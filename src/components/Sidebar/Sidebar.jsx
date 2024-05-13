@@ -79,7 +79,7 @@ function Sidebar({isUploading,totalUploadProgress}) {
           <div className="profile-image"></div>
           <div className="account-name">
             <div className="studio-name">Obscura </div>
-            <div className="profile-name">John</div>
+            <div className="profile-name">Sam</div>
           </div>
         </div>
         <div className="option-icon"></div>
