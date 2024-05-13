@@ -25,7 +25,7 @@ function Home({ projects,loadProjects}) {
                             </linearGradient>
                             {/* Apply the gradient to the text */}
                             <text x="128px" y="46px" fontFamily="Arial" fontSize="3rem" font-fontWeight="800" fill="url(#textGradient)" textAnchor="middle">
-                                Monalisa ✨
+                                Obscura ✨
                             </text>
                         </svg>
                     </div>
