@@ -1,0 +1,177 @@
+@import '../../style/variables';
+.projects-header{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: space-between;
+    padding: 8px*2 8px*3;
+    h1{
+
+    animation: fadeInLeft 0.5s ease-out 0s;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-out;
+    }
+    .actions{
+        display: flex;
+        justify-content: flex-end;
+    }
+}
+.view-control{
+    display:flex;
+    margin: 8px;
+    font-size: 0.9rem;
+    margin-left: 8px*3;
+    margin-bottom: 8px*3;
+    .control-label{
+      color: $gray3-default-dark;
+      padding: 8px;
+      &.label-all-photos{
+        color: $gray2-default-dark;
+      }
+    }
+    .controls{
+      border-radius: $border-radius-1+1;
+      transition-duration: 0.15s;
+      background: linear-gradient(120deg, $dark-1 -80%, $dark-2 20%,$dark-2 60%, $dark-3 100%);
+      border: 1px solid $gray6-accessible-dark;
+      border-top: 1px solid $gray5-accessible-dark;
+      border-bottom: 1px solid $gray6-accessible-dark;;
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);;
+      &:hover{
+        transition-duration: 0.1s;
+      }
+      display:flex;
+      .control{
+        padding: 8px 8px*2;
+        font-weight: 400;
+        border-radius: $border-radius-1;
+        border-right: 1px solid rgba(255, 255, 255, 0.02);
+        color: $gray4-accessible-dark;
+        cursor: pointer;
+        transition-duration: 0.15s;
+        &:hover{
+            border-radius: 2px;
+            background-color: $dark-2;
+            color: $gray2-accessible-dark;
+            transition-duration: 0.1s;
+            &:last-child{
+                border-radius: 8px;
+            }
+        }
+        &.active{
+          color: $light-0;
+          background-color: $dark-4;
+          border: 1px solid $gray5-accessible-dark;
+          border-top: 1px solid $gray3-accessible-dark;
+          border-left: 1px solid $gray3-accessible-dark;
+          border-bottom: 1px solid $gray5-accessible-dark;
+          border-radius: 6px !important;
+          box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);;
+          transform: scale(1.1);
+          &:hover{
+            background-color: $dark-1;
+            border: 1px solid $gray3-accessible-dark;
+            transition-duration: 0.1s;
+          }
+        }
+      }
+    }
+  }
+@keyframes delete-caution {
+    0% {
+        opacity: 0;
+    }
+    25% {
+        opacity: 0.8;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+
+
+
+  .projects-list{
+    padding: 0 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 8px*3;
+    width: 100%;
+    padding: 8px*3;
+    padding-top: 8px;
+    
+    .message{
+        color: $gray4-default-dark;
+    }
+    
+    &.completed{
+        h3::after{
+            font-size: 0.9rem;
+            font-weight: 400;
+            margin-left: 8px*1;
+            content: 'Client Approved';
+            color: $gray3-default-dark;
+        }
+        .project{
+            grid-template-columns: auto 8px*16;
+
+            .project-options{
+                align-items: center;
+            }
+        }
+    }
+}
+
+//write a media quer for divces less than 1200px
+@media only screen and (max-width: 1500px) {
+    .projects-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .projects-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr ;
+    }
+}
+@media only screen and (max-width: 1080px) {
+    .projects-list{
+        grid-template-columns: 1fr 1fr 1fr ;
+    }
+}
+@media only screen and (max-width: 960px) {
+    .projects-list{
+        grid-template-columns: 1fr 1fr  ;
+    }
+}
+@media only screen and (max-width: 860px) {
+    .projects-list{
+        grid-template-columns: 1fr 1fr  ;
+    }
+}
+@media only screen and (max-width: 580px) {
+    .projects-list{
+        grid-template-columns: 1fr 1fr  ;
+    }
+}
+@media only screen and (max-width: 640px) {
+    .projects-list{
+        grid-template-columns: 1fr  ;
+    }
+}
+@media only screen and (max-width: 480px) {
+    .projects-list{
+        grid-template-columns: 1fr  ;
+    }
+}
