@@ -44,7 +44,7 @@ useEffect(() => {
 }, [uploadStatus])
   // Fetch Projects
   useEffect(() => {
-    document.title = `FotoFlow`;
+    document.title = `Obscura FotoFlow`;
     loadProjects()
   }, []);
 
