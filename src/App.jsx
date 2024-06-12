@@ -21,11 +21,28 @@ import {
 import Selection from './features/Selection/Selection';
 import Storage from './features/Storage/Storage';
 import UploadProgress from './components/UploadProgress/UploadProgress';
+import ImageGallery from './draft/masanory-grid';
+import Subscription from './components/Subscription/Subscription';
+import AddProjectModal from './components/Modal/AddProject';
 
 function App() {
   
   const navigate = useNavigate();
-  const [authenticated,setAuthenticated] = useState(true)
+  const [authenticated,setAuthenticated] = useState(false);
+  const logout = () =>{
+    setAuthenticated(false)
+    localStorage.removeItem('authenticated')
+    navigate('/login')
+  }
+  const checkAuthStatus = () => {
+    const isAuthenticated = localStorage.getItem('authenticated');
+    if (isAuthenticated === 'true') {
+        setAuthenticated(true);
+    }
+    else{
+      setAuthenticated(false);
+    }
+};
   // Alert
   const [alert, setAlert] = useState({ type: '', message: '', show: false });
   const showAlert = (type, message) => setAlert({ type, message, show: true });
@@ -35,6 +52,17 @@ function App() {
  const [uploadList, setUploadList] = useState([]);
  const [uploadStatus, setUploadStatus] = useState('close');
   const [isLoading, setIsLoading] = useState(true);
+      // Modal
+      const [modal, setModal] = useState({ createProject: false })
+
+      const openModal = () => setModal({ createProject: true });
+  
+      const closeModal = () => setModal({ createProject: false });
+  
+      useEffect(() => {
+        console.log(modal)
+      }, [modal]);
+
 useEffect(() => {
   if(uploadStatus === 'completed'){
     setTimeout(() => {
@@ -45,6 +73,7 @@ useEffect(() => {
   // Fetch Projects
   useEffect(() => {
     document.title = `Obscura FotoFlow`;
+    checkAuthStatus()
     loadProjects()
   }, []);
 
@@ -121,7 +150,7 @@ useEffect(() => {
     });
   };
   
-  const shareOrSelection = window.location.href.includes('share') || window.location.href.includes('selection' )
+  const shareOrSelection = window.location.href.includes('share') || window.location.href.includes('selection')|| window.location.href.includes('masanory-grid')
   
   // Render
   return (
@@ -129,13 +158,13 @@ useEffect(() => {
       {authenticated && (!shareOrSelection)? (
         <>
           <Header />
-          <Sidebar />
+          <Sidebar logout={logout} />
           <Alert {...alert} setAlert={setAlert} />
           <UploadProgress {...{uploadList,uploadStatus}}/>
+          <AddProjectModal visible={modal.createProject} onClose={closeModal} onSubmit={addProject} showAlert={showAlert} openModal={openModal} />
         </>
       ) : (
-        <></>
-        //<>{!shareOrSelection && <LoginModal {...{ setAuthenticated }} />}</>
+        <>{!shareOrSelection && <LoginModal {...{ setAuthenticated }} />}</>
       )}
       {isLoading ? (
                 <div className="loader-wrap">
@@ -146,17 +175,18 @@ useEffect(() => {
       <Routes>
         { authenticated ? 
           <>
-            <Route exact path="/" element={<Home {...{projects,loadProjects}} />}/>
+            <Route exact path="/" element={<Home {...{projects,loadProjects,openModal}} />}/>
             <Route path="/project/:id/:collectionId?" element={<Project {...{ projects, addCollection, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert }} />}/>
-            <Route path="/projects" element={<Projects {...{ projects, addProject, showAlert, isLoading }} />}/>
+            <Route path="/projects" element={<Projects {...{ projects, addProject, showAlert, isLoading,openModal }} />}/>
             <Route path="/storage" element={<Storage {...{projects}}/>}/>
-            
+            <Route path="/subscription" element={<Subscription/>}/>
           </> 
           
           : ''
         }
         <Route path="/share/:projectId/:collectionId?" element={<ShareProject {...{ projects }} />}/>
         <Route path="/selection/:projectId/:collectionId?" element={<Selection {...{ projects }} />}/>
+        <Route path="/masanory-grid" element={<ImageGallery />}/>
       </Routes>
             )}
       

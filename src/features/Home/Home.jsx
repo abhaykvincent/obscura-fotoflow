@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './Home.scss';
 import { getProjectsByStatus, getRecentProjects } from '../../utils/projectFilters';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
-function Home({ projects,loadProjects}) {
+function Home({ projects,loadProjects,openModal}) {
 
     document.title = `FotoFlow | Home`;
     const recentProjects = getRecentProjects(projects, 4);
@@ -20,8 +20,8 @@ function Home({ projects,loadProjects}) {
                         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                             {/* Define the linear gradient */}
                             <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" style={{ stopColor: '#30d158', stopOpacity: 1 }} />
-                                <stop offset="100%" style={{ stopColor: '#136a29', stopOpacity: 1 }} />
+                                <stop offset="0%" style={{ stopColor: '#54a134', stopOpacity: 1 }} />
+                                <stop offset="100%" style={{ stopColor: '#3f7528', stopOpacity: 1 }} />
                             </linearGradient>
                             {/* Apply the gradient to the text */}
                             <text x="128px" y="46px" fontFamily="Arial" fontSize="3rem" font-fontWeight="800" fill="url(#textGradient)" textAnchor="middle">
@@ -32,7 +32,9 @@ function Home({ projects,loadProjects}) {
                     <h1 className='welcome-message'>Let's manage your Snaps </h1>
                 </div>
                 <div className="actions">
-                    <div className="button primary">Create Project</div>
+                    <div className="button primary"
+                    onClick={openModal}
+                    >Create Project</div>
                 </div>
             </div>
             {
@@ -77,7 +79,9 @@ function Home({ projects,loadProjects}) {
                     </div>
                     <div className="projects-list">
 
-                    <Link className="project new" to={`/projects`} >
+                    <div className="project new" 
+                        onClick={openModal}
+                    >
                         <div className="project-cover"
                         ></div>
                         <div className="project-details">
@@ -90,7 +94,7 @@ function Home({ projects,loadProjects}) {
                         <div className="project-options">
                             
                         </div>
-                    </Link>
+                    </div >
                     </div>
                 </>)
             }

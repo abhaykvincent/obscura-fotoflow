@@ -18,7 +18,7 @@
         a{
         .label{
             opacity: 0.0;
-            transform: translateX(8px*4);
+            transform: translateX(8px*0);
             display: flex;
             width: 8px*8;
             text-align: center;
@@ -140,7 +140,7 @@
         display: grid;
         justify-items: center;
         position: absolute;
-        bottom: 8px*9;
+        bottom: 8px*7;
         padding: 8px;
         margin: 8px*1;
         width: $sidebar-width -  8px*2.5;
@@ -151,13 +151,90 @@
         opacity: 0.5;
         }
         .message{
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         color: $gray-accessible-dark;
         margin: 8px;
         margin-top: 4px;
+            span{
+                font-size: 0.6rem;
+                color: $gray6-accessible-light;
+                padding: 4px ;
+                border-radius: 4px;
+                border: 1px solid $dark-0;
+            }
         }
-        .botton{
-        margin: 0;
+
+        .plan{
+            font-size: 0.8rem;
+            margin-top: 8px;
+            color: $gray2-accessible-dark;
+        }
+        .botton.primary.outline{
+            margin: 0;
+            width: 100%;
+        }
+    }
+    .profile-settings{
+        .profile-options-window{
+            display: grid;
+            justify-items: start;
+            position: absolute;
+            bottom: 8px;
+            padding: 0px;
+            margin: 8px;
+            height: 0px;
+            width: 172px;
+            background-color: #171717;
+            border: 1px solid #2B2B2B;
+            z-index: 20;
+            border-radius: 4px;
+            overflow: hidden;
+            opacity: 0;
+            transition-duration: 0.2s;
+                .option{
+                    display: block;
+                    width: 100%;
+                    color: $gray3-accessible-light;
+                    padding: 8px 8px*2;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    &.logout{
+                        display: grid;
+                        align-items: center;
+                        grid-template-columns: auto 8px*3;
+                        &::after{
+                            content: '.';
+                            width: 8px*2;
+                            height: 8px*2;
+                            margin-left: 8px*2;
+                            background-image: url('../../assets/img/icons/logout.svg');
+                            background-size: 100%;
+                            background-position: center;
+                            background-repeat: no-repeat;
+
+                        }
+                    }
+                &:hover{
+                    background: $dark-1;
+                    transition-duration: 0.1s;
+                }
+                &.disabled{
+                    color: $gray4-accessible-dark;
+                    &:hover{
+                        background: $dark-2;
+                        transition-duration: 0.1s;
+                    }
+                }
+                
+            }
+            &.active{
+                bottom: 8px*6;
+
+                padding: 8px;
+                height: 8PX*24;
+                opacity: 1;
+                transition-duration: 0.1s;
+            }
         }
     }
     .profile-options{
@@ -169,14 +246,18 @@
         gap: 8px;
         position: absolute;
         top: 100vh;
-        padding: 8px*2;
+        padding: 8px*1.5;
+        padding-right: 0;
         width: $sidebar-width - 8px;
         transform: translateY(-100%);
+        cursor: pointer;
+        z-index: 21;
         .profile{
         width: 100%;
         display: flex;
         gap: 8px;
         align-items: center;
+
         .account-name{
             display: grid;
             gap: 4px;
@@ -207,10 +288,10 @@
         }
         .profile-image{
             padding: 8px*2.5;
-            background-image: url('https://professions.ng/wp-content/uploads/2023/09/Tips-for-Aspiring-Photographers-Building-a-Portfolio-in-Nigeria.jpeg');
+            background-image: url('https://instagram.fcok8-1.fna.fbcdn.net/v/t51.29350-15/422581045_1105391657151823_2362685168979462587_n.jpg?stp=c0.76.595.595a_dst-jpg_e15_s150x150&_nc_ht=instagram.fcok8-1.fna.fbcdn.net&_nc_cat=107&_nc_ohc=oSjokEUfsTkQ7kNvgE_ZRPW&edm=AGFyKLkBAAAA&ccb=7-5&oh=00_AYBeRaGb3Exa9d9mxAsfmW5SkVNCH94vuFVLcwrpqaXssQ&oe=666AA3C2&_nc_sid=cf751b');
             background-size: 100%;
-            border: 1px solid $dark-0;
-            border-radius: $border-radius-1 ;
+            border: 0px solid $dark-0;
+            border-radius: 50%;
 
         }
         }

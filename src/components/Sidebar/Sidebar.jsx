@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Sidebar.scss'
 import { GrUpgrade } from "react-icons/gr";
-function Sidebar({isUploading,totalUploadProgress}) {
+function Sidebar({logout}) {
+  const [profileOptionActive, setProfileOptionActive] = useState(false)
+  const toggleProfileOption = () => {
+    setProfileOptionActive(!profileOptionActive)
+  }
+  useEffect(() => {
+    // console.log(profileOptionActive)
+  }, [profileOptionActive])
   const location = useLocation();
   
   return (
@@ -74,22 +81,41 @@ function Sidebar({isUploading,totalUploadProgress}) {
           </div>
         </Link>
       </div>
-      <div className="profile-options">
-        <div className="profile">
-          <div className="profile-image"></div>
-          <div className="account-name">
-            <div className="studio-name">Obscura </div>
-            <div className="profile-name">Sam</div>
+
+      <div className="profile-settings">
+        <div className="profile-options" onClick={toggleProfileOption}>
+          <div className="profile"
+          >
+            <div className="profile-image"></div>
+            <div className="account-name">
+              <div className="studio-name">Obscura</div>
+              <div className="profile-name">Sam</div>
+            </div>
           </div>
+          <div className="option-icon"></div>
         </div>
-        <div className="option-icon"></div>
+        <div className={`profile-options-window ${profileOptionActive?'active':''}`}>
+          <div className="option disabled">Profile</div>
+          <div className="option disabled">Account</div>
+          <div className="option disabled">Settings</div>
+          
+          <Link to={`/subscription`}>
+            <div className="option">Subscription</div>
+          </Link>
+          <div className="option logout"
+            onClick={logout}
+          >Logout</div>
+        </div>
       </div>
-      <div className="status">
+      <div className="subscriptoion status">
         <div className="icon">
         <GrUpgrade />
         </div>
-        <div className="message">You have 126MB left</div>
-        <div className="button primary outline">Upgrade</div>
+        <div className="message">Upgrade to <span>STUDIO</span></div>
+        <div className="button primary outline"
+          
+        >Waitlist</div>
+        <p className="plan">Current Plan: Freelancer</p>
       </div>
     </div>
   );

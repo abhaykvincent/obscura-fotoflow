@@ -63,7 +63,7 @@ const ImageGallery = React.memo(({ imageUrls,projectId }) => {
             </div>
             </div>
             <div className='photo' key={index} 
-            style={{ backgroundImage: `url(${fileUrl.url})` }} alt={`File ${index}`}></div>
+            style={{ backgroundImage: `url("${fileUrl.url}")` }} alt={`File ${index}`}></div>
           </div>
         ))}
       </div>

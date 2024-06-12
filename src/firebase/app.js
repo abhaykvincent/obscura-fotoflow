@@ -7,7 +7,6 @@ import { getAuth, connectAuthEmulator, GoogleAuthProvider, signInWithPopup } fro
 
 if(process.env.NODE_ENV === 'development'){
     console.log('DEV MODE');
-    console.log(process.env.REACT_APP_API_KEY);
     
 }
 else{
@@ -15,13 +14,13 @@ else{
     console.log(process.env.REACT_APP_API_KEY);
 }
 const firebaseConfig = {
-    apiKey: "AIzaSyDmAGZJTd1xSofgYgyQeGOYP2dSiLE646U",
-    authDomain: "fotoflow-dev.firebaseapp.com",
-    projectId: "fotoflow-dev",
-    storageBucket: "fotoflow-dev.appspot.com",
-    messagingSenderId: "180761954293",
-    appId: "1:180761954293:web:2756c328ad6f8d792e82bc",
-    measurementId: "G-HMJWHV4W3X"
+    apiKey: "AIzaSyATMISVaGPMkJANWrzgmOGqgMGHprnrT04",
+    authDomain: "obscura-fotoflow.firebaseapp.com",
+    projectId: "obscura-fotoflow",
+    storageBucket: "obscura-fotoflow.appspot.com",
+    messagingSenderId: "541778693405",
+    appId: "1:541778693405:web:030ac1bcc8e072ea94e5f4",
+    measurementId: "G-3P0M36DPY2"
   };
 
 
@@ -30,7 +29,7 @@ const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 const db = getFirestore(app); 
 const analytics = getAnalytics(app);
-//const auth = getAuth(app);
+const auth = getAuth(app);
 
 if (process.env.NODE_ENV === 'development') {
     const EMULATOR_HOST = process.env.REACT_APP_EMULATOR_HOST;
@@ -41,9 +40,9 @@ if (process.env.NODE_ENV === 'development') {
 
     connectStorageEmulator(storage, EMULATOR_HOST, EMULATOR_PORT);
     connectFirestoreEmulator(db, EMULATOR_HOST, EMULATOR_FIRESTORE_PORT);
-    //connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${EMULATOR_AUTH_PORT}`);
+    connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${EMULATOR_AUTH_PORT}`);
 }
 
 const provider = new GoogleAuthProvider();
 
-export { storage, db, analytics/* , auth, provider, signInWithPopup */};
+export { storage, db, analytics, auth, provider, signInWithPopup};
