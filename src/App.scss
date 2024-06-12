@@ -137,7 +137,29 @@ body{
       .project-options{
         display: flex;
         justify-content: flex-end;
-        align-items: flex-end;
+        align-items: center;
+        color: $dark-0;
+        .pin{
+          // blur
+          filter: blur(3px);
+          transition-timing-function: ease-out;
+          transition-duration: 0.1s;
+          margin-left: 8px*2;
+          margin-right: 8px*1.2;
+          
+        }&:hover{
+          color: $dark-1;
+          .pin{
+            border: 1px solid $dark-0;
+          filter: blur(0.1px);
+          transition-delay: 0.1s;
+          transition-duration: 0.15s;
+          transition-timing-function: ease-out;
+          margin-left: 8px*1.9;
+          margin-right: 8px*0.7;
+          //kerling
+          font-stretch: expanded; } 
+        }
       }
       .client-contact{
         margin-top: 8px;
@@ -440,6 +462,48 @@ body{
         }
       }
     }
+    &#loginModal{
+      max-width: 8px*50;
+      left: 50vw;
+      top: 50vH;
+      transform: translate(-50%, -50%);
+      padding: 0;
+      .logo{
+        position: absolute;
+        top: -8px*16;
+        width: 100%;
+        height: 8px*10;
+        background-image: url('./assets/img/fotoflow-pro-logo.svg');
+        background-size: 50%;
+        background-position: center;
+      }
+      .form-section{
+        min-width: 8px*30;
+        margin: 0;
+        p{
+          margin: 8px*2 8px;
+          text-align: center;
+        }
+      }
+      .actions{
+        position: relative;
+        .button{
+          height: 8px*5;
+          display: flex;
+          align-items: center;
+          gap: 8px*2;
+          background-color: $dark-1;
+          border: 1px solid $dark-0;
+          .google-logo{
+            width: 8px*4;
+            height: 8px*4;
+            border: none;
+            background-image: url('./assets/img/google-logo.png');
+            background-size: 100%;
+          }
+        }
+      }
+    }
   }
   .modal-backdrop{
     position: fixed;
@@ -521,7 +585,7 @@ margin-left: 4px;
         //add a loading animation with linear-gradient
         //background: linear-gradient(90deg, $dark-3 20%, $dark-2 40%,$dark-2 60%, $dark-3 80%);
         
-        transform: scale(0.9);
+        transform: scale(0.98);
         border-radius: 2px;
         // background size: take the width of largest side
         background-size: contain;
@@ -649,7 +713,7 @@ margin-left: 4px;
         border-radius: 2px;
         z-index: 1;
         .photo{
-          transform: scale(0.8)translateY(-8px*1);
+          transform: scale(0.9)translateY(8px*0);
           transition-duration: 0.1s;
           transition-timing-function: ease-out;
         }

@@ -4,17 +4,11 @@ import AddProjectModal from '../../components/Modal/AddProject';
 import './Projects.scss';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
 
-function Projects({ projects, addProject, showAlert, isLoading }) {
+function Projects({ projects, openModal,addProject, showAlert, isLoading }) {
 
 
-    // Modal
-    const [modal, setModal] = useState({ createProject: false })
 
-    const openModal = () => setModal({ createProject: true });
-
-    const closeModal = () => setModal({ createProject: false });
-
- 
+ console.log(openModal)
 
     return (
         <main className="projects">
@@ -52,7 +46,9 @@ function Projects({ projects, addProject, showAlert, isLoading }) {
                 <h3 className='section-heading'>Recent Projects</h3>
                         </div>
 
-                        <Link className="project new"  >
+                        <div className="project new"  
+                            onClick={openModal}
+                        >
                             <div className="project-cover"
                             ></div>
                             <div className="project-details">
@@ -65,13 +61,13 @@ function Projects({ projects, addProject, showAlert, isLoading }) {
                             <div className="project-options">
                                 
                             </div>
-                        </Link>
+                        </div>
                         </>
                     )
                     }
                 </div>
             
-            <AddProjectModal visible={modal.createProject} onClose={closeModal} onSubmit={addProject} showAlert={showAlert} />
+            
         </main>
     );
 

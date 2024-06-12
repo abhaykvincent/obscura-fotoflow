@@ -73,7 +73,12 @@ export default function Project({ projects,  addCollection, deleteCollection, de
           <p className="client-phone">{project.phone}</p>
           <p className="client-email">{project.email}</p>
         </div>
-        <div className="project-options">
+        <div className="project-options">PIN 
+          {/* display project pin and a click buttion to copy to clicp board */}
+          <div className="button secondary pin" onClick={()=>{
+            navigator.clipboard.writeText(`${project.pin}`)
+            showAlert('success', 'Pin copied to clipboard!')
+          }}>{project.pin}</div>
         </div>
       </div>
       {project.collections.length === 0 ? (

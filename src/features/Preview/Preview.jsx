@@ -92,11 +92,12 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
       <div className="image-wrap">
         <div className="image"
           style={{
-            backgroundImage: `url(${image.url})`,
+            backgroundImage: `url("${image.url}")`,
             backgroundPositionX: zoomValue>100?`${imagePosition.x}px`:'center',
             backgroundPositionY: zoomValue>100?`${imagePosition.y}px`:'center',
             backgroundSize: `auto ${zoomValue}%`
           }}>
+            
         </div>
 
       </div>
