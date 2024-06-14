@@ -126,7 +126,20 @@ body{
       .client{
         display: flex;
         align-items: center;
-        gap: 8px*2;
+        gap: 8px*1;
+        .back{
+          width: 8px*4;
+          height: 8px*3;
+          background-image: url('./assets/img/icons/back.png');
+          background-size: auto 100%  ;
+          background-position: left center;
+          transition-duration: 0.1s;
+          transform: translateX(0);
+          &:hover{
+            transition-duration: 0.3s;
+            transform: translateX(-8px);
+          }
+        }
         .type{
 
           display: block;

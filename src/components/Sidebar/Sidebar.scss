@@ -85,7 +85,7 @@
                 border: 1px solid $dark-2;
             }
             .label,.icon{
-                opacity: 0.5 !important;
+                opacity: 0.2 !important;
             }
             cursor: not-allowed;
             }
@@ -248,7 +248,7 @@
         top: 100vh;
         padding: 8px*1.5;
         padding-right: 0;
-        width: $sidebar-width - 8px;
+        width: $sidebar-width - 8px*2;
         transform: translateY(-100%);
         cursor: pointer;
         z-index: 21;
@@ -288,9 +288,9 @@
         }
         .profile-image{
             padding: 8px*2.5;
-            background-image: url('https://instagram.fcok8-1.fna.fbcdn.net/v/t51.29350-15/422581045_1105391657151823_2362685168979462587_n.jpg?stp=c0.76.595.595a_dst-jpg_e15_s150x150&_nc_ht=instagram.fcok8-1.fna.fbcdn.net&_nc_cat=107&_nc_ohc=oSjokEUfsTkQ7kNvgE_ZRPW&edm=AGFyKLkBAAAA&ccb=7-5&oh=00_AYBeRaGb3Exa9d9mxAsfmW5SkVNCH94vuFVLcwrpqaXssQ&oe=666AA3C2&_nc_sid=cf751b');
+            background-image: url('../../assets/img/profile/sam.jpg');
             background-size: 100%;
-            border: 0px solid $dark-0;
+            border: 1px solid $gray-accessible-dark;
             border-radius: 50%;
 
         }

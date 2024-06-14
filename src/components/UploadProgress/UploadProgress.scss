@@ -72,7 +72,7 @@
         }
     }
     .body{
-        height: 8px*24;
+        height: 8px*32;
         padding: 0 8px*2;
         overflow: scroll;
         background: linear-gradient(120deg, $dark-2 0%, $dark-3 100%);
@@ -101,7 +101,7 @@
                 .task-status{
                     background-image: url('https://media.tenor.com/t5DMW5PI8mgAAAAi/loading-green-loading.gif');
                     background-position: center;
-                    background-size: auto 50%;
+                    background-size: auto 40%;
                     opacity: 0;
                 }
                 &.initializing{
