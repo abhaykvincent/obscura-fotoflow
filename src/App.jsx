@@ -24,6 +24,7 @@ import UploadProgress from './components/UploadProgress/UploadProgress';
 import ImageGallery from './draft/masanory-grid';
 import Subscription from './components/Subscription/Subscription';
 import AddProjectModal from './components/Modal/AddProject';
+import Galleries from './features/Galleries/Galleries';
 
 function App() {
   
@@ -124,7 +125,7 @@ useEffect(() => {
       });
       setProjects(updatedProjects);
       showAlert('success', `Collection <b>${newCollection.name}</b> added successfully!`);// Redirect to /projects page
-      navigate(`/project/${projectId}/${id}`);
+      navigate(`/project/galleries/${projectId}/${id}`);
     })
     .catch((error) => {
       showAlert('error', `Error adding collection: ${error.message}`);
@@ -176,7 +177,8 @@ useEffect(() => {
         { authenticated ? 
           <>
             <Route exact path="/" element={<Home {...{projects,loadProjects,openModal}} />}/>
-            <Route path="/project/:id/:collectionId?" element={<Project {...{ projects, addCollection, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert }} />}/>
+            <Route path="/project/:id" element={<Project {...{ projects, addCollection, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert }} />}/>
+            <Route exact path="/project/galleries/:id/:collectionId?" element={<Galleries {...{ projects, addCollection, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert }} />}/>
             <Route path="/projects" element={<Projects {...{ projects, addProject, showAlert, isLoading,openModal }} />}/>
             <Route path="/storage" element={<Storage {...{projects}}/>}/>
             <Route path="/subscription" element={<Subscription/>}/>
