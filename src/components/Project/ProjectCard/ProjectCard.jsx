@@ -2,6 +2,7 @@ import {Link} from 'react-router-dom';
 import './ProjectCard.scss'
 
 function ProjectCard({project, key, index}) {   
+    console.log(project, key, index)
     //Project's selected photos count
     const getProjectSelectedPhotosCount = (project) => {
         return project.collections.flatMap(collection => collection.uploadedFiles)
@@ -9,7 +10,7 @@ function ProjectCard({project, key, index}) {
             .length;
     }
   return (
-    <Link className={`project ${project.status?project.status:''}`} to={`/project/${project.id}`} key={key}>
+    <Link className={`project ${project.id} ${project.status?project.status:''}`} to={`/project/${project.id}`} key={key}>
         <div className="cover-wrap">
             <div
                 className="project-cover"

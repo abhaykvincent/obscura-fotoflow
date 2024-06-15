@@ -3,10 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { findCollectionById } from '../../utils/CollectionQuery';
 import AddCollectionModal from '../../components/Modal/AddCollection';
 import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
-import CollectionsPanel from '../../components/Project/Collections/CollectionsPanel';
-import CollectionImages from '../../components/Project/Collections/CollectionImages';
 
-import './Project.scss';
 export default function Project({ projects,  addCollection, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert}) {
   const navigate = useNavigate();
   // Route Params
@@ -65,9 +62,11 @@ export default function Project({ projects,  addCollection, deleteCollection, de
         </div>
       </div>
       <div className="project-dashboard">
-        <div className="gallery-overview">
-        {project.collections.length === 0 ? (
+
+        {
+        project.collections.length === 0 ? (
         <>  
+        <div className="templates">
           <div className="gallery new" 
           onClick={openModal}>
 
@@ -83,6 +82,7 @@ export default function Project({ projects,  addCollection, deleteCollection, de
            </div>
            <div className="gallery-name">New Gallery</div>
            
+         </div>
          </div>
         </>
       ) : (
@@ -188,7 +188,6 @@ export default function Project({ projects,  addCollection, deleteCollection, de
           </div>
           </>
       )}
-        </div>
 
         <div className="financials-overview">
           <div className="payments">
@@ -218,6 +217,7 @@ export default function Project({ projects,  addCollection, deleteCollection, de
                     <div className="signal"></div>
                   </div>
                 <div className="circle orange">₹76K</div>
+                <p className="message">All payments are succussful.</p>
               </div>
               <div className="payments-list">
                 <div className="box amount-card">₹13K</div>
@@ -351,11 +351,11 @@ export default function Project({ projects,  addCollection, deleteCollection, de
         </div>
 
       </div>
-      
-
+    
 
       <AddCollectionModal project={project} visible={modal.createCollection} onClose={closeModal} onSubmit={addCollection}  />
       {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm} onClose={onDeleteConfirmClose}/>:''}
     </main>
   )
   }
+  // Line complexity 2.0 => 3.5

@@ -53,16 +53,10 @@ function App() {
  const [uploadList, setUploadList] = useState([]);
  const [uploadStatus, setUploadStatus] = useState('close');
   const [isLoading, setIsLoading] = useState(true);
-      // Modal
-      const [modal, setModal] = useState({ createProject: false })
-
-      const openModal = () => setModal({ createProject: true });
-  
-      const closeModal = () => setModal({ createProject: false });
-  
-      useEffect(() => {
-        console.log(modal)
-      }, [modal]);
+    // Modal
+    const [modal, setModal] = useState({ createProject: false })
+    const openModal = () => setModal({ createProject: true });
+    const closeModal = () => setModal({ createProject: false });
 
 useEffect(() => {
   if(uploadStatus === 'completed'){
@@ -93,8 +87,10 @@ useEffect(() => {
     navigate(`/project/${newProject.id}`);
   };
   const deleteProject = (projectId) => {
+    console.log(projects.length)
     const updatedProjects = projects.filter(project => project.id !== projectId)
     const project = projects.find(project => project.id === projectId) || {}
+
     deleteProjectFromFirestore(projectId)
     .then(() => {
       navigate('/projects');
@@ -197,4 +193,4 @@ useEffect(() => {
 }
 
 export default App;
-// line Complexity  146 -> 133 -> 127 -> 152 -> 132
+// Line Complexity  1.5 -> 2.0
