@@ -86,7 +86,7 @@ export default function Project({ projects,  addCollection, deleteCollection, de
          </div>
         </>
       ) : (
-        <>
+        <div className="gallery-overview">
           <div className="galleries">
             <h3 className='heading'>Galleries</h3>
             <Link className="gallery" to={`/project/galleries/${id}`}>
@@ -186,7 +186,7 @@ export default function Project({ projects,  addCollection, deleteCollection, de
               <div className="button secondary outline disabled">Finder</div>
             </div>
           </div>
-          </>
+          </div>
       )}
 
         <div className="financials-overview">
