@@ -159,11 +159,7 @@ body{
           transition-duration: 0.1s;
           margin-left: 8px*2;
           margin-right: 8px*1.2;
-          
-        }&:hover{
-          color: $dark-1;
-          .pin{
-            border: 1px solid $dark-0;
+          border: 1px solid $dark-0;
           filter: blur(0.1px);
           transition-delay: 0.1s;
           transition-duration: 0.15s;
@@ -171,7 +167,8 @@ body{
           margin-left: 8px*1.9;
           margin-right: 8px*0.7;
           //kerling
-          font-stretch: expanded; } 
+          font-stretch: expanded;
+          
         }
       }
       .client-contact{

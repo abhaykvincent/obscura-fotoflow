@@ -29,6 +29,7 @@ import Galleries from './features/Galleries/Galleries';
 function App() {
   
   const navigate = useNavigate();
+  // Doors
   const [authenticated,setAuthenticated] = useState(false);
   const logout = () =>{
     setAuthenticated(false)
@@ -43,28 +44,28 @@ function App() {
     else{
       setAuthenticated(false);
     }
-};
+  };
   // Alert
   const [alert, setAlert] = useState({ type: '', message: '', show: false });
   const showAlert = (type, message) => setAlert({ type, message, show: true });
   // Core Data
   const [projects, setProjects] = useState([]);
- // Upload progress
- const [uploadList, setUploadList] = useState([]);
- const [uploadStatus, setUploadStatus] = useState('close');
+  // Upload progress
+  const [uploadList, setUploadList] = useState([]);
+  const [uploadStatus, setUploadStatus] = useState('close');
   const [isLoading, setIsLoading] = useState(true);
-    // Modal
-    const [modal, setModal] = useState({ createProject: false })
-    const openModal = () => setModal({ createProject: true });
-    const closeModal = () => setModal({ createProject: false });
+  // Modal
+  const [modal, setModal] = useState({ createProject: false })
+  const openModal = () => setModal({ createProject: true });
+  const closeModal = () => setModal({ createProject: false });
 
-useEffect(() => {
-  if(uploadStatus === 'completed'){
-    setTimeout(() => {
-      setUploadStatus('close')
-    }, 1000)
-  }
-}, [uploadStatus])
+  useEffect(() => {
+    if(uploadStatus === 'completed'){
+      setTimeout(() => {
+        setUploadStatus('close')
+      }, 1000)
+    }
+  }, [uploadStatus])
   // Fetch Projects
   useEffect(() => {
     document.title = `Obscura FotoFlow`;
@@ -87,7 +88,6 @@ useEffect(() => {
     navigate(`/project/${newProject.id}`);
   };
   const deleteProject = (projectId) => {
-    console.log(projects.length)
     const updatedProjects = projects.filter(project => project.id !== projectId)
     const project = projects.find(project => project.id === projectId) || {}
 
