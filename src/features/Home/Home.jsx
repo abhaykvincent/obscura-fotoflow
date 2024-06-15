@@ -24,8 +24,8 @@ function Home({ projects,loadProjects,openModal}) {
                                 <stop offset="100%" style={{ stopColor: '#3f7528', stopOpacity: 1 }} />
                             </linearGradient>
                             {/* Apply the gradient to the text */}
-                            <text x="128px" y="46px" fontFamily="Arial" fontSize="3rem" font-fontWeight="800" fill="url(#textGradient)" textAnchor="middle">
-                                Obscura ✨
+                            <text x="104px" y="44px" fontFamily="Arial" fontSize="3rem" font-fontWeight="800" fill="url(#textGradient)" textAnchor="middle">
+                                Obscura 
                             </text>
                         </svg>
                     </div>

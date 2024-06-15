@@ -87,6 +87,7 @@ export default function Project({ projects,  addCollection, deleteCollection, de
         </>
       ) : (
         <div className="gallery-overview">
+          
           <div className="galleries">
             <h3 className='heading'>Galleries</h3>
             <Link className="gallery" to={`/project/galleries/${id}`}>
@@ -129,61 +130,6 @@ export default function Project({ projects,  addCollection, deleteCollection, de
             <div className="ctas">
               <div className="button secondary outline bold">+ New Gallery</div>
               <div className="button secondary outline disabled">Share</div>
-            </div>
-          </div>
-          <div className="galleries selected">
-            <h3 className='heading'>Selected</h3>
-            <Link className="gallery" to={`/project/galleries/${id}`}>
-              <div className="thumbnails">
-                <div className="thumbnail thumb1">
-                  <div className="backthumb bthumb1"
-                  style={
-                    {
-                      backgroundImage:
-                        `url(${project.projectCover?project.projectCover:''})`
-                    }}
-                  ></div>
-                  <div className="backthumb bthumb2"></div>
-                  <div className="backthumb bthumb3"></div>
-                </div>
-                <div className="thumbnail thumb2">
-                  <div className="backthumb bthumb1" style={
-                    {
-                      backgroundImage:
-                        `url(${project.projectCover?project.projectCover:''})`
-                    }}>
-                  </div>
-                  <div className="backthumb bthumb2"></div>
-                  <div className="backthumb bthumb3"></div>
-                  </div>
-                <div className="thumbnail thumb3">
-                    <div className="backthumb bthumb1 count" style={
-                    {
-                      backgroundImage:
-                        `url(${project.projectCover?project.projectCover:''})`
-                    }}>
-                    371 Photos</div>
-                    <div className="backthumb bthumb2"></div>
-                    <div className="backthumb bthumb3"></div>
-                  </div>
-                <div className="thumbnail thumb3">
-                    <div className="backthumb bthumb1 count" style={
-                    {
-                      backgroundImage:
-                        `url(${project.projectCover?project.projectCover:''})`
-                    }}>
-                    371 Photos</div>
-                    <div className="backthumb bthumb2"></div>
-                    <div className="backthumb bthumb3"></div>
-                  </div>
-              </div>
-          
-            </Link>
-
-            <div className="ctas">
-              <div className="label">Open in</div>
-              <div className="button secondary outline bold lr disabled">Lr</div>
-              <div className="button secondary outline disabled">Finder</div>
             </div>
           </div>
           </div>
