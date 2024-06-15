@@ -101,24 +101,6 @@ export default function ShareProject() {
         <div className="shared-collection">
           <ShareGallery images={imageUrls} projectId={projectId}/>
 
-        <div className="pagination">
-          <div className={`button ${page===1?'disabled':'primary'} previous`}
-            onClick={
-              ()=>{
-                if(page>1)
-                  setPage(page-1)
-              }
-            }
-          >Previous</div>
-          <div className="button primary next"
-            onClick={
-              ()=>{
-                setPage(page+1)
-              }
-            }
-          >Next</div>
-
-        </div>
         </div>
     </div>
   );
