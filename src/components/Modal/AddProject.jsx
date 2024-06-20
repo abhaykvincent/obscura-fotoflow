@@ -11,6 +11,7 @@ function AddProjectModal({ showAlert,visible, onClose, onSubmit }) {
       email: 'julia.ethan@gmail.com',
       phone: '3656992278',
       collections: [],
+      events: [],
       status: 'draft',
       createdAt: new Date(),
       uploadedFilesCount:0,

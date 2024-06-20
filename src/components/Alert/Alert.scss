@@ -23,6 +23,12 @@
   .alert.success {
     background-color: $green-accessible-light;
   }
+
+  .alert.success-negative{
+    background-color: $dark-2;
+    border: 1px solid $red-default-light;
+    opacity: 0.5;  
+  }
   
   .alert.error {
     background-color: $red-accessible-light;

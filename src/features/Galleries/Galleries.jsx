@@ -59,7 +59,7 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
     <main className='project-page'>
       <div className="project-info">
       <div className="client">
-          <Link className="back" to={`/project/${id}}`}></Link>
+          <Link className="back" to={`/project/${encodeURIComponent(id)}`}></Link>
           <h1>{project.name}</h1>
           <div className="type">{project.type}</div>
         </div>
@@ -128,7 +128,11 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
                       </div>
                       <div className="thumbnail thumb2">
 
-                        <div className="backthumb bthumb1">
+                        <div className="backthumb bthumb1"style={
+                          { 
+                            backgroundImage: 
+                              `url(${project.projectCover?project.projectCover:''})`
+                          }}>
                         </div>
                         <div className="backthumb bthumb2"></div>
                         <div className="backthumb bthumb3"></div>
@@ -136,7 +140,7 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
                       <div className="thumbnail thumb3">
 
                           <div className="backthumb bthumb1 count">
-                          1265 Photos</div>
+                          {project.uploadedFilesCount} Photos</div>
                           <div className="backthumb bthumb2"></div>
                           <div className="backthumb bthumb3"></div>
                         </div>
@@ -167,7 +171,6 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
             </div>
             </div>
           </div>
-          <CollectionsPanel {...{project, collectionId:targetCollectionId, deleteCollection, openModal}}/>
           <CollectionImages  {...{ id, collectionId:targetCollectionId,collection,setUploadList,setUploadStatus,showAlert}} />
         </div>
       )}

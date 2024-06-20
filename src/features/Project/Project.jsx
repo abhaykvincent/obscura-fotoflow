@@ -3,8 +3,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { findCollectionById } from '../../utils/CollectionQuery';
 import AddCollectionModal from '../../components/Modal/AddCollection';
 import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
+import DashboardEvents from '../../components/Events/Events';
 
-export default function Project({ projects,  addCollection, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert}) {
+export default function Project({ projects,  addCollection,addEvent, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert}) {
   const navigate = useNavigate();
   // Route Params
   let { id,collectionId } = useParams();
@@ -32,7 +33,6 @@ export default function Project({ projects,  addCollection, deleteCollection, de
   else{
   document.title = `${project.name}'s ${project.type}`
   }
-
 
   return (
     <main className='project-page'>
@@ -109,8 +109,8 @@ export default function Project({ projects,  addCollection, deleteCollection, de
                       backgroundImage:
                         `url(${project.projectCover?project.projectCover:''})`
                     }}>
-                  6 Galleries
-                  </div>
+                  
+                  {project.collections.length} Galleries</div>
                   <div className="backthumb bthumb2"></div>
                   <div className="backthumb bthumb3"></div>
                   </div>
@@ -120,7 +120,8 @@ export default function Project({ projects,  addCollection, deleteCollection, de
                       backgroundImage:
                         `url(${project.projectCover?project.projectCover:''})`
                     }}>
-                    1265 Photos</div>
+                    
+                    {project.uploadedFilesCount} Photos</div>
                     <div className="backthumb bthumb2"></div>
                     <div className="backthumb bthumb3"></div>
                   </div>
@@ -175,126 +176,7 @@ export default function Project({ projects,  addCollection, deleteCollection, de
           </div>
         </div>
 
-        <div className="shoots">
-          <div className="headings">
-            <h3 className='heading heading-shoots'>Shoots</h3>
-            <h3 className='heading heading-crew'>Crew</h3>
-          </div>
-          
-          <div className="shoot-list">
-            <div className="event-container">
-              <div className="shoot">
-                <div className="time">
-                  <div className="status large">
-                    <div className="signal"></div>
-                  </div>
-                  <div className="date">
-                    <h1>14</h1>
-                    <h5>Feb</h5>
-                  </div>
-                  <p>10:00AM</p>
-                  <p className='location'>Totonto, ON</p>
-                </div>
-                <div className="details">
-                  <div className="team-badges">
-                    <div className="badge"></div>
-                    <div className="badge second"></div>
-                    <div className="badge third"></div>
-                  </div>
-                </div>
-                <div className="cta button secondary outline">Confirm</div>
-              </div>
-              <div className="crew">
-                <div className="crew-card box">
-                  <div className="status">
-                    <div className="signal"></div>
-                  </div>
-                  <div className="avatar"></div>
-                  <div className="name">Abhay Vincent</div>
-                </div>
-                <div className="crew-card box">
-                  <div className="status">
-                    <div className="signal"></div>
-                  </div>
-                  <div className="avatar"></div>
-                  <div className="name">John Doe</div>
-                </div>
-                <div className="assistants">
-                  <div className="assistant-card box">
-                  <div className="status">
-                    <div className="signal"></div>
-                  </div><div className="avatar"></div></div>
-                  <div className="assistant-card box">
-                  <div className="status">
-                    <div className="signal"></div>
-                  </div><div className="avatar"></div></div>
-                </div>
-              </div>
-            </div>
-
-            <div className="event-container">
-              <div className="shoot">
-                <div className="time">
-                  <div className="status large">
-                    <div className="signal"></div>
-                  </div>
-                  <div className="date">
-                    <h1>28</h1>
-                    <h5>Feb</h5>
-                  </div>
-                  <p>8:00AM</p>
-                  <p className='location'>Wasaga,ON</p>
-                </div>
-                <div className="details">
-                  <div className="team-badges">
-                    <div className="badge"></div>
-                    <div className="badge second"></div>
-                    <div className="badge third"></div>
-                  </div>
-                </div>
-                <div className="cta button secondary outline">Confirm</div>
-              </div>
-              <div className="crew">
-                <div className="crew-card box">
-                  <div className="status">
-                    <div className="signal"></div>
-                  </div>
-                  <div className="avatar"></div>
-                  <div className="name">Abhay Vincent</div>
-                </div>
-                <div className="crew-card box">
-                  <div className="status">
-                    <div className="signal"></div>
-                  </div>
-                  <div className="avatar"></div>
-                  <div className="name">John Doe</div>
-                </div>
-                <div className="crew-card box">
-                  <div className="status">
-                    <div className="signal"></div>
-                  </div>
-                  <div className="avatar"></div>
-                  <div className="name">Jane Doe</div>
-                </div>
-                <div className="assistants">
-                  <div className="assistant-card box">
-                  <div className="status">
-                    <div className="signal"></div>
-                  </div><div className="avatar"></div></div>
-                  <div className="assistant-card box">
-                  <div className="status">
-                    <div className="signal"></div>
-                  </div><div className="avatar"></div></div>
-                  <div className="assistant-card box">
-                  <div className="status">
-                    <div className="signal"></div>
-                  </div><div className="avatar"></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-        </div>
+        <DashboardEvents project={project} addEvent={addEvent}/>
 
       </div>
     
