@@ -56,6 +56,7 @@ export default function ShareProject() {
     console.log(collection)
     document.title = `${project.name} | ${collection.name} | Gallery`
     const newImages = project?.collections.find((collection)=>collection.id===collectionId)?.uploadedFiles;
+    console.log(newImages)
     setImageUrls(newImages)
     setPage(1)
   }, [project, collectionId]);
@@ -81,22 +82,15 @@ export default function ShareProject() {
   };
   return (
     <div className="share-project">
-      <div className="project-header"
-      style={
-        { 
-          backgroundImage: 
-            `url(${imageUrls[0]?imageUrls[0]:''})`
-        }}
-      >
+      <div className="project-header">
+        <img className='banner' src={project.projectCover} alt="" srcset="" />
         <div className="project-info">
-
-        <h1 className='projet-name'>{project.name}</h1>
-        <p>10th October, 2023</p>
-        <CollectionsPanel/>
+          <h1 className='projet-name'>{project.name}</h1>
+          <p>10th October, 2023</p>
+          <CollectionsPanel/>
         </div>
-        <div className="banner" >
-
-        </div>
+        
+        
       </div>
         <div className="shared-collection">
           <ShareGallery images={imageUrls} projectId={projectId}/>

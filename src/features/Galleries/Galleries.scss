@@ -238,24 +238,25 @@
 				z-index: 5;
 				opacity: 1;
 				background-size: cover;
+				background-position:center;
 				transition-duration: 0.2s;
 				border: 1px solid $gray3-default-dark;
 			}
 			.bthumb2{
 				position: absolute;
 				transform: rotate(6deg)translateY(-6px) scale(1);
-				transition-duration: 0.2s;
+				transition-duration: 0.4s;
 				transition-delay: 0.1s;
 				transition-timing-function: ease-in;
-				border: 1px solid $gray5-default-dark;
+				border: 1px solid $gray6-accessible-dark;
 			}
 			.bthumb3{
 				position: absolute;
-				transition-duration: 0.2s;
+				transition-duration: 0.3s;
 				transform: rotate(-4deg)translateY(-3px) scale(1);
 				transition-delay: 0.2s;
 				transition-timing-function: ease-in;
-				border: 1px solid $gray4-default-dark;
+				border: 1px solid $gray6-accessible-dark;
 			}
 		}
 	}
@@ -282,12 +283,12 @@
 				.bthumb1{
 					position: absolute;
 					transform: rotate(0deg);
-					border: 1px solid $gray2-default-dark;
+					border: 1px solid $gray-default-dark;
 				}
 				.bthumb2{
 					position: absolute;
-					transform: rotate(0deg)translateY(12px) scale(0.80);
-					opacity: 0.3;
+					transform: rotate(0deg)translateY(-12px) scale(0.80);
+					opacity: 1;
 					transition-duration: 0.1s;
 					transition-delay: 0.0s;
 					transition-timing-function: ease-in;
@@ -296,11 +297,11 @@
 				}
 				.bthumb3{
 					position: absolute;
-					transform: rotate(0deg) translateY(6px) scale(0.90);
+					transform: rotate(0deg) translateY(-6px) scale(0.90);
 					transition-duration: 0.1s;
 					transition-delay: 0.0s;
-					opacity: 0.6;
-					border: 1px solid $gray2-default-dark;
+					opacity: 01;
+					border: 1px solid $gray4-default-dark;
 					transition-timing-function: ease-in;
 					box-shadow: 2px 1px 0px rgba(0, 0, 0, 0.5);
 				}
@@ -320,21 +321,21 @@
 					}
 					.bthumb2{
 						position: absolute;
-						transform: rotate(0deg)translateY(18px) scale(0.80);
-						opacity: 0.6;
+						transform: rotate(0deg)translateY(-18px) scale(0.80);
+						opacity: 0.4;
 						transition-duration: 0.2s;
 					}
 					.bthumb3{
 						position: absolute;
-						transform: rotate(0deg) translateY(9px) scale(0.90);
+						transform: rotate(0deg) translateY(-9px) scale(0.90);
 						transition-duration: 0.2s;
 						opacity: 0.7;
 					}
 					.bthumb4{
 						position: absolute;
-						transform: rotate(0deg) translateY(9px) scale(0.90);
+						transform: rotate(0deg) translateY(-9px) scale(0.90);
 						transition-duration: 0.2s;
-						opacity: 0.9;
+						opacity: 0.6;
 					}
 				}
 				&.thumb2{
@@ -422,7 +423,7 @@
 			margin-bottom: 8px*2;
 		}
 		.gallery-name{
-			margin-top: 8px*2;
+			margin-top: 8px*1;
 			text-align: center;
 		}
 	}
@@ -642,6 +643,11 @@
 	
 			}
 		}
+	}
+	.new-shoot{
+		margin-top: 8px*2;
+		width: 8px*13;
+		height: 8px*16;
 	}
 }
 

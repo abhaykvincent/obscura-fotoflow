@@ -16,7 +16,8 @@ import {
   fetchProjects,
   addCollectionToFirestore, 
   deleteProjectFromFirestore, 
-  deleteCollectionFromFirestore, 
+  deleteCollectionFromFirestore,
+  addEventToFirestore, 
 } from './firebase/functions/firestore';
 import Selection from './features/Selection/Selection';
 import Storage from './features/Storage/Storage';
@@ -100,7 +101,7 @@ function App() {
       }, 1);
       setTimeout(() => {
         setProjects(updatedProjects);
-        showAlert('success', `Project <b>${project.name}</b> deleted successfully!`);// Redirect to /projects page
+        showAlert('success-negative', `Project <b>${project.name}</b> deleted successfully!`);// Redirect to /projects page
       }, 700);
     })
     .catch((error) => {
@@ -127,6 +128,30 @@ function App() {
       showAlert('error', `Error adding collection: ${error.message}`);
     });
   };
+  // Function to create new event for a project in the cloud firestore
+  // then update the state of the project with the new event
+  const addEvent = (projectId, newEvent) => {
+    addEventToFirestore(projectId, newEvent)
+    .then((Data) => {
+      console.log('Data', Data);
+      debugger
+      const updatedProjects = projects.map((project) => {
+        if (project.id === projectId) {
+          const updatedEvents = [...project.events, newEvent];
+          return { ...project, events: updatedEvents };
+        }
+        return project;
+      });
+      setProjects(updatedProjects);
+      showAlert('success', `Event <b>${newEvent.name}</b> added successfully!`);// Redirect to /projects page
+      })
+      .catch((error) => {
+        console.log(error.message)
+        showAlert('error', `Error adding event: ${error.message}`);
+      })
+
+      }
+      
   const deleteCollection = (projectId, collectionId) => {
     deleteCollectionFromFirestore(projectId, collectionId)
     .then(() => {
@@ -173,7 +198,7 @@ function App() {
         { authenticated ? 
           <>
             <Route exact path="/" element={<Home {...{projects,loadProjects,openModal}} />}/>
-            <Route path="/project/:id" element={<Project {...{ projects, addCollection, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert }} />}/>
+            <Route path="/project/:id" element={<Project {...{ projects, addCollection,addEvent, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert, }} />}/>
             <Route exact path="/project/galleries/:id/:collectionId?" element={<Galleries {...{ projects, addCollection, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert }} />}/>
             <Route path="/projects" element={<Projects {...{ projects, addProject, showAlert, isLoading,openModal }} />}/>
             <Route path="/storage" element={<Storage {...{projects}}/>}/>
