@@ -1,0 +1,324 @@
+@import '../../style/variables';
+.sidebar{
+    position: fixed;
+    top:  0px;
+    left: 0%;
+    width: $sidebar-width;
+    height: 100vh;
+    background: linear-gradient(160deg, $dark-3 0%, $dark-2 50%, $dark-3 80%, $dark-3 100%);
+        
+    @include boxed;
+    z-index: 11;
+    padding-top: $header-height ;
+    box-shadow:  -1px 1px 4px rgba(0, 0, 0, 0.3);
+    transition-duration: 0.2s;
+    .menu-list{
+        padding: 8px*2;
+
+        a{
+        .label{
+            opacity: 0.0;
+            transform: translateX(8px*0);
+            display: flex;
+            width: 8px*8;
+            text-align: center;
+        }
+        @for $i from 1 through 10 {
+            &:nth-child(#{$i}) {
+            .label{
+                $delay: 0.1s + 0.05s * ($i - 1);
+                animation: fadeInLeft 0.15s ease-out $delay;
+                animation-fill-mode: forwards;
+            }
+            }
+        }
+        
+        .icon{
+            width: 8px*3;
+            height: 8px*3;
+            padding: 8px;
+            background-size:75%;
+            background-position: center center;
+            opacity: 0;
+            transform: scale(0.1)  translateY(8px*5);
+        }
+        @for $i from 1 through 10 {
+            &:nth-child(#{$i}) {
+            .icon{
+                $delay: 0s + 0.05s * ($i - 1);
+                animation: menu-icon-reveal 0.2s ease-out $delay;
+                animation-fill-mode: forwards;
+            }
+            }
+        }
+        .menu{
+            display: grid;
+            grid-template-columns: 8px*3 auto auto;
+            align-items: center;
+            font-size: 0.95rem;
+            gap:8px;
+            padding: 6px 8px;
+            margin-bottom: 4px;
+            border-radius: 8px*0.75;
+            border: 1px solid transparent;
+            opacity: 0.7;
+            transition-duration: 0.1s;
+            &:hover{
+            border: 1px solid $dark-1;
+            background-color: $dark-2;
+            opacity: 1;
+            transition-duration: 0.1s;
+            }
+            // when mouse is clicked
+            &:active{
+            background-color: $dark-2;
+            border: 1px solid $dark-0;
+            box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            opacity: 1;
+            }
+            &.selected{
+            background-color: $dark-2;
+            border: 1px solid $dark-1;
+            box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            opacity: 1;
+            .icon{
+                opacity: 0.9;
+            }
+            }
+            &.disabled{
+            &:hover{
+                border: 1px solid $dark-2;
+            }
+            .label,.icon{
+                opacity: 0.2 !important;
+            }
+            cursor: not-allowed;
+            }
+            &.home .icon{
+            background-size: 90%;
+            background-image: url('../../assets/img/icons/home.svg');
+            }
+            &.events .icon{
+            background-image: url('../../assets/img/icons/event.png');
+            }
+            &.projects .icon{
+            background-image: url('../../assets/img/icons/folder.svg');
+            }
+            &.storage .icon{
+            background-size: 85%;
+            background-image: url('../../assets/img/icons/storage-drive.svg');
+            }
+            &.store .icon{
+            background-size: 80%;
+            background-image: url('../../assets/img/icons/store.svg');
+            }
+            &.settings .icon{
+            background-size: 100%;
+            background-image: url('../../assets/img/icons/settings.svg');
+            }
+            &.calendar .icon{
+            background-size: 80%;
+            background-image: url('../../assets/img/icons/calendar.svg');
+            }
+            &.invoices .icon{
+            background-size: 75%;
+            background-image: url('../../assets/img/icons/reciept.svg');
+            }
+            &.accounts .icon{
+            background-size: 60%;
+            background-image: url('../../assets/img/icons/bank.svg');
+            }
+            &.team .icon{
+            background-size: 100%;
+            background-image: url('../../assets/img/icons/team.svg');
+            }
+        }
+        }
+
+        p.label{
+        font-size: 0.8rem;
+        color: $gray4-default-dark;
+        margin: 8px*2;
+        }
+    }
+    .status{
+        display: grid;
+        justify-items: center;
+        position: absolute;
+        bottom: 8px*7;
+        padding: 8px;
+        margin: 8px*1;
+        width: $sidebar-width -  8px*2.5;
+        background-color: $dark-2;
+        border: 1px solid $dark-1;
+        border-radius: 4px;
+        .icon{
+        opacity: 0.5;
+        }
+        .message{
+        font-size: 0.9rem;
+        color: $gray-accessible-dark;
+        margin: 8px;
+        margin-top: 4px;
+            span{
+                font-size: 0.6rem;
+                color: $gray6-accessible-light;
+                padding: 4px ;
+                border-radius: 4px;
+                border: 1px solid $dark-0;
+            }
+        }
+
+        .plan{
+            font-size: 0.8rem;
+            margin-top: 8px;
+            color: $gray2-accessible-dark;
+        }
+        .botton.primary.outline{
+            margin: 0;
+            width: 100%;
+        }
+    }
+    .profile-settings{
+        .profile-options-window{
+            display: grid;
+            justify-items: start;
+            position: absolute;
+            bottom: 8px;
+            padding: 0px;
+            margin: 8px;
+            height: 0px;
+            width: 172px;
+            background-color: #171717;
+            border: 1px solid #2B2B2B;
+            z-index: 20;
+            border-radius: 4px;
+            overflow: hidden;
+            opacity: 0;
+            transition-duration: 0.2s;
+                .option{
+                    display: block;
+                    width: 100%;
+                    color: $gray3-accessible-light;
+                    padding: 8px 8px*2;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    &.logout{
+                        display: grid;
+                        align-items: center;
+                        grid-template-columns: auto 8px*3;
+                        &::after{
+                            content: '.';
+                            width: 8px*2;
+                            height: 8px*2;
+                            margin-left: 8px*2;
+                            background-image: url('../../assets/img/icons/logout.svg');
+                            background-size: 100%;
+                            background-position: center;
+                            background-repeat: no-repeat;
+
+                        }
+                    }
+                &:hover{
+                    background: $dark-1;
+                    transition-duration: 0.1s;
+                }
+                &.disabled{
+                    color: $gray4-accessible-dark;
+                    &:hover{
+                        background: $dark-2;
+                        transition-duration: 0.1s;
+                    }
+                }
+                
+            }
+            &.active{
+                bottom: 8px*6;
+
+                padding: 8px;
+                height: 8PX*24;
+                opacity: 1;
+                transition-duration: 0.1s;
+            }
+        }
+    }
+    .profile-options{
+        width: 100%;
+        display: grid;
+        justify-content: start;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 8px;
+        position: absolute;
+        top: 100vh;
+        padding: 8px*1.5;
+        padding-right: 0;
+        width: $sidebar-width - 8px*2;
+        transform: translateY(-100%);
+        cursor: pointer;
+        z-index: 21;
+        .profile{
+        width: 100%;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+
+        .account-name{
+            display: grid;
+            gap: 4px;
+        }
+        .studio-name{
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .profile-name{
+            font-weight: 500;
+            font-size: 0.7rem;
+            color: $gray3-accessible-dark;
+            &::after{
+            content: 'Admin';
+            display: inline-block;
+            color: $green-default-light;
+            font-size: 0.5rem;
+            margin-left: 4px;
+            font-weight: 700;
+            padding: 2px 4px;
+            //background-color: $green-accessible-light;
+            border: 1px solid $green-accessible-light;
+            border-radius: 4px;
+            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9), inset 1px 1px 2px rgba(0, 0, 0, 0.9);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
+            opacity: 0.6;
+            }
+        }
+        .profile-image{
+            padding: 8px*2.5;
+            background-image: url('../../assets/img/profile/sam.jpg');
+            background-size: 100%;
+            border: 1px solid $gray-accessible-dark;
+            border-radius: 50%;
+
+        }
+        }
+        .option-icon{
+        width: 8px*1.5;
+        height: 8px*2;
+        background-image: url('../../assets/img/icons/arrow-dropdown.png');
+        background-size: 100%;
+        background-position: center center;
+        transform: rotate(180deg);
+        opacity: 0.5;
+        }
+    }
+    &.hide{
+        left: 0%;
+        transition-duration: 0.1s;
+    }
+}
+  @media only screen and (max-width: 1080px) {
+    .App{
+    }
+      
+  }

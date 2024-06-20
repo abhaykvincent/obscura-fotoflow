@@ -5,7 +5,7 @@ import {
     ref,
     deleteObject
 } from "firebase/storage";
-import { getDoc, getDocs, setDoc } from "firebase/firestore";
+import { arrayUnion, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { db, storage } from '../firebase/app';
 import { collection, doc, updateDoc } from "firebase/firestore";
 import { delay } from "./generalUtils";
@@ -299,7 +299,7 @@ export const addUploadedFilesToFirestore = async (projectId, collectionId,import
 
     if (projectData.exists()) {
         // Update the project document with the new collections array
-        return updateDoc(collectionDoc, { uploadedFiles })
+        return updateDoc(collectionDoc, {uploadedFiles: arrayUnion(...uploadedFiles)} )
             .then(() => {
                 let projectCover= uploadedFiles[0].url
                 // if project-cover doesent exixt
@@ -311,8 +311,6 @@ export const addUploadedFilesToFirestore = async (projectId, collectionId,import
                         totalFileSize:importFileSize+projectData.data().totalFileSize,
                         projectCover:projectCover,
                         status:"uploaded",
-                        //pin:generateMemorablePIN(4)
-                        //add pin if not exist
                         pin: projectData.data().pin ? projectData.data().pin : generateMemorablePIN(4)
                 });
             })

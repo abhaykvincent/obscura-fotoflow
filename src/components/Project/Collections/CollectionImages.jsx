@@ -62,12 +62,25 @@ useEffect(() => {
 }
 }, [showAllPhotos,collectionImages]);
 
-const handleFileInputChange = (event) => {
+/* async()=>{
+    setUploadStatus('open')
+    setIsPhotosImported(false);
+    let uploadedImages=await handleUpload(files, id, collectionId,importFileSize,setUploadList,setUploadStatus,showAlert)
+    console.log(uploadedImages)
+    setImageUrls(uploadedImages)
+} */
+
+const handleFileInputChange = async (event) => {
     const selectedFiles = Array.from(event.target.files);
     setIsPhotosImported(true);
     setFiles(selectedFiles);
-    setImportFileSize(addAllFileSizesToMB(selectedFiles))
-    setImageUrls(selectedFiles)
+    setImportFileSize(addAllFileSizesToMB(selectedFiles));
+    setImageUrls(selectedFiles);
+    setUploadStatus('open');
+    setIsPhotosImported(false);
+    let uploadedImages = await handleUpload(files, id, collectionId, importFileSize, setUploadList, setUploadStatus, showAlert);
+    console.log(uploadedImages);
+    setImageUrls(uploadedImages);
 };
 return (
     <div className="project-collection">
@@ -97,15 +110,7 @@ return (
 
                 >Import Images</label>
                 <input id='fileInput' type="file" multiple onChange={handleFileInputChange} />
-                <div className={`button ${isPhotosImported ? 'primary' : 'secondary disabled'}`} 
-                    onClick={async()=>{
-                        setUploadStatus('open')
-                        setIsPhotosImported(false);
-                        let uploadedImages=await handleUpload(files, id, collectionId,importFileSize,setUploadList,setUploadStatus,showAlert)
-                        console.log(uploadedImages)
-                        setImageUrls(uploadedImages)
-                    }}
-                    >Upload Images</div>
+                
             </div>
 
         </div>
@@ -113,15 +118,7 @@ return (
             imageUrls.length > 0 ?
             <ImageGallery {...{isPhotosImported, imageUrls, projectId:id}}/>:''
         }
-        <div className="pagination">
-            <div className="button secondary"
-                onClick={
-                    ()=>{
-                    }
-                }
-            >Load Images</div>
-
-        </div>
+        
     </div>
     );
 };

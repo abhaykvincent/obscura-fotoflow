@@ -22,7 +22,7 @@ function DeleteConfirmationModal({ onDeleteConfirm, onClose}) {
         </div>
         <div className="actions">
           <div className="button secondary" onClick={onClose}>Cancel</div>
-          <div className="button primary" onClick={handleDelete}>Delete</div>
+          <div className="button warnning" onClick={handleDelete}>Delete</div>
         </div>
       </div>
       <div className="modal-backdrop" onClick={onClose}></div>

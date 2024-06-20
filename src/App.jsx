@@ -16,7 +16,8 @@ import {
   fetchProjects,
   addCollectionToFirestore, 
   deleteProjectFromFirestore, 
-  deleteCollectionFromFirestore, 
+  deleteCollectionFromFirestore,
+  addEventToFirestore, 
 } from './firebase/functions/firestore';
 import Selection from './features/Selection/Selection';
 import Storage from './features/Storage/Storage';
@@ -29,6 +30,7 @@ import Galleries from './features/Galleries/Galleries';
 function App() {
   
   const navigate = useNavigate();
+  // Doors
   const [authenticated,setAuthenticated] = useState(false);
   const logout = () =>{
     setAuthenticated(false)
@@ -43,34 +45,28 @@ function App() {
     else{
       setAuthenticated(false);
     }
-};
+  };
   // Alert
   const [alert, setAlert] = useState({ type: '', message: '', show: false });
   const showAlert = (type, message) => setAlert({ type, message, show: true });
   // Core Data
   const [projects, setProjects] = useState([]);
- // Upload progress
- const [uploadList, setUploadList] = useState([]);
- const [uploadStatus, setUploadStatus] = useState('close');
+  // Upload progress
+  const [uploadList, setUploadList] = useState([]);
+  const [uploadStatus, setUploadStatus] = useState('close');
   const [isLoading, setIsLoading] = useState(true);
-      // Modal
-      const [modal, setModal] = useState({ createProject: false })
+  // Modal
+  const [modal, setModal] = useState({ createProject: false })
+  const openModal = () => setModal({ createProject: true });
+  const closeModal = () => setModal({ createProject: false });
 
-      const openModal = () => setModal({ createProject: true });
-  
-      const closeModal = () => setModal({ createProject: false });
-  
-      useEffect(() => {
-        console.log(modal)
-      }, [modal]);
-
-useEffect(() => {
-  if(uploadStatus === 'completed'){
-    setTimeout(() => {
-      setUploadStatus('close')
-    }, 1000)
-  }
-}, [uploadStatus])
+  useEffect(() => {
+    if(uploadStatus === 'completed'){
+      setTimeout(() => {
+        setUploadStatus('close')
+      }, 1000)
+    }
+  }, [uploadStatus])
   // Fetch Projects
   useEffect(() => {
     document.title = `Obscura FotoFlow`;
@@ -95,6 +91,7 @@ useEffect(() => {
   const deleteProject = (projectId) => {
     const updatedProjects = projects.filter(project => project.id !== projectId)
     const project = projects.find(project => project.id === projectId) || {}
+
     deleteProjectFromFirestore(projectId)
     .then(() => {
       navigate('/projects');
@@ -104,7 +101,7 @@ useEffect(() => {
       }, 1);
       setTimeout(() => {
         setProjects(updatedProjects);
-        showAlert('success', `Project <b>${project.name}</b> deleted successfully!`);// Redirect to /projects page
+        showAlert('success-negative', `Project <b>${project.name}</b> deleted successfully!`);// Redirect to /projects page
       }, 700);
     })
     .catch((error) => {
@@ -131,6 +128,30 @@ useEffect(() => {
       showAlert('error', `Error adding collection: ${error.message}`);
     });
   };
+  // Function to create new event for a project in the cloud firestore
+  // then update the state of the project with the new event
+  const addEvent = (projectId, newEvent) => {
+    addEventToFirestore(projectId, newEvent)
+    .then((Data) => {
+      console.log('Data', Data);
+      debugger
+      const updatedProjects = projects.map((project) => {
+        if (project.id === projectId) {
+          const updatedEvents = [...project.events, newEvent];
+          return { ...project, events: updatedEvents };
+        }
+        return project;
+      });
+      setProjects(updatedProjects);
+      showAlert('success', `Event <b>${newEvent.name}</b> added successfully!`);// Redirect to /projects page
+      })
+      .catch((error) => {
+        console.log(error.message)
+        showAlert('error', `Error adding event: ${error.message}`);
+      })
+
+      }
+      
   const deleteCollection = (projectId, collectionId) => {
     deleteCollectionFromFirestore(projectId, collectionId)
     .then(() => {
@@ -177,7 +198,7 @@ useEffect(() => {
         { authenticated ? 
           <>
             <Route exact path="/" element={<Home {...{projects,loadProjects,openModal}} />}/>
-            <Route path="/project/:id" element={<Project {...{ projects, addCollection, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert }} />}/>
+            <Route path="/project/:id" element={<Project {...{ projects, addCollection,addEvent, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert, }} />}/>
             <Route exact path="/project/galleries/:id/:collectionId?" element={<Galleries {...{ projects, addCollection, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert }} />}/>
             <Route path="/projects" element={<Projects {...{ projects, addProject, showAlert, isLoading,openModal }} />}/>
             <Route path="/storage" element={<Storage {...{projects}}/>}/>
@@ -197,4 +218,4 @@ useEffect(() => {
 }
 
 export default App;
-// line Complexity  146 -> 133 -> 127 -> 152 -> 132
+// Line Complexity  1.5 -> 2.0

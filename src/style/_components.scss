@@ -50,9 +50,8 @@
         border: 1px solid $dark-0;
     }
     &.warnning{
-        background-color: $dark-1;
         padding: 4px 8px;
-        border: 1px solid $gray4-default-dark;
+        border: 1px solid $red-default-dark;
         &:hover{
             border: 1px solid $red-default-dark;
         }

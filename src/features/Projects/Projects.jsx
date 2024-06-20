@@ -5,11 +5,9 @@ import './Projects.scss';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
 
 function Projects({ projects, openModal,addProject, showAlert, isLoading }) {
-
-
-
- console.log(openModal)
-
+    useEffect(() => {
+        console.log(projects);
+    }, [projects]);
     return (
         <main className="projects">
             <div className="projects-header">

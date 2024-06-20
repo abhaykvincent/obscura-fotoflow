@@ -59,7 +59,7 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
     <main className='project-page'>
       <div className="project-info">
       <div className="client">
-          <Link className="back" to={`/project/${id}}`}></Link>
+          <Link className="back" to={`/project/${encodeURIComponent(id)}`}></Link>
           <h1>{project.name}</h1>
           <div className="type">{project.type}</div>
         </div>
@@ -92,66 +92,85 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
       ) : (
         <div className="project-collections">
           <div className="galleries">
-        <h2>Galleries</h2>
+            <h2>Galleries</h2>
 
-        <div className="list">
-        {
-          project.collections.length > 0 ? 
-          <div className="gallery-list">
-            {project.collections.map((collection) => (
-              <Link className="gallery" to={`/project/galleries/${id}/${collection.id}`}>
-                <div className="thumbnails">
-                  <div className="thumbnail thumb1">
-                    <div className="backthumb bthumb1"
-                    style={
-                      { 
-                        backgroundImage: 
-                          `url(${project.projectCover?project.projectCover:''})`
-                      }}
-                    ></div>
-                    <div className="backthumb bthumb2"></div>
-                    <div className="backthumb bthumb3"></div>
+            <div className="list">
+            {
+              project.collections.length > 0 ? 
+              <div className="gallery-list">
+                {project.collections.map((collection) => (
+                  
+                  collection.pin=="" ?
+                  <div className="gallery  no-images" key={collection.id} onClick={()=>{}}>
+                    <div className="thumbnails">
+                      <div className="thumbnail thumb1">
+                        <div className="backthumb bthumb1"></div>
+                        <div className="backthumb bthumb2"></div>
+                        <div className="backthumb bthumb3"></div>
+                      </div>
+                      
+                    </div>
+                    <div className="gallery-name">Upload Photos</div>
+                    
                   </div>
-                  <div className="thumbnail thumb2">
+                  :<Link className="gallery" to={`/project/galleries/${id}/${collection.id}`}>
+                    <div className="thumbnails">
+                      <div className="thumbnail thumb1">
+                        <div className="backthumb bthumb1"
+                        style={
+                          { 
+                            backgroundImage: 
+                              `url(${project.projectCover?project.projectCover:''})`
+                          }}
+                        ></div>
+                        <div className="backthumb bthumb2"></div>
+                        <div className="backthumb bthumb3"></div>
+                      </div>
+                      <div className="thumbnail thumb2">
 
-                    <div className="backthumb bthumb1">
-                    </div>
-                    <div className="backthumb bthumb2"></div>
-                    <div className="backthumb bthumb3"></div>
-                    </div>
-                  <div className="thumbnail thumb3">
+                        <div className="backthumb bthumb1"style={
+                          { 
+                            backgroundImage: 
+                              `url(${project.projectCover?project.projectCover:''})`
+                          }}>
+                        </div>
+                        <div className="backthumb bthumb2"></div>
+                        <div className="backthumb bthumb3"></div>
+                        </div>
+                      <div className="thumbnail thumb3">
 
-                      <div className="backthumb bthumb1 count">
-                      1265 Photos</div>
-                      <div className="backthumb bthumb2"></div>
-                      <div className="backthumb bthumb3"></div>
+                          <div className="backthumb bthumb1 count">
+                          {project.uploadedFilesCount} Photos</div>
+                          <div className="backthumb bthumb2"></div>
+                          <div className="backthumb bthumb3"></div>
+                        </div>
                     </div>
+                    <div className="gallery-name">{collection.name}</div>
+                    
+                  </Link>
+
+                  
+                ))}
+
+            
+              </div>:''
+            }
+            <div className="gallery new" 
+              onClick={openModal}>
+              <div className="thumbnails">
+                <div className="thumbnail thumb1">
+                  <div className="backthumb bthumb1"
+                  ></div>
+                  <div className="backthumb bthumb2"></div>
+                  <div className="backthumb bthumb3"></div>
+                  <div className="backthumb bthumb4"></div>
                 </div>
-                <div className="gallery-name">{collection.name}</div>
-                
-              </Link>
-            ))}
-
-        
-          </div>:''
-        }
-        <div className="gallery new" 
-          onClick={openModal}>
-           <div className="thumbnails">
-             <div className="thumbnail thumb1">
-               <div className="backthumb bthumb1"
-               ></div>
-               <div className="backthumb bthumb2"></div>
-               <div className="backthumb bthumb3"></div>
-               <div className="backthumb bthumb4"></div>
-             </div>
-           </div>
-           <div className="gallery-name">New Gallery</div>
-           
-         </div>
-        </div>
-      </div>
-          <CollectionsPanel {...{project, collectionId:targetCollectionId, deleteCollection, openModal}}/>
+              </div>
+              <div className="gallery-name">New Gallery</div>
+              
+            </div>
+            </div>
+          </div>
           <CollectionImages  {...{ id, collectionId:targetCollectionId,collection,setUploadList,setUploadStatus,showAlert}} />
         </div>
       )}

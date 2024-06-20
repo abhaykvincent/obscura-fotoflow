@@ -139,6 +139,39 @@ export const addCollectionToFirestore = async (projectId,collectionData) => {
         throw error;
     });
 };
+// Function to create new event for a project in the cloud firestore
+export const addEventToFirestore = async (projectId,eventData) => {
+    const {type,date,location} =eventData;
+    const id= `${type.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
+
+    const projectsCollection = collection(db, 'projects');
+    const projectDoc = doc(projectsCollection, projectId);
+
+    const eventsCollection = collection(projectDoc, 'events');
+    const eventDoc = {
+        id : projectId+'-'+id,
+    }
+
+    return updateDoc(projectDoc, {
+    events: arrayUnion({ id, type, date, location }),
+})
+.then(() => {
+    console.log('Event added to project successfully.');
+    return id;
+})
+/* .then(() => {
+    // create new event
+    return setDoc(doc(eventsCollection, eventDoc.id), eventDoc); // Ensure setDoc returns a promise
+})   */
+.catch((error) => {
+    console.error('Error adding event to project:', error.message);
+    throw error;
+});
+};
+    
+ 
+
+
 
 export const deleteCollectionFromFirestore = async (projectId, collectionId) => {
     if (!projectId || !collectionId) {
