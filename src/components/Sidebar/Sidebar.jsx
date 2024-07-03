@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Sidebar.scss'
 import { GrUpgrade } from "react-icons/gr";
-function Sidebar({logout}) {
+import { logout, selectUser } from '../../app/slices/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+function Sidebar() {
+  
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
   const [profileOptionActive, setProfileOptionActive] = useState(false)
   const toggleProfileOption = () => {
     setProfileOptionActive(!profileOptionActive)
@@ -62,6 +67,12 @@ function Sidebar({logout}) {
             <div className="label">Storage</div>
           </div>
         </Link>
+        <Link to={`/notifications`}>
+          <div className={`menu storage ${location.pathname === '/notifications' ? 'selected' : ''}`}>
+            <div className="icon"></div>
+            <div className="label">Notifications</div>
+          </div>
+        </Link>
         <Link to={`/financials`}>
           <div className={`menu accounts ${location.pathname === '/accounts' ? 'selected' : ''} disabled`}>
             <div className="icon"></div>
@@ -89,7 +100,7 @@ function Sidebar({logout}) {
             <div className="profile-image"></div>
             <div className="account-name">
               <div className="studio-name">Obscura</div>
-              <div className="profile-name">Sam</div>
+              <div className="profile-name">{user.displayName}</div>
             </div>
           </div>
           <div className="option-icon"></div>
@@ -103,7 +114,7 @@ function Sidebar({logout}) {
             <div className="option">Subscription</div>
           </Link>
           <div className="option logout"
-            onClick={logout}
+            onClick={()=>dispatch(logout())}
           >Logout</div>
         </div>
       </div>

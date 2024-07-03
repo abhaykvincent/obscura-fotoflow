@@ -8,7 +8,6 @@ function Storage({projects}) {
     const usedSpace = projects.reduce((acc,project) => {
         return acc + project.totalFileSize
     },0)
-    console.log(usedSpace)
 
     const progressPercentage = 25; // Set the desired progress percentage
 
@@ -105,7 +104,6 @@ function Storage({projects}) {
             <div className="row-group">
                 {
                     projects.map((project)=>{
-                        console.log(project)
                         return (
                             <div className="row">
                                 <div className="box-wrap">
@@ -131,7 +129,6 @@ function Storage({projects}) {
             <div className="row-group">
                 {
                     projects.slice(0, 3).map((project) => {
-                        console.log(project)
                         return (
                             
                             <div className="row">

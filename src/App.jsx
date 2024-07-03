@@ -1,51 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-// Components
-import './App.scss';
-import Alert from './components/Alert/Alert';
-import Header from './components/Header/Header';
-import Sidebar from './components/Sidebar/Sidebar';
-// Features
-import Home from './features/Home/Home';
-import Project from './features/Project/Project';
-import Projects from './features/Projects/Projects';
-import LoginModal from './features/Login/Login';
-import ShareProject from './features/Share/Share';
 //Firebase functions
 import { 
   fetchProjects,
   addCollectionToFirestore, 
   deleteProjectFromFirestore, 
   deleteCollectionFromFirestore,
-  addEventToFirestore, 
+  addEventToFirestore,
+  addCrewToFirestore, 
 } from './firebase/functions/firestore';
-import Selection from './features/Selection/Selection';
-import Storage from './features/Storage/Storage';
+// Components
+import './App.scss';
+import Alert from './components/Alert/Alert';
+import Header from './components/Header/Header';
+import Sidebar from './components/Sidebar/Sidebar';
 import UploadProgress from './components/UploadProgress/UploadProgress';
-import ImageGallery from './draft/masanory-grid';
 import Subscription from './components/Subscription/Subscription';
 import AddProjectModal from './components/Modal/AddProject';
+// Features
+import Home from './features/Home/Home';
+import Project from './features/Project/Project';
+import Projects from './features/Projects/Projects';
+import LoginModal from './features/Login/Login';
+import ShareProject from './features/Share/Share';
+import Storage from './features/Storage/Storage';
 import Galleries from './features/Galleries/Galleries';
+import ImageGallery from './draft/masanory-grid';
+import Selection from './features/Selection/Selection';
+import Notifications from './features/Notifications/Notifications';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkAuthStatus, selectIsAuthenticated } from './app/slices/authSlice';
 
 function App() {
   
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  // Doors
-  const [authenticated,setAuthenticated] = useState(false);
-  const logout = () =>{
-    setAuthenticated(false)
-    localStorage.removeItem('authenticated')
-    navigate('/login')
-  }
-  const checkAuthStatus = () => {
-    const isAuthenticated = localStorage.getItem('authenticated');
-    if (isAuthenticated === 'true') {
-        setAuthenticated(true);
-    }
-    else{
-      setAuthenticated(false);
-    }
-  };
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   // Alert
   const [alert, setAlert] = useState({ type: '', message: '', show: false });
   const showAlert = (type, message) => setAlert({ type, message, show: true });
@@ -69,10 +59,15 @@ function App() {
   }, [uploadStatus])
   // Fetch Projects
   useEffect(() => {
+    console.log('App Component Triggered !!')
     document.title = `Obscura FotoFlow`;
-    checkAuthStatus()
+    dispatch(checkAuthStatus())
     loadProjects()
   }, []);
+  useEffect(() => {
+    console.log('projects changed !!')
+    console.group(projects)
+  }, [projects]);
 
   const loadProjects = () => {
     setIsLoading(true);
@@ -134,7 +129,7 @@ function App() {
     addEventToFirestore(projectId, newEvent)
     .then((Data) => {
       console.log('Data', Data);
-      debugger
+       
       const updatedProjects = projects.map((project) => {
         if (project.id === projectId) {
           const updatedEvents = [...project.events, newEvent];
@@ -144,11 +139,11 @@ function App() {
       });
       setProjects(updatedProjects);
       showAlert('success', `Event <b>${newEvent.name}</b> added successfully!`);// Redirect to /projects page
-      })
-      .catch((error) => {
-        console.log(error.message)
-        showAlert('error', `Error adding event: ${error.message}`);
-      })
+    })
+    .catch((error) => {
+      console.log(error.message)
+      showAlert('error', `Error adding event: ${error.message}`);
+    })
 
       }
       
@@ -171,47 +166,79 @@ function App() {
       showAlert('error', `Error deleting collection: ${error.message}`);
     });
   };
+  // Add crew to the event of id 
+  const addCrew = (projectId,eventId,user) =>{
+    console.log(projectId,eventId,user)
+     
+      addCrewToFirestore(projectId,eventId,user)
+      .then((Data) => {
+        const updatedProjects = projects.map((project) => {
+          if (project.id === projectId) {
+            const updatedEvents = project.events.map((event) => {
+              if (event.id === eventId) {
+                const updatedCrew = [...event.crews, user];
+                return { ...event, crews
+                  : updatedCrew };
+              }
+              return event;
+            }
+            );
+            return { ...project, events: updatedEvents };
+          }
+          return project;
+        })
+        setProjects(updatedProjects);
+        showAlert('success', `Crew member <b>${user.name}</b> added successfully!`);
+        })
+        .catch((error) => {
+          showAlert('error', `Error adding crew member: ${error.message}`);
+        })
+      }
+
   
   const shareOrSelection = window.location.href.includes('share') || window.location.href.includes('selection')|| window.location.href.includes('masanory-grid')
   
   // Render
   return (
     <div className="App">
-      {authenticated && (!shareOrSelection)? (
+      {isAuthenticated && (!shareOrSelection)? (
         <>
           <Header />
-          <Sidebar logout={logout} />
+          <Sidebar />
           <Alert {...alert} setAlert={setAlert} />
           <UploadProgress {...{uploadList,uploadStatus}}/>
           <AddProjectModal visible={modal.createProject} onClose={closeModal} onSubmit={addProject} showAlert={showAlert} openModal={openModal} />
         </>
       ) : (
-        <>{!shareOrSelection && <LoginModal {...{ setAuthenticated }} />}</>
+        <>{!shareOrSelection && <LoginModal/>}</>
       )}
-      {isLoading ? (
-                <div className="loader-wrap">
-                    <div className="loader"></div>
-                    <p className='loading-message'>loading projects</p>
-                </div>
-            ) : (
-      <Routes>
-        { authenticated ? 
-          <>
-            <Route exact path="/" element={<Home {...{projects,loadProjects,openModal}} />}/>
-            <Route path="/project/:id" element={<Project {...{ projects, addCollection,addEvent, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert, }} />}/>
-            <Route exact path="/project/galleries/:id/:collectionId?" element={<Galleries {...{ projects, addCollection, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert }} />}/>
-            <Route path="/projects" element={<Projects {...{ projects, addProject, showAlert, isLoading,openModal }} />}/>
-            <Route path="/storage" element={<Storage {...{projects}}/>}/>
-            <Route path="/subscription" element={<Subscription/>}/>
-          </> 
-          
-          : ''
-        }
-        <Route path="/share/:projectId/:collectionId?" element={<ShareProject {...{ projects }} />}/>
-        <Route path="/selection/:projectId/:collectionId?" element={<Selection {...{ projects }} />}/>
-        <Route path="/masanory-grid" element={<ImageGallery />}/>
-      </Routes>
-            )}
+      {
+        isLoading ? (
+          <div className="loader-wrap">
+              <div className="loader"></div>
+              <p className='loading-message'>loading projects</p>
+          </div>
+        ) : (
+          <Routes>
+            { isAuthenticated ? 
+              <>
+                <Route exact path="/" element={<Home {...{projects,loadProjects,openModal}} />}/>
+                <Route path="/project/:id" element={<Project {...{ projects, addCollection,addEvent,addCrew, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert, }} />}/>
+                <Route exact path="/project/galleries/:id/:collectionId?" element={<Galleries {...{ projects, addCollection, addCrew,deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert }} />}/>
+                <Route path="/projects" element={<Projects {...{ projects, addProject, showAlert, isLoading,openModal }} />}/>
+                <Route path="/storage" element={<Storage {...{projects}}/>}/>
+                <Route path="/notifications" element={<Notifications/>}/>
+                <Route path="/subscription" element={<Subscription/>}/>
+              </> 
+              
+              : ''
+            }
+            <Route path="/share/:projectId/:collectionId?" element={<ShareProject {...{ projects }} />}/>
+            <Route path="/selection/:projectId/:collectionId?" element={<Selection {...{ projects }} />}/>
+            <Route path="/masanory-grid" element={<ImageGallery />}/>
+          </Routes>
+        )
+      }
       
     </div>
   );

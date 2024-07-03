@@ -6,7 +6,6 @@ import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
 
 function Projects({ projects, openModal,addProject, showAlert, isLoading }) {
     useEffect(() => {
-        console.log(projects);
     }, [projects]);
     return (
         <main className="projects">
@@ -24,7 +23,6 @@ function Projects({ projects, openModal,addProject, showAlert, isLoading }) {
                         <div className={`control active`} >All</div>
                         <div className={`control `} >Active</div>
                         <div className={`control `} >Starred</div>
-                        <div className={`control `} >This Week</div>
                         <div className={`control `} >Today</div>
                     </div>
                     <div className={`active`}></div>
@@ -34,9 +32,8 @@ function Projects({ projects, openModal,addProject, showAlert, isLoading }) {
                 {projects.length !== 0? (
                     projects.map((project, index) => (
                         <ProjectCard 
-                        key={project.id}
                         project={project}
-                        index={index}
+                        key={project.id}
                     /> 
                     ))) : (
                         <>
