@@ -14,7 +14,6 @@ function UploadProgress({uploadList,uploadStatus}) {
             }
         })
          setUploadPercent(totalProgress/totalFilesCount*100);
-         console.log(totalProgress/totalFilesCount*100)
     }, [uploadList])
     const [modalState, setModalState] = useState('')
     useEffect(() => {

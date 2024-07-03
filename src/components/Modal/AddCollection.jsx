@@ -16,7 +16,7 @@ function AddCollectionModal({ project, visible, onClose, onSubmit }) {
   };
   const handleSubmit = () => {
     onSubmit(project.id,CollectionData);
-    onClose();
+    onClose('createCollection');
   };
 
   if (!visible) {
@@ -28,7 +28,7 @@ function AddCollectionModal({ project, visible, onClose, onSubmit }) {
       <div className="modal create-project">
         <div className='modal-header'>
           <div className="modal-controls">
-            <div className="control close" onClick={onClose}></div>
+            <div className="control close" onClick={()=>onClose('createCollection')}></div>
             <div className="control minimize"></div>
             <div className="control maximize"></div>
           </div>
@@ -43,11 +43,11 @@ function AddCollectionModal({ project, visible, onClose, onSubmit }) {
           </div>
         </div>
         <div className="actions">
-          <div className="button secondary" onClick={onClose}>Cancel</div>
+          <div className="button secondary" onClick={()=>onClose('createCollection')}>Cancel</div>
           <div className="button primary" onClick={handleSubmit}>Create</div>
         </div>
       </div>
-      <div className="modal-backdrop" onClick={onClose}></div>
+      <div className="modal-backdrop" onClick={()=>onClose('createCollection')}></div>
     </div>
   );
 }

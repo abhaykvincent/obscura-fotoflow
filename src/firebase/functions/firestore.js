@@ -3,6 +3,7 @@ import { db } from "../app";
 import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion} from "firebase/firestore";
 import {generateRandomString} from "../../utils/stringUtils";
 import { deleteCollectionFromStorage, deleteProjectFromStorage } from "../../utils/storageOperations";
+import { update } from "firebase/database";
 
 
 
@@ -149,26 +150,66 @@ export const addEventToFirestore = async (projectId,eventData) => {
 
     const eventsCollection = collection(projectDoc, 'events');
     const eventDoc = {
-        id : projectId+'-'+id,
+        id : id,
+        ...eventData
     }
 
-    return updateDoc(projectDoc, {
-    events: arrayUnion({ id, type, date, location }),
-})
-.then(() => {
-    console.log('Event added to project successfully.');
-    return id;
-})
-/* .then(() => {
-    // create new event
-    return setDoc(doc(eventsCollection, eventDoc.id), eventDoc); // Ensure setDoc returns a promise
-})   */
-.catch((error) => {
-    console.error('Error adding event to project:', error.message);
-    throw error;
+    return setDoc(doc(eventsCollection, eventDoc.id), eventDoc)
+    .then(() => {
+        return updateDoc(projectDoc, {
+            events: arrayUnion({ id, type, date, location, crews: [] }), // Assuming collections is an array in your projectData
+    }) })
+    .then(() => {
+        console.log('Event added to project successfully.');
+        return id;
+    }) 
+    .catch((error) => {
+        console.error('Error adding event to project:', error.message);
+        throw error;
 });
 };
+// userIs need to be the key valude pair of projectDoc
+export const addCrewToFirestore = async (projectId,eventId,userId) => {
     
+    const projectsCollection = collection(db, 'projects');
+    const projectDoc = doc(projectsCollection, projectId);
+
+    const eventsCollection = collection(projectDoc, 'events');
+    const eventDoc = doc(eventsCollection,eventId);
+
+    const projectSnapshot =  await getDoc(projectDoc);
+    const projectData = projectSnapshot.data();
+    console.log(projectData);
+
+    const event = projectData.events.find(event => event.id === eventId);
+    
+    let updatedEvent = {
+        ...event,
+        crews: [...event.crews, userId]
+    }
+    let updatedProject = {
+        ...projectData,
+        events: projectData.events.map(event => {
+            if (event.id === eventId) {
+                return updatedEvent;
+            }
+            return event;
+        }
+        )
+    }
+
+    return updateDoc(projectDoc, updatedProject)
+   .then(() => {
+        console.log('User added to Event '+eventId+' successfully.');
+         
+        return eventId;
+    })
+    .catch((error) => {
+        console.error('Error adding user to project:', error.message);
+        throw error;
+    });
+};
+
  
 
 
@@ -262,7 +303,7 @@ export const updateProjectStatusInFirestore = async (projectId, status) => {
     if (!projectId || !status) {
         throw new Error('Project ID and status are required.');
     }
-    debugger
+    
 
     const projectsCollection = collection(db, 'projects');
     const projectDoc = doc(projectsCollection, projectId);

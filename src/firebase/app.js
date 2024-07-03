@@ -20,7 +20,6 @@ const firebaseConfig = {
     storageBucket: "obscura-fotoflow.appspot.com",
     messagingSenderId: "541778693405",
     appId: "1:541778693405:web:030ac1bcc8e072ea94e5f4",
-    measurementId: "G-3P0M36DPY2"
   };
   
 

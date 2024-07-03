@@ -10,10 +10,47 @@ export const teams = [
 	},
 	{
 		userId: 'abhay-0000',
+		name: 'Abhay',
 		email: 'abhaykvincent@gmail.com',
 		projectAccess: {
-			roles: ['admin','developer'],
+			roles: ['admin','developer','assistant'],
 			accessLevel: 'full-access'
+		}
+	},
+	{
+		userId: 'ashish-0000',
+		name: 'Ashish',
+		email: 'ashishkvincent@gmail.com',
+		projectAccess: {
+			roles: ['photographer'],
+			accessLevel: 'project-access'
+		}
+	},
+	{
+		userId: 'john-0000',
+		name: 'John',
+		email: 'john.doe@gmail.com',
+		projectAccess: {
+			roles: ['designer'],
+			accessLevel: 'project-access'
+		}
+	},
+	{
+		userId: 'jane-0000',
+		name: 'Jane',
+		email: 'jane.doe@gmail.com',
+		projectAccess: {
+			roles: ['assistant'],
+			accessLevel: 'project-access'
+		}
+	},
+	{
+		userId: 'joey-0000',
+		name: 'Joey',
+		email: 'joey.doe@gmail.com',
+		projectAccess: {
+			roles: ['assistant'],
+			accessLevel: 'project-access'
 		}
 	}
 ];
@@ -23,4 +60,12 @@ export const fullAccess = (email) => {
 
 export const getOwnerFromTeams = () => {
 	return teams.filter(team => team.projectAccess.roles.includes('owner'))[0];
+};
+
+export const getUserByID = (id) => {
+	console.log(teams.find(team => team.userId === id))
+	return teams.find(team => team.userId === id);
+};
+export const getUsersByRole = (role) => {
+	return teams.filter(team => team.projectAccess.roles.includes(role));
 };

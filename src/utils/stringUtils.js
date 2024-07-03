@@ -39,6 +39,9 @@ export function shortenFileName(fileName){
       ? `${fileName.substring(0, 10)}...${fileName.substring(fileName.length - 10)}`
       : fileName
 }
+export const capitalizeFirstLetter = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
 export function convertMegabytes(megabytes, decimalPlaces = 0) {
   const sizes = ['MB', 'GB', 'TB'];
 

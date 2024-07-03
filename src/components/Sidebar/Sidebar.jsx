@@ -62,6 +62,12 @@ function Sidebar({logout}) {
             <div className="label">Storage</div>
           </div>
         </Link>
+        <Link to={`/notifications`}>
+          <div className={`menu storage ${location.pathname === '/notifications' ? 'selected' : ''}`}>
+            <div className="icon"></div>
+            <div className="label">Notifications</div>
+          </div>
+        </Link>
         <Link to={`/financials`}>
           <div className={`menu accounts ${location.pathname === '/accounts' ? 'selected' : ''} disabled`}>
             <div className="icon"></div>

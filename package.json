@@ -22,9 +22,10 @@
   "scripts": {
     "emulator": "firebase emulators:start",
     "start": "dotenv -e .env.development react-scripts start",
-    
     "build": "dotenv -e .env.production react-scripts build",
-    "deploy": "firebase deploy --only hosting"
+    "deploy": "firebase deploy --only hosting",
+    "firebase-login": "firebase firebase login",
+    "firebase-logout": "firebase firebase logout"
   },
   "eslintConfig": {
     "extends": [

@@ -85,7 +85,13 @@ const handleFileInputChange = async (event) => {
 return (
     <div className="project-collection">
         <div className="header">
-            <div className="label"><h3>{collection.name}</h3></div>
+        <div className="options">
+                <label htmlFor="fileInput" className={`button ${isPhotosImported ? 'secondary' : 'primary'}`} 
+
+                >Upload Images</label>
+                <input id='fileInput' type="file" multiple onChange={handleFileInputChange} />
+                
+            </div>
 
             {
                 collectionImages?.length>0?
@@ -105,13 +111,7 @@ return (
                 </div>
             }
 
-            <div className="options">
-                <label htmlFor="fileInput" className={`button ${isPhotosImported ? 'secondary' : 'primary'}`} 
-
-                >Import Images</label>
-                <input id='fileInput' type="file" multiple onChange={handleFileInputChange} />
-                
-            </div>
+            
 
         </div>
         {
