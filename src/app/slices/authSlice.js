@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
 
 const initialState = {
-  isAuthenticated: true,
+  isAuthenticated: false,
   user: {
 	displayName: '',
 	email: '',
