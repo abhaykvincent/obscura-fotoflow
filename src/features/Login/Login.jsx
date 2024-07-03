@@ -3,8 +3,11 @@ import { provider,auth,signInWithPopup } from '../../firebase/app';
 import {GoogleAuthProvider} from 'firebase/auth';
 import { Navigate, useNavigate } from 'react-router';
 import { fullAccess, getOwnerFromTeams } from '../../data/teams';
+import { useDispatch } from 'react-redux';
+import { login } from '../../app/slices/authSlice';
 
-const LoginModal = ({setAuthenticated}) => {
+const LoginModal = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   document.title = `Login`
     const handleGoogleSignIn = async () => {
@@ -17,12 +20,8 @@ const LoginModal = ({setAuthenticated}) => {
           const user = result.user;
           // IdP data available using getAdditionalUserInfo(result)
           // ...
-          console.log(user)
-          if (fullAccess(user.email)) {  
-            setAuthenticated(true)
-            localStorage.setItem('authenticated', 'true');
-            navigate('/')
-          }
+          console.log("Logged in as " + user.email )
+          dispatch(login(user))
 
         }).catch((error) => {
           // Handle Errors here.
