@@ -28,26 +28,14 @@ import Galleries from './features/Galleries/Galleries';
 import ImageGallery from './draft/masanory-grid';
 import Selection from './features/Selection/Selection';
 import Notifications from './features/Notifications/Notifications';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkAuthStatus, selectIsAuthenticated } from './app/slices/authSlice';
 
 function App() {
   
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  // Doors
-  const [authenticated,setAuthenticated] = useState(false);
-  const logout = () =>{
-    setAuthenticated(false)
-    localStorage.removeItem('authenticated')
-    navigate('/login')
-  }
-  const checkAuthStatus = () => {
-    const isAuthenticated = localStorage.getItem('authenticated');
-    if (isAuthenticated === 'true') {
-        setAuthenticated(true);
-    }
-    else{
-      setAuthenticated(false);
-    }
-  };
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   // Alert
   const [alert, setAlert] = useState({ type: '', message: '', show: false });
   const showAlert = (type, message) => setAlert({ type, message, show: true });
@@ -73,7 +61,7 @@ function App() {
   useEffect(() => {
     console.log('App Component Triggered !!')
     document.title = `Obscura FotoFlow`;
-    checkAuthStatus()
+    dispatch(checkAuthStatus())
     loadProjects()
   }, []);
   useEffect(() => {
@@ -213,16 +201,16 @@ function App() {
   // Render
   return (
     <div className="App">
-      {authenticated && (!shareOrSelection)? (
+      {isAuthenticated && (!shareOrSelection)? (
         <>
           <Header />
-          <Sidebar logout={logout} />
+          <Sidebar />
           <Alert {...alert} setAlert={setAlert} />
           <UploadProgress {...{uploadList,uploadStatus}}/>
           <AddProjectModal visible={modal.createProject} onClose={closeModal} onSubmit={addProject} showAlert={showAlert} openModal={openModal} />
         </>
       ) : (
-        <>{!shareOrSelection && <LoginModal {...{ setAuthenticated }} />}</>
+        <>{!shareOrSelection && <LoginModal/>}</>
       )}
       {
         isLoading ? (
@@ -232,7 +220,7 @@ function App() {
           </div>
         ) : (
           <Routes>
-            { authenticated ? 
+            { isAuthenticated ? 
               <>
                 <Route exact path="/" element={<Home {...{projects,loadProjects,openModal}} />}/>
                 <Route path="/project/:id" element={<Project {...{ projects, addCollection,addEvent,addCrew, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert, }} />}/>
