@@ -1,72 +1,50 @@
 import React, { useState } from 'react'
 import AddEventModal from '../Modal/AddEvent'
+import AddCrewModal from '../Modal/AddCrew';
+import CrewCard from '../Cards/CrewCard/CrewCard';
+import { getUserByID, teams } from '../../data/teams';
 
-function DashboardEvents({project,addEvent})
+function DashboardEvents({project,addEvent,addCrew})
 {
   // Modal
-  const [modal, setModal] = useState({createEvent: false})
-  const openModal = () => setModal({ createEvent: true });
-  const closeModal = () => setModal({ createEvent: false });
+  const [modal, setModal] = useState({createEvent: false,addCrew:false})
+  // maKE ONLY modalType TRUE OTHERS false
+  const openModal = (modalType) => setModal({...modal, [modalType]: true });
+  const closeModal = (modalType) => {
+    setModal({...modal, [modalType]: false });}
+  
+    // Events
+    const [selectedEventID, setSelectedEventID] = useState('')
+
   return (
     <div className="shoots">
 
       <div className="headings">
-        <h3 className='heading heading-shoots'>Shoots</h3>
-        <h3 className='heading heading-crew'>Crew</h3>
+        <div className="heading-shoots">
+          
+          <h3 className='heading '>Shoots</h3>
+        <div className="new-shoot button tertiary l2 outline"
+        onClick={ ()=>{
+            openModal('createEvent')
+          }
+          }>+ New</div>
+        </div>
+        {
+          project.events && project.events.length >0 &&
+            <div className="heading-crew">
+
+              <h3 className='heading '>Crew</h3>
+            </div>
+        }
       </div>
       
       <div className="shoot-list">
-        <div className="event-container">
-          <div className="shoot">
-            <div className="time">
-              <div className="status large">
-                <div className="signal"></div>
-              </div>
-              <div className="date">
-                <h1>14</h1>
-                <h5>Feb</h5>
-              </div>
-              <p>10:00AM</p>
-              <p className='location'>Totonto, ON</p>
-            </div>
-            <div className="details">
-              <div className="team-badges">
-                <div className="badge"></div>
-                <div className="badge second"></div>
-                <div className="badge third"></div>
-              </div>
-            </div>
-            <div className="cta button secondary outline">Confirm</div>
-          </div>
-          <div className="crew">
-            <div className="crew-card box">
-              <div className="status">
-                <div className="signal"></div>
-              </div>
-              <div className="avatar"></div>
-              <div className="name">Abhay Vincent</div>
-            </div>
-            <div className="crew-card box">
-              <div className="status">
-                <div className="signal"></div>
-              </div>
-              <div className="avatar"></div>
-              <div className="name">John Doe</div>
-            </div>
-            <div className="assistants">
-              <div className="assistant-card box">
-              <div className="status">
-                <div className="signal"></div>
-              </div><div className="avatar"></div></div>
-              <div className="assistant-card box">
-              <div className="status">
-                <div className="signal"></div>
-              </div><div className="avatar"></div></div>
-            </div>
-          </div>
-        </div>
-
-        <div className="event-container">
+        {/* loop events from project */}
+        {
+          project.events && 
+          project.events.map((event) => (
+       
+        <div key={event.id} className="event-container">
           <div className="shoot">
             <div className="time">
               <div className="status large">
@@ -76,6 +54,7 @@ function DashboardEvents({project,addEvent})
                 <h1>28</h1>
                 <h5>Feb</h5>
               </div>
+              <p>{event.type}</p>   
               <p>8:00AM</p>
               <p className='location'>Wasaga,ON</p>
             </div>
@@ -86,60 +65,48 @@ function DashboardEvents({project,addEvent})
                 <div className="badge third"></div>
               </div>
             </div>
-            <div className="cta button secondary outline">Confirm</div>
+            <div className="cta button secondary outline">Reschedule</div>
           </div>
           <div className="crew">
-            <div className="crew-card box">
-              <div className="status">
-                <div className="signal"></div>
+            {
+              event.crews&&event.crews.map((crew) => (
+                crew.role !== 'assistant' &&
+                <CrewCard key={crew.assigne} user={getUserByID(crew.assigne)} role={crew.role}/>
+              ))
+            }<div className="assistants">
+              {
+              event.crews&&event.crews.map((crew) => (
+                crew.role == 'assistant' &&
+                <CrewCard key={crew.assigne} user={getUserByID(crew.assigne)} role={crew.role}/>
+              ))
+            }
+              <div className="assistant-card new-crew box"
+              onClick={ ()=>{
+                setSelectedEventID(event.id)
+                openModal('addCrew')
+              }
+              }>
+                <p>Crew</p>
               </div>
-              <div className="avatar"></div>
-              <div className="name">Abhay Vincent</div>
-            </div>
-            <div className="crew-card box">
-              <div className="status">
-                <div className="signal"></div>
-              </div>
-              <div className="avatar"></div>
-              <div className="name">John Doe</div>
-            </div>
-            <div className="crew-card box">
-              <div className="status">
-                <div className="signal"></div>
-              </div>
-              <div className="avatar"></div>
-              <div className="name">Jane Doe</div>
-            </div>
-            <div className="assistants">
-              <div className="assistant-card box">
-              <div className="status">
-                <div className="signal"></div>
-              </div><div className="avatar"></div></div>
-              <div className="assistant-card box">
-              <div className="status">
-                <div className="signal"></div>
-              </div><div className="avatar"></div></div>
-              <div className="assistant-card box">
-              <div className="status">
-                <div className="signal"></div>
-              </div><div className="avatar"></div></div>
             </div>
           </div>
-        </div>
+        </div>))
+ }
       </div>
       
-      <div className="new-shoot box" 
-        onClick={ ()=>{
-          openModal()
-        }
-        }
-      >
-      </div>
+      
       <AddEventModal 
         project={project} 
         visible={modal.createEvent} 
         onClose={closeModal} 
         onSubmit={addEvent}  
+      />
+      <AddCrewModal
+        project={project} 
+        eventId={selectedEventID}
+        visible={modal.addCrew} 
+        onClose={closeModal} 
+        onSubmit={addCrew}  
       />
       
     </div>

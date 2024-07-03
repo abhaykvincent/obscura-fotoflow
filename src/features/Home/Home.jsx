@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Home.scss';
 import { getProjectsByStatus, getRecentProjects } from '../../utils/projectFilters';
@@ -6,13 +6,22 @@ import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
 function Home({ projects,loadProjects,openModal}) {
 
     document.title = `FotoFlow | Home`;
-    const recentProjects = getRecentProjects(projects, 4);
     const selectionCompletedProjects = getProjectsByStatus(projects, 'selection-completed');
     const requestPendingProjects = getProjectsByStatus(projects, 'request-pending');
 
+    const [recentProjects, setRecentProjects] = useState([])
+    useEffect(() => {
+        setRecentProjects(getRecentProjects(projects, 3))
+    }, [])
 
     return (
+        <>
+        
+        <div className="home-header">
+                <Link to="/notifications" className="notifications"><div  className="new"></div></Link>
+            </div>
         <main className="home">
+            {/*  */}
             <div className="welcome-section">
                 <div className="welcome-content">
                     <div className='welcome-message-top user-name'>
@@ -24,7 +33,7 @@ function Home({ projects,loadProjects,openModal}) {
                                 <stop offset="100%" style={{ stopColor: '#3f7528', stopOpacity: 1 }} />
                             </linearGradient>
                             {/* Apply the gradient to the text */}
-                            <text x="104px" y="44px" fontFamily="Arial" fontSize="3rem" font-fontWeight="800" fill="url(#textGradient)" textAnchor="middle">
+                            <text x="104px" y="44px" fontFamily="Arial" fontSize="3rem" fontWeight="800" fill="url(#textGradient)" textAnchor="middle">
                                 Obscura 
                             </text>
                         </svg>
@@ -47,8 +56,8 @@ function Home({ projects,loadProjects,openModal}) {
                                 recentProjects.length !== 0? (
                                 recentProjects.map((project, index) => (
                                     <ProjectCard
-                                        key={project.id}
                                         project={project}
+                                        key={project.id}
                                     /> 
                                 ))
                                 ) : (
@@ -108,6 +117,7 @@ function Home({ projects,loadProjects,openModal}) {
                 >Refresh</div>
             </div>
         </main>
+        </>
     );
 }
 

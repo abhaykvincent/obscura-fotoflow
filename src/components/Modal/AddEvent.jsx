@@ -14,9 +14,9 @@ function AddEventModal({ project, visible, onClose, onSubmit }) {
       }));
   };
   const handleSubmit = () => {
-    console.log(project.id,EventData);
+    //console.log(project.id,EventData);
     onSubmit(project.id,EventData);
-    onClose();
+    onClose('createEvent');
   };
 
   if (!visible) {
@@ -28,7 +28,7 @@ function AddEventModal({ project, visible, onClose, onSubmit }) {
       <div className="modal create-project">
         <div className='modal-header'>
           <div className="modal-controls">
-            <div className="control close" onClick={onClose}></div>
+            <div className="control close" onClick={()=>onClose('createEvent')}></div>
             <div className="control minimize disabled"></div>
             <div className="control maximize disabled"></div>
           </div>
@@ -58,7 +58,7 @@ function AddEventModal({ project, visible, onClose, onSubmit }) {
           </div>
         </div>
         <div className="actions">
-          <div className="button secondary" onClick={onClose}>Cancel</div>
+          <div className="button secondary" onClick={()=>{onClose('createEvent')}}>Cancel</div>
           <div className="button primary" onClick={handleSubmit}>Create</div>
         </div>
       </div>
