@@ -31,6 +31,7 @@ import Selection from './features/Selection/Selection';
 import Notifications from './features/Notifications/Notifications';
 // Redux 
 import { checkAuthStatus, selectIsAuthenticated } from './app/slices/authSlice';
+import { showAlert } from './app/slices/alertSlice';
 function App() {
   
   const dispatch = useDispatch();
@@ -38,7 +39,6 @@ function App() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   // Alert
   const [alert, setAlert] = useState({ type: '', message: '', show: false });
-  const showAlert = (type, message) => setAlert({ type, message, show: true });
   // Core Data
   const [projects, setProjects] = useState([]);
   // Upload progress
@@ -96,12 +96,12 @@ function App() {
       }, 1);
       setTimeout(() => {
         setProjects(updatedProjects);
-        showAlert('success-negative', `Project <b>${project.name}</b> deleted successfully!`);// Redirect to /projects page
+        dispatch(showAlert({type:'success-negative', message:`Project <b>${project.name}</b> deleted successfully!`}));// Redirect to /projects page
       }, 700);
     })
     .catch((error) => {
       console.error('Error deleting project:', error);
-      showAlert('error', error.message)
+      dispatch(showAlert({type:'error', message:` error.message`}));
     })
   };
   const addCollection = (projectId, newCollection) => {
@@ -110,17 +110,17 @@ function App() {
       const updatedProjects = projects.map((project) => {
         if (project.id === projectId) {
           const updatedCollections = [...project.collections, {id,...newCollection}];
-          showAlert('success', 'New Collection created!')
+          dispatch(showAlert({type:'success', message:'New Collection created!'}))
           return { ...project, collections: updatedCollections };
         }
         return project;
       });
       setProjects(updatedProjects);
-      showAlert('success', `Collection <b>${newCollection.name}</b> added successfully!`);// Redirect to /projects page
+      dispatch(showAlert({type:'success', message:`Collection <b>${newCollection.name}</b> added successfully!`}));
       navigate(`/project/galleries/${projectId}/${id}`);
     })
     .catch((error) => {
-      showAlert('error', `Error adding collection: ${error.message}`);
+      dispatch(showAlert({type:'error', message:`Error adding collection: ${error.message}`}));
     });
   };
   // Function to create new event for a project in the cloud firestore
@@ -138,11 +138,11 @@ function App() {
         return project;
       });
       setProjects(updatedProjects);
-      showAlert('success', `Event <b>${newEvent.name}</b> added successfully!`);// Redirect to /projects page
+      dispatch(showAlert({type:'success', message:`Event <b>${newEvent.name}</b> added successfully!`}));
     })
     .catch((error) => {
       console.log(error.message)
-      showAlert('error', `Error adding event: ${error.message}`);
+      dispatch(showAlert({type:'error', message:`Error adding event: ${error.message}`}));
     })
 
       }
@@ -155,7 +155,7 @@ function App() {
             const updatedCollections = project.collections.filter(
             (collection) => collection.id !== collectionId
           );
-          showAlert('success', 'Collection deleted!');
+          dispatch(showAlert({type:'success', message:`Collection deleted!`}));
           return { ...project, collections: updatedCollections };
         }
         return project;
@@ -163,7 +163,7 @@ function App() {
       setProjects(updatedProjects);
     })
     .catch((error) => {
-      showAlert('error', `Error deleting collection: ${error.message}`);
+      dispatch(showAlert({type:'error', message:`Error deleting collection: ${error.message}`}));
     });
   };
   // Add crew to the event of id 
@@ -188,10 +188,10 @@ function App() {
           return project;
         })
         setProjects(updatedProjects);
-        showAlert('success', `Crew member <b>${user.name}</b> added successfully!`);
-        })
+        dispatch(showAlert({type:'success', message:`Crew member <b>${user.name}</b> added successfully!`}));
+      })
         .catch((error) => {
-          showAlert('error', `Error adding crew member: ${error.message}`);
+          dispatch(showAlert({type:'error', message:`Error adding crew member: ${error.message}`}));
         })
       }
 
@@ -207,7 +207,7 @@ function App() {
           <Sidebar />
           <Alert {...alert} setAlert={setAlert} />
           <UploadProgress {...{uploadList,uploadStatus}}/>
-          <AddProjectModal visible={modal.createProject} onClose={closeModal} onSubmit={addProject} showAlert={showAlert} openModal={openModal} />
+          <AddProjectModal visible={modal.createProject} onClose={closeModal} onSubmit={addProject} openModal={openModal} />
         </>
       ) : (
         <>{!shareOrSelection && <LoginModal/>}</>
@@ -223,9 +223,9 @@ function App() {
             { isAuthenticated ? 
               <>
                 <Route exact path="/" element={<Home {...{projects,loadProjects,openModal}} />}/>
-                <Route path="/project/:id" element={<Project {...{ projects, addCollection,addEvent,addCrew, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert, }} />}/>
-                <Route exact path="/project/galleries/:id/:collectionId?" element={<Galleries {...{ projects, addCollection, addCrew,deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert }} />}/>
-                <Route path="/projects" element={<Projects {...{ projects, addProject, showAlert, isLoading,openModal }} />}/>
+                <Route path="/project/:id" element={<Project {...{ projects, addCollection,addEvent,addCrew, deleteCollection, deleteProject,setUploadList,setUploadStatus, }} />}/>
+                <Route exact path="/project/galleries/:id/:collectionId?" element={<Galleries {...{ projects, addCollection, addCrew,deleteCollection, deleteProject,setUploadList,setUploadStatus }} />}/>
+                <Route path="/projects" element={<Projects {...{ projects, addProject, isLoading,openModal }} />}/>
                 <Route path="/storage" element={<Storage {...{projects}}/>}/>
                 <Route path="/notifications" element={<Notifications/>}/>
                 <Route path="/subscription" element={<Subscription/>}/>

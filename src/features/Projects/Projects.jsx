@@ -5,7 +5,7 @@ import './Projects.scss';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
 import Refresh from '../../components/Refresh/Refresh';
 
-function Projects({ projects, openModal,addProject, showAlert, isLoading }) {
+function Projects({ projects, openModal,addProject, isLoading }) {
     useEffect(() => {
     }, [projects]);
     return (

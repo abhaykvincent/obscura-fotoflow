@@ -8,7 +8,9 @@ import CollectionImages from '../../components/Project/Collections/CollectionIma
 
 import './Galleries.scss';
 import ShareGallery from '../../components/Modal/ShareGallery'
+import { useDispatch } from 'react-redux';
 export default function Galleries({ projects,  addCollection, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert}) {
+  const dispatch= useDispatch();
   const navigate = useNavigate();
   // Route Params
   let { id,collectionId } = useParams();
@@ -167,7 +169,7 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
             </div>
             </div>
           </div>
-          <CollectionImages  {...{ id, collectionId:targetCollectionId,collection,setUploadList,setUploadStatus,showAlert}} />
+          <CollectionImages  {...{ id, collectionId:targetCollectionId,collection,setUploadList,setUploadStatus}} />
         </div>
       )}
 

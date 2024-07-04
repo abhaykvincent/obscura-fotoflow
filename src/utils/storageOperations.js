@@ -211,7 +211,7 @@ const sliceUpload = async (slice, id, collectionId,setUploadList) => {
 };
 
 
-export const handleUpload = async (files, id, collectionId,importFileSize, setUploadList,setUploadStatus, showAlert, retries = 2) => {
+export const handleUpload = async (files, id, collectionId,importFileSize, setUploadList,setUploadStatus, retries = 2) => {
     let uploadPromises = [];
     setUploadList(files)
     // Slice the files array into smaller arrays of size sliceSize
@@ -262,12 +262,12 @@ export const handleUpload = async (files, id, collectionId,importFileSize, setUp
 
                 addUploadedFilesToFirestore(id, collectionId,importFileSize, uploadedFiles)
                     .then(() => {
-                        showAlert('success', 'All files uploaded successfully!')
+                        //showAlert('success', 'All files uploaded successfully!')
 
                     })
                     .catch((error) => {
                         console.error('Error adding uploaded files to project:', error.message);
-                        showAlert('error', error.message)
+                        //showAlert('error', error.message)
                         throw error;
                     });
                 return uploadedFiles;
