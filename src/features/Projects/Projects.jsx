@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'; // Import React Router components
 import AddProjectModal from '../../components/Modal/AddProject';
 import './Projects.scss';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
+import Refresh from '../../components/Refresh/Refresh';
 
 function Projects({ projects, openModal,addProject, showAlert, isLoading }) {
     useEffect(() => {
@@ -62,6 +63,7 @@ function Projects({ projects, openModal,addProject, showAlert, isLoading }) {
                     }
                 </div>
             
+                <Refresh/>
             
         </main>
     );

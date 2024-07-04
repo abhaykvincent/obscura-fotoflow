@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 //Firebase functions
 import { 
   fetchProjects,
@@ -28,9 +29,8 @@ import Galleries from './features/Galleries/Galleries';
 import ImageGallery from './draft/masanory-grid';
 import Selection from './features/Selection/Selection';
 import Notifications from './features/Notifications/Notifications';
-import { useDispatch, useSelector } from 'react-redux';
+// Redux 
 import { checkAuthStatus, selectIsAuthenticated } from './app/slices/authSlice';
-
 function App() {
   
   const dispatch = useDispatch();
@@ -229,6 +229,7 @@ function App() {
                 <Route path="/storage" element={<Storage {...{projects}}/>}/>
                 <Route path="/notifications" element={<Notifications/>}/>
                 <Route path="/subscription" element={<Subscription/>}/>
+                
               </> 
               
               : ''
@@ -245,4 +246,4 @@ function App() {
 }
 
 export default App;
-// Line Complexity  1.5 -> 2.0
+// Line Complexity  1.5 -> 2.0 -> 2.5

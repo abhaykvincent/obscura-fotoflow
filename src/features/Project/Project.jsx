@@ -5,6 +5,7 @@ import AddCollectionModal from '../../components/Modal/AddCollection';
 import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 import DashboardEvents from '../../components/Events/Events';
 import AmountCard from '../../components/Cards/AmountCard/AmountCard';
+import Refresh from '../../components/Refresh/Refresh';
 
 export default function Project({ projects,  addCollection,addEvent,addCrew, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert}) {
   const navigate = useNavigate();
@@ -167,7 +168,8 @@ export default function Project({ projects,  addCollection,addEvent,addCrew, del
         <AddCollectionModal project={project} visible={modal.createCollection} onClose={closeModal} onSubmit={addCollection}  />
         {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm} onClose={onDeleteConfirmClose}/>:''}
       
-      </main>
+      
+        <Refresh/></main>
       <div className="project-info">
       <div className="breadcrumbs">
       <Link className="back" to="/projects">Projects</Link>

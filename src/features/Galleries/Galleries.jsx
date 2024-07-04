@@ -182,7 +182,6 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
       <div className="breadcrumbs">
         <Link className="back " to={`/projects`}>Project </Link>
         <Link className="back highlight" to={`/project/${encodeURIComponent(id)}`}>{project.name}</Link>
-        <Link className="back active" to={`/project/${encodeURIComponent(id)}`}>Gallery</Link>
       </div>
       <div className="client">
           
