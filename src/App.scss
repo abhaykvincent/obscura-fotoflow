@@ -30,6 +30,15 @@ body{
 
 }
 .App{
+ width: 100vw;
+ min-height: 100vh;
+ .modal-container{
+   width: 100vw;
+   height: 100vh;
+   position: absolute;
+   top: -$header-height;
+   left: -$sidebar-width;
+ }
 *{
 
   color: white;
@@ -87,9 +96,6 @@ body{
   }
   .breadcrumbs{
     display: flex;
-    position: fixed;
-    top: 10px;
-    left: -8px*0.2;
     padding: 4px 8px;
     border-radius: 4px;
     cursor: pointer;
@@ -237,6 +243,7 @@ body{
         .view-control{
           display:flex;
           align-items: center;
+          justify-content: center;
           margin: 4px;
           font-size: 0.9rem;
           .control-label{
@@ -294,13 +301,28 @@ body{
       top: -200px;
     }
   }
+  .refresh{
+    display: grid;
+    justify-items: center;
+    margin-top: 8px*4;
+    p{
+        color: $gray4-default-dark;
+
+        margin: 8px;
+    }
+    .button{
+        color: $gray-default-dark;
+        font-weight: 400;
+    }
+
+}
   .project-info{
-    top: -10px;
+    top: 00px;
     left: calc($sidebar-width - -8px*1);
     width: calc(100vw - $sidebar-width);
     position: fixed; 
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: auto auto auto;
     justify-content: space-between;
     justify-items: stretch;
     padding: 8px*2;
@@ -310,14 +332,12 @@ body{
       display: grid;
       grid-template-columns: auto auto;
       justify-items: start;
+
       justify-content: start;
-      grid-row: 2/3;
-      grid-column: 1/2;
       align-items: center;
       gap: 8px*1;
-      margin-top: 8px*3;
       h1{
-        font-size: 1.2rem;
+        font-size: 1.5rem;
       }
       .type{
 
@@ -377,9 +397,6 @@ body{
       }
     }
     .project-options{
-      position: absolute;
-      right: 8px*2;
-      top: 8px*3;
       display: grid;
       grid-template-columns: auto auto auto;
       justify-content: end;
@@ -438,14 +455,14 @@ body{
   }
   .modal{
     position: fixed;
-    top: 20vh;
-    left: 50vw;
+    top: 50vh;
+    left: 50%;
     background-color: $dark-2;
     border-radius: $border-radius-1;
     border: 1px solid $dark-0;
     padding-bottom: 8px*8;
     z-index: 20;
-    transform: translateX(-100%) scale(0.9);
+    transform: translate(-50%, -50%) scale(0.9);
     opacity: 0;
     animation-name: modal-in;
     animation-duration: 0.1s;
@@ -680,11 +697,11 @@ body{
 //modal-in 
 @keyframes modal-in {
   0% {
-    transform: translateX(-50%) scale(0.3);
+    transform: translate(-40%, 50%)  scale(0.3);
     opacity: 0;
   }
   100% {
-    transform: translateX(-100%) scale(1);
+    transform: translate(-50%, -50%)  scale(1);
     opacity: 1;
   }
 }
@@ -710,6 +727,7 @@ body{
       height: 100vh;
       position: absolute;
       top: 0;
+      left: 0;
     }
     .modal{
       display: grid;
@@ -730,16 +748,6 @@ body{
           }
         }
       }
-    }
-  }
-  @keyframes modal-in {
-    0% {
-      transform: translateX(-50%) scale(0.3);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(-50%) scale(1);
-      opacity: 1;
     }
   }
 }
@@ -1012,19 +1020,42 @@ margin-left: 4px;
     .App{
       .header{
         grid-template-columns: 8px*9 1fr 1fr 1fr;
+        .logo{
+          display: none;
+        }
         .hamburger{
           display: grid;
           align-items: center;
           justify-items: center;
         }
       }
-      
+      .project-info{
+        top: 0;
+        left: 8px*2;
+        width: calc(100vw - 8px*0);
+        grid-template-columns: auto 1fr 1fr;
+        .breadcrumbs{
+          position: relative;
+          padding-left: 8px*4.5;
+          top: 0;
+        }
+        .client{
+          position: relative;
+          margin-top: 0;
+          grid-row: /* auto */ auto;
+          grid-column: /* auto */ auto;
+        }
+        .project-options{
+          position: relative;
+          top: 0;
+        }
+      } 
       main {
         left: 0;
         width: calc(100vw );
         .project-collection .header {
           display: grid;
-          grid-template-columns: 2fr 8px*20;
+          grid-template-columns: 2fr autorefresh 2fr;
           padding-bottom: 16px;
           align-items: center;
           .label{
@@ -1055,7 +1086,7 @@ margin-left: 4px;
         width: calc(100vw );
         .project-collection .header {
           display: grid;
-          grid-template-columns: 2fr 8px*20;
+          grid-template-columns: 2fr auto;
           padding-bottom: 16px;
           align-items: center;
           .label{

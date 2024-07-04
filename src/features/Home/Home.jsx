@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './Home.scss';
 import { getProjectsByStatus, getRecentProjects } from '../../utils/projectFilters';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
+import Refresh from '../../components/Refresh/Refresh';
 function Home({ projects,loadProjects,openModal}) {
 
     document.title = `FotoFlow | Home`;
@@ -107,15 +108,8 @@ function Home({ projects,loadProjects,openModal}) {
                     </div>
                 </>)
             }
-            <div className="refresh">
-                <p>
-                    Refresh your projects to see the latest updates
-                </p>
-                <div className="button secondary"
-
-                onClick={loadProjects}
-                >Refresh</div>
-            </div>
+            
+            <Refresh/>
         </main>
         </>
     );
