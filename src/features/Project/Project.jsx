@@ -6,9 +6,11 @@ import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 import DashboardEvents from '../../components/Events/Events';
 import AmountCard from '../../components/Cards/AmountCard/AmountCard';
 import Refresh from '../../components/Refresh/Refresh';
+import { useDispatch } from 'react-redux';
 
-export default function Project({ projects,  addCollection,addEvent,addCrew, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert}) {
+export default function Project({ projects,  addCollection,addEvent,addCrew, deleteCollection, deleteProject,setUploadList,setUploadStatus}) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   // Route Params
   let { id,collectionId } = useParams();
   // Modal

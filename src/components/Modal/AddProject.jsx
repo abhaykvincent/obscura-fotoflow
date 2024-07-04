@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { addProject } from '../../firebase/functions/firestore';
 import { analytics } from '../../firebase/app';
 import { getAnalytics, logEvent } from 'firebase/analytics';
+import { useDispatch } from 'react-redux';
 
 function AddProjectModal({ showAlert,visible, onClose, onSubmit }) {
-
+    const dispatch = useDispatch();
   const [projectData, setProjectData] = useState({
       name: 'Ethan Ross',
       type: 'Birthday',
@@ -33,13 +34,13 @@ function AddProjectModal({ showAlert,visible, onClose, onSubmit }) {
           .then((addedProject) => {
               onSubmit(addedProject);
               onClose();
-              showAlert('success', 'New Project created!')
+              dispatch(showAlert({type:'success', message:`New Project created!`}));
               logEvent(analytics,'project_created');
 
           })
           .catch((error) => {
               console.error('Error creating project:', error);
-              showAlert('error', 'error')
+              dispatch(showAlert({type:'error', message:`error`}));
               // Handle error scenarios, e.g., show an error message
           });
   };

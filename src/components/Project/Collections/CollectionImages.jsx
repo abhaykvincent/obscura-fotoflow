@@ -4,7 +4,7 @@ import ImageGallery from '../../ImageGallery/ImageGallery';
 import { fetchImages } from '../../../firebase/functions/firestore';
 import { addAllFileSizesToMB } from '../../../utils/fileUtils';
 
-const CollectionImages = ({ id, collectionId,collection,setUploadList,setUploadStatus,showAlert }) => {
+const CollectionImages = ({ id, collectionId,collection,setUploadList,setUploadStatus }) => {
 // Files
 const [files, setFiles] = useState([]);
 const [collectionImages, setCollectionImages] = useState([]);
@@ -78,7 +78,7 @@ const handleFileInputChange = async (event) => {
     setImageUrls(selectedFiles);
     setUploadStatus('open');
     setIsPhotosImported(false);
-    let uploadedImages = await handleUpload(files, id, collectionId, importFileSize, setUploadList, setUploadStatus, showAlert);
+    let uploadedImages = await handleUpload(files, id, collectionId, importFileSize, setUploadList, setUploadStatus);
     console.log(uploadedImages);
     setImageUrls(uploadedImages);
 };
