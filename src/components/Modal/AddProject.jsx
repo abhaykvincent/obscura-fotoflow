@@ -3,8 +3,9 @@ import { addProject } from '../../firebase/functions/firestore';
 import { analytics } from '../../firebase/app';
 import { getAnalytics, logEvent } from 'firebase/analytics';
 import { useDispatch } from 'react-redux';
+import { showAlert } from '../../app/slices/alertSlice';
 
-function AddProjectModal({ showAlert,visible, onClose, onSubmit }) {
+function AddProjectModal({visible, onClose, onSubmit }) {
     const dispatch = useDispatch();
   const [projectData, setProjectData] = useState({
       name: 'Ethan Ross',

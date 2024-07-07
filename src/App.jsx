@@ -26,19 +26,18 @@ import LoginModal from './features/Login/Login';
 import ShareProject from './features/Share/Share';
 import Storage from './features/Storage/Storage';
 import Galleries from './features/Galleries/Galleries';
-import ImageGallery from './draft/masanory-grid';
+import ImageGallery from './x-draft/masanory-grid';
 import Selection from './features/Selection/Selection';
 import Notifications from './features/Notifications/Notifications';
 // Redux 
 import { checkAuthStatus, selectIsAuthenticated } from './app/slices/authSlice';
 import { showAlert } from './app/slices/alertSlice';
+
 function App() {
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  // Alert
-  const [alert, setAlert] = useState({ type: '', message: '', show: false });
   // Core Data
   const [projects, setProjects] = useState([]);
   // Upload progress
@@ -50,6 +49,8 @@ function App() {
   const openModal = () => setModal({ createProject: true });
   const closeModal = () => setModal({ createProject: false });
 
+
+  // Upload status
   useEffect(() => {
     if(uploadStatus === 'completed'){
       setTimeout(() => {
@@ -205,7 +206,7 @@ function App() {
         <>
           <Header />
           <Sidebar />
-          <Alert {...alert} setAlert={setAlert} />
+          <Alert />
           <UploadProgress {...{uploadList,uploadStatus}}/>
           <AddProjectModal visible={modal.createProject} onClose={closeModal} onSubmit={addProject} openModal={openModal} />
         </>

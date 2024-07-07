@@ -5,17 +5,15 @@ import { hideAlert, selectAlertMessage, selectAlertShow, selectAlertType, } from
 
 const Alert = () => {
   const dispatch = useDispatch();
+
+  const [visible, setVisible] = useState(false);
   const show = useSelector(selectAlertShow);
   const type = useSelector(selectAlertType);
   const message = useSelector(selectAlertMessage);
 
-  console.log(show, type, message);
-
-  const [visible, setVisible] = useState(false);
-
   useEffect(() => {
     if (show) {
-      setVisible(true);
+      setVisible(true);// Alert pops up
       setTimeout(() => {
         setVisible(false);
         dispatch(hideAlert())
