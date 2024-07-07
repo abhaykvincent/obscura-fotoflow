@@ -149,10 +149,10 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
                   
                 ))}
 
+<div className="active-box box"></div>
             
               </div>:''
             }
-            <div className="active-box box"></div>
             <div className="gallery new" 
               onClick={()=>openModal('createCollection')}>
               <div className="thumbnails">
