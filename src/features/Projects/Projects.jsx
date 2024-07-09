@@ -4,10 +4,12 @@ import AddProjectModal from '../../components/Modal/AddProject';
 import './Projects.scss';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
 import Refresh from '../../components/Refresh/Refresh';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectProjects } from '../../app/slices/projectsSlice';
+import { openModal } from '../../app/slices/modalSlice';
 
-function Projects({openModal}) {
+function Projects() {
+    const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
     useEffect(() => {
     }, [projects]);
@@ -17,7 +19,7 @@ function Projects({openModal}) {
                 <h1>Projects</h1>
                 <div className="actions">
                     <div className="button primary"
-                        onClick={openModal}
+                        onClick={()=>dispatch(openModal('createProject'))}
                     >Create Project</div>
                 </div>
             </div>
@@ -47,7 +49,7 @@ function Projects({openModal}) {
                             </div>
 
                             <div className="project new"
-                                onClick={openModal}
+                                onClick={()=>{dispatch(openModal('createProject'))}}
                             >
                                 <div className="project-cover" ></div>
                                 <div className="project-details">

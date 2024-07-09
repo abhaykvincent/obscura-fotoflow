@@ -28,7 +28,6 @@ const app = initializeApp(firebaseConfig);
 
 const storage = getStorage(app);
 const db = getFirestore(app); 
-const analytics = getAnalytics(app);
 const auth = getAuth(app);
 
 if (process.env.NODE_ENV === 'development') {
@@ -45,4 +44,4 @@ if (process.env.NODE_ENV === 'development') {
 
 const provider = new GoogleAuthProvider();
 
-export { storage, db, analytics, auth, provider, signInWithPopup};
+export { storage, db,auth, provider, signInWithPopup};

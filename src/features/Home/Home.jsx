@@ -4,9 +4,11 @@ import './Home.scss';
 import { getProjectsByStatus, getRecentProjects } from '../../utils/projectFilters';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
 import Refresh from '../../components/Refresh/Refresh';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectProjects } from '../../app/slices/projectsSlice';
-function Home({openModal}) {
+import { openModal } from '../../app/slices/modalSlice';
+function Home() {
+    const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
     document.title = `FotoFlow | Home`;
     const selectionCompletedProjects = getProjectsByStatus(projects, 'selection-completed');
@@ -45,7 +47,7 @@ function Home({openModal}) {
                     </div>
                     <div className="actions">
                         <div className="button primary"
-                        onClick={openModal}
+                        onClick={()=>dispatch(openModal('createCollection'))}
                         >Create Project</div>
                     </div>
                 </div>
@@ -92,7 +94,8 @@ function Home({openModal}) {
                         <div className="projects-list">
 
                         <div className="project new" 
-                            onClick={openModal}
+                            
+                        onClick={()=>dispatch(openModal('createCollection'))}
                         >
                             <div className="project-cover"
                             ></div>

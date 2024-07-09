@@ -11,6 +11,7 @@ import CollectionImages from '../../components/Project/Collections/CollectionIma
 import CollectionsPanel from '../../components/Project/Collections/CollectionsPanel';
 
 import './Galleries.scss';
+import { openModal } from '../../app/slices/modalSlice';
 
 export default function Galleries({setUploadList,setUploadStatus}) {
   const projects = useSelector(selectProjects)
@@ -18,16 +19,6 @@ export default function Galleries({setUploadList,setUploadStatus}) {
   const navigate = useNavigate();
   // Route Params
   let { id,collectionId } = useParams();
-  // Modal
-  const [modal, setModal] = useState({
-    createCollection: false,
-    shareGallery: false,
-  })
-  const openModal = (modalName) => setModal({ ...modal,[modalName]: true });
-  const closeModal = (modalName) => setModal({ ...modal,[modalName]: false });
-  useEffect(()=>{
-    console.log(modal)
-  },[modal])
   // Delete Project Modal
   const[confirmDeleteProject,setConfirmDeleteProject] = useState(false)
   const onDeleteConfirmClose = () => setConfirmDeleteProject(false)
@@ -84,7 +75,8 @@ export default function Galleries({setUploadList,setUploadStatus}) {
       {project.collections.length === 0 ? (
         <>  
           <div className="button secondary add-collection"
-                onClick={()=>openModal('createCollection')}
+                onClick={() => {
+                  dispatch(openModal('createCollection'))}}
                 >Add Collection</div>
         <div className="no-items no-collections">Create a collection</div>
         </>
@@ -158,7 +150,7 @@ export default function Galleries({setUploadList,setUploadStatus}) {
               </div>:''
             }
             <div className="gallery new" 
-              onClick={()=>openModal('createCollection')}>
+              onClick={() => dispatch(openModal('createCollection'))}>
               <div className="thumbnails">
                 <div className="thumbnail thumb1">
                   <div className="backthumb bthumb1"
@@ -180,8 +172,8 @@ export default function Galleries({setUploadList,setUploadStatus}) {
       
 
 
-      <AddCollectionModal project={project} visible={modal.createCollection} onClose={closeModal}   />
-      <ShareGallery   project={project}  visible={modal.shareGallery} onClose={closeModal} />
+      <AddCollectionModal project={project}/>
+      <ShareGallery   project={project} />
       {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm} onClose={onDeleteConfirmClose}/>:''}
     </main>
     <div className="project-info">
@@ -195,11 +187,8 @@ export default function Galleries({setUploadList,setUploadStatus}) {
           <div className="type"></div>
         </div>
         <div className="project-options">
-          <div className="button primary share" /* href={`/share/${id}`} */onClick={()=>openModal('shareGallery')} target="_blank">Share</div>
-          <a className="button primary selection" /* href={`/selection/${id}`} */ target="_blank">Selection</a>
-          <div className="button warnning" onClick={()=>{
-            setConfirmDeleteProject(true)
-          }}>Delete</div>
+          <div className="button primary share" /* href={`/share/${id}`} */onClick={()=>dispatch(openModal('shareGallery'))} target="_blank">Share</div>
+         
         </div>
         {/* <div className="project-options">PIN 
           <div className="button secondary pin" onClick={()=>{

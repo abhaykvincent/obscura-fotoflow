@@ -8,6 +8,7 @@ import Sidebar from './components/Sidebar/Sidebar';
 import UploadProgress from './components/UploadProgress/UploadProgress';
 import Subscription from './components/Subscription/Subscription';
 import AddProjectModal from './components/Modal/AddProject';
+import Loading from './components/Loading/Loading';
 // Features
 import Home from './features/Home/Home';
 import Project from './features/Project/Project';
@@ -22,14 +23,15 @@ import Notifications from './features/Notifications/Notifications';
 // Redux 
 import { checkAuthStatus, selectIsAuthenticated } from './app/slices/authSlice';
 import { selectProjects,selectLoading ,fetchProjects} from './app/slices/projectsSlice';
-import Loading from './components/Loading/Loading';
 // Stylesheets
 import './App.scss';
+import { selectModal } from './app/slices/modalSlice';
 
 function App() {
   const dispatch = useDispatch();
 
   const projects = useSelector(selectProjects);
+  const modals = useSelector(selectModal);
   const isAuthenticated = useSelector(selectIsAuthenticated);
   // Upload progress
   const [uploadList, setUploadList] = useState([]);
@@ -48,14 +50,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    console.log('projects changed !!')
-    console.log(projects)
-  }, [projects]);
-  useEffect(() => {
     if(uploadStatus === 'completed'){
-      setTimeout(() => {
-        setUploadStatus('close')
-      }, 1000)
+      setTimeout(() => setUploadStatus('close'), 1000)
     }
   }, [uploadStatus])
 
@@ -70,7 +66,7 @@ function App() {
           <Sidebar />
           <Alert />
           <UploadProgress {...{uploadList,uploadStatus}}/>
-          <AddProjectModal visible={modal.createProject} onClose={closeModal}  openModal={openModal} />
+          <AddProjectModal />
         </>
       ) : (
         <>{ !publicPages && <LoginModal/> }</>
@@ -82,10 +78,10 @@ function App() {
           <Routes>
             { isAuthenticated &&
               <>
-                <Route exact path="/" element={<Home {...{openModal}} />}/>
+                <Route exact path="/" element={<Home/>}/>
                 <Route       path="/project/:id" element={<Project {...{setUploadList,setUploadStatus, }} />}/>
                 <Route exact path="/project/galleries/:id/:collectionId?" element={<Galleries {...{setUploadList,setUploadStatus }} />}/>
-                <Route       path="/projects" element={<Projects {...{openModal}} />}/>
+                <Route       path="/projects" element={<Projects/>}/>
                
                 <Route path="/storage" element={<Storage/>}/>
                 <Route path="/notifications" element={<Notifications/>}/>
