@@ -4,7 +4,7 @@ import ImageGallery from '../../ImageGallery/ImageGallery';
 import { fetchImages } from '../../../firebase/functions/firestore';
 import { addAllFileSizesToMB } from '../../../utils/fileUtils';
 
-const CollectionImages = ({ id, collectionId,collection,setUploadList,setUploadStatus,showAlert }) => {
+const CollectionImages = ({ id, collectionId,collection,setUploadList,setUploadStatus }) => {
 // Files
 const [files, setFiles] = useState([]);
 const [collectionImages, setCollectionImages] = useState([]);
@@ -62,17 +62,37 @@ useEffect(() => {
 }
 }, [showAllPhotos,collectionImages]);
 
-const handleFileInputChange = (event) => {
+/* async()=>{
+    setUploadStatus('open')
+    setIsPhotosImported(false);
+    let uploadedImages=await handleUpload(files, id, collectionId,importFileSize,setUploadList,setUploadStatus,showAlert)
+    console.log(uploadedImages)
+    setImageUrls(uploadedImages)
+} */
+
+const handleFileInputChange = async (event) => {
     const selectedFiles = Array.from(event.target.files);
+    console.log(selectedFiles)
     setIsPhotosImported(true);
     setFiles(selectedFiles);
-    setImportFileSize(addAllFileSizesToMB(selectedFiles))
-    setImageUrls(selectedFiles)
+    setImportFileSize(addAllFileSizesToMB(selectedFiles));
+    setImageUrls(selectedFiles);
+    setUploadStatus('open');
+    setIsPhotosImported(false);
+    let uploadedImages = await handleUpload(selectedFiles, id, collectionId, importFileSize, setUploadList, setUploadStatus);
+    console.log(uploadedImages);
+    setImageUrls(uploadedImages);
 };
 return (
     <div className="project-collection">
         <div className="header">
-            <div className="label"><h3>{collection.name}</h3></div>
+        <div className="options">
+                <label htmlFor="fileInput" className={`button ${isPhotosImported ? 'secondary' : 'primary'}`} 
+
+                >Upload Images</label>
+                <input id='fileInput' type="file" multiple onChange={handleFileInputChange} />
+                
+            </div>
 
             {
                 collectionImages?.length>0?
@@ -92,36 +112,14 @@ return (
                 </div>
             }
 
-            <div className="options">
-                <label htmlFor="fileInput" className={`button ${isPhotosImported ? 'secondary' : 'primary'}`} 
-
-                >Import Images</label>
-                <input id='fileInput' type="file" multiple onChange={handleFileInputChange} />
-                <div className={`button ${isPhotosImported ? 'primary' : 'secondary disabled'}`} 
-                    onClick={async()=>{
-                        setUploadStatus('open')
-                        setIsPhotosImported(false);
-                        let uploadedImages=await handleUpload(files, id, collectionId,importFileSize,setUploadList,setUploadStatus,showAlert)
-                        console.log(uploadedImages)
-                        setImageUrls(uploadedImages)
-                    }}
-                    >Upload Images</div>
-            </div>
+            
 
         </div>
         {
             imageUrls.length > 0 ?
             <ImageGallery {...{isPhotosImported, imageUrls, projectId:id}}/>:''
         }
-        <div className="pagination">
-            <div className="button secondary"
-                onClick={
-                    ()=>{
-                    }
-                }
-            >Load Images</div>
-
-        </div>
+        
     </div>
     );
 };

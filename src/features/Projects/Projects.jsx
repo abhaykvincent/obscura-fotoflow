@@ -3,26 +3,23 @@ import { Link } from 'react-router-dom'; // Import React Router components
 import AddProjectModal from '../../components/Modal/AddProject';
 import './Projects.scss';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
+import Refresh from '../../components/Refresh/Refresh';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectProjects } from '../../app/slices/projectsSlice';
+import { openModal } from '../../app/slices/modalSlice';
 
-function Projects({ projects, addProject, showAlert, isLoading }) {
-
-
-    // Modal
-    const [modal, setModal] = useState({ createProject: false })
-
-    const openModal = () => setModal({ createProject: true });
-
-    const closeModal = () => setModal({ createProject: false });
-
- 
-
+function Projects() {
+    const dispatch = useDispatch()
+    const projects = useSelector(selectProjects)
+    useEffect(() => {
+    }, [projects]);
     return (
         <main className="projects">
             <div className="projects-header">
                 <h1>Projects</h1>
                 <div className="actions">
                     <div className="button primary"
-                        onClick={openModal}
+                        onClick={()=>dispatch(openModal('createProject'))}
                     >Create Project</div>
                 </div>
             </div>
@@ -32,49 +29,48 @@ function Projects({ projects, addProject, showAlert, isLoading }) {
                         <div className={`control active`} >All</div>
                         <div className={`control `} >Active</div>
                         <div className={`control `} >Starred</div>
-                        <div className={`control `} >This Week</div>
                         <div className={`control `} >Today</div>
                     </div>
                     <div className={`active`}></div>
                 </div>
             </div>
             <div className="projects-list">
-                {projects.length !== 0? (
+                { 
+                projects.length !== 0? (
                     projects.map((project, index) => (
                         <ProjectCard 
-                        key={project.id}
                         project={project}
-                        index={index}
+                        key={project.id}
                     /> 
                     ))) : (
                         <>
-                        <div className="section recent">
-                <h3 className='section-heading'>Recent Projects</h3>
-                        </div>
+                            <div className="section recent">
+                                <h3 className='section-heading'>Recent Projects</h3>
+                            </div>
 
-                        <Link className="project new"  >
-                            <div className="project-cover"
-                            ></div>
-                            <div className="project-details">
-                                <div className="details-top">
+                            <div className="project new"
+                                onClick={()=>{dispatch(openModal('createProject'))}}
+                            >
+                                <div className="project-cover" ></div>
+                                <div className="project-details">
+                                    <div className="details-top">
 
-                                    <h4 className="project-title">Create Your First Project</h4>
-                                    <p className="project-type"></p>
+                                        <h4 className="project-title">Create Your First Project</h4>
+                                        <p className="project-type"></p>
+                                    </div>
                                 </div>
+                                <div className="project-options"></div>
                             </div>
-                            <div className="project-options">
-                                
-                            </div>
-                        </Link>
                         </>
                     )
-                    }
-                </div>
+                }
+            </div>
+            {/* Refresh Projects Data from cloud */}
+            <Refresh/>
             
-            <AddProjectModal visible={modal.createProject} onClose={closeModal} onSubmit={addProject} showAlert={showAlert} />
         </main>
     );
-
 }
 
 export default Projects;
+// Line Complexity  1.0 -> 

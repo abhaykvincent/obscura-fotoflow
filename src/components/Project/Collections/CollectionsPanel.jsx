@@ -15,7 +15,7 @@ export default function CollectionsPanel({ project, collectionId, deleteCollecti
               key={collection.id}
               className={`collection-tab ${collection.id === collectionId || (!collectionId && index === 0) ? 'active' : ''}`}
             >
-              <Link to={`/project/${project.id}/${collection.id}`}>{collection.name}</Link>
+              <Link to={`/project/galleries/${project.id}/${collection.id}`}>{collection.name}</Link>
               <div className="delete-collection"
                 onClick={() => handleDeleteCollection(project.id, collection.id)}
               >X</div>

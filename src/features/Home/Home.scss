@@ -1,6 +1,7 @@
 @import '../../style/variables';
 
 .home{
+    z-index: none;
     .welcome-section{
         padding: 8px*2;    
         display: grid;
@@ -11,7 +12,7 @@
             display: FLEX;
             svg{
                 opacity: 0;
-                animation: fadeInLeft 0.5s ease-out 0.03s;
+                animation: fadeInLeft 0.5s ease-out 0s;
                 animation-fill-mode: forwards;
                 animation-timing-function: ease-out;
                 height: 4rem;
@@ -33,14 +34,15 @@
             font-size:3rem;
             font-weight: 600;
             color: $gray2-default-dark;
-                &:last-child{
-                    margin-top: -1rem;
-                    color: $gray4-default-dark;
-                    opacity: 0;
-                    animation: fadeInLeft 0.5s ease-out 0.05s;
-                    animation-fill-mode: forwards;
-                    animation-timing-function: ease-out;
-                }
+            &:last-child{
+                margin-top: -8px*2;
+                color: $gray4-default-dark;
+                opacity: 0;
+                font-size:2.5rem;
+                animation: fadeInLeft 0.5s ease-out 0.05s;
+                animation-fill-mode: forwards;
+                animation-timing-function: ease-out;
+            }
             span{
                 
             }
@@ -50,8 +52,12 @@
             }
         }
         .actions{
+            position: fixed;
+            top: 8px*1.75;
+            right: 8px*1.5;
             display: flex;
             justify-content: flex-end;
+            z-index: 99;
         }
         
 
@@ -140,19 +146,31 @@
             }
         }
     }
-    .refresh{
-        display: grid;
-        justify-items: center;
-        p{
-            color: $gray4-default-dark;
+    
+}
 
-            margin: 8px;
-        }
-        .button{
-            color: $gray-default-dark;
-            font-weight: 400;
-        }
+.home-header{
+    .notifications{
+        position: fixed;
+        top:0px;
+        right:8px*2;
+        width: 8px*4;
+        height: 8px*4;
+        z-index: 99;
+        background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/appointment-reminders--v1.png');
+        background-size: 90%;
+        transform: rotate(45deg);
+        .new{
 
+            position: absolute;
+            top:8px*1.1;
+            right:8px*0.2;
+            width: 8px*1;
+            height: 8px*1;
+            border-radius: 50%;
+            background-color: red;
+            border: 1px solid black;
+        }
     }
 }
 @keyframes fadeInLeft {
@@ -196,8 +214,6 @@
             grid-template-columns: 1fr;
             .welcome-message{
                 &:last-child{
-                    margin-top: 0;
-                    line-height: 2.5rem;
 
                 }
             }

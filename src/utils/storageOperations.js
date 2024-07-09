@@ -5,7 +5,7 @@ import {
     ref,
     deleteObject
 } from "firebase/storage";
-import { getDoc, getDocs, setDoc } from "firebase/firestore";
+import { arrayUnion, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { db, storage } from '../firebase/app';
 import { collection, doc, updateDoc } from "firebase/firestore";
 import { delay } from "./generalUtils";
@@ -36,7 +36,6 @@ export const fetchImageUrls = async (id, collectionId, setImageUrls, page, pageS
             // Break the loop once endAt is reached
             if (currentIndex === endAt) break;
         }
-        console.log(imageUrls.length)
         setImageUrls(imageUrls); // Set the image URLs outside the loop
     } catch (error) {
         console.error("Error fetching images:", error);
@@ -49,8 +48,6 @@ export const fetchImageInfo = async (id, collectionId) => {
     const imageInfoList = [];
 
         const listResult = await list(storageRef);
-
-        console.log(listResult)
         for (const item of listResult.items) {
             const downloadURL = await getDownloadURL(item);
             const imageName = item.name.split('/').pop(); // Extracting the image name
@@ -184,11 +181,8 @@ const sliceUpload = async (slice, id, collectionId,setUploadList) => {
     //update uploadList files that maatches current slice eaach files status as initializing
     setUploadList(prevState => {
         return prevState.map((file, index) => {
-            console.log(file)
-            console.log(slice)
             if (slice[index] && file.name === slice[index].name) {
                 console.log('%c ' + file.name + ' file status changed to initializing', 'color:yellow');
-                console.log(file)
                 return {
                     name: file.name,
                     size: file.size,
@@ -211,7 +205,7 @@ const sliceUpload = async (slice, id, collectionId,setUploadList) => {
 };
 
 
-export const handleUpload = async (files, id, collectionId,importFileSize, setUploadList,setUploadStatus, showAlert, retries = 2) => {
+export const handleUpload = async (files, id, collectionId,importFileSize, setUploadList,setUploadStatus, retries = 2) => {
     let uploadPromises = [];
     setUploadList(files)
     // Slice the files array into smaller arrays of size sliceSize
@@ -224,9 +218,6 @@ export const handleUpload = async (files, id, collectionId,importFileSize, setUp
         const slice = files.slice(i, i + sliceSize);
 
         try {
-
-            
-
             const results = await sliceUpload(slice, id, collectionId,setUploadList);
             uploadedFiles.push(...results);
         } catch (error) {
@@ -239,8 +230,6 @@ export const handleUpload = async (files, id, collectionId,importFileSize, setUp
             await delay(100);
         }
     }
-    console.log('Promises:')
-    console.log(uploadedFiles)
     return Promise.all(uploadedFiles)
         .then((results) => {
             let failedFiles = [];
@@ -248,7 +237,6 @@ export const handleUpload = async (files, id, collectionId,importFileSize, setUp
             // results is an array of arrays with objects
             // convert all objects  to single array
             results = [].concat(...results);
-            console.log(results)
             results.forEach((result, index) => {
                 if (result.status === 'rejected')
                     failedFiles.push(files[index]);
@@ -259,15 +247,16 @@ export const handleUpload = async (files, id, collectionId,importFileSize, setUp
             if (failedFiles.length == 0) {
                 setUploadStatus('completed')
                 console.log("%c All files uploaded successfully!", 'color:green');
+                
 
                 addUploadedFilesToFirestore(id, collectionId,importFileSize, uploadedFiles)
                     .then(() => {
-                        showAlert('success', 'All files uploaded successfully!')
+                        //showAlert('success', 'All files uploaded successfully!')
 
                     })
                     .catch((error) => {
                         console.error('Error adding uploaded files to project:', error.message);
-                        showAlert('error', error.message)
+                        //showAlert('error', error.message)
                         throw error;
                     });
                 return uploadedFiles;
@@ -299,11 +288,10 @@ export const addUploadedFilesToFirestore = async (projectId, collectionId,import
 
     if (projectData.exists()) {
         // Update the project document with the new collections array
-        return updateDoc(collectionDoc, { uploadedFiles })
+        return updateDoc(collectionDoc, {uploadedFiles: arrayUnion(...uploadedFiles)} )
             .then(() => {
-                let projectCover= uploadedFiles[0].url
+                let projectCover= uploadedFiles[0].url?uploadedFiles[0].url:''
                 // if project-cover doesent exixt
-                console.log(projectData.data())
                 console.log('Uploaded files added to collection successfully.');
                 // update uploaded files count on project document
                 return updateDoc(projectDoc, 
@@ -311,8 +299,6 @@ export const addUploadedFilesToFirestore = async (projectId, collectionId,import
                         totalFileSize:importFileSize+projectData.data().totalFileSize,
                         projectCover:projectCover,
                         status:"uploaded",
-                        //pin:generateMemorablePIN(4)
-                        //add pin if not exist
                         pin: projectData.data().pin ? projectData.data().pin : generateMemorablePIN(4)
                 });
             })

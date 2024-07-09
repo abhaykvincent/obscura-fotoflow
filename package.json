@@ -8,7 +8,6 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.5.1",
     "dotenv": "^16.4.4",
-    "electron": "^27.0.2",
     "firebase": "^10.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -23,9 +22,10 @@
   "scripts": {
     "emulator": "firebase emulators:start",
     "start": "dotenv -e .env.development react-scripts start",
-    
     "build": "dotenv -e .env.production react-scripts build",
-    "deploy": "firebase deploy --only hosting"
+    "deploy": "firebase deploy --only hosting",
+    "firebase-login": "firebase firebase login",
+    "firebase-logout": "firebase firebase logout"
   },
   "eslintConfig": {
     "extends": [
