@@ -8,7 +8,6 @@ import AddCollectionModal from '../../components/Modal/AddCollection';
 import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 import ShareGallery from '../../components/Modal/ShareGallery'
 import CollectionImages from '../../components/Project/Collections/CollectionImages';
-import CollectionsPanel from '../../components/Project/Collections/CollectionsPanel';
 
 import './Galleries.scss';
 import { openModal } from '../../app/slices/modalSlice';
@@ -45,7 +44,6 @@ export default function Galleries({setUploadList,setUploadStatus}) {
   const targetCollectionId = collectionId || defaultCollectionId;
   let collection = findCollectionById(project, targetCollectionId);
   // If the collection is not found, redirect to the project page and return
-
   if (collection==='Collection not found' && defaultCollectionId!=='') {
     setTimeout(()=>{
     navigate(`/project/${id}`);
@@ -61,30 +59,25 @@ export default function Galleries({setUploadList,setUploadStatus}) {
   const findIndexofCollection = (collectionId) => {
     return project.collections.findIndex((collection) => collection.id === collectionId);
   }
-    const index = findIndexofCollection(targetCollectionId);
-    const activeBox = document.querySelector('.active-box');
-    if (activeBox) {
-      activeBox.style.left = `${(index) * 8*27.2 + 8*4}px`;
-    }
-  
-
+  const index = findIndexofCollection(targetCollectionId);
+  const activeBox = document.querySelector('.active-box');
+  if (activeBox) {
+    activeBox.style.left = `${(index) * 8*27.2 + 8*4}px`;
+  }
   return (
-    <>
+  <>
     <main className='project-page gallery-page'>
-      
       {project.collections.length === 0 ? (
         <>  
           <div className="button secondary add-collection"
-                onClick={() => {
-                  dispatch(openModal('createCollection'))}}
-                >Add Collection</div>
-        <div className="no-items no-collections">Create a collection</div>
+            onClick={() => {
+              dispatch(openModal('createCollection'))}}
+            >Add Collection</div>
+          <div className="no-items no-collections">Create a collection</div>
         </>
       ) : (
         <div className="project-collections">
           <div className="galleries">
-            <h2></h2>
-
             <div className="list">
             {
               project.collections.length > 0 ? 
@@ -120,58 +113,45 @@ export default function Galleries({setUploadList,setUploadStatus}) {
                           <div className="backthumb bthumb3"></div>
                         </div>
                         <div className="thumbnail thumb2">
-
-                          <div className="backthumb bthumb1"style={
-                            { 
-                              backgroundImage: 
-                                `url(${project.projectCover!==""?project.projectCover:'https://img.icons8.com/external-others-abderraouf-omara/64/FFFFFF/external-images-photography-and-equipements-others-abderraouf-omara.png'})`,
+                          <div className="backthumb bthumb1"style={{ 
+                              backgroundImage: `url(${project.projectCover!==""?project.projectCover:'https://img.icons8.com/external-others-abderraouf-omara/64/FFFFFF/external-images-photography-and-equipements-others-abderraouf-omara.png'})`,
                               backgroundSize:`${project.projectCover!=""?'':'50%'}`
                             }}>
                           </div>
                           <div className="backthumb bthumb2"></div>
                           <div className="backthumb bthumb3"></div>
-                          </div>
+                        </div>
                         <div className="thumbnail thumb3">
-
-                            <div className="backthumb bthumb1 count">
-                            {project.uploadedFilesCount } Photos</div>
-                            <div className="backthumb bthumb2"></div>
-                            <div className="backthumb bthumb3"></div>
-                          </div>
+                          <div className="backthumb bthumb1 count">{project.uploadedFilesCount } Photos</div>
+                          <div className="backthumb bthumb2"></div>
+                          <div className="backthumb bthumb3"></div>
+                        </div>
                       </div>
                       <div className="gallery-name">{collection.name}</div>
                     </Link>
 
                   
                 ))}
-
-<div className="active-box box"></div>
-            
+                <div className="active-box box"></div>
               </div>:''
             }
-            <div className="gallery new" 
-              onClick={() => dispatch(openModal('createCollection'))}>
-              <div className="thumbnails">
-                <div className="thumbnail thumb1">
-                  <div className="backthumb bthumb1"
-                  ></div>
-                  <div className="backthumb bthumb2"></div>
-                  <div className="backthumb bthumb3"></div>
-                  <div className="backthumb bthumb4"></div>
+              <div className="gallery new" 
+                onClick={() => dispatch(openModal('createCollection'))}>
+                <div className="thumbnails">
+                  <div className="thumbnail thumb1">
+                    <div className="backthumb bthumb1"></div>
+                    <div className="backthumb bthumb2"></div>
+                    <div className="backthumb bthumb3"></div>
+                    <div className="backthumb bthumb4"></div>
+                  </div>
                 </div>
+                <div className="gallery-name">New Gallery</div>
               </div>
-              <div className="gallery-name">New Gallery</div>
-              
-            </div>
             </div>
           </div>
           <CollectionImages  {...{ id, collectionId:targetCollectionId,collection,setUploadList,setUploadStatus}} />
         </div>
       )}
-
-      
-
-
       <AddCollectionModal project={project}/>
       <ShareGallery   project={project} />
       {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm} onClose={onDeleteConfirmClose}/>:''}
@@ -182,22 +162,13 @@ export default function Galleries({setUploadList,setUploadStatus}) {
         <Link className="back highlight" to={`/project/${encodeURIComponent(id)}`}>{project.name}</Link>
       </div>
       <div className="client">
-          
-          <h1>{collection.name}</h1>
-          <div className="type"></div>
-        </div>
-        <div className="project-options">
-          <div className="button primary share" /* href={`/share/${id}`} */onClick={()=>dispatch(openModal('shareGallery'))} target="_blank">Share</div>
-         
-        </div>
-        {/* <div className="project-options">PIN 
-          <div className="button secondary pin" onClick={()=>{
-            navigator.clipboard.writeText(`${project.pin}`)
-            showAlert('success', 'Pin copied to clipboard!')
-          }}>{project.pin}</div>
-        </div> */}
+        <h1>{collection.name}</h1>
+        <div className="type"></div>
       </div>
-    </>
-  )
-  }
-  // Line Complexity  2.0 -> 
+      <div className="project-options">
+        <div className="button primary share" /* href={`/share/${id}`} */onClick={()=>dispatch(openModal('shareGallery'))} target="_blank">Share</div>
+      </div>
+    </div>
+  </>
+  )}
+  // Line Complexity  2.0 -> 1.5

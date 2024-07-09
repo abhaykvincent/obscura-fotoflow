@@ -28,7 +28,6 @@ export default function Project() {
   if (!projects) return;
   // Find the project with the given id
   const project = projects.find((p) => p.id === id);
-  console.log(project)
   // If the project is not found, redirect to the projects page and return
   if (!project) {
     setTimeout(()=>{
@@ -37,13 +36,12 @@ export default function Project() {
     return;
   }
   else{
-  document.title = `${project.name}'s ${project.type}`
+    document.title = `${project.name}'s ${project.type}`
   }
 
   return (
     <>
       <main className='project-page'>
-        
         <div className="project-dashboard">
 
           {
@@ -117,7 +115,10 @@ export default function Project() {
             
               </Link>
               <div className="ctas">
-                <div className="button secondary outline bold">PIN: ****</div>
+                <div className="button secondary outline bold pin" onClick={()=>{
+                  navigator.clipboard.writeText(`${project.pin}`)
+                  showAlert('success', 'Pin copied to clipboard!')
+                }}>PIN: {project.pin}</div>
                 <div className="button secondary outline disabled">Share</div>
               </div>
             </div>
@@ -178,17 +179,14 @@ export default function Project() {
           <DashboardEvents project={project} />
 
         </div>
-      
-
         <AddCollectionModal project={project}/>
         {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm}/>:''}
-      
-      
-        <Refresh/></main>
+        <Refresh/>
+      </main>
       <div className="project-info">
-      <div className="breadcrumbs">
-      <Link className="back" to="/projects">Projects</Link>
-      </div>
+        <div className="breadcrumbs">
+          <Link className="back" to="/projects">Projects</Link>
+        </div>
         <div className="client">
           <h1>{project.name}</h1>
           <div className="type">{project.type}</div>
@@ -198,7 +196,6 @@ export default function Project() {
             dispatch(openModal('confirmDeleteProject'))
           }}>Delete</div>
         </div>
-          
       </div>
     </>
   )
