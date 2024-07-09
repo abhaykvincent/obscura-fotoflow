@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { findCollectionById } from '../../utils/CollectionQuery';
+import { deleteProject, selectProjects } from '../../app/slices/projectsSlice';
+
 import AddCollectionModal from '../../components/Modal/AddCollection';
 import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
-import CollectionsPanel from '../../components/Project/Collections/CollectionsPanel';
+import ShareGallery from '../../components/Modal/ShareGallery'
 import CollectionImages from '../../components/Project/Collections/CollectionImages';
+import CollectionsPanel from '../../components/Project/Collections/CollectionsPanel';
 
 import './Galleries.scss';
-import ShareGallery from '../../components/Modal/ShareGallery'
-export default function Galleries({ projects,  addCollection, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert}) {
+
+export default function Galleries({setUploadList,setUploadStatus}) {
+  const projects = useSelector(selectProjects)
+  const dispatch= useDispatch();
   const navigate = useNavigate();
   // Route Params
   let { id,collectionId } = useParams();
@@ -25,7 +31,7 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
   // Delete Project Modal
   const[confirmDeleteProject,setConfirmDeleteProject] = useState(false)
   const onDeleteConfirmClose = () => setConfirmDeleteProject(false)
-  const onDeleteConfirm = () => deleteProject(id);
+  const onDeleteConfirm = () => dispatch(deleteProject(id))
 
   // If no projects are available, return early
   if (!projects) return;
@@ -147,10 +153,10 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
                   
                 ))}
 
+<div className="active-box box"></div>
             
               </div>:''
             }
-            <div className="active-box box"></div>
             <div className="gallery new" 
               onClick={()=>openModal('createCollection')}>
               <div className="thumbnails">
@@ -167,14 +173,14 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
             </div>
             </div>
           </div>
-          <CollectionImages  {...{ id, collectionId:targetCollectionId,collection,setUploadList,setUploadStatus,showAlert}} />
+          <CollectionImages  {...{ id, collectionId:targetCollectionId,collection,setUploadList,setUploadStatus}} />
         </div>
       )}
 
       
 
 
-      <AddCollectionModal project={project} visible={modal.createCollection} onClose={closeModal} onSubmit={addCollection}  />
+      <AddCollectionModal project={project} visible={modal.createCollection} onClose={closeModal}   />
       <ShareGallery   project={project}  visible={modal.shareGallery} onClose={closeModal} />
       {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm} onClose={onDeleteConfirmClose}/>:''}
     </main>
@@ -182,7 +188,6 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
       <div className="breadcrumbs">
         <Link className="back " to={`/projects`}>Project </Link>
         <Link className="back highlight" to={`/project/${encodeURIComponent(id)}`}>{project.name}</Link>
-        <Link className="back active" to={`/project/${encodeURIComponent(id)}`}>Gallery</Link>
       </div>
       <div className="client">
           
@@ -206,3 +211,4 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
     </>
   )
   }
+  // Line Complexity  2.0 -> 

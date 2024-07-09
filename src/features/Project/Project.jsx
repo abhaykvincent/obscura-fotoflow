@@ -5,9 +5,15 @@ import AddCollectionModal from '../../components/Modal/AddCollection';
 import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 import DashboardEvents from '../../components/Events/Events';
 import AmountCard from '../../components/Cards/AmountCard/AmountCard';
+import Refresh from '../../components/Refresh/Refresh';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteProject, selectProjects } from '../../app/slices/projectsSlice';
+import { showAlert } from '../../app/slices/alertSlice';
 
-export default function Project({ projects,  addCollection,addEvent,addCrew, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert}) {
+export default function Project({addCollection}) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const projects = useSelector(selectProjects)
   // Route Params
   let { id,collectionId } = useParams();
   // Modal
@@ -18,7 +24,12 @@ export default function Project({ projects,  addCollection,addEvent,addCrew, del
   // Delete Project Modal
   const[confirmDeleteProject,setConfirmDeleteProject] = useState(false)
   const onDeleteConfirmClose = () => setConfirmDeleteProject(false)
-  const onDeleteConfirm = () => deleteProject(id);
+  const onDeleteConfirm = () => {
+    dispatch(deleteProject(id)).then(() => {
+      navigate('/projects');
+      dispatch(showAlert({type:'success-negative', message:`Project <b>${project.name}</b> deleted successfully!`}));// Redirect to /projects page
+    })
+  };
 
   // If no projects are available, return early
   if (!projects) return;
@@ -159,7 +170,7 @@ export default function Project({ projects,  addCollection,addEvent,addCrew, del
             </div>
           </div>
 
-          <DashboardEvents project={project} addEvent={addEvent} addCrew={addCrew}/>
+          <DashboardEvents project={project} />
 
         </div>
       
@@ -167,7 +178,8 @@ export default function Project({ projects,  addCollection,addEvent,addCrew, del
         <AddCollectionModal project={project} visible={modal.createCollection} onClose={closeModal} onSubmit={addCollection}  />
         {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm} onClose={onDeleteConfirmClose}/>:''}
       
-      </main>
+      
+        <Refresh/></main>
       <div className="project-info">
       <div className="breadcrumbs">
       <Link className="back" to="/projects">Projects</Link>
@@ -186,4 +198,4 @@ export default function Project({ projects,  addCollection,addEvent,addCrew, del
     </>
   )
   }
-  // Line complexity 2.0 => 3.5
+  // Line complexity 2.0 -> 3.5 -> 2.0

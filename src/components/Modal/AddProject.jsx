@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { addProject } from '../../firebase/functions/firestore';
 import { analytics } from '../../firebase/app';
 import { getAnalytics, logEvent } from 'firebase/analytics';
+import { useDispatch } from 'react-redux';
+import { showAlert } from '../../app/slices/alertSlice';
+import { addProject } from '../../app/slices/projectsSlice';
+import { useNavigate } from 'react-router';
 
-function AddProjectModal({ showAlert,visible, onClose, onSubmit }) {
-
+function AddProjectModal({visible, onClose, onSubmit }) {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
   const [projectData, setProjectData] = useState({
       name: 'Ethan Ross',
       type: 'Birthday',
@@ -13,12 +17,12 @@ function AddProjectModal({ showAlert,visible, onClose, onSubmit }) {
       collections: [],
       events: [],
       status: 'draft',
-      createdAt: new Date(),
+      projectCover:'',
       uploadedFilesCount:0,
       selectedFilesCount:0,
       totalFileSize:0,
+      createdAt: new Date(),
       lastOpened: new Date(),
-      projectCover:''
   });
   const handleInputChange = (event) => {
       const {name,value} = event.target;
@@ -29,17 +33,20 @@ function AddProjectModal({ showAlert,visible, onClose, onSubmit }) {
   };
   const handleSubmit = () => {
       // Call the API function to add a new project
-      addProject(projectData)
-          .then((addedProject) => {
-              onSubmit(addedProject);
+      
+      dispatch(addProject(projectData))
+          .then((response) => {
+            let newProjectData = response.payload;
+            console.log(newProjectData)
               onClose();
-              showAlert('success', 'New Project created!')
+              dispatch(showAlert({type:'success', message:`New Project created!`}));
               logEvent(analytics,'project_created');
-
+              console.log(`/project/${newProjectData.id}`)
+              navigate(`/project/${newProjectData.id}`);
           })
           .catch((error) => {
               console.error('Error creating project:', error);
-              showAlert('error', 'error')
+              dispatch(showAlert({type:'error', message:`error`}));
               // Handle error scenarios, e.g., show an error message
           });
   };

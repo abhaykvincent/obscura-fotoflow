@@ -12,7 +12,7 @@
             display: FLEX;
             svg{
                 opacity: 0;
-                animation: fadeInLeft 0.5s ease-out 0.03s;
+                animation: fadeInLeft 0.5s ease-out 0s;
                 animation-fill-mode: forwards;
                 animation-timing-function: ease-out;
                 height: 4rem;
@@ -146,20 +146,7 @@
             }
         }
     }
-    .refresh{
-        display: grid;
-        justify-items: center;
-        p{
-            color: $gray4-default-dark;
-
-            margin: 8px;
-        }
-        .button{
-            color: $gray-default-dark;
-            font-weight: 400;
-        }
-
-    }
+    
 }
 
 .home-header{
