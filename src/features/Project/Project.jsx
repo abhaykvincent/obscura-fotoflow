@@ -8,24 +8,18 @@ import Refresh from '../../components/Refresh/Refresh';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteProject, selectProjects } from '../../app/slices/projectsSlice';
 import { showAlert } from '../../app/slices/alertSlice';
-import { openModal } from '../../app/slices/modalSlice';
+import { closeModal, openModal, selectModal } from '../../app/slices/modalSlice';
 
 export default function Project() {
+  let { id} = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const projects = useSelector(selectProjects)
-  // Route Params
-  let { id,collectionId } = useParams();
-  // Modal
-  console.log(projects.length)
-  const [modal, setModal] = useState({createCollection: false})
-  const closeModal = () => setModal({ createCollection: false });
-  // Delete Project Modal
-  const[confirmDeleteProject,setConfirmDeleteProject] = useState(false)
-  const onDeleteConfirmClose = () => setConfirmDeleteProject(false)
+  const {confirmDeleteProject} = useSelector(selectModal)
   const onDeleteConfirm = () => {
     dispatch(deleteProject(id)).then(() => {
       navigate('/projects');
+      dispatch(closeModal('confirmDeleteProject'))
       dispatch(showAlert({type:'success-negative', message:`Project <b>${project.name}</b> deleted successfully!`}));// Redirect to /projects page
     })
   };
@@ -186,8 +180,8 @@ export default function Project() {
         </div>
       
 
-        <AddCollectionModal project={project} visible={modal.createCollection} onClose={closeModal}/>
-        {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm} onClose={onDeleteConfirmClose}/>:''}
+        <AddCollectionModal project={project}/>
+        {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm}/>:''}
       
       
         <Refresh/></main>
@@ -201,7 +195,7 @@ export default function Project() {
         </div>
         <div className="project-options">
           <div className="button tertiary" onClick={()=>{
-            setConfirmDeleteProject(true)
+            dispatch(openModal('confirmDeleteProject'))
           }}>Delete</div>
         </div>
           

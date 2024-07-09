@@ -22,25 +22,18 @@ import Selection from './features/Selection/Selection';
 import Notifications from './features/Notifications/Notifications';
 // Redux 
 import { checkAuthStatus, selectIsAuthenticated } from './app/slices/authSlice';
-import { selectProjects,selectLoading ,fetchProjects} from './app/slices/projectsSlice';
+import { selectLoading ,fetchProjects} from './app/slices/projectsSlice';
 // Stylesheets
 import './App.scss';
-import { selectModal } from './app/slices/modalSlice';
 
 function App() {
   const dispatch = useDispatch();
-
-  const projects = useSelector(selectProjects);
-  const modals = useSelector(selectModal);
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const isLoading = useSelector(selectLoading);
+
   // Upload progress
   const [uploadList, setUploadList] = useState([]);
   const [uploadStatus, setUploadStatus] = useState('close');
-  const isLoading = useSelector(selectLoading);
-  // Modal
-  const [modal, setModal] = useState({ createProject: false })
-  const openModal = () => setModal({ createProject: true });
-  const closeModal = () => setModal({ createProject: false });
 
   // ON RENDER
   useEffect(() => {
@@ -50,9 +43,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if(uploadStatus === 'completed'){
+    if(uploadStatus === 'completed')
       setTimeout(() => setUploadStatus('close'), 1000)
-    }
   }, [uploadStatus])
 
   const publicPages = window.location.href.includes('share') || window.location.href.includes('selection')|| window.location.href.includes('masanory-grid')
@@ -79,25 +71,21 @@ function App() {
             { isAuthenticated &&
               <>
                 <Route exact path="/" element={<Home/>}/>
-                <Route       path="/project/:id" element={<Project {...{setUploadList,setUploadStatus, }} />}/>
+                <Route       path="/project/:id" element={<Project/>}/>
                 <Route exact path="/project/galleries/:id/:collectionId?" element={<Galleries {...{setUploadList,setUploadStatus }} />}/>
                 <Route       path="/projects" element={<Projects/>}/>
-               
                 <Route path="/storage" element={<Storage/>}/>
                 <Route path="/notifications" element={<Notifications/>}/>
                 <Route path="/subscription" element={<Subscription/>}/>
               </> 
             }
             <Route path="/share/:projectId/:collectionId?" element={<ShareProject/>}/>
-            <Route path="/selection/:projectId/:collectionId?" element={<Selection />}/>
+            <Route path="/selection/:projectId/:collectionId?" element={<Selection/>}/>
             <Route path="/masanory-grid" element={<ImageGallery />}/>
           </Routes>
-        )
-      }
-      
+        )}
     </div>
   );
 }
-
 export default App;
-// Line Complexity  1.5 -> 2.0 -> 2.5 -> 2.0 -> 1.0
+// Line Complexity  1.5 -> 2.0 -> 2.5 -> 2.0 -> 1.0 ->0.9
