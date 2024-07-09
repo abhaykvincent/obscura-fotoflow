@@ -20,20 +20,21 @@ function DashboardEvents({project})
     <div className="shoots">
 
       <div className="headings">
-        <div className="heading-shoots">
+        <div className="heading-section">
           
-          <h3 className='heading '>Shoots</h3>
-        <div className="new-shoot button tertiary l2 outline"
-        onClick={ ()=>{
-            openModal('createEvent')
-          }
-          }>+ New</div>
-        </div>
+            <h3 className='heading '>Shoots</h3>
+          <div className="new-shoot button tertiary l2 outline"
+          onClick={ ()=>{
+              openModal('createEvent')
+            }
+            }>+ New</div>
+          </div>
         {
           project.events && project.events.length >0 &&
-            <div className="heading-crew">
-
-              <h3 className='heading '>Crew</h3>
+            <div className="heading-crew heading-section">
+                <h3 className='heading '>Crew</h3>
+                <div className="new-shoot button tertiary l2 outline"
+                onClick={ ()=>{}}>+ New</div>
             </div>
         }
       </div>

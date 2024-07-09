@@ -79,7 +79,11 @@ export default function Project({addCollection}) {
           <div className="gallery-overview">
             
             <div className="galleries">
-              <h3 className='heading'>Galleries</h3>
+            <div className="heading-shoots heading-section">
+              <h3 className='heading '>Galleries</h3>
+              <div className="new-shoot button tertiary l2 outline"
+              onClick={ ()=>{}}>+ New</div>
+            </div>
               <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/project/galleries/${id}`}>
                 <div className="thumbnails">
                   <div className="thumbnail thumb1">
@@ -120,7 +124,7 @@ export default function Project({addCollection}) {
             
               </Link>
               <div className="ctas">
-                <div className="button secondary outline bold">+ New Gallery</div>
+                <div className="button secondary outline bold">PIN: ****</div>
                 <div className="button secondary outline disabled">Share</div>
               </div>
             </div>
@@ -129,7 +133,11 @@ export default function Project({addCollection}) {
 
           <div className="financials-overview">
             <div className="payments">
-              <h3 className='heading'>Invoices</h3>
+              <div className="heading-shoots heading-section">
+                <h3 className='heading '>Invoices</h3>
+                <div className="new-shoot button tertiary l2 outline"
+                onClick={ ()=>{}}>+ New</div>
+              </div>
               <div className="card">
                 <div className="chart box">
                     <div className="status large">
@@ -148,7 +156,11 @@ export default function Project({addCollection}) {
               </div>
             </div>
             <div className="payments expances">
-              <h3 className='heading'>Expances</h3>
+              <div className="heading-shoots heading-section">
+                <h3 className='heading '>Expances</h3>
+                <div className="new-shoot button tertiary l2 outline"
+                onClick={ ()=>{}}>+ New</div>
+              </div>
               <div className="card">
                 <div className="chart box">
                     <div className="status large">

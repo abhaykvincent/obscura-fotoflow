@@ -43,6 +43,7 @@ function AddCrewModal({ project,eventId, visible, onClose }) {
     dispatch(addCrew({projectId:project.id,eventId:eventId,crewData:crewData}))
     .then((data)=>{
       console.log(data)
+      debugger
       dispatch(showAlert({type:'success', message:`Event <b></b> added successfully!`}));
     })
     onClose('createEvent');
