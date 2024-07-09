@@ -33,9 +33,8 @@ export const deleteProject = createAsyncThunk(
 export const addCollection = createAsyncThunk(
   'projects/addCollection',
   async ({ projectId, newCollection }, { dispatch }) => {
-    console.log(projectId, newCollection)
     const id = await addCollectionToFirestore(projectId, newCollection);
-    return id
+    return {projectId, collection: {id,...newCollection}}
   }
 );
 
@@ -182,7 +181,6 @@ const projectsSlice = createSlice({
         const { projectId, newEvent } = action.payload;
         state.data = state.data.map((project) => {
           if (project.id === projectId) {
-            console.log(project.data)
             const updatedEvents = [...project.events, newEvent];
             return { ...project, events: updatedEvents };
           }
@@ -204,13 +202,10 @@ const projectsSlice = createSlice({
         state.status = 'idle';
         state.loading = false;
         const { projectId, eventId, crewData } = action.payload;
-        console.log(action.payload)
         state.data = state.data.map((project) => {
           if (project.id === projectId) {
-            console.log(project)
             const updatedEvents = project.events.map((event) => {
               if (event.id === eventId) {
-                console.log(event)
                 const updatedCrew = [...event.crews, crewData];
                 return { ...event, crews: updatedCrew };
               }

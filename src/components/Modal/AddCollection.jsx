@@ -24,10 +24,7 @@ function AddCollectionModal({ project, visible, onClose }) {
     dispatch(addCollection({ projectId: project.id, newCollection: CollectionData }))
     .then((id)=>{
       dispatch(showAlert({type:'success', message:`Collection <b>${CollectionData.name}</b> added successfully!`}));
-      console.log(id.payload);
-      setTimeout(()=>{
-        navigate(`/project/galleries/${project.id}/${id.payload}`);
-      },100)
+        navigate(`/project/galleries/${project.id}/${id.payload.collection.id}`);
     })
     onClose('createCollection');
   };

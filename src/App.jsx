@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 // Components
-import './App.scss';
 import Alert from './components/Alert/Alert';
 import Header from './components/Header/Header';
 import Sidebar from './components/Sidebar/Sidebar';
@@ -24,10 +23,12 @@ import Notifications from './features/Notifications/Notifications';
 import { checkAuthStatus, selectIsAuthenticated } from './app/slices/authSlice';
 import { selectProjects,selectLoading ,fetchProjects} from './app/slices/projectsSlice';
 import Loading from './components/Loading/Loading';
+// Stylesheets
+import './App.scss';
 
 function App() {
-  
   const dispatch = useDispatch();
+
   const projects = useSelector(selectProjects);
   const isAuthenticated = useSelector(selectIsAuthenticated);
   // Upload progress
@@ -43,15 +44,13 @@ function App() {
   useEffect(() => {
     document.title = `Obscura FotoFlow`;
     dispatch(checkAuthStatus())
-    // Fetch Projects
     dispatch(fetchProjects())
   }, []);
-  // Changes !! Projects
+
   useEffect(() => {
     console.log('projects changed !!')
     console.log(projects)
   }, [projects]);
-  // Upload status UI Update
   useEffect(() => {
     if(uploadStatus === 'completed'){
       setTimeout(() => {
@@ -74,25 +73,24 @@ function App() {
           <AddProjectModal visible={modal.createProject} onClose={closeModal}  openModal={openModal} />
         </>
       ) : (
-        <>{!publicPages && <LoginModal/>}</>
+        <>{ !publicPages && <LoginModal/> }</>
       )}
       {
         isLoading ? (
           <Loading/>
         ) : (
           <Routes>
-            { isAuthenticated ? 
+            { isAuthenticated &&
               <>
                 <Route exact path="/" element={<Home {...{openModal}} />}/>
-                <Route path="/project/:id" element={<Project {...{setUploadList,setUploadStatus, }} />}/>
+                <Route       path="/project/:id" element={<Project {...{setUploadList,setUploadStatus, }} />}/>
                 <Route exact path="/project/galleries/:id/:collectionId?" element={<Galleries {...{setUploadList,setUploadStatus }} />}/>
-                <Route path="/projects" element={<Projects {...{openModal}} />}/>
+                <Route       path="/projects" element={<Projects {...{openModal}} />}/>
                
                 <Route path="/storage" element={<Storage/>}/>
                 <Route path="/notifications" element={<Notifications/>}/>
                 <Route path="/subscription" element={<Subscription/>}/>
               </> 
-              : ''
             }
             <Route path="/share/:projectId/:collectionId?" element={<ShareProject/>}/>
             <Route path="/selection/:projectId/:collectionId?" element={<Selection />}/>
