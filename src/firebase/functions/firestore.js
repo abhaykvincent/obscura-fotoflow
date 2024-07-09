@@ -16,7 +16,6 @@ export const fetchProjectsFromFirestore = async () => {
         id: doc.id,
         ...doc.data(),
     }));
-    console.log("projectsData")
     console.log(projectsData)
     return projectsData
 };

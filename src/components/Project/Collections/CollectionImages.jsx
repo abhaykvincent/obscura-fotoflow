@@ -72,13 +72,14 @@ useEffect(() => {
 
 const handleFileInputChange = async (event) => {
     const selectedFiles = Array.from(event.target.files);
+    console.log(selectedFiles)
     setIsPhotosImported(true);
     setFiles(selectedFiles);
     setImportFileSize(addAllFileSizesToMB(selectedFiles));
     setImageUrls(selectedFiles);
     setUploadStatus('open');
     setIsPhotosImported(false);
-    let uploadedImages = await handleUpload(files, id, collectionId, importFileSize, setUploadList, setUploadStatus);
+    let uploadedImages = await handleUpload(selectedFiles, id, collectionId, importFileSize, setUploadList, setUploadStatus);
     console.log(uploadedImages);
     setImageUrls(uploadedImages);
 };
