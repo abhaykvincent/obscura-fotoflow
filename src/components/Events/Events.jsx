@@ -4,7 +4,7 @@ import AddCrewModal from '../Modal/AddCrew';
 import CrewCard from '../Cards/CrewCard/CrewCard';
 import { getUserByID, teams } from '../../data/teams';
 
-function DashboardEvents({project,addEvent,addCrew})
+function DashboardEvents({project})
 {
   // Modal
   const [modal, setModal] = useState({createEvent: false,addCrew:false})
@@ -99,14 +99,12 @@ function DashboardEvents({project,addEvent,addCrew})
         project={project} 
         visible={modal.createEvent} 
         onClose={closeModal} 
-        onSubmit={addEvent}  
       />
       <AddCrewModal
         project={project} 
         eventId={selectedEventID}
         visible={modal.addCrew} 
-        onClose={closeModal} 
-        onSubmit={addCrew}  
+        onClose={closeModal}  
       />
       
     </div>
@@ -114,3 +112,4 @@ function DashboardEvents({project,addEvent,addCrew})
 }
 
 export default DashboardEvents
+// Line Complexity  1.0 -> 

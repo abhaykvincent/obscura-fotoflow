@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { findCollectionById } from '../../utils/CollectionQuery';
+import { deleteProject, selectProjects } from '../../app/slices/projectsSlice';
+
 import AddCollectionModal from '../../components/Modal/AddCollection';
 import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
-import CollectionsPanel from '../../components/Project/Collections/CollectionsPanel';
+import ShareGallery from '../../components/Modal/ShareGallery'
 import CollectionImages from '../../components/Project/Collections/CollectionImages';
+import CollectionsPanel from '../../components/Project/Collections/CollectionsPanel';
 
 import './Galleries.scss';
-import ShareGallery from '../../components/Modal/ShareGallery'
-import { useDispatch } from 'react-redux';
-export default function Galleries({ projects,  addCollection, deleteCollection, deleteProject,setUploadList,setUploadStatus,showAlert}) {
+
+export default function Galleries({setUploadList,setUploadStatus}) {
+  const projects = useSelector(selectProjects)
   const dispatch= useDispatch();
   const navigate = useNavigate();
   // Route Params
@@ -27,7 +31,7 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
   // Delete Project Modal
   const[confirmDeleteProject,setConfirmDeleteProject] = useState(false)
   const onDeleteConfirmClose = () => setConfirmDeleteProject(false)
-  const onDeleteConfirm = () => deleteProject(id);
+  const onDeleteConfirm = () => dispatch(deleteProject(id))
 
   // If no projects are available, return early
   if (!projects) return;
@@ -176,7 +180,7 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
       
 
 
-      <AddCollectionModal project={project} visible={modal.createCollection} onClose={closeModal} onSubmit={addCollection}  />
+      <AddCollectionModal project={project} visible={modal.createCollection} onClose={closeModal}   />
       <ShareGallery   project={project}  visible={modal.shareGallery} onClose={closeModal} />
       {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm} onClose={onDeleteConfirmClose}/>:''}
     </main>
@@ -207,3 +211,4 @@ export default function Galleries({ projects,  addCollection, deleteCollection, 
     </>
   )
   }
+  // Line Complexity  2.0 -> 

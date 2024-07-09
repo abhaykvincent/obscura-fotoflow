@@ -12,9 +12,6 @@ const alertSlice = createSlice({
 	initialState,
 	reducers: {
 		showAlert: (state, action) => {
-
-			console.log(action)
-			debugger
 			state.show = true;
 			state.type = action.payload.type;
 			state.message = action.payload.message;

@@ -226,7 +226,7 @@ body{
       position: relative;
       padding: 8px*2;
       margin: 8px;
-      margin-top: 8px*2;
+      margin-top: 8px*0;
       background-color: $dark-3;
       border-radius: $border-radius-1;
       @include boxed;
@@ -326,7 +326,7 @@ body{
     justify-content: space-between;
     justify-items: stretch;
     padding: 8px*2;
-    z-index: 45;
+    z-index: 40;
     animation: gallery-page-reveal 0.1s ease-out forwards;
     .client{
       display: grid;

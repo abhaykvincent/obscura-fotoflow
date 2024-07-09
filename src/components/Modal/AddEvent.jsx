@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import { addEvent } from '../../app/slices/projectsSlice';
+import { useDispatch } from 'react-redux';
+import { showAlert } from '../../app/slices/alertSlice';
 
-function AddEventModal({ project, visible, onClose, onSubmit }) {
+function AddEventModal({ project, visible, onClose}) {
+  const dispatch = useDispatch();
   const [EventData, setEventData] = useState({
     type: 'Wedding day',
     date: '10-20-2025',
-    location:'Kochi, India'
+    location:'Kochi, India',
+    crews: []
   });
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -14,8 +19,10 @@ function AddEventModal({ project, visible, onClose, onSubmit }) {
       }));
   };
   const handleSubmit = () => {
-    //console.log(project.id,EventData);
-    onSubmit(project.id,EventData);
+    dispatch(addEvent({projectId:project.id,newEvent:EventData}))
+    .then((data)=>{
+      dispatch(showAlert({type:'success', message:`Event <b>${data.payload.newEvent.type}</b> added successfully!`}));
+    })
     onClose('createEvent');
   };
 
@@ -69,8 +76,4 @@ function AddEventModal({ project, visible, onClose, onSubmit }) {
 
 export default AddEventModal
 
-
-function convertToSlug(inputString) {
-  // Replace spaces with hyphens and convert to lowercase
-  return inputString.replace(/\s+/g, '-').toLowerCase();
-}
+  // Line Complexity  1.0 -> 

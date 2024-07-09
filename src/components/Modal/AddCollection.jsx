@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { addCollection } from '../../app/slices/projectsSlice';
+import { showAlert } from '../../app/slices/alertSlice';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router';
 
-function AddCollectionModal({ project, visible, onClose, onSubmit }) {
+function AddCollectionModal({ project, visible, onClose }) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
   const [CollectionData, setCollectionData] = useState({
     name: 'Birthday',
     status: 'empty',
@@ -15,7 +21,14 @@ function AddCollectionModal({ project, visible, onClose, onSubmit }) {
       }));
   };
   const handleSubmit = () => {
-    onSubmit(project.id,CollectionData);
+    dispatch(addCollection({ projectId: project.id, newCollection: CollectionData }))
+    .then((id)=>{
+      dispatch(showAlert({type:'success', message:`Collection <b>${CollectionData.name}</b> added successfully!`}));
+      console.log(id.payload);
+      setTimeout(()=>{
+        navigate(`/project/galleries/${project.id}/${id.payload}`);
+      },100)
+    })
     onClose('createCollection');
   };
 

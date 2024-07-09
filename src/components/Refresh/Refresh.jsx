@@ -1,6 +1,9 @@
 import React from 'react'
+import { fetchProjects } from '../../app/slices/projectsSlice'
+import { useDispatch } from 'react-redux'
 
-function Refresh({loadProjects}) {
+function Refresh() {
+  const dispatch = useDispatch()
   return (
 	<div className="refresh">
         <p>
@@ -8,7 +11,7 @@ function Refresh({loadProjects}) {
         </p>
         <div className="button secondary"
 
-        onClick={loadProjects}
+        onClick={()=>{dispatch(fetchProjects())}}
         >Refresh</div>
     </div>
   )

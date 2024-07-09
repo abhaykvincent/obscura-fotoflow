@@ -1,27 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { getUserByID, getUsersByRole, teams } from '../../data/teams';
+import { addCrew } from '../../app/slices/projectsSlice';
+import { useDispatch } from 'react-redux';
+import { showAlert } from '../../app/slices/alertSlice';
 
-function AddCrewModal({ project,eventId, visible, onClose, onSubmit }) {
-  //console.log(eventId)
-   
-  const [EventData, setEventData] = useState({
+function AddCrewModal({ project,eventId, visible, onClose }) {
+  const dispatch = useDispatch()
+  const [crewData, setCrewData] = useState({
     role: 'photographer',
     assigne:'sam-0001',
     name: 'Sam',
     });
-  const [users, setUsers] = useState(getUsersByRole(EventData.role));
+  const [users, setUsers] = useState(getUsersByRole(setCrewData.role));
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
 
     //console.log(name,value)
-    setEventData((prevData) => ({
+    setCrewData((prevData) => ({
         ...prevData,
         [name]: value,
       }));
       if (name === 'role') {
         setUsers(getUsersByRole(value))
-        setEventData((prevData) => ({
+        setCrewData((prevData) => ({
           ...prevData,
           assigne: getUsersByRole(value)[0].userId || 'uu',
           name: getUsersByRole(value)[0].name || 'uu',
@@ -30,7 +32,7 @@ function AddCrewModal({ project,eventId, visible, onClose, onSubmit }) {
       }
       if (name === 'assigne') {
         const user = getUserByID(value);
-        setEventData((prevData) => ({
+        setCrewData((prevData) => ({
           ...prevData,
           name: user.name,
         }
@@ -38,14 +40,18 @@ function AddCrewModal({ project,eventId, visible, onClose, onSubmit }) {
       }
   };
   const handleSubmit = () => {
-    onSubmit(project.id,eventId,EventData);
-    onClose('addCrew');
+    dispatch(addCrew({projectId:project.id,eventId:eventId,crewData:crewData}))
+    .then((data)=>{
+      console.log(data)
+      dispatch(showAlert({type:'success', message:`Event <b></b> added successfully!`}));
+    })
+    onClose('createEvent');
   };
 
   useEffect(() => {
-    console.log(EventData)
+    console.log(setCrewData)
 
-  },[EventData.role])
+  },[setCrewData.role])
 
   if (!visible) {
     return null;
@@ -68,7 +74,7 @@ function AddCrewModal({ project,eventId, visible, onClose, onSubmit }) {
             {/* Role */}
             <div className="field">
               <label className="" htmlFor="">Role</label>
-              <select className="" name="role" value={EventData.role} onChange={handleInputChange}>
+              <select className="" name="role" value={setCrewData.role} onChange={handleInputChange}>
                 <option value="photographer">Photographer</option>
                 <option value="videographer">Videographer</option>
                 <option value="assistant">Assistant</option>
@@ -80,7 +86,7 @@ function AddCrewModal({ project,eventId, visible, onClose, onSubmit }) {
             <div className="field assigne">
               <label className="" htmlFor="assigne">Assigne</label>
               <div className="select-wrapper">
-                <select className="" name="assigne" value={EventData.assigne} onChange={handleInputChange}>
+                <select className="" name="assigne" value={setCrewData.assigne} onChange={handleInputChange}>
                   { 
                     users.map((user)=>{
                       //console.log(user)
@@ -110,3 +116,4 @@ function AddCrewModal({ project,eventId, visible, onClose, onSubmit }) {
 }
 
 export default AddCrewModal
+// Line Complexity  1.0 -> 

@@ -4,8 +4,11 @@ import AddProjectModal from '../../components/Modal/AddProject';
 import './Projects.scss';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
 import Refresh from '../../components/Refresh/Refresh';
+import { useSelector } from 'react-redux';
+import { selectProjects } from '../../app/slices/projectsSlice';
 
-function Projects({ projects, openModal,addProject, isLoading }) {
+function Projects({openModal}) {
+    const projects = useSelector(selectProjects)
     useEffect(() => {
     }, [projects]);
     return (
@@ -30,7 +33,8 @@ function Projects({ projects, openModal,addProject, isLoading }) {
                 </div>
             </div>
             <div className="projects-list">
-                {projects.length !== 0? (
+                { 
+                projects.length !== 0? (
                     projects.map((project, index) => (
                         <ProjectCard 
                         project={project}
@@ -38,36 +42,33 @@ function Projects({ projects, openModal,addProject, isLoading }) {
                     /> 
                     ))) : (
                         <>
-                        <div className="section recent">
-                <h3 className='section-heading'>Recent Projects</h3>
-                        </div>
+                            <div className="section recent">
+                                <h3 className='section-heading'>Recent Projects</h3>
+                            </div>
 
-                        <div className="project new"  
-                            onClick={openModal}
-                        >
-                            <div className="project-cover"
-                            ></div>
-                            <div className="project-details">
-                                <div className="details-top">
+                            <div className="project new"
+                                onClick={openModal}
+                            >
+                                <div className="project-cover" ></div>
+                                <div className="project-details">
+                                    <div className="details-top">
 
-                                    <h4 className="project-title">Create Your First Project</h4>
-                                    <p className="project-type"></p>
+                                        <h4 className="project-title">Create Your First Project</h4>
+                                        <p className="project-type"></p>
+                                    </div>
                                 </div>
+                                <div className="project-options"></div>
                             </div>
-                            <div className="project-options">
-                                
-                            </div>
-                        </div>
                         </>
                     )
-                    }
-                </div>
-            
-                <Refresh/>
+                }
+            </div>
+            {/* Refresh Projects Data from cloud */}
+            <Refresh/>
             
         </main>
     );
-
 }
 
 export default Projects;
+// Line Complexity  1.0 -> 
