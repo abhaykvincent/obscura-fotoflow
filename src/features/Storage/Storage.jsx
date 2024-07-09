@@ -2,8 +2,11 @@ import React from 'react'
 import './Storage.scss'
 import StoragePie from '../../components/StoragePie/StoragePie';
 import { convertMegabytes } from '../../utils/stringUtils';
+import { selectProjects } from '../../app/slices/projectsSlice';
+import { useSelector } from 'react-redux';
 
-function Storage({projects}) {
+function Storage() {
+    const projects = useSelector(selectProjects)
     // Calculate the storage used from projects importFileSize
     const usedSpace = projects.reduce((acc,project) => {
         return acc + project.totalFileSize
