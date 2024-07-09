@@ -38,7 +38,6 @@ export default function Selection() {
     document.title = project.name+' | Selection'
     setCurrentCollectionIndex(project.collections.findIndex(collection => collection.id === collectionId))
     let newImages = project?.collections.find((collection)=>collection.id===collectionId)?.uploadedFiles || []
-    console.log(newImages)
     setImages(newImages);
     setTotalPages(Math.ceil(newImages.length/size))
     setPage(1)
@@ -71,7 +70,6 @@ useEffect(() => {
           }
         });
       });
-      console.log(selectedImagesInFirestore)
       setSelectedImages(selectedImagesInFirestore)
     } catch (error) {
       console.error('Failed to fetch project:', error);
@@ -81,8 +79,6 @@ useEffect(() => {
   // Handle add selected images
   const handleAddSelectedImages = async () => {
     try {
-      console.log('selectedImagesInCollection',selectedImagesInCollection)
-      console.log('selectedImages',selectedImages)
       await addSelectedImagesToFirestore(projectId, collectionId, selectedImages,page,size,totalPages);
       // handle success (e.g. show a success message)
     } catch (error) {
@@ -166,3 +162,4 @@ useEffect(() => {
     selectedImages.forEach((image) => selectedImagesInCollection.push(image))
   }
 }
+// Line Complexity  1.5 ->

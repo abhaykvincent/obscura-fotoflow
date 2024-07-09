@@ -15,12 +15,6 @@ function Notifications(notifications) {
 				<div className="type"></div>
 			</div>
 		<div className="project-options"></div>
-        {/* <div className="project-options">PIN 
-          <div className="button secondary pin" onClick={()=>{
-            navigator.clipboard.writeText(`${project.pin}`)
-            showAlert('success', 'Pin copied to clipboard!')
-          }}>{project.pin}</div>
-        </div> */}
       	</div>
 		<main>
 			<div className="notifications-list">
@@ -54,3 +48,4 @@ function Notifications(notifications) {
 }
 
 export default Notifications
+// Line Complexity  0.5 ->
