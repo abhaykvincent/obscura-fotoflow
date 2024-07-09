@@ -9,6 +9,7 @@ const initialState = {
     createProject: false,
     createCollection: false,
     shareGallery: false,
+    confirmDeleteProject:false
 
 };
 

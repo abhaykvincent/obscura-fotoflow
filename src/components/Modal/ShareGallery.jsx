@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './ShareGallery.scss'
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
+
 function ShareGallery({project }) {
   const dispatch = useDispatch()
   const visible = useSelector(selectModal)

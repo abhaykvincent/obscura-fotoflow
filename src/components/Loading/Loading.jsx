@@ -10,3 +10,4 @@ function Loading() {
 }
 
 export default Loading
+// Line Complexity  0.1 ->

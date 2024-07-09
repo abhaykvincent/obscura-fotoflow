@@ -93,3 +93,4 @@ function UploadProgress({uploadList,uploadStatus}) {
 }
 
 export default UploadProgress
+// Line Complexity  1.0 ->

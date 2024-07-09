@@ -8,24 +8,18 @@ import Refresh from '../../components/Refresh/Refresh';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteProject, selectProjects } from '../../app/slices/projectsSlice';
 import { showAlert } from '../../app/slices/alertSlice';
-import { openModal } from '../../app/slices/modalSlice';
+import { closeModal, openModal, selectModal } from '../../app/slices/modalSlice';
 
 export default function Project() {
+  let { id} = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const projects = useSelector(selectProjects)
-  // Route Params
-  let { id,collectionId } = useParams();
-  // Modal
-  console.log(projects.length)
-  const [modal, setModal] = useState({createCollection: false})
-  const closeModal = () => setModal({ createCollection: false });
-  // Delete Project Modal
-  const[confirmDeleteProject,setConfirmDeleteProject] = useState(false)
-  const onDeleteConfirmClose = () => setConfirmDeleteProject(false)
+  const {confirmDeleteProject} = useSelector(selectModal)
   const onDeleteConfirm = () => {
     dispatch(deleteProject(id)).then(() => {
       navigate('/projects');
+      dispatch(closeModal('confirmDeleteProject'))
       dispatch(showAlert({type:'success-negative', message:`Project <b>${project.name}</b> deleted successfully!`}));// Redirect to /projects page
     })
   };
@@ -34,7 +28,6 @@ export default function Project() {
   if (!projects) return;
   // Find the project with the given id
   const project = projects.find((p) => p.id === id);
-  console.log(project)
   // If the project is not found, redirect to the projects page and return
   if (!project) {
     setTimeout(()=>{
@@ -43,13 +36,12 @@ export default function Project() {
     return;
   }
   else{
-  document.title = `${project.name}'s ${project.type}`
+    document.title = `${project.name}'s ${project.type}`
   }
 
   return (
     <>
       <main className='project-page'>
-        
         <div className="project-dashboard">
 
           {
@@ -123,7 +115,10 @@ export default function Project() {
             
               </Link>
               <div className="ctas">
-                <div className="button secondary outline bold">PIN: ****</div>
+                <div className="button secondary outline bold pin" onClick={()=>{
+                  navigator.clipboard.writeText(`${project.pin}`)
+                  showAlert('success', 'Pin copied to clipboard!')
+                }}>PIN: {project.pin}</div>
                 <div className="button secondary outline disabled">Share</div>
               </div>
             </div>
@@ -184,27 +179,23 @@ export default function Project() {
           <DashboardEvents project={project} />
 
         </div>
-      
-
-        <AddCollectionModal project={project} visible={modal.createCollection} onClose={closeModal}/>
-        {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm} onClose={onDeleteConfirmClose}/>:''}
-      
-      
-        <Refresh/></main>
+        <AddCollectionModal project={project}/>
+        {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm}/>:''}
+        <Refresh/>
+      </main>
       <div className="project-info">
-      <div className="breadcrumbs">
-      <Link className="back" to="/projects">Projects</Link>
-      </div>
+        <div className="breadcrumbs">
+          <Link className="back" to="/projects">Projects</Link>
+        </div>
         <div className="client">
           <h1>{project.name}</h1>
           <div className="type">{project.type}</div>
         </div>
         <div className="project-options">
           <div className="button tertiary" onClick={()=>{
-            setConfirmDeleteProject(true)
+            dispatch(openModal('confirmDeleteProject'))
           }}>Delete</div>
         </div>
-          
       </div>
     </>
   )
