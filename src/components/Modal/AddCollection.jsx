@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { addCollection } from '../../app/slices/projectsSlice';
 import { showAlert } from '../../app/slices/alertSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
+import { closeModal, selectModal } from '../../app/slices/modalSlice';
 
-function AddCollectionModal({ project, visible, onClose }) {
+function AddCollectionModal({ project }) {
   const dispatch = useDispatch();
   const navigate = useNavigate()
+  const visible = useSelector(selectModal)
+  const onClose = () => dispatch(closeModal('createCollection'))
   const [CollectionData, setCollectionData] = useState({
     name: 'Birthday',
     status: 'empty',
@@ -26,10 +29,10 @@ function AddCollectionModal({ project, visible, onClose }) {
       dispatch(showAlert({type:'success', message:`Collection <b>${CollectionData.name}</b> added successfully!`}));
         navigate(`/project/galleries/${project.id}/${id.payload.collection.id}`);
     })
-    onClose('createCollection');
+    onClose();
   };
 
-  if (!visible) {
+  if (!visible.createCollection) {
     return null;
   }
 
@@ -38,7 +41,7 @@ function AddCollectionModal({ project, visible, onClose }) {
       <div className="modal create-project">
         <div className='modal-header'>
           <div className="modal-controls">
-            <div className="control close" onClick={()=>onClose('createCollection')}></div>
+            <div className="control close" onClick={()=>onClose()}></div>
             <div className="control minimize"></div>
             <div className="control maximize"></div>
           </div>
@@ -53,11 +56,11 @@ function AddCollectionModal({ project, visible, onClose }) {
           </div>
         </div>
         <div className="actions">
-          <div className="button secondary" onClick={()=>onClose('createCollection')}>Cancel</div>
+          <div className="button secondary" onClick={()=>onClose()}>Cancel</div>
           <div className="button primary" onClick={handleSubmit}>Create</div>
         </div>
       </div>
-      <div className="modal-backdrop" onClick={()=>onClose('createCollection')}></div>
+      <div className="modal-backdrop" onClick={()=>onClose()}></div>
     </div>
   );
 }

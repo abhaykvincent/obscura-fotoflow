@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { analytics } from '../../firebase/app';
-import { getAnalytics, logEvent } from 'firebase/analytics';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
 import { addProject } from '../../app/slices/projectsSlice';
 import { useNavigate } from 'react-router';
+import { closeModal, selectModal } from '../../app/slices/modalSlice';
 
-function AddProjectModal({visible, onClose, onSubmit }) {
+function AddProjectModal() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const visible = useSelector(selectModal)
+    const onClose = () => dispatch(closeModal('createProject'))
   const [projectData, setProjectData] = useState({
       name: 'Ethan Ross',
       type: 'Birthday',
@@ -40,7 +41,7 @@ function AddProjectModal({visible, onClose, onSubmit }) {
             console.log(newProjectData)
               onClose();
               dispatch(showAlert({type:'success', message:`New Project created!`}));
-              logEvent(analytics,'project_created');
+            
               console.log(`/project/${newProjectData.id}`)
               navigate(`/project/${newProjectData.id}`);
           })
@@ -52,7 +53,7 @@ function AddProjectModal({visible, onClose, onSubmit }) {
   };
 
 
-  if (!visible) {
+  if (!visible.createProject) {
     return null;
   }
 

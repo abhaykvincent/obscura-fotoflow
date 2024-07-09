@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { findCollectionById } from '../../utils/CollectionQuery';
 import AddCollectionModal from '../../components/Modal/AddCollection';
 import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 import DashboardEvents from '../../components/Events/Events';
@@ -9,8 +8,9 @@ import Refresh from '../../components/Refresh/Refresh';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteProject, selectProjects } from '../../app/slices/projectsSlice';
 import { showAlert } from '../../app/slices/alertSlice';
+import { openModal } from '../../app/slices/modalSlice';
 
-export default function Project({addCollection}) {
+export default function Project() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const projects = useSelector(selectProjects)
@@ -19,7 +19,6 @@ export default function Project({addCollection}) {
   // Modal
   console.log(projects.length)
   const [modal, setModal] = useState({createCollection: false})
-  const openModal = () => setModal({ createCollection: true });
   const closeModal = () => setModal({ createCollection: false });
   // Delete Project Modal
   const[confirmDeleteProject,setConfirmDeleteProject] = useState(false)
@@ -58,7 +57,7 @@ export default function Project({addCollection}) {
           <>  
           <div className="templates">
             <div className="gallery new" 
-            onClick={openModal}>
+            onClick={()=>dispatch(openModal('createCollection'))}>
 
           <h3 className='heading'>Galleries</h3>
             <div className="thumbnails">
@@ -187,7 +186,7 @@ export default function Project({addCollection}) {
         </div>
       
 
-        <AddCollectionModal project={project} visible={modal.createCollection} onClose={closeModal} onSubmit={addCollection}  />
+        <AddCollectionModal project={project} visible={modal.createCollection} onClose={closeModal}/>
         {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm} onClose={onDeleteConfirmClose}/>:''}
       
       
