@@ -83,7 +83,8 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
   }
 
   return (
-    <div
+    <div className="preview-wrapper">
+      <div
       className='preview'
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
@@ -108,7 +109,7 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
                 setPreviewIndex(prevIndex => prevIndex + 1)
             }}
           ></div>
-}
+    }
         {previewIndex ===0 ||<div className="prev"
           onClick={() => {
               setPreviewIndex(prevIndex => prevIndex - 1)
@@ -146,6 +147,9 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
         </div>
       </div>
     </div>
+
+    </div>
+    
   )
 }
 
