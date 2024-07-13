@@ -28,6 +28,13 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
   }
 
   useEffect(() => {
+    //scrolltotop
+    window.scrollTo(0, 0);
+  }, [])
+
+  //useeffect side effect
+
+  useEffect(() => {
     setImageSize()
     zoomReset()
   }, [image])
@@ -154,3 +161,5 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
 }
 
 export default Preview
+
+  // Line Complexity  1.5 -> 

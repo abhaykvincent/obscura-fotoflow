@@ -20,10 +20,12 @@ const ImageGallery = React.memo(({ imageUrls,projectId }) => {
   useEffect(() => {
     if(isPreviewOpen){
       document.getElementsByClassName('header')[0].style.display = 'none';
-      document.getElementsByClassName('sidebar')[0].style.display = 'none';
+      document.getElementsByClassName('sidebar')[0].style.display = 'none'; 
+      document.getElementsByClassName('project-info')[0].style.display = 'none'
     }else{
       document.getElementsByClassName('header')[0].style.display = 'grid';
       document.getElementsByClassName('sidebar')[0].style.display = 'block';
+       document.getElementsByClassName('project-info')[0].style.display = 'grid'
     }
   }, [isPreviewOpen]);
 

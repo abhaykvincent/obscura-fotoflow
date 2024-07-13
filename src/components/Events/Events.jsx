@@ -20,7 +20,7 @@ function DashboardEvents({project})
     <div className="shoots">
 
       <div className="headings">
-        <div className="heading-section">
+        <div className="heading-shoots heading-section">
           
             <h3 className='heading '>Shoots</h3>
           <div className="new-shoot button tertiary l2 outline"
@@ -57,7 +57,7 @@ function DashboardEvents({project})
               </div>
               <p>{event.type}</p>   
               <p>8:00AM</p>
-              <p className='location'>Wasaga,ON</p>
+              <p className='location'>{event.location}</p>
             </div>
             <div className="details">
               <div className="team-badges">
