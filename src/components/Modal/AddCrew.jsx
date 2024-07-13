@@ -15,8 +15,6 @@ function AddCrewModal({ project,eventId, visible, onClose }) {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-
-    //console.log(name,value)
     setCrewData((prevData) => ({
         ...prevData,
         [name]: value,
@@ -42,17 +40,11 @@ function AddCrewModal({ project,eventId, visible, onClose }) {
   const handleSubmit = () => {
     dispatch(addCrew({projectId:project.id,eventId:eventId,crewData:crewData}))
     .then((data)=>{
-      console.log(data)
-      debugger
       dispatch(showAlert({type:'success', message:`Event <b></b> added successfully!`}));
     })
     onClose('createEvent');
   };
 
-  useEffect(() => {
-    console.log(setCrewData)
-
-  },[setCrewData.role])
 
   if (!visible) {
     return null;
@@ -90,7 +82,6 @@ function AddCrewModal({ project,eventId, visible, onClose }) {
                 <select className="" name="assigne" value={setCrewData.assigne} onChange={handleInputChange}>
                   { 
                     users.map((user)=>{
-                      //console.log(user)
                       return <option key={user.userId} value={user.userId}> {user.name} </option>
                     })
                   }

@@ -1,7 +1,7 @@
 // slices/authSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
-import { addCollectionToFirestore, addCrewToFirestore, addEventToFirestore, addProjectToFirestore, deleteCollectionFromFirestore, deleteProjectFromFirestore, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
+import { addCollectionToFirestore, addCrewToFirestore, addEventToFirestore, addPaymentToFirestore, addProjectToFirestore, deleteCollectionFromFirestore, deleteProjectFromFirestore, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 
 
@@ -29,6 +29,7 @@ export const deleteProject = createAsyncThunk(
     return projectId;
   }
 );
+
 // Collections
 export const addCollection = createAsyncThunk(
   'projects/addCollection',
@@ -59,6 +60,17 @@ export const addCrew = createAsyncThunk(
   async ({ projectId, eventId, crewData }, { dispatch }) => {
     await addCrewToFirestore(projectId, eventId, crewData);
     return { projectId, eventId, crewData };
+  }
+);
+// Financials
+// Payments
+
+export const addPayment =  createAsyncThunk(
+  'projects/addPayment',
+  async ({ projectId, paymentData }, { dispatch }) => {
+    console.log({ projectId, paymentData })
+    await addPaymentToFirestore(projectId, paymentData);
+    return { projectId, paymentData };
   }
 );
 
@@ -217,6 +229,31 @@ const projectsSlice = createSlice({
         });
       })
       .addCase(addCrew.rejected, (state, action) => {
+        state.status = 'failed';
+        state.loading = false;
+        state.error = action.error.message;
+      });
+      // Add payment
+      builder
+      .addCase(addPayment.pending, (state) => {
+        state.status = 'loading';
+        state.loading = true;
+      })
+     .addCase(addPayment.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.loading = false;
+        const { projectId, paymentData } = action.payload;
+        state.data = state.data.map((project) => {
+          if (project.id === projectId) {
+            const updatedPayments = [...project.payments, paymentData];
+            return { ...project, payments: updatedPayments };
+          }
+          return project;
+        });
+        console.log(paymentData);
+        debugger
+      })
+     .addCase(addPayment.rejected, (state, action) => {
         state.status = 'failed';
         state.loading = false;
         state.error = action.error.message;

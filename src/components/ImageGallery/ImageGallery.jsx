@@ -6,7 +6,6 @@ const ImageGallery = React.memo(({ imageUrls,projectId }) => {
   let importedImages=[]
   // Preview
   // is preview open
-  console.log(imageUrls)
   const [isPreviewOpen,setIsPreviewOpen] = useState(false);
   const [previewIndex,setPreviewIndex] = useState(0);
   const openPreview = (index) => {

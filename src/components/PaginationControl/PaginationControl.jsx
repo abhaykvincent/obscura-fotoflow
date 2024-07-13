@@ -6,7 +6,6 @@ export default function PaginationControl({ currentPage, totalPages, handlePageC
     const [expanded, setExpanded] = useState(false);
     const pageNumbers = [];
 
-    console.log(currentCollectionIndex +'/'+ totalCollections)
     for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
     }

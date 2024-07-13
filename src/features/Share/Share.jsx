@@ -20,9 +20,7 @@ export default function ShareProject() {
   const [size,setSize]=useState(100);
   // Fetch Images
 // if co collectionIs is passed, use the first collectionId
-  console.log(project)
     collectionId  = collectionId || project?.collections[0]?.id
-    console.log(projectId, collectionId)
     
   // Fetch Images based on projectId
   const fetchProjectData = async () => {
@@ -45,7 +43,6 @@ export default function ShareProject() {
   }
 
   useEffect(() => {
-    console.log(projectId, collectionId)
     fetchProjectData();
   }, []);
 
@@ -53,10 +50,9 @@ export default function ShareProject() {
     if(!project) return
     // find collection name from collection id
     const collection = findCollectionById(project.collections, collectionId);
-    console.log(collection)
     document.title = `${project.name} | ${collection.name} | Gallery`
     const newImages = project?.collections.find((collection)=>collection.id===collectionId)?.uploadedFiles;
-    console.log(newImages)
+
     setImageUrls(newImages)
     setPage(1)
   }, [project, collectionId]);

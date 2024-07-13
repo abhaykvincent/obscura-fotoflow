@@ -17,6 +17,7 @@ function AddProjectModal() {
       phone: '3656992278',
       collections: [],
       events: [],
+      payments: [],
       status: 'draft',
       projectCover:'',
       uploadedFilesCount:0,
@@ -38,11 +39,9 @@ function AddProjectModal() {
       dispatch(addProject(projectData))
           .then((response) => {
             let newProjectData = response.payload;
-            console.log(newProjectData)
               onClose();
               dispatch(showAlert({type:'success', message:`New Project created!`}));
             
-              console.log(`/project/${newProjectData.id}`)
               navigate(`/project/${newProjectData.id}`);
           })
           .catch((error) => {
