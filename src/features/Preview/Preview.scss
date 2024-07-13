@@ -1,13 +1,17 @@
 @import '../../style/variables';
+.preview-wrapper{
+    position: fixed;
+    left: 0;
+    z-index: 50;
+  }
 .preview{
     position: fixed;
-    top: -($header-height + 8px*1);
+    top: -($header-height );
     left: -($sidebar-width);
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(4px);
-    z-index: 100;
     .image-wrap{
         display: flex;
         height: 100%;
@@ -84,6 +88,7 @@
             }
             }
             .file-name{
+                color: $gray-accessible-dark;
                 font-size: 0.9rem;
                 font-weight: 600;
             }

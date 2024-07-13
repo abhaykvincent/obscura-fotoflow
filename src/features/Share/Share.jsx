@@ -84,7 +84,7 @@ export default function ShareProject() {
     <div className="share-project">
       <div className="project-header">
         <img className='banner' src={project.projectCover} alt="" srcset="" />
-        <div className="project-info">
+        <div className="gallery-info">
           <h1 className='projet-name'>{project.name}</h1>
           <p>10th October, 2023</p>
           <CollectionsPanel/>

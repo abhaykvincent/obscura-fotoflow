@@ -16,6 +16,7 @@
   padding: 0;
   background-repeat: no-repeat;
   box-sizing: border-box;
+  font-family: 'Product Sans';
 }
 h1,h2{
   font-family: 'Product Sans';
@@ -551,6 +552,7 @@ body{
           border-radius: 4px;
           height: 8px*4;
           padding: 4px 8px;
+          padding-right: 4px;
           @include boxed;
         }
 
@@ -1070,6 +1072,7 @@ margin-left: 4px;
           display: none;
         }
       }
+      
       .preview{
         left: 0;
       }
