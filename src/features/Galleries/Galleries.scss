@@ -633,7 +633,8 @@
 			display: flex;
 			gap: 8px*3;
 			margin-top: 8px*0;
-			padding-bottom: 8px*2;
+			padding-bottom: 8px*1;
+			padding-top: 8px*2;
 			border-bottom: 1px solid $dark-1;
 			&:last-child{
 
@@ -865,12 +866,25 @@
 		justify-content: space-between;
 		gap: 8px;
 		border-bottom: 1px solid $gray5-default-dark;
+		margin-bottom: 8px*1;
 		.heading{
 			border: none;
 			margin-bottom: 0;
 		}
 	}
-}.heading-section{
+	.heading-shoots{
+		display: flex;
+		justify-content: space-between;
+		gap: 8px;
+		border-bottom: 1px solid $gray5-default-dark;
+		margin-bottom: 8px*1;
+		.heading{
+			border: none;
+			margin-bottom: 0;
+		}
+	}
+}
+.heading-section{
 	display: flex;
 	justify-content: space-between;
 	align-items: center;

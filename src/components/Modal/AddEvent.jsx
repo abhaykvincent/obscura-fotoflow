@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { addEvent } from '../../app/slices/projectsSlice';
 import { useDispatch } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
+import './AddEvent.scss'
 
 function AddEventModal({ project, visible, onClose}) {
   const dispatch = useDispatch();
   const [EventData, setEventData] = useState({
     type: 'Wedding day',
-    date: '10-20-2025',
+    date: new Date().toISOString().split('T')[0],
+    // default time morining "8:00 AM" exactily an convert to a date time format
+    time: '09:00',
     location:'Kochi, India',
     crews: []
   });
@@ -32,7 +35,7 @@ function AddEventModal({ project, visible, onClose}) {
 
   return (
     <div className="modal-container">
-      <div className="modal create-project">
+      <div className="modal create-event">
         <div className='modal-header'>
           <div className="modal-controls">
             <div className="control close" onClick={()=>onClose('createEvent')}></div>
@@ -54,8 +57,11 @@ function AddEventModal({ project, visible, onClose}) {
             </div>
             <div className="field">
               <label className="" htmlFor="">Date</label>
-
-              <input type="text" className="" name="date" value={EventData.date} onChange={handleInputChange}/>
+              <input type="date" className="" name="date" value={EventData.date} onChange={handleInputChange}/>
+            </div>
+            <div className="field">
+              <label className="" htmlFor="">Time</label>
+              <input type="time" className="" name="date" value={EventData.time} onChange={handleInputChange}/>
             </div>
             <div className="field">
               <label className="" htmlFor="">Location</label>
@@ -76,4 +82,4 @@ function AddEventModal({ project, visible, onClose}) {
 
 export default AddEventModal
 
-  // Line Complexity  1.0 -> 
+  // Line Complexity  0.8 -> 
