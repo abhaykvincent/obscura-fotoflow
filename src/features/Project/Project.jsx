@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { deleteProject, selectProjects } from '../../app/slices/projectsSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 import { closeModal, openModal, selectModal } from '../../app/slices/modalSlice';
+import AddPaymentModal from '../../components/Modal/AddPayment';
 
 export default function Project() {
   let { id} = useParams();
@@ -130,7 +131,8 @@ export default function Project() {
               <div className="heading-shoots heading-section">
                 <h3 className='heading '>Invoices</h3>
                 <div className="new-shoot button tertiary l2 outline"
-                onClick={ ()=>{}}>+ New</div>
+                
+            onClick={()=>dispatch(openModal('addPayment'))}>+ New</div>
               </div>
               <div className="card">
                 <div className="chart box">
@@ -141,10 +143,19 @@ export default function Project() {
                   <p className="message">All payments are succussful.</p>
                 </div>
                 <div className="payments-list">
-                  <AmountCard amount='₹20K' direction="+ " percentage="10%" status={'confirmed'}/>
-                  <AmountCard amount='₹40K' direction="+ " percentage="20%" status={'confirmed'}/>
-                  <AmountCard amount='₹60K' direction="+ " percentage="30%" status={'confirmed'}/>
-                  <AmountCard amount='₹60K' direction="" percentage="Balance" status={'pending'}/>
+                  {
+                    project.payments?.length === 0? (
+                      <div className="no-payments">
+                        <p>No payments yet.</p>
+                        <div className="button secondary outline"
+                        onClick={()=>dispatch(openModal('addPayment'))}>Add Invoice</div>
+                      </div>
+                    ) : (
+                      project.payments?.map((payment, index) => (
+                        <AmountCard amount={`₹${payment.amount}K`} direction="+ " percentage="10%" status={'confirmed'}/>
+                      ))
+                    )
+                  }
                   <div className="button secondary outline disable">Add Invoice</div>
                 </div>
               </div>
@@ -166,7 +177,7 @@ export default function Project() {
                 <div className="payments-list">
                   <AmountCard amount='₹13K' direction="- " percentage="John Doe" status={'confirmed'}/>
                   <AmountCard amount='₹18K' direction="- " percentage="Abhay V" status={'confirmed'}/>
-                  <AmountCard amount='₹9K' direction="- " percentage="Jane Doe" status={'pending'}/>
+                  <AmountCard amount='₹9K'  direction="- " percentage="Jane Doe" status={'pending'}/>
                   <AmountCard amount='₹25K' direction="- " percentage="Print Shop 1" status={'pending'}/>
                   <AmountCard amount='₹13K' direction="- " percentage="Print Shop 2" status={'pending'}/>
                   <AmountCard amount='₹13K' direction="- " percentage="Print Shop 2" status={'pending'}/>
@@ -180,6 +191,7 @@ export default function Project() {
 
         </div>
         <AddCollectionModal project={project}/>
+        <AddPaymentModal  project={project}/>
         {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm}/>:''}
         <Refresh/>
       </main>

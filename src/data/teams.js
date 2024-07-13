@@ -63,7 +63,6 @@ export const getOwnerFromTeams = () => {
 };
 
 export const getUserByID = (id) => {
-	console.log(teams.find(team => team.userId === id))
 	return teams.find(team => team.userId === id);
 };
 export const getUsersByRole = (role) => {
