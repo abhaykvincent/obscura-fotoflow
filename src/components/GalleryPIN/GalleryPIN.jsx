@@ -23,12 +23,10 @@ function GalleryPIN({setAuthenticated,projectPin}) {
                 if (pinInputs[0] && pinInputs[0].current) {
                     pinInputs[0].current.focus();
                 } else {
-                    console.log(pinInputs[0])
                     console.error('pinInputs[0] or pinInputs[0].current is null or undefined');
                 }
             }, 500);
         }
-        // You can replace the above console.log with your actual authentication logic
     };
     const handlePinChange = (index, value) => {
         // Allow only numeric values
@@ -37,7 +35,6 @@ function GalleryPIN({setAuthenticated,projectPin}) {
         const newPin = [...pin];
         newPin[index] = sanitizedValue.slice(0, 1); // Take only the first digit
         setPin(newPin);
-        console.log(newPin)
         if (index < 3 && sanitizedValue !== '') {
           pinInputs[index + 1].current.focus();
         }

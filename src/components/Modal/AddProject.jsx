@@ -38,11 +38,9 @@ function AddProjectModal() {
       dispatch(addProject(projectData))
           .then((response) => {
             let newProjectData = response.payload;
-            console.log(newProjectData)
               onClose();
               dispatch(showAlert({type:'success', message:`New Project created!`}));
             
-              console.log(`/project/${newProjectData.id}`)
               navigate(`/project/${newProjectData.id}`);
           })
           .catch((error) => {

@@ -18,7 +18,6 @@ const [page,setPage]=useState(1);
 const [size,setSize]=useState(15);
 // add project images when started from fetchImages
 useEffect(()=>{
-    console.log(id,collectionId)
     setShowAllPhotos(true)
     //get images from 
     fetchImages(id,collectionId)
@@ -62,17 +61,9 @@ useEffect(() => {
 }
 }, [showAllPhotos,collectionImages]);
 
-/* async()=>{
-    setUploadStatus('open')
-    setIsPhotosImported(false);
-    let uploadedImages=await handleUpload(files, id, collectionId,importFileSize,setUploadList,setUploadStatus,showAlert)
-    console.log(uploadedImages)
-    setImageUrls(uploadedImages)
-} */
 
 const handleFileInputChange = async (event) => {
     const selectedFiles = Array.from(event.target.files);
-    console.log(selectedFiles)
     setIsPhotosImported(true);
     setFiles(selectedFiles);
     setImportFileSize(addAllFileSizesToMB(selectedFiles));
@@ -80,7 +71,6 @@ const handleFileInputChange = async (event) => {
     setUploadStatus('open');
     setIsPhotosImported(false);
     let uploadedImages = await handleUpload(selectedFiles, id, collectionId, importFileSize, setUploadList, setUploadStatus);
-    console.log(uploadedImages);
     setImageUrls(uploadedImages);
 };
 return (

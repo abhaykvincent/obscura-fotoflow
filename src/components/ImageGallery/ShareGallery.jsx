@@ -10,7 +10,6 @@ const ShareGallery = ({ images,projectId }) => {
   const [isPreviewOpen,setIsPreviewOpen] = useState(false);
   const [previewIndex,setPreviewIndex] = useState(0);
   const openPreview = (index) => {
-    console.log(index)
     setIsPreviewOpen(true)
     setPreviewIndex(index)
   }
@@ -18,7 +17,6 @@ const ShareGallery = ({ images,projectId }) => {
     setIsPreviewOpen(false)
   }
 
-  console.log(images)
   useEffect(() => {
     setLoadedImages(images.slice(0, size));
   }, [images])
