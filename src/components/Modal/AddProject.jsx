@@ -17,6 +17,7 @@ function AddProjectModal() {
       phone: '3656992278',
       collections: [],
       events: [],
+      payments: [],
       status: 'draft',
       projectCover:'',
       uploadedFilesCount:0,
