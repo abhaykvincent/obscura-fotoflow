@@ -25,6 +25,7 @@ import { checkAuthStatus, selectIsAuthenticated } from './app/slices/authSlice';
 import { selectLoading ,fetchProjects} from './app/slices/projectsSlice';
 // Stylesheets
 import './App.scss';
+import { isPublicPage } from './utils/publicPages';
 
 function App() {
   const dispatch = useDispatch();
@@ -47,12 +48,10 @@ function App() {
       setTimeout(() => setUploadStatus('close'), 1000)
   }, [uploadStatus])
 
-  const publicPages = window.location.href.includes('share') || window.location.href.includes('selection')|| window.location.href.includes('masanory-grid')
-  
   // Render
   return (
     <div className="App">
-      {isAuthenticated && (!publicPages)? (
+      {isAuthenticated && (!isPublicPage())? (
         <>
           <Header />
           <Sidebar />
@@ -61,7 +60,7 @@ function App() {
           <AddProjectModal />
         </>
       ) : (
-        <>{ !publicPages && <LoginModal/> }</>
+        <>{ !isPublicPage() && <LoginModal/> }</>
       )}
       {
         isLoading ? (
