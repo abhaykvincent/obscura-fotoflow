@@ -38,12 +38,16 @@ function ProjectCard({project}) {
                     <div className="project-summary">
                         <div className="summary-left">
                             <div className="summary-item photos-count">
-                                <p>{project.uploadedFilesCount}</p>
                                 <div className="icon"></div>
+                                <p>{project.uploadedFilesCount}</p>
                             </div>
                             <div className="summary-item collection-count">
-                                <p>{project.collections.length}</p>
                                 <div className="icon"></div>
+                                <p>{project.collections.length}</p>
+                            </div>
+                            <div className="summary-item invoice-count">
+                                <div className="icon"></div>
+                                <p>{project.payments.length}</p>
                             </div>
                             
 
@@ -53,7 +57,7 @@ function ProjectCard({project}) {
                             // if pin available, show pin number  
                             project.pin ?
                             <div className="pin">
-                                <p className="pin-label">PIN</p>
+                                <p className="pin-label"></p>
                                 <p className="pin-number">{project.pin}</p>
                             </div>
                             : ''
