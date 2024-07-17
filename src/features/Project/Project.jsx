@@ -131,8 +131,8 @@ export default function Project() {
               <div className="heading-shoots heading-section">
                 <h3 className='heading '>Invoices</h3>
                 <div className="new-shoot button tertiary l2 outline"
-                
-            onClick={()=>dispatch(openModal('addPayment'))}>+ New</div>
+  
+                  onClick={()=>dispatch(openModal('addPayment'))}>+ New</div>
               </div>
               <div className="card">
                 <div className="chart box">
@@ -152,11 +152,10 @@ export default function Project() {
                       </div>
                     ) : (
                       project.payments?.map((payment, index) => (
-                        <AmountCard amount={`₹${payment.amount}K`} direction="+ " percentage="10%" status={'confirmed'}/>
+                        <AmountCard amount={`₹${payment.amount/1000} K`} direction="+ " percentage="10%" status={'confirmed'}/>
                       ))
                     )
                   }
-                  <div className="button secondary outline disable">Add Invoice</div>
                 </div>
               </div>
             </div>

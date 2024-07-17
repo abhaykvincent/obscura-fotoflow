@@ -11,10 +11,21 @@ function AddPaymentModal({ project }) {
   
   const [paymentData, setPaymentData] = useState({
     name: 'Advance',
-    amount: 0,
-    percentage: 0
+    amount: null
   });
+  const [errors, setErrors] = useState({});
 
+  const validateForm = () => {
+    let newErrors = {};
+    if (!paymentData.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+    if (paymentData.amount <= 0) {
+      newErrors.amount = "Amount must be greater than 0";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setPaymentData(prevData => ({
@@ -22,40 +33,17 @@ function AddPaymentModal({ project }) {
       [name]: value,
     }));
   };
-
-  const handleAmountChange = (event) => {
-    const value = parseFloat(event.target.value) || 0;
-    const percentage = (value / project.totalAmount) * 100;
-    setPaymentData(prevData => ({
-      ...prevData,
-      amount: value,
-      percentage: Math.round(percentage * 100) / 100
-    }));
-  };
-
-  const handlePercentageChange = (event) => {
-    const value = parseFloat(event.target.value) || 0;
-    const amount = (value / 100) * project.totalAmount;
-    setPaymentData(prevData => ({
-      ...prevData,
-      percentage: value,
-      amount: Math.round(amount / 500) * 500
-    }));
-  };
-
-  const togglePercentage = () => {
-    setPaymentData(prevData => ({
-      ...prevData,
-      isPercentage: !prevData.isPercentage
-    }));
-  };
-
   const handleSubmit = () => {
-    dispatch(addPayment({ projectId: project.id, paymentData }))
-      .then((data) => {
-        dispatch(showAlert({type:'success', message:`<b>${paymentData.name}</b> payment added successfully!`}));
-        onClose();
-      });
+    if (validateForm()) {
+      dispatch(addPayment({ projectId: project.id, paymentData }))
+        .then((data) => {
+          dispatch(showAlert({type:'success', message:`<b>${paymentData.name}</b> payment added successfully!`}));
+          onClose();
+        })
+        .catch((error) => {
+          dispatch(showAlert({type:'error', message: 'Failed to add payment. Please try again.'}));
+        });
+    }
   };
 
   if (!visible.addPayment) return null;
@@ -73,35 +61,29 @@ function AddPaymentModal({ project }) {
         </div>
         <div className='modal-body'>
           <div className="form-section">
-            <div className="field">
-              <label htmlFor="name">Name</label>
-              <input id="name" name="name" value={paymentData.name} type="text" onChange={handleInputChange}/>
-            </div>
-            <div className="field">
-              <label htmlFor="amount">
-                {paymentData.isPercentage ? 'Percentage' : 'Amount'}
-                
-              </label>
-              {paymentData.isPercentage ? (
-                <input
-                  id="amount"
-                  name="percentage"
-                className='symbol'
-                  value={paymentData.percentage}
-                  type="number"
-                  onChange={handlePercentageChange}
-                />
-              ) : (
-                <input
-                  id="amount"
-                  name="amount"
-                className='symbol'
-                  value={paymentData.amount}
-                  type="number"
-                  onChange={handleAmountChange}
-                />
-              )}
-            </div>
+          <div className="field">
+            <label htmlFor="name">Name</label>
+            <input 
+              id="name" 
+              name="name" 
+              value={paymentData.name} 
+              type="text" 
+              onChange={handleInputChange}
+            />
+          </div>
+            {errors.name && <div className="error">{errors.name}</div>}
+          <div className="field">
+            <label htmlFor="amount">Amount</label>
+            <input
+              id="amount"
+              name="amount"
+              className='symbol'
+              value={paymentData.amount}
+              type="number"
+              onChange={handleInputChange}
+            />
+          </div>
+          {errors.amount && <div className="error">{errors.amount}</div>}
             <div className="field">
               <div className="div"></div>
               <PaymentVisualization project={project} newPayment={paymentData} />
