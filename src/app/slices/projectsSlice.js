@@ -251,7 +251,6 @@ const projectsSlice = createSlice({
           return project;
         });
         console.log(paymentData);
-        debugger
       })
      .addCase(addPayment.rejected, (state, action) => {
         state.status = 'failed';

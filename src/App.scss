@@ -555,11 +555,27 @@ body{
           padding-right: 4px;
           @include boxed;
         }
+        .symbol{
+          position: relative;
+          &::before{
+            content: "%";
+            position: relative;
+            top:0;
+            left:0;
+            height: 8PX*2;
+            width: 8PX*2;
+            color: red
+          }
+        }
 
         &:hover{
           label{
             color: $gray3-default-light;
           }
+        }
+        &.three{
+          
+        grid-template-columns: 8px*12 8px*33 8px*8;
         }
       }
     }

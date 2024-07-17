@@ -172,7 +172,7 @@
 								0px 0px 2px 4px #a19b3415,
 								0px 0px 8px 8px #95791f21;
 							  
-							  animation: blink 2s infinite;
+							  animation: blink 4s infinite;
 							}
 							
 							
@@ -189,8 +189,8 @@
 							0%, 100% {
 							  opacity: 1;
 							}
-							80% {
-							  opacity: 0.5;
+							90% {
+							  opacity: 0.4;
 							}
 						  }
 					}
