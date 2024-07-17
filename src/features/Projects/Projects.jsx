@@ -26,10 +26,11 @@ function Projects() {
             <div className="view-control">
                 <div className="control-wrap">
                     <div className="controls">
-                        <div className={`control active`} >All</div>
-                        <div className={`control `} >Active</div>
-                        <div className={`control `} >Starred</div>
-                        <div className={`control `} >Today</div>
+                        <div className={`control ctrl-all active`} >All</div>
+                        <div className={`control ctrl-active`} >Upcoming</div>
+                        <div className={`control ctrl-pending`} >In Progres</div>
+                        <div className={`control ctrl-draft`} >Completed</div>
+                        <div className={`control ctrl-draft`} >Archived</div>
                     </div>
                     <div className={`active`}></div>
                 </div>
