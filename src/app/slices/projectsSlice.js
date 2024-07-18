@@ -1,7 +1,7 @@
 // slices/authSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
-import { addCollectionToFirestore, addCrewToFirestore, addEventToFirestore, addPaymentToFirestore, addProjectToFirestore, deleteCollectionFromFirestore, deleteProjectFromFirestore, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
+import { addBudgetToFirestore, addCollectionToFirestore, addCrewToFirestore, addEventToFirestore, addPaymentToFirestore, addProjectToFirestore, deleteCollectionFromFirestore, deleteProjectFromFirestore, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 
 
@@ -71,6 +71,13 @@ export const addPayment =  createAsyncThunk(
     console.log({ projectId, paymentData })
     await addPaymentToFirestore(projectId, paymentData);
     return { projectId, paymentData };
+  }
+);
+export const addBudget =  createAsyncThunk(
+  'projects/addBudget',
+  async ({ projectId, budgetData }, { dispatch }) => {
+    budgetData = await addBudgetToFirestore(projectId, budgetData);
+    return {budgetData};
   }
 );
 
@@ -253,6 +260,34 @@ const projectsSlice = createSlice({
         console.log(paymentData);
       })
      .addCase(addPayment.rejected, (state, action) => {
+        state.status = 'failed';
+        state.loading = false;
+        state.error = action.error.message;
+      });
+      // set Budget
+      builder
+     .addCase(addBudget.pending, (state) => {
+        state.status = 'loading';
+        state.loading = true;
+      })
+      .addCase(addBudget.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.loading = false;
+        const { projectId, budgetData } = action.payload;
+        state.data = state.data.map((project) => {
+          if (project.id === projectId) {
+            const updatedBudgets = project.budgets.map((budget) => {
+              if (budget.id === budgetData.id) {
+                return budgetData;
+              }
+              return budget;
+            });
+            return { ...project, budgets: updatedBudgets };
+          }
+          return project;
+        });
+      })
+     .addCase(addBudget.rejected, (state, action) => {
         state.status = 'failed';
         state.loading = false;
         state.error = action.error.message;
