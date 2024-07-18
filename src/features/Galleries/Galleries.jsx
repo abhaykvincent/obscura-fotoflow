@@ -35,9 +35,8 @@ export default function Galleries({setUploadList,setUploadStatus}) {
     },100)
     return;
   }
-  else{
   document.title = `${project.name}'s ${project.type}`
-  }
+  
 
   // Determine the collectionId to use
   const defaultCollectionId = project.collections.length > 0 ? project.collections[0].id : '';
@@ -166,6 +165,7 @@ export default function Galleries({setUploadList,setUploadStatus}) {
         <div className="type"></div>
       </div>
       <div className="project-options">
+        <div className="button secondery pin" onClick={()=>{}} >PIN : {project.pin}</div>
         <div className="button primary share" /* href={`/share/${id}`} */onClick={()=>dispatch(openModal('shareGallery'))} target="_blank">Share</div>
       </div>
     </div>
