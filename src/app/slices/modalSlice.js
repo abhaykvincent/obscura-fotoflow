@@ -6,7 +6,8 @@ const initialState = {
     createCollection: false,
     shareGallery: false,
     confirmDeleteProject:false,
-    addPayment:false
+    addPayment:false,
+    addBudget: false
 
 };
 

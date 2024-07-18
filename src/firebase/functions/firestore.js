@@ -238,6 +238,37 @@ export const addCrewToFirestore = async (projectId,eventId,userData) => {
         throw error;
     });
 };
+// Budget
+/* const [budgetData, setBudgetData] = useState({
+    amount: null
+  }); */
+export const addBudgetToFirestore = async (projectId,budgetData) => {
+    const projectsCollection = collection(db, 'projects');
+    const projectDoc = doc(projectsCollection, projectId);
+
+    const projectSnapshot =  await getDoc(projectDoc);
+    const projectData = projectSnapshot.data();
+    
+    const id= `budget-${projectData.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
+    
+    const updatedProject = {
+        ...projectData,
+        budgets:budgetData, // Assuming collections is an array in your projectData
+    }
+
+    return updateDoc(projectDoc, updatedProject)
+    .then(() => {
+        console.log('Budget added to project successfully.');
+        return budgetData
+    })
+    .catch((error) => {
+        console.error('Error adding budget to project:', error.message);
+        throw error;
+    });
+
+
+
+};
 // Payment
 export const addPaymentToFirestore = async (projectId,paymentData) => {
     

@@ -542,6 +542,7 @@ body{
         gap: 8px*2;
         margin: 8px*1.5 8px;
         font-size: 0.9rem;
+        margin-top: 8px*1;
         label{
           text-align: right ;
           color: $gray-default-dark;
@@ -568,6 +569,15 @@ body{
             color: red
           }
         }
+        .bigger{
+          font-size: 1.2rem;
+        }
+        &.ai-suggestion{
+          margin-top: 8px*-1;
+          label{
+            opacity:0.5
+          }
+        }
 
         &:hover{
           label{
@@ -581,6 +591,7 @@ body{
       }
       .error{
         margin-top: -8px;
+        margin-bottom: 8px;
         margin-left: 8px*15;
         font-size: 0.8rem;
         color: $red-accessible-dark
@@ -659,6 +670,49 @@ body{
           grid-template-columns: 1fr auto;
           justify-content: stretch;
           align-items: center;
+        }
+      }
+    }
+    .ai-suggestion{
+
+      display: grid;
+    }
+    .ai-suggestions{
+      display: flex;
+      flex-wrap: wrap;
+      justify-items: flex-start;
+      label{
+        color: $green-default-light;
+          float: right;
+        width:100%
+
+      }
+      .tag{
+        padding: 2px 4px;
+        height: 8px*2.5;
+        font-size: 0.7rem;
+        color: $gray-accessible-light;
+        animation: fade-in 0.2s ease-in-out;
+        animation-fill-mode: forwards;
+        opacity: 0;
+        // loop nth child animation delay increments
+        @for $i from 1 through 10 {
+          &:nth-child(#{$i}) {
+              $delay: 0.5s + 0.05s * ($i - 1);
+              animation: fadeInLeft 0.15s ease-out $delay;
+              animation-fill-mode: forwards;
+          }
+        }
+         
+        
+        &:nth-child(1){
+          color: $gray-accessible-dark;
+          border: 1px solid $green-default-light;
+          background-color: $dark-2;
+        }
+        &:nth-child(2){
+          color: $gray-accessible-dark;
+          border: 1px solid $gray-accessible-light;
         }
       }
     }
