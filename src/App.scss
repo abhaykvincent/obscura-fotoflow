@@ -127,7 +127,7 @@ body{
     &.project-page{
       opacity: 0;
       transform: translateY(-8px*2);
-      animation: project-page-reveal 0.4s ease-out forwards;
+      animation: gallery-page-reveal 0.4s ease-out forwards;
     }
     &.gallery-page{
       opacity: 0;
@@ -420,6 +420,7 @@ body{
         margin-right: 8px*0.7;
         //kerling
         font-stretch: expanded;
+        
         
       }
     }
