@@ -23,8 +23,8 @@ function AddProjectModal() {
       uploadedFilesCount:0,
       selectedFilesCount:0,
       totalFileSize:0,
-      createdAt: new Date(),
-      lastOpened: new Date(),
+      createdAt: new Date().getTime(),
+      lastOpened: new Date().getTime(),
   });
   const handleInputChange = (event) => {
       const {name,value} = event.target;

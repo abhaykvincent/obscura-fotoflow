@@ -87,7 +87,7 @@ export default function AddBudgetModal({ project }) {
           {errors.amount && <div className="error">{errors.amount}</div>}
           {/* AI suggested */}
           <div className="field">
-            <label htmlFor="amount">AI Suggested</label>
+            <label className='ai-label' htmlFor="amount">AI Suggested</label>
             <div className="ai-suggestions">
 
               {

@@ -2,19 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../app/slices/modalSlice';
+import { positionCollectionsActiveBox } from '../../../utils/UI/collectionActiveBox';
 
-const ProjectCollections = ({ project, collectionId}) => {
+const CollectionsPanel = ({ project, collectionId}) => {
   const dispatch = useDispatch();
-  const findIndexofCollection = (collectionId) => {
-    return project.collections.findIndex((collection) => collection.id === collectionId);
-  };
-  const index = findIndexofCollection(collectionId);
-  const activeBox = document.querySelector('.active-box');
-  if (activeBox) {
-    activeBox.style.left = `${index * 8 * 27.2 + 8 * 4}px`;
-  }
+  positionCollectionsActiveBox(collectionId,project.collections)
 
-  return<div className="galleries">
+  return <div className="galleries">
     <div className="list">
       {
       project.collections.length > 0 ? 
@@ -59,7 +53,7 @@ const ProjectCollections = ({ project, collectionId}) => {
                     <div className="backthumb bthumb3"></div>
                   </div>
                   <div className="thumbnail thumb3">
-                    <div className="backthumb bthumb1 count">{project.uploadedFilesCount } Photos</div>
+                    <div className="backthumb bthumb1 count">{/* {collection.uploadedFilesCount } Photos */}</div>
                     <div className="backthumb bthumb2"></div>
                     <div className="backthumb bthumb3"></div>
                   </div>
@@ -87,4 +81,5 @@ const ProjectCollections = ({ project, collectionId}) => {
     </div>
   </div>
 }
-export default ProjectCollections;
+export default CollectionsPanel;
+// Line Complexity  0.9 -> 

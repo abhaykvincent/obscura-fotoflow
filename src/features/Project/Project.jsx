@@ -31,7 +31,7 @@ export default function Project() {
   if (!projects) return;
   // Find the project with the given id
   const project = projects.find((p) => p.id === id);
-  console.log(project)
+  console.log({project})
   // If the project is not found, redirect to the projects page and return
   if (!project) {
     setTimeout(()=>{
@@ -42,6 +42,7 @@ export default function Project() {
   else{
     document.title = `${project.name}'s ${project.type}`
   }
+  
 
   return (
     <>
@@ -53,8 +54,10 @@ export default function Project() {
             <div className="templates">
               <div className="gallery new" 
               onClick={()=>dispatch(openModal('createCollection'))}>
+                <div className="heading-section">
 
-            <h3 className='heading'>Galleries</h3>
+            <h3 className='heading'>Galleries <span>{project.collections.length}</span></h3>
+                </div>
               <div className="thumbnails">
                 <div className="thumbnail thumb1">
                   <div className="backthumb bthumb1"
@@ -73,7 +76,7 @@ export default function Project() {
           <div className="gallery-overview">
             <div className="galleries">
               <div className="heading-shoots heading-section">
-                <h3 className='heading '>Galleries</h3>
+                <h3 className='heading '>Galleries <span>{project.collections.length}</span></h3>
                 <div className="new-shoot button tertiary l2 outline"
                   onClick={ ()=>{}}>+ New
                 </div>
@@ -96,7 +99,7 @@ export default function Project() {
                       {
                         backgroundImage:
                           `url(${project.projectCover?project.projectCover:''})`
-                    }}>{project.collections.length} Galleries</div>
+                    }}></div>
                     <div className="backthumb bthumb2"></div>
                     <div className="backthumb bthumb3"></div>
                   </div>
@@ -127,32 +130,32 @@ export default function Project() {
           <div className="financials-overview">
             <div className="payments">
               <div className="heading-shoots heading-section">
-                <h3 className='heading '>Invoices</h3>
-                <div className="new-shoot button tertiary l2 outline"
+                <h3 className='heading '>Invoices <span>{project.payments.length}</span></h3>
+                {project.payments.length>0&&<div className="new-shoot button tertiary l2 outline"
                   onClick={()=>project.budgets && dispatch(openModal('addPayment'))}
-                  >+ New</div>
+                  >+ New</div>}
               </div>
-              <div className="card">
-                <div className="chart box">
+              <div className={`card ${project.budgets ? '':'single'}`}>
+                <div className={`chart box `}>
                     <div className="status large">
                       <div className="signal"></div>
                     </div>
-                  <div className="circle green">
-                  {
-                    project.budgets ? (
-                      <>
-                      {formatDecimalK(project.budgets.amount)}
-                      <p className="edit text">Edit</p>
-                      </>
-                    ):
-                    <p className="set">Set</p>
-                  } 
-                  </div>
+                    <div className={`circle ${ !project.budgets?'gray':'green'}`}>
+                    {
+                      project.budgets && (
+                        <>
+                        {formatDecimalK(project.budgets.amount)}
+                        <p className="edit text">Edit</p>
+                        </>
+                      )
+                      
+                    } 
+                    </div>
                   <div className="message">
 
                   {
                       project.budgets || project.budgets?.amount !==0? (
-                        <div className="button primary"
+                        <div className="button primary outline"
                         onClick={()=>dispatch(openModal('addBudget'))}
                         >
                           Set Budget
@@ -165,7 +168,7 @@ export default function Project() {
                     }
                   </div>
                 </div>
-                <div className="payments-list">
+                {project.budgets&&<div className="payments-list">
                   {
                     project.payments?.length === 0? (
                       <div className="no-payments">
@@ -174,14 +177,38 @@ export default function Project() {
                         onClick={()=>project.budgets && dispatch(openModal('addPayment'))}>Add Invoice</div>
                       </div>
                     ) : (
+                      <>
+                      {
                       project.payments?.map((payment, index) => (
-                        <AmountCard amount={`₹${payment.amount/1000} K`} direction="+ " percentage={
-                          payment.amount/project.budgets?project.budgets.amount*100:0
-                        } status={'confirmed'}/>
-                      ))
+                        <AmountCard amount={`₹${payment.amount/1000} K`} 
+                        project={project}
+                          direction="+ " 
+                          percentage={
+                            payment.amount/(project.budgets.amount?project.budgets.amount*100:0)
+                          } 
+                            status={'confirmed'}/>
+                      ))}
+                      
+                      {/* Balance */}
+                      {
+                        (
+                          <AmountCard amount={
+                            `₹${(project.budgets.amount - project.payments.reduce((a,b)=>a+b.amount,0))/1000} K`
+                          } direction="- " percentage={'Balance'} status={'pending'}/>
+                        )
+                      }
+                      {/* Filler Cards */}
+                      {
+                        project.payments?.length<5 && (
+                          Array(4-project.payments.length).fill(0).map((item, index) => (
+                            <AmountCard amount={''} direction={''} percentage={''} status={'draft'}/>
+                          ))
+                        )
+                      }
+                      </>
                     )
                   }
-                </div>
+                </div>}
               </div>
             </div>
             <div className="payments expances">
@@ -196,14 +223,17 @@ export default function Project() {
                       <div className="signal"></div>
                     </div>
                   <div className="circle orange">₹76K</div>
-                  <p className="message">All payments are succussful.</p>
+                  {/* <p className="message">All payments are succussful.</p> */}
+                  <div className="legend">
+                    <div className="paid">Paid</div>
+                    <div className="pending">Pending</div>
+                  </div>
                 </div>
                 <div className="payments-list">
                   <AmountCard amount='₹13K' direction="- " percentage="John Doe" status={'confirmed'}/>
                   <AmountCard amount='₹18K' direction="- " percentage="Abhay V" status={'confirmed'}/>
                   <AmountCard amount='₹9K'  direction="- " percentage="Jane Doe" status={'pending'}/>
                   <AmountCard amount='₹25K' direction="- " percentage="Print Shop 1" status={'pending'}/>
-                  <AmountCard amount='₹13K' direction="- " percentage="Print Shop 2" status={'pending'}/>
                   <AmountCard amount='₹13K' direction="- " percentage="Print Shop 2" status={'pending'}/>
                   
                 </div>

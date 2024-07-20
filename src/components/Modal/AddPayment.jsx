@@ -16,10 +16,7 @@ function AddPaymentModal({ project }) {
   });
   const existingPaymentsTotal = project.payments.reduce((sum, payment) => sum + parseInt(payment.amount), 0);
   let balance = project.budgets?.amount - existingPaymentsTotal;
-  console.log(project.budgets?.amount)
-  console.log({existingPaymentsTotal})
-  console.log(project.payments)
-  console.log({balance})
+
 
   const [aiSuggestions, setAISuggestions] = useState(
     {

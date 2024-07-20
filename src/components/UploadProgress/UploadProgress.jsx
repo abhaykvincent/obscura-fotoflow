@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import './UploadProgress.scss'
 import { convertMegabytes } from '../../utils/stringUtils';
-function UploadProgress({uploadList,uploadStatus}) {
+import { useSelector } from 'react-redux';
+import { selectUploadList, selectUploadStatus } from '../../app/slices/uploadSlice';
+
+function UploadProgress({}) {
+    const uploadList = useSelector(selectUploadList)
+    const uploadStatus = useSelector(selectUploadStatus)
     const [uploadPercent,setUploadPercent] = useState(0)
     const [totalProgress,setTotalProgress]  = useState(0)
     useEffect(() => {

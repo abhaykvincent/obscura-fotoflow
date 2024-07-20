@@ -1,8 +1,19 @@
 import React from 'react'
 
-function AmountCard({amount,direction,percentage,status}) {
-	const formattedPercentage = percentage && parseFloat(percentage).toFixed(1);
-	console.log(formattedPercentage)
+function AmountCard({amount,direction,percentage,status,project}) {
+	let formattedPercentage=''
+	// if(percentage is string)
+	if(typeof percentage ==='string'){
+		formattedPercentage = percentage;
+
+	if(percentage=='Balance'){
+		formattedPercentage = 'Balance';
+	}	}
+	else{
+		//calculate percentage
+		percentage = percentage? (percentage*10000).toFixed(0):0;
+		formattedPercentage = percentage && parseFloat(percentage).toFixed(0)+'%';
+	}
   return (
 	
 	<div className="box amount-card">
@@ -10,10 +21,10 @@ function AmountCard({amount,direction,percentage,status}) {
 			<span className="direction">{direction}</span> 
 			{amount}
 		</div>
-		<div className="percentage">{formattedPercentage}%</div>
+		<div className="percentage">{formattedPercentage}</div>
 		<div className={`status ${status}`}>
-                <div className="signal"></div>
-              </div>
+			<div className="signal"></div>
+		</div>
 		
 	</div>
   )

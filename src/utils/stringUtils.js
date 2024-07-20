@@ -67,3 +67,11 @@ export function formatDecimal(amount) {
 export function formatDecimalK(amount) {
   return '₹'+(amount/1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + 'K';
 }
+
+// desired url http://localhost:3000/share/ethan-ross-Ksi9g/birthday-CLhMa
+// if localhost localhost:port , if production obscura.fotoflow
+// ethan-ross-Ksi9g id projectId and birthday-CLhMa is the collectionId
+
+export function getGalleryURL(page,projectId) {
+  return `${window.location.protocol}//${window.location.host}/${page}/${projectId}`;
+}
