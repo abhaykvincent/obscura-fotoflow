@@ -5,10 +5,10 @@ import { fetchImages } from '../../../firebase/functions/firestore';
 import { addAllFileSizesToMB } from '../../../utils/fileUtils';
 import UploadButton from '../../UploadButton/UploadButton';
 import { useDispatch } from 'react-redux';
-import { setUploadList } from '../../../app/slices/studioSlice';
+import { setUploadList, setUploadStatuss } from '../../../app/slices/uploadSlice';
 
 const CollectionImages = ({ id, collectionId,collection }) => {
-    const dispatch =useDispatch
+    const dispatch =useDispatch()
 // Files
 const [collectionImages, setCollectionImages] = useState([]);
 const [imageUrls, setImageUrls] = useState([]);
@@ -26,10 +26,11 @@ const [uploadStatus, setUploadStatus] = useState('close');
 useEffect(() => {
   if(uploadStatus === 'completed')
     setTimeout(() => setUploadStatus('close'), 1000)
+    dispatch(setUploadStatuss(uploadStatus))
 }, [uploadStatus])
 useEffect(() => {
     console.log(uploadList)
-   // dispatch(setUploadList(uploadList))
+   dispatch(setUploadList(uploadList))
 }, [uploadList])
 
 // Initial collection images fetch

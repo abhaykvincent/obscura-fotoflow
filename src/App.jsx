@@ -20,7 +20,7 @@ import Galleries from './features/Galleries/Galleries';
 import ImageGallery from './x-draft/masanory-grid';
 import Selection from './features/Selection/Selection';
 import Notifications from './features/Notifications/Notifications';
-//Utils
+// Utils
 import { isPublicPage } from './utils/publicPages';
 // Redux 
 import { checkAuthStatus, selectIsAuthenticated } from './app/slices/authSlice';
@@ -62,9 +62,9 @@ export default function App() {
           <Routes>
             { isAuthenticated &&
               <>
-                <Route exact   path="/"              element={<Home/>}/>
-                <Route        path="/project/:id"   element={<Project/>}/>
-                <Route exact path="/project/galleries/:id/:collectionId?" element={<Galleries />}/>
+                <Route exact   path="/"               element={<Home/>}/>
+                <Route        path="/project/:id"    element={<Project/>}/>
+                <Route exact path="/project/galleries/:id/:collectionId?" element={<Galleries/>}/>
                 <Route      path="/projects"       element={<Projects/>}/>
                 <Route     path="/storage"        element={<Storage/>}/>
                 <Route    path="/notifications"  element={<Notifications/>}/>

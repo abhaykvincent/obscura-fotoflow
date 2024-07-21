@@ -100,7 +100,7 @@ function AddPaymentModal({ project }) {
             {errors.name && <div className="error">{errors.name}</div>}
             {/* AI suggested */}
           <div className="field ai-suggestion">
-              <label htmlFor="amount">AI✨  </label>
+              <label className='ai-label' htmlFor="amount">AI✨  </label>
               <div className="ai-suggestions">
 
                 {
@@ -129,7 +129,7 @@ function AddPaymentModal({ project }) {
           {errors.amount && <div className="error">{errors.amount}</div>}
           {/* AI suggested */}
           <div className="field ai-suggestion">
-              <label htmlFor="amount">✨ AI </label>
+              <label className='ai-label' htmlFor="amount">✨ AI </label>
               <div className="ai-suggestions">
 
               {

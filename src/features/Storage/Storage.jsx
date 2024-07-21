@@ -4,14 +4,15 @@ import StoragePie from '../../components/StoragePie/StoragePie';
 import { convertMegabytes } from '../../utils/stringUtils';
 import { selectProjects } from '../../app/slices/projectsSlice';
 import { useSelector } from 'react-redux';
+import { getUsedSpace } from '../../utils/fileUtils';
+import { selectStorageLimit } from '../../app/slices/studioSlice';
 
 function Storage() {
     const projects = useSelector(selectProjects)
+    const storageLimit = useSelector(selectStorageLimit)
     // Calculate the storage used from projects importFileSize
-    const usedSpace = projects.reduce((acc,project) => {
-        return acc + project.totalFileSize
-    },0)
-
+    const usedSpace = getUsedSpace(projects)
+    
     const progressPercentage = 25; // Set the desired progress percentage
 
   // Calculate the stroke-dashoffset based on the percentage
@@ -24,7 +25,7 @@ function Storage() {
         </div>
       <div className="storage-info">
         <div className="storage-pie-wrap">
-            <StoragePie totalSpace={2000} usedSpace={usedSpace} />
+            <StoragePie totalSpace={storageLimit.total} usedSpace={usedSpace} />
         </div>
         {/* <p className="storage-insight">Storing 24034 photos in 17 collections</p> */}
         <div className="storage-subscription">

@@ -13,6 +13,7 @@ import { deleteProject, selectProjects } from '../../app/slices/projectsSlice';
 import { openModal } from '../../app/slices/modalSlice';
 
 import './Galleries.scss';
+import { setAvailableStortage } from '../../app/slices/studioSlice';
 
 export default function Galleries({}) {
   const dispatch= useDispatch();
@@ -29,6 +30,8 @@ export default function Galleries({}) {
   const onDeleteConfirm = () => dispatch(deleteProject(id))
 
   useEffect(() => {
+    
+    dispatch(setAvailableStortage(projects))
     // If no projects are available, return early
     if (!projects) return;
     // Find the project with the given id
@@ -42,6 +45,7 @@ export default function Galleries({}) {
       return;
     }  
     console.log({projectTemp})
+    
 
   // Determine the collectionId to use
   const defaultCollectionId = projectTemp?.collections && (projectTemp.collections.length > 0 ? projectTemp.collections[0].id : '');

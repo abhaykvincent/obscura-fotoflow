@@ -6,3 +6,9 @@ export const addAllFileSizesToMB = (files) =>{
     }
     return size / 1000000;
 }
+export const getUsedSpace = (projects) =>{
+    const usedSpace = projects.reduce((acc,project) => {
+        return acc + project.totalFileSize
+    },0)
+    return usedSpace
+}

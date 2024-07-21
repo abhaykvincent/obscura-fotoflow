@@ -29,7 +29,7 @@ const ImageGallery = React.memo(({ projectId, imageUrls }) => {
   return (
     <div className="gallary">
       <div className="photos">
-        {imageUrls.map((fileUrl, index) => (
+        {imageUrls.map((fileUrl, index) => index <8 &&(
           <div className="photo-wrap"
             onClick={()=>openPreview(index)}>
             <div className="hover-options-wrap">
