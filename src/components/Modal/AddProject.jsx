@@ -9,6 +9,7 @@ function AddProjectModal() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const visible = useSelector(selectModal)
+    console.log(visible)
     const onClose = () => dispatch(closeModal('createProject'))
   const [projectData, setProjectData] = useState({
       name: 'Ethan Ross',
@@ -23,8 +24,8 @@ function AddProjectModal() {
       uploadedFilesCount:0,
       selectedFilesCount:0,
       totalFileSize:0,
-      createdAt: new Date(),
-      lastOpened: new Date(),
+      createdAt: new Date().getTime(),
+      lastOpened: new Date().getTime(),
   });
   const handleInputChange = (event) => {
       const {name,value} = event.target;

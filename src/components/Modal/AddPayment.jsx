@@ -16,10 +16,7 @@ function AddPaymentModal({ project }) {
   });
   const existingPaymentsTotal = project.payments.reduce((sum, payment) => sum + parseInt(payment.amount), 0);
   let balance = project.budgets?.amount - existingPaymentsTotal;
-  console.log(project.budgets?.amount)
-  console.log({existingPaymentsTotal})
-  console.log(project.payments)
-  console.log({balance})
+
 
   const [aiSuggestions, setAISuggestions] = useState(
     {
@@ -103,7 +100,7 @@ function AddPaymentModal({ project }) {
             {errors.name && <div className="error">{errors.name}</div>}
             {/* AI suggested */}
           <div className="field ai-suggestion">
-              <label htmlFor="amount">AI✨  </label>
+              <label className='ai-label' htmlFor="amount">AI✨  </label>
               <div className="ai-suggestions">
 
                 {
@@ -132,7 +129,7 @@ function AddPaymentModal({ project }) {
           {errors.amount && <div className="error">{errors.amount}</div>}
           {/* AI suggested */}
           <div className="field ai-suggestion">
-              <label htmlFor="amount">✨ AI </label>
+              <label className='ai-label' htmlFor="amount">✨ AI </label>
               <div className="ai-suggestions">
 
               {
