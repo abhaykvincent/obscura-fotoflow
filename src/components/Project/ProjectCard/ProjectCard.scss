@@ -111,7 +111,7 @@
         align-content: space-between;
         margin: 8px*2;
         margin-right: 8px*1.5;
-        margin-bottom: 8px*1.5;
+        margin-bottom: 8px*1;
         margin-top: 8px*1.5;
         gap: 8px*0.2;
         transition-duration: 0.1s;
@@ -155,16 +155,14 @@
             display: flex;
             height: 100%;
             font-size: 0.8rem;
-            gap: 8px;
+            gap: 4px;
             justify-content: space-between;
-            transition-duration: 0.2s;
-            gap: 8px*2;
+            transition-duration: 0.2s;align-items: center;
             .summary-left{
                 display: flex;
                 align-items: end;
-                gap: 4px;
+                gap: 6px;
                 font-weight: 500;
-                opacity: 0.5;
             }
             .summary-right{
                 display: grid;
@@ -175,14 +173,23 @@
                 display: flex;
                 gap: 4px;
                 }
-                .summary-item{
+                
+            }.summary-item{
 
-                    .icon{
-                        background-size: 90% ;
-                        opacity: 0.9 !important;
-                        transition-duration: 0.1s;
-                        padding: 8px*1.1;
-                    }
+                opacity: 0.2;
+                .icon{
+                    background-size: 90% ;
+                    opacity: 0.9 !important;
+                    transition-duration: 0.1s;
+                    padding: 8px*1.1;
+                }
+                &.active{
+
+            opacity: 0.8;p{
+                font-size: 0.7rem;
+                color: $gray-accessible-dark;
+                line-height: 1rem;
+            }
                 }
             }
             .summary-item{
@@ -201,7 +208,7 @@
                 }
                 .icon{
                     padding: 8px*1;
-                    background-size: 70%;
+                    background-size: 80%;
                     background-position: center;
                     opacity: 0.5;
                 }
@@ -209,6 +216,11 @@
             .collection-count{
                 .icon{
                     background-image: url('../../../assets/img/icons/folders.svg');
+                }
+            }
+            .invoice-count{
+                .icon{
+                    background-image: url('https://img.icons8.com/pastel-glyph/64/FFFFFF/invoice-1.png');
                 }
             }
             .photos-count{
@@ -234,26 +246,31 @@
         }
     }
     .pin{
+        display: flex;
         opacity: 0.5;
+        background-color: $dark-1;
+        border-radius: 4px;
+        border: 1px solid $dark-0;
+        padding: 1px 4px;
+        padding-left: 1px;
+        gap: 0px;
         .pin-label{
+            width: 8px*2;
+            height: 8px*2;
             font-size: 0.7rem;
             display: inline-block;
             padding: 0;
             border-radius: 4px;
             color: $gray2-default-dark;
+            background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/key.png');
+            background-size: 50%;
+            background-position: center;
         }
         .pin-number{
             font-size: 0.7rem;
             text-align: center;
-            display: inline-block;
-            background-color: $dark-1;
-            padding: 2px 4px;
-            margin: 0;
-            margin-left: 4px;
-            margin-top: 4px;
-            width: 8px*5;
-            border-radius: 4px;
-            border: 1px solid $dark-0;
+            display: flex;
+            align-items: center;
         }
     }
     &.new{
@@ -289,122 +306,128 @@
             }
         }
         
-    }
-    &:nth-child(7){
-        .status-signal{
-            border: 1px solid $gray3-accessible-dark;
-            background-color: $dark-1 !important;
-            box-shadow: 0 1px 1px 2px #252525a3,0 0 10px 5px #2c2c2cd6,0 0 4px 1px #000000,0 0 20px 20px #0000000e !important;
-
-        }
+    }/* Draft */
+    &.Wedding{
         .project-cover{
-
-        transition-duration: 5s !important;
-        }
-        &:hover{
-            border-right: 1px solid rgba(54, 54, 54, 0.8);
-            border-top: 1px solid rgba(54, 54, 54, 0.8);
-            .status-signal{
-                border: 1px solid $gray3-accessible-dark;
-                background-color: $gray5-accessible-dark !important;
-                box-shadow: 0 1px 1px 2px #252525a3,0 0 10px 5px #000000d6,0 0 4px 1px #000000,0 0 20px 20px #0000000e !important;
-                
-            }.project-cover{
-
-                transform: scale(1.05);
-                transition-duration: 5s !important;
-                }
+            background-size: 50%;
+            background-image: url('https://img.icons8.com/dotty/80/FFFFFF/wedding-rings.png');
         }
     }
-    &.uploaded{
-        .project-details .details-top .right .status-signal{
-            background-color: $yellow-default-dark !important;
-            transform: scale(1.1);
-            box-shadow: 0 1px 1px 1px #362e00ef, 0 0 10px 5px #ffd70038, 0 0 4px 2px #b69b0017, 0 0 20px 10px hsla(60, 100%, 50%, 0.01) !important;
-
+    &.Birthday{
+        .project-cover{
+            background-size: 40%;
+            background-image: url('https://img.icons8.com/ios/150/FFFFFF/birthday.png');
+        }
+    }&.Baptism{
+        .project-cover{
+            background-size: 50%;
+            background-image: url('https://img.icons8.com/external-others-bomsymbols-/91/FFFFFF/external-angel-christmas-decoration-outline-others-bomsymbols-.png');
         }
     }
-    &.draft{
-        .project-details .details-top .right .status-signal{
-            background-color: $gray4-default-dark !important;
-            transform: scale(1.1);
-            border: 1px solid $gray-default-dark;
-            box-shadow: 0 1px 1px 1px #3c3c3cef, 0 0 10px 5px #ffffff0d, 0 0 4px 2px #b1b1b117, 0 0 20px 10px hsla(0, 0%, 100%, 0.01) !important;
-
-        }
-    }
-    &.cold{
-        .project-details .details-top .right .status-signal{
-            background-color: $gray-default-dark !important;
-            transform: scale(1.1);
-            box-shadow: 0 1px 1px 1px #3c3c3cef, 0 0 10px 5px #ffffff1f, 0 0 4px 2px #b1b1b117, 0 0 20px 10px hsla(0, 0%, 100%, 0.01) !important;
-
-        }
-    }
-    &.red{
-        .project-details .details-top .right .status-signal{
-            background-color: $red-default-dark;
-            transform: scale(1.1);
-            box-shadow: 0 1px 1px 1px #8700002e, 0 0 10px 5px #ff000038, 0 0 4px 2px #ff000073, 0 0 20px 10px hsla(0, 100%, 50%, 0.2);
-
-
-        }
-        &:hover{
-        }
-    }
-    &.selecting{
-            /* background-color: $orange-accessible-dark;
-            transform: scale(1.1);
-            box-shadow: 0 1px 1px 1px #d966002e, 0 0 10px 5px #a7640038, 0 0 4px 2px #b46f066a, 0 0 20px 10px hsla(30, 100%, 50%, 0.05);
-
- */ 
-        .project-details .details-top .right .status-signal{
-        background-color: $orange-default-dark;
-        transform: scale(1.1);
-        box-shadow: 0 1px 1px 1px #d966002e, 0 0 10px 5px #a7640038, 0 0 4px 2px #b46f066a, 0 0 20px 10px hsla(30, 100%, 50%, 0.05) !important;
-
-        animation: upload-blinking 1.5s infinite ease-in-out;
-        animation-delay: 0.1s;
-
-        }
-        
-    }
-    &:nth-child(9){
-        .project-details .details-top .right .status-signal{
-            background-color: $yellow-default-dark;
+        &.draft {
+            .project-details .details-top .right .status-signal {
+                //background-color: $amber-dark;
+                background-color: $yellow-default-dark;
                 transform: scale(1.1);
-                box-shadow: 0 1px 1px 1px #362e00ef, 0 0 10px 5px #ffd70038, 0 0 4px 2px #b69b0017, 0 0 20px 10px hsla(60, 100%, 50%, 0.01) !important;
-    
-            animation: upload-blinking 0.75s infinite ease-in-out;
-            animation-delay: 0.5s
+                box-shadow: 0 1px 1px 1px #ffbf002e, 0 0 10px 5px #ffcc0038, 0 0 4px 2px #ffdd002a, 0 0 20px 10px hsla(45, 100%, 50%, 0.05) !important;
 
+                animation: steady 1.5s infinite;
+            }
         }
-        &:hover{
-        }
-    }
-    &.uploading{
-        .project-details .details-top .right .status-signal{
-            background-color: $green-accessible-dark;
-            transform: scale(1.1);
-            box-shadow: 0 1px 1px 1px #022002a3,0 0 10px 5px #00ff0024,0 0 4px 2px #00ff0061,0 0 20px 10px hsla(120, 100%, 50%, 0.2) !important;
-                
-            animation: upload-blinking 0.75s infinite ease-in-out;
-            animation-delay: 0.5s
 
-        }
-        &:hover{
-        }
-    }
-    &.designing{
-        .project-details .details-top .right .status-signal{
-            background-color: $purple-accessible-dark;
-            transform: scale(1.1);
-            box-shadow: 0 1px 1px 1px #5e2a7e2e, 0 0 10px 5px #9b59b638, 0 0 4px 2px #9b59b673, 0 0 20px 10px hsla(270, 100%, 50%, 0.2);
+        /* Upcoming */
+        &.upcoming {
+            .project-details .details-top .right .status-signal {
+                //background-color: $cyan-dark;
+                background-color: #00bfff;
 
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #00bfff2e, 0 0 10px 5px #00ccff38, 0 0 4px 2px #00ddff6a, 0 0 20px 10px hsla(180, 100%, 50%, 0.05) !important;
+
+                animation: steady 1.5s infinite;
+            }
         }
-        &:hover{
+
+        /* In Progress */
+        &.uploaded {
+            .project-details .details-top .right .status-signal {
+                //background-color: $lime-green-dark;
+                background-color: $green-default-light;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #32cd322e, 0 0 10px 5px #38cc0038, 0 0 4px 2px #34dd002e, 0 0 20px 10px hsla(90, 100%, 50%, 0.05) !important;
+
+                animation: pulsing 1.5s infinite ease-in-out;
+            }
         }
-    }
+
+        /* Selecting Images */
+        &.selecting {
+            .project-details .details-top .right .status-signal {
+                //background-color: $green-dark;
+                background-color:$green-default-light;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #0080002e, 0 0 10px 5px #00a00038, 0 0 4px 2px #00b0006a, 0 0 20px 10px hsla(120, 100%, 50%, 0.05) !important;
+
+                animation: blinking 1.5s infinite ease-in-out;
+            }
+        }
+
+        /* Editing Images */
+        &.editing {
+            .project-details .details-top .right .status-signal {
+                background-color: $purple-accessible-dark;
+;                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #8000802e, 0 0 10px 5px #a000a038, 0 0 4px 2px #b000b06a, 0 0 20px 10px hsla(300, 100%, 50%, 0.05) !important;
+
+                animation: pulsing 1.5s infinite ease-in-out;
+            }
+        }
+
+        /* Client Review */
+        &.client-review {
+            .project-details .details-top .right .status-signal {
+                background-color: $orange-accessible-dark;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #d966002e, 0 0 10px 5px #a7640038, 0 0 4px 2px #b46f066a, 0 0 20px 10px hsla(30, 100%, 50%, 0.05) !important;
+
+                animation: blinking 1.5s infinite ease-in-out;
+                animation-delay: 0.1s;
+            }
+        }
+
+        /* Completed */
+        &.completed {
+            .project-details .details-top .right .status-signal {
+                background-color: $yellow-default-dark;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #ffcc002e, 0 0 10px 5px #ffdd0038, 0 0 4px 2px #ffee006a, 0 0 20px 10px hsla(60, 100%, 50%, 0.05) !important;
+
+                animation: steady 1.5s infinite;
+            }
+        }
+
+        /* Archived */
+        &.archived {
+            .project-details .details-top .right .status-signal {
+                background-color: #cccccc;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #d3d3d32e, 0 0 10px 5px #cccccc38, 0 0 4px 2px #bbbbbb6a, 0 0 20px 10px hsla(0, 0%, 75%, 0.05) !important;
+
+                animation: steady 1.5s infinite;
+            }
+        }
+
+        /* Pending Payment */
+        &.pending-payment {
+            .project-details .details-top .right .status-signal {
+                background-color: $red-accessible-dark;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #ff00002e, 0 0 10px 5px #ff333338, 0 0 4px 2px #ff66666a, 0 0 20px 10px hsla(0, 100%, 50%, 0.05) !important;
+
+                animation: blinking 1.5s infinite ease-in-out;
+            }
+        }
+
     
     @for $i from 1 through 10 {
         &:nth-child(#{$i}) {
@@ -439,3 +462,29 @@
         opacity: 0.2;
       }
     }
+
+    /* Keyframe Animations */
+@keyframes steady {
+    0% { opacity: 1; }
+    100% { opacity: 1; }
+}
+
+@keyframes pulsing {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.1); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes blinking {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes rapid-blinking {
+    0% { opacity: 1; }
+    25% { opacity: 0; }
+    50% { opacity: 1; }
+    75% { opacity: 0; }
+    100% { opacity: 1; }
+}

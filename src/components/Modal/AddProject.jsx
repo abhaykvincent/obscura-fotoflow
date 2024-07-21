@@ -1,23 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { addProject } from '../../firebase/functions/firestore';
-import { analytics } from '../../firebase/app';
-import { getAnalytics, logEvent } from 'firebase/analytics';
+import { useDispatch, useSelector } from 'react-redux';
+import { showAlert } from '../../app/slices/alertSlice';
+import { addProject } from '../../app/slices/projectsSlice';
+import { useNavigate } from 'react-router';
+import { closeModal, selectModal } from '../../app/slices/modalSlice';
 
-function AddProjectModal({ showAlert,visible, onClose, onSubmit }) {
-
+function AddProjectModal() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const visible = useSelector(selectModal)
+    console.log(visible)
+    const onClose = () => dispatch(closeModal('createProject'))
   const [projectData, setProjectData] = useState({
       name: 'Ethan Ross',
       type: 'Birthday',
       email: 'julia.ethan@gmail.com',
       phone: '3656992278',
       collections: [],
+      events: [],
+      payments: [],
       status: 'draft',
-      createdAt: new Date(),
+      projectCover:'',
       uploadedFilesCount:0,
       selectedFilesCount:0,
       totalFileSize:0,
-      lastOpened: new Date(),
-      projectCover:''
+      createdAt: new Date().getTime(),
+      lastOpened: new Date().getTime(),
   });
   const handleInputChange = (event) => {
       const {name,value} = event.target;
@@ -28,23 +36,24 @@ function AddProjectModal({ showAlert,visible, onClose, onSubmit }) {
   };
   const handleSubmit = () => {
       // Call the API function to add a new project
-      addProject(projectData)
-          .then((addedProject) => {
-              onSubmit(addedProject);
+      
+      dispatch(addProject(projectData))
+          .then((response) => {
+            let newProjectData = response.payload;
               onClose();
-              showAlert('success', 'New Project created!')
-              logEvent(analytics,'project_created');
-
+              dispatch(showAlert({type:'success', message:`New Project created!`}));
+            
+              navigate(`/project/${newProjectData.id}`);
           })
           .catch((error) => {
               console.error('Error creating project:', error);
-              showAlert('error', 'error')
+              dispatch(showAlert({type:'error', message:`error`}));
               // Handle error scenarios, e.g., show an error message
           });
   };
 
 
-  if (!visible) {
+  if (!visible.createProject) {
     return null;
   }
 
@@ -96,3 +105,4 @@ function AddProjectModal({ showAlert,visible, onClose, onSubmit }) {
 }
 
 export default AddProjectModal
+// Line Complexity  1.0 ->

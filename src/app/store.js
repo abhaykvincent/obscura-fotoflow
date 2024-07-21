@@ -1,8 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import authReducer from './slices/authSlice';
+import alertReducer from './slices/alertSlice';
+import projectsReducer from './slices/projectsSlice'
+import modalReducer from './slices/modalSlice'
+import uploadReducer from './slices/uploadSlice'
+import studioReducer from './slices/studioSlice'
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    auth: authReducer,
+    alert: alertReducer,
+    projects: projectsReducer,
+    modal: modalReducer,
+    upload: uploadReducer,
+    studio: studioReducer
   },
 });

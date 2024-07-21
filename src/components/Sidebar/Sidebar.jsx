@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Sidebar.scss'
 import { GrUpgrade } from "react-icons/gr";
-function Sidebar({isUploading,totalUploadProgress}) {
+import { logout, selectUser } from '../../app/slices/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+function Sidebar() {
+  
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+  const [profileOptionActive, setProfileOptionActive] = useState(false)
+  const toggleProfileOption = () => {
+    setProfileOptionActive(!profileOptionActive)
+  }
+  useEffect(() => {
+    // console.log(profileOptionActive)
+  }, [profileOptionActive])
   const location = useLocation();
   
   return (
@@ -55,6 +67,12 @@ function Sidebar({isUploading,totalUploadProgress}) {
             <div className="label">Storage</div>
           </div>
         </Link>
+        <Link to={`/notifications`}>
+          <div className={`menu notifications ${location.pathname === '/notifications' ? 'selected' : ''}`}>
+            <div className="icon"></div>
+            <div className="label">Notifications</div>
+          </div>
+        </Link>
         <Link to={`/financials`}>
           <div className={`menu accounts ${location.pathname === '/accounts' ? 'selected' : ''} disabled`}>
             <div className="icon"></div>
@@ -74,25 +92,45 @@ function Sidebar({isUploading,totalUploadProgress}) {
           </div>
         </Link>
       </div>
-      <div className="profile-options">
-        <div className="profile">
-          <div className="profile-image"></div>
-          <div className="account-name">
-            <div className="studio-name">Obscura </div>
-            <div className="profile-name">Sam</div>
+
+      <div className="profile-settings">
+        <div className="profile-options" onClick={toggleProfileOption}>
+          <div className="profile"
+          >
+            <div className="profile-image"></div>
+            <div className="account-name">
+              <div className="studio-name">Obscura</div>
+              <div className="profile-name">{user.displayName}</div>
+            </div>
           </div>
+          <div className="option-icon"></div>
         </div>
-        <div className="option-icon"></div>
+        <div className={`profile-options-window ${profileOptionActive?'active':''}`}>
+          <div className="option disabled">Profile</div>
+          <div className="option disabled">Account</div>
+          <div className="option disabled">Settings</div>
+          
+          <Link to={`/subscription`}>
+            <div className="option">Subscription</div>
+          </Link>
+          <div className="option logout"
+            onClick={()=>dispatch(logout())}
+          >Logout</div>
+        </div>
       </div>
-      <div className="status">
+      <div className="subscriptoion status">
         <div className="icon">
         <GrUpgrade />
         </div>
-        <div className="message">You have 126MB left</div>
-        <div className="button primary outline">Upgrade</div>
+        <div className="message">Upgrade to <span>STUDIO</span></div>
+        <div className="button primary outline"
+          
+        >Waitlist</div>
+        <p className="plan">Current Plan: Freelancer</p>
       </div>
     </div>
   );
 }
 
 export default Sidebar;
+// Line Complexity  1.4 ->

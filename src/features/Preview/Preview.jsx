@@ -28,6 +28,13 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
   }
 
   useEffect(() => {
+    //scrolltotop
+    window.scrollTo(0, 0);
+  }, [])
+
+  //useeffect side effect
+
+  useEffect(() => {
     setImageSize()
     zoomReset()
   }, [image])
@@ -83,7 +90,8 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
   }
 
   return (
-    <div
+    <div className="preview-wrapper">
+      <div
       className='preview'
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
@@ -92,11 +100,12 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
       <div className="image-wrap">
         <div className="image"
           style={{
-            backgroundImage: `url(${image.url})`,
+            backgroundImage: `url("${image.url}")`,
             backgroundPositionX: zoomValue>100?`${imagePosition.x}px`:'center',
             backgroundPositionY: zoomValue>100?`${imagePosition.y}px`:'center',
             backgroundSize: `auto ${zoomValue}%`
           }}>
+            
         </div>
 
       </div>
@@ -107,7 +116,7 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
                 setPreviewIndex(prevIndex => prevIndex + 1)
             }}
           ></div>
-}
+    }
         {previewIndex ===0 ||<div className="prev"
           onClick={() => {
               setPreviewIndex(prevIndex => prevIndex - 1)
@@ -145,7 +154,12 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
         </div>
       </div>
     </div>
+
+    </div>
+    
   )
 }
 
 export default Preview
+
+  // Line Complexity  1.5 -> 

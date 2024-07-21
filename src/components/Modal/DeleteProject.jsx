@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { closeModal } from '../../app/slices/modalSlice';
+import { useDispatch } from 'react-redux';
 
-function DeleteConfirmationModal({ onDeleteConfirm, onClose}) {
+function DeleteConfirmationModal({ onDeleteConfirm}) {
+  const dispatch = useDispatch();
   const handleDelete = () => {
     // Call the delete function upon confirmation
     onDeleteConfirm();
-    onClose();
   };
 
   return (
@@ -12,7 +14,7 @@ function DeleteConfirmationModal({ onDeleteConfirm, onClose}) {
       <div className="modal delete-project">
         <div className='modal-header'>
           <div className="modal-controls">
-            <div className="control close" onClick={onClose}></div>
+            <div className="control close" onClick={()=>dispatch(closeModal('confirmDeleteProject'))}></div>
           </div>
           <div className="modal-title">Confirm Deletion</div>
         </div>
@@ -21,11 +23,11 @@ function DeleteConfirmationModal({ onDeleteConfirm, onClose}) {
           <p className='note'><strong>Note:</strong> This action is permanent and will result in the loss of all associated data.</p>
         </div>
         <div className="actions">
-          <div className="button secondary" onClick={onClose}>Cancel</div>
-          <div className="button primary" onClick={handleDelete}>Delete</div>
+          <div className="button secondary" onClick={()=>dispatch(closeModal('confirmDeleteProject'))}>Cancel</div>
+          <div className="button warnning" onClick={handleDelete}>Delete</div>
         </div>
       </div>
-      <div className="modal-backdrop" onClick={onClose}></div>
+      <div className="modal-backdrop" onClick={()=>dispatch(closeModal('confirmDeleteProject'))}></div>
     </div>
   );
 }

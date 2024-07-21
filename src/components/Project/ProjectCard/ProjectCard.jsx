@@ -1,7 +1,7 @@
 import {Link} from 'react-router-dom';
 import './ProjectCard.scss'
 
-function ProjectCard({project, key, index}) {   
+function ProjectCard({project}) {   
     //Project's selected photos count
     const getProjectSelectedPhotosCount = (project) => {
         return project.collections.flatMap(collection => collection.uploadedFiles)
@@ -9,13 +9,13 @@ function ProjectCard({project, key, index}) {
             .length;
     }
   return (
-    <Link className={`project ${project.status?project.status:''}`} to={`/project/${project.id}`} key={key}>
+    <Link className={`project ${project.id} ${project.type?project.type:''} ${project.status?project.status:''}`} to={`/project/${project.id}`} key={project.id}>
         <div className="cover-wrap">
             <div
                 className="project-cover"
                 style={{
                     backgroundImage: project.projectCover ? `url(${project.projectCover})` : '',
-                    backgroundSize: project.projectCover ? 'cover' : '20%',
+                    backgroundSize: project.projectCover ? 'cover' : '',
                 }}
             />
         </div>
@@ -37,13 +37,17 @@ function ProjectCard({project, key, index}) {
                     </div> :
                     <div className="project-summary">
                         <div className="summary-left">
-                            <div className="summary-item photos-count">
+                            <div className={`summary-item photos-count ${project.uploadedFilesCount>0?'active':''}`}>
+                                <div className="icon"></div>
                                 <p>{project.uploadedFilesCount}</p>
-                                <div className="icon"></div>
                             </div>
-                            <div className="summary-item collection-count">
-                                <p>{project.collections.length}</p>
+                            <div className={`summary-item collection-count ${project.collections.length>0?'active':''}`}>
                                 <div className="icon"></div>
+                                <p>{project.collections.length}</p>
+                            </div>
+                            <div className={`summary-item invoice-count ${project.payments.length>0?'active':''}`}>
+                                <div className="icon"></div>
+                                <p>{project.payments.length}</p>
                             </div>
                             
 
@@ -53,7 +57,7 @@ function ProjectCard({project, key, index}) {
                             // if pin available, show pin number  
                             project.pin ?
                             <div className="pin">
-                                <p className="pin-label">PIN</p>
+                                <p className="pin-label"></p>
                                 <p className="pin-number">{project.pin}</p>
                             </div>
                             : ''

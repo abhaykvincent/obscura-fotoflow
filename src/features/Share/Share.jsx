@@ -20,9 +20,7 @@ export default function ShareProject() {
   const [size,setSize]=useState(100);
   // Fetch Images
 // if co collectionIs is passed, use the first collectionId
-  console.log(project)
     collectionId  = collectionId || project?.collections[0]?.id
-    console.log(projectId, collectionId)
     
   // Fetch Images based on projectId
   const fetchProjectData = async () => {
@@ -45,7 +43,6 @@ export default function ShareProject() {
   }
 
   useEffect(() => {
-    console.log(projectId, collectionId)
     fetchProjectData();
   }, []);
 
@@ -53,9 +50,9 @@ export default function ShareProject() {
     if(!project) return
     // find collection name from collection id
     const collection = findCollectionById(project.collections, collectionId);
-    console.log(collection)
     document.title = `${project.name} | ${collection.name} | Gallery`
     const newImages = project?.collections.find((collection)=>collection.id===collectionId)?.uploadedFiles;
+
     setImageUrls(newImages)
     setPage(1)
   }, [project, collectionId]);
@@ -81,44 +78,19 @@ export default function ShareProject() {
   };
   return (
     <div className="share-project">
-      <div className="project-header"
-      style={
-        { 
-          backgroundImage: 
-            `url(${imageUrls[0]?imageUrls[0]:''})`
-        }}
-      >
-        <div className="project-info">
-
-        <h1 className='projet-name'>{project.name}</h1>
-        <p>10th October, 2023</p>
-        <CollectionsPanel/>
+      <div className="project-header">
+        <img className='banner' src={project.projectCover} alt="" srcset="" />
+        <div className="gallery-info">
+          <h1 className='projet-name'>{project.name}</h1>
+          <p>10th October, 2023</p>
+          <CollectionsPanel/>
         </div>
-        <div className="banner" >
-
-        </div>
+        
+        
       </div>
         <div className="shared-collection">
           <ShareGallery images={imageUrls} projectId={projectId}/>
 
-        <div className="pagination">
-          <div className={`button ${page===1?'disabled':'primary'} previous`}
-            onClick={
-              ()=>{
-                if(page>1)
-                  setPage(page-1)
-              }
-            }
-          >Previous</div>
-          <div className="button primary next"
-            onClick={
-              ()=>{
-                setPage(page+1)
-              }
-            }
-          >Next</div>
-
-        </div>
         </div>
     </div>
   );

@@ -1,7 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import './UploadProgress.scss'
-function UploadProgress({uploadList,uploadStatus}) {
-    const [modalState, setModalState] = useState('')
+import { convertMegabytes } from '../../utils/stringUtils';
+import { useSelector } from 'react-redux';
+import { selectUploadList, selectUploadStatus } from '../../app/slices/uploadSlice';
+
+function UploadProgress({}) {
+    const uploadList = useSelector(selectUploadList)
+    const uploadStatus = useSelector(selectUploadStatus)
+    const [uploadPercent,setUploadPercent] = useState(0)
+    const [totalProgress,setTotalProgress]  = useState(0)
+    useEffect(() => {
+        setTotalProgress(0)
+        let totalFilesCount= uploadList.length;
+        uploadList.forEach(item => {
+            if(item.status === 'uploaded')
+            {
+                setTotalProgress(totalProgress+1)
+            }
+        })
+         setUploadPercent(totalProgress/totalFilesCount*100);
+    }, [uploadList])
+    const [modalState, setModalState] = useState('open')
+
     useEffect(() => {
         if(uploadStatus == 'completed'){
             setModalState('completed')
@@ -12,7 +32,9 @@ function UploadProgress({uploadList,uploadStatus}) {
         if(uploadStatus == 'open'){
             setModalState('')
         }
+        console.log(uploadStatus)
     }, [uploadStatus])
+
     const onMinimize = () => {
         setModalState('minimize')
     }
@@ -36,7 +58,7 @@ function UploadProgress({uploadList,uploadStatus}) {
                 <p>128 Photos Uploaded</p>
             </div>:
             <div className="header-title">
-                <h4>Uploading 10 of 210</h4>
+                <h4>Uploading {totalProgress} of {uploadList.length}</h4>
                 <p>128MB Remaining</p>
             </div>
         }
@@ -52,7 +74,9 @@ function UploadProgress({uploadList,uploadStatus}) {
             ></div>
           </div>
         <div className="total-progress">
-            <div className="progress-bar"></div>
+            <div className="progress-bar"
+                style={{width:uploadPercent+'%'}}
+            ></div>
         </div>
         </div>
         <div className="body">
@@ -63,7 +87,7 @@ function UploadProgress({uploadList,uploadStatus}) {
                     <div className="task-cover"></div>
                     <div className="task-name">
                         <p className="file-name">{file.name}</p>
-                        <p className="file-progress">Uploading {file.progress?file.progress+'%':''} . 123KB</p>
+                        <p className="file-progress">Uploading {file.progress?file.progress+'%':''} . {convertMegabytes(file.size/1000000,2)}</p>
                     </div>
                     <div className="task-status"></div>
                     </div>
@@ -76,3 +100,4 @@ function UploadProgress({uploadList,uploadStatus}) {
 }
 
 export default UploadProgress
+// Line Complexity  1.0 ->

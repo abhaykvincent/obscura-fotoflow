@@ -16,7 +16,7 @@ function signInWithEmailAndPassword() {
         console.error(errorCode, errorMessage);
       });
   }
-  
+
   // Function to sign in with Google
   function signInWithGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();

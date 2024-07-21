@@ -8,7 +8,7 @@
   .button{
     color:white;
   }
-  .project-info{
+  .gallery-info{
     position: relative;
     z-index: 3;
     text-align: center;
@@ -30,8 +30,8 @@
   background-size: 100%;
   .banner{
     align-items: center;
-    max-height: 60vh;
-    max-width: 8px*3000;
+    max-height: calc(100vh - 8px*60);
+    max-width: calc(100vw);
     position: relative;
     top: 0;
     margin: 0 auto;

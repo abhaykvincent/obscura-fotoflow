@@ -1,0 +1,521 @@
+@import '../../style/variables';
+.welcome-section{
+    padding: 8px*2;    
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-content: space-between;
+    font-family: "Product Sans";
+    .welcome-message-top{
+        display: grid;
+        grid-template-columns: auto ;
+        justify-content: center;
+        gap: 0px;
+        h1{
+            line-height: 3rem;
+            opacity: 0;
+            animation: fadeInLeft 0.5s ease-out 0.1s;
+            animation-fill-mode: forwards;
+            animation-timing-function: ease-out;
+            span.iconic-gradient{
+                line-height: 1rem;
+                background: linear-gradient(90deg,  $green-accessible-dark 0%,  $green-dark-accessible-light 90%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        
+        }
+        h2{
+            margin-top: 0rem;
+            font-size:2.5rem;
+            line-height: 2.4rem;
+            color: $gray4-default-dark;
+            opacity: 0;
+            animation: fadeInLeft 0.5s ease-out 0.40s;
+            animation-fill-mode: forwards;
+            animation-timing-function: ease-out;
+        }
+    }
+    .welcome-message{
+        font-size:3rem;
+        font-weight: 600;
+        color: $gray2-default-dark;
+        min-height: 8px*7;
+        
+            
+        &.sub{
+            text-align: center;
+        }
+        span{
+            &.bold{
+                color: $gray2-accessible-light;
+            }
+        }
+        .actions{
+            display: flex;
+            justify-content: flex-end;
+        }
+    }
+    h2.welcome-sub-message {
+        font-size: 1.2rem;
+        color: $gray-accessible-dark;
+        font-weight: 400;
+    }
+    .actions{
+        display: flex;
+        justify-content: flex-end;
+        opacity: 0;
+        animation : fadeInLeft 0.5s ease-out 0.3s;
+        animation-fill-mode: forwards;
+    }
+    
+
+}
+.subscription{ 
+    display: grid;
+    text-align: center;
+    
+    .section{
+        padding: 8px;
+        opacity: 0;
+        transform: translateX(8px);
+        transition: opacity 0.5s, transform 0.5s;
+        
+        @for $i from 1 through 5 {
+            &:nth-child(#{$i}) {
+                $delay: 0.1*($i - 1) + 0.4s * ($i - 1);
+                animation: fadeInUp 0.1s ease-out $delay;
+                animation-fill-mode: forwards;
+                animation-timing-function: ease-out;
+                .projects{
+                    .project{
+                        opacity: 0;
+                    transform: translateY(-8px);
+                    transition: opacity 1s, transform 0.5s;
+                    
+                    @for $j from 1 through 10 {
+                        &:nth-child(#{$j}) {
+                            $delay2: 0.1s*($i - 2) + 0.6s + 0.05s * ($j - 1);
+                            animation: fadeInUp 0.5s ease-out $delay2;
+                            animation-fill-mode: forwards;
+                            animation-timing-function: ease-out;
+                        }
+                    }
+                    }
+                }
+            }
+        }
+        .section-heading{
+            display: inline-block;
+            width: auto;
+            font-weight: 400;
+            padding: 8px*1 0;
+            padding-right: 8px*2;
+            margin-left: 8px;
+            margin-top: 8px*1;
+            margin-bottom: 8px*3;
+            border-bottom: 2px solid $gray6-default-dark;
+            color: $gray3-default-light;
+            a{
+                font-size: 0.9rem;
+                font-weight: 400;
+                float: right;
+                color: $green-default-dark;
+                text-decoration: underline;
+                margin: 0 8px*1;
+            }
+        }
+        .events-header{
+            display: flex;
+            padding: 0 8px;
+            .icon{
+                height: 8px*4;
+                width: 8px*4;
+                padding: 8px*3;
+                margin-right: 8px*1;
+                background-image: url('../../assets/img/icons/camera.svg');
+                background-size: 70%;
+                background-position: center 70% ;
+            }
+        }
+        .project-header{
+            display: flex;
+            .icon{
+                height: 8px*4;
+                width: 8px*4;
+                padding: 8px*3;
+                background-image: url('../../assets/img/icons/folder.svg');
+                background-size: 50%;
+                background-position: center;
+            }
+        }
+        .projects{
+            padding: 0 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 8px*3;
+            width: 100%;
+            
+            .message{
+                color: $gray4-default-dark;
+            }
+            
+            &.completed{
+                h3::after{
+                    font-size: 0.9rem;
+                    font-weight: 400;
+                    margin-left: 8px*1;
+                    content: 'Client Approved';
+                    color: $gray3-default-dark;
+                }
+                .project{
+                    grid-template-columns: auto 8px*16;
+
+                    .project-options{
+                        align-items: center;
+                    }
+                }
+            }
+        }
+        &.approval-pending{
+            .project-options{
+                display:grid !important;
+            }
+        }
+    }
+
+    .plans-container{
+        margin-left: 8px*2;
+        margin-top: 8px*2;
+        opacity: 0;
+        animation: fadeInLeft 0.5s ease-out 0.5s;
+        animation-fill-mode: forwards;
+        animation-timing-function: ease-out;
+        .subscriptions-heading{
+            margin-bottom: 8px*4;
+            font-size: 1.8rem;
+            font-weight: normal;
+            color: $gray6-accessible-light;
+        }
+        .plans{
+            display: grid;
+            justify-content: center;
+            grid-template-columns: minmax(100px, 240px) minmax(100px, 240px);
+            gap: 8px*4;
+            align-items: start;
+            
+            .plan{
+                padding: 8px*4;
+                padding-top: 8px*2;
+                border-radius: 8px;
+                border: 1px solid $dark-1;
+                background-color: $dark-2;
+                .current-plan {
+                    border: none;
+                }
+                .plan-name{
+                    font-size: 1rem;
+                    color: $gray5-accessible-light;
+                    margin-bottom: 0px;
+                }
+                .plan-pricing{
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap:8px;
+                    padding: 8px*2 0px;
+                    padding-top: 8px*0;
+                    h1{
+                        color: $gray4-accessible-light;
+                        font-weight: 400;
+                    }
+                    .unit{
+                        font-size: 0.8rem;
+                        color: $gray2-accessible-dark;
+                        line-height: 2rem;
+                        span{
+                            font-size: 1.2rem;
+                            color: $gray3-accessible-light;
+                            text-decoration: line-through;
+                            text-decoration-color: $gray4-accessible-light;
+
+
+                        }
+                    }
+
+                    
+                    &.yearly{
+                        margin-top: -8px*2;
+                        margin-left: 4px;
+                        h1{
+                            color: $green-accessible-dark;
+                            font-size: 1.2rem;
+                            font-weight: normal;
+                        }
+                        .unit{
+                            font-size: 0.8rem;
+                            color: $gray3-accessible-dark;
+                            line-height: 1rem;
+                            span{
+                                font-size: 0.8rem;
+                                color: $gray-accessible-dark;
+                                text-decoration: line-through;
+                                text-decoration-color: rgba(188, 188, 188, 0.5);
+                                
+                            }
+                        }
+                        
+                    }
+                    .first-month{
+                        font-size: 0.7rem;
+                        margin-top: 0px;
+                        color: $green-accessible-light;
+                    }
+                }
+                .plan-features{
+                    margin-bottom: 8px*4;
+                    p{
+                        color: $gray-accessible-light;
+                        font-size: 0.8rem;
+                    }
+                }
+                .core-features{
+                    margin-bottom: 8px*2;
+                    margin-top: 8px*1;
+                    h4{
+                        font-size: 1.1rem;
+                        margin-bottom: 8px;
+                        line-height:0.9rem;
+                        color: $gray5-accessible-light;
+                        &.beta{
+                            margin-left: 8px*5;
+                            span.tag{
+                                font-size: 0.4rem;
+                                padding: 2px 4px;
+                                border: 1px solid $green-accessible-light;
+                                color: $green-accessible-dark;
+                                border-radius: 2px;
+                                margin-left: 8px;
+                                opacity: 0.7;
+                                margin-bottom: 8px*2;
+                            }
+                        }
+                        
+                    }
+                }
+                .validity{
+                    line-break: anywhere;
+                    .label{
+                        color: $gray4-accessible-dark;
+                        text-decoration: none;
+                    }
+                    p{
+                        font-size: 0.8rem;
+                        color: $green-accessible-light;
+                        text-decoration: underline;
+                        text-decoration-color: $green-default-light
+                    }
+                    margin-bottom: 8px*2;
+                }
+                .disable{
+                    opacity: 0.5;
+                }
+                .payment-status{
+                    font-size: 0.9rem;
+                    margin-bottom: 8px*1;
+                    text-align: center;
+                    color: $gray4-default-light;
+                }
+                .waitlist-label{
+                    font-size: 0.7rem;
+                    color: $gray3-accessible-dark;
+                    margin-bottom: 8px;
+                }
+                .button{
+                    width: 100%;
+                    margin: 0;
+                    margin-bottom: 0px;
+                    color: $gray4-default-light;
+                }
+                &.studio{
+                    border: 2px solid $green-accessible-light;
+                    background-color: $dark-3;
+                    padding-bottom: 8px*3;
+                    overflow: hidden;
+                *{
+
+                    z-index: 2;
+                }
+                    .plan-name{
+                        text-align: center;
+                        color: $green-accessible-dark;
+                    }.cover{
+                        width: 100%;
+                        padding-top: 80%;
+                        background-image: url('../../assets/img/subscription/green-spheret-3d.avif');
+                        background-color: $dark-3;
+                        background-size: 90%;
+                        background-position: center center;
+                        background-blend-mode:lighten;
+                        opacity: 0.8;
+                        z-index: 0;
+                        animation-name: rotate-globe  ;
+                        animation-duration:  30s;
+                        animation-timing-function: linear;
+                        animation-iteration-count: infinite;
+
+                    }
+                }
+                &.freelancer{
+                    padding-bottom: 8px*3;
+                    background-color: $dark-3;
+                    border: 1px solid $gray2-accessible-dark;
+                    overflow: hidden;
+
+                    .plan-name{
+                        text-align: center;
+                    }
+                    .cover{
+                        width: 100%;
+                        padding-top: 80%;
+                        background-image: url('../../assets/img/subscription/gray-sphere-3d.avif');
+                        background-color: $dark-3;
+                        background-size: 80%;
+                        background-position: center;
+                        background-blend-mode:lighten;
+                        opacity: 0.8;
+                    }
+                }
+                &.hobbiest{
+                    opacity: 0.2;
+                }
+            }
+        }
+    }
+}
+@keyframes fadeInLeft {
+    0% {
+      opacity: 0;
+      margin-left: 8px*4;
+    }
+    100% {
+      opacity: 1;
+      margin-left: 0;
+    }
+  }
+
+  @media only screen and (max-width: 1500px) {
+    .home .section .projects{
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .home .section .projects{
+        grid-template-columns: 1fr 1fr 1fr ;
+    }
+}
+@media only screen and (max-width: 1080px) {
+    .home .section .projects{
+        grid-template-columns: 1fr 1fr 1fr ;
+        .project{
+            .project-cover{
+            }
+            .project-details{
+            }
+        }
+    }
+}
+@media only screen and (max-width: 860px) {
+    .home {
+        .section .projects{
+            grid-template-columns: 1fr 1fr  ;
+        }
+        .welcome-section{
+            grid-template-columns: 1fr;
+            .welcome-message{
+                &:last-child{
+                    margin-top: 0;
+                    line-height: 2.5rem;
+
+                }
+            }
+            .actions{
+                justify-content: flex-start;
+                margin-top: 8px*4;
+            }
+        }
+
+    }
+}
+  @media only screen and (max-width: 580px) {
+    .home .section .projects{
+        grid-template-columns: 1fr 1fr ;
+        .project{
+            .project-cover{
+                width: 80px
+            }
+            .project-details{
+                margin-left: -24px;
+                .empty-message {
+                    display: none;
+                }
+            }
+        }
+    }
+    
+    .subscription .plans-container .plans{
+        padding: 8px*2;
+        grid-template-columns: 1fr;
+    }
+}
+  @media only screen and (max-width: 430px) {
+
+    .home .section .projects{
+        grid-template-columns: 1fr  ;
+    }
+    .subscription 
+    {
+        .welcome-section{
+            grid-template-columns: 1fr;
+            .welcome-message-top
+            {
+                h1{
+                    line-height: 3rem;
+                }
+                h2{
+                    margin-top: 8px*2;
+                    line-height: 2.5rem;
+
+                }
+            }
+
+            .actions{
+                justify-content: flex-start;
+                margin-top: 8px*4;
+            }
+        }
+        .section .projects{
+            grid-template-columns: 1fr;
+        }
+    }
+  }
+
+  @keyframes rotate-globe{
+    0%{
+        transform: rotate(0deg);
+        opacity: 1;
+    }
+    50%{
+        transform: rotate(180deg);
+        opacity: 0.7;
+    }
+    88%{
+        transform: rotate(320deg);
+        opacity: 0.8;
+
+    }
+    100%{
+        transform: rotate(360deg);
+        opacity: 1;
+
+    }
+  }

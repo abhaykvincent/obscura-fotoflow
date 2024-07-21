@@ -1,0 +1,9 @@
+.field{
+    input::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+      }
+    select::-webkit-inner-spin-button {
+        filter: invert(0);
+        margin-right: -8px*4;
+      }
+}
