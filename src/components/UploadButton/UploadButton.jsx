@@ -1,19 +1,31 @@
 import React, { useState } from 'react'
 import { addAllFileSizesToMB } from '../../utils/fileUtils';
 import { handleUpload } from '../../utils/uploadOperations';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectStorageLimit } from '../../app/slices/studioSlice';
+import { showAlert } from '../../app/slices/alertSlice';
 
 function UploadButton({isPhotosImported,setIsPhotosImported,imageUrls,setImageUrls,id,collectionId,setUploadLists,setUploadStatus}) {
+    const dispatch= useDispatch()
     let importFileSize=0
+    const storageLimit = useSelector(selectStorageLimit)
     const handleFileInputChange = async (event) => {
         const selectedFiles = Array.from(event.target.files);
         setIsPhotosImported(true);
         importFileSize=addAllFileSizesToMB(selectedFiles);
-        setImageUrls(selectedFiles);
-        setUploadStatus('open');
-        setIsPhotosImported(false);
-
-        let uploadedImages = await handleUpload(selectedFiles, id, collectionId, importFileSize, setUploadLists, setUploadStatus);
-        setImageUrls([...imageUrls,...uploadedImages]);
+        console.log({importFileSize, available:storageLimit.available, limit:storageLimit.total})
+        
+        if(importFileSize<storageLimit.available){
+            setImageUrls(selectedFiles);
+            setUploadStatus('open');
+            setIsPhotosImported(false);
+    
+            let uploadedImages = await handleUpload(selectedFiles, id, collectionId, importFileSize, setUploadLists, setUploadStatus);
+            setImageUrls([...imageUrls,...uploadedImages]);
+        }
+        else{
+            dispatch(showAlert({type:'error', message:`Uploaded <b>file size exceeds </b> your limit! Upgrade`}));
+        }
     };
     return (
         <>

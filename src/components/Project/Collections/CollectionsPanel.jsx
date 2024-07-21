@@ -70,7 +70,8 @@ const CollectionsPanel = ({ project, collectionId}) => {
         onClick={() => dispatch(openModal('createCollection'))}>
         <div className="thumbnails">
           <div className="thumbnail thumb1">
-            <div className="backthumb bthumb1"></div>
+            <div className="backthumb bthumb1">
+            </div>
             <div className="backthumb bthumb2"></div>
             <div className="backthumb bthumb3"></div>
             <div className="backthumb bthumb4"></div>

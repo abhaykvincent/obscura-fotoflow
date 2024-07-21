@@ -1,5 +1,6 @@
 // slices/uploadSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { getUsedSpace } from '../../utils/fileUtils';
 
 const initialState = {
   name: 'Obscura',
@@ -7,8 +8,16 @@ const initialState = {
   plan:['Free Trial'],
   limits:{
     storage: {
-      'total': 4,
-      'available':0.001
+      // In MB 
+      // 1 GB - 1000
+      total: 5000,
+      available:1
+    },
+    projects:{
+
+    },
+    collections:{
+      perProject: 3
     }
   },
   loading : false,
@@ -19,16 +28,20 @@ const studioSlice = createSlice({
   name: 'studio',
   initialState,
   reducers: {
-    setUploadList: (state, action) => {
-      console.log(action.payload)
+    setAvailableStortage: (state, action) => {
+      console.log(getUsedSpace(action.payload))
+      console.log(state.limits.storage.available)
+      const available = state.limits.storage.total-getUsedSpace(action.payload)
+      state.limits.storage.available=available
     },
   },
   extraReducers: (builder) => {
   },
 });
 
-export const { setUploadList } = studioSlice.actions;
+export const { setAvailableStortage } = studioSlice.actions;
 export default studioSlice.reducer;
 
 // Selector to get projects data from the state
 export const selectStorageLimit = (state) => state.studio.limits.storage;
+export const selectCollectionsLimit = (state) => state.studio.limits.collections;

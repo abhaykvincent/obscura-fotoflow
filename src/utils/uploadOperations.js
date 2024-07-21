@@ -236,7 +236,7 @@ const addUploadedFilesToFirestore = async (projectId, collectionId, importFileSi
             status: "uploaded",
             pin: projectData.data().pin ? projectData.data().pin : generateMemorablePIN(4)
         });
-
+        console.log(projectData.data())
         await batch.commit();
         console.log('Uploaded files and project document updated successfully.');
     } else {

@@ -47,7 +47,7 @@ function Home() {
                     </div>
                     <div className="actions">
                         <div className="button primary"
-                        onClick={()=>dispatch(openModal('createCollection'))}
+                        onClick={()=>dispatch(openModal('createProject'))}
                         >Create Project</div>
                     </div>
                 </div>
@@ -95,7 +95,7 @@ function Home() {
 
                         <div className="project new" 
                             
-                        onClick={()=>dispatch(openModal('createCollection'))}
+                        onClick={()=>dispatch(openModal('createProject'))}
                         >
                             <div className="project-cover"
                             ></div>

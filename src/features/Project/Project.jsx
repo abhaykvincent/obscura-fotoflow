@@ -61,13 +61,13 @@ export default function Project() {
               <div className="thumbnails">
                 <div className="thumbnail thumb1">
                   <div className="backthumb bthumb1"
-                  ></div>
+                  >
+              <div className="button primary outline">New Gallery</div></div>
                   <div className="backthumb bthumb2"></div>
                   <div className="backthumb bthumb3"></div>
                   <div className="backthumb bthumb4"></div>
                 </div>
               </div>
-              <div className="gallery-name">New Gallery</div>
               
             </div>
             </div>
@@ -172,7 +172,6 @@ export default function Project() {
                   {
                     project.payments?.length === 0? (
                       <div className="no-payments">
-                        <p>No payments yet.</p>
                         <div className="button secondary outline"
                         onClick={()=>project.budgets && dispatch(openModal('addPayment'))}>Add Invoice</div>
                       </div>

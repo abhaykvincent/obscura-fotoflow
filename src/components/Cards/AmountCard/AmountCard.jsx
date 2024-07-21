@@ -16,7 +16,7 @@ function AmountCard({amount,direction,percentage,status,project}) {
 	}
   return (
 	
-	<div className="box amount-card">
+	<div className={`box amount-card ${status}`}>
 		<div className="amount">
 			<span className="direction">{direction}</span> 
 			{amount}

@@ -20,7 +20,8 @@ function UploadProgress({}) {
         })
          setUploadPercent(totalProgress/totalFilesCount*100);
     }, [uploadList])
-    const [modalState, setModalState] = useState('')
+    const [modalState, setModalState] = useState('open')
+
     useEffect(() => {
         if(uploadStatus == 'completed'){
             setModalState('completed')
@@ -31,6 +32,7 @@ function UploadProgress({}) {
         if(uploadStatus == 'open'){
             setModalState('')
         }
+        console.log(uploadStatus)
     }, [uploadStatus])
 
     const onMinimize = () => {

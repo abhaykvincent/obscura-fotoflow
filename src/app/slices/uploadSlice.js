@@ -8,22 +8,26 @@ const initialState = {
   error: null,
 };
 
-
-
 const uploadSlice = createSlice({
   name: 'upload',
   initialState,
   reducers: {
     setUploadList: (state, action) => {
       console.log(action.payload)
-      state.uploadStatus = action.payload;
+      if(action.payload.length >0){
+        state.uploadStatus = 'open';
+      }
     },
+    setUploadStatuss:(state, action) => {
+      console.log(action.payload)
+        state.uploadStatus = action.payload
+    }
   },
   extraReducers: (builder) => {
   },
 });
 
-export const { setUploadList } = uploadSlice.actions;
+export const { setUploadList, setUploadStatuss } = uploadSlice.actions;
 export default uploadSlice.reducer;
 
 // Selector to get projects data from the state
