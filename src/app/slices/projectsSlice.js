@@ -77,6 +77,7 @@ export const addBudget =  createAsyncThunk(
   'projects/addBudget',
   async ({ projectId, budgetData }, { dispatch }) => {
     budgetData = await addBudgetToFirestore(projectId, budgetData);
+    console.log(budgetData)
     return {budgetData};
   }
 );
@@ -276,13 +277,7 @@ const projectsSlice = createSlice({
         const { projectId, budgetData } = action.payload;
         state.data = state.data.map((project) => {
           if (project.id === projectId) {
-            const updatedBudgets = project.budgets.map((budget) => {
-              if (budget.id === budgetData.id) {
-                return budgetData;
-              }
-              return budget;
-            });
-            return { ...project, budgets: updatedBudgets };
+            return { ...project, budgets: budgetData };
           }
           return project;
         });

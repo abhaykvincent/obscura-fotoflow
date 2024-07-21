@@ -7,12 +7,11 @@ import { getAuth, connectAuthEmulator, GoogleAuthProvider, signInWithPopup } fro
 
 if(process.env.NODE_ENV === 'development'){
     console.log('DEV MODE');
-    console.log(process.env.REACT_APP_API_KEY);
-    
 }
 else{
     console.log('PROD MODE');
 }
+
 const firebaseConfig = {
     apiKey: "AIzaSyATMISVaGPMkJANWrzgmOGqgMGHprnrT04",
     authDomain: "obscura-fotoflow.firebaseapp.com",
@@ -22,8 +21,6 @@ const firebaseConfig = {
     appId: "1:541778693405:web:030ac1bcc8e072ea94e5f4",
   };
   
-
-
 const app = initializeApp(firebaseConfig);
 
 const storage = getStorage(app);

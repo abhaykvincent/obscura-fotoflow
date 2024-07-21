@@ -3,6 +3,8 @@ import authReducer from './slices/authSlice';
 import alertReducer from './slices/alertSlice';
 import projectsReducer from './slices/projectsSlice'
 import modalReducer from './slices/modalSlice'
+import uploadReducer from './slices/uploadSlice'
+import studioReducer from './slices/studioSlice'
 
 export const store = configureStore({
   reducer: {
@@ -10,5 +12,7 @@ export const store = configureStore({
     alert: alertReducer,
     projects: projectsReducer,
     modal: modalReducer,
+    upload: uploadReducer,
+    studio: studioReducer
   },
 });
