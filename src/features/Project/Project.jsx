@@ -31,7 +31,7 @@ export default function Project() {
   if (!projects) return;
   // Find the project with the given id
   const project = projects.find((p) => p.id === id);
-  console.log({project})
+  console.log(project)
   // If the project is not found, redirect to the projects page and return
   if (!project) {
     setTimeout(()=>{

@@ -44,7 +44,6 @@ export default function Galleries({}) {
       },100)
       return;
     }  
-    console.log({projectTemp})
     
 
   // Determine the collectionId to use
@@ -61,6 +60,7 @@ export default function Galleries({}) {
     setTimeout(()=>{navigate(`/project/galleries/${id}/${targetCollectionId}`);},100)
     return
   }
+  console.log(findCollectionById(projectTemp, targetCollectionId))
   document.title = `${projectTemp.name}'s ${projectTemp.type}`
 }, [projects, id, collectionId, navigate]);
 

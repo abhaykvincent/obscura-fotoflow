@@ -107,9 +107,9 @@ function Storage() {
             <h2>Projects</h2>
             <div className="row-group">
                 {
-                    projects.map((project)=>{
+                    projects.map((project,index)=>{
                         return (
-                            <div className="row">
+                            <div className="row" key={project.id}>
                                 <div className="box-wrap">
                                     <div className="status-signal"></div>
                                     <div className="box-content">
@@ -135,7 +135,7 @@ function Storage() {
                     projects.slice(0, 3).map((project) => {
                         return (
                             
-                            <div className="row">
+                            <div className="row" key={project.id}>
                                 <div className="box-wrap">
                                     <div className="status-signal"></div>
                                     <div className="box-content">

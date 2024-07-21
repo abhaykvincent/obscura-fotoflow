@@ -12,7 +12,6 @@ function AddCollectionModal({ project }) {
   const visible = useSelector(selectModal)
   const collectionsLimit = useSelector(selectCollectionsLimit)
   let collectionsLength= project?.collections?project.collections:0
-  console.log(collectionsLength.length)
   const [CollectionData, setCollectionData] = useState({
     name: 'Birthday',
     status: 'empty',

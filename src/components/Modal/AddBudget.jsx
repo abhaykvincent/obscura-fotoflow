@@ -79,7 +79,7 @@ export default function AddBudgetModal({ project }) {
               id="amount"
               name="amount"
               className='bigger symbol'
-              value={budgetData.amount}
+              value={budgetData.amount?budgetData.amount:0}
               type="number"
               onChange={handleInputChange}
             />
