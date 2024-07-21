@@ -36,6 +36,11 @@
       border-top: 1px solid $gray5-accessible-dark;
       border-bottom: 1px solid $gray6-accessible-dark;;
       box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);;
+      opacity: 0;
+
+      animation: fadeInLeft 0.25s ease-out 0.2s;
+      animation-fill-mode: forwards;
+      animation-timing-function: ease-out;
       &:hover{
         transition-duration: 0.1s;
       }

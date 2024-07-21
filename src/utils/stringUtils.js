@@ -59,3 +59,19 @@ export function convertMegabytes(megabytes, decimalPlaces = 0) {
 
   return `${megabytes.toFixed(decimalPlaces)} ${sizes[sizeIndex]}`;
 }
+// display amount 999999 in indian standerds ₹9,99,999 with ₹ at begining
+export function formatDecimal(amount) {
+  return '₹'+amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+// now for mat it with K suffix like ₹999.9K for ₹9,99,999 
+export function formatDecimalK(amount) {
+  return '₹'+(amount/1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + 'K';
+}
+
+// desired url http://localhost:3000/share/ethan-ross-Ksi9g/birthday-CLhMa
+// if localhost localhost:port , if production obscura.fotoflow
+// ethan-ross-Ksi9g id projectId and birthday-CLhMa is the collectionId
+
+export function getGalleryURL(page,projectId) {
+  return `${window.location.protocol}//${window.location.host}/${page}/${projectId}`;
+}

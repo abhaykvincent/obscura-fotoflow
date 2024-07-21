@@ -16,6 +16,7 @@
   padding: 0;
   background-repeat: no-repeat;
   box-sizing: border-box;
+  font-family: 'Product Sans';
 }
 h1,h2{
   font-family: 'Product Sans';
@@ -126,7 +127,7 @@ body{
     &.project-page{
       opacity: 0;
       transform: translateY(-8px*2);
-      animation: project-page-reveal 0.4s ease-out forwards;
+      animation: gallery-page-reveal 0.4s ease-out forwards;
     }
     &.gallery-page{
       opacity: 0;
@@ -316,6 +317,41 @@ body{
     }
 
 }
+  .legend{
+    display: flex;
+    font-size: 0.8rem;
+    height: 8px*3;
+    gap: 8px*2.5;
+    margin-left: 8px*1.5;
+    .paid{
+      color: $dark-0;
+      &::before{
+        position: absolute;
+        margin-top: 6px;
+        margin-left: -8px;
+        color: transparent;
+        content: ".";
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background-color: $green-accessible-dark;
+      }
+    }
+    .pending{
+      color: $dark-0;
+      &::before{
+        position: absolute;
+        margin-top: 6px;
+        margin-left: -8px;
+        color: transparent;
+        content: ".";
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background-color: $orange-accessible-dark;
+      }
+    }
+  }
   .project-info{
     top: 00px;
     left: calc($sidebar-width - -8px*1);
@@ -325,8 +361,9 @@ body{
     grid-template-columns: auto auto auto;
     justify-content: space-between;
     justify-items: stretch;
-    padding: 8px*2;
+    padding: 8px*1.5;
     z-index: 40;
+    gap: 8px*1;
     animation: gallery-page-reveal 0.1s ease-out forwards;
     .client{
       display: grid;
@@ -336,6 +373,10 @@ body{
       justify-content: start;
       align-items: center;
       gap: 8px*1;
+      position: relative;
+      margin-top: 0;
+      grid-row: auto;
+      grid-column: auto;
       h1{
         font-size: 1.5rem;
       }
@@ -357,7 +398,7 @@ body{
       padding-left: 8px*3;
       padding-right: 8px*1;
       margin-right: 4px;
-      margin-top: 4px;
+      margin-top: 2px;
 
       align-items: center;
       align-content: flex-start;
@@ -420,6 +461,7 @@ body{
         //kerling
         font-stretch: expanded;
         
+        
       }
     }
     .client-contact{
@@ -453,6 +495,30 @@ body{
       }
     }
   }
+  .project-info{
+    top: 0;
+    left: $sidebar-width;
+    width: calc(100vw - $sidebar-width);
+    grid-template-columns: auto 1fr 1fr;
+    transition-duration: 0.2s;
+    transition-delay: 0.1s;
+    .breadcrumbs{
+      position: relative;
+      padding-left: 0px;
+      top: 0;
+      margin-left: -8px*1;
+    }
+    .client{
+      position: relative;
+      margin-top: 0;
+      grid-row: /* auto */ auto;
+      grid-column: /* auto */ auto;
+    }
+    .project-options{
+      position: relative;
+      top: 0;
+    }
+  } 
   .modal{
     position: fixed;
     top: calc(50vh - $header-height - 20%);
@@ -491,7 +557,7 @@ body{
           width: 8px;
           border-radius: 50%;
           transform: scale(0.8);
-          opacity: 0.5;
+          opacity: 0.8;
           animation-name: control-button-reveal;
           animation-duration: 1s;
           animation-fill-mode: forwards;
@@ -540,9 +606,22 @@ body{
         gap: 8px*2;
         margin: 8px*1.5 8px;
         font-size: 0.9rem;
+        margin-top: 8px*1;
+        opacity: 0;
+        animation: fadeInLeft 0.2s ease-out 0.1s;
+        animation-fill-mode: forwards;
         label{
           text-align: right ;
           color: $gray-default-dark;
+          font-size: 1rem;
+          &.ai-label{
+            color: $green-default-light;
+            opacity: 0;
+            font-size: 0.8rem;
+        $delay: 0.5s;
+        animation: fadeInLeft 0.1s ease-out 0.4s;
+        animation-fill-mode: forwards;
+          }
         } 
         input,select{
           background-color: $dark-3;
@@ -551,7 +630,28 @@ body{
           border-radius: 4px;
           height: 8px*4;
           padding: 4px 8px;
+          padding-right: 4px;
           @include boxed;
+        }
+        .symbol{
+          position: relative;
+          &::before{
+            content: "%";
+            position: relative;
+            top:0;
+            left:0;
+            height: 8PX*2;
+            width: 8PX*2;
+            color: red
+          }
+        }
+        .bigger{
+          font-size: 1.2rem;
+        }
+        &.ai-suggestion{
+          label{
+            opacity:0
+          }
         }
 
         &:hover{
@@ -559,6 +659,17 @@ body{
             color: $gray3-default-light;
           }
         }
+        &.three{
+          
+        grid-template-columns: 8px*12 8px*33 8px*8;
+        }
+      }
+      .error{
+        margin-top: -8px;
+        margin-bottom: 8px;
+        margin-left: 8px*15;
+        font-size: 0.8rem;
+        color: $red-accessible-dark
       }
     }
     .actions{
@@ -637,6 +748,52 @@ body{
         }
       }
     }
+    .ai-suggestion{
+
+      display: grid;
+    }
+    .ai-suggestions{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      justify-items: flex-start;
+      margin-top: -8px;
+      label{
+        color: $green-default-light;
+          float: right;
+        width:100%;
+
+      }
+      .tag{
+        padding: 2px 4px;
+        height: 8px*2.5;
+        font-size: 0.7rem;
+        color: $gray-accessible-light;
+        animation: fade-in 0.2s ease-in-out;
+        animation-fill-mode: forwards;
+        opacity: 0;
+        margin: 0;
+        // loop nth child animation delay increments
+        @for $i from 1 through 10 {
+          &:nth-child(#{$i}) {
+              $delay: 0.5s + 0.05s * ($i - 1);
+              animation: fadeInLeft 0.15s ease-out $delay;
+              animation-fill-mode: forwards;
+          }
+        }
+         
+        
+        &:nth-child(1){
+          color: $gray-accessible-dark;
+          border: 1px solid $green-default-light;
+          background-color: $dark-2;
+        }
+        &:nth-child(2){
+          color: $gray-accessible-dark;
+          border: 1px solid $gray-accessible-light;
+        }
+      }
+    }
   }
   .modal-backdrop{
     position: fixed;
@@ -708,7 +865,7 @@ body{
 @keyframes control-button-reveal {
   0% {
     transform: scale(0.8);
-    opacity: 0.5;
+    opacity: 0.7;
   }
   50% {
     transform: scale(1);
@@ -716,12 +873,19 @@ body{
   }
   100% {
     transform: scale(0.8);
-    opacity: 0.5;
+    opacity: 0.7;
   }
 }
 
 @media only screen and (max-width: 1080px) {
   .App {
+
+  main{
+    position: relative;
+    top: $header-height ;
+    left: $sidebar-width;
+    width: calc(100vw - 8px*7.5);
+  }
     .modal-container{
       width: 100vw;
       height: 100vh;
@@ -1019,7 +1183,7 @@ margin-left: 4px;
   @media only screen and (max-width: 1080px) {
     .App{
       .header{
-        grid-template-columns: 8px*9 1fr 1fr 1fr;
+        grid-template-columns: $header-height 1fr 1fr 1fr;
         .logo{
           display: none;
         }
@@ -1031,12 +1195,12 @@ margin-left: 4px;
       }
       .project-info{
         top: 0;
-        left: 8px*2;
-        width: calc(100vw - 8px*0);
+        left: 8px*7.5;
+        width: calc(100vw - 8px*7.5);
         grid-template-columns: auto 1fr 1fr;
         .breadcrumbs{
           position: relative;
-          padding-left: 8px*4.5;
+          padding-left: 0px;
           top: 0;
         }
         .client{
@@ -1051,7 +1215,7 @@ margin-left: 4px;
         }
       } 
       main {
-        left: 0;
+        left: 8px*8;
         width: calc(100vw );
         .project-collection .header {
           display: grid;
@@ -1070,6 +1234,7 @@ margin-left: 4px;
           display: none;
         }
       }
+      
       .preview{
         left: 0;
       }
@@ -1082,7 +1247,7 @@ margin-left: 4px;
         display: none;
       }
       main {
-        left: 0;
+        left: 8px*8;
         width: calc(100vw );
         .project-collection .header {
           display: grid;
@@ -1114,8 +1279,8 @@ margin-left: 4px;
       }
     }
     main {
-      left: 0;
-      width: calc(100vw );
+      left: 8px*8;
+      width: calc(100vw - 8px*7.5);
       .header{
         .view-control .control-label.label-selected-photos{
           display: none;

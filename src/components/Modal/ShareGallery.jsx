@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './ShareGallery.scss'
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
+import { getGalleryURL, getShareURL } from '../../utils/stringUtils';
 
 function ShareGallery({project }) {
   const dispatch = useDispatch()
@@ -28,7 +29,7 @@ function ShareGallery({project }) {
             
               <div className="select-galleries">
                 
-              <p className='client-label'>Select galleries to Share / Selection</p>
+              <p className='client-label'>Select galleries</p>
                 {project.collections.map((collection) => {
                 return (
                   <div className="form-item">
@@ -42,16 +43,16 @@ function ShareGallery({project }) {
                 );
               })}
               </div>
-              <p className='client-label'>Share Gallery</p>
               <div className="link-pin">
 
-                <p className='link'>{`🔗 http://...${project.id}/`}</p>
+                <a className='link' href={getGalleryURL('share',project.id)} target='_blank'
+                >{`🔗 Share Gallery`}</a>
                 <p className='access'>🔓 Public</p>
               </div>
-              <p className='client-label'>Selection Gallery</p>
               <div className="link-pin">
 
-                <p className='link'>{`🔗 http://...${project.id}/`}</p>
+              <a className='link' href={getGalleryURL('selection',project.id)} target='_blank'
+                >{`🔗 Selection Gallery`}</a>
                 <p className='pin'>🔐 {project.pin}</p>
               </div>
               
@@ -72,18 +73,19 @@ function ShareGallery({project }) {
         </div>
         <div className="actions">
           <div className="button secondary" onClick={onClose}>Cancel</div>
+          
           <div className="button primary outline" /* Photos */
-          onClick={()=>{
-            // go to https://wa.me/[phone number]?text=[pre-filled message]
-            window.open(`https://wa.me/+91${project.phone}?text=Hey, I have a Gallery for Selection that I'd like to share with you. Check it out at http://obscura-fotoflow.web.app/selection/${project.id}/`,'_blank');
-          }}
-          >Selection</div>
-          <div className="button primary" /* Photos */
             onClick={()=>{
               // go to https://wa.me/[phone number]?text=[pre-filled message]
               window.open(`https://wa.me/+91${project.phone}?text=Hey, I have a project that I'd like to share with you. Check it out at http://obscura-fotoflow.web.app/share/${project.id}/`,'_blank');
             }}
           >Share</div>
+          <div className="button primary " /* Photos */
+          onClick={()=>{
+            // go to https://wa.me/[phone number]?text=[pre-filled message]
+            window.open(`https://wa.me/+91${project.phone}?text=Hey, I have a Gallery for Selection that I'd like to share with you. Check it out at http://obscura-fotoflow.web.app/selection/${project.id}/`,'_blank');
+          }}
+          >Selection</div>
         </div>
       </div>
       <div className="modal-backdrop" onClick={onClose}></div>

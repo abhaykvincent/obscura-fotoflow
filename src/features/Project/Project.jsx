@@ -9,6 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { deleteProject, selectProjects } from '../../app/slices/projectsSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 import { closeModal, openModal, selectModal } from '../../app/slices/modalSlice';
+import AddPaymentModal from '../../components/Modal/AddPayment';
+import AddBudgetModal from '../../components/Modal/AddBudget';
+import { formatDecimalK, formatDecimalRs } from '../../utils/stringUtils';
 
 export default function Project() {
   let { id} = useParams();
@@ -28,6 +31,7 @@ export default function Project() {
   if (!projects) return;
   // Find the project with the given id
   const project = projects.find((p) => p.id === id);
+  console.log({project})
   // If the project is not found, redirect to the projects page and return
   if (!project) {
     setTimeout(()=>{
@@ -38,43 +42,45 @@ export default function Project() {
   else{
     document.title = `${project.name}'s ${project.type}`
   }
+  
 
   return (
     <>
       <main className='project-page'>
         <div className="project-dashboard">
-
-          {
+        {
           project.collections.length === 0 ? (
           <>  
-          <div className="templates">
-            <div className="gallery new" 
-            onClick={()=>dispatch(openModal('createCollection'))}>
+            <div className="templates">
+              <div className="gallery new" 
+              onClick={()=>dispatch(openModal('createCollection'))}>
+                <div className="heading-section">
 
-          <h3 className='heading'>Galleries</h3>
-            <div className="thumbnails">
-              <div className="thumbnail thumb1">
-                <div className="backthumb bthumb1"
-                ></div>
-                <div className="backthumb bthumb2"></div>
-                <div className="backthumb bthumb3"></div>
-                <div className="backthumb bthumb4"></div>
+            <h3 className='heading'>Galleries <span>{project.collections.length}</span></h3>
+                </div>
+              <div className="thumbnails">
+                <div className="thumbnail thumb1">
+                  <div className="backthumb bthumb1"
+                  >
+              <div className="button primary outline">New Gallery</div></div>
+                  <div className="backthumb bthumb2"></div>
+                  <div className="backthumb bthumb3"></div>
+                  <div className="backthumb bthumb4"></div>
+                </div>
               </div>
+              
             </div>
-            <div className="gallery-name">New Gallery</div>
-            
-          </div>
-          </div>
+            </div>
           </>
         ) : (
           <div className="gallery-overview">
-            
             <div className="galleries">
-            <div className="heading-shoots heading-section">
-              <h3 className='heading '>Galleries</h3>
-              <div className="new-shoot button tertiary l2 outline"
-              onClick={ ()=>{}}>+ New</div>
-            </div>
+              <div className="heading-shoots heading-section">
+                <h3 className='heading '>Galleries <span>{project.collections.length}</span></h3>
+                <div className="new-shoot button tertiary l2 outline"
+                  onClick={ ()=>{}}>+ New
+                </div>
+              </div>
               <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/project/galleries/${id}`}>
                 <div className="thumbnails">
                   <div className="thumbnail thumb1">
@@ -83,7 +89,6 @@ export default function Project() {
                       {
                         backgroundImage:
                         `url(${project.projectCover!==""?project.projectCover:'https://img.icons8.com/external-others-abderraouf-omara/64/FFFFFF/external-images-photography-and-equipements-others-abderraouf-omara.png'})`
-
                       }}
                     ></div>
                     <div className="backthumb bthumb2"></div>
@@ -94,25 +99,22 @@ export default function Project() {
                       {
                         backgroundImage:
                           `url(${project.projectCover?project.projectCover:''})`
-                      }}>
-                    
-                    {project.collections.length} Galleries</div>
+                    }}></div>
                     <div className="backthumb bthumb2"></div>
                     <div className="backthumb bthumb3"></div>
-                    </div>
+                  </div>
                   <div className="thumbnail thumb3">
-                      <div className="backthumb bthumb1 count" style={
-                      {
-                        backgroundImage:
-                          `url(${project.projectCover?project.projectCover:''})`
-                      }}>
-                      
-                      {project.uploadedFilesCount!==0? project.uploadedFilesCount+' Photos': 'Upload Photos'}</div>
-                      <div className="backthumb bthumb2"></div>
-                      <div className="backthumb bthumb3"></div>
-                    </div>
+                    <div className="backthumb bthumb1 count" style={
+                    {
+                      backgroundImage:
+                        `url(${project.projectCover?project.projectCover:''})`
+                    }}>
+                    
+                    {project.uploadedFilesCount!==0? project.uploadedFilesCount+' Photos': 'Upload Photos'}</div>
+                    <div className="backthumb bthumb2"></div>
+                    <div className="backthumb bthumb3"></div>
+                  </div>
                 </div>
-            
               </Link>
               <div className="ctas">
                 <div className="button secondary outline bold pin" onClick={()=>{
@@ -122,31 +124,90 @@ export default function Project() {
                 <div className="button secondary outline disabled">Share</div>
               </div>
             </div>
-            </div>
+          </div>
         )}
 
           <div className="financials-overview">
             <div className="payments">
               <div className="heading-shoots heading-section">
-                <h3 className='heading '>Invoices</h3>
-                <div className="new-shoot button tertiary l2 outline"
-                onClick={ ()=>{}}>+ New</div>
+                <h3 className='heading '>Invoices <span>{project.payments.length}</span></h3>
+                {project.payments.length>0&&<div className="new-shoot button tertiary l2 outline"
+                  onClick={()=>project.budgets && dispatch(openModal('addPayment'))}
+                  >+ New</div>}
               </div>
-              <div className="card">
-                <div className="chart box">
+              <div className={`card ${project.budgets ? '':'single'}`}>
+                <div className={`chart box `}>
                     <div className="status large">
                       <div className="signal"></div>
                     </div>
-                  <div className="circle green">₹120K</div>
-                  <p className="message">All payments are succussful.</p>
+                    <div className={`circle ${ !project.budgets?'gray':'green'}`}>
+                    {
+                      project.budgets && (
+                        <>
+                        {formatDecimalK(project.budgets.amount)}
+                        <p className="edit text">Edit</p>
+                        </>
+                      )
+                      
+                    } 
+                    </div>
+                  <div className="message">
+
+                  {
+                      project.budgets || project.budgets?.amount !==0? (
+                        <div className="button primary outline"
+                        onClick={()=>dispatch(openModal('addBudget'))}
+                        >
+                          Set Budget
+                        </div>
+                      ) :
+                      (
+                        project.payments?.length === 0 &&
+                        <p>Create your first invoice</p>
+                      )
+                    }
+                  </div>
                 </div>
-                <div className="payments-list">
-                  <AmountCard amount='₹20K' direction="+ " percentage="10%" status={'confirmed'}/>
-                  <AmountCard amount='₹40K' direction="+ " percentage="20%" status={'confirmed'}/>
-                  <AmountCard amount='₹60K' direction="+ " percentage="30%" status={'confirmed'}/>
-                  <AmountCard amount='₹60K' direction="" percentage="Balance" status={'pending'}/>
-                  <div className="button secondary outline disable">Add Invoice</div>
-                </div>
+                {project.budgets&&<div className="payments-list">
+                  {
+                    project.payments?.length === 0? (
+                      <div className="no-payments">
+                        <div className="button secondary outline"
+                        onClick={()=>project.budgets && dispatch(openModal('addPayment'))}>Add Invoice</div>
+                      </div>
+                    ) : (
+                      <>
+                      {
+                      project.payments?.map((payment, index) => (
+                        <AmountCard amount={`₹${payment.amount/1000} K`} 
+                        project={project}
+                          direction="+ " 
+                          percentage={
+                            payment.amount/(project.budgets.amount?project.budgets.amount*100:0)
+                          } 
+                            status={'confirmed'}/>
+                      ))}
+                      
+                      {/* Balance */}
+                      {
+                        (
+                          <AmountCard amount={
+                            `₹${(project.budgets.amount - project.payments.reduce((a,b)=>a+b.amount,0))/1000} K`
+                          } direction="- " percentage={'Balance'} status={'pending'}/>
+                        )
+                      }
+                      {/* Filler Cards */}
+                      {
+                        project.payments?.length<5 && (
+                          Array(4-project.payments.length).fill(0).map((item, index) => (
+                            <AmountCard amount={''} direction={''} percentage={''} status={'draft'}/>
+                          ))
+                        )
+                      }
+                      </>
+                    )
+                  }
+                </div>}
               </div>
             </div>
             <div className="payments expances">
@@ -161,14 +222,17 @@ export default function Project() {
                       <div className="signal"></div>
                     </div>
                   <div className="circle orange">₹76K</div>
-                  <p className="message">All payments are succussful.</p>
+                  {/* <p className="message">All payments are succussful.</p> */}
+                  <div className="legend">
+                    <div className="paid">Paid</div>
+                    <div className="pending">Pending</div>
+                  </div>
                 </div>
                 <div className="payments-list">
                   <AmountCard amount='₹13K' direction="- " percentage="John Doe" status={'confirmed'}/>
                   <AmountCard amount='₹18K' direction="- " percentage="Abhay V" status={'confirmed'}/>
-                  <AmountCard amount='₹9K' direction="- " percentage="Jane Doe" status={'pending'}/>
+                  <AmountCard amount='₹9K'  direction="- " percentage="Jane Doe" status={'pending'}/>
                   <AmountCard amount='₹25K' direction="- " percentage="Print Shop 1" status={'pending'}/>
-                  <AmountCard amount='₹13K' direction="- " percentage="Print Shop 2" status={'pending'}/>
                   <AmountCard amount='₹13K' direction="- " percentage="Print Shop 2" status={'pending'}/>
                   
                 </div>
@@ -180,6 +244,8 @@ export default function Project() {
 
         </div>
         <AddCollectionModal project={project}/>
+        <AddPaymentModal  project={project}/>
+        <AddBudgetModal  project={project}/>
         {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm}/>:''}
         <Refresh/>
       </main>
@@ -200,4 +266,4 @@ export default function Project() {
     </>
   )
   }
-  // Line complexity 2.0 -> 3.5 -> 2.0
+  // Line complexity 2.0 -> 3.5 -> 2.0 ->2.5

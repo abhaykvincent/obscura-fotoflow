@@ -68,7 +68,7 @@ function Sidebar() {
           </div>
         </Link>
         <Link to={`/notifications`}>
-          <div className={`menu storage ${location.pathname === '/notifications' ? 'selected' : ''}`}>
+          <div className={`menu notifications ${location.pathname === '/notifications' ? 'selected' : ''}`}>
             <div className="icon"></div>
             <div className="label">Notifications</div>
           </div>

@@ -1,15 +1,13 @@
 // slices/authSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fullAccess } from '../../data/teams';
-import { addCollectionToFirestore, addCrewToFirestore, addEventToFirestore, addProjectToFirestore, deleteCollectionFromFirestore, deleteProjectFromFirestore, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
-import { showAlert } from './alertSlice';
-
 
 const initialState = {
     createProject: false,
     createCollection: false,
     shareGallery: false,
-    confirmDeleteProject:false
+    confirmDeleteProject:false,
+    addPayment:false,
+    addBudget: false
 
 };
 
@@ -19,9 +17,11 @@ const modalSlice = createSlice({
   reducers: {
     openModal: (state, action) => {
       state[action.payload] = true;
+      console.log('openModal',action.payload)
     },
     closeModal: (state, action) => {
       state[action.payload] = false;
+      console.log('closeModal',action.payload)
     }
   }
 });

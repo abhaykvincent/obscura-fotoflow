@@ -20,14 +20,14 @@ function DashboardEvents({project})
     <div className="shoots">
 
       <div className="headings">
-        <div className="heading-section">
+        <div className="heading-shoots heading-section">
           
             <h3 className='heading '>Shoots</h3>
-          <div className="new-shoot button tertiary l2 outline"
+          {project.payments.length>0&&<div className="new-shoot button tertiary l2 outline"
           onClick={ ()=>{
               openModal('createEvent')
             }
-            }>+ New</div>
+            }>+ New</div>}
           </div>
         {
           project.events && project.events.length >0 &&
@@ -52,12 +52,19 @@ function DashboardEvents({project})
                 <div className="signal"></div>
               </div>
               <div className="date">
-                <h1>28</h1>
-                <h5>Feb</h5>
+                <h1>{
+                  /* convert {date: '2024-07-18'} to day: 18, month: Jul, year: 2024 */
+                    event.date.split('-')[2]
+                  }</h1>
+                <h5>
+                  {
+                    new Date(event.date).toLocaleString('default', { month: 'short' })
+                  }
+                </h5>
               </div>
               <p>{event.type}</p>   
               <p>8:00AM</p>
-              <p className='location'>Wasaga,ON</p>
+              <p className='location'>{event.location}</p>
             </div>
             <div className="details">
               <div className="team-badges">
@@ -92,7 +99,25 @@ function DashboardEvents({project})
             </div>
           </div>
         </div>))
- }
+        }
+        {
+          project.events.length==0 &&
+          <div className="event-container">
+          <div className="shoot new"
+            onClick={()=>openModal('createEvent')}
+              
+            
+          >
+            <div className="time">
+              <div className="status large draft">
+                <div className="signal "></div>
+                <div className="icon"></div>
+                <div className="button primary outline">New Shoot</div>
+              </div>
+            </div>
+          </div>
+        </div>}
+        
       </div>
       
       

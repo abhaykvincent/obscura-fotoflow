@@ -1,7 +1,6 @@
 import React, { useCallback, memo, useState } from 'react';
 const SelectionGallery = ({ images, selectedImages, setSelectedImages, setSelectedImagesInCollection }) => {
   const handleImageClick = useCallback((fileUrl) => {
-    console.log("Clicked image URL: ", fileUrl);
 
     // Check if fileUrl is already in selectedImages
     const index = selectedImages.indexOf(fileUrl);

@@ -2,7 +2,6 @@ import React from 'react'
 import { capitalizeFirstLetter } from '../../../utils/stringUtils'
 
 function CrewCard({user,role}) {
-	console.log(user)
   return (
 	<div className={` ${role === 'assistant' ? 'assistant-card':'crew-card'} box`}>
 		{role === 'assistant' ? '':<div className="status">

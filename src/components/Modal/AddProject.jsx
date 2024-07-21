@@ -9,6 +9,7 @@ function AddProjectModal() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const visible = useSelector(selectModal)
+    console.log(visible)
     const onClose = () => dispatch(closeModal('createProject'))
   const [projectData, setProjectData] = useState({
       name: 'Ethan Ross',
@@ -17,13 +18,14 @@ function AddProjectModal() {
       phone: '3656992278',
       collections: [],
       events: [],
+      payments: [],
       status: 'draft',
       projectCover:'',
       uploadedFilesCount:0,
       selectedFilesCount:0,
       totalFileSize:0,
-      createdAt: new Date(),
-      lastOpened: new Date(),
+      createdAt: new Date().getTime(),
+      lastOpened: new Date().getTime(),
   });
   const handleInputChange = (event) => {
       const {name,value} = event.target;
@@ -38,11 +40,9 @@ function AddProjectModal() {
       dispatch(addProject(projectData))
           .then((response) => {
             let newProjectData = response.payload;
-            console.log(newProjectData)
               onClose();
               dispatch(showAlert({type:'success', message:`New Project created!`}));
             
-              console.log(`/project/${newProjectData.id}`)
               navigate(`/project/${newProjectData.id}`);
           })
           .catch((error) => {
