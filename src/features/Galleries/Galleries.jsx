@@ -44,7 +44,6 @@ export default function Galleries({}) {
       },100)
       return;
     }  
-    console.log({projectTemp})
     
 
   // Determine the collectionId to use
@@ -54,13 +53,14 @@ export default function Galleries({}) {
   setCollection(findCollectionById(projectTemp, targetCollectionId))
   // If the collection is not found, redirect to the project page and return
   if (defaultCollectionId==='Collection not found' && defaultCollectionId!=='') {
-    setTimeout(()=>{navigate(`/project/${id}`);},100)
+    setTimeout(()=>{navigate(`/gallery/${id}`);},100)
     return;
   }
   if(!collectionId&&defaultCollectionId!==''){
-    setTimeout(()=>{navigate(`/project/galleries/${id}/${targetCollectionId}`);},100)
+    setTimeout(()=>{navigate(`/gallery/${id}/${targetCollectionId}`);},100)
     return
   }
+  console.log(findCollectionById(projectTemp, targetCollectionId))
   document.title = `${projectTemp.name}'s ${projectTemp.type}`
 }, [projects, id, collectionId, navigate]);
 

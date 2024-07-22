@@ -429,7 +429,7 @@
         }
 
     
-    @for $i from 1 through 10 {
+    @for $i from 1 through 20 {
         &:nth-child(#{$i}) {
             $delay: 0.2s + 0.05s * ($i - 1);
             animation: fadeInUp 0.4s ease-out $delay;

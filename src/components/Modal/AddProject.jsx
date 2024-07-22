@@ -9,7 +9,6 @@ function AddProjectModal() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const visible = useSelector(selectModal)
-    console.log(visible)
     const onClose = () => dispatch(closeModal('createProject'))
   const [projectData, setProjectData] = useState({
       name: 'Ethan Ross',
@@ -19,6 +18,7 @@ function AddProjectModal() {
       collections: [],
       events: [],
       payments: [],
+      expenses: [],
       status: 'draft',
       projectCover:'',
       uploadedFilesCount:0,

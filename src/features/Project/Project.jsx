@@ -12,6 +12,7 @@ import { closeModal, openModal, selectModal } from '../../app/slices/modalSlice'
 import AddPaymentModal from '../../components/Modal/AddPayment';
 import AddBudgetModal from '../../components/Modal/AddBudget';
 import { formatDecimalK, formatDecimalRs } from '../../utils/stringUtils';
+import AddExpenseModal from '../../components/Modal/AddExpense';
 
 export default function Project() {
   let { id} = useParams();
@@ -31,7 +32,7 @@ export default function Project() {
   if (!projects) return;
   // Find the project with the given id
   const project = projects.find((p) => p.id === id);
-  console.log({project})
+  console.log(project)
   // If the project is not found, redirect to the projects page and return
   if (!project) {
     setTimeout(()=>{
@@ -81,7 +82,7 @@ export default function Project() {
                   onClick={ ()=>{}}>+ New
                 </div>
               </div>
-              <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/project/galleries/${id}`}>
+              <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/gallery/${id}`}>
                 <div className="thumbnails">
                   <div className="thumbnail thumb1">
                     <div className="backthumb bthumb1"
@@ -187,7 +188,6 @@ export default function Project() {
                           } 
                             status={'confirmed'}/>
                       ))}
-                      
                       {/* Balance */}
                       {
                         (
@@ -210,32 +210,68 @@ export default function Project() {
                 </div>}
               </div>
             </div>
-            <div className="payments expances">
-              <div className="heading-shoots heading-section">
-                <h3 className='heading '>Expances</h3>
-                <div className="new-shoot button tertiary l2 outline"
-                onClick={ ()=>{}}>+ New</div>
+            {/* expenses */}
+            <div className="payments expenses">
+            <div className="heading-shoots heading-section">
+                <h3 className='heading '>Expenses <span>{project.expenses.length}</span></h3>
+                {project.expenses.length>0&&<div className="new-shoot button tertiary l2 outline"
+                  onClick={()=>project.expenses && dispatch(openModal('addExpense'))}
+                  >+ New</div>}
               </div>
-              <div className="card">
-                <div className="chart box">
+              <div className={`card ${project.expenses ? '':'single'}`}>
+                <div className={`chart box `}>
                     <div className="status large">
                       <div className="signal"></div>
                     </div>
-                  <div className="circle orange">₹76K</div>
-                  {/* <p className="message">All payments are succussful.</p> */}
-                  <div className="legend">
-                    <div className="paid">Paid</div>
-                    <div className="pending">Pending</div>
+                    <div className={`circle ${ !project.expenses.length>0?'gray':'green'}`}>
+                     
+                    </div>
+                  <div className="message">
+
+                  {
+                      project.expenses || project.expenses?.amount !==0? (
+                        <div className="button primary outline"
+                        onClick={()=>dispatch(openModal('addExpense'))}
+                        >
+                          Add Expense
+                        </div>
+                      ) :
+                      (
+                        project.expenses?.length === 0 &&
+                        <p>Add project expenses</p>
+                      )
+                    }
                   </div>
                 </div>
-                <div className="payments-list">
-                  <AmountCard amount='₹13K' direction="- " percentage="John Doe" status={'confirmed'}/>
-                  <AmountCard amount='₹18K' direction="- " percentage="Abhay V" status={'confirmed'}/>
-                  <AmountCard amount='₹9K'  direction="- " percentage="Jane Doe" status={'pending'}/>
-                  <AmountCard amount='₹25K' direction="- " percentage="Print Shop 1" status={'pending'}/>
-                  <AmountCard amount='₹13K' direction="- " percentage="Print Shop 2" status={'pending'}/>
-                  
-                </div>
+                {project.expenses[0]?.amount&&<div className="payments-list">
+                  {
+                    project.expenses?.length === 0? (
+                      <div className="no-payments">
+                        <div className="button secondary outline"
+                        onClick={()=>project.budgets && dispatch(openModal('addExpense'))}>Add Expense</div>
+                      </div>
+                    ) : (
+                      <>
+                      {
+                      project.expenses?.map((payment, index) => (
+                        <AmountCard amount={`₹ ${payment.amount/1000}K`} 
+                        project={project}
+                          direction="+ " 
+                          percentage={payment.name} 
+                            status={'confirmed'}/>
+                      ))}
+                      {/* Filler Cards */}
+                      {
+                        project.expenses?.length<5 && (
+                          Array(5-project.expenses.length).fill(0).map((item, index) => (
+                            <AmountCard amount={''} direction={''} percentage={''} status={'draft'}/>
+                          ))
+                        )
+                      }
+                      </>
+                    )
+                  }
+                </div>}
               </div>
             </div>
           </div>
@@ -245,6 +281,7 @@ export default function Project() {
         </div>
         <AddCollectionModal project={project}/>
         <AddPaymentModal  project={project}/>
+        <AddExpenseModal  project={project}/>
         <AddBudgetModal  project={project}/>
         {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm}/>:''}
         <Refresh/>

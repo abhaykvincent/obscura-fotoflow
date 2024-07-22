@@ -12,7 +12,6 @@ function AddCollectionModal({ project }) {
   const visible = useSelector(selectModal)
   const collectionsLimit = useSelector(selectCollectionsLimit)
   let collectionsLength= project?.collections?project.collections:0
-  console.log(collectionsLength.length)
   const [CollectionData, setCollectionData] = useState({
     name: 'Birthday',
     status: 'empty',
@@ -34,7 +33,7 @@ function AddCollectionModal({ project }) {
     {dispatch(addCollection({ projectId: project.id, newCollection: CollectionData }))
     .then((id)=>{
       dispatch(showAlert({type:'success', message:`Collection <b>${CollectionData.name}</b> added successfully!`}));
-        navigate(`/project/galleries/${project.id}/${id.payload.collection.id}`);
+        navigate(`/gallery/${project.id}/${id.payload.collection.id}`);
     })}
     else{
       dispatch(showAlert({type:'error', message:`Project <b>${CollectionData.name}</b>'s Collection limit reached! Upgrade`}));

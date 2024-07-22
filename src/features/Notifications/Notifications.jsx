@@ -22,7 +22,7 @@ function Notifications(notifications) {
 				{
 					Array.from({length: 4}).map((_,i)=>{
 					return (
-						<NotificationCard title="Lorem ipsum dolor sit amet consectetur." 
+						<NotificationCard key={i} title="Lorem ipsum dolor sit amet consectetur." 
 						context="Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur iure quis omnis." 
 						i={i}
 						recent={true}
@@ -32,7 +32,7 @@ function Notifications(notifications) {
 				{
 					Array.from({length: 6}).map((_,i)=>{
 					return (
-						<NotificationCard title="Lorem ipsum dolor sit amet consectetur." 
+						<NotificationCard key={i} title="Lorem ipsum dolor sit amet consectetur." 
 						context="Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur iure quis omnis." 
 						i={i+9}
 						recent={false}

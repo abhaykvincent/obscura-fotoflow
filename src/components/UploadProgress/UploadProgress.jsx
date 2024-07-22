@@ -32,7 +32,6 @@ function UploadProgress({}) {
         if(uploadStatus == 'open'){
             setModalState('')
         }
-        console.log(uploadStatus)
     }, [uploadStatus])
 
     const onMinimize = () => {

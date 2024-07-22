@@ -7,8 +7,8 @@ const initialState = {
     shareGallery: false,
     confirmDeleteProject:false,
     addPayment:false,
+    addExpense:false,
     addBudget: false
-
 };
 
 const modalSlice = createSlice({
@@ -17,11 +17,10 @@ const modalSlice = createSlice({
   reducers: {
     openModal: (state, action) => {
       state[action.payload] = true;
-      console.log('openModal',action.payload)
+      console.log('Opening '+action.payload +' Modal ...')
     },
     closeModal: (state, action) => {
       state[action.payload] = false;
-      console.log('closeModal',action.payload)
     }
   }
 });
