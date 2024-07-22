@@ -301,6 +301,34 @@ export const addPaymentToFirestore = async (projectId,paymentData) => {
     });
 };
 
+// Expenses
+export const addExpenseToFirestore = async (projectId,expenseData) => {
+    console.log(expenseData);
+    const projectsCollection = collection(db, 'projects');
+    const projectDoc = doc(projectsCollection, projectId);
+
+    const projectSnapshot =  await getDoc(projectDoc);
+    const projectData = projectSnapshot.data();
+    const id= `expense-${projectData.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
+    expenseData =  {
+        id,
+        ...expenseData
+    }
+    const updatedProject = {
+        ...projectData,
+        expenses: arrayUnion(expenseData), // Assuming collections is an array in your projectData
+    }
+
+    return updateDoc(projectDoc, updatedProject)
+    .then(() => {
+        console.log('Expense added to Project '+id+' successfully.');
+        return expenseData;
+    })
+    .catch((error) => {
+        console.error('Error adding expense to project:', error.message);
+        throw error;
+    });
+};
 
 
  

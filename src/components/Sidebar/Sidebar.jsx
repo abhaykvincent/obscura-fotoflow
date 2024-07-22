@@ -53,7 +53,7 @@ function Sidebar() {
         <Link to={`/invoices`}>
           <div className={`menu invoices ${location.pathname === '/invoices' ? 'selected' : ''} disabled`}>
             <div className="icon"></div>
-            <div className="label">Invoices</div>
+            <div className="label">Financials</div>
             <div className="coming-soon">
               <div className="coming-soon-tag">SOON</div>
             </div>
@@ -73,13 +73,10 @@ function Sidebar() {
             <div className="label">Notifications</div>
           </div>
         </Link>
-        <Link to={`/financials`}>
-          <div className={`menu accounts ${location.pathname === '/accounts' ? 'selected' : ''} disabled`}>
+        <Link to={`/subscription`}>
+          <div className={`menu subscription ${location.pathname === '/subscription' ? 'selected' : ''}`}>
             <div className="icon"></div>
-            <div className="label">Accounts</div>
-            <div className="coming-soon">
-              <div className="coming-soon-tag">SOON</div>
-            </div>
+            <div className="label">Subscription</div>
           </div>
         </Link>
         <Link to={`/team`}>

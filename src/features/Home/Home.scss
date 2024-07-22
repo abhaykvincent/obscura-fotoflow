@@ -35,10 +35,11 @@
             font-weight: 600;
             color: $gray2-default-dark;
             &:last-child{
+                font-weight: 500;
                 margin-top: -8px*2;
                 color: $gray4-default-dark;
                 opacity: 0;
-                font-size:2.5rem;
+                font-size:2rem;
                 animation: fadeInLeft 0.5s ease-out 0.05s;
                 animation-fill-mode: forwards;
                 animation-timing-function: ease-out;

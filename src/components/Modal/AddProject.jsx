@@ -18,6 +18,7 @@ function AddProjectModal() {
       collections: [],
       events: [],
       payments: [],
+      expenses: [],
       status: 'draft',
       projectCover:'',
       uploadedFilesCount:0,

@@ -34,6 +34,13 @@ function Projects() {
                     </div>
                     <div className={`active`}></div>
                 </div>
+                <div className="control-wrap">
+                    <div className="controls">
+                        <div className={`control ctrl-all active`} ><div className="icon card-view"></div></div>
+                        <div className={`control ctrl-active disabled`} ><div className="icon list-view"></div></div>
+                    </div>
+                    <div className={`active`}></div>
+                </div>
             </div>
             <div className="projects-list">
                 { 

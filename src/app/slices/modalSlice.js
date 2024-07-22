@@ -7,8 +7,8 @@ const initialState = {
     shareGallery: false,
     confirmDeleteProject:false,
     addPayment:false,
+    addExpense:false,
     addBudget: false
-
 };
 
 const modalSlice = createSlice({

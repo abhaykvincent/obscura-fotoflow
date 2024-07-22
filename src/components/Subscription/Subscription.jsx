@@ -81,7 +81,7 @@ function Subscription({ }) {
                         </div>
                         <div className="plan-features">
                             <p className="features">Invoices</p>
-                            <p className="features">Expances</p>
+                            <p className="features">Expenses</p>
                             <p className="features">Collabration</p>
                             <p className="features">Online Payments</p>
                             <p className="features">Cold Storage Access </p>

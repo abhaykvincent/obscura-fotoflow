@@ -96,13 +96,18 @@ return (
                     <div className="control-label label-selected-photos">{selectedImages.length} Photos</div>
                 </div>:
                 <div className="empty-message">
-                    <p>Import shoot photos to upload </p>
+                    <p>Upload Photos from Shoot</p>
                 </div>
             }
         </div>
         {
             imageUrls.length > 0 ?
-                <ImageGallery {...{isPhotosImported, imageUrls, projectId:id}}/>:''
+                <ImageGallery {...{isPhotosImported, imageUrls, projectId:id}}/>:
+                <label  htmlFor="fileInput"  className="drop-upload">
+                    <div for="" className="drop-area">
+
+                    </div>
+                </label>
         }
     </div>
     );

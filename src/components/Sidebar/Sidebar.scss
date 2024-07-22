@@ -24,7 +24,7 @@
             width: 8px*8;
             text-align: center;
         }
-        @for $i from 1 through 10 {
+        @for $i from 1 through 20 {
             &:nth-child(#{$i}) {
             .label{
                 $delay: 0.1s + 0.05s * ($i - 1);
@@ -43,7 +43,7 @@
             opacity: 0;
             transform: scale(0.1)  translateY(8px*5);
         }
-        @for $i from 1 through 10 {
+        @for $i from 1 through 20 {
             &:nth-child(#{$i}) {
             .icon{
                 $delay: 0s + 0.05s * ($i - 1);
@@ -116,6 +116,10 @@
             &.notifications .icon{
             background-size: 85%;
             background-image: url('https://img.icons8.com/ios-filled/150/FFFFFF/appointment-reminders--v1.png');
+            }
+            &.subscription .icon{
+            background-size: 85%;
+            background-image: url('https://img.icons8.com/glyph-neue/64/FFFFFF/bank-card-back-side.png');
             }
             &.store .icon{
             background-size: 105%;
