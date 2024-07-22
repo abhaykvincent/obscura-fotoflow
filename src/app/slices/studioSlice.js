@@ -29,8 +29,6 @@ const studioSlice = createSlice({
   initialState,
   reducers: {
     setAvailableStortage: (state, action) => {
-      console.log(getUsedSpace(action.payload))
-      console.log(state.limits.storage.available)
       const available = state.limits.storage.total-getUsedSpace(action.payload)
       state.limits.storage.available=available
     },

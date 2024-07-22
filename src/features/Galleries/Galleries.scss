@@ -137,7 +137,7 @@
 	.financials-overview{
 		display: grid;
 		justify-content: start;
-		gap: 8px*5;
+		gap: 8px*3;
 		grid-template-columns: auto auto;
 		.payments{
 			.card{
@@ -145,7 +145,7 @@
 				grid-template-columns: auto 3fr;
 				gap: 8px;
 				.payments-list{
-					width: 8px*18;
+					min-width: 8px*18;
 					display: grid;
 					align-content: start;
 					gap: 4px;
@@ -320,9 +320,7 @@
 					grid-template-columns: auto;
 				}
 			}
-			&.expances{
-
-			opacity: 0.3;
+			&.expenses{
 			}
 		}
 	}
@@ -851,13 +849,16 @@
 					padding: 4px;
 					box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
 					.date{
-						margin-bottom: 8px*2;
+						margin-bottom: 8px*1;
 						border-radius: 4px;
 						h5{
 							text-align: center;
 							margin-top: -4px;
+							color: $gray2-default-dark;
 						}
 						h1{
+							font-size: 1.5rem;
+							margin-bottom: 2px;
 						}
 						
 					}
@@ -866,9 +867,26 @@
 						font-size: 0.8rem;
 						margin-top: -2px;
 					}
+					.event-type-label{
+						color: $gray4-default-light;
+						font-weight: 400;
+						font-size: 0.9rem;
+						margin-bottom: 2px;
+					}
 					.location{
 						color: $gray-default-dark;
-						margin-top: 2px;
+						margin-top: 8px;
+						&::before{
+							content: '.';
+							display: inline-table;
+							width: 8px*2.5;
+							height: 8px*2;
+							color: transparent;
+							background-image: url('https://img.icons8.com/material/48/FFFFFF/marker--v1.png');
+							background-position: center;
+							background-size:auto 80% ;
+							background-repeat: no-repeat;
+						}
 					}
 				}
 				.details{

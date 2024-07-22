@@ -18,15 +18,16 @@
             animation-timing-function: ease-out;
             span.iconic-gradient{
                 line-height: 1rem;
-                background: linear-gradient(90deg,  $green-accessible-dark 0%,  $green-dark-accessible-light 90%);
+                background: linear-gradient(90deg,  $green-accessible-light 0%,$green-accessible-dark 20%,  $green-dark-accessible-light 90%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
             }
         
         }
         h2{
-            margin-top: 0rem;
-            font-size:2.5rem;
+            margin-top: -0.5rem;
+            margin-bottom: 0.5rem;
+            font-size:2rem;
             line-height: 2.4rem;
             color: $gray4-default-dark;
             opacity: 0;

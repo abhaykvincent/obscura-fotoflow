@@ -52,17 +52,11 @@ function DashboardEvents({project})
                 <div className="signal"></div>
               </div>
               <div className="date">
-                <h1>{
-                  /* convert {date: '2024-07-18'} to day: 18, month: Jul, year: 2024 */
-                    event.date.split('-')[2]
-                  }</h1>
-                <h5>
-                  {
-                    new Date(event.date).toLocaleString('default', { month: 'short' })
-                  }
+                <h1>{ event.date.split('-')[2] }</h1>
+                <h5>{ new Date(event.date).toLocaleString('default', { month: 'short' })}
                 </h5>
               </div>
-              <p>{event.type}</p>   
+              <p className='event-type-label'>{event.type}</p>   
               <p>8:00AM</p>
               <p className='location'>{event.location}</p>
             </div>
