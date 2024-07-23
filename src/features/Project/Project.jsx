@@ -131,8 +131,8 @@ export default function Project() {
           <div className="financials-overview">
             <div className="payments">
               <div className="heading-shoots heading-section">
-                <h3 className='heading '>Invoices <span>{project.payments.length}</span></h3>
-                {project.payments.length>0&&<div className="new-shoot button tertiary l2 outline"
+                <h3 className='heading '>Invoices <span>{project.payments?project.payments.length:''}</span></h3>
+                {project.payments?.length>0&&<div className="new-shoot button tertiary l2 outline"
                   onClick={()=>project.budgets && dispatch(openModal('addPayment'))}
                   >+ New</div>}
               </div>
@@ -192,7 +192,7 @@ export default function Project() {
                       {
                         (
                           <AmountCard amount={
-                            `₹${(project.budgets.amount - project.payments.reduce((a,b)=>a+b.amount,0))/1000} K`
+                            `₹${(project.budgets.amount - project.payments?.reduce((a,b)=>a+b.amount,0))/1000} K`
                           } direction="- " percentage={'Balance'} status={'pending'}/>
                         )
                       }
@@ -213,8 +213,8 @@ export default function Project() {
             {/* expenses */}
             <div className="payments expenses">
             <div className="heading-shoots heading-section">
-                <h3 className='heading '>Expenses <span>{project.expenses.length}</span></h3>
-                {project.expenses.length>0&&<div className="new-shoot button tertiary l2 outline"
+                <h3 className='heading '>Expenses <span>{project.expenses?.length}</span></h3>
+                {project.expenses?.length>0&&<div className="new-shoot button tertiary l2 outline"
                   onClick={()=>project.expenses && dispatch(openModal('addExpense'))}
                   >+ New</div>}
               </div>
@@ -223,7 +223,7 @@ export default function Project() {
                     <div className="status large">
                       <div className="signal"></div>
                     </div>
-                    <div className={`circle ${ !project.expenses.length>0?'gray':'green'}`}>
+                    <div className={`circle ${ !project.budgets?.length>0?'gray':'green'}`}>
                      
                     </div>
                   <div className="message">
@@ -243,7 +243,7 @@ export default function Project() {
                     }
                   </div>
                 </div>
-                {project.expenses[0]?.amount&&<div className="payments-list">
+                {project.expenses&&project.expenses[0]?.amount&&<div className="payments-list">
                   {
                     project.expenses?.length === 0? (
                       <div className="no-payments">

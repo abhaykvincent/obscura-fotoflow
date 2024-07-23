@@ -7,6 +7,7 @@ import './Selection.scss';
 import GalleryPIN from '../../components/GalleryPIN/GalleryPIN';
 export default function Selection() {
   let { projectId, collectionId } = useParams();
+  //Project
   const [project, setProject] = useState();
   const [authenticated, setAuthenticated] = useState(false)
   const [images, setImages] = useState([]);
@@ -18,9 +19,8 @@ export default function Selection() {
   const [totalCollections, setTotalCollections] = useState(0);
   const [currentCollectionIndex, setCurrentCollectionIndex] = useState(0);
   collectionId = collectionId || project?.collections[0]?.id;
-  console.log(projectId, collectionId)
-  // Set body color to white
   useEffect(() => {
+    console.log(projectId, collectionId)
     document.body.style.backgroundColor = 'white';
   }, []);
 
@@ -32,7 +32,6 @@ export default function Selection() {
   // Update images when project or collectionId changes
   useEffect(() => {
     if(!project) return
-    // set document title
     setTotalCollections(project.collections.length)
     
     document.title = project.name+' | Selection'
@@ -42,6 +41,9 @@ export default function Selection() {
     setTotalPages(Math.ceil(newImages.length/size))
     setPage(1)
   }, [project, collectionId]);
+  useEffect(() => {
+    console.log(selectedImages)
+  }, [selectedImages]);
 
   // Paginate images
   const paginatedImages = useMemo(() => {
@@ -64,12 +66,14 @@ useEffect(() => {
       // get all images url with status 'selected' from projectData as set
       const selectedImagesInFirestore = []
       projectData.collections.forEach((collection) => {
-        collection.uploadedFiles.forEach((image) => {
+        console.log(collection)
+        collection.uploadedFiles?.forEach((image) => {
           if (image.status === 'selected') {
-            selectedImagesInFirestore.push(image.url);
+            selectedImagesInFirestore.push(image);
           }
         });
       });
+      console.log(selectedImagesInFirestore)
       setSelectedImages(selectedImagesInFirestore)
     } catch (error) {
       console.error('Failed to fetch project:', error);
@@ -80,10 +84,8 @@ useEffect(() => {
   const handleAddSelectedImages = async () => {
     try {
       await addSelectedImagesToFirestore(projectId, collectionId, selectedImages,page,size,totalPages);
-      // handle success (e.g. show a success message)
     } catch (error) {
       console.error('Failed to add selected images:', error);
-      // handle error (e.g. show an error message)
     }
   };
 
@@ -91,11 +93,9 @@ useEffect(() => {
   const handleSelectionCompleted = async () => {
     try {
       await updateProjectStatusInFirestore(projectId, 'selected');
-      // handle success (e.g. show a success message)
     }
     catch (error) {
       console.error('Failed to update project status:', error);
-      // handle error (e.g. show an error message)
     }
       
   };
@@ -140,6 +140,7 @@ useEffect(() => {
           </div>
         }
         <PaginationControl
+          images={paginatedImages}
           currentCollectionIndex={currentCollectionIndex+1}
           totalCollections={totalCollections}
           currentPage={page}

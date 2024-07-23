@@ -45,9 +45,9 @@ function ProjectCard({project}) {
                                 <div className="icon"></div>
                                 <p>{project.collections.length}</p>
                             </div>
-                            <div className={`summary-item invoice-count ${project.payments.length>0?'active':''}`}>
+                            <div className={`summary-item invoice-count ${project.payments?.length>0?'active':''}`}>
                                 <div className="icon"></div>
-                                <p>{project.payments.length}</p>
+                                <p>{project.payments?.length}</p>
                             </div>
                             
 

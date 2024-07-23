@@ -16,7 +16,6 @@ export const fetchProjectsFromFirestore = async () => {
         id: doc.id,
         ...doc.data(),
     }));
-    console.log(projectsData)
     return projectsData
 };
 export const fetchProject = async (projectId) => {
@@ -37,6 +36,7 @@ export const fetchProject = async (projectId) => {
             throw new Error('Collection does not exist.');
         }
     }));
+    console.log(projectData)
     
 
     return projectData;
@@ -344,8 +344,7 @@ export const addSelectedImagesToFirestore = async (projectId, collectionId, imag
     }
 
     let status = page===totalPages? 'selected' : 'selecting';
-    console.log(page,totalPages)
-    console.log(status)
+    console.log(images)
     const projectsCollection = collection(db, 'projects');
     const projectDoc = doc(projectsCollection, projectId);
     const subCollectionId = projectId + '-' + collectionId;
@@ -355,16 +354,19 @@ export const addSelectedImagesToFirestore = async (projectId, collectionId, imag
         const collectionData = collectionSnapshot.data();
 
         if (collectionSnapshot.exists()) {
-
             const updatedImages = collectionData.uploadedFiles.map((image) => {
                 const imageIndex = collectionData.uploadedFiles.indexOf(image);
                 const startIndex = (page - 1) * size;
                 const endIndex = page * size;
 
                 if (imageIndex >= startIndex && imageIndex < endIndex) {
+                    console.log(images.includes(image.url) ? 'selected' : '')
+
+                    const isSelected = images.some(img => img.url === image.url);
+                
                     return {
                         ...image,
-                        status: images.includes(image.url) ? 'selected' : ''
+                        status: isSelected ? 'selected' : image.status || 'unselected'
                     };
                 } else {
                     return image; // retain the status if outside the page and size range
