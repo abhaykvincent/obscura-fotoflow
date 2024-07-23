@@ -14,7 +14,7 @@ function AddPaymentModal({ project }) {
     name: 'Advance',
     amount: 15000
   });
-  const existingPaymentsTotal = project.payments.reduce((sum, payment) => sum + parseInt(payment.amount), 0);
+  const existingPaymentsTotal = project.payments?.reduce((sum, payment) => sum + parseInt(payment.amount), 0);
   let balance = project.budgets?.amount - existingPaymentsTotal;
 
 

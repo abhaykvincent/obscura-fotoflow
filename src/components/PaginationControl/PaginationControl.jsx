@@ -1,115 +1,135 @@
-// PaginationControl.jsx
-import { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-
-export default function PaginationControl({ currentPage, totalPages, handlePageChange, saveSelectedImages,handleSelectionCompleted,currentCollectionIndex ,totalCollections,project}) {
-    const [expanded, setExpanded] = useState(false);
-    const pageNumbers = [];
-
-    for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
+const checkForSelectedImages = (images) => {
+    for (let i = 0; i < images.length; i++) {
+      if (images[i].status==="selected") {
+        console.log(images[i].status)
+        return true;
+      }
     }
+    return false;
+  };
+const PaginationButton = ({ onClick, disabled, children,className, active,highlight ,selected}) => (
+  <button
+    className={`button light-mode  ${selected} ${selected?'selected':''} ${active ? 'secondary outline' : (highlight?'primary':'secondary')} ${disabled ? 'disabled' : ''}`}
+    onClick={onClick}
+    disabled={disabled}
+    aria-current={active ? 'page' : undefined}
+  >
+    {children}
+  </button>
+);
 
-    return (
-        <div className="pagination">
-            {
+const PageNumbers = ({ currentPage, totalPages, handlePageChange ,images}) => {
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
 
-            totalPages!= 0?
-                <><div
-                className={`button light-mode primary ${currentPage === 1 ? 'disabled' : ''}`}
-                onClick={() => handlePageChange(currentPage - 1)}>Previous</div>
-                {
-                    expanded ?
-                        pageNumbers.map((number) => (
-                            <div
-                                key={number}
-                                className={`button light-mode ${currentPage === number ? 'primary' : 'secondary'}`}
-                                onClick={() => handlePageChange(number)}
-                            >
-                                {number}
-                            </div>
-                        ))
-                        :
-                        <>
-                            {pageNumbers.slice(0, 2).map((number) => (
-                                <div
-                                    key={number}
-                                    className={`button light-mode ${currentPage === number ? 'primary' : 'secondary'}`}
-                                    onClick={() => handlePageChange(number)}
-                                >
-                                    {number}
-                                </div>
-                            ))}
+  if (totalPages <= 5) {
+    return pageNumbers.map((number) => (
+      <PaginationButton
+        key={number}
+        onClick={() => handlePageChange(number)}
+        active={currentPage === number}
+        selected={checkForSelectedImages(images)}
+      >
+        {number}
+      </PaginationButton>
+    ));
+  }
 
-                            {
-                                currentPage > 3 && currentPage < totalPages - 1 ?
-                                    <>
-                                        <div
-                                            className="button light-mode secondary"
-                                            onClick={() => setExpanded(true)}
-                                        >
-                                            ...
-                                        </div>
-                                        <div
-                                            key={currentPage}
-                                            className={`button light-mode primary`}
-                                            onClick={() => handlePageChange(currentPage)}
-                                        >
-                                            {currentPage}
-                                        </div>
-                                        <div
-                                            className="button light-mode secondary"
-                                            onClick={() => setExpanded(true)}
-                                        >
-                                            ...
-                                        </div>
-                                    </>
-                                    :
-                                    <div
-                                        className="button light-mode secondary"
-                                        onClick={() => setExpanded(true)}
-                                    >
-                                        ...
-                                    </div>
-                            }
-                            {pageNumbers.slice(-2).map((number) => (
-                                <div
-                                    key={number}
-                                    className={`button light-mode ${currentPage === number ? 'primary' : 'secondary'}`}
-                                    onClick={() => handlePageChange(number)}
-                                >
-                                    {number}
-                                </div>
-                            ))}
-                        </>
-                }</>
+  return (
+    <>
+      <PaginationButton onClick={() => handlePageChange(1)} active={currentPage === 1}>1</PaginationButton>
+      {currentPage > 3 && <span className="ellipsis">...</span>}
+      {currentPage === totalPages && <PaginationButton onClick={() => handlePageChange(totalPages - 2)}>{totalPages - 2}</PaginationButton>}
+      {currentPage > 2 && currentPage < totalPages && (
+        <PaginationButton onClick={() => handlePageChange(currentPage - 1)}>{currentPage - 1}</PaginationButton>
+      )}
+      {currentPage !== 1 && currentPage !== totalPages && (
+        <PaginationButton onClick={() => handlePageChange(currentPage)} active>{currentPage}</PaginationButton>
+      )}
+      {currentPage < totalPages - 1 && currentPage > 1 && (
+        <PaginationButton onClick={() => handlePageChange(currentPage + 1)}>{currentPage + 1}</PaginationButton>
+      )}
+      {currentPage === 1 && <PaginationButton onClick={() => handlePageChange(3)}>3</PaginationButton>}
+      {currentPage < totalPages - 2 && <span className="ellipsis">...</span>}
+      <PaginationButton onClick={() => handlePageChange(totalPages)} active={currentPage === totalPages}>{totalPages}</PaginationButton>
+    </>
+  );
+};
 
-            : <p>Go to</p>
-            }
-            
-            
-            {
-            currentPage === totalPages || totalPages===0 ? 
-                currentCollectionIndex === totalCollections ?
-                <div className={`button primary`}
-                    onClick={() => {
-                        handlePageChange(currentPage + 1)
-                        handleSelectionCompleted()
-                    }}
-                >Send</div>:
-                <Link to={`/selection/${project.id}/${project.collections[currentCollectionIndex].id}`}>
-                    <div className={`button primary`}
-                    onClick={() => {
-                        handlePageChange(currentPage + 1)
-                        handleSelectionCompleted()
-                    }}
-                    >Next Collection</div>
-                </Link>
-                
-            :
-            <div className={`button primary ${currentPage === totalPages ? 'disabled' : ''}`}
-                onClick={() => handlePageChange(currentPage + 1)}
-            >Next</div>}
-        </div>
-    );
+export default function PaginationControl({ 
+    images,
+  currentPage, 
+  totalPages, 
+  handlePageChange, 
+  handleSelectionCompleted,
+  currentCollectionIndex,
+  totalCollections,
+  project
+}) {
+  const isLastPage = currentPage === totalPages || totalPages === 0;
+  const isLastCollection = currentCollectionIndex === totalCollections;
+  
+  return (
+    <nav className="pagination" aria-label="Pagination">
+    {/* If first page, show previous button as Previous Gallery if not first collection */}
+    {(currentPage === 1 && currentCollectionIndex !== 0) ? (
+        //Previous
+      <PaginationButton
+        onClick={() => handlePageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        Previous
+      </PaginationButton>
+    ):
+    <PaginationButton
+    onClick={() => handlePageChange(currentPage - 1)}
+    disabled={currentPage === 1}
+    >Previous</PaginationButton>
 }
+    {/* Numbers list */}
+      {totalPages !== 0 ? (
+        <PageNumbers
+            images={images}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
+        />
+      ) : (
+        <p>Go to</p>
+      )}
+
+      {isLastPage ? (
+        isLastCollection ? (
+          <PaginationButton highlight={true} onClick={handleSelectionCompleted}>
+            Send
+          </PaginationButton>
+        ) : (
+          <Link to={`/selection/${project.id}/${project.collections[currentCollectionIndex].id}`}>
+            <PaginationButton
+            highlight={true} 
+              onClick={() => {
+                handlePageChange(currentPage + 1);
+                handleSelectionCompleted();
+              }}
+            >
+              Next Collection
+            </PaginationButton>
+          </Link>
+        )
+      ) : (
+        <PaginationButton
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          highlight={true} 
+        >
+          Next
+        </PaginationButton>
+      )}
+    </nav>
+  );
+}
+// Line Complexity  1.5 -> 1.1

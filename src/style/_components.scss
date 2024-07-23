@@ -22,9 +22,20 @@
         border: 1px solid $green-default-light;
         &.outline {
             background: none;
-            border: 1px solid $green-dark-accessible-light;
+            border: 1px solid $gray-accessible-light;
             color: $green-default-light;
             font-weight: 500;
+        }
+        &.light-mode{
+            background-color: white;
+            border: 1px solid $green-accessible-light;
+            color: white;
+            &.outline {
+                background: $gray3-accessible-dark;
+                border: 1px solid $green-dark-accessible-light;
+                color: $gray6-default-dark;
+            }
+              
         }
 
     }
@@ -34,11 +45,13 @@
         &.light-mode{
             background-color: white;
             border: 1px solid $gray-accessible-dark;
-            color: black;
+            color: $gray2-accessible-dark;
         }
         &.outline{
             
-            border: 1px solid $gray-accessible-light;
+            background: $gray6-accessible-light;
+            border: 2px solid $green-accessible-dark;
+            color: $dark-3;
             &.bold{
                 border: 1px solid $gray4-accessible-light;
 

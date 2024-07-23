@@ -12,7 +12,7 @@ function DashboardEvents({project})
   const openModal = (modalType) => setModal({...modal, [modalType]: true });
   const closeModal = (modalType) => {
     setModal({...modal, [modalType]: false });}
-  
+  console.log(project.events?.length >0 || project.events?.length !== undefined)
     // Events
     const [selectedEventID, setSelectedEventID] = useState('')
 
@@ -23,7 +23,7 @@ function DashboardEvents({project})
         <div className="heading-shoots heading-section">
           
             <h3 className='heading '>Shoots</h3>
-          {project.payments.length>0&&<div className="new-shoot button tertiary l2 outline"
+          {project.payments?.length>0&&<div className="new-shoot button tertiary l2 outline"
           onClick={ ()=>{
               openModal('createEvent')
             }
@@ -41,66 +41,63 @@ function DashboardEvents({project})
       
       <div className="shoot-list">
         {/* loop events from project */}
-        {
-          project.events && 
-          project.events.map((event) => (
-       
-        <div key={event.id} className="event-container">
-          <div className="shoot">
-            <div className="time">
-              <div className="status large">
-                <div className="signal"></div>
+        {(project.events?.length >0 && project.events?.length !== undefined)
+         && project.events.map((event) => (
+          <div key={event.id} className="event-container">
+            <div className="shoot">
+              <div className="time">
+                <div className="status large">
+                  <div className="signal"></div>
+                </div>
+                <div className="date">
+                  <h1>{ event.date.split('-')[2] }</h1>
+                  <h5>{ new Date(event.date).toLocaleString('default', { month: 'short' })}
+                  </h5>
+                </div>
+                <p className='event-type-label'>{event.type}</p>   
+                <p>8:00AM</p>
+                <p className='location'>{event.location}</p>
               </div>
-              <div className="date">
-                <h1>{ event.date.split('-')[2] }</h1>
-                <h5>{ new Date(event.date).toLocaleString('default', { month: 'short' })}
-                </h5>
+              <div className="details">
+                <div className="team-badges">
+                  <div className="badge"></div>
+                  <div className="badge second"></div>
+                  <div className="badge third"></div>
+                </div>
               </div>
-              <p className='event-type-label'>{event.type}</p>   
-              <p>8:00AM</p>
-              <p className='location'>{event.location}</p>
+              <div className="cta button secondary outline">Reschedule</div>
             </div>
-            <div className="details">
-              <div className="team-badges">
-                <div className="badge"></div>
-                <div className="badge second"></div>
-                <div className="badge third"></div>
-              </div>
-            </div>
-            <div className="cta button secondary outline">Reschedule</div>
-          </div>
-          <div className="crew">
-            {
-              event.crews&&event.crews.map((crew) => (
-                crew.role !== 'assistant' &&
-                <CrewCard key={crew.assigne} user={getUserByID(crew.assigne)} role={crew.role}/>
-              ))
-            }<div className="assistants">
+            <div className="crew">
               {
-              event.crews&&event.crews.map((crew) => (
-                crew.role == 'assistant' &&
-                <CrewCard key={crew.assigne} user={getUserByID(crew.assigne)} role={crew.role}/>
-              ))
-            }
-              <div className="assistant-card new-crew box"
-              onClick={ ()=>{
-                setSelectedEventID(event.id)
-                openModal('addCrew')
+                event.crews&&event.crews.map((crew) => (
+                  crew.role !== 'assistant' &&
+                  <CrewCard key={crew.assigne} user={getUserByID(crew.assigne)} role={crew.role}/>
+                ))
+              }<div className="assistants">
+                {
+                event.crews&&event.crews.map((crew) => (
+                  crew.role == 'assistant' &&
+                  <CrewCard key={crew.assigne} user={getUserByID(crew.assigne)} role={crew.role}/>
+                ))
               }
-              }>
-                <p>Crew</p>
+                <div className="assistant-card new-crew box"
+                onClick={ ()=>{
+                  setSelectedEventID(event.id)
+                  openModal('addCrew')
+                }
+                }>
+                  <p>Crew</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>))
-        }
+      ))
+    }
         {
           project.events.length==0 &&
           <div className="event-container">
           <div className="shoot new"
             onClick={()=>openModal('createEvent')}
-              
-            
           >
             <div className="time">
               <div className="status large draft">
