@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import AddEventModal from '../Modal/AddEvent'
-import AddCrewModal from '../Modal/AddCrew';
-import CrewCard from '../Cards/CrewCard/CrewCard';
-import { getUserByID, teams } from '../../data/teams';
+import AddEventModal from '../../Modal/AddEvent'
+import AddCrewModal from '../../Modal/AddCrew';
+import CrewCard from '../../Cards/CrewCard/CrewCard';
+import { getUserByID, teams } from '../../../data/teams';
 
 function DashboardEvents({project})
 {

@@ -9,7 +9,7 @@
     height: 8px*3.5;
     margin: 4px;
     font-weight: 600;
-    opacity: 0.8;
+    opacity: 0.9;
     text-align: center;
     cursor: pointer;
     transition-duration: 0.3s;
@@ -18,8 +18,10 @@
         transition-duration: 0.2s;
     }
     &.primary{
-        background: linear-gradient(330deg, $green-dark-accessible-light, $green-accessible-light);
-        border: 1px solid $green-default-light;
+        background: linear-gradient(330deg, $gray6-default-light, white);
+        border: 1px solid $gray6-default-dark;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0);
+    color: $gray6-default-dark;
         &.outline {
             background: none;
             border: 1px solid $gray-accessible-light;
@@ -45,13 +47,16 @@
         &.light-mode{
             background-color: white;
             border: 1px solid $gray-accessible-dark;
-            color: $gray2-accessible-dark;
+            color: $gray2-accessible-light;
+            &.outline {
+
+            border: 2px solid $green-accessible-dark;
+            }
         }
         &.outline{
             
-            background: $gray6-accessible-light;
-            border: 2px solid $green-accessible-dark;
-            color: $dark-3;
+            background-color: $dark-1;
+            color: white;
             &.bold{
                 border: 1px solid $gray4-accessible-light;
 
