@@ -126,7 +126,13 @@ body{
     padding-top: 8px*1;
     z-index: 10;
     &.project-page{
+      display: grid;
+      grid-template-columns: auto auto;
+      grid-template-rows: auto auto;
       opacity: 0;
+      gap: 8px*1;
+
+      padding-right: 8px;
       transform: translateY(-8px*2);
       animation: gallery-page-reveal 0.4s ease-out forwards;
     }
@@ -291,12 +297,13 @@ body{
       }
       .drop-upload{
         .drop-area{
-          height: 8px*10;
+          height: 8px*20;
           border-radius: 8px*1;
           border: 1px double $green-default-dark;
           stroke-dashoffset: 20px 10px;
           opacity: 0.8;
-          background: url('https://img.icons8.com/ios-filled/50/FFFFFF/image-gallery.png') ;
+          background-size: 80%;;
+          background: url('https://img.icons8.com/ios/100/FFFFFF/drag-and-drop.png') ;
           background-repeat: no-repeat;
           background-position: center;
           transition-duration: 0.1s;
@@ -919,6 +926,17 @@ body{
   }
 }
 
+@media only screen and (max-width: 1230px) {
+  .App {
+
+    main{
+      position: relative;
+      top: $header-height ;
+      left: 60px;
+      width: calc(100vw - 8px*7.5);
+    }
+  }
+}
 @media only screen and (max-width: 1080px) {
   .App {
 
@@ -1259,6 +1277,11 @@ margin-left: 4px;
       main {
         left: 8px*8;
         width: calc(100vw - 8px*8);
+
+        &.project-page{
+          display: grid;
+          grid-template-columns: 1fr auto;
+      }
         .project-collection .header {
           display: grid;
           grid-template-columns: 2fr auto 2fr;
@@ -1283,7 +1306,7 @@ margin-left: 4px;
     }
       
   }
-  @media only screen and (max-width: 860px) {
+  @media only screen and (max-width: 992px) {
     .App{
       header .profile-options .profile .profile-name {
         display: none;
@@ -1291,6 +1314,10 @@ margin-left: 4px;
       main {
         left: 8px*8;
         width: calc(100vw - 8px*8);
+        &.project-page{
+          display: grid;
+          grid-template-columns: auto;
+      }
         .project-collection .header {
           display: grid;
           grid-template-columns: 2fr auto;

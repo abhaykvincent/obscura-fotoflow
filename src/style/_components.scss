@@ -9,22 +9,43 @@
     height: 8px*3.5;
     margin: 4px;
     font-weight: 600;
-    opacity: 0.8;
+    opacity: 0.9;
     text-align: center;
+    line-height: 1.2rem;
     cursor: pointer;
-    transition-duration: 0.3s;
+    transition-duration: 0.1s;
     &:hover{
         opacity: 1;
         transition-duration: 0.2s;
+        transition-timing-function: ease-out;
+        transform: translateY(-1px);
+        box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2), 1px 1px 1px  rgba(0, 0, 0, 0.5);
+    }
+    &:active{
+        opacity: 1;
+        transition-duration: 0.1s;
+        transition-timing-function: ease-in-out;
+        transform: translateY(1px) translateX(0px);
+        opacity: 0.5;
     }
     &.primary{
-        background: linear-gradient(330deg, $green-dark-accessible-light, $green-accessible-light);
-        border: 1px solid $green-default-light;
+        background: linear-gradient(330deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.8));
+        border: 1px solid rgba(98, 98, 98, 0.5);
+        border-top: 1px solid white;
+        border-left: 1px solid white;
+        border-right: 1px solid rgba(98, 98, 98, 0.5);
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0);
+        color: black;
         &.outline {
-            background: none;
-            border: 1px solid $gray-accessible-light;
+            background: $dark-2;
             color: $green-default-light;
-            font-weight: 500;
+            font-weight: 500;border: 1px solid rgba(98, 98, 98, 0.5);
+            border-top: 1px solid rgba(255, 255, 255, 0.4);
+            border-left: 1px solid rgba(255, 255, 255, 0.4);
+            border-right: 1px solid rgba(98, 98, 98, 0.5);
+            &:hover{
+                background: linear-gradient(330deg, rgba(255, 255, 255, 1),rgba(255, 255, 255, 0.9));
+            }
         }
         &.light-mode{
             background-color: white;
@@ -37,6 +58,10 @@
             }
               
         }
+        &:hover{
+
+        background: linear-gradient(330deg, rgba(255, 255, 255, 0.7),rgba(255, 255, 255, 0.8));
+        }
 
     }
     &.secondary{
@@ -45,13 +70,16 @@
         &.light-mode{
             background-color: white;
             border: 1px solid $gray-accessible-dark;
-            color: $gray2-accessible-dark;
+            color: $gray2-accessible-light;
+            &.outline {
+
+            border: 2px solid $green-accessible-dark;
+            }
         }
         &.outline{
             
-            background: $gray6-accessible-light;
-            border: 2px solid $green-accessible-dark;
-            color: $dark-3;
+            background-color: $dark-1;
+            color: white;
             &.bold{
                 border: 1px solid $gray4-accessible-light;
 
@@ -83,6 +111,23 @@
     &.large{
         height: 8px*5;
         padding: 8px*1.2 8px*4;
+    }
+    &.icon{
+        &.add{
+            &::before{
+                content: '.';
+                margin-right: 4px;
+                margin-left: -4px;
+                width: 8px*3;
+                height: 100%;
+                padding: 8px;
+                color: transparent;
+                background: url('https://img.icons8.com/ios-filled/500/1A1A1A/plus-math.png');
+                background-size: 100%;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+        }
     }
 }
 .coming-soon{

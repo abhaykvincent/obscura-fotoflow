@@ -5,23 +5,19 @@
 .project-dashboard{
 	display: grid;
 	grid-template-columns: auto auto;
-	justify-content:start ;
+	grid-template-rows: 8px*24 auto;
+	align-content: normal;
+	justify-content: start;
+	align-items: start;
 	padding: 8px*2;
-	column-gap: 8px*5;
+	column-gap: 8px*3;
 	row-gap: 8px*3;
 	.headings{
 		display: grid;
 		grid-template-columns: 8px*28 auto;
 		gap: 8px*3;
 	}
-	.heading{
-		margin: 8px*2 0;
-		margin-top: 0;
-		color: $gray2-default-light;
-		padding-bottom: 8px;
-		border-bottom: 1px solid $dark-1;
-		font-size: 1rem;
-	}
+	
 
 	.box{
 		position: relative;
@@ -1044,6 +1040,7 @@
 	gap: 8px;
 	border-bottom: 1px solid $gray5-default-dark;
 	margin-bottom: 8px*2;
+	height: 8px*4;
 	.heading{
 		border: none;
 		margin-bottom: 4px;
@@ -1057,11 +1054,39 @@
 	}
 	.button{
 		margin: 0;
-		margin-bottom: -0.6px;
+		margin-bottom: -4px;
 		margin-right: -2px;
 	}
 }
+@media only screen and (max-width: 1080px) {
+    .project-dashboard{
+		grid-template-columns: 1fr;
+		.financials-overview{
 
+		}
+		.shoots{
+			grid-column: inherit;
+		}
+	}
+}
+@media only screen and (max-width: 992px) {
+    .project-dashboard{
+		.financials-overview{
+
+		}
+		.shoots{
+			grid-column: inherit;
+		}
+	}
+}
+@media only screen and (max-width: 768px) {
+    .project-dashboard{
+		grid-template-columns: 1fr;
+		.financials-overview{
+
+		}
+	}
+}
 @media only screen and (max-width: 520px) {
 	.project-dashboard{
 		

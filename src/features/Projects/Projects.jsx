@@ -18,7 +18,7 @@ function Projects() {
             <div className="projects-header">
                 <h1>Projects</h1>
                 <div className="actions">
-                    <div className="button primary"
+                    <div className="button primary icon add"
                         onClick={()=>dispatch(openModal('createProject'))}
                     >Create Project</div>
                 </div>

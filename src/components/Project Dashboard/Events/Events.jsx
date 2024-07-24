@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import AddEventModal from '../Modal/AddEvent'
-import AddCrewModal from '../Modal/AddCrew';
-import CrewCard from '../Cards/CrewCard/CrewCard';
-import { getUserByID, teams } from '../../data/teams';
+import AddEventModal from '../../Modal/AddEvent'
+import AddCrewModal from '../../Modal/AddCrew';
+import CrewCard from '../../Cards/CrewCard/CrewCard';
+import { getUserByID, teams } from '../../../data/teams';
 
 function DashboardEvents({project})
 {
@@ -73,7 +73,8 @@ function DashboardEvents({project})
                   crew.role !== 'assistant' &&
                   <CrewCard key={crew.assigne} user={getUserByID(crew.assigne)} role={crew.role}/>
                 ))
-              }<div className="assistants">
+              }
+              <div className="assistants">
                 {
                 event.crews&&event.crews.map((crew) => (
                   crew.role == 'assistant' &&
