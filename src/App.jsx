@@ -28,6 +28,7 @@ import { checkAuthStatus, selectIsAuthenticated } from './app/slices/authSlice';
 import { selectLoading ,fetchProjects} from './app/slices/projectsSlice';
 // Stylesheets
 import './App.scss';
+import Teams from './features/Teams/Teams';
 
 // APP
 export default function App() {
@@ -73,7 +74,7 @@ export default function App() {
                 <Route  path="/calendar"       element={<CommingSoon title={'Calendar'}/>}/>
                 <Route  path="/invoices"       element={<CommingSoon title={'Financials'}/>}/>
                 <Route  path="/accounts"       element={<CommingSoon title={'Accounts'}/>}/>
-                <Route  path="/team"           element={<CommingSoon title={'team'}/>}/>
+                <Route  path="/team"           element={<Teams/>}/>
               </> 
             }
             <Route path="/share/:projectId/:collectionId?" element={<ShareProject/>}/>

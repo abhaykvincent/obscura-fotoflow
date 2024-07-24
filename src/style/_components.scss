@@ -44,7 +44,8 @@
             border-left: 1px solid rgba(255, 255, 255, 0.4);
             border-right: 1px solid rgba(98, 98, 98, 0.5);
             &:hover{
-                background: linear-gradient(330deg, rgba(255, 255, 255, 1),rgba(255, 255, 255, 0.9));
+                background: linear-gradient(330deg, rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.4));
+                border: 1px solid rgba(255, 255, 255, 0.4);
             }
         }
         &.light-mode{

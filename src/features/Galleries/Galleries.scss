@@ -424,7 +424,7 @@
 				height: 100%;
 				@include boxed;
 				border-radius: 4px;
-				background-color: $dark-1;
+				background-color: $dark-2;
 				border: 1px solid $gray4-default-dark;
 				box-shadow: -2px -1px 4px rgba(0, 0, 0, 0.6);
 			}
@@ -476,7 +476,7 @@
 				transition-timing-function: ease-in;
 				.backthumb{
 					box-shadow: 6px 4px 6px rgba(0, 0, 0, 0.4);
-					background-color: $dark-1;
+					background-color: $dark-2;
 
 				}
 				.bthumb1{

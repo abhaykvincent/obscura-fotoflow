@@ -10,29 +10,36 @@ function DashboardPayments({project}){
     <div className="payments">
       <div className="heading-shoots heading-section">
         <h3 className='heading '>Invoices <span>{project.payments?project.payments.length:''}</span></h3>
-        {project.payments?.length>0&&<div className="new-shoot button tertiary l2 outline"
-          onClick={()=>project.budgets && dispatch(openModal('addPayment'))}
-          >+ New</div>}
+        {project.payments?.length>0&&
+          <div className="new-shoot button tertiary l2 outline"
+            onClick={()=>project.budgets && dispatch(openModal('addPayment'))}
+          >+ New</div>
+        }
       </div>
       <div className={`card ${project.budgets ? '':'single'}`}>
-        <div className={`chart box`}>
-            <div className="status large">
-              <div className="signal"></div>
-            </div>
-            <div className={`circle ${ !project.budgets?'gray':'green'}`}>
-            {
-              project.budgets && (
-                <>
-                {formatDecimalK(project.budgets.amount)}
-                <p className="edit text">Edit</p>
-                </>
-              )
-            } 
-            </div>
+        <div className={`chart box hgf`}>
+          <div className="status large">
+            <div className="signal"></div>
+          </div>
+          <div className={`circle ${ !project.budgets?'gray':'green'}`}>
+          {/* {
+            project.budgets && (
+              <>
+              {formatDecimalK(project.budgets?.amount)}
+              <p className="edit text">Edit</p>
+              </>
+            )
+          }  */}
+          </div>
           <div className="message">
+            {!project.budgets}hgfd
           {
-            project.budgets || project.budgets?.amount !==0? (
-              ''
+            !project.budgets?(
+              <div className="button primary outline"
+                nClick={()=>dispatch(openModal('addBudget'))}
+              >
+                Set Budget
+              </div>
             ) :
             (
               project.payments?.length === 0 &&
@@ -86,4 +93,4 @@ function DashboardPayments({project}){
 }
 
 export default DashboardPayments
-// Line Complexity  1.0 -> 0.9
+// Line Complexity  1.0 -> 0.9 -> 1.0

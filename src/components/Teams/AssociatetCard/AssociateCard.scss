@@ -1,0 +1,490 @@
+@import '../../../style/variables';
+.project{
+    width: 100%;
+    //padding: 8px*1;
+    display: grid;
+    grid-template-columns: 8px*15 auto;
+    background: linear-gradient(120deg, $dark-2 50%, $dark-3 100%);
+    border-radius: $border-radius-1;
+    @include boxShadow;
+    @include boxed;
+    transition-duration: 0.2s;
+    transform: scale(1) translateY(-8px);
+    border: 1px solid $gray6-accessible-dark;
+    border-top: 1px solid rgba(186, 230, 186, 0.2);
+    border-right: 1px solid rgba(162, 194, 156, 0.1);
+    margin-top: 0px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    &:hover{
+        border-right: 1px solid rgba(185, 209, 180, 0.25);
+        border-top: 1px solid rgba(139, 185, 139, 0.25);
+        transition-duration: 0.4s;
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 8px 4px #14562413;
+        background: linear-gradient(30deg, $dark-4, $dark-3);
+        transition-duration: 0.3s;
+        transition-timing-function: ease-in;
+        .cover-wrap{
+            transform: scale(1.02);
+            transition-duration: 0.1s;
+            transition-timing-function: ease-in;
+        }
+        .project-cover{
+            height: 100%;
+            min-height: 8px*12;
+            width: 8px*15;
+            border-radius: 8px;
+            border: 1px solid $gray4-accessible-dark;
+            // custome transitio duration for transform: scale
+            background-size: 100%;
+            transition-timing-function: ease-in;
+            opacity: 1;
+        }
+        .project-details{
+            transition-duration: 0.2s !important;
+            transition-timing-function: ease-out;
+        }
+        .project-summary{
+            opacity: 1 !important;
+        }
+
+        &.draft{
+            box-shadow: 4PX -4PX 2px 0px #2c2c2c39;
+            .project-details .details-top .right .status-signal{
+                box-shadow: 0 0 8px 4px #252525a3;
+            }
+        }
+        &.uploaded{
+            .project-details .details-top .right .status-signal{
+                background-color: $yellow-default-dark;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #6758002e, 0 0 10px 5px #ffd70038, 0 0 4px 2px #ffd90058, 0 0 20px 10px hsla(60, 100%, 50%, 0.1) !important;
+    
+            }
+        }.designing{
+            .project-details .details-top .right .status-signal{
+                background-color: $purple-accessible-dark;
+                transform: scale(1.1);
+                
+            box-shadow: 0 1px 1px 1px #5e2a7e2e, 0 0 10px 5px #9b59b638, 0 0 4px 2px #9c59b6a9, 0 0 20px 10px hsla(270, 96%, 53%, 0.4) !important;
+
+            }
+        }
+        .right{
+            .status-signal{
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #022002a3,0 0 10px 5px #00ff0024,0 0 4px 2px #00ff0061,0 0 20px 10px hsla(120, 100%, 50%, 0.2) !important;
+                transition-delay: 0.1s;
+            }
+        }
+    }
+    &:active{
+        transition-duration: 0.2s;
+        transition-timing-function: ease-in;
+        transform: scale(0.99) translateY(0px) !important;
+        box-shadow: 0px 0px 0px rgba(0, 0, 0, 1);
+    }
+
+    .cover-wrap{
+        transition-duration: 0.1s;
+        transition-timing-function: ease-out;
+    }
+    .project-cover{
+        height: 100%;
+        min-height: 8px*12;
+        width: 8px*15;
+        border-radius: 8px;
+        border: 1px solid $gray3-accessible-dark;
+        border-top: 1px solid $gray2-accessible-dark;
+        border-left: 1px solid $gray2-accessible-dark;
+        background-color: $dark-3;
+        background-image: url('../../../assets/img/icons/cake.svg');
+        background-size: cover;
+        background-position:  center;
+        opacity: 1;
+        transition-duration: 0.1s;
+        transform: scale(1.05);
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8) ,inset 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    .project-details{
+        display: grid;
+        align-content: space-between;
+        margin: 8px*2;
+        margin-right: 8px*1.5;
+        margin-bottom: 8px*1;
+        margin-top: 8px*1.5;
+        gap: 8px*0.2;
+        transition-duration: 0.1s;
+        .details-top{
+            display: grid;
+            grid-template-columns: auto 8px;
+            .project-title{
+                font-size: 0.9rem;
+            }
+            .project-type{
+            line-height: 8px*2.5;
+            font-weight: 400;
+            font-size: 0.8rem;
+            color: $gray3-default-dark;
+            }
+            .right{
+                .status-signal{
+                    height: 8px;
+                    width: 8px;
+                    border-radius: 50%;
+                    background-color: $green-default-light;
+                    // add a neon glow effect brop shadows
+                    box-shadow: 0 1px 1px 1px #022002a3,0 0 10px 5px #00ff0024,0 0 4px 1px #00ff0021,0 0 20px 10px #00ff000e;
+                    transform: scale(1);   
+                    transition-duration: 0.2s; 
+                    &:hover{
+
+                        background-color: $green-default-dark;
+                    }
+                }
+            }
+        }
+        .empty-message {
+            font-size: 0.8rem;
+            font-weight: 400;
+            text-align: left;
+            justify-content: start;
+            color: $gray5-accessible-dark;
+        }
+        .project-summary{
+            display: flex;
+            height: 100%;
+            font-size: 0.8rem;
+            gap: 4px;
+            justify-content: space-between;
+            transition-duration: 0.2s;align-items: center;
+            .summary-left{
+                display: flex;
+                align-items: end;
+                gap: 6px;
+                font-weight: 500;
+            }
+            .summary-right{
+                display: grid;
+                justify-items: end;
+                gap: 4px;
+                .quick-actions{
+
+                display: flex;
+                gap: 4px;
+                }
+                
+            }.summary-item{
+
+                opacity: 0.2;
+                .icon{
+                    background-size: 90% ;
+                    opacity: 0.9 !important;
+                    transition-duration: 0.1s;
+                    padding: 8px*1.1;
+                }
+                &.active{
+
+            opacity: 0.8;p{
+                font-size: 0.7rem;
+                color: $gray-accessible-dark;
+                line-height: 1rem;
+            }
+                }
+            }
+            .summary-item{
+                display: flex;
+                gap: 2px;
+                &:hover{
+                    .icon{
+                        transform: scale(1.4);
+                        transition-duration: 0.2s;
+                    }
+                }
+                p{
+                    font-size: 0.7rem;
+                    color: $gray3-accessible-dark;
+                    line-height: 1rem;
+                }
+                .icon{
+                    padding: 8px*1;
+                    background-size: 80%;
+                    background-position: center;
+                    opacity: 0.5;
+                }
+            }
+            .collection-count{
+                .icon{
+                    background-image: url('../../../assets/img/icons/folders.svg');
+                }
+            }
+            .invoice-count{
+                .icon{
+                    background-image: url('https://img.icons8.com/pastel-glyph/64/FFFFFF/invoice-1.png');
+                }
+            }
+            .photos-count{
+                .icon{
+                    background-image: url('../../../assets/img/icons/images.svg');
+                }
+            }
+            .selected-count{
+                .icon{
+                    background-image: url('../../../assets/img/icons/selected.svg');
+                }
+            }
+            .share{
+                .icon{
+                    background-image: url('../../../assets/img/icons/play-circle.svg');
+                }
+            }
+            .select{
+                .icon{
+                    background-image: url('../../../assets/img/icons/checkmark.svg');
+                }
+            }
+        }
+    }
+    .pin{
+        display: flex;
+        opacity: 0.5;
+        background-color: $dark-1;
+        border-radius: 4px;
+        border: 1px solid $dark-0;
+        padding: 1px 4px;
+        padding-left: 1px;
+        gap: 0px;
+        .pin-label{
+            width: 8px*2;
+            height: 8px*2;
+            font-size: 0.7rem;
+            display: inline-block;
+            padding: 0;
+            border-radius: 4px;
+            color: $gray2-default-dark;
+            background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/key.png');
+            background-size: 50%;
+            background-position: center;
+        }
+        .pin-number{
+            font-size: 0.7rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+        }
+    }
+    &.new{
+        .project-cover{
+        background-size: 20%;
+        }
+        .project-details{
+            align-content: center;
+            text-align: center;
+            margin: 8px*2;
+        }
+        
+    }
+    &.all{
+        width: 80%;
+        .project-cover{
+            background-image: url('../../../assets/img/icons/arrow-right.svg');
+            transform: scale(1.05);;
+            background-size: 20%;
+            background-position: 45%;
+            background-color: $dark-2;
+            border: 1px solid $gray4-accessible-dark;
+        }
+        .project-details{
+            align-content: center;
+            text-align: center;
+            margin: 8px*2;
+        }
+        &:hover{
+            opacity: 0.7 !important;
+            .project-cover{
+                background-position: 55%;
+            }
+        }
+        
+    }/* Draft */
+    &.Wedding{
+        .project-cover{
+            background-size: 50%;
+            background-image: url('https://img.icons8.com/dotty/80/FFFFFF/wedding-rings.png');
+        }
+    }
+    &.Birthday{
+        .project-cover{
+            background-size: 40%;
+            background-image: url('https://img.icons8.com/ios/150/FFFFFF/birthday.png');
+        }
+    }&.Baptism{
+        .project-cover{
+            background-size: 50%;
+            background-image: url('https://img.icons8.com/external-others-bomsymbols-/91/FFFFFF/external-angel-christmas-decoration-outline-others-bomsymbols-.png');
+        }
+    }
+        &.draft {
+            .project-details .details-top .right .status-signal {
+                //background-color: $amber-dark;
+                background-color: $yellow-default-dark;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #ffbf002e, 0 0 10px 5px #ffcc0038, 0 0 4px 2px #ffdd002a, 0 0 20px 10px hsla(45, 100%, 50%, 0.05) !important;
+
+                animation: steady 1.5s infinite;
+            }
+        }
+
+        /* Upcoming */
+        &.upcoming {
+            .project-details .details-top .right .status-signal {
+                //background-color: $cyan-dark;
+                background-color: #00bfff;
+
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #00bfff2e, 0 0 10px 5px #00ccff38, 0 0 4px 2px #00ddff6a, 0 0 20px 10px hsla(180, 100%, 50%, 0.05) !important;
+
+                animation: steady 1.5s infinite;
+            }
+        }
+
+        /* In Progress */
+        &.uploaded {
+            .project-details .details-top .right .status-signal {
+                //background-color: $lime-green-dark;
+                background-color: $green-default-light;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #32cd322e, 0 0 10px 5px #38cc0038, 0 0 4px 2px #34dd002e, 0 0 20px 10px hsla(90, 100%, 50%, 0.05) !important;
+
+                animation: pulsing 1.5s infinite ease-in-out;
+            }
+        }
+
+        /* Selecting Images */
+        &.selecting {
+            .project-details .details-top .right .status-signal {
+                //background-color: $green-dark;
+                background-color:$green-default-light;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #0080002e, 0 0 10px 5px #00a00038, 0 0 4px 2px #00b0006a, 0 0 20px 10px hsla(120, 100%, 50%, 0.05) !important;
+
+                animation: blinking 1.5s infinite ease-in-out;
+            }
+        }
+
+        /* Editing Images */
+        &.editing {
+            .project-details .details-top .right .status-signal {
+                background-color: $purple-accessible-dark;
+;                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #8000802e, 0 0 10px 5px #a000a038, 0 0 4px 2px #b000b06a, 0 0 20px 10px hsla(300, 100%, 50%, 0.05) !important;
+
+                animation: pulsing 1.5s infinite ease-in-out;
+            }
+        }
+
+        /* Client Review */
+        &.client-review {
+            .project-details .details-top .right .status-signal {
+                background-color: $orange-accessible-dark;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #d966002e, 0 0 10px 5px #a7640038, 0 0 4px 2px #b46f066a, 0 0 20px 10px hsla(30, 100%, 50%, 0.05) !important;
+
+                animation: blinking 1.5s infinite ease-in-out;
+                animation-delay: 0.1s;
+            }
+        }
+
+        /* Completed */
+        &.completed {
+            .project-details .details-top .right .status-signal {
+                background-color: $yellow-default-dark;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #ffcc002e, 0 0 10px 5px #ffdd0038, 0 0 4px 2px #ffee006a, 0 0 20px 10px hsla(60, 100%, 50%, 0.05) !important;
+
+                animation: steady 1.5s infinite;
+            }
+        }
+
+        /* Archived */
+        &.archived {
+            .project-details .details-top .right .status-signal {
+                background-color: #cccccc;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #d3d3d32e, 0 0 10px 5px #cccccc38, 0 0 4px 2px #bbbbbb6a, 0 0 20px 10px hsla(0, 0%, 75%, 0.05) !important;
+
+                animation: steady 1.5s infinite;
+            }
+        }
+
+        /* Pending Payment */
+        &.pending-payment {
+            .project-details .details-top .right .status-signal {
+                background-color: $red-accessible-dark;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #ff00002e, 0 0 10px 5px #ff333338, 0 0 4px 2px #ff66666a, 0 0 20px 10px hsla(0, 100%, 50%, 0.05) !important;
+
+                animation: blinking 1.5s infinite ease-in-out;
+            }
+        }
+
+    
+    @for $i from 1 through 20 {
+        &:nth-child(#{$i}) {
+            $delay: 0.2s + 0.05s * ($i - 1);
+            animation: fadeInUp 0.4s ease-out $delay;
+            animation-fill-mode: forwards;
+            animation-timing-function: ease-out;
+
+            .status-signal{
+                opacity: 0;
+                $delay: 0.6s + 0.02s * ($i - 1);
+                animation: glowUp 0.6s ease-in-out $delay;
+                animation-fill-mode: forwards;
+                animation-timing-function: ease-out;
+            }
+        }
+    }
+}
+@keyframes glowUp {
+    0%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 1;
+    }
+}
+@keyframes upload-blinking {
+    0%, 100% {
+        opacity: 1;
+      }
+      50%,60% {
+        opacity: 0.2;
+      }
+    }
+
+    /* Keyframe Animations */
+@keyframes steady {
+    0% { opacity: 1; }
+    100% { opacity: 1; }
+}
+
+@keyframes pulsing {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.1); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes blinking {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes rapid-blinking {
+    0% { opacity: 1; }
+    25% { opacity: 0; }
+    50% { opacity: 1; }
+    75% { opacity: 0; }
+    100% { opacity: 1; }
+}

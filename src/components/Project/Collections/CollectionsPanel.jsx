@@ -25,7 +25,7 @@ const CollectionsPanel = ({ project, collectionId}) => {
                 </div>
                 
               </div>
-              <div className="gallery-name">Upload Photos</div>
+              <div className="gallery-name">Upload</div>
               
             </div>
             : <Link  key={collection.id} className={`gallery ${collectionId===collection.id && 'active'}`} to={`/gallery/${project.id}/${collection.id}`}>

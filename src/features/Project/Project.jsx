@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 //Components
 import DashboardEvents from '../../components/Project Dashboard/Events/Events';
+import SidePanel from '../../components/Project/SidePanel/SidePanel';
 import Refresh from '../../components/Refresh/Refresh';
 // Modals
 import DashboardPayments from '../../components/Project Dashboard/Payments/Payments';
@@ -19,8 +20,6 @@ import { closeModal, openModal, selectModal } from '../../app/slices/modalSlice'
 import { showAlert } from '../../app/slices/alertSlice';
 
 import './Project.scss'
-import TimelineEvent from '../../components/Timeline/TimelineEvent';
-import { timelineData } from '../../data/timeline';
 
 export default function Project() {
   let { id} = useParams();
@@ -61,34 +60,7 @@ export default function Project() {
             </div>
           <DashboardEvents project={project} />
         </div>
-        <div className="side-panel box">
-          <div className="headings">
-            <div className="heading-shoots heading-section">
-              <h3 className='heading '>Timeline</h3>
-              <div className="coming-soon">
-              <div className="coming-soon-tag">Soon</div>
-              </div>
-            </div>
-          </div>
-          <div className="timeline">
-            <div className="guide-line"></div>
-            <div className="events">
-            {timelineData.slice().reverse().map((event, index) => (
-              <TimelineEvent
-                key={index}
-                event={{
-                  title: event.title,
-                  description: event.description,
-                  date: event.date,
-                  status: event.status
-                }}
-              />
-            ))}
-              
-            </div>
-          </div>
-        </div>
-
+        <SidePanel/>
         {/* Modals */}
         <AddCollectionModal project={project}/>
         <AddPaymentModal  project={project}/>

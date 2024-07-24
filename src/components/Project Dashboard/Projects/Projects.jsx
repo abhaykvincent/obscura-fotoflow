@@ -72,7 +72,7 @@ function DashboardProjects({project}){
                     `url(${project.projectCover?project.projectCover:''})`
                 }}>
                 
-                {project.uploadedFilesCount!==0? project.uploadedFilesCount+' Photos': 'Upload Photos'}</div>
+                {project.uploadedFilesCount!==0? project.uploadedFilesCount+' Photos': 'otos'}</div>
                 <div className="backthumb bthumb2"></div>
                 <div className="backthumb bthumb3"></div>
               </div>
