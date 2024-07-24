@@ -3,22 +3,24 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 //Components
 import DashboardEvents from '../../components/Project Dashboard/Events/Events';
-import AmountCard from '../../components/Cards/AmountCard/AmountCard';
 import Refresh from '../../components/Refresh/Refresh';
 // Modals
-import AddCollectionModal from '../../components/Modal/AddCollection';
-import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
+import DashboardPayments from '../../components/Project Dashboard/Payments/Payments';
+import DashboardExpances from '../../components/Project Dashboard/Expances/Expances';
+import DashboardProjects from '../../components/Project Dashboard/Projects/Projects';
 import AddExpenseModal from '../../components/Modal/AddExpense';
 import AddPaymentModal from '../../components/Modal/AddPayment';
 import AddBudgetModal from '../../components/Modal/AddBudget';
-// Utils
-import { formatDecimalK, formatDecimalRs } from '../../utils/stringUtils';
+import AddCollectionModal from '../../components/Modal/AddCollection';
+import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 // Redux
 import { deleteProject, selectProjects } from '../../app/slices/projectsSlice';
 import { closeModal, openModal, selectModal } from '../../app/slices/modalSlice';
 import { showAlert } from '../../app/slices/alertSlice';
-import DashboardPayments from '../../components/Project Dashboard/Payments/Payments';
-import DashboardExpances from '../../components/Project Dashboard/Expances/Expances';
+
+import './Project.scss'
+import TimelineEvent from '../../components/Timeline/TimelineEvent';
+import { timelineData } from '../../data/timeline';
 
 export default function Project() {
   let { id} = useParams();
@@ -50,98 +52,51 @@ export default function Project() {
   return (
     <>
       <main className='project-page'>
-        <div className="project-dashboard">
-        {
-          project.collections.length === 0 ? (
-          <>  
-              <div className="gallery new" 
-              onClick={()=>dispatch(openModal('createCollection'))}>
-                <div className="heading-section">
 
-            <h3 className='heading'>Galleries <span>{project.collections.length}</span></h3>
-                </div>
-              <div className="thumbnails">
-                <div className="thumbnail thumb1">
-                  <div className="backthumb bthumb1"
-                  >
-              <div className="button primary outline">New Gallery</div></div>
-                  <div className="backthumb bthumb2"></div>
-                  <div className="backthumb bthumb3"></div>
-                  <div className="backthumb bthumb4"></div>
-                </div>
+        <div className="project-dashboard">
+          <DashboardProjects project={project}/>
+            <div className="financials-overview">
+          <DashboardPayments project={project}/>
+          <DashboardExpances project={project}/>
+            </div>
+          <DashboardEvents project={project} />
+        </div>
+        <div className="side-panel box">
+          <div className="headings">
+            <div className="heading-shoots heading-section">
+              <h3 className='heading '>Timeline</h3>
+              <div className="coming-soon">
+              <div className="coming-soon-tag">Soon</div>
               </div>
+            </div>
+          </div>
+          <div className="timeline">
+            <div className="guide-line"></div>
+            <div className="events">
+            {timelineData.slice().reverse().map((event, index) => (
+              <TimelineEvent
+                key={index}
+                event={{
+                  title: event.title,
+                  description: event.description,
+                  date: event.date,
+                  status: event.status
+                }}
+              />
+            ))}
               
             </div>
-          </>
-        ) : (
-          <div className="gallery-overview">
-            <div className="galleries">
-              <div className="heading-shoots heading-section">
-                <h3 className='heading '>Galleries <span>{project.collections.length}</span></h3>
-                <div className="new-shoot button tertiary l2 outline"
-                  onClick={ ()=>{}}>+ New
-                </div>
-              </div>
-              <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/gallery/${id}`}>
-                <div className="thumbnails">
-                  <div className="thumbnail thumb1">
-                    <div className="backthumb bthumb1"
-                    style={
-                      {
-                        backgroundImage:
-                        `url(${project.projectCover!==""?project.projectCover:'https://img.icons8.com/external-others-abderraouf-omara/64/FFFFFF/external-images-photography-and-equipements-others-abderraouf-omara.png'})`
-                      }}
-                    ></div>
-                    <div className="backthumb bthumb2"></div>
-                    <div className="backthumb bthumb3"></div>
-                  </div>
-                  <div className="thumbnail thumb2">
-                    <div className="backthumb bthumb1 count"style={
-                      {
-                        backgroundImage:
-                          `url(${project.projectCover?project.projectCover:''})`
-                    }}></div>
-                    <div className="backthumb bthumb2"></div>
-                    <div className="backthumb bthumb3"></div>
-                  </div>
-                  <div className="thumbnail thumb3">
-                    <div className="backthumb bthumb1 count" style={
-                    {
-                      backgroundImage:
-                        `url(${project.projectCover?project.projectCover:''})`
-                    }}>
-                    
-                    {project.uploadedFilesCount!==0? project.uploadedFilesCount+' Photos': 'Upload Photos'}</div>
-                    <div className="backthumb bthumb2"></div>
-                    <div className="backthumb bthumb3"></div>
-                  </div>
-                </div>
-              </Link>
-              <div className="ctas">
-                <div className="button secondary outline bold pin" onClick={()=>{
-                  navigator.clipboard.writeText(`${project.pin}`)
-                  showAlert('success', 'Pin copied to clipboard!')
-                }}>PIN: {project.pin}</div>
-                <div className="button secondary outline disabled">Share</div>
-              </div>
-            </div>
           </div>
-        )}
-
-          <div className="financials-overview">
-            <DashboardPayments project={project}/>
-            <DashboardExpances project={project}/>
-          </div>
-
-          <DashboardEvents project={project} />
-
         </div>
+
+        {/* Modals */}
         <AddCollectionModal project={project}/>
         <AddPaymentModal  project={project}/>
         <AddExpenseModal  project={project}/>
         <AddBudgetModal  project={project}/>
         {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm}/>:''}
         <Refresh/>
+
       </main>
       <div className="project-info">
         <div className="breadcrumbs">
@@ -160,4 +115,4 @@ export default function Project() {
     </>
   )
   }
-  // Line complexity 2.0 -> 3.5 -> 2.0 ->2.5 -> 3.0 -> 2.5 ->
+  // Line complexity 2.0 -> 3.5 -> 2.0 ->2.5 -> 3.0 -> 2.5 -> 1.6 ->0.9

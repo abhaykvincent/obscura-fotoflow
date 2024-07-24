@@ -73,7 +73,8 @@ function DashboardEvents({project})
                   crew.role !== 'assistant' &&
                   <CrewCard key={crew.assigne} user={getUserByID(crew.assigne)} role={crew.role}/>
                 ))
-              }<div className="assistants">
+              }
+              <div className="assistants">
                 {
                 event.crews&&event.crews.map((crew) => (
                   crew.role == 'assistant' &&

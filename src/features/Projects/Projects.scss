@@ -1,4 +1,5 @@
 @import '../../style/variables';
+
 .projects-header{
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -17,7 +18,7 @@
 }
 .view-control{
     display:flex;
-    margin: 8px*3;
+    margin: 8px 8px*3;
     font-size: 0.9rem;
     margin-left: 8px*3;
     margin-bottom: 8px*3;

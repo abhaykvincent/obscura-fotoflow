@@ -32,11 +32,7 @@ function DashboardPayments({project}){
           <div className="message">
           {
             project.budgets || project.budgets?.amount !==0? (
-              <div className="button primary outline"
-              onClick={()=>dispatch(openModal('addBudget'))}
-              >
-                Set Budget
-              </div>
+              ''
             ) :
             (
               project.payments?.length === 0 &&
