@@ -30,6 +30,7 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
   useEffect(() => {
     //scrolltotop
     window.scrollTo(0, 0);
+    console.log(image)
   }, [])
 
   //useeffect side effect
@@ -37,6 +38,7 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
   useEffect(() => {
     setImageSize()
     zoomReset()
+    console.log(image)
   }, [image])
   useEffect(() => {
     console.log(imagePosition)
@@ -109,6 +111,7 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
         </div>
 
       </div>
+
       <div className="controls">
             {(previewIndex >= imagesLength - 1) ||
           <div className="next"
@@ -124,6 +127,25 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
         ></div>}
 
       </div>
+
+      <div className="controls bottom">
+        <div className="left-controls"></div>
+        <div className="center-controls">
+          <div className="tool">{image.status=="selected"?
+            <div className="selected-button active">
+              <div className="icon selected"></div>
+              <div className="text">Selected</div>
+            </div>
+          :
+            <div className="selected-button active">
+              <div className="icon not-selected"></div>
+              <div className="text">Approve</div>
+            </div>}
+          </div>
+        </div>
+        <div className="right-controls"></div>
+      </div>
+
       <div className="controls top">
         <div className="left-controls">
           <div className="back"

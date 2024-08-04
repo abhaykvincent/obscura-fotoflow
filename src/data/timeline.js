@@ -44,18 +44,18 @@ export const timelineData = [
       status: "upcomming"
     },
     {
-      title: "Final Delivery",
+      title: "Final Album Delivery",
       description: "Deliver approved photos.",
       date: "2024-04-05",
       status: "upcomming"
     },
     {
-      title: "Feedback and Testimonials",
+      title: "Feedback",
       description: "Request client feedback.",
       status: "upcomming"
     },
     {
-      title: "Follow-Up",
+      title: "Sell Print Products",
       description: "Ensure satisfaction and discuss future projects.",
       date: "2024-04-15",
       status: "upcomming"

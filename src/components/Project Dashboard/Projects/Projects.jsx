@@ -43,7 +43,7 @@ function DashboardProjects({project}){
               onClick={ ()=>{}}>+ New
             </div>
           </div>
-          <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/gallery/${project.id}`}>
+          <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/${defaultStudio.domain}/gallery/${project.id}`}>
             <div className="thumbnails">
               <div className="thumbnail thumb1">
                 <div className="backthumb bthumb1"
@@ -72,7 +72,7 @@ function DashboardProjects({project}){
                     `url(${project.projectCover?project.projectCover:''})`
                 }}>
                 
-                {project.uploadedFilesCount!==0? project.uploadedFilesCount+' Photos': 'Upload Photos'}</div>
+                {project.uploadedFilesCount!==0? project.uploadedFilesCount+' Photos': 'otos'}</div>
                 <div className="backthumb bthumb2"></div>
                 <div className="backthumb bthumb3"></div>
               </div>

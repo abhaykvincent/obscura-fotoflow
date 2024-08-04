@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import './Sidebar.scss'
 import { GrUpgrade } from "react-icons/gr";
 import { logout, selectUser } from '../../app/slices/authSlice';
@@ -12,28 +12,28 @@ function Sidebar() {
   const toggleProfileOption = () => {
     setProfileOptionActive(!profileOptionActive)
   }
-  useEffect(() => {
-    // console.log(profileOptionActive)
-  }, [profileOptionActive])
+  const [defaultStudio, defaultStudioSet]= useState('obscura')
   const location = useLocation();
+  const params = useParams()
+  const studioName = params.studioName!==undefined ? params.studioName : defaultStudio
   
   return (
     <div className="sidebar">
       <div className="menu-list">
-        <Link to={`/`}>
-          <div className={`menu home ${location.pathname === '/' ? 'selected' : ''}`}>
+        <Link to={`/${studioName}/`}>
+          <div className={`menu home ${location.pathname === `/${studioName}/` ? 'selected' : ''}`}>
             <div className="icon"></div>
             <div className="label">Home</div>
           </div>
         </Link>
-        <Link to={`/projects`}>
-          <div className={`menu projects ${location.pathname === '/projects' ? 'selected' : ''}`}>
+        <Link to={`/${studioName}/projects`}>
+          <div className={`menu projects ${location.pathname === `/${studioName}/projects` ? 'selected' : ''}`}>
             <div className="icon"></div>
             <div className="label">Projects</div>
           </div>
         </Link>
-        <Link to={`/store`}>
-          <div className={`menu store ${location.pathname === '/store' ? 'selected' : ''} disabled`}>
+        <Link to={`/${studioName}/store`}>
+          <div className={`menu store ${location.pathname === `/${studioName}/store` ? 'selected' : ''} disabled`}>
             <div className="icon"></div>
             <div className="label">Store</div>
             <div className="coming-soon">
@@ -41,8 +41,8 @@ function Sidebar() {
             </div>
           </div>
         </Link>
-        <Link to={`/calendar`}>
-          <div className={`menu calendar ${location.pathname === '/calendar' ? 'selected' : ''} disabled`}>
+        <Link to={`/${studioName}/calendar`}>
+          <div className={`menu calendar ${location.pathname === `/${studioName}/calendar` ? 'selected' : ''} disabled`}>
             <div className="icon"></div>
             <div className="label">Calendar</div>
             <div className="coming-soon">
@@ -50,8 +50,8 @@ function Sidebar() {
             </div>
           </div>
         </Link>
-        <Link to={`/invoices`}>
-          <div className={`menu invoices ${location.pathname === '/invoices' ? 'selected' : ''} disabled`}>
+        <Link to={`/${studioName}/invoices`}>
+          <div className={`menu invoices ${location.pathname === `/${studioName}/invoices` ? 'selected' : ''} disabled`}>
             <div className="icon"></div>
             <div className="label">Financials</div>
             <div className="coming-soon">
@@ -61,26 +61,26 @@ function Sidebar() {
         </Link>
         {/* Admin */}
         <p className="label">ADMIN</p>
-        <Link to={`/storage`}>
-          <div className={`menu storage ${location.pathname === '/storage' ? 'selected' : ''}`}>
+        <Link to={`/${studioName}/storage`}>
+          <div className={`menu storage ${location.pathname === `/${studioName}/storage` ? 'selected' : ''}`}>
             <div className="icon"></div>
             <div className="label">Storage</div>
           </div>
         </Link>
-        <Link to={`/notifications`}>
-          <div className={`menu notifications ${location.pathname === '/notifications' ? 'selected' : ''}`}>
+        <Link to={`/${studioName}/notifications`}>
+          <div className={`menu notifications ${location.pathname === `/${studioName}/notifications` ? 'selected' : ''}`}>
             <div className="icon"></div>
             <div className="label">Notifications</div>
           </div>
         </Link>
-        <Link to={`/subscription`}>
-          <div className={`menu subscription ${location.pathname === '/subscription' ? 'selected' : ''}`}>
+        <Link to={`/${studioName}/subscription`}>
+          <div className={`menu subscription ${location.pathname === `/${studioName}/subscription` ? 'selected' : ''}`}>
             <div className="icon"></div>
             <div className="label">Subscription</div>
           </div>
         </Link>
-        <Link to={`/team`}>
-          <div className={`menu team ${location.pathname === '/team' ? 'selected' : ''} disabled`}>
+        <Link to={`/${studioName}/team`}>
+          <div className={`menu team ${location.pathname === `/${studioName}/team` ? 'selected' : ''}`}>
             <div className="icon"></div>
             <div className="label">Team</div>
             <div className="coming-soon">

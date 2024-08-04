@@ -424,7 +424,7 @@
 				height: 100%;
 				@include boxed;
 				border-radius: 4px;
-				background-color: $dark-1;
+				background-color: $dark-2;
 				border: 1px solid $gray4-default-dark;
 				box-shadow: -2px -1px 4px rgba(0, 0, 0, 0.6);
 			}
@@ -476,7 +476,7 @@
 				transition-timing-function: ease-in;
 				.backthumb{
 					box-shadow: 6px 4px 6px rgba(0, 0, 0, 0.4);
-					background-color: $dark-1;
+					background-color: $dark-2;
 
 				}
 				.bthumb1{
@@ -521,19 +521,19 @@
 					}
 					.bthumb2{
 						position: absolute;
-						transform: rotate(0deg)translateY(-18px) scale(0.80);
+						transform: rotate(0deg)translateY(-16px) scale(0.80);
 						opacity: 0.5;
 						transition-duration: 0.2s;
 					}
 					.bthumb3{
 						position: absolute;
-						transform: rotate(0deg) translateY(-12px) scale(0.90);
+						transform: rotate(0deg) translateY(-8px) scale(0.90);
 						transition-duration: 0.2s;
 						opacity: 0.5;
 					}
 					.bthumb4{
 						position: absolute;
-						transform: rotate(0deg) translateY(-12px) scale(0.90);
+						transform: rotate(0deg) translateY(-10px) scale(0.90);
 						transition-duration: 0.2s;
 						opacity: 0.2;
 					}
@@ -756,28 +756,7 @@
 						border: 1px solid $dark-0
 					}
 				}
-				.avatar{
-					width: 8px*9;
-					height: 8px*9;
-					margin: auto;
-					background-color: $dark-2;
-					border: 1px solid $dark-0;
-					border-radius: 50%;
-					box-shadow: 2px 2px 4px  rgb(0, 0, 0);;
-					background-size: 100%;
-					&.jane-0000{
-						background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_YNd0KfrIVqUEQP9KlCujsRsIZ5tEC7KQzxGCtD0lsXuxFi-rJ0SIQlnmv5tHTJ3QLDM&usqp=CAU');
-					}
-					&.john-0000{
-						background-image: url('https://www.francisjtaylor.co.uk/wp-content/uploads/2021/06/Francis-J-Taylor.jpg');
-					}
-					&.abhay-0000{
-						background-image: url('https://avatars.githubusercontent.com/u/13717741?v=4');
-					}
-					&.sam-0001{
-						background-image: url('../../assets/img/profile/sam.jpg');
-					}
-				}
+				
 				.assistants{
 					width: 8px*16;
 					gap: 4px;
@@ -922,7 +901,6 @@
 					text-align: center;
 				}
 				&.new{
-					grid-template-columns: 1fr;
 					width: auto;
 					.time{
 						min-width: 8px*14;
@@ -1033,6 +1011,29 @@
 		}
 	}
 }
+.avatar{
+	width: 8px*9;
+	height: 8px*9;
+	margin: auto;
+	background-color: $dark-2;
+	border: 1px solid $dark-0;
+	border-radius: 50%;
+	box-shadow: 2px 2px 4px  rgb(0, 0, 0);;
+	background-size: 100% !important;
+	&.jane-0005{
+		background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_YNd0KfrIVqUEQP9KlCujsRsIZ5tEC7KQzxGCtD0lsXuxFi-rJ0SIQlnmv5tHTJ3QLDM&usqp=CAU')!important;
+	}
+	&.john-0004{
+		background-image: url('https://www.francisjtaylor.co.uk/wp-content/uploads/2021/06/Francis-J-Taylor.jpg')!important;
+	}
+	&.abhay-0002{
+		background-image: url('https://avatars.githubusercontent.com/u/13717741?v=4')!important;
+	}
+	&.sam-0001{
+		background-image: url('../../assets/img/profile/sam.jpg') !important
+	}
+}
+
 .heading-section{
 	display: flex;
 	justify-content: space-between;
@@ -1131,7 +1132,7 @@
 			}
 		}
 		.financials-overview{
-			grid-template-columns: 1fr;
+			margin-top: 8px*2;
 		}
 		
 	}

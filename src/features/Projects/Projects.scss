@@ -1,10 +1,12 @@
 @import '../../style/variables';
 
-.projects-header{
+
+.projects-header,.teams-header{
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 8px*20;
     justify-content: space-between;
-    padding: 8px*2 8px*3;
+    padding: 8px*1.5 8px*3;
+    padding-right: 8px*2.5;
     h1{
 
     animation: fadeInLeft 0.5s ease-out 0s;
@@ -159,47 +161,130 @@
         }
     }
 }
+.teams-list{
+    padding: 0 8px;
+    display: grid;
+    grid-template-columns: minmax(200px, 480px) minmax(200px, 480px) minmax(200px, 480px);
+    gap: 8px*3;
+    row-gap: 8px*4;
+    width: 100%;
+    padding: 8px*3;
+    padding-top: 8px;
+    
+    .message{
+        color: $gray4-default-dark;
+    }
+    
+    &.completed{
+        h3::after{
+            font-size: 0.9rem;
+            font-weight: 400;
+            margin-left: 8px*1;
+            content: 'Client Approved';
+            color: $gray3-default-dark;
+        }
+        .project{
+            grid-template-columns: auto 8px*16;
+
+            .project-options{
+                align-items: center;
+            }
+        }
+    }
+}
 
 //write a media quer for divces less than 1200px
-@media only screen and (max-width: 1500px) {
+@media only screen and (max-width: 1800px) {
+    .teams-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
     .projects-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr 1fr ;
+    }
+}
+@media only screen and (max-width: 1600px) {
+    .teams-list{
         gap: 8PX*4;
         grid-template-columns: 1fr 1fr 1fr;
     }
+    .projects-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr  ;
+    }
+}
+@media only screen and (max-width: 1300px) {
+    .teams-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .projects-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr  ;
+    }
 }
 @media only screen and (max-width: 1200px) {
+    .teams-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
     .projects-list{
         gap: 8PX*4;
         grid-template-columns: 1fr 1fr 1fr ;
     }
 }
 @media only screen and (max-width: 1080px) {
+    .teams-list{
+        grid-template-columns: 1fr 1fr  ;
+    }
     .projects-list{
+        gap: 8PX*4;
         grid-template-columns: 1fr 1fr 1fr ;
     }
 }
 @media only screen and (max-width: 960px) {
+    .teams-list{
+        grid-template-columns: 1fr 1fr   ;
+    }
     .projects-list{
+        gap: 8PX*4;
         grid-template-columns: 1fr 1fr  ;
     }
 }
 @media only screen and (max-width: 860px) {
-    .projects-list{
-        grid-template-columns: 1fr 1fr  ;
+    .teams-list{
+        grid-template-columns: 1fr 1fr    ;
     }
-}
-@media only screen and (max-width: 580px) {
     .projects-list{
-        grid-template-columns: 1fr 1fr  ;
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr;
     }
 }
 @media only screen and (max-width: 640px) {
-    .projects-list{
+    .teams-list{
         grid-template-columns: 1fr  ;
+    }
+    .projects-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr ;
+    }
+}
+@media only screen and (max-width: 580px) {
+    .teams-list{
+        grid-template-columns: 1fr   ;
+    }
+    .projects-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr ;
     }
 }
 @media only screen and (max-width: 480px) {
-    .projects-list{
+    .teams-list{
         grid-template-columns: 1fr  ;
+    }
+    .projects-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr ;
     }
 }

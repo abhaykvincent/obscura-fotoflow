@@ -296,6 +296,7 @@ body{
         }
       }
       .drop-upload{
+        cursor: pointer;
         .drop-area{
           height: 8px*20;
           border-radius: 8px*1;
@@ -303,7 +304,7 @@ body{
           stroke-dashoffset: 20px 10px;
           opacity: 0.8;
           background-size: 80%;;
-          background: url('https://img.icons8.com/ios/100/FFFFFF/drag-and-drop.png') ;
+          //background: url('https://img.icons8.com/ios/100/FFFFFF/drag-and-drop.png') ;
           background-repeat: no-repeat;
           background-position: center;
           transition-duration: 0.1s;
@@ -311,6 +312,16 @@ body{
           opacity: 1;
           border: 1px double $green-default-light;
 
+          }
+          p{
+            margin-top: 8px*2;
+            font-size: 1rem;
+            text-align: center;
+            color: $gray2-default-dark;
+            border: 1px solid $dark-3;
+            padding: 4px 8px*2;
+            border-radius: 4px;
+            
           }
         }
       }
@@ -328,23 +339,34 @@ body{
     }
   }
   .refresh{
-    position: absolute;
-    left: calc(50vw - $sidebar-width);
-    transform: translateX(-50%);
     bottom: 8px*2;
     display: grid;
     justify-items: center;
     margin-top: 8px*4;
+    opacity: 0;
+    animation: 0.5s reveal-up 1s forwards;
     p{
-        color: $gray4-default-dark;
+    margin-bottom: 8px*1;
+    color: $gray4-default-dark;
 
-        margin: 8px;
     }
     .button{
         color: $gray-default-dark;
-        font-weight: 400;
+    opacity: 0;
+    font-weight: 400;
+        animation: 0.5s reveal-up 1.2s forwards;
     }
 
+}
+@keyframes reveal-up {
+    0%{
+    opacity: 0;
+    transform: translateY(8px*1);
+    }
+    100%{
+    opacity: 1;
+    transform: translateY(8px*0);
+    }
 }
   .legend{
     display: flex;
@@ -663,7 +685,7 @@ body{
           padding: 4px 8px;
           padding-right: 4px;
           @include boxed;
-          border: 1px solid $gray3-accessible-light
+          border: 1px solid $gray-accessible-light
 
         }
         .symbol{
@@ -736,12 +758,15 @@ body{
         }
       }
     }
-    &#loginModal{
+    &.loginModal{
       max-width: 8px*50;
       left: 50vw;
       top: 50vH;
       transform: translate(-50%, -50%);
       padding: 0;
+      &.emailPassword{
+        width: 8px*42;
+      }
       .logo{
         position: absolute;
         top: -8px*16;
@@ -775,8 +800,29 @@ body{
             background-image: url('./assets/img/google-logo.png');
             background-size: 100%;
           }
+          .lock{
+            width: 8px*4;
+            height: 8px*4;
+            border: none;
+            background-image: url('https://img.icons8.com/?size=100&id=2862&format=png&color=FFFFFF');
+            background-size: 60%;
+            background-position: center 30%;
+            
+          }
+          &:active{
+            .lock{
+              background-image: url('https://img.icons8.com/?size=100&id=3721&format=png&color=FFFFFF');
+
+            }
+          }
+          &.secondary{
+            background-color: $dark-2;
+            border: 1px solid $dark-1;
+          }
         }
       }
+    }
+    &#loginEmailPasswordModal{
     }
     &.add-crew{
       .assigne{
@@ -1296,7 +1342,6 @@ margin-left: 4px;
         }
 
         .button.disabled{
-          display: none;
         }
       }
       
@@ -1317,6 +1362,7 @@ margin-left: 4px;
         &.project-page{
           display: grid;
           grid-template-columns: auto;
+          gap: 8px*5;
       }
         .project-collection .header {
           display: grid;
@@ -1332,7 +1378,6 @@ margin-left: 4px;
         }
 
         .button.disabled{
-          display: none;
         }
       }
     }
@@ -1466,3 +1511,4 @@ margin-left: 4px;
   }
     
 }
+// Line complexity 15.5 -> !!!

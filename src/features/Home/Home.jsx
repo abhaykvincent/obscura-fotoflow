@@ -46,8 +46,8 @@ function Home() {
                         <h1 className='welcome-message'>Let's manage your Snaps </h1>
                     </div>
                     <div className="actions">
-                        <div className="button primary"
-                        onClick={()=>dispatch(openModal('createProject'))}
+                        <div className="button primary icon add"
+                            onClick={()=>dispatch(openModal('createProject'))}
                         >Create Project</div>
                     </div>
                 </div>
