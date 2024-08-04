@@ -32,14 +32,19 @@ const studioSlice = createSlice({
       const available = state.limits.storage.total-getUsedSpace(action.payload)
       state.limits.storage.available=available
     },
+    setStudio:(state, action) => {
+      state.name=action.payload.name
+      state.domain=action.payload.domain
+    },
   },
   extraReducers: (builder) => {
   },
 });
 
-export const { setAvailableStortage } = studioSlice.actions;
+export const { setAvailableStortage,setStudio } = studioSlice.actions;
 export default studioSlice.reducer;
 
 // Selector to get projects data from the state
+export const selectStudio = (state) => state.studio;
 export const selectStorageLimit = (state) => state.studio.limits.storage;
 export const selectCollectionsLimit = (state) => state.studio.limits.collections;

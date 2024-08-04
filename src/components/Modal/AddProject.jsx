@@ -4,10 +4,12 @@ import { showAlert } from '../../app/slices/alertSlice';
 import { addProject } from '../../app/slices/projectsSlice';
 import { useNavigate } from 'react-router';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
+import { selectStudio } from '../../app/slices/studioSlice';
 
 function AddProjectModal() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const defaultStudio = useSelector(selectStudio)
     const visible = useSelector(selectModal)
     const onClose = () => dispatch(closeModal('createProject'))
   const [projectData, setProjectData] = useState({
@@ -43,7 +45,7 @@ function AddProjectModal() {
               onClose();
               dispatch(showAlert({type:'success', message:`New Project created!`}));
             
-              navigate(`/project/${newProjectData.id}`);
+              navigate(`/${defaultStudio.domain}/project/${newProjectData.id}`);
           })
           .catch((error) => {
               console.error('Error creating project:', error);
@@ -80,8 +82,6 @@ function AddProjectModal() {
                         <input className="" name="type" value={projectData.type} type="text"
                             onChange={handleInputChange} />
                     </div>
-                </div>
-                <div className="form-section contact">
                     <div className="field">
                         <label className="" htmlFor="">Email</label>
                         <input className="" name="email" value={projectData.email} type="text"

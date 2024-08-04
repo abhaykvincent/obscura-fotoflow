@@ -1,7 +1,11 @@
 import {Link} from 'react-router-dom';
 import './ProjectCard.scss'
+import { selectStudio } from '../../../app/slices/studioSlice';
+import { useSelector } from 'react-redux';
 
 function ProjectCard({project}) {   
+  const defaultStudio = useSelector(selectStudio)
+
     //Project's selected photos count
     const getProjectSelectedPhotosCount = (project) => {
         return project.collections.flatMap(collection => collection.uploadedFiles)
@@ -9,7 +13,7 @@ function ProjectCard({project}) {
             .length;
     }
   return (
-    <Link className={`project ${project.id} ${project.type?project.type:''} ${project.status?project.status:''}`} to={`/project/${project.id}`} key={project.id}>
+    <Link className={`project ${project.id} ${project.type?project.type:''} ${project.status?project.status:''}`} to={`/${defaultStudio.domain}/project/${project.id}`} key={project.id}>
         <div className="cover-wrap">
             <div
                 className="project-cover"
@@ -47,7 +51,7 @@ function ProjectCard({project}) {
                             </div>
                             <div className={`summary-item invoice-count ${project.payments?.length>0?'active':''}`}>
                                 <div className="icon"></div>
-                                <p>{project.payments?.length}</p>
+                                <p>{project.payments&&project.payments.length}</p>
                             </div>
                             
 

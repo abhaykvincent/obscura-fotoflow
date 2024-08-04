@@ -9,7 +9,8 @@
 }
 .side-panel{
     display: grid;
-    grid-template-rows: 8px*5 auto;
+    align-items: center;
+    grid-template-rows: 8px*5 auto 8px*5 auto;
     padding-top: 8px*2;
     background-color: $dark-2;
     padding: 8px*1;
@@ -19,6 +20,7 @@
     margin-bottom: 8px;
     border-radius: 4px;
     border: 1px solid $dark-1;
+    
     .heading{
         margin-left: 4px;
         margin-top: 4px;
@@ -27,6 +29,8 @@
         display: grid;
         grid-template-columns: 2px auto ;
         opacity: 0.2;
+        max-height: calc(100vh - 8px*70);
+        overflow-y: scroll;
         .events{
             display: grid;
             gap: 8px*0;
@@ -178,6 +182,38 @@
             z-index: 30;
         }
     } 
+    .client-details{
+        .client-field{
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            color: $dark-0;
+            .highlight{
+                    color: white;
+                    font-weight: 600;
+            }
+            &.client-name{
+                margin-bottom: 8px;
+                p{
+                }
+            }
+            &.client-email{
+                p{
+                    color: $gray-default-dark;
+                }
+            }
+            &.client-phone{
+                p{
+                    color: $gray-default-dark;
+                }
+            }
+            &.client-location{
+                p{
+                    color: $dark-0;
+                }
+            }
+        }
+    }
 }
 @media only screen and (max-width: 1230px) {
     .side-panel{
@@ -224,7 +260,7 @@
 }
 @media only screen and (max-width: 768px) {
     .side-panel{
-        width: calc(100% - 8px*20);
+        width: calc(100% - 8px*5);
         margin-left: 8px*2.5;
         margin-top: 0;
     }

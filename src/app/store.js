@@ -6,6 +6,7 @@ import modalReducer from './slices/modalSlice'
 import uploadReducer from './slices/uploadSlice'
 import studioReducer from './slices/studioSlice'
 import teamsReducer from './slices/teamsSlice'
+import shortcutsReducer from './slices/shortcutSlice'
 
 export const store = configureStore({
   reducer: {
@@ -16,5 +17,6 @@ export const store = configureStore({
     upload: uploadReducer,
     studio: studioReducer,
     teams: teamsReducer,
+    shortcuts: shortcutsReducer,
   },
 });

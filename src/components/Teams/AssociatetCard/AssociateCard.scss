@@ -1,13 +1,14 @@
 @import '../../../style/variables';
-.project{
+.associate{
     width: 100%;
     //padding: 8px*1;
     display: grid;
-    grid-template-columns: 8px*15 auto;
+    grid-template-columns: 8px*10 auto;
     background: linear-gradient(120deg, $dark-2 50%, $dark-3 100%);
     border-radius: $border-radius-1;
     @include boxShadow;
     @include boxed;
+    padding-left: 8px*5;
     transition-duration: 0.2s;
     transform: scale(1) translateY(-8px);
     border: 1px solid $gray6-accessible-dark;
@@ -29,40 +30,40 @@
             transition-duration: 0.1s;
             transition-timing-function: ease-in;
         }
-        .project-cover{
+        .associate-cover{
             height: 100%;
             min-height: 8px*12;
             width: 8px*15;
-            border-radius: 8px;
+            border-radius: 50%;
             border: 1px solid $gray4-accessible-dark;
             // custome transitio duration for transform: scale
             background-size: 100%;
             transition-timing-function: ease-in;
             opacity: 1;
         }
-        .project-details{
+        .associate-details{
             transition-duration: 0.2s !important;
             transition-timing-function: ease-out;
         }
-        .project-summary{
+        .associate-summary{
             opacity: 1 !important;
         }
 
         &.draft{
             box-shadow: 4PX -4PX 2px 0px #2c2c2c39;
-            .project-details .details-top .right .status-signal{
+            .associate-details .details-top .right .status-signal{
                 box-shadow: 0 0 8px 4px #252525a3;
             }
         }
         &.uploaded{
-            .project-details .details-top .right .status-signal{
+            .associate-details .details-top .right .status-signal{
                 background-color: $yellow-default-dark;
                 transform: scale(1.1);
                 box-shadow: 0 1px 1px 1px #6758002e, 0 0 10px 5px #ffd70038, 0 0 4px 2px #ffd90058, 0 0 20px 10px hsla(60, 100%, 50%, 0.1) !important;
     
             }
         }.designing{
-            .project-details .details-top .right .status-signal{
+            .associate-details .details-top .right .status-signal{
                 background-color: $purple-accessible-dark;
                 transform: scale(1.1);
                 
@@ -88,25 +89,26 @@
     .cover-wrap{
         transition-duration: 0.1s;
         transition-timing-function: ease-out;
+        margin-left: -8px*5;
+        margin-right: 8px*5;
     }
-    .project-cover{
-        height: 100%;
-        min-height: 8px*12;
+    .associate-cover{
+        height: 8px*15;
         width: 8px*15;
-        border-radius: 8px;
+        border-radius: 50%;
         border: 1px solid $gray3-accessible-dark;
         border-top: 1px solid $gray2-accessible-dark;
         border-left: 1px solid $gray2-accessible-dark;
         background-color: $dark-3;
-        background-image: url('../../../assets/img/icons/cake.svg');
-        background-size: cover;
+        background-image: url('https://img.icons8.com/glyph-neue/128/FFFFFF/gender-neutral-user.png');
+        background-size: 60%;
         background-position:  center;
         opacity: 1;
         transition-duration: 0.1s;
-        transform: scale(1.05);
+        transform: scale(1.05) scale(1.1);
         box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8) ,inset 1px 1px 2px rgba(0, 0, 0, 0.5);
     }
-    .project-details{
+    .associate-details{
         display: grid;
         align-content: space-between;
         margin: 8px*2;
@@ -118,14 +120,19 @@
         .details-top{
             display: grid;
             grid-template-columns: auto 8px;
-            .project-title{
-                font-size: 0.9rem;
+            .associate-title{
+                font-size: 1.2rem;
+                margin-bottom: 4px;
             }
-            .project-type{
+            .associate-type{
+                padding: 1px 4px;
             line-height: 8px*2.5;
             font-weight: 400;
             font-size: 0.8rem;
-            color: $gray3-default-dark;
+            color: $gray2-default-dark;
+            background-color: $dark-3;
+            border: 1px solid $dark-0;
+            border-radius: 4px;
             }
             .right{
                 .status-signal{
@@ -143,6 +150,57 @@
                     }
                 }
             }
+            .left{
+                .roles{
+                    display: flex;
+                    gap: 4px;
+                    margin-top: -2px;
+                }
+                .card-title{
+                    display: flex;
+                    gap: 8px*2;
+                    align-items: center;
+                    margin-bottom: 4px;
+                    .access-level{
+                        font-size: 0.8rem;
+                        color: $gray2-accessible-dark
+                    }
+                }
+                .card-email{
+                    display: flex;
+                    margin-top: 8px;
+                    gap: 4px;
+                    .icon{
+                        width: 8px*3;
+                        height: 8px*3;
+                        background-size: 80%;
+                        background-repeat: no-repeat;
+                        &.email{
+                            background-image: url('https://img.icons8.com/sf-regular-filled/96/FFFFFF/new-post.png');
+                        }
+                    }
+                    .associate-email{
+                        font-size: 0.8rem;
+                    }
+                }
+                .card-phone{
+                    display: flex;
+                    margin-top: -4px;
+                    gap: 4px;
+                    .icon{
+                        width: 8px*3;
+                        height: 8px*3;
+                        background-size: 80%;
+                        background-repeat: no-repeat;
+                        &.phone{
+                            background-image: url('https://img.icons8.com/sf-regular-filled/96/FFFFFF/phone.png');
+                        }
+                    }
+                    .associate-phone{
+                        font-size: 0.8rem;
+                    }
+                }
+            }
         }
         .empty-message {
             font-size: 0.8rem;
@@ -151,7 +209,7 @@
             justify-content: start;
             color: $gray5-accessible-dark;
         }
-        .project-summary{
+        .associate-summary{
             display: flex;
             height: 100%;
             font-size: 0.8rem;
@@ -274,10 +332,10 @@
         }
     }
     &.new{
-        .project-cover{
+        .associate-cover{
         background-size: 20%;
         }
-        .project-details{
+        .associate-details{
             align-content: center;
             text-align: center;
             margin: 8px*2;
@@ -286,7 +344,7 @@
     }
     &.all{
         width: 80%;
-        .project-cover{
+        .associate-cover{
             background-image: url('../../../assets/img/icons/arrow-right.svg');
             transform: scale(1.05);;
             background-size: 20%;
@@ -294,38 +352,38 @@
             background-color: $dark-2;
             border: 1px solid $gray4-accessible-dark;
         }
-        .project-details{
+        .associate-details{
             align-content: center;
             text-align: center;
             margin: 8px*2;
         }
         &:hover{
             opacity: 0.7 !important;
-            .project-cover{
+            .associate-cover{
                 background-position: 55%;
             }
         }
         
     }/* Draft */
     &.Wedding{
-        .project-cover{
+        .associate-cover{
             background-size: 50%;
             background-image: url('https://img.icons8.com/dotty/80/FFFFFF/wedding-rings.png');
         }
     }
     &.Birthday{
-        .project-cover{
+        .associate-cover{
             background-size: 40%;
             background-image: url('https://img.icons8.com/ios/150/FFFFFF/birthday.png');
         }
     }&.Baptism{
-        .project-cover{
+        .associate-cover{
             background-size: 50%;
             background-image: url('https://img.icons8.com/external-others-bomsymbols-/91/FFFFFF/external-angel-christmas-decoration-outline-others-bomsymbols-.png');
         }
     }
         &.draft {
-            .project-details .details-top .right .status-signal {
+            .associate-details .details-top .right .status-signal {
                 //background-color: $amber-dark;
                 background-color: $yellow-default-dark;
                 transform: scale(1.1);
@@ -337,7 +395,7 @@
 
         /* Upcoming */
         &.upcoming {
-            .project-details .details-top .right .status-signal {
+            .associate-details .details-top .right .status-signal {
                 //background-color: $cyan-dark;
                 background-color: #00bfff;
 
@@ -350,7 +408,7 @@
 
         /* In Progress */
         &.uploaded {
-            .project-details .details-top .right .status-signal {
+            .associate-details .details-top .right .status-signal {
                 //background-color: $lime-green-dark;
                 background-color: $green-default-light;
                 transform: scale(1.1);
@@ -362,7 +420,7 @@
 
         /* Selecting Images */
         &.selecting {
-            .project-details .details-top .right .status-signal {
+            .associate-details .details-top .right .status-signal {
                 //background-color: $green-dark;
                 background-color:$green-default-light;
                 transform: scale(1.1);
@@ -374,7 +432,7 @@
 
         /* Editing Images */
         &.editing {
-            .project-details .details-top .right .status-signal {
+            .associate-details .details-top .right .status-signal {
                 background-color: $purple-accessible-dark;
 ;                transform: scale(1.1);
                 box-shadow: 0 1px 1px 1px #8000802e, 0 0 10px 5px #a000a038, 0 0 4px 2px #b000b06a, 0 0 20px 10px hsla(300, 100%, 50%, 0.05) !important;
@@ -385,7 +443,7 @@
 
         /* Client Review */
         &.client-review {
-            .project-details .details-top .right .status-signal {
+            .associate-details .details-top .right .status-signal {
                 background-color: $orange-accessible-dark;
                 transform: scale(1.1);
                 box-shadow: 0 1px 1px 1px #d966002e, 0 0 10px 5px #a7640038, 0 0 4px 2px #b46f066a, 0 0 20px 10px hsla(30, 100%, 50%, 0.05) !important;
@@ -397,7 +455,7 @@
 
         /* Completed */
         &.completed {
-            .project-details .details-top .right .status-signal {
+            .associate-details .details-top .right .status-signal {
                 background-color: $yellow-default-dark;
                 transform: scale(1.1);
                 box-shadow: 0 1px 1px 1px #ffcc002e, 0 0 10px 5px #ffdd0038, 0 0 4px 2px #ffee006a, 0 0 20px 10px hsla(60, 100%, 50%, 0.05) !important;
@@ -408,7 +466,7 @@
 
         /* Archived */
         &.archived {
-            .project-details .details-top .right .status-signal {
+            .associate-details .details-top .right .status-signal {
                 background-color: #cccccc;
                 transform: scale(1.1);
                 box-shadow: 0 1px 1px 1px #d3d3d32e, 0 0 10px 5px #cccccc38, 0 0 4px 2px #bbbbbb6a, 0 0 20px 10px hsla(0, 0%, 75%, 0.05) !important;
@@ -419,7 +477,7 @@
 
         /* Pending Payment */
         &.pending-payment {
-            .project-details .details-top .right .status-signal {
+            .associate-details .details-top .right .status-signal {
                 background-color: $red-accessible-dark;
                 transform: scale(1.1);
                 box-shadow: 0 1px 1px 1px #ff00002e, 0 0 10px 5px #ff333338, 0 0 4px 2px #ff66666a, 0 0 20px 10px hsla(0, 100%, 50%, 0.05) !important;

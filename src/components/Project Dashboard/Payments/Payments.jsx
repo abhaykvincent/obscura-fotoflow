@@ -7,9 +7,9 @@ import AmountCard from '../../Cards/AmountCard/AmountCard'
 function DashboardPayments({project}){
   const dispatch = useDispatch()
   return (
-    <div className="payments">
-      <div className="heading-shoots heading-section">
-        <h3 className='heading '>Invoices <span>{project.payments?project.payments.length:''}</span></h3>
+    <div className="payments ">
+      <div className="heading-shoots heading-section hjkk">
+        <h3 className='heading hjkk'>Invoices <span>{project.payments?project.payments.length:''}</span></h3>
         {project.payments?.length>0&&
           <div className="new-shoot button tertiary l2 outline"
             onClick={()=>project.budgets && dispatch(openModal('addPayment'))}
@@ -17,7 +17,7 @@ function DashboardPayments({project}){
         }
       </div>
       <div className={`card ${project.budgets ? '':'single'}`}>
-        <div className={`chart box hgf`}>
+        <div className={`chart box `}>
           <div className="status large">
             <div className="signal"></div>
           </div>
@@ -32,11 +32,11 @@ function DashboardPayments({project}){
           }  */}
           </div>
           <div className="message">
-            {!project.budgets}hgfd
+            {!project.budgets}
           {
             !project.budgets?(
               <div className="button primary outline"
-                nClick={()=>dispatch(openModal('addBudget'))}
+                onClick={()=>dispatch(openModal('addBudget'))}
               >
                 Set Budget
               </div>

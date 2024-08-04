@@ -5,6 +5,8 @@ import { Navigate, useNavigate } from 'react-router';
 import { fullAccess, getOwnerFromTeams } from '../../data/teams';
 import { useDispatch } from 'react-redux';
 import { login } from '../../app/slices/authSlice';
+import { openModal } from '../../app/slices/modalSlice';
+import LoginEmailPassword from './LoginEmailPassword';
 
 const LoginModal = () => {
   const dispatch = useDispatch();
@@ -31,9 +33,13 @@ const LoginModal = () => {
           // ...
         });
     };
+    const openEmailPassordLogin = () => {
+      dispatch(openModal('loginEmailPassword'))
+    }
 
   return (
-    <div className="modal" id="loginModal">
+    <>
+    <div className="modal loginModal">
       <div className="modal-header">
         <div className="modal-controls">
           <div className="control close"></div>
@@ -43,6 +49,7 @@ const LoginModal = () => {
       <div className="form-section">
           <p>SignIn to FotoFlow as <b>{getOwnerFromTeams().email}</b></p>
         <div className="actions">
+          <div className='button secondary outline'  onClick={openEmailPassordLogin}>Password Login<div className="email-logo"></div></div>
           <div className='button'  onClick={handleGoogleSignIn}>Sign In as {getOwnerFromTeams().name}<div className="google-logo"></div></div>
         </div>
       </div>
@@ -50,6 +57,8 @@ const LoginModal = () => {
         
       </div>
     </div>
+    <LoginEmailPassword/>
+    </>
   );
 }
 

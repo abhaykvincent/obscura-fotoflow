@@ -21,23 +21,21 @@ function Teams() {
             <div className="teams-header">
                 <h1>Teams</h1>
                 <div className="actions">
-                    <div className="button primary icon add"
+                    <div className="button primary icon add disabled"
                         onClick={()=>dispatch(openModal('createAssociate'))}
                     >New Associate</div>
                 </div>
             </div>
             <div className="view-control">
-                <div className="control-wrap">
+                <div className="control-wrap disabled">
                     <div className="controls">
                         <div className={`control ctrl-all active`} >All</div>
-                        <div className={`control ctrl-active`} >Upcoming</div>
-                        <div className={`control ctrl-pending`} >In Progres</div>
-                        <div className={`control ctrl-draft`} >Completed</div>
-                        <div className={`control ctrl-draft`} >Archived</div>
+                        <div className={`control ctrl-active`} >Top-rated</div>
+                        <div className={`control ctrl-pending`} >Active</div>
                     </div>
                     <div className={`active`}></div>
                 </div>
-                <div className="control-wrap">
+                <div className="control-wrap disabled">
                     <div className="controls">
                         <div className={`control ctrl-all active`} ><div className="icon card-view"></div></div>
                         <div className={`control ctrl-active disabled`} ><div className="icon list-view"></div></div>
@@ -49,31 +47,27 @@ function Teams() {
                 { 
                 teams.length !== 0? (
                   teams.map((associate, index) => (
-                        <AssociateCard
-                        associate={associate}
-                        key={associate.id}
-                    /> 
+                        <AssociateCard associate={associate} key={associate.userId} /> 
                     ))) : (
-                        <>
-                            <div className="section recent">
-                                <h3 className='section-heading'>Recent Projects</h3>
-                            </div>
+                    <>
+                        <div className="section recent">
+                            <h3 className='section-heading'>Recent Projects</h3>
+                        </div>
 
-                            <div className="associate new"
-                                onClick={()=>{dispatch(openModal('createProject'))}}
-                            >
-                                <div className="associate-cover" ></div>
-                                <div className="associate-details">
-                                    <div className="details-top">
+                        <div className="associate new"
+                            onClick={()=>{dispatch(openModal('createProject'))}}
+                        >
+                            <div className={`associate-cover avatar `} ></div>
+                            <div className="associate-details">
+                                <div className="details-top">
 
-                                        <h4 className="associate-title">Create Your First Project</h4>
-                                        <p className="associate-type"></p>
-                                    </div>
+                                    <h4 className="associate-title">Create Your First Project</h4>
+                                    <p className="associate-type"></p>
                                 </div>
-                                <div className="associate-options"></div>
                             </div>
-                        </>
-                    )
+                            <div className="associate-options"></div>
+                        </div>
+                    </>)
                 }
             </div>
             {/* Refresh Projects Data from cloud */}

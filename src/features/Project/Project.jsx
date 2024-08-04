@@ -23,6 +23,7 @@ import './Project.scss'
 
 export default function Project() {
   let { id} = useParams();
+  console.log(id)
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const projects = useSelector(selectProjects)
@@ -54,7 +55,7 @@ export default function Project() {
 
         <div className="project-dashboard">
           <DashboardProjects project={project}/>
-            <div className="financials-overview">
+            <div className="financials-overview ">
           <DashboardPayments project={project}/>
           <DashboardExpances project={project}/>
             </div>
