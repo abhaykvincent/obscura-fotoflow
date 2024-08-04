@@ -6,7 +6,27 @@ import { deleteCollectionFromStorage, deleteProjectFromStorage } from "../../uti
 import { update } from "firebase/database";
 
 
+// Studio
+export const createStudio = async (studioData) => {
+    const {name,status} =studioData;
+    const id= `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
+    
+    const studiosCollection = collection(db, 'studios');
+    const studioDoc = {
+        id : id,
+        ...studioData
+    }
+    return setDoc(doc(studiosCollection, studioDoc.id), studioDoc)
 
+    .then(() => {
+        console.log('Studio created successfully.');
+    })
+    .catch((error) => {
+        console.error('Error creating studio:', error.message);
+
+        throw error;
+    })
+}
 //Fetches
 export const fetchProjectsFromFirestore = async () => {
     const projectsCollection = collection(db, 'projects');
