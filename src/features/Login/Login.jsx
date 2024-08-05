@@ -2,7 +2,7 @@ import React from 'react';
 import { provider,auth,signInWithPopup } from '../../firebase/app';
 import {GoogleAuthProvider} from 'firebase/auth';
 import { Navigate, useNavigate } from 'react-router';
-import { fullAccess, getOwnerFromTeams } from '../../data/teams';
+import { fullAccess, getOwnerFromTeams, getStudiosOfUser } from '../../data/teams';
 import { useDispatch } from 'react-redux';
 import { googleLogin, login } from '../../app/slices/authSlice';
 import { openModal } from '../../app/slices/modalSlice';
@@ -24,7 +24,16 @@ const LoginModal = () => {
       // IdP data available using getAdditionalUserInfo(result)
       // ...
       console.log("Logged in as " + user.email )
-      dispatch(login(user))
+      // EROR: Login.jsx:27 A non-serializable value was detected in an action, in the path: `payload`. Value: 
+      const serializedUser = {
+        userId: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        access: fullAccess(user.email),
+        studio: getStudiosOfUser(user.email),
+      };
+      dispatch(login(serializedUser))
 
 
     }).catch((error) => {

@@ -10,7 +10,7 @@ const initialState = {
   },
   currentStudio: {
     name: '',
-    data: {}
+    domain:''
   },
   isAuthenticated: false,
   createStudio: false,
@@ -28,12 +28,16 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         localStorage.setItem('authenticated', 'true')
         state.user = action.payload;
+        console.log(action.payload)
+
+        state.currentStudio = action.payload.studio
+          
 
       }
       else{
         state.createStudio=true
         console.log("creating new studio")
-         
+         return('llll')
       }
     },
     logout: (state) => {

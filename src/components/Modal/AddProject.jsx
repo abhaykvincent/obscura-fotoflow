@@ -39,13 +39,20 @@ function AddProjectModal() {
   const handleSubmit = () => {
       // Call the API function to add a new project
       
-      dispatch(addProject(projectData))
+            // get the route url and take out between first and second /
+            const url = window.location.href;
+            const parts = url.split('/');
+            const domain = parts[3];
+            console.log(domain,projectData)
+
+            dispatch(addProject({domain,projectData}))
           .then((response) => {
             let newProjectData = response.payload;
+            console.log(response)
               onClose();
               dispatch(showAlert({type:'success', message:`New Project created!`}));
             
-              navigate(`/${defaultStudio.domain}/project/${newProjectData.id}`);
+              //navigate(`/${domain}/project/${newProjectData.id}`);
           })
           .catch((error) => {
               console.error('Error creating project:', error);

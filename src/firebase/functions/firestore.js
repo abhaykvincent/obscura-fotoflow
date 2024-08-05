@@ -79,29 +79,27 @@ export const fetchImages = async (projectId,collectionId) => {
 
   
 // Project Operations
-export const addProjectToFirestore = async ({ name, type, ...optionalData }) => {
-    if (!name || !type) {
-    throw new Error('Project name and type are required.');
-    }
-    const id= `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
+export const addProjectToStudio = async (domain, project) => {
+    
+    console.log(domain, project)
+    const id = `${project.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
     const projectData = {
-        id,
-        name,
-        type, 
-        ...optionalData};
-    const projectsCollection = collection(db, 'projects');
-    return setDoc(doc(projectsCollection, id), projectData)
-    .then((dta) => {
-        console.log("Project added successfully 🎉");
-        console.log(projectData)
-        return projectData
-    } )
-    .catch(error => {
-        console.error('Error adding project:', error.message);
-        throw error;
-    });
-};
-export const deleteProjectFromFirestore = async (projectId) => {
+      id,
+      ...project
+    };
+  
+    try {
+      const studioDocRef = doc(db, 'studios', domain);
+      const projectsCollectionRef = collection(studioDocRef, 'projects');
+      await setDoc(doc(projectsCollectionRef, id), projectData);
+      console.log("Project added successfully 🎉");
+      return projectData;
+    } catch (error) {
+      console.error('Error adding project:', error.message);
+      throw error;
+    }
+  };
+  export const deleteProjectFromFirestore = async (projectId) => {
     if (!projectId) {
       throw new Error('Project ID is required for deletion.');
     }
@@ -349,11 +347,6 @@ export const addExpenseToFirestore = async (projectId,expenseData) => {
         throw error;
     });
 };
-
-
- 
-
-
 
 
 // Collection Image Operations

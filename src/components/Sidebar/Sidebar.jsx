@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import './Sidebar.scss'
 import { GrUpgrade } from "react-icons/gr";
-import { logout, selectUser } from '../../app/slices/authSlice';
+import { logout, selectUser, selectUserStudio } from '../../app/slices/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 function Sidebar() {
   
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user = useSelector(selectUser);
   const [profileOptionActive, setProfileOptionActive] = useState(false)
   const toggleProfileOption = () => {
     setProfileOptionActive(!profileOptionActive)
   }
-  const [defaultStudio, defaultStudioSet]= useState('obscura')
+  const defaultStudio = useSelector(selectUserStudio)
   const location = useLocation();
   const params = useParams()
-  const studioName = params.studioName!==undefined ? params.studioName : defaultStudio
+  const studioName = defaultStudio.domain
   
   return (
     <div className="sidebar">
@@ -111,7 +112,13 @@ function Sidebar() {
             <div className="option">Subscription</div>
           </Link>
           <div className="option logout"
-            onClick={()=>dispatch(logout())}
+            onClick={
+              ()=>{
+                dispatch(logout())
+                // navigate('/')
+                navigate(`/`)
+              }
+            }
           >Logout</div>
         </div>
       </div>
