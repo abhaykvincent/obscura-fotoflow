@@ -126,7 +126,13 @@ body{
     padding-top: 8px*1;
     z-index: 10;
     &.project-page{
+      display: grid;
+      grid-template-columns: auto auto;
+      grid-template-rows: auto auto;
       opacity: 0;
+      gap: 8px*1;
+
+      padding-right: 8px;
       transform: translateY(-8px*2);
       animation: gallery-page-reveal 0.4s ease-out forwards;
     }
@@ -244,7 +250,6 @@ body{
         }
         .view-control{
           display:flex;
-          align-items: center;
           justify-content: space-between;
           margin: 4px;
           font-size: 0.9rem;
@@ -291,13 +296,15 @@ body{
         }
       }
       .drop-upload{
+        cursor: pointer;
         .drop-area{
-          height: 8px*10;
+          height: 8px*20;
           border-radius: 8px*1;
           border: 1px double $green-default-dark;
           stroke-dashoffset: 20px 10px;
           opacity: 0.8;
-          background: url('https://img.icons8.com/ios-filled/50/FFFFFF/image-gallery.png') ;
+          background-size: 80%;;
+          //background: url('https://img.icons8.com/ios/100/FFFFFF/drag-and-drop.png') ;
           background-repeat: no-repeat;
           background-position: center;
           transition-duration: 0.1s;
@@ -305,6 +312,16 @@ body{
           opacity: 1;
           border: 1px double $green-default-light;
 
+          }
+          p{
+            margin-top: 8px*2;
+            font-size: 1rem;
+            text-align: center;
+            color: $gray2-default-dark;
+            border: 1px solid $dark-3;
+            padding: 4px 8px*2;
+            border-radius: 4px;
+            
           }
         }
       }
@@ -322,23 +339,34 @@ body{
     }
   }
   .refresh{
-    position: absolute;
-    left: calc(50vw - $sidebar-width);
-    transform: translateX(-50%);
     bottom: 8px*2;
     display: grid;
     justify-items: center;
     margin-top: 8px*4;
+    opacity: 0;
+    animation: 0.5s reveal-up 1s forwards;
     p{
-        color: $gray4-default-dark;
+    margin-bottom: 8px*1;
+    color: $gray4-default-dark;
 
-        margin: 8px;
     }
     .button{
         color: $gray-default-dark;
-        font-weight: 400;
+    opacity: 0;
+    font-weight: 400;
+        animation: 0.5s reveal-up 1.2s forwards;
     }
 
+}
+@keyframes reveal-up {
+    0%{
+    opacity: 0;
+    transform: translateY(8px*1);
+    }
+    100%{
+    opacity: 1;
+    transform: translateY(8px*0);
+    }
 }
   .legend{
     display: flex;
@@ -544,8 +572,8 @@ body{
   } 
   .modal{
     position: fixed;
-    top: calc(50vh - $header-height - 20%);
-    left: calc(50vw - $sidebar-width);
+    top: calc(50vh);
+    left: calc(50vw );
     background-color: $dark-2;
     border-radius: $border-radius-1;
     border: 1px solid $dark-0;
@@ -657,7 +685,7 @@ body{
           padding: 4px 8px;
           padding-right: 4px;
           @include boxed;
-          border: 1px solid $gray3-accessible-light
+          border: 1px solid $gray-accessible-light
 
         }
         .symbol{
@@ -730,12 +758,15 @@ body{
         }
       }
     }
-    &#loginModal{
+    &.loginModal{
       max-width: 8px*50;
       left: 50vw;
       top: 50vH;
       transform: translate(-50%, -50%);
       padding: 0;
+      &.emailPassword{
+        width: 8px*42;
+      }
       .logo{
         position: absolute;
         top: -8px*16;
@@ -769,8 +800,29 @@ body{
             background-image: url('./assets/img/google-logo.png');
             background-size: 100%;
           }
+          .lock{
+            width: 8px*4;
+            height: 8px*4;
+            border: none;
+            background-image: url('https://img.icons8.com/?size=100&id=2862&format=png&color=FFFFFF');
+            background-size: 60%;
+            background-position: center 30%;
+            
+          }
+          &:active{
+            .lock{
+              background-image: url('https://img.icons8.com/?size=100&id=3721&format=png&color=FFFFFF');
+
+            }
+          }
+          &.secondary{
+            background-color: $dark-2;
+            border: 1px solid $dark-1;
+          }
         }
       }
+    }
+    &#loginEmailPasswordModal{
     }
     &.add-crew{
       .assigne{
@@ -920,6 +972,17 @@ body{
   }
 }
 
+@media only screen and (max-width: 1230px) {
+  .App {
+
+    main{
+      position: relative;
+      top: $header-height ;
+      left: 60px;
+      width: calc(100vw - 8px*7.5);
+    }
+  }
+}
 @media only screen and (max-width: 1080px) {
   .App {
 
@@ -1260,6 +1323,11 @@ margin-left: 4px;
       main {
         left: 8px*8;
         width: calc(100vw - 8px*8);
+
+        &.project-page{
+          display: grid;
+          grid-template-columns: 1fr auto;
+      }
         .project-collection .header {
           display: grid;
           grid-template-columns: 2fr auto 2fr;
@@ -1274,7 +1342,6 @@ margin-left: 4px;
         }
 
         .button.disabled{
-          display: none;
         }
       }
       
@@ -1284,7 +1351,7 @@ margin-left: 4px;
     }
       
   }
-  @media only screen and (max-width: 860px) {
+  @media only screen and (max-width: 992px) {
     .App{
       header .profile-options .profile .profile-name {
         display: none;
@@ -1292,6 +1359,11 @@ margin-left: 4px;
       main {
         left: 8px*8;
         width: calc(100vw - 8px*8);
+        &.project-page{
+          display: grid;
+          grid-template-columns: auto;
+          gap: 8px*5;
+      }
         .project-collection .header {
           display: grid;
           grid-template-columns: 2fr auto;
@@ -1306,7 +1378,6 @@ margin-left: 4px;
         }
 
         .button.disabled{
-          display: none;
         }
       }
     }
@@ -1440,3 +1511,4 @@ margin-left: 4px;
   }
     
 }
+// Line complexity 15.5 -> !!!

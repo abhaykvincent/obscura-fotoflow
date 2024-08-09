@@ -1,11 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../../app/slices/modalSlice';
 import { positionCollectionsActiveBox } from '../../../utils/UI/collectionActiveBox';
+import { selectStudio } from '../../../app/slices/studioSlice';
+import { selectUserStudio } from '../../../app/slices/authSlice';
 
 const CollectionsPanel = ({ project, collectionId}) => {
   const dispatch = useDispatch();
+  const defaultStudio = useSelector(selectUserStudio)
   positionCollectionsActiveBox(collectionId,project.collections)
 
   return <div className="galleries">
@@ -23,12 +26,10 @@ const CollectionsPanel = ({ project, collectionId}) => {
                   <div className="backthumb bthumb2"></div>
                   <div className="backthumb bthumb3"></div>
                 </div>
-                
               </div>
-              <div className="gallery-name">Upload Photos</div>
-              
+              <div className="gallery-name">Upload</div>
             </div>
-            : <Link  key={collection.id} className={`gallery ${collectionId===collection.id && 'active'}`} to={`/gallery/${project.id}/${collection.id}`}>
+            : <Link  key={collection.id} className={`gallery ${collectionId===collection.id && 'active'}`} to={`/${defaultStudio.domain}/gallery/${project.id}/${collection.id}`}>
                 <div className="thumbnails">
                   <div className="thumbnail thumb1">
                     <div className="backthumb bthumb1"

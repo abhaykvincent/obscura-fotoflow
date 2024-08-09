@@ -264,7 +264,7 @@
         gap: 8px;
         position: absolute;
         top: 100vh;
-        padding: 8px*1.5;
+        padding: 8px*1;
         padding-right: 0;
         width: $sidebar-width - 8px*2;
         transform: translateY(-100%);
@@ -338,7 +338,11 @@
     transform: scale(1) translateY(0);
 }
 }
-  @media only screen and (max-width: 1080px) {
+
+@media only screen and (max-width: 1230px) {
+    
+}
+  @media only screen and (max-width: 1230px) {
     .App{
       .sidebar{
         width: 8px*7.5;
@@ -356,8 +360,8 @@
                     width: 8px*3;
                     height: 8px*3;
                 }.menu{
+                    height: 100%;
                     grid-template-columns: auto;
-                    font-size: 1rem;
                     padding: 4px;
                     margin: 0;
                     margin-bottom: 8px;
@@ -372,8 +376,10 @@
                         display: grid;
                         width: auto;
                         z-index: 9;
-                        padding: 1px 8px;
+                        padding: 2px 8px;
                         margin-left: 4px;
+                        font-size: 0.9rem;
+                        line-height: 1.1rem;
                         background-color: $dark-1;
                         border-radius: 4px;
                         border: 1px solid $dark-0;

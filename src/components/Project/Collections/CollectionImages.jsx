@@ -6,6 +6,8 @@ import { addAllFileSizesToMB } from '../../../utils/fileUtils';
 import UploadButton from '../../UploadButton/UploadButton';
 import { useDispatch } from 'react-redux';
 import { setUploadList, setUploadStatuss } from '../../../app/slices/uploadSlice';
+import Lottie from 'react-lottie';
+import animationData from '../../../assets/animations/UploadFiles.json';
 
 const CollectionImages = ({ id, collectionId,collection }) => {
     const dispatch =useDispatch()
@@ -22,6 +24,14 @@ const [size,setSize]=useState(15);
 // Upload progress
 const [uploadList, setUploadLists] = useState([]);
 const [uploadStatus, setUploadStatus] = useState('close');
+const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice'
+    }
+  };
 // ON Upload status
 useEffect(() => {
   if(uploadStatus === 'completed')
@@ -96,7 +106,6 @@ return (
                     <div className="control-label label-selected-photos">{selectedImages.length} Photos</div>
                 </div>:
                 <div className="empty-message">
-                    <p>Upload Photos from Shoot</p>
                 </div>
             }
         </div>
@@ -105,7 +114,12 @@ return (
                 <ImageGallery {...{isPhotosImported, imageUrls, projectId:id}}/>:
                 <label  htmlFor="fileInput"  className="drop-upload">
                     <div for="" className="drop-area">
-
+                        <p>Click here to upload</p>
+                    <Lottie
+            options={defaultOptions}
+            height={150}
+            width={150}
+          />
                     </div>
                 </label>
         }

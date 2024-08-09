@@ -8,7 +8,8 @@ const initialState = {
     confirmDeleteProject:false,
     addPayment:false,
     addExpense:false,
-    addBudget: false
+    addBudget: false,
+    loginEmailPassword: false,
 };
 
 const modalSlice = createSlice({

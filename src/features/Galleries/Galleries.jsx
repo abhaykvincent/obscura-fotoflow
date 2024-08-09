@@ -13,10 +13,12 @@ import { deleteProject, selectProjects } from '../../app/slices/projectsSlice';
 import { openModal } from '../../app/slices/modalSlice';
 
 import './Galleries.scss';
-import { setAvailableStortage } from '../../app/slices/studioSlice';
+import { selectStudio, setAvailableStortage } from '../../app/slices/studioSlice';
+import { selectUserStudio } from '../../app/slices/authSlice';
 
 export default function Galleries({}) {
   const dispatch= useDispatch();
+  const defaultStudio = useSelector(selectUserStudio)
   const navigate = useNavigate();
   let { id,collectionId } = useParams();
   // State
@@ -53,11 +55,11 @@ export default function Galleries({}) {
   setCollection(findCollectionById(projectTemp, targetCollectionId))
   // If the collection is not found, redirect to the project page and return
   if (defaultCollectionId==='Collection not found' && defaultCollectionId!=='') {
-    setTimeout(()=>{navigate(`/gallery/${id}`);},100)
+    setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}`);},100)
     return;
   }
   if(!collectionId&&defaultCollectionId!==''){
-    setTimeout(()=>{navigate(`/gallery/${id}/${targetCollectionId}`);},100)
+    setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}/${targetCollectionId}`);},100)
     return
   }
   console.log(findCollectionById(projectTemp, targetCollectionId))
