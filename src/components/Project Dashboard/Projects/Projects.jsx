@@ -43,7 +43,7 @@ function DashboardProjects({project}){
               onClick={ ()=>{}}>+ New
             </div>
           </div>
-          <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/${defaultStudio.domain}/gallery/${project.id}`}>
+          <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/obscura/gallery/${project.id}`}>
             <div className="thumbnails">
               <div className="thumbnail thumb1">
                 <div className="backthumb bthumb1"

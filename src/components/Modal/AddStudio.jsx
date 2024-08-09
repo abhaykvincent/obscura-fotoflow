@@ -5,33 +5,23 @@ import { addProject } from '../../app/slices/projectsSlice';
 import { useNavigate } from 'react-router';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
 import { selectStudio } from '../../app/slices/studioSlice';
-import { selectUserStudio } from '../../app/slices/authSlice';
+import { selectCreateStudioModal, selectUserStudio } from '../../app/slices/authSlice';
+import { createStudio } from '../../firebase/functions/firestore';
 
-function AddProjectModal() {
+function AddStudio() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const visible = useSelector(selectModal)
-    const onClose = () => dispatch(closeModal('createProject'))
-  const [projectData, setProjectData] = useState({
-      name: 'Ethan Ross',
-      type: 'Birthday',
-      email: 'julia.ethan@gmail.com',
-      phone: '3656992278',
-      collections: [],
-      events: [],
-      payments: [],
-      expenses: [],
-      status: 'draft',
-      projectCover:'',
-      uploadedFilesCount:0,
-      selectedFilesCount:0,
-      totalFileSize:0,
-      createdAt: new Date().getTime(),
-      lastOpened: new Date().getTime(),
+    const defaultStudio = useSelector(selectUserStudio)
+    const visible = useSelector(selectCreateStudioModal)
+    console.log(visible)
+    const onClose = () => dispatch(closeModal('createStudio'))
+  const [studioData, setStudioData] = useState({
+      name: 'Sixty Frames',
+      domain: 'sixty-frames',
   });
   const handleInputChange = (event) => {
       const {name,value} = event.target;
-      setProjectData((prevData) => ({
+      setStudioData((prevData) => ({
           ...prevData,
           [name]: value,
       }));
@@ -39,20 +29,13 @@ function AddProjectModal() {
   const handleSubmit = () => {
       // Call the API function to add a new project
       
-            // get the route url and take out between first and second /
-            const url = window.location.href;
-            const parts = url.split('/');
-            const domain = parts[3];
-            console.log(domain,projectData)
-
-            dispatch(addProject({domain,projectData}))
+      createStudio(studioData)
           .then((response) => {
-            let newProjectData = response.payload;
-            console.log(response)
+            let newStudioData = response.payload;
               onClose();
               dispatch(showAlert({type:'success', message:`New Project created!`}));
             
-              //navigate(`/${domain}/project/${newProjectData.id}`);
+              navigate(`/${studioData.id}`);
           })
           .catch((error) => {
               console.error('Error creating project:', error);
@@ -62,7 +45,7 @@ function AddProjectModal() {
   };
 
 
-  if (!visible.createProject) {
+  if (!visible) {
     return null;
   }
 
@@ -75,28 +58,18 @@ function AddProjectModal() {
                     <div className="control minimize"></div>
                     <div className="control maximize"></div>
                 </div>
-                <div className="modal-title">Create Project</div>
+                <div className="modal-title">New Studio</div>
             </div>
             <div className='modal-body'>
                 <div className="form-section">
                     <div className="field">
-                        <label className="" htmlFor="">Project Name</label>
-                        <input className="" name="name" value={projectData.name} type="text"
+                        <label className="" htmlFor="">Studio Name</label>
+                        <input className="" name="name" value={studioData.name} type="text"
                             onChange={handleInputChange} />
                     </div>
                     <div className="field">
-                        <label className="" htmlFor="">Project Type</label>
-                        <input className="" name="type" value={projectData.type} type="text"
-                            onChange={handleInputChange} />
-                    </div>
-                    <div className="field">
-                        <label className="" htmlFor="">Email</label>
-                        <input className="" name="email" value={projectData.email} type="text"
-                            onChange={handleInputChange} />
-                    </div>
-                    <div className="field">
-                        <label className="" htmlFor="">Phone</label>
-                        <input className="" name="phone" value={projectData.phone} type="text"
+                        <label className="" htmlFor="">Studio id</label>
+                        <input className="" name="domain" value={studioData.domain} type="text"
                             onChange={handleInputChange} />
                     </div>
                 </div>
@@ -111,5 +84,5 @@ function AddProjectModal() {
   );
 }
 
-export default AddProjectModal
+export default AddStudio
 // Line Complexity  1.0 ->

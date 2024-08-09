@@ -1,47 +1,49 @@
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { selectUserStudio } from '../app/slices/authSlice';
 
-// Replace this with your default studio
-const defaultStudio = 'obscura';
 
 export const useShortcutsConfig = () => {
+  const defaultStudio = useSelector(selectUserStudio)
+
   const navigate = useNavigate();
 
   const handlers = {
     OPEN_PROJECTS: () => {
       console.log('Opening Projects Page...');
-      navigate(`/${defaultStudio}/projects`);
+      navigate(`/${defaultStudio.domain}/projects`);
     },
     OPEN_HOME: () => {
       console.log('Opening Home Page...');
-      navigate(`/${defaultStudio}/`);
+      navigate(`/${defaultStudio.domain}/`);
     },
     OPEN_STORAGE: () => {
       console.log('Opening Storage Page...');
-      navigate(`/${defaultStudio}/storage`);
+      navigate(`/${defaultStudio.domain}/storage`);
     },
     OPEN_NOTIFICATIONS: () => {
       console.log('Opening Notifications Page...');
-      navigate(`/${defaultStudio}/notifications`);
+      navigate(`/${defaultStudio.domain}/notifications`);
     },
     OPEN_SUBSCRIPTION: () => {
       console.log('Opening Subscription Page...');
-      navigate(`/${defaultStudio}/subscription`);
+      navigate(`/${defaultStudio.domain}/subscription`);
     },
     OPEN_STORE: () => {
       console.log('Opening Store Page...');
-      navigate(`/${defaultStudio}/store`);
+      navigate(`/${defaultStudio.domain}/store`);
     },
     OPEN_CALENDAR: () => {
       console.log('Opening Calendar Page...');
-      navigate(`/${defaultStudio}/calendar`);
+      navigate(`/${defaultStudio.domain}/calendar`);
     },
     OPEN_INVOICES: () => {
       console.log('Opening Invoices Page...');
-      navigate(`/${defaultStudio}/invoices`);
+      navigate(`/${defaultStudio.domain}/invoices`);
     },
     OPEN_ACCOUNTS: () => {
       console.log('Opening Accounts Page...');
-      navigate(`/${defaultStudio}/accounts`);
+      navigate(`/${defaultStudio.domain}/accounts`);
     },
     OPEN_TEAM: () => {
       console.log('Opening Team Page...');

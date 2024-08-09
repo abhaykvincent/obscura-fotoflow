@@ -7,9 +7,12 @@ import Refresh from '../../components/Refresh/Refresh';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectProjects } from '../../app/slices/projectsSlice';
 import { openModal } from '../../app/slices/modalSlice';
+import { selectUserStudio } from '../../app/slices/authSlice';
 function Home() {
     const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
+    const defaultStudio = useSelector(selectUserStudio)
+    console.log(defaultStudio)
     document.title = `FotoFlow | Home`;
     const selectionCompletedProjects = getProjectsByStatus(projects, 'selection-completed');
     const requestPendingProjects = getProjectsByStatus(projects, 'request-pending');
@@ -39,7 +42,7 @@ function Home() {
                                 </linearGradient>
                                 {/* Apply the gradient to the text */}
                                 <text x="104px" y="44px" fontFamily="Arial" fontSize="3rem" fontWeight="800" fill="url(#textGradient)" textAnchor="middle">
-                                    Obscura 
+                                    {defaultStudio.name}
                                 </text>
                             </svg>
                         </div>
@@ -89,7 +92,7 @@ function Home() {
                     ):
                     (<>
                         <div className="section recent">
-                            <h3 className='section-heading'>You dont have any projects cerated</h3>
+                            <h3 className='section-heading'>You dont have any projects created</h3>
                         </div>
                         <div className="projects-list">
 

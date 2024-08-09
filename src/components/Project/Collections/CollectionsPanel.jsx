@@ -4,10 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../../app/slices/modalSlice';
 import { positionCollectionsActiveBox } from '../../../utils/UI/collectionActiveBox';
 import { selectStudio } from '../../../app/slices/studioSlice';
+import { selectUserStudio } from '../../../app/slices/authSlice';
 
 const CollectionsPanel = ({ project, collectionId}) => {
   const dispatch = useDispatch();
-  const defaultStudio = useSelector(selectStudio)
+  const defaultStudio = useSelector(selectUserStudio)
   positionCollectionsActiveBox(collectionId,project.collections)
 
   return <div className="galleries">

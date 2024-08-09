@@ -6,21 +6,78 @@ import { deleteCollectionFromStorage, deleteProjectFromStorage } from "../../uti
 import { update } from "firebase/database";
 
 
+// Studio
+export const createStudio = async (studioData) => {
+    const {name,status} =studioData;
+    const id= `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
+    
+    const studiosCollection = collection(db, 'studios');
+    const studioDoc = {
+        id : id,
+        ...studioData
+    }
+    return setDoc(doc(studiosCollection, studioDoc.id), studioDoc)
 
-//Fetches
-export const fetchProjectsFromFirestore = async () => {
-    const projectsCollection = collection(db, 'projects');
-    const querySnapshot = await getDocs(projectsCollection);
+    .then(() => {
+        console.log('Studio created successfully.');
+    })
+    .catch((error) => {
+        console.error('Error creating studio:', error.message);
+
+        throw error;
+    })
+}
+export const createUser = async (userData) => {
+    const {email,studio} = userData;
+    console.log(userData)
+    const usersCollection = collection(db, 'users');
+    const userDoc = {
+        email : email,
+        studio : studio
+    }
+    await setDoc(doc(usersCollection, userDoc.email), userDoc)
+    return userDoc
+}
+export const fetchUsers = async () => {
+    const usersCollection = collection(db, 'users');
+    const querySnapshot = await getDocs(usersCollection);
+    const usersData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    return usersData;
+};
+export const fetchStudiosOfUser = async (email) => {
+    const usersCollection = collection(db, 'users');
+    const querySnapshot = await getDocs(usersCollection);
+    const usersData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    const user = usersData.find((user) => user.email === email);
+    const studio = user?.studio
+    console.log(user)
+    return studio;
+};
+// Fetches
+// Function to fetch all projects from a specific studio
+export const fetchProjectsFromFirestore = async (domain) => {
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const querySnapshot = await getDocs(projectsCollectionRef);
 
     const projectsData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
     }));
-    return projectsData
+    console.log(projectsData)
+    return projectsData;
 };
-export const fetchProject = async (projectId) => {
-    const projectsCollection = collection(db, 'projects');
-    const projectDoc = doc(projectsCollection, projectId);
+// Function to fetch a specific project from a specific studio
+export const fetchProject = async (domain, projectId) => {
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDoc = doc(projectsCollectionRef, projectId);
     const projectSnapshot = await getDoc(projectDoc);
 
     const projectData = projectSnapshot.data();
@@ -31,14 +88,13 @@ export const fetchProject = async (projectId) => {
     
         if (collectionSnapshot.exists()) {
             console.log(collectionSnapshot.data());
-            return {...collection,...collectionSnapshot.data(),...{id:collection.id}};
+            return { ...collection, ...collectionSnapshot.data(), id: collection.id };
         } else {
             throw new Error('Collection does not exist.');
         }
     }));
-    console.log(projectData)
+    console.log(projectData);
     
-
     return projectData;
 };
 export const fetchImages = async (projectId,collectionId) => {
@@ -59,29 +115,27 @@ export const fetchImages = async (projectId,collectionId) => {
 
   
 // Project Operations
-export const addProjectToFirestore = async ({ name, type, ...optionalData }) => {
-    if (!name || !type) {
-    throw new Error('Project name and type are required.');
-    }
-    const id= `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
+export const addProjectToStudio = async (domain, project) => {
+    
+    console.log(domain, project)
+    const id = `${project.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
     const projectData = {
-        id,
-        name,
-        type, 
-        ...optionalData};
-    const projectsCollection = collection(db, 'projects');
-    return setDoc(doc(projectsCollection, id), projectData)
-    .then((dta) => {
-        console.log("Project added successfully 🎉");
-        console.log(projectData)
-        return projectData
-    } )
-    .catch(error => {
-        console.error('Error adding project:', error.message);
-        throw error;
-    });
-};
-export const deleteProjectFromFirestore = async (projectId) => {
+      id,
+      ...project
+    };
+  
+    try {
+      const studioDocRef = doc(db, 'studios', domain);
+      const projectsCollectionRef = collection(studioDocRef, 'projects');
+      await setDoc(doc(projectsCollectionRef, id), projectData);
+      console.log("Project added successfully 🎉");
+      return projectData;
+    } catch (error) {
+      console.error('Error adding project:', error.message);
+      throw error;
+    }
+  };
+  export const deleteProjectFromFirestore = async (projectId) => {
     if (!projectId) {
       throw new Error('Project ID is required for deletion.');
     }
@@ -329,11 +383,6 @@ export const addExpenseToFirestore = async (projectId,expenseData) => {
         throw error;
     });
 };
-
-
- 
-
-
 
 
 // Collection Image Operations
