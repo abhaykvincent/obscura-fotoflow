@@ -6,13 +6,8 @@ function Refresh() {
   const dispatch = useDispatch()
   return (
 	<div className="refresh">
-        <p>
-            Refresh your projects to see the latest updates
-        </p>
-        <div className="button secondary"
-
-        onClick={()=>{dispatch(fetchProjects())}}
-        >Refresh</div>
+        <p>Refresh to get the latest updates</p>
+        <div className="button secondary"onClick={()=>{dispatch(fetchProjects())}}>Refresh</div>
     </div>
   )
 }

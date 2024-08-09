@@ -1,5 +1,5 @@
 
-const publicPatterns = ['share', 'selection', 'masonry-grid'];
+const publicPatterns = ['share', 'selection', 'masonry-grid','onboarding'];
 
 export const isPublicPage = () => 
   publicPatterns.some(pattern => 

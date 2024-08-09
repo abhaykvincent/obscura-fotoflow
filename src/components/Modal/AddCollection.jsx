@@ -4,15 +4,18 @@ import { showAlert } from '../../app/slices/alertSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
-import { selectCollectionsLimit } from '../../app/slices/studioSlice';
+import { selectCollectionsLimit, selectStudio } from '../../app/slices/studioSlice';
+import { selectUserStudio } from '../../app/slices/authSlice';
 
 function AddCollectionModal({ project }) {
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const visible = useSelector(selectModal)
-  const collectionsLimit = useSelector(selectCollectionsLimit)
+  const defaultStudio = useSelector(selectUserStudio)
+  const collectionsLimit ={
+    perProject: 3
+  }
   let collectionsLength= project?.collections?project.collections:0
-  console.log(collectionsLength.length)
   const [CollectionData, setCollectionData] = useState({
     name: 'Birthday',
     status: 'empty',
@@ -34,7 +37,7 @@ function AddCollectionModal({ project }) {
     {dispatch(addCollection({ projectId: project.id, newCollection: CollectionData }))
     .then((id)=>{
       dispatch(showAlert({type:'success', message:`Collection <b>${CollectionData.name}</b> added successfully!`}));
-        navigate(`/project/galleries/${project.id}/${id.payload.collection.id}`);
+        navigate(`/${defaultStudio.domain}/gallery/${project.id}/${id.payload.collection.id}`);
     })}
     else{
       dispatch(showAlert({type:'error', message:`Project <b>${CollectionData.name}</b>'s Collection limit reached! Upgrade`}));

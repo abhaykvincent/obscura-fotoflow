@@ -35,10 +35,11 @@
             font-weight: 600;
             color: $gray2-default-dark;
             &:last-child{
+                font-weight: 500;
                 margin-top: -8px*2;
                 color: $gray4-default-dark;
                 opacity: 0;
-                font-size:2.5rem;
+                font-size:2rem;
                 animation: fadeInLeft 0.5s ease-out 0.05s;
                 animation-fill-mode: forwards;
                 animation-timing-function: ease-out;
@@ -53,8 +54,8 @@
         }
         .actions{
             position: fixed;
-            top: 8px*1.75;
-            right: 8px*1.5;
+            top: 8px*10;
+            right: 8px*5;
             display: flex;
             justify-content: flex-end;
             z-index: 99;
@@ -153,7 +154,7 @@
 .home-header{
     .notifications{
         position: fixed;
-        top:0px;
+        top:8px*2;
         right:8px*2;
         width: 8px*4;
         height: 8px*4;
@@ -228,7 +229,7 @@
 }
   @media only screen and (max-width: 580px) {
     .home .section .projects{
-        grid-template-columns: 1fr 1fr ;
+        grid-template-columns: 1fr  ;
         .project{
             .project-cover{
                 width: 80px

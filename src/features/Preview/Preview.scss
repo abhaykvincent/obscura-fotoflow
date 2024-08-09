@@ -61,151 +61,203 @@
                 opacity: 1;
             }
         }
-        .top{
+        &.top{
             margin-top: 8px;
-        }
-        .left-controls{
-            display: flex;
-            align-items: center;
-            position: fixed;
-            top: 8px;
-            left: 0px;
-            width: 8px*40;
-            height: 8px*3;
-            margin: 8px*2;
-            .back{
-                padding: 8px*2.5;
-                margin-right: 8px*2;
-                border-radius: 100%;
-                background-image: url('../../assets/img/icons/arrow-round-back.svg');
-                background-position: center center;
-                background-size: 40% auto;
-                cursor: pointer;
-                transition-duration: 0.2s;
-            &:hover{
-                background-color: rgba(255, 255, 255, 0.1);
-                transform: scale(1.1);
-            }
-            }
-            .file-name{
-                color: $gray-accessible-dark;
-                font-size: 0.9rem;
-                font-weight: 600;
-            }
-        }
-        .right-controls{
-            display: flex;
-            align-items: center;
-            justify-content: end;
-            position: fixed;
-            top: 8px;
-            right: 0px;
-            width: 8px*40;
-            height: 8px*3;
-            margin: 8px*2;
-            .icon{
-                padding: 8px*2.5;
-                border-radius: 100%;
-                background-position: center center;
-                background-size: 50% auto;
-                cursor: pointer;
-                transition-duration: 0.2s;
+            .left-controls{
+                display: flex;
+                align-items: center;
+                position: fixed;
+                top: 8px;
+                left: 0px;
+                width: 8px*40;
+                height: 8px*3;
+                margin: 8px*2;
+                .back{
+                    padding: 8px*2.5;
+                    margin-right: 8px*2;
+                    border-radius: 100%;
+                    background-image: url('../../assets/img/icons/arrow-round-back.svg');
+                    background-position: center center;
+                    background-size: 40% auto;
+                    cursor: pointer;
+                    transition-duration: 0.2s;
                 &:hover{
                     background-color: rgba(255, 255, 255, 0.1);
                     transform: scale(1.1);
                 }
-
-            }
-            .download{
-                background-image: url('../../assets/img/icons/download.svg');
-            }
-            .share{
-                background-image: url('../../assets/img/icons/share.svg');
-            }
-            .set-cover{
-                
-                padding: 8px*1 8px*2;
-                border-radius: 8px*2;
-                &:hover{
-                    background-color: rgba(255, 255, 255, 0.1);
-                    transform: scale(1);
+                }
+                .file-name{
+                    color: $gray-accessible-dark;
+                    font-size: 0.9rem;
+                    font-weight: 600;
                 }
             }
-        }
-        .center-controls{
-            .magnifier{
+            .right-controls{
                 display: flex;
                 align-items: center;
+                justify-content: end;
                 position: fixed;
-                top: 8px*2;
-                left: 50vw;
-                gap:8px;
-                background-color: rgba(255, 255, 255, 0.1);
-                border-radius: 8px;
-                padding: 4px;
-                transform: translateX(-50%);
-                .zoom-out{
-                    padding: 8px*2;
-                    width: 8px*3;
-                    height: 8px*3;
-                    border-radius: 6px;
-                    background-image: url('../../assets/img/icons/minus.svg');
-                    background-size: 50%;
+                top: 8px;
+                right: 0px;
+                width: 8px*40;
+                height: 8px*3;
+                margin: 8px*2;
+                .icon{
+                    padding: 8px*2.5;
+                    border-radius: 100%;
                     background-position: center center;
-                    opacity: 0.6;
+                    background-size: 50% auto;
                     cursor: pointer;
                     transition-duration: 0.2s;
                     &:hover{
                         background-color: rgba(255, 255, 255, 0.1);
-                        opacity: 1;
+                        transform: scale(1.1);
                     }
+    
                 }
-                .zoom-value{
-                    font-weight: 600;
-                    color: $gray-accessible-dark;
+                .download{
+                    background-image: url('../../assets/img/icons/download.svg');
                 }
-                .zoom-in{
-                    padding: 8px*2;
-                    width: 8px*3;
-                    height: 8px*3;
-                    border-radius: 6px;
-                    background-image: url('../../assets/img/icons/plus.svg');
-                    background-size: 50%;
-                    background-position: center center;
-                    opacity: 0.6;
-                    cursor: pointer;
-                    transition-duration: 0.2s;
-                    &:hover{
-                        background-color: rgba(255, 255, 255, 0.2);
-                        opacity: 1;
-                    }
+                .share{
+                    background-image: url('../../assets/img/icons/share.svg');
                 }
-                .zoom-reset{
-                    position: absolute;
-                    top: 8px;
-                    right: 0;
-                    padding: 4px 12px;
-                    border-radius: 4px;
-                    font-size: 0.9rem;
-                    background-color: $gray6-accessible-dark;
-                    border: 1px solid $gray6-accessible-dark;
-                    z-index: -1;
-                    opacity: 0;
+                .set-cover{
                     
-                    transition-duration: 0.2s;
-                    // cursor for reset
-                    cursor: pointer;
-                    &.show{
-                        opacity: 0.6;
-                        right: -8px*1.5;
-                        transform: translateX(100%);
-                        transition-duration: 0.2s;
-                    }
+                    padding: 8px*1 8px*2;
+                    border-radius: 8px*2;
                     &:hover{
-                        border: 1px solid $gray4-accessible-dark;
+                        background-color: rgba(255, 255, 255, 0.1);
+                        transform: scale(1);
                     }
                 }
             }
+            .center-controls{
+                .magnifier{
+                    display: flex;
+                    align-items: center;
+                    position: fixed;
+                    top: 8px*2;
+                    left: 50vw;
+                    gap:8px;
+                    background-color: rgba(255, 255, 255, 0.1);
+                    border-radius: 8px;
+                    padding: 4px;
+                    transform: translateX(-50%);
+                    .zoom-out{
+                        padding: 8px*2;
+                        width: 8px*3;
+                        height: 8px*3;
+                        border-radius: 6px;
+                        background-image: url('../../assets/img/icons/minus.svg');
+                        background-size: 50%;
+                        background-position: center center;
+                        opacity: 0.6;
+                        cursor: pointer;
+                        transition-duration: 0.2s;
+                        &:hover{
+                            background-color: rgba(255, 255, 255, 0.1);
+                            opacity: 1;
+                        }
+                    }
+                    .zoom-value{
+                        font-weight: 600;
+                        color: $gray-accessible-dark;
+                    }
+                    .zoom-in{
+                        padding: 8px*2;
+                        width: 8px*3;
+                        height: 8px*3;
+                        border-radius: 6px;
+                        background-image: url('../../assets/img/icons/plus.svg');
+                        background-size: 50%;
+                        background-position: center center;
+                        opacity: 0.6;
+                        cursor: pointer;
+                        transition-duration: 0.2s;
+                        &:hover{
+                            background-color: rgba(255, 255, 255, 0.2);
+                            opacity: 1;
+                        }
+                    }
+                    .zoom-reset{
+                        position: absolute;
+                        top: 8px;
+                        right: 0;
+                        padding: 4px 12px;
+                        border-radius: 4px;
+                        font-size: 0.9rem;
+                        background-color: $gray6-accessible-dark;
+                        border: 1px solid $gray6-accessible-dark;
+                        z-index: -1;
+                        opacity: 0;
+                        
+                        transition-duration: 0.2s;
+                        // cursor for reset
+                        cursor: pointer;
+                        &.show{
+                            opacity: 0.6;
+                            right: -8px*1.5;
+                            transform: translateX(100%);
+                            transition-duration: 0.2s;
+                        }
+                        &:hover{
+                            border: 1px solid $gray4-accessible-dark;
+                        }
+                    }
+                }
+            }
+        }
+        &.bottom{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-content: space-between;
+            justify-items: center;
+            position: fixed;
+            bottom: 0px;
+            width: 100%;
+            height: 8px*6;
+        }
+    }
+}
+.selected-button{
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    padding-right: 8px*2;
+    border-radius: 8px*4;
+    border: 1px solid $dark-0;
+    cursor: pointer;
+    .icon{
+        width: 8px*2;
+        height: 8px*2;
+        &.not-selected{
+            
+            background-image: url('../../assets/img/icons/heart-dislike.svg');
+            background-position: center;
+            background-size: 100%;
+        }
+        &.selected{
+            
+            background-image: url('../../assets/img/icons/heart.svg');
+            background-position: center;
+            background-size: 100%;
+        }
+    }
+    &:hover{
+        .icon{
+            &.selected{
+                
+                background-image: url('../../assets/img/icons/heart-dislike.svg');
+                background-position: center;
+                background-size: 100%;
+            }
+            &.not-selected{
+                
+                background-image: url('../../assets/img/icons/heart.svg');
+                background-position: center;
+                background-size: 100%;
+            }
+
         }
     }
 }

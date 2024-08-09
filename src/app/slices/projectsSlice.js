@@ -1,7 +1,7 @@
 // slices/authSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
-import { addBudgetToFirestore, addCollectionToFirestore, addCrewToFirestore, addEventToFirestore, addPaymentToFirestore, addProjectToFirestore, deleteCollectionFromFirestore, deleteProjectFromFirestore, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
+import { addBudgetToFirestore, addCollectionToFirestore, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteProjectFromFirestore, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 
 
@@ -14,12 +14,16 @@ const initialState = {
 // Projects
 export const fetchProjects = createAsyncThunk(
   'projects/fetchProjects', 
-  fetchProjectsFromFirestore
+  ({currentDomain}) => {
+  return fetchProjectsFromFirestore(currentDomain)
+  }
 );
 
 export const addProject = createAsyncThunk(
   'projects/addProject',
-  (project) => addProjectToFirestore(project)
+  ({domain,projectData}) => {
+    console.log(domain,projectData)
+    return addProjectToStudio(domain,projectData)}
 );
 
 
@@ -64,13 +68,21 @@ export const addCrew = createAsyncThunk(
 );
 // Financials
 // Payments
-
 export const addPayment =  createAsyncThunk(
   'projects/addPayment',
   async ({ projectId, paymentData }, { dispatch }) => {
     console.log({ projectId, paymentData })
     await addPaymentToFirestore(projectId, paymentData);
     return { projectId, paymentData };
+  }
+);
+// Expenses
+export const addExpense =  createAsyncThunk(
+  'projects/addExpense',
+  async ({ projectId, paymentData }, { dispatch }) => {
+    console.log({ projectId, paymentData })
+    await addExpenseToFirestore(projectId, paymentData);
+    return { projectId, expenseData:paymentData };
   }
 );
 export const addBudget =  createAsyncThunk(
@@ -265,6 +277,32 @@ const projectsSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       });
+      // Add Expense
+      builder
+      .addCase(addExpense.pending, (state) => {
+        state.status = 'loading';
+        state.loading = true;
+      })
+      .addCase(addExpense.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.loading = false;
+        const { projectId, expenseData } = action.payload;
+        console.log(expenseData);
+        state.data = state.data.map((project) => {
+          if (project.id === projectId) {
+            const updatedExpenses = [...project.expenses, expenseData];
+            return { ...project, expenses: updatedExpenses };
+          }
+          return project;
+        });
+      })
+      .addCase(addExpense.rejected, (state, action) => {
+        state.status = 'failed';
+        state.loading = false;
+        state.error = action.error.message;
+      });
+
+
       // set Budget
       builder
      .addCase(addBudget.pending, (state) => {

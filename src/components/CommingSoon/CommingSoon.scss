@@ -1,0 +1,33 @@
+@import '../../style/variables';
+.gallery{
+	.welcome-section{
+		p{
+			text-align: center;
+			color: $gray2-default-dark;
+		}
+		.button{
+			display: grid;
+			justify-self: center;
+			margin-top: 8px*1.5;
+		}
+	}
+	.section{
+		padding: 8px*10;
+		padding-top: 8px*5;
+		.page-illustration{
+			width: 75vh;
+			margin: auto;
+			margin-top: -8px*4;
+			height: 50vh;
+			border-radius: 4px;
+			border: 1px solid $dark-2;
+			//background-color: $dark-3;
+			background-size: auto 100% ;
+			background-position: center ;
+			background-image: url('../../assets/img/page\ illustrations/image.png');
+			&.gallery-illustration{
+				background-image: url('');
+			}
+		}
+	}
+}

@@ -1,9 +1,12 @@
 @import '../../style/variables';
-.projects-header{
+
+
+.projects-header,.teams-header{
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 8px*20;
     justify-content: space-between;
-    padding: 8px*2 8px*3;
+    padding: 8px*1.5 8px*3;
+    padding-right: 8px*2.5;
     h1{
 
     animation: fadeInLeft 0.5s ease-out 0s;
@@ -17,10 +20,11 @@
 }
 .view-control{
     display:flex;
-    margin: 8px;
+    margin: 8px 8px*3;
     font-size: 0.9rem;
     margin-left: 8px*3;
     margin-bottom: 8px*3;
+    justify-content: space-between;
     .control-label{
       color: $gray3-default-dark;
       padding: 8px;
@@ -77,7 +81,28 @@
             border: 1px solid $gray3-accessible-dark;
             transition-duration: 0.1s;
           }
+          
+          .icon{
+
+            background-size: 120%;
+          }
         }
+        &.disabled{
+            opacity: 0.2;
+          }
+        .icon{
+            width: 8px*1.8;
+            height: 8px*1.8;
+            background-position: center;
+            background-size: 110%;
+            &.card-view{
+                background-image: url('https://img.icons8.com/sf-black-filled/64/FFFFFF/four-squares.png');
+            }
+            &.list-view{
+                background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/list.png');
+            }
+        }
+        
       }
     }
   }
@@ -136,47 +161,130 @@
         }
     }
 }
+.teams-list{
+    padding: 0 8px;
+    display: grid;
+    grid-template-columns: minmax(200px, 480px) minmax(200px, 480px) minmax(200px, 480px);
+    gap: 8px*3;
+    row-gap: 8px*4;
+    width: 100%;
+    padding: 8px*3;
+    padding-top: 8px;
+    
+    .message{
+        color: $gray4-default-dark;
+    }
+    
+    &.completed{
+        h3::after{
+            font-size: 0.9rem;
+            font-weight: 400;
+            margin-left: 8px*1;
+            content: 'Client Approved';
+            color: $gray3-default-dark;
+        }
+        .project{
+            grid-template-columns: auto 8px*16;
+
+            .project-options{
+                align-items: center;
+            }
+        }
+    }
+}
 
 //write a media quer for divces less than 1200px
-@media only screen and (max-width: 1500px) {
+@media only screen and (max-width: 1800px) {
+    .teams-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
     .projects-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr 1fr ;
+    }
+}
+@media only screen and (max-width: 1600px) {
+    .teams-list{
         gap: 8PX*4;
         grid-template-columns: 1fr 1fr 1fr;
     }
+    .projects-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr  ;
+    }
+}
+@media only screen and (max-width: 1300px) {
+    .teams-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .projects-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr  ;
+    }
 }
 @media only screen and (max-width: 1200px) {
+    .teams-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
     .projects-list{
         gap: 8PX*4;
         grid-template-columns: 1fr 1fr 1fr ;
     }
 }
 @media only screen and (max-width: 1080px) {
+    .teams-list{
+        grid-template-columns: 1fr 1fr  ;
+    }
     .projects-list{
+        gap: 8PX*4;
         grid-template-columns: 1fr 1fr 1fr ;
     }
 }
 @media only screen and (max-width: 960px) {
+    .teams-list{
+        grid-template-columns: 1fr 1fr   ;
+    }
     .projects-list{
+        gap: 8PX*4;
         grid-template-columns: 1fr 1fr  ;
     }
 }
 @media only screen and (max-width: 860px) {
-    .projects-list{
-        grid-template-columns: 1fr 1fr  ;
+    .teams-list{
+        grid-template-columns: 1fr 1fr    ;
     }
-}
-@media only screen and (max-width: 580px) {
     .projects-list{
-        grid-template-columns: 1fr 1fr  ;
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr;
     }
 }
 @media only screen and (max-width: 640px) {
-    .projects-list{
+    .teams-list{
         grid-template-columns: 1fr  ;
+    }
+    .projects-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr ;
+    }
+}
+@media only screen and (max-width: 580px) {
+    .teams-list{
+        grid-template-columns: 1fr   ;
+    }
+    .projects-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr ;
     }
 }
 @media only screen and (max-width: 480px) {
-    .projects-list{
+    .teams-list{
         grid-template-columns: 1fr  ;
+    }
+    .projects-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr ;
     }
 }

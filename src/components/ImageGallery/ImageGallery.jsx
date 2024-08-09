@@ -31,6 +31,7 @@ const ImageGallery = React.memo(({ projectId, imageUrls }) => {
       <div className="photos">
         {imageUrls.map((fileUrl, index) => index <8 &&(
           <div className="photo-wrap"
+          key={index}
             onClick={()=>openPreview(index)}>
             <div className="hover-options-wrap">
               <div className="hover-options">

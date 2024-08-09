@@ -18,7 +18,7 @@ function Projects() {
             <div className="projects-header">
                 <h1>Projects</h1>
                 <div className="actions">
-                    <div className="button primary"
+                    <div className="button primary icon add"
                         onClick={()=>dispatch(openModal('createProject'))}
                     >Create Project</div>
                 </div>
@@ -31,6 +31,13 @@ function Projects() {
                         <div className={`control ctrl-pending`} >In Progres</div>
                         <div className={`control ctrl-draft`} >Completed</div>
                         <div className={`control ctrl-draft`} >Archived</div>
+                    </div>
+                    <div className={`active`}></div>
+                </div>
+                <div className="control-wrap">
+                    <div className="controls">
+                        <div className={`control ctrl-all active`} ><div className="icon card-view"></div></div>
+                        <div className={`control ctrl-active disabled`} ><div className="icon list-view"></div></div>
                     </div>
                     <div className={`active`}></div>
                 </div>

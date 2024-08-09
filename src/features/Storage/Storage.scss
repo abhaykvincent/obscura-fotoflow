@@ -25,6 +25,10 @@
             justify-content: center;
             animation: reveal-storage-space-pie;
             animation-duration: 0.5s;
+            
+            .disabled{
+                opacity: 0.1;
+            }
             .storage-pie{
                 width: 8px*20;
                 height: 8px*20;
@@ -61,6 +65,17 @@
                 animation-duration: 0.5s;
                 animation-delay: 01s;
                 animation-fill-mode: forwards;
+            }
+            svg:nth-child(2){
+                .used-storage{
+                animation-delay: 5s;
+                }
+                .used-storage-text{
+                    animation-delay: 1.5s;
+                }
+                .available-storage-text{
+                    animation-delay: 1.7s;
+                }
             }
         }
         .storage-insight{
@@ -119,11 +134,14 @@
             animation-fill-mode: forwards;
             .storage-class{
 
-                opacity: 0;
                 animation-name: storage-class-reveal;
                 animation-duration: 0.2s;
                 animation-delay: 1.5s;
                 animation-fill-mode: forwards;
+                &.cold{
+                    opacity: 0.1;
+                    animation: none;
+                }
             }
             .storage-class-label{
                 font-weight: 600;
@@ -227,7 +245,7 @@
                     margin-bottom: 2px;
                 }
             }
-            .project-info{
+            .project-size{
                 display: flex;
                 justify-content: start;
                 gap:8px;
@@ -237,6 +255,7 @@
             }
         }
         .cold{
+            opacity: 0.1;
             .row-group{
             .status-signal{
                 height: 8px;

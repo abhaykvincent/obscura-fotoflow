@@ -4,12 +4,13 @@ import { showAlert } from '../../app/slices/alertSlice';
 import { addProject } from '../../app/slices/projectsSlice';
 import { useNavigate } from 'react-router';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
+import { selectStudio } from '../../app/slices/studioSlice';
+import { selectUserStudio } from '../../app/slices/authSlice';
 
 function AddProjectModal() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const visible = useSelector(selectModal)
-    console.log(visible)
     const onClose = () => dispatch(closeModal('createProject'))
   const [projectData, setProjectData] = useState({
       name: 'Ethan Ross',
@@ -19,6 +20,7 @@ function AddProjectModal() {
       collections: [],
       events: [],
       payments: [],
+      expenses: [],
       status: 'draft',
       projectCover:'',
       uploadedFilesCount:0,
@@ -37,13 +39,20 @@ function AddProjectModal() {
   const handleSubmit = () => {
       // Call the API function to add a new project
       
-      dispatch(addProject(projectData))
+            // get the route url and take out between first and second /
+            const url = window.location.href;
+            const parts = url.split('/');
+            const domain = parts[3];
+            console.log(domain,projectData)
+
+            dispatch(addProject({domain,projectData}))
           .then((response) => {
             let newProjectData = response.payload;
+            console.log(response)
               onClose();
               dispatch(showAlert({type:'success', message:`New Project created!`}));
             
-              navigate(`/project/${newProjectData.id}`);
+              //navigate(`/${domain}/project/${newProjectData.id}`);
           })
           .catch((error) => {
               console.error('Error creating project:', error);
@@ -80,8 +89,6 @@ function AddProjectModal() {
                         <input className="" name="type" value={projectData.type} type="text"
                             onChange={handleInputChange} />
                     </div>
-                </div>
-                <div className="form-section contact">
                     <div className="field">
                         <label className="" htmlFor="">Email</label>
                         <input className="" name="email" value={projectData.email} type="text"
