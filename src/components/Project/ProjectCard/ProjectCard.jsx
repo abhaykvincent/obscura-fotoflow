@@ -2,9 +2,10 @@ import {Link} from 'react-router-dom';
 import './ProjectCard.scss'
 import { selectStudio } from '../../../app/slices/studioSlice';
 import { useSelector } from 'react-redux';
+import { selectUserStudio } from '../../../app/slices/authSlice';
 
 function ProjectCard({project}) {   
-  const defaultStudio = useSelector(selectStudio)
+  const defaultStudio = useSelector(selectUserStudio)
 
     //Project's selected photos count
     const getProjectSelectedPhotosCount = (project) => {

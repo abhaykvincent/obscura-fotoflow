@@ -60,13 +60,19 @@ export const users = [
 		userId: 'abhay-0002',
 		name: 'Abhay',
 		email: 'abhaykvincent@gmail.com',
-		studios:['monalisa']
+		studios:['jazmiro']
 	},
 	{
 		userId: 'sam-0001',
 		name: 'Sam',
 		email: 'sam.obscura@gmail.com',
 		studios:['obscura']
+	},
+	{
+		userId: 'mirza-0001',
+		name: 'Mirza',
+		email: 'jazmiro.web@gmail.com',
+		studios:['jazmiro']
 	},
 ]
 export const studios = [
@@ -77,10 +83,22 @@ export const studios = [
 	{
 		domain: 'obscura',
 		name: 'Obscura'
+	
+	},
+	{
+		domain: 'jazmiro',
+		name: 'Jazmiro'
+	},
+	{
+		domain: 'erwethryjthg',
+		name: 'erwethryjthg'
 	},
 ]
 export const fullAccess = (email) => {
     return teams.some(team => team.email === email && team.projectAccess.accessLevel === 'full-access');
+};
+export const isAlreadyInStudio = (email, studio) => {
+    return users.some(user => user.email === email && user.studios.includes(studio));
 };
 
 
@@ -97,8 +115,6 @@ export const getUsersByRole = (role) => {
 
 export const getStudiosOfUser = (email) => {
     const user = users.find(user => user.email === email);
-	console.log(users,email)
 	let userStudios = studios.find(studio => studio.domain === user.studios[0]);
-	console.log(userStudios)
     return user ? userStudios : [];
 };
