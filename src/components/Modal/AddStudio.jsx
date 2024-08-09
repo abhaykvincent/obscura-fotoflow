@@ -5,16 +5,16 @@ import { addProject } from '../../app/slices/projectsSlice';
 import { useNavigate } from 'react-router';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
 import { selectStudio } from '../../app/slices/studioSlice';
-import { selectCreateStudioModal } from '../../app/slices/authSlice';
+import { selectCreateStudioModal, selectUserStudio } from '../../app/slices/authSlice';
 import { createStudio } from '../../firebase/functions/firestore';
 
 function AddStudio() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const defaultStudio = useSelector(selectStudio)
+    const defaultStudio = useSelector(selectUserStudio)
     const visible = useSelector(selectCreateStudioModal)
     console.log(visible)
-    const onClose = () => dispatch(closeModal('createProject'))
+    const onClose = () => dispatch(closeModal('createStudio'))
   const [studioData, setStudioData] = useState({
       name: 'Sixty Frames',
       domain: 'sixty-frames',

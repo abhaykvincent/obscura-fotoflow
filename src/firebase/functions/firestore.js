@@ -27,20 +27,57 @@ export const createStudio = async (studioData) => {
         throw error;
     })
 }
-//Fetches
-export const fetchProjectsFromFirestore = async () => {
-    const projectsCollection = collection(db, 'projects');
-    const querySnapshot = await getDocs(projectsCollection);
+export const createUser = async (userData) => {
+    const {email,studio} = userData;
+    console.log(userData)
+    const usersCollection = collection(db, 'users');
+    const userDoc = {
+        email : email,
+        studio : studio
+    }
+    await setDoc(doc(usersCollection, userDoc.email), userDoc)
+    return userDoc
+}
+export const fetchUsers = async () => {
+    const usersCollection = collection(db, 'users');
+    const querySnapshot = await getDocs(usersCollection);
+    const usersData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    return usersData;
+};
+export const fetchStudiosOfUser = async (email) => {
+    const usersCollection = collection(db, 'users');
+    const querySnapshot = await getDocs(usersCollection);
+    const usersData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    const user = usersData.find((user) => user.email === email);
+    const studio = user?.studio
+    console.log(user)
+    return studio;
+};
+// Fetches
+// Function to fetch all projects from a specific studio
+export const fetchProjectsFromFirestore = async (domain) => {
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const querySnapshot = await getDocs(projectsCollectionRef);
 
     const projectsData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
     }));
-    return projectsData
+    console.log(projectsData)
+    return projectsData;
 };
-export const fetchProject = async (projectId) => {
-    const projectsCollection = collection(db, 'projects');
-    const projectDoc = doc(projectsCollection, projectId);
+// Function to fetch a specific project from a specific studio
+export const fetchProject = async (domain, projectId) => {
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDoc = doc(projectsCollectionRef, projectId);
     const projectSnapshot = await getDoc(projectDoc);
 
     const projectData = projectSnapshot.data();
@@ -51,14 +88,13 @@ export const fetchProject = async (projectId) => {
     
         if (collectionSnapshot.exists()) {
             console.log(collectionSnapshot.data());
-            return {...collection,...collectionSnapshot.data(),...{id:collection.id}};
+            return { ...collection, ...collectionSnapshot.data(), id: collection.id };
         } else {
             throw new Error('Collection does not exist.');
         }
     }));
-    console.log(projectData)
+    console.log(projectData);
     
-
     return projectData;
 };
 export const fetchImages = async (projectId,collectionId) => {

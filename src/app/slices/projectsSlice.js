@@ -14,7 +14,9 @@ const initialState = {
 // Projects
 export const fetchProjects = createAsyncThunk(
   'projects/fetchProjects', 
-  fetchProjectsFromFirestore
+  ({currentDomain}) => {
+  return fetchProjectsFromFirestore(currentDomain)
+  }
 );
 
 export const addProject = createAsyncThunk(

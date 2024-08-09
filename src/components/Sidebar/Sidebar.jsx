@@ -17,6 +17,7 @@ function Sidebar() {
   const location = useLocation();
   const params = useParams()
   const studioName = defaultStudio.domain
+  console.log(defaultStudio)
   
   return (
     <div className="sidebar">
@@ -97,7 +98,7 @@ function Sidebar() {
           >
             <div className="profile-image"></div>
             <div className="account-name">
-              <div className="studio-name">Obscura</div>
+              <div className="studio-name">{defaultStudio.name}</div>
               <div className="profile-name">{user.displayName}</div>
             </div>
           </div>

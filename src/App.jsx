@@ -25,7 +25,7 @@ import CommingSoon from './components/CommingSoon/CommingSoon';
 // Utils
 import { isPublicPage } from './utils/publicPages';
 // Redux 
-import { checkAuthStatus, selectIsAuthenticated, selectUserStudio } from './app/slices/authSlice';
+import { checkAuthStatus, checkStudioStatus, selectIsAuthenticated, selectUserStudio } from './app/slices/authSlice';
 import { selectLoading ,fetchProjects} from './app/slices/projectsSlice';
 // Stylesheets
 import './App.scss';
@@ -33,6 +33,7 @@ import Teams from './features/Teams/Teams';
 import SupportIcon from './components/Modal/SupportIcon/SupportIcon';
 import { useShortcutsConfig } from './hooks/shortcutsConfig';
 import { selectStudio, setStudio } from './app/slices/studioSlice';
+import Onboarding from './features/Onboarding/Onboarding';
 // Wrapper component to pass studio name to pages
 const StudioWrapper = ({ Component }) => {
   const { studioName } = useParams();
@@ -47,20 +48,32 @@ export default function App() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const isLoading = useSelector(selectLoading);
   const defaultStudio = useSelector(selectUserStudio)
+  const url = window.location.href;
+  const parts = url.split('/');
+  const URLdomain = parts[3];
+  const currentDomain = defaultStudio.domain ? defaultStudio.domain : URLdomain;
 
+  let {name,domain} = defaultStudio
   // ON Render
   useEffect(() => {
-    let {name,domain} = defaultStudio
-    console.log("Users Studio")
-    console.log(defaultStudio)
-    dispatch(setStudio(name,domain))
+    console.log("Users Studio : "+defaultStudio.domain)
+    console.log('isAuthenticated: '+isAuthenticated)
   }, [isAuthenticated,defaultStudio]);
   // ON Render
   useEffect(() => {
     document.title = `Obscura FotoFlow`;
     dispatch(checkAuthStatus())
-    dispatch(fetchProjects())
+    dispatch(checkStudioStatus())
+    console.log(currentDomain)
+    dispatch(fetchProjects({currentDomain}))
   }, []);
+  useEffect(() => {
+    document.title = `Obscura FotoFlow`;
+    dispatch(checkAuthStatus())
+    dispatch(checkStudioStatus())
+    console.log(currentDomain)
+    dispatch(fetchProjects({currentDomain}))
+  }, [currentDomain]);
   const params = useParams()
 
 
@@ -100,9 +113,12 @@ export default function App() {
               <Route path="/:studioName/invoices" element={<CommingSoon title={'Financials'}/>} />
               <Route path="/:studioName/accounts" element={<CommingSoon title={'Accounts'}/>} />
               <Route path="/:studioName/team" element={<Teams />} />
+
             </>
             
             )}
+              <Route path="/onboarding" element={<Onboarding />} />
+
             <Route path="/share/:projectId/:collectionId?" element={<ShareProject/>}/>
             <Route path="/selection/:projectId/:collectionId?" element={<Selection/>}/>
             <Route path="/masanory-grid" element={<ImageGallery />}/>
@@ -113,4 +129,4 @@ export default function App() {
     
   );
 }
-// Line Complexity  1.5 -> 2.0 -> 2.5 -> 2.0 -> 1.0 ->0.9 -> 1.1
+// Line Complexity  1.5 -> 2.0 -> 2.5 -> 2.0 -> 1.0 ->0.9   -> 1.1

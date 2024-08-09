@@ -5,11 +5,11 @@ import { addProject } from '../../app/slices/projectsSlice';
 import { useNavigate } from 'react-router';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
 import { selectStudio } from '../../app/slices/studioSlice';
+import { selectUserStudio } from '../../app/slices/authSlice';
 
 function AddProjectModal() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const defaultStudio = useSelector(selectStudio)
     const visible = useSelector(selectModal)
     const onClose = () => dispatch(closeModal('createProject'))
   const [projectData, setProjectData] = useState({

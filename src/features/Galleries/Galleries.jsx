@@ -14,10 +14,11 @@ import { openModal } from '../../app/slices/modalSlice';
 
 import './Galleries.scss';
 import { selectStudio, setAvailableStortage } from '../../app/slices/studioSlice';
+import { selectUserStudio } from '../../app/slices/authSlice';
 
 export default function Galleries({}) {
   const dispatch= useDispatch();
-  const defaultStudio = useSelector(selectStudio)
+  const defaultStudio = useSelector(selectUserStudio)
   const navigate = useNavigate();
   let { id,collectionId } = useParams();
   // State

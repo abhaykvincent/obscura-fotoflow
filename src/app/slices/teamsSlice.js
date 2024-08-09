@@ -13,7 +13,7 @@ const initialState = {
 // teams
 export const fetchTeams = createAsyncThunk(
   'teams/fetchTeams', 
-  console.log('fetchTeamsFromFirestore')
+  //console.log('fetchTeamsFromFirestore')
 );
 
 export const addAssociate = createAsyncThunk(
@@ -24,7 +24,7 @@ export const addAssociate = createAsyncThunk(
 
 export const deleteAssociate = createAsyncThunk(
   'teams/deleteAssociate',
-  console.log('deleteAssociateFromFirestore')
+  //console.log('deleteAssociateFromFirestore')
 );
 
 

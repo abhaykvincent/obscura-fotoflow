@@ -10,7 +10,13 @@ import { Link } from 'react-router-dom';
 
 function Storage() {
     const projects = useSelector(selectProjects)
-    const storageLimit = useSelector(selectStorageLimit)
+    const storageLimit ={
+          // In MB 
+          // 1 GB - 1000
+          total: 5000,
+          available:1
+        }
+      
     // Calculate the storage used from projects importFileSize
     const usedSpace = getUsedSpace(projects)
     

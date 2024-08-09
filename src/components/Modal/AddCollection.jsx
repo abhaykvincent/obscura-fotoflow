@@ -5,13 +5,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
 import { selectCollectionsLimit, selectStudio } from '../../app/slices/studioSlice';
+import { selectUserStudio } from '../../app/slices/authSlice';
 
 function AddCollectionModal({ project }) {
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const visible = useSelector(selectModal)
-  const defaultStudio = useSelector(selectStudio)
-  const collectionsLimit = useSelector(selectCollectionsLimit)
+  const defaultStudio = useSelector(selectUserStudio)
+  const collectionsLimit ={
+    perProject: 3
+  }
   let collectionsLength= project?.collections?project.collections:0
   const [CollectionData, setCollectionData] = useState({
     name: 'Birthday',
