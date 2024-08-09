@@ -162,36 +162,43 @@ export const addProjectToStudio = async (domain, project) => {
   };
   
 // Collection Operations
+export const addCollectionToStudioProject = async (domain, projectId, collectionData) => {
+    const { name, status } = collectionData;
+    console.log(domain)
+    const id = `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
 
-export const addCollectionToFirestore = async (projectId,collectionData) => {
-    const {name,status} =collectionData;
-    const id= `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
-
-    const projectsCollection = collection(db, 'projects');
-    const projectDoc = doc(projectsCollection, projectId);
-
-    const collectionsCollection = collection(projectDoc, 'collections');
     const collectionDoc = {
-        id : projectId+'-'+id,
-    }
+        id: `${projectId}-${id}`,
+        name,
+        status,
+    };
 
-    // Update the project with the new collection
-    return updateDoc(projectDoc, {
-        collections: arrayUnion({ id, name, status }), // Assuming collections is an array in your projectData
-    })
-    .then(() => {
-        // create new collection 
-        setDoc(doc(collectionsCollection, collectionDoc.id), collectionDoc)
-    })
-    .then(() => {
-        console.log('Collection added to project successfully.');
-        return id
-    })
-    .catch((error) => {
+    try {
+        // Reference to the studio document
+        const studioDocRef = doc(db, 'studios', domain);
+
+        // Reference to the specific project's document within the studio
+        const projectDocRef = doc(studioDocRef, 'projects', projectId);
+
+        // Reference to the collections sub-collection within the project
+        const collectionsCollectionRef = collection(projectDocRef, 'collections');
+
+        // Update the project with the new collection ID, name, and status
+        await updateDoc(projectDocRef, {
+            collections: arrayUnion({ id, name, status }), // Assuming collections is an array in your projectData
+        });
+
+        // Create the new collection document in the Firestore
+        await setDoc(doc(collectionsCollectionRef, collectionDoc.id), collectionDoc);
+
+        console.log('Collection added to project successfully 🎉');
+        return collectionDoc.id;
+    } catch (error) {
         console.error('Error adding collection to project:', error.message);
         throw error;
-    });
+    }
 };
+
 export const deleteCollectionFromFirestore = async (projectId, collectionId) => {
     if (!projectId || !collectionId) {
         throw new Error('Project ID and Collection ID are required for deletion.');

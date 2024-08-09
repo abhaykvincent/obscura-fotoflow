@@ -11,6 +11,7 @@ function AddProjectModal() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const visible = useSelector(selectModal)
+    const currentStudio = useSelector(selectUserStudio)
     const onClose = () => dispatch(closeModal('createProject'))
   const [projectData, setProjectData] = useState({
       name: 'Ethan Ross',
@@ -40,11 +41,12 @@ function AddProjectModal() {
       // Call the API function to add a new project
       
             // get the route url and take out between first and second /
-            const url = window.location.href;
+            /* const url = window.location.href;
             const parts = url.split('/');
             const domain = parts[3];
-            console.log(domain,projectData)
+            console.log(domain,projectData) */
 
+            const domain = currentStudio.domain;
             dispatch(addProject({domain,projectData}))
           .then((response) => {
             let newProjectData = response.payload;

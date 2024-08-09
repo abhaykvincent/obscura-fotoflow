@@ -33,8 +33,9 @@ function AddCollectionModal({ project }) {
   const handleSubmit = () => {
     console.log(collectionsLength.length)
     console.log(collectionsLimit)
+    const domain= defaultStudio.domain
     if(collectionsLength.length < collectionsLimit.perProject)
-    {dispatch(addCollection({ projectId: project.id, newCollection: CollectionData }))
+    {dispatch(addCollection({ domain:domain, projectId: project.id, newCollection: CollectionData }))
     .then((id)=>{
       dispatch(showAlert({type:'success', message:`Collection <b>${CollectionData.name}</b> added successfully!`}));
         navigate(`/${defaultStudio.domain}/gallery/${project.id}/${id.payload.collection.id}`);
