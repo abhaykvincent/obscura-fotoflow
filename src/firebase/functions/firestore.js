@@ -62,6 +62,8 @@ export const fetchStudiosOfUser = async (email) => {
 // Fetches
 // Function to fetch all projects from a specific studio
 export const fetchProjectsFromFirestore = async (domain) => {
+    let color = domain === '' ? 'gray' : '#0099ff';
+    console.log(`%cFetching Projects from ${domain ? domain : 'undefined'}`, `color: ${color}; `);
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
     const querySnapshot = await getDocs(projectsCollectionRef);
@@ -70,11 +72,14 @@ export const fetchProjectsFromFirestore = async (domain) => {
         id: doc.id,
         ...doc.data(),
     }));
+    color='#54a134';
+    console.log(`%cFetched all ${projectsData.length} Projects from ${domain ? domain : 'undefined'}`, `color: ${color}; `);
     console.log(projectsData)
     return projectsData;
 };
 // Function to fetch a specific project from a specific studio
 export const fetchProject = async (domain, projectId) => {
+    console.log(domain, projectId)
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
     const projectDoc = doc(projectsCollectionRef, projectId);
@@ -168,7 +173,7 @@ export const addCollectionToStudioProject = async (domain, projectId, collection
     const id = `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
 
     const collectionDoc = {
-        id: `${projectId}-${id}`,
+        id: `${id}`,
         name,
         status,
     };

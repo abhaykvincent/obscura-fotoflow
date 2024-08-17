@@ -14,7 +14,13 @@ function SidePanel() {
             </div>
             
         </div>
-        <div className="client-details">
+        <div className="client">
+            <div className="client-image">
+                <div className="profile-picture">
+
+                </div>
+            </div>
+            <div className="client-details">
                 <div className="client-field client-name">
                     <div className="icon profile"></div>
                     <p className='name highlight'>Ethan K Ross</p>
@@ -32,6 +38,8 @@ function SidePanel() {
                     <p className='name'>Toronto, ON</p>
                 </div>
             </div>
+        </div>
+        
         <div className="headings">
             <div className="heading-shoots heading-section">
                 <h3 className='heading '>Timeline</h3>

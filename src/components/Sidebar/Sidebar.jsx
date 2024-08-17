@@ -17,7 +17,6 @@ function Sidebar() {
   const location = useLocation();
   const params = useParams()
   const studioName = defaultStudio.domain
-  console.log(defaultStudio)
   
   return (
     <div className="sidebar">

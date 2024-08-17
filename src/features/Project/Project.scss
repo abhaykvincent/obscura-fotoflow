@@ -177,11 +177,25 @@
             width: 1px;;
             align-items: stretch;
             height: calc(100% - 8px*7);
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: rgba(255, 255, 255, 0.575);
             transform: translateX(8px*1.2) translateY(8px*3);
             z-index: 30;
         }
     } 
+    .client{
+        display: grid;
+        grid-template-columns: 8px*10 auto;
+        gap: 8px*1;
+        .client-image{
+            .profile-picture{
+                width: 8px*10;
+                height: 8px*10;
+                background-size: 100%;
+                background-image: url('https://img.icons8.com/?size=100&id=96471&format=png&color=FFFFFF');
+            }
+        }
+
+    }
     .client-details{
         .client-field{
             display: flex;

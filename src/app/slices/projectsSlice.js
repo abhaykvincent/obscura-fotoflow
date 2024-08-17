@@ -334,4 +334,5 @@ export default projectsSlice.reducer;
 
 // Selector to get projects data from the state
 export const selectProjects = (state) => state.projects.data;
+export const selectProjectsStatus = (state) => state.projects.status;
 export const selectLoading = (state) => state.projects.loading;

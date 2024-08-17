@@ -41,7 +41,7 @@ export default function Galleries({}) {
     let projectTemp=projects.find((p) => p.id === id)
     if (!projectTemp) {
       setTimeout(()=>{
-        navigate('/projects');
+        navigate(`/${defaultStudio.domain}/projects`);
       },100)
       return;
     }  

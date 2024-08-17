@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { fetchImageUrls } from '../../utils/storageOperations';
 import { findCollectionById } from '../../utils/CollectionQuery';
 import './Share.scss';
-import { fetchProject } from '../../firebase/functions/firestore';
+import { fetchProject, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
 import ShareGallery from '../../components/ImageGallery/ShareGallery';
 import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../app/slices/authSlice';
@@ -25,17 +25,20 @@ export default function ShareProject() {
 // if co collectionIs is passed, use the first collectionId
     collectionId  = collectionId || project?.collections[0]?.id
     
+    const domain= defaultStudio.domain
   // Fetch Images based on projectId
   const fetchProjectData = async () => {
     try {
-      const projectData = await fetchProject(projectId);
+      debugger
+      const projectData = await fetchProject(domain,projectId);
+
+      console.log(projectData)
       setProject(projectData);
     } catch (error) {
       console.error('Failed to fetch project:', error);
     }
   };
   const fetchImagesData = async () => {
-    const domain= defaultStudio.domain
     try {
       fetchImageUrls(domain, projectId, collectionId, setImageUrls, page, size);
     } catch (error) {
@@ -48,6 +51,7 @@ export default function ShareProject() {
 
   useEffect(() => {
     fetchProjectData();
+    //fetchImagesData()
   }, []);
 
   useEffect(() => {
