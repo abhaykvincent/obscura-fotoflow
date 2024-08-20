@@ -21,6 +21,7 @@
                 background: linear-gradient(90deg,  $green-accessible-light 0%,$green-accessible-dark 20%,  $green-dark-accessible-light 90%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
+                transition-duration: 2s;
             }
         
         }
@@ -219,10 +220,10 @@
         .plans{
             display: grid;
             justify-content: center;
+            align-items: stretch;
             grid-template-columns: minmax(100px, 240px) minmax(100px, 240px)   minmax(100px, 240px);
             column-gap: 8px*1;
             row-gap: 8px*4;
-            align-items: start;
             
             .plan{
                 padding: 8px*2;
@@ -235,6 +236,7 @@
                 }
                 .current-plan {
                     border: none;
+                    margin-top: 8px*4;
                 }
                 .plan-name{
                     font-size: 1.4rem;
@@ -251,7 +253,6 @@
                     padding-top: 8px*0;
                     z-index: 0;
                     h1{
-                        color: $gray4-accessible-light;
                         opacity: 1;
                         font-weight: 400;
 
@@ -275,17 +276,23 @@
                         }
                     }
 
-                    
+                    &.monthly{
+                        margin-top: -8px*2;
+                        margin-left: 4px;
+                        h1{
+
+                            background: linear-gradient(90deg, #54a134 0%, #54a134 20%, #31611c 90%);
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                        }
+                    }
                     &.yearly{
                         margin-top: -8px*2;
                         margin-left: 4px;
                         h1{
-                            color: $green-accessible-dark;
+                            color: $gray4-accessible-light;
                             font-size: 1.2rem;
                             font-weight: normal;
-                            background: linear-gradient(90deg, #54a134 0%, #54a134 20%, #31611c 90%);
-                            -webkit-background-clip: text;
-                            -webkit-text-fill-color: transparent;
                         }
                         .unit{
                             font-size: 0.8rem;
@@ -306,13 +313,13 @@
                         font-size: 0.7rem;
                         margin-top: 0px;
                         color: $green-accessible-light;
-                        background: linear-gradient(90deg, #54a134 0%, #54a134 80%, #37721e 90%);
+                        background: linear-gradient(90deg, #ffffff37 0%,  #ffffff37 90%);
                         -webkit-background-clip: text;
                         -webkit-text-fill-color: transparent;
                     }
                 }
                 .plan-features{
-                    margin-top: -8px*1;
+                    margin-top: 8px*2;
                     margin-bottom: 8px*2;
                     p{
                         color: $gray-accessible-light;
@@ -348,16 +355,26 @@
                         &.customizable{
                         font-weight: 600;
                         margin-bottom: 8px*2;
+                        margin-top: 8px*2;
                         transition-duration: 0.2s;
+                        .storage-counter{
+                            width: 8px*12;
+                        }
                             .green{
                         transition-duration: 0.4s;
                         color: $green-default-light;
                         border: 1px solid $gray3-accessible-dark;
+                        background: linear-gradient(90deg, #274b1787 10%,#54a134 20%, #54a134 60%, #152b0c 90%);
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
                             }
                             .white{
                         transition-duration: 0.1s;
                         color: $gray5-accessible-light;
                         border: 1px solid $green-accessible-dark;
+                        background: linear-gradient(90deg, #47474787 10%,#c3c3c3 20%, #b0b0b0 60%, #232323 90%);
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
                             }
                         }
                         &.beta{
@@ -405,7 +422,6 @@
                 }
                 .button{
                     width: 100%;
-                    margin: 0;
                     margin-bottom: 0px;
                 }
 
@@ -470,7 +486,7 @@
                     }
                     .cover{
                         width: 100%;
-                        padding-top: 65%;
+                        padding-top: 80%;
                         background-image: url('../../assets/img/subscription/green-spheret-3d.avif');
                         background-color: $dark-2;
                         background-size: 40%, 80%;

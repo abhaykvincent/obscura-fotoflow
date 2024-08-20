@@ -15,34 +15,46 @@ import AddBudgetModal from '../../components/Modal/AddBudget';
 import AddCollectionModal from '../../components/Modal/AddCollection';
 import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 // Redux
-import { deleteProject, selectProjects } from '../../app/slices/projectsSlice';
+import { deleteProject, selectProjects, selectProjectsStatus } from '../../app/slices/projectsSlice';
 import { closeModal, openModal, selectModal } from '../../app/slices/modalSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 
 import './Project.scss'
+import { selectUserStudio } from '../../app/slices/authSlice';
 
 export default function Project() {
   let { id} = useParams();
   console.log(id)
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const defaultStudio = useSelector(selectUserStudio)
   const projects = useSelector(selectProjects)
+  const projectsStatus = useSelector(selectProjectsStatus)
   const {confirmDeleteProject} = useSelector(selectModal)
+
   const onDeleteConfirm = () => {
     dispatch(deleteProject(id)).then(() => {
-      navigate('/projects');
+      navigate(`/${defaultStudio.domain}/projects`);
       dispatch(closeModal('confirmDeleteProject'))
       dispatch(showAlert({type:'success-negative', message:`Project <b>${project.name}</b> deleted successfully!`}));// Redirect to /projects page
     })
   };
 
+  useEffect(() => {
+    
+  if (projectsStatus=='loading') {
+    return <div>Loading...</div>;
+  }
+  }, [projectsStatus]);
   // If no projects are available, return early
   if (!projects) return;
   const project = projects.find((p) => p.id === id);
   console.log(project)
   // If the project is not found, redirect to the projects page and return
   if (!project) {
-    setTimeout(()=>{navigate('/projects');},100)
+    setTimeout(()=>{
+      navigate(`/${defaultStudio.domain}/projects`);
+    },100)
     return;
   }
   else{

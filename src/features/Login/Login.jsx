@@ -33,8 +33,6 @@ const LoginModal = () => {
         const studiosResponse = await fetchStudiosOfUser(user.email);
         console.log("Studios response:", studiosResponse);
         
-
-        const studios = studiosResponse.payload;
         const serializedUser = {
             email: user.email,
             displayName: user.displayName,
@@ -43,13 +41,16 @@ const LoginModal = () => {
         };
         console.log("Serialized user:", serializedUser);
 
-        await dispatch(login(serializedUser));
-        navigate(`/${studiosResponse.domain}/`);
+        const response=  await dispatch(login(serializedUser));
+        console.log("Login response:", response);
+        if(response.payload==='no-studio-found'){
+
+          navigate('/onboarding');
+        }
     } catch (error) {
         console.log("Error during sign-in:", error);
         // Handle Errors here.
         const credential = GoogleAuthProvider.credentialFromError(error);
-        navigate('/onboarding');
     }
 };
 
