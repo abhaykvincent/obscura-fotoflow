@@ -1,7 +1,7 @@
 // slices/authSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
-import { addBudgetToFirestore, addCollectionToFirestore, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteProjectFromFirestore, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
+import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteProjectFromFirestore, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 
 
@@ -37,8 +37,9 @@ export const deleteProject = createAsyncThunk(
 // Collections
 export const addCollection = createAsyncThunk(
   'projects/addCollection',
-  async ({ projectId, newCollection }, { dispatch }) => {
-    const id = await addCollectionToFirestore(projectId, newCollection);
+  async ({ domain, projectId, newCollection }, { dispatch }) => {
+    console.log(domain)
+    const id = await addCollectionToStudioProject(domain,projectId, newCollection);
     return {projectId, collection: {id,...newCollection}}
   }
 );
@@ -333,4 +334,5 @@ export default projectsSlice.reducer;
 
 // Selector to get projects data from the state
 export const selectProjects = (state) => state.projects.data;
+export const selectProjectsStatus = (state) => state.projects.status;
 export const selectLoading = (state) => state.projects.loading;

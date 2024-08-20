@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { getUsedSpace } from '../../utils/fileUtils';
 import { fullAccess, getStudiosOfUser, isAlreadyInStudio, users } from '../../data/teams';
 import firebase from 'firebase/app';
 import { auth } from '../../firebase/app';
@@ -11,8 +12,22 @@ const initialState = {
     access: [] // Array of studio names the user has access to
   },
   currentStudio: {
-    name: '',
-    domain:''
+    name: 'Guest 2024',
+    domain:'guest'
+  },
+  limits:{
+    storage: {
+      // In MB 
+      // 1 GB - 1000
+      total: 5000,
+      available:1
+    },
+    projects:{
+
+    },
+    collections:{
+      perProject: 3
+    }
   },
   isAuthenticated: false,
   createStudio: false,
@@ -24,35 +39,42 @@ export const login = createAsyncThunk(
   'user/login',
   async (serializedUser, { rejectWithValue }) => {
     try {
+      
+    let color = 'orange';
+    const fontSize ='0.8rem';
+    console.log(`%cLogging in as ${serializedUser.email}`, `color: ${color}; font-size: ${fontSize}`);
+    
       // Perform the login logic here (e.g., API call, validation, etc.)
       // For example, assume fullAccess is an async function that checks user access
       
       const users = await fetchUsers()
-      // find user in users with email
-      // if user exists, return user
-      console.log(users)
       const user = users.find(user => {
-         if(user.id === serializedUser.email){
-          return serializedUser
-        }} 
+      console.log(user)
+
+      if(user.email === serializedUser.email){
+      console.log(user)
+      return user
+      }
+    } 
       )
+      color= '#54a134'
+      console.log(`%cUser found in ${user.studio.name} `, `color: ${color}; font-size: ${fontSize}`);
       console.log(user)
 
       if (user) {
         localStorage.setItem('authenticated', 'true');
-        console.log(user)
         if(user.studio){
+          console.log( JSON.stringify(user.studio))
           localStorage.setItem('studio', JSON.stringify(user.studio));
-          console.log('Studio - storing studio to local storage...')
-          debugger
-          console.log('studio-found')
+          console.log('Stored '+ user.studio +' to local storage...')
           return {
             studio: user.studio,
           }
         }
       } 
       if(user.email){
-        console.log('user authenticated')
+        color= '#54a134'
+        console.log(`%c${serializedUser.email} Authenticated as  ${serializedUser.displayName}`, `color: ${color}; font-size: ${fontSize}`);
         localStorage.setItem('authenticated', 'true');
         return user
       }
@@ -73,9 +95,9 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       localStorage.removeItem('authenticated');
       localStorage.removeItem('studio');
-      console.log('Logging out...')
+      console.log('%cLogged out...', 'color: orange; font-size: 0.9rem;');
       state.user = { email: '', access: [] };
-      state.currentStudio = { name: '', data: {} };
+      state.currentStudio = { name: '', domain: '' }; 
     },
     loginEmailPassword: (state, action) => {
       if (action.payload.userId === 'guest' && action.payload.password.includes('2024')) {
@@ -87,11 +109,18 @@ const authSlice = createSlice({
     checkAuthStatus: (state) => {
       const isLocalAuthenticated = localStorage.getItem('authenticated');
       state.isAuthenticated = isLocalAuthenticated === 'true';
+      if(state.isAuthenticated) {
+      {
+        let color= '#54a134'
+        console.log(`%cAuthenticated`, `color: ${color}; font-size: 0.8rem`);
+        
+      }
+      }
     },
     checkStudioStatus: (state) => {
       const studioLocal = localStorage.getItem('studio');
       console.log(studioLocal)
-      state.currentStudio = studioLocal ? JSON.parse(studioLocal) : {};
+      state.currentStudio = JSON.parse(studioLocal) && JSON.parse(studioLocal);
     },
     setUser: (state, action) => {
       state.user = action.payload;
@@ -104,9 +133,11 @@ const authSlice = createSlice({
     },
     setCurrentStudio: (state, action) => {
       state.currentStudio = action.payload;
-      localStorage.setItem('studio',action.payload)
-      console.log(action.payload)
-      debugger
+      localStorage.setItem('studio',JSON.parse(action.payload))
+    },
+    setAvailableStortage: (state, action) => {
+      const available = state.limits.storage.total-getUsedSpace(action.payload)
+      state.limits.storage.available=available
     },
     resetAuth: () => initialState,
   },
@@ -119,8 +150,8 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
-        state.currentStudio = action.payload.studio;
         console.log(action.payload)
+        if(action.payload !== 'no-studio-found') {state.currentStudio = action.payload.studio;}
         state.isAuthenticated = true;
         state.error = null;
       })
@@ -131,7 +162,7 @@ const authSlice = createSlice({
   }
 });
 
-export const { logout, loginEmailPassword, checkAuthStatus,checkStudioStatus, setUser, setLoading, setError, resetAuth, setCurrentStudio } = authSlice.actions;
+export const { logout, loginEmailPassword, checkAuthStatus,checkStudioStatus, setAvailableStortage, setUser, setLoading, setError, resetAuth, setCurrentStudio } = authSlice.actions;
 export default authSlice.reducer;
 
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
@@ -140,3 +171,5 @@ export const selectUserStudio = (state) => state.auth.currentStudio;
 export const selectAuthLoading = (state) => state.auth.loading;
 export const selectAuthError = (state) => state.auth.error;
 export const selectCreateStudioModal = (state) => state.auth.createStudio
+export const selectStorageLimit = (state) => state.auth.limits.storage;
+export const selectCollectionsLimit = (state) => state.auth.limits.collections;

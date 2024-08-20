@@ -13,7 +13,6 @@ function AddStudio() {
     const navigate = useNavigate();
     const defaultStudio = useSelector(selectUserStudio)
     const visible = useSelector(selectCreateStudioModal)
-    console.log(visible)
     const onClose = () => dispatch(closeModal('createStudio'))
   const [studioData, setStudioData] = useState({
       name: 'Sixty Frames',

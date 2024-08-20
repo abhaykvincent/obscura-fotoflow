@@ -12,7 +12,6 @@ function Home() {
     const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
     const defaultStudio = useSelector(selectUserStudio)
-    console.log(defaultStudio)
     document.title = `FotoFlow | Home`;
     const selectionCompletedProjects = getProjectsByStatus(projects, 'selection-completed');
     const requestPendingProjects = getProjectsByStatus(projects, 'request-pending');
