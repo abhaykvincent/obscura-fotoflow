@@ -12,8 +12,8 @@ const initialState = {
     access: [] // Array of studio names the user has access to
   },
   currentStudio: {
-    name: '',
-    domain:''
+    name: 'Guest 2024',
+    domain:'guest'
   },
   limits:{
     storage: {
@@ -49,9 +49,13 @@ export const login = createAsyncThunk(
       
       const users = await fetchUsers()
       const user = users.find(user => {
-         if(user.id === serializedUser.email){
-          return serializedUser
-        }} 
+      console.log(user)
+
+      if(user.email === serializedUser.email){
+      console.log(user)
+      return user
+      }
+    } 
       )
       color= '#54a134'
       console.log(`%cUser found in ${user.studio.name} `, `color: ${color}; font-size: ${fontSize}`);
@@ -60,6 +64,7 @@ export const login = createAsyncThunk(
       if (user) {
         localStorage.setItem('authenticated', 'true');
         if(user.studio){
+          console.log( JSON.stringify(user.studio))
           localStorage.setItem('studio', JSON.stringify(user.studio));
           console.log('Stored '+ user.studio +' to local storage...')
           return {
@@ -92,7 +97,7 @@ const authSlice = createSlice({
       localStorage.removeItem('studio');
       console.log('%cLogged out...', 'color: orange; font-size: 0.9rem;');
       state.user = { email: '', access: [] };
-      state.currentStudio = { name: '', data: {} };
+      state.currentStudio = { name: '', domain: '' }; 
     },
     loginEmailPassword: (state, action) => {
       if (action.payload.userId === 'guest' && action.payload.password.includes('2024')) {
@@ -114,7 +119,8 @@ const authSlice = createSlice({
     },
     checkStudioStatus: (state) => {
       const studioLocal = localStorage.getItem('studio');
-      state.currentStudio = JSON.parse(studioLocal) ? JSON.parse(studioLocal) : {};
+      console.log(studioLocal)
+      state.currentStudio = JSON.parse(studioLocal) && JSON.parse(studioLocal);
     },
     setUser: (state, action) => {
       state.user = action.payload;
@@ -144,7 +150,8 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
-        state.currentStudio = action.payload.studio;
+        console.log(action.payload)
+        if(action.payload !== 'no-studio-found') {state.currentStudio = action.payload.studio;}
         state.isAuthenticated = true;
         state.error = null;
       })

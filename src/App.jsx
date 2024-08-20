@@ -49,21 +49,13 @@ export default function App() {
   const isLoading = useSelector(selectProjectsStatus);
   const projects = useSelector(selectProjects);
   const defaultStudio = useSelector(selectUserStudio)
-  const currentDomain = defaultStudio.domain;
+  const currentDomain = defaultStudio?.domain ?? 'guest'; 
 
   // ON Render
   useEffect(() => {
-    document.title = `Obscura FotoFlow`;
     dispatch(checkAuthStatus())
-    dispatch(checkStudioStatus())
-    console.log(currentDomain)
-    dispatch(fetchProjects({currentDomain}))
-  }, []);
-  useEffect(() => {
-    dispatch(checkAuthStatus())
-    dispatch(checkStudioStatus())
-    console.log(currentDomain)
-    dispatch(fetchProjects({currentDomain}))
+     dispatch(checkStudioStatus())
+    currentDomain !== 'guest' && dispatch(fetchProjects({currentDomain}))
   }, [currentDomain]);
 
 

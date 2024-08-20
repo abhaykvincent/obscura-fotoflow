@@ -54,7 +54,7 @@ function AddProjectModal() {
               onClose();
               dispatch(showAlert({type:'success', message:`New Project created!`}));
             
-              //navigate(`/${domain}/project/${newProjectData.id}`);
+              navigate(`/${domain}/project/${newProjectData.id}`);
           })
           .catch((error) => {
               console.error('Error creating project:', error);
