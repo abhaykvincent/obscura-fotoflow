@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { addAllFileSizesToMB } from '../../utils/fileUtils';
 import { handleUpload } from '../../utils/uploadOperations';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectStorageLimit } from '../../app/slices/studioSlice';
+import { selectStorageLimit } from '../../app/slices/authSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 
 function UploadButton({isPhotosImported,setIsPhotosImported,imageUrls,setImageUrls,id,collectionId,setUploadLists,setUploadStatus}) {

@@ -26,7 +26,7 @@ import CommingSoon from './components/CommingSoon/CommingSoon';
 import { isPublicPage } from './utils/publicPages';
 // Redux 
 import { checkAuthStatus, checkStudioStatus, selectIsAuthenticated, selectUserStudio } from './app/slices/authSlice';
-import { selectLoading ,fetchProjects} from './app/slices/projectsSlice';
+import { selectLoading ,fetchProjects, selectProjects, selectProjectsStatus} from './app/slices/projectsSlice';
 // Stylesheets
 import './App.scss';
 import Teams from './features/Teams/Teams';
@@ -46,35 +46,17 @@ export default function App() {
 
   const { keyMap, handlers } = useShortcutsConfig();
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const isLoading = useSelector(selectLoading);
+  const isLoading = useSelector(selectProjectsStatus);
+  const projects = useSelector(selectProjects);
   const defaultStudio = useSelector(selectUserStudio)
-  const url = window.location.href;
-  const parts = url.split('/');
-  const URLdomain = parts[3];
-  const currentDomain = defaultStudio.domain ? defaultStudio.domain : URLdomain;
+  const currentDomain = defaultStudio?.domain ?? 'guest'; 
 
-  let {name,domain} = defaultStudio
   // ON Render
   useEffect(() => {
-    console.log("Users Studio : "+defaultStudio.domain)
-    console.log('isAuthenticated: '+isAuthenticated)
-  }, [isAuthenticated,defaultStudio]);
-  // ON Render
-  useEffect(() => {
-    document.title = `Obscura FotoFlow`;
     dispatch(checkAuthStatus())
-    dispatch(checkStudioStatus())
-    console.log(currentDomain)
-    dispatch(fetchProjects({currentDomain}))
-  }, []);
-  useEffect(() => {
-    document.title = `Obscura FotoFlow`;
-    dispatch(checkAuthStatus())
-    dispatch(checkStudioStatus())
-    console.log(currentDomain)
-    dispatch(fetchProjects({currentDomain}))
+     dispatch(checkStudioStatus())
+    currentDomain !== 'guest' && dispatch(fetchProjects({currentDomain}))
   }, [currentDomain]);
-  const params = useParams()
 
 
   // RENDER
@@ -93,7 +75,7 @@ export default function App() {
       ) : 
       (<>{ !isPublicPage() && <LoginModal/> }</>)}
       {
-        isLoading ? (
+        isLoading!== 'succeeded'? (
           <Loading/>
         ) : (
           <Routes>
@@ -102,7 +84,7 @@ export default function App() {
               {/* New dynamic routes */}
               <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}`} replace />} />
               <Route exact path="/:studioName/" element={<Home />} />
-              <Route path="/:studioName/project/:id" element={<Project />} />
+              <Route exact path="/:studioName/project/:id" element={<Project />} />
               <Route exact path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
               <Route path="/:studioName/projects" element={<Projects />} />
               <Route path="/:studioName/storage" element={<Storage />} />
@@ -129,4 +111,4 @@ export default function App() {
     
   );
 }
-// Line Complexity  1.5 -> 2.0 -> 2.5 -> 2.0 -> 1.0 ->0.9   -> 1.1
+// Line Complexity  1.5 -> 2.5 -> 2.0 -> 1.0 ->0.9   -> 1.1 -> 1.2

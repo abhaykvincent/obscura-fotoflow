@@ -3,8 +3,10 @@ import { Link, useParams } from 'react-router-dom';
 import { fetchImageUrls } from '../../utils/storageOperations';
 import { findCollectionById } from '../../utils/CollectionQuery';
 import './Share.scss';
-import { fetchProject } from '../../firebase/functions/firestore';
+import { fetchProject, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
 import ShareGallery from '../../components/ImageGallery/ShareGallery';
+import { useSelector } from 'react-redux';
+import { selectUserStudio } from '../../app/slices/authSlice';
 
 export default function ShareProject() {
   // set body color to white
@@ -15,6 +17,7 @@ export default function ShareProject() {
   let  { projectId, collectionId } = useParams();
   const [project, setProject] = useState();
   const [imageUrls, setImageUrls] = useState([]);
+  const defaultStudio = useSelector(selectUserStudio)
 
   const [page,setPage]=useState(1);
   const [size,setSize]=useState(100);
@@ -22,10 +25,14 @@ export default function ShareProject() {
 // if co collectionIs is passed, use the first collectionId
     collectionId  = collectionId || project?.collections[0]?.id
     
+    const domain= defaultStudio.domain
   // Fetch Images based on projectId
   const fetchProjectData = async () => {
     try {
-      const projectData = await fetchProject(projectId);
+      debugger
+      const projectData = await fetchProject(domain,projectId);
+
+      console.log(projectData)
       setProject(projectData);
     } catch (error) {
       console.error('Failed to fetch project:', error);
@@ -33,7 +40,7 @@ export default function ShareProject() {
   };
   const fetchImagesData = async () => {
     try {
-      fetchImageUrls(projectId, collectionId, setImageUrls, page, size);
+      fetchImageUrls(domain, projectId, collectionId, setImageUrls, page, size);
     } catch (error) {
       console.error('Failed to fetch project:', error);
     }
@@ -44,6 +51,7 @@ export default function ShareProject() {
 
   useEffect(() => {
     fetchProjectData();
+    //fetchImagesData()
   }, []);
 
   useEffect(() => {

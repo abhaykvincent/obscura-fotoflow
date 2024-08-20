@@ -16,25 +16,26 @@ const initialPlans = [
   {
     name: 'Freelancer',
     pricing: [
-      { storage: 128, monthlyPrice: '₹990', yearlyPrice: '₹10,000', specialOffer: 'First 2 months on us' },
-      { storage: 512, monthlyPrice: '₹2,000', yearlyPrice: '₹20,000', specialOffer: 'First 2 months on us',defaultPlan: true  },
-      { storage: 1024, monthlyPrice: '₹3,500', yearlyPrice: '₹35,000', specialOffer: 'First 2 months on us' },
+      { storage: 120, monthlyPrice: '₹1,000', yearlyPrice: '₹10,000', specialOffer: 'First 2 months on us' },
+      { storage: 500, monthlyPrice: '₹2,000', yearlyPrice: '₹20,000', specialOffer: 'First 2 months on us',defaultPlan: true  },
+      { storage: 1000, monthlyPrice: '₹3,000', yearlyPrice: '₹30,000', specialOffer: 'First 2 months on us' },
     ],
     defaultPlan: 1,
-    defaultStorage: 512,
-    features: ['+ 512GB for ₹1,500','+256 GB Cold Storage', 'Everything in Core plan', 'Full Resolution', 'Timeline'],
-    coreFeatures: ['Gallery', '128 GB storage'],
-    extraFeatures: { Gallery: 'Unlimited' },
+    defaultStorage: 500,
+    features: ['256 GB Cold Storage', 'Everything in Core plan', 'Full Resolution', 'Timeline'],
+    coreFeatures: ['Gallery','Financials', 'Cold Storage','128 GB storage'],
+    extraFeatures: { Gallery: 'Unlimited',Financials: 'Unlimited','Cold Storage': 'Limited'},
   },
   {
     name: 'Studio',
     pricing: [
-      { storage: 1024, monthlyPrice: '₹4,000', yearlyPrice: '₹40,000', specialOffer: 'First 2 months on us',defaultPlan: true },
-      { storage: 2048, monthlyPrice: '₹6,500', yearlyPrice: '₹65,000', specialOffer: 'First 2 months on us' },
+      { storage: 500, monthlyPrice: '₹3,000', yearlyPrice: '₹30,000', specialOffer: 'First 2 months on us'},
+      { storage: 1000, monthlyPrice: '₹4,000', yearlyPrice: '₹40,000', specialOffer: 'First 2 months on us',defaultPlan: true },
+      { storage: 2000, monthlyPrice: '₹6,000', yearlyPrice: '₹60,000', specialOffer: 'First 2 months on us' },
     ],
-    defaultStorage: 1024,
+    defaultStorage: 1000,
     defaultPlan: 0,
-    features: ['+1024GB for ₹2,500','+512 GB Cold Storage', 'Everything in Freelancer plan', 'Online Payments', 'Cold Storage Access'],
+    features: ['512 GB Cold Storage', 'Everything in Freelancer plan', 'Online Payments', 'Cold Storage Access'],
     coreFeatures: ['AI', 'Bookings', 'Teams', '1024 GB storage'],
     extraFeatures: { AI: 'BETA', Bookings: 'Unlimited' },
     isWaitlist: true,
@@ -55,10 +56,11 @@ const CoreFeature = ({ plan, feature,defaultPlan,defaultStorage, tag, storage , 
       return (
         <h4 className={`customizable  ${tag ? 'beta' : ''}`}>
           <p className={plan.pricing[0].storage>=storage?'hide':''} onClick={onDecrement} disabled={!onDecrement}>-</p>
-          <p className={
-            defaultStorage === storage
+          <p className={`
+          storage-counter
+            ${defaultStorage === storage
               ? 'green'
-              : 'white'
+              : 'white'}`
           }>
             {storage} GB
           </p>
@@ -94,10 +96,9 @@ const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
 
   return (
     <div className={`plan ${plan.name.toLowerCase()} ${plan.expiry ? 'active' : ''}`}>
-      {plan.isCurrentPlan && <div className="current-plan button primary outline">Current Plan</div>}
       <h3 className="plan-name">{plan.name}</h3>
       <div className="cover"></div>
-      <div className="plan-pricing amount">
+      <div className="plan-pricing amount monthly">
         <h1>{currentPricing?.monthlyPrice}</h1>
         {currentPricing?.monthlyPrice == 'Free'?<div className="unit"> * </div>:<div className="unit">/ month</div>}
       </div>
@@ -134,6 +135,8 @@ const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
           <p>{plan.expiry}</p>
         </div>
       )}
+      {plan.isCurrentPlan && <div className="current-plan button primary outline">Current Plan</div>}
+
       {!plan.isCurrentPlan && (
         <>
           <p className='waitlist-label'>{plan.isWaitlist ? 'Apply for next available batch.' : 'Pay Later in 7 days'}</p>

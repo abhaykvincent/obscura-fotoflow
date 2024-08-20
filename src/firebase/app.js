@@ -41,3 +41,5 @@ if (process.env.NODE_ENV === 'development') {
 const provider = new GoogleAuthProvider();
 
 export { storage, db,auth, provider, signInWithPopup};
+
+

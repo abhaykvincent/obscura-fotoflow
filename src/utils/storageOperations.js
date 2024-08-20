@@ -8,9 +8,12 @@ import {
 import { db, storage } from '../firebase/app';
 
 // Fetch Images
-export const fetchImageUrls = async (id, collectionId, setImageUrls, page, pageSize) => {
+export const fetchImageUrls = async (domain, projectId, collectionId, setImageUrls, page, pageSize) => {
     console.log(`Fetching images for page ${page}`);
-    const storageRef = ref(storage, `${id}/${collectionId}`);
+    
+    // Reference to the images folder within the specific studio, project, and collection
+    const storageRef = ref(storage, `${domain}/${projectId}/${collectionId}`);
+
     try {
         const imageUrls = []; // Create an empty array to store the image URLs
     
@@ -23,26 +26,30 @@ export const fetchImageUrls = async (id, collectionId, setImageUrls, page, pageS
         let currentIndex = 0;
         for (const item of listResult.items) {
             if (currentIndex >= startAt && currentIndex < endAt) {
-                //await new Promise((resolve) => setTimeout(resolve, 10)); // Add a delay of 10 milliseconds
                 const downloadURL = await getDownloadURL(item);
                 imageUrls.push(downloadURL);
             }
 
             currentIndex++;
-            // Break the loop once endAt is reached
-            if (currentIndex === endAt) break;
+            if (currentIndex === endAt) break; // Break the loop once endAt is reached
         }
+
         setImageUrls(imageUrls); // Set the image URLs outside the loop
     } catch (error) {
         console.error("Error fetching images:", error);
     }
+
     console.log('Fetching images FINISHED');
 };
-export const fetchImageInfo = async (id, collectionId) => {
-    const storageRef = ref(storage, `${id}/${collectionId}`);
+
+export const fetchImageInfo = async (domain, projectId, collectionId) => {
+    // Reference to the images folder within the specific studio, project, and collection
+    const storageRef = ref(storage, `${domain}/${projectId}/${collectionId}`);
     const imageInfoList = [];
 
+    try {
         const listResult = await list(storageRef);
+
         for (const item of listResult.items) {
             const downloadURL = await getDownloadURL(item);
             const imageName = item.name.split('/').pop(); // Extracting the image name
@@ -53,8 +60,13 @@ export const fetchImageInfo = async (id, collectionId) => {
                 isSelected: false 
             });
         }
+    } catch (error) {
+        console.error("Error fetching image info:", error);
+    }
+
     return imageInfoList;
 };
+
 
 export const deleteCollectionFromStorage = async (id, collectionId) => {
 const storageRef = ref(storage, `${id}/${collectionId}`);

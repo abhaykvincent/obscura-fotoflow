@@ -124,6 +124,7 @@ function Storage() {
                                     <div className="box-content">
                                         <h4>{project.name}</h4>
                                         <div className="project-size">
+                                            <p>{project.uploadedFilesCount} Photos</p>
                                             <p>{convertMegabytes(project.totalFileSize,1)} </p>
                                         </div>
                                     </div>
