@@ -27,6 +27,19 @@ export const createStudio = async (studioData) => {
         throw error;
     })
 }
+export const fetchStudiosOfUser = async (email) => {
+    const usersCollection = collection(db, 'users');
+    const querySnapshot = await getDocs(usersCollection);
+    const usersData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    const user = usersData.find((user) => user.email === email);
+    const studio = user?.studio
+    console.log(user)
+    return studio;
+};
+// Users
 export const createUser = async (userData) => {
     const {email,studio} = userData;
     console.log(userData)
@@ -47,20 +60,8 @@ export const fetchUsers = async () => {
     }));
     return usersData;
 };
-export const fetchStudiosOfUser = async (email) => {
-    const usersCollection = collection(db, 'users');
-    const querySnapshot = await getDocs(usersCollection);
-    const usersData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-    }));
-    const user = usersData.find((user) => user.email === email);
-    const studio = user?.studio
-    console.log(user)
-    return studio;
-};
 // Fetches
-// Function to fetch all projects from a specific studio
+// Function to fetch all projects from a specific studio of domain
 export const fetchProjectsFromFirestore = async (domain) => {
     let color = domain === '' ? 'gray' : '#0099ff';
     console.log(`%cFetching Projects from ${domain ? domain : 'undefined'}`, `color: ${color}; `);
@@ -87,7 +88,7 @@ export const fetchProject = async (domain, projectId) => {
 
     const projectData = projectSnapshot.data();
     projectData.collections = await Promise.all(projectData.collections.map(async (collection) => {
-        const subCollectionId = projectId + '-' + collection.id;
+        const subCollectionId = collection.id;
         const collectionDoc = doc(projectDoc, 'collections', subCollectionId);
         const collectionSnapshot = await getDoc(collectionDoc);
     
@@ -102,21 +103,26 @@ export const fetchProject = async (domain, projectId) => {
     
     return projectData;
 };
-export const fetchImages = async (projectId,collectionId) => {
-    const projectsCollection = collection(db, 'projects');
-    const projectDoc = doc(projectsCollection, projectId);
-    const subCollectionId = projectId+'-'+collectionId;
-    const collectionDoc = doc(projectDoc, 'collections', subCollectionId);
-    const collectionSnapshot = await getDoc(collectionDoc);
+export const fetchImages = async (domain, projectId, collectionId) => {
+    let color = domain === '' ? 'gray' : '#0099ff';
+    console.log(`%cFetching Images from Project ${projectId} in ${domain ? domain : 'undefined'}`, `color: ${color}; `);
 
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+    const subCollectionId = `${collectionId}`;
+    const collectionDocRef = doc(projectDocRef, 'collections', subCollectionId);
+    const collectionSnapshot = await getDoc(collectionDocRef);
 
     if (collectionSnapshot.exists()) {
         const collectionsData = collectionSnapshot.data();
-        return collectionsData.uploadedFiles
+        color = '#54a134';
+        console.log(`%cFetched Images successfully for Project ${projectId} in ${domain}`, `color: ${color}; `);
+        return collectionsData.uploadedFiles;
     } else {
-        throw new Error('Project does not exist.');
+        return []
     }
-}
+};
 
   
 // Project Operations
@@ -140,31 +146,39 @@ export const addProjectToStudio = async (domain, project) => {
       throw error;
     }
   };
-  export const deleteProjectFromFirestore = async (projectId) => {
-    if (!projectId) {
-      throw new Error('Project ID is required for deletion.');
+export const deleteProjectFromFirestore = async (domain, projectId) => {
+    if (!domain || !projectId) {
+        throw new Error('Domain and Project ID are required for deletion.');
     }
-  
-    const projectsCollection = collection(db, 'projects');
-    const projectDoc = doc(projectsCollection, projectId);
-  
+
+    let color = domain === '' ? 'gray' : '#0099ff';
+    console.log(`%cDeleting Project ${projectId} from ${domain ? domain : 'undefined'}`, `color: ${color};`);
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+
     try {
-      const docSnapshot = await getDoc(projectDoc);
-  
-      if (docSnapshot.exists()) {
-        await deleteDoc(projectDoc);
-        console.log('Project deleted successfully.');
-        deleteProjectFromStorage(projectId);
-      } else {
-        console.log('Document does not exist.');
-        // Handle the case where the document doesn't exist
-        throw new Error('Project does not exist.');
-      }
-    } catch (error) {
-      console.error('Error deleting project:', error.message);
-      throw error;
+        const docSnapshot = await getDoc(projectDocRef);
+
+        if (docSnapshot.exists()) {
+            await deleteDoc(projectDocRef);
+            color = '#54a134';
+            console.log(`%cProject ${projectId} deleted successfully from ${domain}`, `color: ${color};`);
+            deleteProjectFromStorage(domain, projectId); // Assuming you also pass the domain to this function
+        } else {
+            color = 'red';
+            console.error(`%cProject ${projectId} does not exist in ${domain}`, `color: ${color};`);
+            throw new Error('Project does not exist.');
+        }
+    } 
+    catch (error) {
+        color = 'red';
+        console.error(`%cError deleting project ${projectId} from ${domain}: ${error.message}`, `color: ${color};`);
+        throw error;
     }
-  };
+};
+
   
 // Collection Operations
 export const addCollectionToStudioProject = async (domain, projectId, collectionData) => {
@@ -204,16 +218,20 @@ export const addCollectionToStudioProject = async (domain, projectId, collection
     }
 };
 
-export const deleteCollectionFromFirestore = async (projectId, collectionId) => {
-    if (!projectId || !collectionId) {
-        throw new Error('Project ID and Collection ID are required for deletion.');
+export const deleteCollectionFromFirestore = async (domain, projectId, collectionId) => {
+    if (!domain || !projectId || !collectionId) {
+        throw new Error('Domain, Project ID, and Collection ID are required for deletion.');
     }
 
-    const projectsCollection = collection(db, 'projects');
-    const projectDoc = doc(projectsCollection, projectId);
+    let color = domain === '' ? 'gray' : '#0099ff';
+    console.log(`%cDeleting Collection ${collectionId} from Project ${projectId} in ${domain ? domain : 'undefined'}`, `color: ${color};`);
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
 
     try {
-        const projectSnapshot = await getDoc(projectDoc);
+        const projectSnapshot = await getDoc(projectDocRef);
 
         if (projectSnapshot.exists()) {
             const projectData = projectSnapshot.data();
@@ -221,285 +239,358 @@ export const deleteCollectionFromFirestore = async (projectId, collectionId) => 
                 (collection) => collection.id !== collectionId
             );
 
-            await updateDoc(projectDoc, { collections: updatedCollections });
-            console.log('Collection deleted successfully.');
-            deleteCollectionFromStorage(projectId, collectionId);
+            await updateDoc(projectDocRef, { collections: updatedCollections });
+            color = '#54a134';
+            console.log(`%cCollection ${collectionId} deleted successfully from Project ${projectId} in ${domain}`, `color: ${color};`);
+            deleteCollectionFromStorage(domain, projectId, collectionId); // Assuming you also pass the domain to this function
         } else {
-            console.log('Project document does not exist.');
+            color = 'red';
+            console.error(`%cProject ${projectId} does not exist in ${domain}`, `color: ${color};`);
             throw new Error('Project does not exist.');
         }
     } catch (error) {
-        console.error('Error deleting collection:', error.message);
+        color = 'red';
+        console.error(`%cError deleting collection ${collectionId} from Project ${projectId} in ${domain}: ${error.message}`, `color: ${color};`);
         throw error;
     }
 };
+
 
 // Function to create new event for a project in the cloud firestore
-export const addEventToFirestore = async (projectId,eventData) => {
+export const addEventToFirestore = async (domain, projectId, eventData) => {
+    if (!domain || !projectId || !eventData) {
+        throw new Error('Domain, Project ID, and Event data are required.');
+    }
 
-    const {type,date,location} =eventData;
-    const id= `${type.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
+    const { type, date, location } = eventData;
+    const id = `${type.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
 
-    const projectsCollection = collection(db, 'projects');
-    const projectDoc = doc(projectsCollection, projectId);
+    let color = domain === '' ? 'gray' : '#0099ff';
+    console.log(`%cAdding Event ${id} to Project ${projectId} in ${domain ? domain : 'undefined'}`, `color: ${color};`);
 
-    const eventsCollection = collection(projectDoc, 'events');
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+
+    const eventsCollectionRef = collection(projectDocRef, 'events');
     const eventDoc = {
-        id : id,
+        id: id,
         ...eventData
-    }
+    };
 
-    return setDoc(doc(eventsCollection, eventDoc.id), eventDoc)
-    .then(() => {
-        return updateDoc(projectDoc, {
-            events: arrayUnion({ id, type, date, location, crews: [] }), // Assuming collections is an array in your projectData
-    }) })
-    .then(() => {
-        console.log('Event added to project successfully.');
-        return id
-    }) 
-    .catch((error) => {
-        console.error('Error adding event to project:', error.message);
+    try {
+        await setDoc(doc(eventsCollectionRef, eventDoc.id), eventDoc);
+
+        await updateDoc(projectDocRef, {
+            events: arrayUnion({ id, type, date, location, crews: [] }) // Assuming events is an array in your projectData
+        });
+
+        color = '#54a134';
+        console.log(`%cEvent ${id} added to Project ${projectId} in ${domain} successfully.`, `color: ${color};`);
+        return id;
+    } catch (error) {
+        color = 'red';
+        console.error(`%cError adding event ${id} to Project ${projectId} in ${domain}: ${error.message}`, `color: ${color};`);
         throw error;
-});
+    }
 };
+
 // userIs need to be the key valude pair of projectDoc
-export const addCrewToFirestore = async (projectId,eventId,userData) => {
-    
-    const projectsCollection = collection(db, 'projects');
-    const projectDoc = doc(projectsCollection, projectId);
-
-    const eventsCollection = collection(projectDoc, 'events');
-    const eventDoc = doc(eventsCollection,eventId);
-
-    const projectSnapshot =  await getDoc(projectDoc);
-    const projectData = projectSnapshot.data();
-    console.log(projectData);
-
-    const event = projectData.events.find(event => event.id === eventId);
-    
-    let updatedEvent = {
-        ...event,
-        crews: [...event.crews, userData]
+export const addCrewToFirestore = async (domain, projectId, eventId, userData) => {
+    if (!domain || !projectId || !eventId || !userData) {
+        throw new Error('Domain, Project ID, Event ID, and User data are required.');
     }
-    let updatedProject = {
-        ...projectData,
-        events: projectData.events.map(event => {
-            if (event.id === eventId) {
-                return updatedEvent;
-            }
-            return event;
+
+    let color = domain === '' ? 'gray' : '#0099ff';
+    console.log(`%cAdding crew to Event ${eventId} in Project ${projectId} under ${domain}`, `color: ${color};`);
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
         }
-        )
-    }
 
-    return updateDoc(projectDoc, updatedProject)
-   .then(() => {
-        console.log('User added to Event '+eventId+' successfully.');
-         
+        const projectData = projectSnapshot.data();
+        const event = projectData.events.find(event => event.id === eventId);
+
+        if (!event) {
+            throw new Error('Event does not exist.');
+        }
+
+        const updatedEvent = {
+            ...event,
+            crews: [...event.crews, userData]
+        };
+
+        const updatedProject = {
+            ...projectData,
+            events: projectData.events.map(event => event.id === eventId ? updatedEvent : event)
+        };
+
+        await updateDoc(projectDocRef, updatedProject);
+
+        color = '#54a134';
+        console.log(`%cCrew added to Event ${eventId} in Project ${projectId} under ${domain} successfully.`, `color: ${color};`);
+
         return eventId;
-    })
-    .catch((error) => {
-        console.error('Error adding user to project:', error.message);
+    } catch (error) {
+        color = 'red';
+        console.error(`%cError adding crew to Event ${eventId} in Project ${projectId} under ${domain}: ${error.message}`, `color: ${color};`);
         throw error;
-    });
+    }
 };
+
 // Budget
 /* const [budgetData, setBudgetData] = useState({
     amount: null
   }); */
-export const addBudgetToFirestore = async (projectId,budgetData) => {
-    const projectsCollection = collection(db, 'projects');
-    const projectDoc = doc(projectsCollection, projectId);
-
-    const projectSnapshot =  await getDoc(projectDoc);
-    const projectData = projectSnapshot.data();
-    
-    const id= `budget-${projectData.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
-    
-    const updatedProject = {
-        ...projectData,
-        budgets:budgetData, // Assuming collections is an array in your projectData
+  export const addBudgetToFirestore = async (domain, projectId, budgetData) => {
+    if (!domain || !projectId || !budgetData) {
+        throw new Error('Domain, Project ID, and Budget data are required.');
     }
 
-    return updateDoc(projectDoc, updatedProject)
-    .then(() => {
-        console.log('Budget added to project successfully.');
-        return budgetData
-    })
-    .catch((error) => {
-        console.error('Error adding budget to project:', error.message);
+    let color = domain === '' ? 'gray' : '#0099ff';
+    console.log(`%cAdding budget to Project ${projectId} under ${domain}`, `color: ${color};`);
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
+        }
+
+        const projectData = projectSnapshot.data();
+        const id = `budget-${projectData.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
+        
+        const updatedProject = {
+            ...projectData,
+            budgets: budgetData, // Assuming budgets is an array in your projectData
+        };
+
+        await updateDoc(projectDocRef, updatedProject);
+
+        color = '#54a134';
+        console.log(`%cBudget added to Project ${projectId} under ${domain} successfully.`, `color: ${color};`);
+
+        return budgetData;
+    } catch (error) {
+        color = 'red';
+        console.error(`%cError adding budget to Project ${projectId} under ${domain}: ${error.message}`, `color: ${color};`);
         throw error;
-    });
-
-
-
+    }
 };
+
 // Payment
-export const addPaymentToFirestore = async (projectId,paymentData) => {
-    
-    const projectsCollection = collection(db, 'projects');
-    const projectDoc = doc(projectsCollection, projectId);
-
-
-    const projectSnapshot =  await getDoc(projectDoc);
-    const projectData = projectSnapshot.data();
-
-    const id= `payment-${projectData.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
-    paymentData =  {
-        id,
-        ...paymentData
-    }
-    const updatedProject = {
-        ...projectData,
-        payments: arrayUnion(paymentData), // Assuming collections is an array in your projectData
+export const addPaymentToFirestore = async (domain, projectId, paymentData) => {
+    if (!domain || !projectId || !paymentData) {
+        throw new Error('Domain, Project ID, and Payment data are required.');
     }
 
+    let color = domain === '' ? 'gray' : '#0099ff';
+    console.log(`%cAdding payment to Project ${projectId} under ${domain}`, `color: ${color};`);
 
-    return updateDoc(projectDoc, updatedProject)
-   .then(() => {
-        console.log('Payment added to Project '+id+' successfully.');
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
+        }
+
+        const projectData = projectSnapshot.data();
+        const id = `payment-${projectData.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
+        
+        paymentData = {
+            id,
+            ...paymentData
+        };
+
+        const updatedProject = {
+            ...projectData,
+            payments: arrayUnion(paymentData),
+        };
+
+        await updateDoc(projectDocRef, updatedProject);
+
+        color = '#54a134';
+        console.log(`%cPayment added to Project ${id} under ${domain} successfully.`, `color: ${color};`);
+
         return id;
-    })
-    .catch((error) => {
-        console.error('Error adding payment to project:', error.message);
+    } catch (error) {
+        color = 'red';
+        console.error(`%cError adding payment to Project ${projectId} under ${domain}: ${error.message}`, `color: ${color};`);
         throw error;
-    });
+    }
 };
 
 // Expenses
-export const addExpenseToFirestore = async (projectId,expenseData) => {
+export const addExpenseToFirestore = async (domain, projectId, expenseData) => {
+    if (!domain || !projectId || !expenseData) {
+        throw new Error('Domain, Project ID, and Expense data are required.');
+    }
+
+    let color = domain === '' ? 'gray' : '#0099ff';
+    console.log(`%cAdding expense to Project ${projectId} under ${domain}`, `color: ${color};`);
     console.log(expenseData);
-    const projectsCollection = collection(db, 'projects');
-    const projectDoc = doc(projectsCollection, projectId);
 
-    const projectSnapshot =  await getDoc(projectDoc);
-    const projectData = projectSnapshot.data();
-    const id= `expense-${projectData.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
-    expenseData =  {
-        id,
-        ...expenseData
-    }
-    const updatedProject = {
-        ...projectData,
-        expenses: arrayUnion(expenseData), // Assuming collections is an array in your projectData
-    }
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
 
-    return updateDoc(projectDoc, updatedProject)
-    .then(() => {
-        console.log('Expense added to Project '+id+' successfully.');
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
+        }
+
+        const projectData = projectSnapshot.data();
+        const id = `expense-${projectData.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
+        
+        expenseData = {
+            id,
+            ...expenseData
+        };
+
+        const updatedProject = {
+            ...projectData,
+            expenses: arrayUnion(expenseData),
+        };
+
+        await updateDoc(projectDocRef, updatedProject);
+
+        color = '#54a134';
+        console.log(`%cExpense added to Project ${id} under ${domain} successfully.`, `color: ${color};`);
+
         return expenseData;
-    })
-    .catch((error) => {
-        console.error('Error adding expense to project:', error.message);
+    } catch (error) {
+        color = 'red';
+        console.error(`%cError adding expense to Project ${projectId} under ${domain}: ${error.message}`, `color: ${color};`);
         throw error;
-    });
+    }
 };
+
 
 
 // Collection Image Operations
 // add array of images to collection as selectedImages
-export const addSelectedImagesToFirestore = async (projectId, collectionId, images, page, size,totalPages) => {
-    if (!projectId || !collectionId || !images) {
-        throw new Error('Project ID, Collection ID, and Images are required.');
+export const addSelectedImagesToFirestore = async (domain, projectId, collectionId, images, page, size, totalPages) => {
+    if (!domain || !projectId || !collectionId || !images) {
+        throw new Error('Domain, Project ID, Collection ID, and Images are required.');
     }
 
-    let status = page===totalPages? 'selected' : 'selecting';
-    console.log(images)
-    const projectsCollection = collection(db, 'projects');
-    const projectDoc = doc(projectsCollection, projectId);
-    const subCollectionId = projectId + '-' + collectionId;
-    const collectionDoc = doc(projectDoc, 'collections', subCollectionId);
+    let status = page === totalPages ? 'selected' : 'selecting';
+    console.log(`%cUpdating image statuses for project: ${projectId}, collection: ${collectionId}`, `color: #0099ff;`);
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+    const subCollectionId = collectionId;
+    const collectionDocRef = doc(projectDocRef, 'collections', subCollectionId);
+
     try {
-        const collectionSnapshot = await getDoc(collectionDoc);
-        const collectionData = collectionSnapshot.data();
+        const collectionSnapshot = await getDoc(collectionDocRef);
 
-        if (collectionSnapshot.exists()) {
-            const updatedImages = collectionData.uploadedFiles.map((image) => {
-                const imageIndex = collectionData.uploadedFiles.indexOf(image);
-                const startIndex = (page - 1) * size;
-                const endIndex = page * size;
-
-                if (imageIndex >= startIndex && imageIndex < endIndex) {
-                    console.log(images.includes(image.url) ? 'selected' : '')
-
-                    const isSelected = images.some(img => img.url === image.url);
-                
-                    return {
-                        ...image,
-                        status: isSelected ? 'selected' : image.status || 'unselected'
-                    };
-                } else {
-                    return image; // retain the status if outside the page and size range
-                }
-            });
-
-
-
-            await updateDoc(collectionDoc, {...collectionData,uploadedFiles:updatedImages});
-            // update status on projeect
-            const projectSnapshot = await getDoc(projectDoc);
-            const projectData = projectSnapshot.data();
-            
-            await updateDoc(projectDoc, {...projectData, status: status});
-            console.log('Selected images status updated successfully.');
-
-        } else {
-            console.log('Collection document does not exist.');
+        if (!collectionSnapshot.exists()) {
+            console.log(`%cCollection ${collectionId} does not exist.`, 'color: red;');
             throw new Error('Collection does not exist.');
         }
+
+        const collectionData = collectionSnapshot.data();
+
+        const updatedImages = collectionData.uploadedFiles.map((image, index) => {
+            const startIndex = (page - 1) * size;
+            const endIndex = page * size;
+
+            if (index >= startIndex && index < endIndex) {
+                const isSelected = images.some(img => img.url === image.url);
+                return {
+                    ...image,
+                    status: isSelected ? 'selected' : image.status || 'unselected'
+                };
+            } else {
+                return image; // Retain the status for images outside the current page range
+            }
+        });
+
+        await updateDoc(collectionDocRef, { ...collectionData, uploadedFiles: updatedImages });
+
+        // Update status on the project
+        const projectSnapshot = await getDoc(projectDocRef);
+        if (projectSnapshot.exists()) {
+            const projectData = projectSnapshot.data();
+            await updateDoc(projectDocRef, { ...projectData, status: status });
+            console.log(`%cSelected images status updated successfully for project: ${projectId}.`, `color: #54a134;`);
+        } else {
+            console.log(`%cProject ${projectId} does not exist.`, 'color: red;');
+            throw new Error('Project does not exist.');
+        }
     } catch (error) {
-        console.error('Error updating image status:', error.message);
+        console.error(`%cError updating image status for project: ${projectId}, collection: ${collectionId} - ${error.message}`, 'color: red;');
         throw error;
     }
-}
+};
+
 // Update project status
-export const updateProjectStatusInFirestore = async (projectId, status) => {
-    if (!projectId || !status) {
-        throw new Error('Project ID and status are required.');
+export const updateProjectStatusInFirestore = async (domain, projectId, status) => {
+    if (!domain || !projectId || !status) {
+        throw new Error('Domain, Project ID, and status are required.');
     }
-    
 
-    const projectsCollection = collection(db, 'projects');
-    const projectDoc = doc(projectsCollection, projectId);
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
 
     try {
-        const projectSnapshot = await getDoc(projectDoc);
+        const projectSnapshot = await getDoc(projectDocRef);
 
         if (projectSnapshot.exists()) {
-            await updateDoc(projectDoc, { status: status });
-            console.log('Project status updated successfully.');
+            await updateDoc(projectDocRef, { status });
+            console.log(`%cProject status updated to "${status}" successfully for project: ${projectId}.`, `color: #54a134;`);
         } else {
-            console.log('Project document does not exist.');
+            console.log(`%cProject ${projectId} does not exist.`, 'color: red;');
             throw new Error('Project does not exist.');
         }
     } catch (error) {
-        console.error('Error updating project status:', error.message);
+        console.error(`%cError updating project status for project: ${projectId} - ${error.message}`, 'color: red;');
         throw error;
     }
-}
+};
+
 // Set cover photo
-export const setCoverPhotoInFirestore = async (projectId, image) => {
-    if (!projectId || !image) {
-        throw new Error('Project ID and Image are required.');
+export const setCoverPhotoInFirestore = async (domain, projectId, image) => {
+    if (!domain || !projectId || !image) {
+        throw new Error('Domain, Project ID, and Image are required.');
     }
 
-    const projectsCollection = collection(db, 'projects');
-    const projectDoc = doc(projectsCollection, projectId);
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
 
     try {
-        const projectSnapshot = await getDoc(projectDoc);
-        const projectData = projectSnapshot.data();
+        const projectSnapshot = await getDoc(projectDocRef);
 
         if (projectSnapshot.exists()) {
-            await updateDoc(projectDoc, { projectCover: image });
-            console.log('Cover photo updated successfully.');
+            await updateDoc(projectDocRef, { projectCover: image });
+            console.log(`%cCover photo updated successfully for project: ${projectId}.`, `color: #54a134;`);
         } else {
-            console.log('Project document does not exist.');
+            console.log(`%cProject ${projectId} does not exist.`, 'color: red;');
             throw new Error('Project does not exist.');
         }
     } catch (error) {
-        console.error('Error updating cover photo:', error.message);
+        console.error(`%cError updating cover photo for project: ${projectId} - ${error.message}`, 'color: red;');
         throw error;
     }
-}
+};

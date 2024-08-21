@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { getUserByID, getUsersByRole, teams } from '../../data/teams';
 import { addCrew } from '../../app/slices/projectsSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
+import { selectDomain } from '../../app/slices/authSlice';
 
 function AddCrewModal({ project,eventId, visible, onClose }) {
   const dispatch = useDispatch()
@@ -12,6 +13,7 @@ function AddCrewModal({ project,eventId, visible, onClose }) {
     name: 'Sam',
     });
   const [users, setUsers] = useState(getUsersByRole(setCrewData.role));
+  const domain = useSelector(selectDomain)
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -38,7 +40,7 @@ function AddCrewModal({ project,eventId, visible, onClose }) {
       }
   };
   const handleSubmit = () => {
-    dispatch(addCrew({projectId:project.id,eventId:eventId,crewData:crewData}))
+    dispatch(addCrew({domain, projectId:project.id,eventId:eventId,crewData:crewData}))
     .then((data)=>{
       dispatch(showAlert({type:'success', message:`Event <b></b> added successfully!`}));
     })

@@ -20,7 +20,7 @@ const initialState = {
       // In MB 
       // 1 GB - 1000
       total: 5000,
-      available:1
+      available:2000
     },
     projects:{
 
@@ -67,8 +67,11 @@ export const login = createAsyncThunk(
           console.log( JSON.stringify(user.studio))
           localStorage.setItem('studio', JSON.stringify(user.studio));
           console.log('Stored '+ user.studio +' to local storage...')
+          // store user
+          localStorage.setItem('user', JSON.stringify(user));
+          console.log('Stored '+ user +' to local storage...')
           return {
-            studio: user.studio,
+            ...user
           }
         }
       } 
@@ -95,6 +98,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       localStorage.removeItem('authenticated');
       localStorage.removeItem('studio');
+      localStorage.removeItem('user')
       console.log('%cLogged out...', 'color: orange; font-size: 0.9rem;');
       state.user = { email: '', access: [] };
       state.currentStudio = { name: '', domain: '' }; 
@@ -113,14 +117,14 @@ const authSlice = createSlice({
       {
         let color= '#54a134'
         console.log(`%cAuthenticated`, `color: ${color}; font-size: 0.8rem`);
-        
+        state.user = JSON.parse(localStorage.getItem('user'));
       }
       }
     },
     checkStudioStatus: (state) => {
       const studioLocal = localStorage.getItem('studio');
-      console.log(studioLocal)
-      state.currentStudio = JSON.parse(studioLocal) && JSON.parse(studioLocal);
+      console.log(JSON.parse(studioLocal))
+      state.currentStudio = JSON.parse(studioLocal);
     },
     setUser: (state, action) => {
       state.user = action.payload;
@@ -168,6 +172,7 @@ export default authSlice.reducer;
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
 export const selectUser = (state) => state.auth.user;
 export const selectUserStudio = (state) => state.auth.currentStudio;
+export const selectDomain = (state) => state.auth.currentStudio.domain;
 export const selectAuthLoading = (state) => state.auth.loading;
 export const selectAuthError = (state) => state.auth.error;
 export const selectCreateStudioModal = (state) => state.auth.createStudio

@@ -4,10 +4,12 @@ import { showAlert } from '../../app/slices/alertSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
 import { formatDecimal } from '../../utils/stringUtils';
+import { selectDomain } from '../../app/slices/authSlice';
 
 function AddPaymentModal({ project }) {
   const dispatch = useDispatch();
   const visible = useSelector(selectModal);
+  const domain = useSelector(selectDomain)
   const onClose = () => dispatch(closeModal('addPayment'));
   
   const [paymentData, setPaymentData] = useState({
@@ -57,7 +59,7 @@ function AddPaymentModal({ project }) {
   }
   const handleSubmit = () => {
     if (validateForm()) {
-      dispatch(addPayment({ projectId: project.id, paymentData }))
+      dispatch(addPayment({domain, projectId: project.id, paymentData }))
         .then((data) => {
           dispatch(showAlert({type:'success', message:`<b>${paymentData.name}</b> payment added successfully!`}));
           onClose();

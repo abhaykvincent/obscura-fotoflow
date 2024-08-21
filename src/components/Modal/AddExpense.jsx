@@ -4,9 +4,11 @@ import { showAlert } from '../../app/slices/alertSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
 import { formatDecimal } from '../../utils/stringUtils';
+import { selectDomain } from '../../app/slices/authSlice';
 
 function AddExpenseModal({ project }) {
   const dispatch = useDispatch();
+  const domain = useSelector(selectDomain)
   const visible = useSelector(selectModal);
   const onClose = () => dispatch(closeModal('addExpense'));
   
@@ -53,7 +55,7 @@ function AddExpenseModal({ project }) {
   }
   const handleSubmit = () => {
     if (validateForm()) {
-      dispatch(addExpense({ projectId: project.id, paymentData:expenseData }))
+      dispatch(addExpense({ domain,projectId: project.id, paymentData:expenseData }))
         .then((data) => {
           dispatch(showAlert({type:'success', message:`<b>${expenseData.name}</b> payment added successfully!`}));
           onClose();

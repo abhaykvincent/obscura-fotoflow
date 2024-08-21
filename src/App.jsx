@@ -101,8 +101,8 @@ export default function App() {
             )}
               <Route path="/onboarding" element={<Onboarding />} />
 
-            <Route path="/share/:projectId/:collectionId?" element={<ShareProject/>}/>
-            <Route path="/selection/:projectId/:collectionId?" element={<Selection/>}/>
+            <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>
+            <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>
             <Route path="/masanory-grid" element={<ImageGallery />}/>
           </Routes>
         )}

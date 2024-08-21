@@ -3,11 +3,13 @@ import './ShareGallery.scss'
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
 import { getGalleryURL, getShareURL } from '../../utils/stringUtils';
+import { selectDomain } from '../../app/slices/authSlice';
 
 function ShareGallery({project }) {
   const dispatch = useDispatch()
   const visible = useSelector(selectModal)
   const onClose = () => dispatch(closeModal('shareGallery'))
+  const domain = useSelector(selectDomain)
   if (!visible.shareGallery) {
     return null;
   }
@@ -45,13 +47,13 @@ function ShareGallery({project }) {
               </div>
               <div className="link-pin">
 
-                <a className='link' href={getGalleryURL('share',project.id)} target='_blank'
+                <a className='link' href={getGalleryURL('share',domain,project.id)} target='_blank'
                 >{`🔗 Share Gallery`}</a>
                 <p className='access'>🔓 Public</p>
               </div>
               <div className="link-pin">
 
-              <a className='link' href={getGalleryURL('selection',project.id)} target='_blank'
+              <a className='link' href={getGalleryURL('selection',domain,project.id)} target='_blank'
                 >{`🔗 Selection Gallery`}</a>
                 <p className='pin'>🔐 {project.pin}</p>
               </div>

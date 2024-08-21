@@ -29,7 +29,7 @@ export const addProject = createAsyncThunk(
 
 export const deleteProject = createAsyncThunk(
   'projects/deleteProject',
-  (projectId) => { deleteProjectFromFirestore(projectId);
+  (domain,projectId) => { deleteProjectFromFirestore(domain, projectId);
     return projectId;
   }
 );
@@ -46,24 +46,25 @@ export const addCollection = createAsyncThunk(
 
 export const deleteCollection = createAsyncThunk(
   'projects/deleteCollection',
-  async ({ projectId, collectionId }, { dispatch }) => {
-    await deleteCollectionFromFirestore(projectId, collectionId);
+  async ({ domain,projectId, collectionId }, { dispatch }) => {
+    await deleteCollectionFromFirestore(domain,projectId, collectionId);
     return { projectId, collectionId };
   }
 );
 // Event
 export const addEvent = createAsyncThunk(
   'projects/addEvent',
-  async ({ projectId, newEvent }, { dispatch }) => {
-    const id = await addEventToFirestore(projectId, newEvent);
+  async ({ domain, projectId, newEvent }, { dispatch }) => {
+    const id = await addEventToFirestore(domain,projectId, newEvent);
     return ({projectId:projectId, newEvent:{id, ...newEvent}})
   }
 );
 // Crew
 export const addCrew = createAsyncThunk(
   'projects/addCrew',
-  async ({ projectId, eventId, crewData }, { dispatch }) => {
-    await addCrewToFirestore(projectId, eventId, crewData);
+  async ({ domain, projectId, eventId, crewData }, { dispatch }) => {
+    console.log(domain)
+    await addCrewToFirestore(domain, projectId, eventId, crewData);
     return { projectId, eventId, crewData };
   }
 );
@@ -71,25 +72,25 @@ export const addCrew = createAsyncThunk(
 // Payments
 export const addPayment =  createAsyncThunk(
   'projects/addPayment',
-  async ({ projectId, paymentData }, { dispatch }) => {
-    console.log({ projectId, paymentData })
-    await addPaymentToFirestore(projectId, paymentData);
+  async ({ domain,projectId, paymentData }, { dispatch }) => {
+    console.log({ domain, projectId, paymentData })
+    await addPaymentToFirestore(domain, projectId, paymentData);
     return { projectId, paymentData };
   }
 );
 // Expenses
 export const addExpense =  createAsyncThunk(
   'projects/addExpense',
-  async ({ projectId, paymentData }, { dispatch }) => {
-    console.log({ projectId, paymentData })
-    await addExpenseToFirestore(projectId, paymentData);
+  async ({ domain,projectId, paymentData }, { dispatch }) => {
+    console.log({ domain,projectId, paymentData })
+    await addExpenseToFirestore(domain,projectId, paymentData);
     return { projectId, expenseData:paymentData };
   }
 );
 export const addBudget =  createAsyncThunk(
   'projects/addBudget',
-  async ({ projectId, budgetData }, { dispatch }) => {
-    budgetData = await addBudgetToFirestore(projectId, budgetData);
+  async ({ domain,projectId, budgetData }, { dispatch }) => {
+    budgetData = await addBudgetToFirestore(domain, projectId, budgetData);
     console.log(budgetData)
     return {budgetData};
   }

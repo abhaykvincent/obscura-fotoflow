@@ -3,10 +3,11 @@ import ImageGallery from '../../ImageGallery/ImageGallery';
 import { fetchImages } from '../../../firebase/functions/firestore';
 import { addAllFileSizesToMB } from '../../../utils/fileUtils';
 import UploadButton from '../../UploadButton/UploadButton';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUploadList, setUploadStatuss } from '../../../app/slices/uploadSlice';
 import Lottie from 'react-lottie';
 import animationData from '../../../assets/animations/UploadFiles.json';
+import { selectDomain } from '../../../app/slices/authSlice';
 
 const CollectionImages = ({ id, collectionId,collection }) => {
     const dispatch =useDispatch()
@@ -15,6 +16,7 @@ const [collectionImages, setCollectionImages] = useState([]);
 const [imageUrls, setImageUrls] = useState([]);
 const [selectedImages, setSelectedImages] = useState([]);
 const [isPhotosImported, setIsPhotosImported] = useState(false);
+const domain = useSelector(selectDomain)
 //import size
 const [showAllPhotos,setShowAllPhotos]=useState(true);
 const [page,setPage]=useState(1);
@@ -46,8 +48,9 @@ useEffect(() => {
 useEffect(()=>{
     setShowAllPhotos(true)
     //get images from 
-    fetchImages(id,collectionId)
+    fetchImages(domain,id,collectionId)
     .then((images)=>{
+        console.log(images)
         setCollectionImages(images)
     })
     .catch((error)=>{
@@ -107,6 +110,10 @@ return (
                 <div className="empty-message">
                 </div>
             }
+
+            <div className={`open-in ${showAllPhotos ? 'disabled':''}`}>
+                Open in <div className="lr button secondary" >Lightroom</div>
+            </div>
         </div>
         {
             imageUrls.length > 0 ?
