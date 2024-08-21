@@ -20,7 +20,7 @@ import { closeModal, openModal, selectModal } from '../../app/slices/modalSlice'
 import { showAlert } from '../../app/slices/alertSlice';
 
 import './Project.scss'
-import { selectUserStudio } from '../../app/slices/authSlice';
+import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 
 export default function Project() {
   let { id} = useParams();
@@ -31,9 +31,10 @@ export default function Project() {
   const projects = useSelector(selectProjects)
   const projectsStatus = useSelector(selectProjectsStatus)
   const {confirmDeleteProject} = useSelector(selectModal)
+  const domain = useSelector(selectDomain)
 
   const onDeleteConfirm = () => {
-    dispatch(deleteProject(id)).then(() => {
+    dispatch(deleteProject(domain,id)).then(() => {
       navigate(`/${defaultStudio.domain}/projects`);
       dispatch(closeModal('confirmDeleteProject'))
       dispatch(showAlert({type:'success-negative', message:`Project <b>${project.name}</b> deleted successfully!`}));// Redirect to /projects page
