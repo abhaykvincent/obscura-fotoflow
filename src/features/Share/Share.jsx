@@ -6,9 +6,12 @@ import './Share.scss';
 import { fetchProject, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
 import ShareGallery from '../../components/ImageGallery/ShareGallery';
 import { useSelector } from 'react-redux';
-import { selectUserStudio } from '../../app/slices/authSlice';
+import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 
 export default function ShareProject() {
+const studio = useSelector(selectUserStudio)
+
+  
   // set body color to white
   useEffect(() => {
     document.body.style.backgroundColor = 'white';
@@ -25,11 +28,11 @@ export default function ShareProject() {
 // if co collectionIs is passed, use the first collectionId
     collectionId  = collectionId || project?.collections[0]?.id
     
-    const domain= defaultStudio.domain
+    
+const domain = useSelector(selectDomain)
   // Fetch Images based on projectId
   const fetchProjectData = async () => {
     try {
-      debugger
       const projectData = await fetchProject(domain,projectId);
 
       console.log(projectData)
@@ -71,23 +74,29 @@ export default function ShareProject() {
   const CollectionsPanel = () => {
     return (
       <div className="collections-panel">
-        {
-          project.collections.map((collection, index) => (
-            <div
-              key={collection.id}
-              className={`collection-tab ${collection.id === collectionId || (!collectionId && index === 0) ? 'active' : ''}`}
-            >
-              <Link to={`/share/${project.id}/${collection.id}`}>{collection.name}</Link>
-            </div>
-          ))
+      {project.collections.map((collection, index) => (
+        <div
+          key={collection.id}
+          className={`
+            collection-tab 
+            ${collection.id === collectionId || (!collectionId && index === 0) ? 'active' : ''}
+            ${collection.uploadedFiles === undefined ? 'disabled' : ''}
+          `}
+        >
+          {
+          <Link to={collection.uploadedFiles !== undefined && `/share/${project.id}/${collection.id}`}>{collection.name}</Link>
+          
         }
-      </div>
+        </div>
+      ))}
+    </div>
     );
   };
   return (
     <div className="share-project">
       <div className="project-header">
         <img className='banner' src={project.projectCover} alt="" srcset="" />
+        <div className="studio">{studio.name} Studio</div>
         <div className="gallery-info">
           <h1 className='projet-name'>{project.name}</h1>
           <p>10th October, 2023</p>

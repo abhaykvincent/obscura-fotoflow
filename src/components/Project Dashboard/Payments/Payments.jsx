@@ -22,14 +22,14 @@ function DashboardPayments({project}){
             <div className="signal"></div>
           </div>
           <div className={`circle ${ !project.budgets?'gray':'green'}`}>
-          {/* {
+          {
             project.budgets && (
               <>
               {formatDecimalK(project.budgets?.amount)}
               <p className="edit text">Edit</p>
               </>
             )
-          }  */}
+          } 
           </div>
           <div className="message">
             {!project.budgets}

@@ -2,13 +2,14 @@ import React, { useState } from 'react'
 import { addAllFileSizesToMB } from '../../utils/fileUtils';
 import { handleUpload } from '../../utils/uploadOperations';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectStorageLimit } from '../../app/slices/authSlice';
+import { selectDomain, selectStorageLimit } from '../../app/slices/authSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 
 function UploadButton({isPhotosImported,setIsPhotosImported,imageUrls,setImageUrls,id,collectionId,setUploadLists,setUploadStatus}) {
     const dispatch= useDispatch()
     let importFileSize=0
     const storageLimit = useSelector(selectStorageLimit)
+    const domain = useSelector(selectDomain)
     const handleFileInputChange = async (event) => {
         const selectedFiles = Array.from(event.target.files);
         setIsPhotosImported(true);
@@ -20,7 +21,7 @@ function UploadButton({isPhotosImported,setIsPhotosImported,imageUrls,setImageUr
             setUploadStatus('open');
             setIsPhotosImported(false);
     
-            let uploadedImages = await handleUpload(selectedFiles, id, collectionId, importFileSize, setUploadLists, setUploadStatus);
+            let uploadedImages = await handleUpload(domain,selectedFiles, id, collectionId, importFileSize, setUploadLists, setUploadStatus);
             setImageUrls([...imageUrls,...uploadedImages]);
         }
         else{
