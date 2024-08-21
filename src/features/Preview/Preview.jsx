@@ -3,6 +3,8 @@ import './Preview.scss'
 import { shortenFileName } from '../../utils/stringUtils'
 import { setCoverPhotoInFirestore } from '../../firebase/functions/firestore'
 import { useState } from 'react'
+import { selectDomain } from '../../app/slices/authSlice'
+import { useSelector } from 'react-redux'
 
 function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePreview, projectId }) {
   const [zoomValue, setZoomValue] = useState(100)
@@ -17,6 +19,8 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
     y: (screenHeight/2)-imageHeight/1.5
   })
   const [isDragging, setIsDragging] = useState(false);
+const domain = useSelector(selectDomain)
+
   // function to set image width and height from url
   const setImageSize = () => {
     const setimage = new Image();
@@ -155,7 +159,7 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
         </div>
         <div className="right-controls">
           <div className="icon set-cover"
-            onClick={() => setCoverPhotoInFirestore(projectId, image.url)}
+            onClick={() => setCoverPhotoInFirestore(domain,projectId, image.url)}
           >Set as cover</div>
           <div className="icon download"></div>
           <div className="icon share"></div>

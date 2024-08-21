@@ -131,6 +131,7 @@ body{
       grid-template-rows: auto auto;
       opacity: 0;
       gap: 8px*1;
+      align-items: start;
 
       padding-right: 8px;
       transform: translateY(-8px*2);
@@ -286,6 +287,29 @@ body{
                   transition-duration: 0.1s;
                 }
               }
+            }
+          }
+        }
+        .open-in{
+          font-size: 0.8rem;
+          color: $gray-default-dark;
+          display: flex;
+          gap: 8px;
+          align-items: center;
+          justify-content: flex-end;
+          .lr.button{
+            background-color: #001b30;
+            color: #2fa3f7;
+            border:1px solid  #2fa3f7;
+            box-shadow: -1px -1px 4px #000000, -1px 0px 8px #2fa4f79c;
+          }
+          &.disabled{
+            color: $gray4-default-dark;
+            .lr.button{
+              background-color: #001b3016;
+              color: #46545e;
+              border:1px solid  #7a838b40;
+              box-shadow: -1px -1px 4px #000000, -1px 0px 8px #2fa4f710;
             }
           }
         }

@@ -65,7 +65,7 @@ function DashboardEvents({project})
                   <div className="badge third"></div>
                 </div>
               </div>
-              <div className="cta button secondary outline">Reschedule</div>
+              <div className="cta button secondary outline">Confirmed</div>
             </div>
             <div className="crew">
               {

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { addEvent } from '../../app/slices/projectsSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
 import './AddEvent.scss'
+import { selectDomain } from '../../app/slices/authSlice';
 
 function AddEventModal({ project, visible, onClose}) {
   const dispatch = useDispatch();
@@ -14,6 +15,8 @@ function AddEventModal({ project, visible, onClose}) {
     location:'Kochi, India',
     crews: []
   });
+  const domain = useSelector(selectDomain)
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setEventData((prevData) => ({
@@ -22,7 +25,7 @@ function AddEventModal({ project, visible, onClose}) {
       }));
   };
   const handleSubmit = () => {
-    dispatch(addEvent({projectId:project.id,newEvent:EventData}))
+    dispatch(addEvent({domain,projectId:project.id,newEvent:EventData}))
     .then((data)=>{
       dispatch(showAlert({type:'success', message:`Event <b>${data.payload.newEvent.type}</b> added successfully!`}));
     })

@@ -7,6 +7,8 @@ import GalleryPIN from '../../components/GalleryPIN/GalleryPIN';
 import SelectionGallery from '../../components/ImageGallery/SelectionGallery';
 import PaginationControl from '../../components/PaginationControl/PaginationControl';
 import './Selection.scss';
+import { selectDomain } from '../../app/slices/authSlice';
+import { useSelector } from 'react-redux';
 
 export default function Selection() {
   let { projectId, collectionId } = useParams();
@@ -22,6 +24,7 @@ export default function Selection() {
   const [totalCollections, setTotalCollections] = useState(0);
   const [currentCollectionIndex, setCurrentCollectionIndex] = useState(0);
   const [selectionCompleted, setSelectionCompleted] = useState(true);
+  const domain = useSelector(selectDomain)
   const defaultOptions = {
     loop: false,
     autoplay: true,
@@ -49,6 +52,7 @@ export default function Selection() {
     document.title = project.name+' | Selection'
     setCurrentCollectionIndex(project.collections.findIndex(collection => collection.id === collectionId))
     let newImages = project?.collections.find((collection)=>collection.id===collectionId)?.uploadedFiles || []
+    console.log(newImages)
     setImages(newImages);
     setTotalPages(Math.ceil(newImages.length/size))
     setPage(1)
@@ -73,7 +77,9 @@ export default function Selection() {
   // Fetch project data and set Selected Images  
   const fetchProjectData = async () => {
     try {
-      const projectData = await fetchProject(projectId);
+      const projectData = await fetchProject(domain, projectId);
+      console.log(projectData)
+
       setProject(projectData);
       // get all images url with status 'selected' from projectData as set
       const selectedImagesInFirestore = []
@@ -93,7 +99,7 @@ export default function Selection() {
   // Handle add selected images
   const handleAddSelectedImages = async () => {
     try {
-      await addSelectedImagesToFirestore(projectId, collectionId, selectedImages,page,size,totalPages);
+      await addSelectedImagesToFirestore(domain, projectId, collectionId, selectedImages,page,size,totalPages);
     } catch (error) {
       console.error('Failed to add selected images:', error);
     }
@@ -102,7 +108,8 @@ export default function Selection() {
   // handle selection completed
   const handleSelectionCompleted = async () => {
     try {
-      await updateProjectStatusInFirestore(projectId, 'selected');
+      saveSelectedImages()
+      await updateProjectStatusInFirestore(domain,projectId, 'selected');
     }
     catch (error) {
       console.error('Failed to update project status:', error);
@@ -116,9 +123,16 @@ export default function Selection() {
       {project.collections.map((collection, index) => (
         <div
           key={collection.id}
-          className={`collection-tab ${collection.id === collectionId || (!collectionId && index === 0) ? 'active' : ''}`}
+          className={`
+            collection-tab 
+            ${collection.id === collectionId || (!collectionId && index === 0) ? 'active' : ''}
+            ${collection.uploadedFiles === undefined ? 'disabled' : ''}
+          `}
         >
-          <Link to={`/selection/${project.id}/${collection.id}`}>{collection.name}</Link>
+          {
+          <Link to={collection.uploadedFiles !== undefined && `/${domain}/selection/${project.id}/${collection.id}`}>{collection.name}</Link>
+          
+        }
         </div>
       ))}
     </div>
@@ -190,6 +204,7 @@ export default function Selection() {
   );
 
   function saveSelectedImages() {
+    debugger
     handleAddSelectedImages()
     selectedImages.forEach((image) => selectedImagesInCollection.push(image))
   }
