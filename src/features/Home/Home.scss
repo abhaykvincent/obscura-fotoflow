@@ -232,10 +232,10 @@
         grid-template-columns: 1fr  ;
         .project{
             .project-cover{
-                width: 80px
+                width: 8px*15
             }
             .project-details{
-                margin-left: -24px;
+                margin-left: 8px*2;
                 .empty-message {
                     display: none;
                 }

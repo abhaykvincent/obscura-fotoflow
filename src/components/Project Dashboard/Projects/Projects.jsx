@@ -5,11 +5,12 @@ import CrewCard from '../../Cards/CrewCard/CrewCard';
 import { getUserByID, teams } from '../../../data/teams';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../app/slices/modalSlice';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { showAlert } from '../../../app/slices/alertSlice';
 
 function DashboardProjects({project}){
   const dispatch =useDispatch()
+  const navigate = useNavigate();
   return (
     <>
     {
@@ -39,8 +40,8 @@ function DashboardProjects({project}){
         <div className="galleries">
           <div className="heading-shoots heading-section">
             <h3 className='heading '>Galleries <span>{project.collections.length}</span></h3>
-            <div className="new-shoot button tertiary l2 outline"
-              onClick={ ()=>{}}>+ New
+            <div className="new-shoot button tertiary l2 outline icon new"
+              onClick={ ()=>{}}>New
             </div>
           </div>
           <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/obscura/gallery/${project.id}`}>
@@ -78,13 +79,26 @@ function DashboardProjects({project}){
               </div>
             </div>
           </Link>
-          <div className="ctas">
-            <div className="button secondary outline bold pin" onClick={()=>{
+          {
+            project.pin?
+            <div className="ctas">
+            <div className="button secondary outline bold pin " onClick={()=>{
               navigator.clipboard.writeText(`${project.pin}`)
               showAlert('success', 'Pin copied to clipboard!')
             }}>PIN: {project.pin}</div>
-            <div className="button secondary outline disabled">Share</div>
+            <div className="button primary outline ">Share</div>
           </div>
+            :
+            <div className="ctas">
+            <div className="button primary  bold pin " onClick={()=>{
+              //go to project/collection
+              //`/moalisa/gallery/${project.id}/${project.collections[0].id}` with react naigate
+              navigate(`/monalisa/gallery/${project.id}/${project.collections[0].id}`)
+            }}>Upload Images</div>
+            <div className="button secondary outline disabled ">Share</div>
+          </div>
+          }
+          
         </div>
       </div>
     )}

@@ -1,15 +1,17 @@
 import React from 'react'
 import TimelineEvent from '../../Timeline/TimelineEvent'
 import { timelineData } from '../../../data/timeline'
+import ProjectExpiration from '../../ProjectExpiration/ProjectExpiration'
 
 function SidePanel() {
   return (
     <div className="side-panel box">
+        <ProjectExpiration createdAt={1724348248766} />
         <div className="headings">
             <div className="heading-shoots heading-section">
                 <h3 className='heading '>Client</h3>
             <div className="options">
-                <div className="button tertiary l2">Edit</div>
+                <div className="button tertiary l2 icon edit">Edit</div>
             </div>
             </div>
             

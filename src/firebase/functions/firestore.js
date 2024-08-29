@@ -8,7 +8,8 @@ import { update } from "firebase/database";
 
 // Studio
 export const createStudio = async (studioData) => {
-    const {name,status} =studioData;
+    console.log(studioData)
+    const {name} =studioData;
     const id= `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
     
     const studiosCollection = collection(db, 'studios');
@@ -16,10 +17,11 @@ export const createStudio = async (studioData) => {
         id : id,
         ...studioData
     }
-    return setDoc(doc(studiosCollection, studioDoc.id), studioDoc)
+    return setDoc(doc(studiosCollection, studioDoc.domain), studioDoc)
 
     .then(() => {
         console.log('Studio created successfully.');
+        return studioDoc
     })
     .catch((error) => {
         console.error('Error creating studio:', error.message);
@@ -39,18 +41,30 @@ export const fetchStudiosOfUser = async (email) => {
     console.log(user)
     return studio;
 };
+//fetch all studios
+export const fetchStudios = async () => {
+    const studiosCollection = collection(db, 'studios');
+    const querySnapshot = await getDocs(studiosCollection);
+    const studiosData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    return studiosData;
+}
 // Users
 export const createUser = async (userData) => {
     const {email,studio} = userData;
     console.log(userData)
     const usersCollection = collection(db, 'users');
     const userDoc = {
+        displayName:'',
         email : email,
         studio : studio
     }
     await setDoc(doc(usersCollection, userDoc.email), userDoc)
     return userDoc
 }
+
 export const fetchUsers = async () => {
     const usersCollection = collection(db, 'users');
     const querySnapshot = await getDocs(usersCollection);

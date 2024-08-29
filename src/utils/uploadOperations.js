@@ -13,7 +13,8 @@ import { showAlert } from "../app/slices/alertSlice";
 
 
 // Firebase Cloud Storage
-// File Singleupload function
+
+// File Single upload function
 export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
     const MAX_RETRIES = 5;
     const INITIAL_RETRY_DELAY = 500;
@@ -155,7 +156,7 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
 
     return results;
 };
-// ENTRY POINT
+// Upload ENTRY POINT
 export const handleUpload = async (domain,files, id, collectionId,importFileSize, setUploadLists,setUploadStatus, retries = 2) => {
     setUploadLists(files)
     // Slice the files array into smaller arrays of size sliceSize

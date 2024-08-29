@@ -8,9 +8,9 @@ function DashboardExpances({project}){
   return (<div className="payments expenses">
     <div className="heading-shoots heading-section">
         <h3 className='heading '>Expenses <span>{project.expenses?.length}</span></h3>
-        {project.expenses?.length>0&&<div className="new-shoot button tertiary l2 outline"
+        {project.expenses?.length>0&&<div className="new-shoot button tertiary l2 outline icon new"
           onClick={()=>project.expenses && dispatch(openModal('addExpense'))}
-          >+ New</div>}
+          >New</div>}
       </div>
       <div className={`card ${project.expenses ? '':'single'}`}>
         <div className={`chart box `}>
@@ -48,7 +48,7 @@ function DashboardExpances({project}){
               <>
               {
               project.expenses?.map((payment, index) => (
-                <AmountCard amount={`₹ ${payment.amount/1000}K`} 
+                <AmountCard amount={`₹${payment.amount/1000}K`} 
                 project={project}
                   direction="+ " 
                   percentage={payment.name} 
