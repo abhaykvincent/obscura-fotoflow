@@ -28,19 +28,7 @@ function AddStudio() {
   const handleSubmit = () => {
       // Call the API function to add a new project
       
-      createStudio(studioData)
-          .then((response) => {
-            let newStudioData = response.payload;
-              onClose();
-              dispatch(showAlert({type:'success', message:`New Project created!`}));
-            
-              navigate(`/${studioData.id}`);
-          })
-          .catch((error) => {
-              console.error('Error creating project:', error);
-              dispatch(showAlert({type:'error', message:`error`}));
-              // Handle error scenarios, e.g., show an error message
-          });
+      
   };
 
 

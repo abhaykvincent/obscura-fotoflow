@@ -6,7 +6,7 @@
     bottom: 8px*0;
     right: 8px*0;
     z-index: 12;
-    opacity: 0.2;
+    opacity: 0.4;
     cursor: pointer;
     transition-duration: 0.1s;
     &:hover{
@@ -103,6 +103,7 @@
     &.expanded{
         transition-duration: 0.1s;
 
+        opacity: 1;
         .support-actions{
         margin-bottom: 8px;
                 padding: 8px*2;
@@ -131,7 +132,7 @@
             transition-duration: 0.2s;
             transition-timing-function: ease-in-out;
             &:hover{
-              transform: scale(1.05);
+              transform: scale(1);
               transition-duration: 0.1s;
             transition-timing-function: ease-out;
       

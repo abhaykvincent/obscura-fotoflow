@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Lottie from 'react-lottie';
 import animationData from '../../assets/animations/CompletedAnimation.json';
-import { fetchProject, addSelectedImagesToFirestore, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
+import { fetchProject, addSelectedImagesToFirestore, updateProjectStatusInFirestore, removeUnselectedImagesFromFirestore } from '../../firebase/functions/firestore';
 import GalleryPIN from '../../components/GalleryPIN/GalleryPIN';
 import SelectionGallery from '../../components/ImageGallery/SelectionGallery';
 import PaginationControl from '../../components/PaginationControl/PaginationControl';
@@ -17,6 +17,7 @@ export default function Selection() {
   const [images, setImages] = useState([]);
   const [authenticated, setAuthenticated] = useState(false)
   const [selectedImages, setSelectedImages] = useState([]);
+  const [unselectedImages, setUnselectedImages] = useState([]);
   const [selectedImagesInCollection, setSelectedImagesInCollection] = useState([]);
   const [page,setPage]=useState(1);
   const [size,setSize]=useState(15);
@@ -96,19 +97,11 @@ export default function Selection() {
     }
   };
 
-  // Handle add selected images
-  const handleAddSelectedImages = async () => {
-    try {
-      await addSelectedImagesToFirestore(domain, projectId, collectionId, selectedImages,page,size,totalPages);
-    } catch (error) {
-      console.error('Failed to add selected images:', error);
-    }
-  };
 
   // handle selection completed
   const handleSelectionCompleted = async () => {
     try {
-      saveSelectedImages()
+      handleAddOrRemoveSelectedImages()
       await updateProjectStatusInFirestore(domain,projectId, 'selected');
     }
     catch (error) {
@@ -116,7 +109,18 @@ export default function Selection() {
     }
       
   };
-
+  const handleAddOrRemoveSelectedImages = async () => {
+    try {
+      if (selectedImages.length > 0) {
+        await addSelectedImagesToFirestore(domain, projectId, collectionId, selectedImages, page, size, totalPages);
+      } 
+      if (unselectedImages.length > 0) {
+        await removeUnselectedImagesFromFirestore(domain, projectId, collectionId, unselectedImages, page, size, totalPages);
+      }
+    } catch (error) {
+      console.error('Error updating selected/unselected images:', error);
+    }
+  };
   // Collections panel
   const CollectionsPanel = () => (
     <div className="collections-panel">
@@ -159,7 +163,7 @@ export default function Selection() {
             <div className="shared-collection">
               {
                 paginatedImages.length>0?
-                <SelectionGallery images={paginatedImages} {...{selectedImages,setSelectedImages,setSelectedImagesInCollection}} />
+                <SelectionGallery images={paginatedImages} {...{selectedImages,setSelectedImages,setUnselectedImages,setSelectedImagesInCollection}} />
                 :
                 <div className="no-images-message">
                   <p>There are no photos in this collection</p>
@@ -172,7 +176,7 @@ export default function Selection() {
                 currentPage={page}
                 totalPages={totalPages}
                 handlePageChange={(newPage) => {
-                  saveSelectedImages()
+                  handleAddOrRemoveSelectedImages()
                   setPage(newPage)
                 }}
                 handleSelectionCompleted={handleSelectionCompleted}
@@ -202,11 +206,8 @@ export default function Selection() {
       }
     </div>
   );
-
-  function saveSelectedImages() {
-    debugger
-    handleAddSelectedImages()
-    selectedImages.forEach((image) => selectedImagesInCollection.push(image))
-  }
+  
+  
+  
 }
 // Line Complexity  1.5 -> 1.7

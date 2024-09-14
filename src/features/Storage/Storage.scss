@@ -19,65 +19,7 @@
         @include boxed;
         margin-bottom: 8px*5;
         background-color: $dark-3;
-        .storage-pie-wrap{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: reveal-storage-space-pie;
-            animation-duration: 0.5s;
-            
-            .disabled{
-                opacity: 0.1;
-            }
-            .storage-pie{
-                width: 8px*20;
-                height: 8px*20;
-                border-radius: 100%;
-                border: 8px solid $gray3-accessible-dark;
-            }
-            .available-storage{
-                stroke: $dark-1;
-            }
-            .used-storage{
-                stroke: $green-default-dark;
-                // add drop shadow that glows
-                filter: drop-shadow(0 0 2px $green-dark-accessible-light);
-                transition-duration: 1s;
-                transition-timing-function: ease-out;
-            }
-            .used-storage-text{
-                font-weight: 700;
-                font-size: 0.95rem;
-                fill: $green-default-light;
-                opacity: 0;
-                animation: reveal-storage-text;
-                animation-duration: 0.5s;
-                animation-delay: 0.7s;
-                animation-fill-mode: forwards;
-            }
-            .available-storage-text{
-                font-weight: 400;
-                font-size: 0.4rem;
-                fill: $gray2-accessible-dark;
-                letter-spacing: -0.05rem;
-                opacity: 0;
-                animation: reveal-storage-text;
-                animation-duration: 0.5s;
-                animation-delay: 01s;
-                animation-fill-mode: forwards;
-            }
-            svg:nth-child(2){
-                .used-storage{
-                animation-delay: 5s;
-                }
-                .used-storage-text{
-                    animation-delay: 1.5s;
-                }
-                .available-storage-text{
-                    animation-delay: 1.7s;
-                }
-            }
-        }
+        
         .storage-insight{
             text-align: center;
             color: $gray-accessible-dark;
@@ -104,6 +46,7 @@
             }
         }
     }
+    
     section{
         margin: 8px*2;
         margin-bottom: 8px*4;
@@ -323,6 +266,64 @@
                   animation-timing-function: ease-out;
                 }
               }
+        }
+    }
+}
+.storage-pie-wrap{
+    display: flex;
+    align-items: start;
+    animation: reveal-storage-space-pie;
+    animation-duration: 0.5s;
+    
+    .disabled{
+        opacity: 0.1;
+    }
+    .storage-pie{
+        width: 8px*20;
+        height: 8px*20;
+        border-radius: 100%;
+        border: 8px solid $gray3-accessible-dark;
+    }
+    .available-storage{
+        stroke: $dark-1;
+    }
+    .used-storage{
+        stroke: $green-default-dark;
+        // add drop shadow that glows
+        filter: drop-shadow(0 0 2px $green-dark-accessible-light);
+        transition-duration: 1s;
+        transition-timing-function: ease-out;
+    }
+    .used-storage-text{
+        font-weight: 700;
+        font-size: 0.95rem;
+        fill: $green-default-light;
+        opacity: 0;
+        animation: reveal-storage-text;
+        animation-duration: 0.5s;
+        animation-delay: 0.7s;
+        animation-fill-mode: forwards;
+    }
+    .available-storage-text{
+        font-weight: 400;
+        font-size: 0.4rem;
+        fill: $gray2-accessible-dark;
+        letter-spacing: -0.05rem;
+        opacity: 0;
+        animation: reveal-storage-text;
+        animation-duration: 0.5s;
+        animation-delay: 01s;
+        animation-fill-mode: forwards;
+    }
+    svg:nth-child(2){
+        .used-storage{
+        animation-delay: 5s;
+        }
+        .used-storage-text{
+            animation-delay: 1.5s;
+        }
+        .available-storage-text{
+            animation-delay: 1.7s;
         }
     }
 }

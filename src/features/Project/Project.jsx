@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-//Components
+
+// Components
 import DashboardEvents from '../../components/Project Dashboard/Events/Events';
 import SidePanel from '../../components/Project/SidePanel/SidePanel';
 import Refresh from '../../components/Refresh/Refresh';
+
 // Modals
 import DashboardPayments from '../../components/Project Dashboard/Payments/Payments';
 import DashboardExpances from '../../components/Project Dashboard/Expances/Expances';
@@ -14,91 +16,94 @@ import AddPaymentModal from '../../components/Modal/AddPayment';
 import AddBudgetModal from '../../components/Modal/AddBudget';
 import AddCollectionModal from '../../components/Modal/AddCollection';
 import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
+
 // Redux
 import { deleteProject, selectProjects, selectProjectsStatus } from '../../app/slices/projectsSlice';
 import { closeModal, openModal, selectModal } from '../../app/slices/modalSlice';
 import { showAlert } from '../../app/slices/alertSlice';
-
-import './Project.scss'
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 
+import './Project.scss';
+
 export default function Project() {
-  let { id} = useParams();
-  console.log(id)
+  const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const defaultStudio = useSelector(selectUserStudio)
-  const projects = useSelector(selectProjects)
-  const projectsStatus = useSelector(selectProjectsStatus)
-  const {confirmDeleteProject} = useSelector(selectModal)
-  const domain = useSelector(selectDomain)
 
-  const onDeleteConfirm = () => {
-    dispatch(deleteProject(domain,id)).then(() => {
+  const defaultStudio = useSelector(selectUserStudio);
+  const projects = useSelector(selectProjects);
+  const projectsStatus = useSelector(selectProjectsStatus);
+  const { confirmDeleteProject } = useSelector(selectModal);
+  const domain = useSelector(selectDomain);
+
+  // Local state for the project
+  const [project, setProject] = useState(null);
+
+  // Update project whenever projects or id changes
+  useEffect(() => {
+    const selectedProject = projects?.find((p) => p.id === id);
+    setProject(selectedProject);
+
+    if (projectsStatus === 'succeeded' && !selectedProject) {
       navigate(`/${defaultStudio.domain}/projects`);
-      dispatch(closeModal('confirmDeleteProject'))
-      dispatch(showAlert({type:'success-negative', message:`Project <b>${project.name}</b> deleted successfully!`}));// Redirect to /projects page
-    })
-  };
+    }
+  }, [projects, id, projectsStatus, defaultStudio.domain, navigate]);
 
   useEffect(() => {
-    
-  if (projectsStatus=='loading') {
-    return <div>Loading...</div>;
-  }
-  }, [projectsStatus]);
-  // If no projects are available, return early
-  if (!projects) return;
-  const project = projects.find((p) => p.id === id);
-  console.log(project)
-  // If the project is not found, redirect to the projects page and return
-  if (!project) {
-    setTimeout(()=>{
+    if (project) {
+      console.log(project)
+      document.title = `${project.name} - ${project.type}`;
+    }
+  }, [project]);
+  useEffect(() => {
+      console.log(projects)
+  }, [projects]);
+
+  const handleDeleteConfirm = () => {
+    dispatch(deleteProject(domain, id)).then(() => {
       navigate(`/${defaultStudio.domain}/projects`);
-    },100)
-    return;
-  }
-  else{
-    document.title = `${project.name}'s ${project.type}`
-  }
-  
+      dispatch(closeModal('confirmDeleteProject'));
+      dispatch(showAlert({ type: 'success-negative', message: `Project <b>${project.name}</b> deleted successfully!` }));
+    });
+  };
+
+  // If the project is not found, return null
+  if (!project) return null;
+
   return (
     <>
       <main className='project-page'>
-
         <div className="project-dashboard">
-          <DashboardProjects project={project}/>
-            <div className="financials-overview ">
-          <DashboardPayments project={project}/>
-          <DashboardExpances project={project}/>
-            </div>
+          <DashboardProjects project={project} />
+          <div className="financials-overview">
+            <DashboardPayments project={project} />
+            <DashboardExpances project={project} />
+          </div>
           <DashboardEvents project={project} />
         </div>
-        <SidePanel/>
+        <SidePanel />
         {/* Modals */}
-        <AddCollectionModal project={project}/>
-        <AddPaymentModal  project={project}/>
-        <AddExpenseModal  project={project}/>
-        <AddBudgetModal  project={project}/>
-        {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm}/>:''}
-        <Refresh/>
-
+        <AddCollectionModal project={project} />
+        <AddPaymentModal project={project} />
+        <AddExpenseModal project={project} />
+        <AddBudgetModal project={project} />
+        {confirmDeleteProject && <DeleteConfirmationModal onDeleteConfirm={handleDeleteConfirm} />}
+        <Refresh />
       </main>
       <div className="project-info">
         <div className="breadcrumbs">
-          <Link className="back" to="/projects">Projects</Link>
+          <Link className="back" to={`/${defaultStudio.domain}/projects`}>Projects</Link>
         </div>
         <div className="client">
           <h1>{project.name}</h1>
           <div className="type">{project.type}</div>
         </div>
         <div className="project-options">
-          <div className="button tertiary" onClick={()=>{
-            dispatch(openModal('confirmDeleteProject'))
-          }}>Delete</div>
+          <button className="button tertiary" onClick={() => dispatch(openModal('confirmDeleteProject'))}>
+            Delete
+          </button>
         </div>
       </div>
     </>
-  )
-  }
-  // Line complexity 2.0 -> 3.5 -> 2.0 ->2.5 -> 3.0 -> 2.5 -> 1.6 ->0.9
+  );
+}

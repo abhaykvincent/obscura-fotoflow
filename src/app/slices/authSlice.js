@@ -8,6 +8,7 @@ import { useRevalidator } from 'react-router';
 
 const initialState = {
   user: {
+    name:'',
     email: '',
     access: [] // Array of studio names the user has access to
   },
@@ -136,6 +137,7 @@ const authSlice = createSlice({
       state.error = action.payload;
     },
     setCurrentStudio: (state, action) => {
+      console.log(action.payload)
       state.currentStudio = action.payload;
       localStorage.setItem('studio',JSON.parse(action.payload))
     },

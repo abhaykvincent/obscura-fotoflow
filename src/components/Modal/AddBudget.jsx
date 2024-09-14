@@ -23,6 +23,7 @@ export default function AddBudgetModal({ project }) {
     {amount: 45000},
     {amount: 60000},
   ]);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(0);
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {
@@ -81,9 +82,11 @@ export default function AddBudgetModal({ project }) {
               id="amount"
               name="amount"
               className='bigger symbol'
-              value={budgetData.amount?budgetData.amount:0}
+              placeholder={aiSuggestions[activeSuggestionIndex].amount}
+              value={budgetData.amount!==null?budgetData.amount:null}
               type="number"
               onChange={handleInputChange}
+              
             />
           </div>
           {errors.amount && <div className="error">{errors.amount}</div>}
@@ -97,6 +100,13 @@ export default function AddBudgetModal({ project }) {
                   return (
                     <div className="tag button tertiary suggestion"
                     onClick={() => handleAISuggestionChange(suggestion.amount)}
+                    //on hover set activeSuggestionIndex
+                    onMouseEnter={() => 
+                      setActiveSuggestionIndex(index)}
+                    onMouseLeave={
+                      // after 2 s reset to 0
+                      () => setTimeout(() => setActiveSuggestionIndex(0), 10000)
+                    } 
                     key={index}
                     >{formatDecimal(suggestion.amount)}</div>
                   )

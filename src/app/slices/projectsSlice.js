@@ -7,7 +7,7 @@ import { showAlert } from './alertSlice';
 
 const initialState = {
   data: [],
-  status: 'idle',
+  status: 'succeeded',
   loading : false,
   error: null,
 };
@@ -92,7 +92,7 @@ export const addBudget =  createAsyncThunk(
   async ({ domain,projectId, budgetData }, { dispatch }) => {
     budgetData = await addBudgetToFirestore(domain, projectId, budgetData);
     console.log(budgetData)
-    return {budgetData};
+    return {projectId,budgetData};
   }
 );
 
@@ -131,7 +131,7 @@ const projectsSlice = createSlice({
         state.loading = true;
       })
      .addCase(addProject.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.status = 'succeeded';
         state.loading = false;
         state.data.push(action.payload);
       })
@@ -148,7 +148,7 @@ const projectsSlice = createSlice({
         state.loading = true;
       })
       .addCase(deleteProject.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.status = 'succeeded';
         state.loading = false;
         state.data = state.data.filter(project => project.id !== action.payload);
       })
@@ -164,7 +164,7 @@ const projectsSlice = createSlice({
         state.loading = true;
       })
       .addCase(addCollection.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.status = 'succeeded';
         state.loading = false;
         const { projectId, collection } = action.payload;
         state.data = state.data.map((project) => {
@@ -187,7 +187,7 @@ const projectsSlice = createSlice({
         state.loading = true;
       })
       .addCase(deleteCollection.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.status = 'succeeded';
         state.loading = false;
         const { projectId, collectionId } = action.payload;
         state.data = state.data.map((project) => {
@@ -210,7 +210,7 @@ const projectsSlice = createSlice({
         state.loading = true;
       })
       .addCase(addEvent.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.status = 'succeeded';
         state.loading = false;
         const { projectId, newEvent } = action.payload;
         state.data = state.data.map((project) => {
@@ -233,7 +233,7 @@ const projectsSlice = createSlice({
         state.loading = true;
       })
       .addCase(addCrew.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.status = 'succeeded';
         state.loading = false;
         const { projectId, eventId, crewData } = action.payload;
         state.data = state.data.map((project) => {
@@ -262,7 +262,7 @@ const projectsSlice = createSlice({
         state.loading = true;
       })
      .addCase(addPayment.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.status = 'succeeded';
         state.loading = false;
         const { projectId, paymentData } = action.payload;
         state.data = state.data.map((project) => {
@@ -286,7 +286,7 @@ const projectsSlice = createSlice({
         state.loading = true;
       })
       .addCase(addExpense.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.status = 'succeeded';
         state.loading = false;
         const { projectId, expenseData } = action.payload;
         console.log(expenseData);
@@ -312,13 +312,15 @@ const projectsSlice = createSlice({
         state.loading = true;
       })
       .addCase(addBudget.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.status = 'succeeded';
         state.loading = false;
         const { projectId, budgetData } = action.payload;
+        console.log({ projectId, budgetData })
         state.data = state.data.map((project) => {
           if (project.id === projectId) {
             return { ...project, budgets: budgetData };
           }
+          console.log(project)
           return project;
         });
       })
