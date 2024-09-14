@@ -13,8 +13,8 @@ function Sidebar() {
   console.log(user)
   const [profileOptionActive, setProfileOptionActive] = useState(false)
   const toggleProfileOption = () => {
-    setProfileOptionActive(!profileOptionActive)
-  }
+    setProfileOptionActive((prevState) => !prevState);
+  };
   const defaultStudio = useSelector(selectUserStudio)
   const location = useLocation();
   const params = useParams()

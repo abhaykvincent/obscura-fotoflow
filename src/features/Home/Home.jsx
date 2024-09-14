@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectProjects } from '../../app/slices/projectsSlice';
 import { openModal } from '../../app/slices/modalSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
+import StoragePie from '../../components/StoragePie/StoragePie';
 function Home() {
     const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
@@ -25,7 +26,7 @@ function Home() {
         <>
         
             <div className="home-header">
-                <Link to="/notifications" className="notifications"><div  className="new"></div></Link>
+                
             </div>
             <main className="home">
                 {/*  */}
@@ -47,6 +48,12 @@ function Home() {
                         </div>
                         <h1 className='welcome-message'>Let's manage your Snaps </h1>
                     </div>
+
+                    <div className="storage-pie-wrap">
+                        <StoragePie totalSpace={1000} usedSpace={10} active/>
+                        <StoragePie totalSpace={1000} usedSpace={10} />
+                    </div>
+
                     <div className="actions">
                         <div className="button primary icon add"
                             onClick={()=>dispatch(openModal('createProject'))}

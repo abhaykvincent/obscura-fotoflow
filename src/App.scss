@@ -1066,7 +1066,7 @@ body{
     }
     .modal{
       display: grid;
-      width: 90vw;
+      max-width: 90vw;
       
     transform: translateX(-50%);
       .form-section{

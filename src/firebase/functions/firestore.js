@@ -556,6 +556,51 @@ export const addSelectedImagesToFirestore = async (domain, projectId, collection
         throw error;
     }
 };
+export const removeUnselectedImagesFromFirestore = async (domain, projectId, collectionId, images, page, size, totalPages) => {
+    if (!domain || !projectId || !collectionId || !images) {
+      throw new Error('Domain, Project ID, Collection ID, and Images are required.');
+    }
+  
+    let status = page === totalPages ? 'selected' : 'selecting';
+    console.log(`Removing unselected image statuses for project: ${projectId}, collection: ${collectionId}`);
+  
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+    const collectionDocRef = doc(projectDocRef, 'collections', collectionId);
+  
+    try {
+      const collectionSnapshot = await getDoc(collectionDocRef);
+      if (!collectionSnapshot.exists()) {
+        throw new Error('Collection does not exist.');
+      }
+  
+      const collectionData = collectionSnapshot.data();
+      const updatedImages = collectionData.uploadedFiles.map((image) => {
+        if (images.some(img => img.url === image.url)) {
+          // Mark as unselected if it's in the current unselected images array
+          return { ...image, status: 'unselected' };
+        } else {
+          return image;
+        }
+      });
+  
+      await updateDoc(collectionDocRef, { ...collectionData, uploadedFiles: updatedImages });
+  
+      const projectSnapshot = await getDoc(projectDocRef);
+      if (projectSnapshot.exists()) {
+        const projectData = projectSnapshot.data();
+        await updateDoc(projectDocRef, { ...projectData, status: status });
+        console.log(`Unselected images status updated successfully for project: ${projectId}.`);
+      } else {
+        throw new Error('Project does not exist.');
+      }
+    } catch (error) {
+      console.error(`Error updating unselected images: ${error.message}`);
+      throw error;
+    }
+  };
+  
 
 // Update project status
 export const updateProjectStatusInFirestore = async (domain, projectId, status) => {

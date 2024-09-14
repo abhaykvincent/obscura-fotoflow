@@ -49,7 +49,7 @@ function Onboarding() {
             console.log(response)
               dispatch(showAlert({type:'success', message:`New Project created!`}));
             
-              navigate(`/${response.id}`);
+              navigate(`/${response.domain}`);
           })
           .catch((error) => {
               console.error('Error creating project:', error);

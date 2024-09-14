@@ -5,7 +5,7 @@
     .welcome-section{
         padding: 8px*2;    
         display: grid;
-        grid-template-columns: 1fr 8px*20;
+        grid-template-columns: auto 1fr 8px*20;
         justify-content: space-between;
         font-family: "Product Sans";
         .welcome-message-top{
@@ -53,12 +53,13 @@
             }
         }
         .actions{
-            position: fixed;
-            top: 8px*10;
+            position: absolute;
+            top: 8px*12 ;
             right: 8px*5;
             display: flex;
             justify-content: flex-end;
             z-index: 99;
+            
         }
         
 

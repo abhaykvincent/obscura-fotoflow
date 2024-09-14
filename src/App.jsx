@@ -83,17 +83,19 @@ export default function App() {
       ) : 
       (<>{ !isPublicPage() && <LoginModal/> }</>)}
       {
-        isLoading!== 'succeeded'? (
+        isLoading!== 'succeeded' && isAuthenticated? (
           <Loading/>
         ) : (
           <Routes>
             {isAuthenticated && (
               
             <>
-              {/* New dynamic routes */}
+              <Route path="/admin/" element={
+                <AdminRoute> 
+                  <AdminPanel /> 
+                </AdminRoute> 
+              }/>
 
-              <Route path="/admin" element={   <AdminRoute> <AdminPanel /> </AdminRoute> }
-              />
               <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}`} replace />} />
               <Route exact path="/:studioName/" element={<Home />} />
               <Route exact path="/:studioName/project/:id" element={<Project />} />

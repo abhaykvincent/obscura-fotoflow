@@ -2,14 +2,14 @@
 .alert {
     position: fixed;
     bottom: 8px*2;
-    right: 8px*10;
-    transform: translate(0px,8px*5);
+    right: 8px*8;
+    transform: translate(8px*5,0);
     padding: 8px*1 8px*2;
     border-radius: 4px;
     text-align: center;
     text-shadow:  1px 1px 4px  rgba(0, 0, 0, 0.5);
     transition-duration: 0.1s;
-    z-index: 12;
+    z-index: 10;
 		box-shadow: 1px 1px 4px  rgba(0, 0, 0, 0.8);
     opacity: 0;
     color: white;

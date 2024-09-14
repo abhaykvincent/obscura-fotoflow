@@ -8,7 +8,7 @@ const AdminRoute = ({ children }) => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
   if (!isAuthenticated || user.email !== 'abhaykvincent@gmail.com') {
-    return <Navigate to="/" replace />; // Redirect to the home page or login if not authorized
+    return <Navigate to="/" replace />; // Redirect to the home page or login if not authorized to App's ADMIN page
   }
 
   return children;
