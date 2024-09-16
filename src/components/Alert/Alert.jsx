@@ -17,7 +17,7 @@ const Alert = () => {
       setTimeout(() => {
         setVisible(false);
         dispatch(hideAlert())
-      }, 1500); // Hide after 1 second
+      }, 3000); // Hide after 1 second
     }
   }, [show]);
 

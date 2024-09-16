@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { convertMegabytes } from '../../utils/stringUtils';
 
-const StoragePie = ({ totalSpace, usedSpace, active }) => {
+const StoragePie = ({ width,height, totalSpace, usedSpace, active }) => {
   const [currentUsedSpace , setCurrentUsedSpace] = React.useState(0);
   useEffect(() => {
     setTimeout(() => {
@@ -19,7 +19,7 @@ const StoragePie = ({ totalSpace, usedSpace, active }) => {
   const dashoffset = circumference - (usedPercentage / 100) * circumference;
 
   return (
-    <svg className={`${active ? '':'disabled'}`} width="200" height="200" viewBox="0 0 100 100">
+    <svg className={`${active ? '':'disabled'}`} width={height} height={height} viewBox="0 0 100 100">
       <circle
         className='available-storage'
         cx="50"

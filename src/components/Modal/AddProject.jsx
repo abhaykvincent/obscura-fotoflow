@@ -13,10 +13,37 @@ function AddProjectModal() {
     const visible = useSelector(selectModal)
     const currentStudio = useSelector(selectUserStudio)
     const onClose = () => dispatch(closeModal('createProject'))
+    // Dummny datas for the new project for random data
+    const dummyName = [
+        'Ethan Ross',
+        'Julia Smith',
+        'Michael Johnson',
+        'Emily Davis',
+        'David Wilson',
+        'Olivia Brown',
+        'Daniel Taylor',
+        'Sophia Anderson',
+        'William Thomas',
+        'Ava Martinez',
+        'James Lee',
+        'Isabella Garcia',
+        'Benjamin Hernandez',
+        'Mia Clark',
+        'Alexander Lewis',
+        'Charlotte Walker',
+        'Henry Hall',
+        'Amelia Allen',
+        'Jackson Young',
+    ]
+    const randomName = dummyName[Math.floor(Math.random() * dummyName.length)];
+    const randomEmail = `${randomName.toLowerCase()}@gmail.com`;
+    const randomType = ['Wedding', 'Birthday', 'Baptism'][Math.floor(Math.random() * 3)];
+    const randomPhone = Math.floor(Math.random() * 9000000000) + 1000000000;
+
   const [projectData, setProjectData] = useState({
-      name: 'Ethan Ross',
-      type: 'Birthday',
-      email: 'julia.ethan@gmail.com',
+      name: randomName,
+      type: randomType,
+      email: randomEmail,
       phone: '3656992278',
       collections: [],
       events: [],

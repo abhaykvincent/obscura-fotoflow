@@ -94,7 +94,7 @@ function Sidebar() {
           </div>
         </Link>
 
-        <AdminRoute> 
+        {/* <AdminRoute> 
           <p className="label">Product ADMIN</p>
           <Link to={`/admin`}>
             <div className={`menu admin ${location.pathname === `/admin` ? 'selected' : ''}`}>
@@ -102,7 +102,7 @@ function Sidebar() {
               <div className="label">Admin</div>
             </div>
           </Link>
-        </AdminRoute>
+        </AdminRoute> */}
 
       </div>
 

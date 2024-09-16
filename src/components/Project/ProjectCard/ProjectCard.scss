@@ -122,10 +122,46 @@
                 font-size: 0.9rem;
             }
             .project-type{
+                margin-top: -2px;
             line-height: 8px*2.5;
             font-weight: 400;
             font-size: 0.8rem;
             color: $gray3-default-dark;
+            }
+            .info-bar{
+                display: grid;
+                grid-template-columns: auto auto;
+                justify-content: space-between;
+                align-items: center;
+                .lr.button.mini{
+                    height: 8px*3;
+                    line-height: 8px*2.5;
+                    padding: 0px 8px;
+                    margin-right: -8px;
+                        background-color: #001b30;
+                        color: #2fa3f7;
+                        border:1px solid  #2fa3f7;
+                        box-shadow: -1px -1px 4px #000000, -1px 0px 8px #2fa4f79c;
+                      &.disabled{
+                        opacity: 0.4;
+                        border:1px solid  #39454f;
+                        color: #1368a4;
+                        background-color: #071b2b;
+
+                      }
+                }
+            }
+            .project-budget{
+                padding: 2px 4px;
+                margin: 0px;
+                margin-bottom: 4px;
+
+                background-color: $dark-1;
+                color: $gray-default-dark;
+                font-size: 0.7rem;
+                display: inline-block;
+                border-radius: 4px;
+                border: 1px solid $dark-0;
             }
             .right{
                 .status-signal{

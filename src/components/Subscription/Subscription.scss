@@ -619,16 +619,20 @@
     } 
 }
   @media only screen and (max-width: 580px) {
-    .home .section .projects{
-        grid-template-columns: 1fr 1fr ;
-        .project{
-            .project-cover{
-                width: 80px
-            }
-            .project-details{
-                margin-left: -24px;
-                .empty-message {
-                    display: none;
+    .home 
+    {
+       
+        .section .projects{
+            grid-template-columns: 1fr 1fr ;
+            .project{
+                .project-cover{
+                    width: 80px
+                }
+                .project-details{
+                    margin-left: -24px;
+                    .empty-message {
+                        display: none;
+                    }
                 }
             }
         }

@@ -1,8 +1,8 @@
 @import '../../style/variables';
 .alert {
     position: fixed;
-    bottom: 8px*2;
-    right: 8px*8;
+    bottom: 8px*2.5;
+    right: 8px*10;
     transform: translate(8px*5,0);
     padding: 8px*1 8px*2;
     border-radius: 4px;
@@ -17,13 +17,16 @@
   
   .alert.show {
     transform: translate(0px,0px);
-    transition-duration: 0.4s;
+    transition-duration: 0.2s;
     opacity: 1;
   }
   
   .alert.success {
-    background-color: $green-accessible-light;
-    border: 1px solid #afff8e;
+    background-color: $dark-2;
+    border: 1px solid $green-accessible-dark;
+    color: white;
+    opacity: 0.8;
+    transition-timing-function: ease-out;
   }
 
   .alert.success-negative{
@@ -33,9 +36,10 @@
   }
   
   .alert.error {
-    background-color: $red-accessible-light;
-    border: 1px solid $red-default-light;
-    opacity: 0.5;
+    background-color: $dark-2;
+    border: 1px solid $red-accessible-dark;
+    color: white;
+    opacity: 0.8;
 
     animation: shake 0.5s ease-in-out;
     animation-delay: 0.15s;

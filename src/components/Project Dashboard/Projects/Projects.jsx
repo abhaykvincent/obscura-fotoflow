@@ -86,7 +86,7 @@ function DashboardProjects({project}){
               navigator.clipboard.writeText(`${project.pin}`)
               showAlert('success', 'Pin copied to clipboard!')
             }}>PIN: {project.pin}</div>
-            <div className="button primary outline ">Share</div>
+            <div className="button primary outline " onClick={()=>dispatch(openModal('shareGallery'))}>Share</div>
           </div>
             :
             <div className="ctas">

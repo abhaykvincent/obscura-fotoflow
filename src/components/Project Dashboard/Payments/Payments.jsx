@@ -15,6 +15,7 @@ function DashboardPayments({ project }) {
       <div className="heading-shoots heading-section hjkk">
         <h3 className='heading hjkk'>Invoices <span>{project.payments ? project.payments.length : ''}</span></h3>
         {project.payments?.length > 0 &&
+          
           <div className="new-shoot button tertiary l2 outline icon new"
             onClick={() => project.budgets && dispatch(openModal('addPayment'))}
           >New</div>
@@ -50,8 +51,8 @@ function DashboardPayments({ project }) {
               <g
               >
 
-              <text x="10" y="18" className="amount highlight">{totalPayments & formatDecimalK(totalPayments)}</text>
-              <text x="12" y="24" className="amount">/ {project.budgets & formatDecimalK(project.budgets?.amount)}</text>
+              <text x="10" y="18" className="amount highlight">{totalPayments && formatDecimalK(totalPayments)}</text>
+              <text x="12" y="24" className="amount">/ {formatDecimalK(project.budgets?.amount ? project.budgets?.amount:0)}</text>
               </g>
             </svg>
           </div>
@@ -65,8 +66,10 @@ function DashboardPayments({ project }) {
                 </div>
               )
               : (
-                project.payments?.length === 0 &&
-                <p>Create Invoice</p>
+                <div className="legend">
+                  <p className="paid">Paid</p>
+                  <p className="pending">Pending</p>
+                </div>
               )
             }
           </div>
@@ -83,7 +86,7 @@ function DashboardPayments({ project }) {
                 {project.payments?.map((payment, index) => (
                   <AmountCard
                     key={index}
-                    amount={`₹${payment.amount / 1000} K`}
+                    amount={`₹ ${payment.amount / 1000} K`}
                     project={project}
                     direction="+ "
                     percentage={payment.amount / (project.budgets.amount ? project.budgets.amount * 100 : 0)}
@@ -92,7 +95,7 @@ function DashboardPayments({ project }) {
                 ))}
                 {/* Balance */}
                 <AmountCard
-                  amount={`₹${(project.budgets.amount - totalPayments) / 1000} K`}
+                  amount={`₹ ${(project.budgets.amount - totalPayments) / 1000} K`}
                   direction="- "
                   percentage={'Balance'}
                   status={'pending'}
