@@ -36,7 +36,8 @@ import { selectStudio, setStudio } from './app/slices/studioSlice';
 import Onboarding from './features/Onboarding/Onboarding';
 import AdminPanel from './features/AdminPanel/AdminPanel';
 import useAdminAuth from './hooks/useAdminAuth';
-import AdminRoute from './components/AdminRoute/AdminRoute';
+import { selectModal } from './app/slices/modalSlice';
+//import AdminRoute from './components/AdminRoute/AdminRoute';
 // Wrapper component to pass studio name to pages
 const StudioWrapper = ({ Component }) => {
   const { studioName } = useParams();
@@ -65,6 +66,16 @@ export default function App() {
      dispatch(checkStudioStatus())
     currentDomain !== 'guest' && dispatch(fetchProjects({currentDomain}))
   }, [currentDomain]);
+    useEffect(() => {
+      const modalStates = Object.values(selectModal);
+      if (modalStates.some(state => state)) {
+        window.scrollTo(0, 0);
+        document.body.style.overflow = 'hidden';
+        debugger
+      } else {
+        document.body.style.overflow = 'auto';
+      }
+    }, [selectModal]);
 
 
   // RENDER
@@ -78,7 +89,6 @@ export default function App() {
           <Sidebar />
           <Alert />
           <UploadProgress/>
-          <AddProjectModal />
         </>
       ) : 
       (<>{ !isPublicPage() && <LoginModal/> }</>)}
@@ -90,11 +100,11 @@ export default function App() {
             {isAuthenticated && (
               
             <>
-              <Route path="/admin/" element={
+              {/* <Route path="/admin/" element={
                 <AdminRoute> 
                   <AdminPanel /> 
                 </AdminRoute> 
-              }/>
+              }/> */}
 
               <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}`} replace />} />
               <Route exact path="/:studioName/" element={<Home />} />

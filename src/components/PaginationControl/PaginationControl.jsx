@@ -1,14 +1,18 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { selectUserStudio } from '../../app/slices/authSlice';
 const checkForSelectedImages = (images) => {
-    for (let i = 0; i < images.length; i++) {
-      if (images[i].status==="selected") {
-        console.log(images[i].status)
-        return true;
-      }
+  // Checks if any of the images have a 'selected' status.
+  for (let i = 0; i < images.length; i++) {
+    if (images[i].status==="selected") {
+      console.log(images[i].status)
+      return true;
     }
-    return false;
-  };
+  }
+  return false;
+};
+
 const PaginationButton = ({ onClick, disabled, children,className, active,highlight ,selected}) => (
   <button
     className={`button light-mode  ${selected} ${selected?'selected':''} ${active ? 'secondary outline' : (highlight?'primary':'secondary')} ${disabled ? 'disabled' : ''}`}
@@ -19,7 +23,6 @@ const PaginationButton = ({ onClick, disabled, children,className, active,highli
     {children}
   </button>
 );
-
 const PageNumbers = ({ currentPage, totalPages, handlePageChange ,images}) => {
   const pageNumbers = [];
   for (let i = 1; i <= totalPages; i++) {
@@ -61,11 +64,12 @@ const PageNumbers = ({ currentPage, totalPages, handlePageChange ,images}) => {
 };
 
 export default function PaginationControl({ 
-    images,
+  images,
   currentPage, 
   totalPages, 
   handlePageChange, 
-  handleSelectionCompleted,
+  saveSelection,
+  completeSelection,
   currentCollectionIndex,
   totalCollections,
   project
@@ -73,25 +77,30 @@ export default function PaginationControl({
   const isLastPage = currentPage === totalPages || totalPages === 0;
   const isLastCollection = currentCollectionIndex === totalCollections;
   
+  const currentStudio = useSelector(selectUserStudio)
   return (
     <nav className="pagination" aria-label="Pagination">
-    {/* If first page, show previous button as Previous Gallery if not first collection */}
-    {(currentPage === 1 && currentCollectionIndex !== 0) ? (
-        //Previous
+
+
+    {/* Page Numbers */}
+    {
+      // If first page, show previous button as Previous Gallery if not first collection
+      (currentPage === 1 && currentCollectionIndex !== 0) ? 
+      // 
       <PaginationButton
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
-      >
-        Previous
-      </PaginationButton>
-    ):
-    <PaginationButton
-    onClick={() => handlePageChange(currentPage - 1)}
-    disabled={currentPage === 1}
-    >Previous</PaginationButton>
-}
-    {/* Numbers list */}
-      {totalPages !== 0 ? (
+      > Previous</PaginationButton>
+      :
+      //
+      <PaginationButton
+        onClick={() => handlePageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+      >Previous</PaginationButton>
+    }
+    {/* Page Numbers */}
+    {
+      totalPages !== 0 ? (
         <PageNumbers
             images={images}
             currentPage={currentPage}
@@ -100,20 +109,25 @@ export default function PaginationControl({
         />
       ) : (
         <p>Go to</p>
-      )}
+      )
+    }
 
       {isLastPage ? (
         isLastCollection ? (
-          <PaginationButton highlight={true} onClick={handleSelectionCompleted}>
-            Send
+          <PaginationButton highlight={true} onClick={()=>{
+            
+            saveSelection() 
+            completeSelection()
+            }}>
+            Finish
           </PaginationButton>
         ) : (
-          <Link to={`/selection/${project.id}/${project.collections[currentCollectionIndex].id}`}>
+          <Link to={`/${currentStudio.domain}/selection/${project.id}/${project.collections[currentCollectionIndex].id}`}>
             <PaginationButton
             highlight={true} 
               onClick={() => {
                 handlePageChange(currentPage + 1);
-                handleSelectionCompleted();
+                saveSelection();
               }}
             >
               Next Collection
@@ -132,4 +146,4 @@ export default function PaginationControl({
     </nav>
   );
 }
-// Line Complexity  1.5 -> 1.1
+// Line Complexity  1.5 -> 1.1 -> 1.4

@@ -19,9 +19,14 @@ const modalSlice = createSlice({
     openModal: (state, action) => {
       state[action.payload] = true;
       console.log('Opening '+action.payload +' Modal ...')
+      window.scrollTo(0, 0);
+      document.body.style.overflow = 'hidden';
     },
     closeModal: (state, action) => {
       state[action.payload] = false;
+      console.log('Closing '+action.payload +' Modal ...')
+      document.body.style.overflow = 'auto';
+
     }
   }
 });

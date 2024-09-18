@@ -91,7 +91,7 @@ export default function Galleries({}) {
         project?.collections && project.collections.length !== 0 && (
           <div className="project-collections">
             <CollectionsPanel {...{project,collectionId:targetCollectionId}}/>
-            <CollectionImages   {...{ id, collectionId:targetCollectionId,collection}} />
+            <CollectionImages   {...{ id, collectionId:targetCollectionId,project}} />
           </div>
         )
       }

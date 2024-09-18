@@ -280,6 +280,17 @@
         background-color: #000000;
         border: 1px solid $gray3-default-dark;
         border-radius: 4px;
+        &:hover{
+            border: 1px solid $gray2-default-dark;
+        }
+        &.active{
+            border: 1px solid $gray-default-dark;
+            .option-icon{
+                transform: rotate(0deg) translateX(8px*-2);
+                transition-duration: 0.1s;
+                transition-timing-function: ease-out;
+            }
+        }
         .profile{
         width: 100%;
         display: flex;
@@ -329,8 +340,10 @@
         background-image: url('../../assets/img/icons/arrow-dropdown.png');
         background-size: 100%;
         background-position: center center;
-        transform: rotate(180deg) translateX(8px*2);
+        transform: rotate(-180deg) translateX(8px*2);
         opacity: 0.5;
+        transition-duration: 0.15s;
+        transition-timing-function: ease-out;
         }
     }
     &.hide{

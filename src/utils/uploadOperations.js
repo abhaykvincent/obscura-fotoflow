@@ -10,6 +10,7 @@ import { collection, doc, updateDoc } from "firebase/firestore";
 import { delay } from "./generalUtils";
 import { generateMemorablePIN } from "./stringUtils";
 import { showAlert } from "../app/slices/alertSlice";
+import { trackEvent } from "../analytics/utils";
 
 
 // Firebase Cloud Storage
@@ -200,7 +201,11 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
                 addUploadedFilesToFirestore(domain,id, collectionId,importFileSize, uploadedFiles)
                     .then(() => {
                         showAlert('success', 'All files uploaded successfully!')
-
+                        trackEvent('files_uploaded', {
+                            domain: domain,
+                            size: importFileSize,
+                            files: uploadedFiles.length,
+                        });
                     })
                     .catch((error) => {
                         console.error('Error adding uploaded files to project:', error.message);

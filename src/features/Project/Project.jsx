@@ -24,6 +24,13 @@ import { showAlert } from '../../app/slices/alertSlice';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 
 import './Project.scss';
+import { DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger, } from '@radix-ui/react-dropdown-menu';
+import ShareGallery from '../../components/Modal/ShareGallery';
 
 export default function Project() {
   const { id } = useParams();
@@ -87,6 +94,8 @@ export default function Project() {
         <AddPaymentModal project={project} />
         <AddExpenseModal project={project} />
         <AddBudgetModal project={project} />
+
+      <ShareGallery   project={project} />
         {confirmDeleteProject && <DeleteConfirmationModal onDeleteConfirm={handleDeleteConfirm} />}
         <Refresh />
       </main>
@@ -99,9 +108,18 @@ export default function Project() {
           <div className="type">{project.type}</div>
         </div>
         <div className="project-options">
-          <button className="button tertiary" onClick={() => dispatch(openModal('confirmDeleteProject'))}>
-            Delete
-          </button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger ><div className="icon options"></div></DropdownMenuTrigger>
+          <DropdownMenuContent>
+          <p>New Gallery</p>
+          <p>Share</p>
+            <DropdownMenuSeparator />
+          <p>Delete</p>
+          <p>Update Cover</p>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         </div>
       </div>
     </>

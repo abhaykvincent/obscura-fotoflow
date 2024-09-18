@@ -153,7 +153,7 @@
 		.payments{
 			.card{
 				display: grid;
-				grid-template-columns: auto 3fr;
+				grid-template-columns: 8px*15 3fr;
 				gap: 8px;
 				.payments-list{
 					min-width: 8px*12;
@@ -258,7 +258,6 @@
 					min-height: 8px*20;
 					display: grid;
 					grid-template-rows: auto auto;
-					align-content: space-between;
 					gap: 8px;
 					border: 1px solid $dark-0;;;
 					padding: 8px;
@@ -388,7 +387,6 @@
 .gallery{
 	position: relative;
 	top:8px*1;
-	width: 8px*22;
 	border-radius: 8px;
 	transition-duration: 0.01s;
 	.thumbnails{
@@ -595,6 +593,7 @@
 	}
 
 	&.new{
+		margin-top: -8px*1.5;
 		width: 8px*15;
 		.thumbnails{
 			margin-top: 4px;

@@ -13,6 +13,8 @@ function ShareGallery({project }) {
   if (!visible.shareGallery) {
     return null;
   }
+  else{
+  }
 
   return (
     <div className="share-gallery modal-container">

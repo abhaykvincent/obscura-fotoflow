@@ -134,6 +134,7 @@ const projectsSlice = createSlice({
         state.status = 'succeeded';
         state.loading = false;
         state.data.push(action.payload);
+        
       })
      .addCase(addProject.rejected, (state, action) => {
         state.status = 'failed';

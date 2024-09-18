@@ -86,9 +86,10 @@
       }
     }
     .support-icon{
-      padding: 8px*5;
+      padding: 8px*4 8px*5;
+      margin-right: -8px*0;
       background-position: center;
-      background-size: auto  60%;
+      background-size: auto  50%;
       background-image: url('https://img.icons8.com/?size=100&id=aKhBH2zWyueV&format=png&color=FFFFFF');
       transition-duration: 0.2s;
       transition-timing-function: ease-in-out;

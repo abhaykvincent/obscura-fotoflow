@@ -9,6 +9,7 @@ import { selectProjects } from '../../app/slices/projectsSlice';
 import { openModal } from '../../app/slices/modalSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import StoragePie from '../../components/StoragePie/StoragePie';
+import AddProjectModal from '../../components/Modal/AddProject';
 function Home() {
     const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
@@ -49,9 +50,9 @@ function Home() {
                         <h1 className='welcome-message'>Let's manage your Snaps </h1>
                     </div>
 
-                    <div className="storage-pie-wrap">
-                        <StoragePie totalSpace={1000} usedSpace={10} active/>
-                        <StoragePie totalSpace={1000} usedSpace={10} />
+                    <div className="storage-pie-wrap" >
+                        <StoragePie height={120} totalSpace={1000} usedSpace={10} active/>
+                        <StoragePie height={120}totalSpace={1000} usedSpace={10} />
                     </div>
 
                     <div className="actions">
@@ -77,7 +78,7 @@ function Home() {
                                     ) : (
                                         <p className="message">No recent projects</p>)
                                 }
-                                <Link className="project all" to={`/projects`} >
+                                <Link className="project all" to={`/${defaultStudio.domain}/projects`} >
                                     <div className="project-cover"
                                     ></div>
                                     <div className="project-details">
@@ -123,6 +124,7 @@ function Home() {
                     </>)
                 }
                 
+          <AddProjectModal />
                 <Refresh/>
             </main>
         </>

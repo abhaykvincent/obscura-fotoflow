@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectUser, setCurrentStudio, setUser } from '../../app/slices/authSlice.js'
 import { showAlert } from '../../app/slices/alertSlice.js'
 import { signInWithPopup } from 'firebase/auth'
-import { auth, provider } from '../../firebase/app.js'
+import { analytics, auth, provider } from '../../firebase/app.js'
 import { GoogleAuthProvider } from 'firebase/auth/cordova'
 
 function Onboarding() {
@@ -84,6 +84,7 @@ function Onboarding() {
       };
       dispatch(setUser(serializedUser))
 
+      analytics.setUserId(user.uid);
 
     }).catch((error) => {
       // Handle Errors here.

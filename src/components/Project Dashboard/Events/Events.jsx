@@ -12,7 +12,7 @@ function DashboardEvents({project})
   const openModal = (modalType) => setModal({...modal, [modalType]: true });
   const closeModal = (modalType) => {
     setModal({...modal, [modalType]: false });}
-  console.log(project.events?.length >0 || project.events?.length !== undefined)
+  
     // Events
     const [selectedEventID, setSelectedEventID] = useState('')
 
