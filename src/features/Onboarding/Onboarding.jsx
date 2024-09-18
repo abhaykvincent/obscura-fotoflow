@@ -6,12 +6,12 @@ import ProfessionType from './ProfessionType.jsx'
 import ClientsSize from './ClientsSize.jsx'
 import UserContact from './UserContact.jsx'
 import { useNavigate } from 'react-router'
-import { createUser } from '../../firebase/functions/firestore.js'
+import { createStudio, createUser } from '../../firebase/functions/firestore.js'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectUser, setCurrentStudio, setUser } from '../../app/slices/authSlice.js'
 import { showAlert } from '../../app/slices/alertSlice.js'
 import { signInWithPopup } from 'firebase/auth'
-import { auth, provider } from '../../firebase/app.js'
+import { analytics, auth, provider } from '../../firebase/app.js'
 import { GoogleAuthProvider } from 'firebase/auth/cordova'
 
 function Onboarding() {
@@ -31,18 +31,31 @@ function Onboarding() {
   const updateAccountData = (data) => {
     setCreateAccountData({...createAccountData, ...data})
   }
+  
   const createAccountAndNavigate  = () => {
     console.log(user)
     createUser({
       email:user.email, 
       studio:{
         name: createAccountData.studioName,
-        domain: createAccountData.studioDomain
-      } 
+        domain: createAccountData.studioDomain,
+        roles: ['Admin'],
+      }
     })
     .then((response) => {
       console.log(response)
-      dispatch(setCurrentStudio(response.studio))
+      createStudio(response.studio)
+          .then((response) => {
+            console.log(response)
+              dispatch(showAlert({type:'success', message:`New Project created!`}));
+            
+              navigate(`/${response.domain}`);
+          })
+          .catch((error) => {
+              console.error('Error creating project:', error);
+              dispatch(showAlert({type:'error', message:`error`}));
+              // Handle error scenarios, e.g., show an error message
+          });
       dispatch(showAlert({type:'success', message:`New Studio created!`}));
 
 
@@ -71,6 +84,7 @@ function Onboarding() {
       };
       dispatch(setUser(serializedUser))
 
+      analytics.setUserId(user.uid);
 
     }).catch((error) => {
       // Handle Errors here.

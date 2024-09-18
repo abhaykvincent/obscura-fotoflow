@@ -1,7 +1,7 @@
 // slices/authSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess, teams as teamsData} from '../../data/teams';
-import { addBudgetToFirestore, addCollectionToFirestore, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteProjectFromFirestore, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
+import { addBudgetToFirestore, addCollectionToFirestore, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 
 const initialState = {

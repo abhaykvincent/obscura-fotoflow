@@ -4,6 +4,8 @@ import './Sidebar.scss'
 import { GrUpgrade } from "react-icons/gr";
 import { logout, selectUser, selectUserStudio } from '../../app/slices/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import AdminRoute from '../AdminRoute/AdminRoute';
+import { trackEvent } from '../../analytics/utils';
 function Sidebar() {
   
   const dispatch = useDispatch();
@@ -12,13 +14,15 @@ function Sidebar() {
   console.log(user)
   const [profileOptionActive, setProfileOptionActive] = useState(false)
   const toggleProfileOption = () => {
-    setProfileOptionActive(!profileOptionActive)
-  }
+    setProfileOptionActive((prevState) => !prevState);
+  };
   const defaultStudio = useSelector(selectUserStudio)
   const location = useLocation();
   const params = useParams()
-  const studioName = defaultStudio.domain ?? {domain:'guest',name:'guest'}; 
+  const studioName = defaultStudio?.domain ?? {domain:'guest',name:'guest'}; 
   
+  if(user==='no-studio-found')
+    return 
   return (
     <div className="sidebar">
       <div className="menu-list">
@@ -90,16 +94,27 @@ function Sidebar() {
             </div>
           </div>
         </Link>
+
+        {/* <AdminRoute> 
+          <p className="label">Product ADMIN</p>
+          <Link to={`/admin`}>
+            <div className={`menu admin ${location.pathname === `/admin` ? 'selected' : ''}`}>
+              <div className="icon"></div>
+              <div className="label">Admin</div>
+            </div>
+          </Link>
+        </AdminRoute> */}
+
       </div>
 
       <div className="profile-settings">
-        <div className="profile-options" onClick={toggleProfileOption}>
+        <div className={`profile-options  ${profileOptionActive?'active':''}`} onClick={toggleProfileOption}>
           <div className="profile"
           >
             <div className="profile-image"></div>
             <div className="account-name">
               <div className="studio-name">{defaultStudio?.name}</div>
-              <div className="profile-name">{user.displayName} <div className="role">{user.studio.roles[0]}</div></div>
+              <div className="profile-name">{user?.displayName} <div className="role">{user.studio?.roles[0]}</div></div>
             </div>
           </div>
           <div className="option-icon"></div>
@@ -116,6 +131,8 @@ function Sidebar() {
             onClick={
               ()=>{
                 dispatch(logout())
+
+      trackEvent('logout')
                 // navigate('/')
                 navigate(`/`)
               }

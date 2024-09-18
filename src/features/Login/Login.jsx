@@ -9,6 +9,7 @@ import { openModal } from '../../app/slices/modalSlice';
 import LoginEmailPassword from './LoginEmailPassword';
 import AddStudio from '../../components/Modal/AddStudio';
 import { fetchStudiosOfUser } from '../../firebase/functions/firestore';
+import { trackEvent } from '../../analytics/utils';
 
 const LoginModal = () => {
   const dispatch = useDispatch();
@@ -29,6 +30,8 @@ const LoginModal = () => {
         // The signed-in user info.
         const user = result.user;
         console.log("Logged in as " + user.email);
+
+      trackEvent('login',{method:'Google'})
         
         const studiosResponse = await fetchStudiosOfUser(user.email);
         console.log("Studios response:", studiosResponse);
@@ -70,9 +73,9 @@ const LoginModal = () => {
         Login
       </div>
       <div className="form-section">
-          <p>Use google account to use <b>FotoFlow</b></p>
+          <p>Open <b> App</b>  with  <b>Google</b></p>
         <div className="actions">
-          <div className='button secondary outline'  onClick={openEmailPassordLogin}>Password Login<div className="email-logo"></div></div>
+          {/* <div className='button secondary outline disable'  onClick={openEmailPassordLogin}>Password Login<div className="email-logo"></div></div> */}
           <div className='button'  onClick={handleGoogleSignIn}>Sign In with<div className="google-logo"></div></div>
         </div>
       </div>

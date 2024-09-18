@@ -12,6 +12,8 @@ function Projects() {
     const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
     useEffect(() => {
+
+    console.log(projects)
     }, [projects]);
     return (
         <main className="projects">
@@ -73,6 +75,8 @@ function Projects() {
                     )
                 }
             </div>
+
+          <AddProjectModal />
             {/* Refresh Projects Data from cloud */}
             <Refresh/>
             

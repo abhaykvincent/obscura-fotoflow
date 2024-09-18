@@ -8,7 +8,8 @@ import { update } from "firebase/database";
 
 // Studio
 export const createStudio = async (studioData) => {
-    const {name,status} =studioData;
+    console.log(studioData)
+    const {name} =studioData;
     const id= `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
     
     const studiosCollection = collection(db, 'studios');
@@ -16,10 +17,11 @@ export const createStudio = async (studioData) => {
         id : id,
         ...studioData
     }
-    return setDoc(doc(studiosCollection, studioDoc.id), studioDoc)
+    return setDoc(doc(studiosCollection, studioDoc.domain), studioDoc)
 
     .then(() => {
         console.log('Studio created successfully.');
+        return studioDoc
     })
     .catch((error) => {
         console.error('Error creating studio:', error.message);
@@ -39,18 +41,30 @@ export const fetchStudiosOfUser = async (email) => {
     console.log(user)
     return studio;
 };
+//fetch all studios
+export const fetchStudios = async () => {
+    const studiosCollection = collection(db, 'studios');
+    const querySnapshot = await getDocs(studiosCollection);
+    const studiosData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    return studiosData;
+}
 // Users
 export const createUser = async (userData) => {
     const {email,studio} = userData;
     console.log(userData)
     const usersCollection = collection(db, 'users');
     const userDoc = {
+        displayName:'',
         email : email,
         studio : studio
     }
     await setDoc(doc(usersCollection, userDoc.email), userDoc)
     return userDoc
 }
+
 export const fetchUsers = async () => {
     const usersCollection = collection(db, 'users');
     const querySnapshot = await getDocs(usersCollection);
@@ -542,6 +556,51 @@ export const addSelectedImagesToFirestore = async (domain, projectId, collection
         throw error;
     }
 };
+export const removeUnselectedImagesFromFirestore = async (domain, projectId, collectionId, images, page, size, totalPages) => {
+    if (!domain || !projectId || !collectionId || !images) {
+      throw new Error('Domain, Project ID, Collection ID, and Images are required.');
+    }
+  
+    let status = page === totalPages ? 'selected' : 'selecting';
+    console.log(`Removing unselected image statuses for project: ${projectId}, collection: ${collectionId}`);
+  
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+    const collectionDocRef = doc(projectDocRef, 'collections', collectionId);
+  
+    try {
+      const collectionSnapshot = await getDoc(collectionDocRef);
+      if (!collectionSnapshot.exists()) {
+        throw new Error('Collection does not exist.');
+      }
+  
+      const collectionData = collectionSnapshot.data();
+      const updatedImages = collectionData.uploadedFiles.map((image) => {
+        if (images.some(img => img.url === image.url)) {
+          // Mark as unselected if it's in the current unselected images array
+          return { ...image, status: 'unselected' };
+        } else {
+          return image;
+        }
+      });
+  
+      await updateDoc(collectionDocRef, { ...collectionData, uploadedFiles: updatedImages });
+  
+      const projectSnapshot = await getDoc(projectDocRef);
+      if (projectSnapshot.exists()) {
+        const projectData = projectSnapshot.data();
+        await updateDoc(projectDocRef, { ...projectData, status: status });
+        console.log(`Unselected images status updated successfully for project: ${projectId}.`);
+      } else {
+        throw new Error('Project does not exist.');
+      }
+    } catch (error) {
+      console.error(`Error updating unselected images: ${error.message}`);
+      throw error;
+    }
+  };
+  
 
 // Update project status
 export const updateProjectStatusInFirestore = async (domain, projectId, status) => {

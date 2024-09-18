@@ -14,11 +14,12 @@ import { openModal } from '../../app/slices/modalSlice';
 
 import './Galleries.scss';
 import { selectStudio, setAvailableStortage } from '../../app/slices/studioSlice';
-import { selectUserStudio } from '../../app/slices/authSlice';
+import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 
 export default function Galleries({}) {
   const dispatch= useDispatch();
   const defaultStudio = useSelector(selectUserStudio)
+  const domain = useSelector(selectDomain)
   const navigate = useNavigate();
   let { id,collectionId } = useParams();
   // State
@@ -70,7 +71,7 @@ export default function Galleries({}) {
     {/* Page Header */}
     <div className="project-info">
       <div className="breadcrumbs">
-        <Link className="back highlight" to={`/project/${encodeURIComponent(id)}`}>{project?.name}</Link>
+        <Link className="back highlight" to={`/${domain}/project/${encodeURIComponent(id)}`}>{project?.name}</Link>
       </div>
       <div className="client">
         <h1>{collection.name}</h1>
@@ -90,7 +91,7 @@ export default function Galleries({}) {
         project?.collections && project.collections.length !== 0 && (
           <div className="project-collections">
             <CollectionsPanel {...{project,collectionId:targetCollectionId}}/>
-            <CollectionImages   {...{ id, collectionId:targetCollectionId,collection}} />
+            <CollectionImages   {...{ id, collectionId:targetCollectionId,project}} />
           </div>
         )
       }

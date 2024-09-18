@@ -4,9 +4,14 @@ import { addCrew } from '../../app/slices/projectsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
 import { selectDomain } from '../../app/slices/authSlice';
+import { closeModal, selectModal } from '../../app/slices/modalSlice';
 
-function AddCrewModal({ project,eventId, visible, onClose }) {
+function AddCrewModal({ project,eventId }) {
   const dispatch = useDispatch()
+
+  const visible = useSelector(selectModal)
+
+  const onClose = () => dispatch(closeModal('addCrew'))
   const [crewData, setCrewData] = useState({
     role: 'photographer',
     assigne:'sam-0001',
@@ -48,7 +53,7 @@ function AddCrewModal({ project,eventId, visible, onClose }) {
   };
 
 
-  if (!visible) {
+  if (!visible.addCrew) {
     return null;
   }
 

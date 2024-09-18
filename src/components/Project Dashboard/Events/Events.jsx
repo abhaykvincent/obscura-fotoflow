@@ -12,7 +12,7 @@ function DashboardEvents({project})
   const openModal = (modalType) => setModal({...modal, [modalType]: true });
   const closeModal = (modalType) => {
     setModal({...modal, [modalType]: false });}
-  console.log(project.events?.length >0 || project.events?.length !== undefined)
+  
     // Events
     const [selectedEventID, setSelectedEventID] = useState('')
 
@@ -23,18 +23,18 @@ function DashboardEvents({project})
         <div className="heading-shoots heading-section">
           
             <h3 className='heading '>Shoots</h3>
-          {project.payments?.length>0&&<div className="new-shoot button tertiary l2 outline"
+          {project.payments?.length>0&&<div className="new-shoot button tertiary l2 outline icon new"
           onClick={ ()=>{
               openModal('createEvent')
             }
-            }>+ New</div>}
+            }>New</div>}
           </div>
         {
           project.events && project.events.length >0 &&
             <div className="heading-crew heading-section">
                 <h3 className='heading '>Crew</h3>
-                <div className="new-shoot button tertiary l2 outline"
-                onClick={ ()=>{}}>+ New</div>
+                <div className="new-shoot button tertiary l2 outline icon new"
+                onClick={ ()=>{}}>New</div>
             </div>
         }
       </div>
@@ -65,7 +65,7 @@ function DashboardEvents({project})
                   <div className="badge third"></div>
                 </div>
               </div>
-              <div className="cta button secondary outline">Confirmed</div>
+              <div className="cta button secondary outline icon confirmed">Confirmed</div>
             </div>
             <div className="crew">
               {

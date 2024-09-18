@@ -25,7 +25,7 @@ import CommingSoon from './components/CommingSoon/CommingSoon';
 // Utils
 import { isPublicPage } from './utils/publicPages';
 // Redux 
-import { checkAuthStatus, checkStudioStatus, selectIsAuthenticated, selectUserStudio } from './app/slices/authSlice';
+import { checkAuthStatus, checkStudioStatus, selectIsAuthenticated, selectUser, selectUserStudio } from './app/slices/authSlice';
 import { selectLoading ,fetchProjects, selectProjects, selectProjectsStatus} from './app/slices/projectsSlice';
 // Stylesheets
 import './App.scss';
@@ -34,6 +34,10 @@ import SupportIcon from './components/Modal/SupportIcon/SupportIcon';
 import { useShortcutsConfig } from './hooks/shortcutsConfig';
 import { selectStudio, setStudio } from './app/slices/studioSlice';
 import Onboarding from './features/Onboarding/Onboarding';
+import AdminPanel from './features/AdminPanel/AdminPanel';
+import useAdminAuth from './hooks/useAdminAuth';
+import { selectModal } from './app/slices/modalSlice';
+//import AdminRoute from './components/AdminRoute/AdminRoute';
 // Wrapper component to pass studio name to pages
 const StudioWrapper = ({ Component }) => {
   const { studioName } = useParams();
@@ -50,13 +54,28 @@ export default function App() {
   const projects = useSelector(selectProjects);
   const defaultStudio = useSelector(selectUserStudio)
   const currentDomain = defaultStudio?.domain ?? 'guest'; 
-
+  const user = useSelector(selectUser);
+  useEffect(() => {
+    console.log(isLoading)
+  }, [isLoading]);
   // ON Render
   useEffect(() => {
+    console.log(currentDomain)
+
     dispatch(checkAuthStatus())
      dispatch(checkStudioStatus())
     currentDomain !== 'guest' && dispatch(fetchProjects({currentDomain}))
   }, [currentDomain]);
+    useEffect(() => {
+      const modalStates = Object.values(selectModal);
+      if (modalStates.some(state => state)) {
+        window.scrollTo(0, 0);
+        document.body.style.overflow = 'hidden';
+        debugger
+      } else {
+        document.body.style.overflow = 'auto';
+      }
+    }, [selectModal]);
 
 
   // RENDER
@@ -64,24 +83,29 @@ export default function App() {
     <div className="App">
       <HotKeys keyMap={keyMap} handlers={handlers}>
       <SupportIcon/>
-      {isAuthenticated && (!isPublicPage())? (
+      {isAuthenticated && user!=='no-studio-found' && (!isPublicPage())? (
         <>
           <Header />
           <Sidebar />
           <Alert />
           <UploadProgress/>
-          <AddProjectModal />
         </>
       ) : 
       (<>{ !isPublicPage() && <LoginModal/> }</>)}
       {
-        isLoading!== 'succeeded'? (
+        isLoading!== 'succeeded' && isAuthenticated? (
           <Loading/>
         ) : (
           <Routes>
             {isAuthenticated && (
+              
             <>
-              {/* New dynamic routes */}
+              {/* <Route path="/admin/" element={
+                <AdminRoute> 
+                  <AdminPanel /> 
+                </AdminRoute> 
+              }/> */}
+
               <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}`} replace />} />
               <Route exact path="/:studioName/" element={<Home />} />
               <Route exact path="/:studioName/project/:id" element={<Project />} />

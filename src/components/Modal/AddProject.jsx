@@ -6,6 +6,9 @@ import { useNavigate } from 'react-router';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
 import { selectStudio } from '../../app/slices/studioSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
+import { trackEvent } from '../../analytics/utils';
+import { analytics } from '../../firebase/app';
+import { logEvent } from 'firebase/analytics';
 
 function AddProjectModal() {
     const dispatch = useDispatch();
@@ -13,10 +16,37 @@ function AddProjectModal() {
     const visible = useSelector(selectModal)
     const currentStudio = useSelector(selectUserStudio)
     const onClose = () => dispatch(closeModal('createProject'))
+    // Dummny datas for the new project for random data
+    const dummyName = [
+        'Ethan Ross',
+        'Julia Smith',
+        'Michael Johnson',
+        'Emily Davis',
+        'David Wilson',
+        'Olivia Brown',
+        'Daniel Taylor',
+        'Sophia Anderson',
+        'William Thomas',
+        'Ava Martinez',
+        'James Lee',
+        'Isabella Garcia',
+        'Benjamin Hernandez',
+        'Mia Clark',
+        'Alexander Lewis',
+        'Charlotte Walker',
+        'Henry Hall',
+        'Amelia Allen',
+        'Jackson Young',
+    ]
+    const randomName = dummyName[Math.floor(Math.random() * dummyName.length)];
+    const randomEmail = `${randomName.toLowerCase()}@gmail.com`;
+    const randomType = ['Wedding', 'Birthday', 'Baptism'][Math.floor(Math.random() * 3)];
+    const randomPhone = Math.floor(Math.random() * 9000000000) + 1000000000;
+
   const [projectData, setProjectData] = useState({
-      name: 'Ethan Ross',
-      type: 'Birthday',
-      email: 'julia.ethan@gmail.com',
+      name: randomName,
+      type: randomType,
+      email: randomEmail,
       phone: '3656992278',
       collections: [],
       events: [],
@@ -52,6 +82,11 @@ function AddProjectModal() {
             let newProjectData = response.payload;
             console.log(response)
               onClose();
+              // trigger analytics event  project_created
+              trackEvent('project_created', {
+                project_type: newProjectData.type,
+                project_email: newProjectData.email,
+              });
               dispatch(showAlert({type:'success', message:`New Project created!`}));
             
               navigate(`/${domain}/project/${newProjectData.id}`);

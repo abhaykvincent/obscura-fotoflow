@@ -6,7 +6,7 @@
     bottom: 8px*0;
     right: 8px*0;
     z-index: 12;
-    opacity: 0.2;
+    opacity: 0.4;
     cursor: pointer;
     transition-duration: 0.1s;
     &:hover{
@@ -86,9 +86,10 @@
       }
     }
     .support-icon{
-      padding: 8px*5;
+      padding: 8px*4 8px*5;
+      margin-right: -8px*0;
       background-position: center;
-      background-size: auto  60%;
+      background-size: auto  50%;
       background-image: url('https://img.icons8.com/?size=100&id=aKhBH2zWyueV&format=png&color=FFFFFF');
       transition-duration: 0.2s;
       transition-timing-function: ease-in-out;
@@ -103,6 +104,7 @@
     &.expanded{
         transition-duration: 0.1s;
 
+        opacity: 1;
         .support-actions{
         margin-bottom: 8px;
                 padding: 8px*2;
@@ -131,7 +133,7 @@
             transition-duration: 0.2s;
             transition-timing-function: ease-in-out;
             &:hover{
-              transform: scale(1.05);
+              transform: scale(1);
               transition-duration: 0.1s;
             transition-timing-function: ease-out;
       

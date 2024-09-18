@@ -32,8 +32,8 @@ function Storage() {
         </div>
       <div className="storage-info">
         <div className="storage-pie-wrap">
-            <StoragePie totalSpace={storageLimit.total} usedSpace={usedSpace} active={true}/>
-            <StoragePie totalSpace={storageLimit.total*2} usedSpace={usedSpace} />
+            <StoragePie height={200} totalSpace={storageLimit.total} usedSpace={usedSpace} active={true}/>
+            <StoragePie height={200} totalSpace={storageLimit.total*2} usedSpace={usedSpace} />
         </div>
         {/* <p className="storage-insight">Storing 24034 photos in 17 collections</p> */}
         <div className="storage-subscription">

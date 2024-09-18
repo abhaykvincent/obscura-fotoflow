@@ -10,10 +10,12 @@ import { collection, doc, updateDoc } from "firebase/firestore";
 import { delay } from "./generalUtils";
 import { generateMemorablePIN } from "./stringUtils";
 import { showAlert } from "../app/slices/alertSlice";
+import { trackEvent } from "../analytics/utils";
 
 
 // Firebase Cloud Storage
-// File Singleupload function
+
+// File Single upload function
 export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
     const MAX_RETRIES = 5;
     const INITIAL_RETRY_DELAY = 500;
@@ -155,7 +157,7 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
 
     return results;
 };
-// ENTRY POINT
+// Upload ENTRY POINT
 export const handleUpload = async (domain,files, id, collectionId,importFileSize, setUploadLists,setUploadStatus, retries = 2) => {
     setUploadLists(files)
     // Slice the files array into smaller arrays of size sliceSize
@@ -199,7 +201,11 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
                 addUploadedFilesToFirestore(domain,id, collectionId,importFileSize, uploadedFiles)
                     .then(() => {
                         showAlert('success', 'All files uploaded successfully!')
-
+                        trackEvent('files_uploaded', {
+                            domain: domain,
+                            size: importFileSize,
+                            files: uploadedFiles.length,
+                        });
                     })
                     .catch((error) => {
                         console.error('Error adding uploaded files to project:', error.message);

@@ -6,7 +6,7 @@ import { hideAlert, selectAlertMessage, selectAlertShow, selectAlertType, } from
 const Alert = () => {
   const dispatch = useDispatch();
 
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   const show = useSelector(selectAlertShow);
   const type = useSelector(selectAlertType);
   const message = useSelector(selectAlertMessage);
@@ -17,7 +17,7 @@ const Alert = () => {
       setTimeout(() => {
         setVisible(false);
         dispatch(hideAlert())
-      }, 1500); // Hide after 1 second
+      }, 3000); // Hide after 1 second
     }
   }, [show]);
 

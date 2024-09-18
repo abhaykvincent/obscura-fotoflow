@@ -1,44 +1,45 @@
-import React, { useCallback, memo, useState } from 'react';
-const SelectionGallery = ({ images, selectedImages, setSelectedImages, setSelectedImagesInCollection }) => {
-  console.log(selectedImages)
+import React, { useCallback, memo } from 'react';
 
+const SelectionGallery = ({ images, selectedImages,setUnselectedImages, setSelectedImages }) => {
   const handleImageClick = useCallback((fileUrl) => {
-    // Check if fileUrl is already in selectedImages
     const index = selectedImages.indexOf(fileUrl);
+  
     if (index > -1) {
-      // If fileUrl is already in selectedImages, remove it
+      // Unselect the image if already selected
       const newSelectedImages = [...selectedImages];
       newSelectedImages.splice(index, 1);
       setSelectedImages(newSelectedImages);
+  
+      // Add to unselected images
+      setUnselectedImages((prevUnselected) => [...prevUnselected, fileUrl]);
     } else {
-      // If fileUrl is not in selectedImages, add it
+      // Select the image if not yet selected
       setSelectedImages([...selectedImages, fileUrl]);
+  
+      // Remove from unselected images if it exists
+      setUnselectedImages((prevUnselected) =>
+        prevUnselected.filter((img) => img.url !== fileUrl.url)
+      );
     }
-    // Update setSelectedImagesInCollection
-    setSelectedImagesInCollection(selectedImages);
-
-  }, [selectedImages, setSelectedImages, setSelectedImagesInCollection]);
-
+  }, [selectedImages, setSelectedImages, setUnselectedImages]);
+  
   const ImageComponent = React.memo(({ fileUrl, index, handleImageClick }) => (
     <div
       className="photo"
       key={index}
-      aria-label={`File ${index}`}
       onClick={() => handleImageClick(fileUrl)}
     >
-      <img className="img"  src={fileUrl.url} alt={`File ${index}`} 
-            ></img>
+      <img className="img" src={fileUrl.url} alt={`File ${index}`} />
       <input
         type="checkbox"
         checked={selectedImages.includes(fileUrl)}
-
         onChange={() => handleImageClick(fileUrl)}
       />
     </div>
   ));
 
   return (
-    <div className="gallary">
+    <div className="gallery">
       <div className="photos">
         {images.map((fileUrl, index) => (
           <ImageComponent key={index} fileUrl={fileUrl} index={index} handleImageClick={handleImageClick} />
@@ -48,4 +49,4 @@ const SelectionGallery = ({ images, selectedImages, setSelectedImages, setSelect
   );
 };
 
-export default SelectionGallery;
+export default memo(SelectionGallery);
