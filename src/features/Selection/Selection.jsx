@@ -39,6 +39,10 @@ export default function Selection() {
   useEffect(() => {
     document.body.style.backgroundColor = 'white';
   }, []);
+  useEffect(() => {
+    console.log(selectionCompleted)
+    
+  }, [selectionCompleted]);
 
   // Fetch project and image URLs
   useEffect(() => {
@@ -54,7 +58,7 @@ export default function Selection() {
     setCurrentCollectionIndex(project.collections.findIndex(collection => collection.id === collectionId))
     let newImages = project?.collections.find((collection)=>collection.id===collectionId)?.uploadedFiles || []
     console.log(newImages)
-    setImages(newImages);
+    newImages.length>0?setImages(newImages):setImages([])
     setTotalPages(Math.ceil(newImages.length/size))
     setPage(1)
   }, [project, collectionId]);
@@ -99,18 +103,26 @@ export default function Selection() {
 
 
   // handle selection completed
-  const handleSelectionCompleted = async () => {
+  const saveSelection = async () => {
     try {
       handleAddOrRemoveSelectedImages()
-      await updateProjectStatusInFirestore(domain,projectId, 'selected');
+      await updateProjectStatusInFirestore(domain,projectId, 'selected')
+
     }
     catch (error) {
       console.error('Failed to update project status:', error);
     }
       
   };
+
+  const completeSelection = () => {
+    setSelectionCompleted(true);
+    
+    saveSelection()
+  };
   const handleAddOrRemoveSelectedImages = async () => {
     try {
+      console.log(selectedImages)
       if (selectedImages.length > 0) {
         await addSelectedImagesToFirestore(domain, projectId, collectionId, selectedImages, page, size, totalPages);
       } 
@@ -121,6 +133,8 @@ export default function Selection() {
       console.error('Error updating selected/unselected images:', error);
     }
   };
+
+
   // Collections panel
   const CollectionsPanel = () => (
     <div className="collections-panel">
@@ -154,7 +168,7 @@ export default function Selection() {
         </div>
         <div className="banner" />
       </div>
-
+      {selectionCompleted ? 'true':'false'}
       {!selectionCompleted ? 
       (<>
         <CollectionsPanel/>
@@ -175,11 +189,12 @@ export default function Selection() {
                 totalCollections={totalCollections}
                 currentPage={page}
                 totalPages={totalPages}
+                completeSelection={completeSelection}
                 handlePageChange={(newPage) => {
                   handleAddOrRemoveSelectedImages()
                   setPage(newPage)
                 }}
-                handleSelectionCompleted={handleSelectionCompleted}
+                saveSelection={saveSelection}
                 project={project}
               />
             </div> 
@@ -197,7 +212,7 @@ export default function Selection() {
             width={200}
           />
           <div className="button primary"
-            onClick={setSelectionCompleted(false)}
+            onClick={() => setSelectionCompleted(false)}
           >
             Select Again
           </div>

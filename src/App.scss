@@ -374,6 +374,10 @@ body{
             }
           }
         }
+        .open-buttons{
+          display: flex;
+          justify-content: flex-end;
+        }
         .open-in{
           font-size: 0.8rem;
           color: $gray-default-dark;

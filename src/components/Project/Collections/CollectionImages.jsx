@@ -8,8 +8,10 @@ import { setUploadList, setUploadStatuss } from '../../../app/slices/uploadSlice
 import Lottie from 'react-lottie';
 import animationData from '../../../assets/animations/UploadFiles.json';
 import { selectDomain } from '../../../app/slices/authSlice';
+import DownloadFiles from '../../DownloadFiles/DownloadFiles';
+import { findCollectionById } from '../../../utils/CollectionQuery';
 
-const CollectionImages = ({ id, collectionId, collection }) => {
+const CollectionImages = ({ id, collectionId, project }) => {
     const dispatch = useDispatch();
 
     // Files
@@ -116,9 +118,12 @@ const CollectionImages = ({ id, collectionId, collection }) => {
                 ) : (
                     <div className="empty-message"></div>
                 )}
-
+                <div className="open-buttons ">
+                    
                 <div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
                     Open in <div className="lr button secondary">Lightroom</div>
+                </div>
+                <DownloadFiles className={`open-in ${showAllPhotos ? 'disabled' : ''}`} folderPath={`${domain}/${id}/${collectionId}/`} project={project} collection={findCollectionById(project, collectionId)}/>
                 </div>
             </div>
             {imageUrls.length > 0 ? (

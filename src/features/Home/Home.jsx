@@ -9,6 +9,7 @@ import { selectProjects } from '../../app/slices/projectsSlice';
 import { openModal } from '../../app/slices/modalSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import StoragePie from '../../components/StoragePie/StoragePie';
+import AddProjectModal from '../../components/Modal/AddProject';
 function Home() {
     const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
@@ -123,6 +124,7 @@ function Home() {
                     </>)
                 }
                 
+          <AddProjectModal />
                 <Refresh/>
             </main>
         </>

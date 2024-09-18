@@ -9,6 +9,7 @@ import { openModal } from '../../app/slices/modalSlice';
 import LoginEmailPassword from './LoginEmailPassword';
 import AddStudio from '../../components/Modal/AddStudio';
 import { fetchStudiosOfUser } from '../../firebase/functions/firestore';
+import { trackEvent } from '../../analytics/utils';
 
 const LoginModal = () => {
   const dispatch = useDispatch();
@@ -29,6 +30,8 @@ const LoginModal = () => {
         // The signed-in user info.
         const user = result.user;
         console.log("Logged in as " + user.email);
+
+      trackEvent('login',{method:'Google'})
         
         const studiosResponse = await fetchStudiosOfUser(user.email);
         console.log("Studios response:", studiosResponse);

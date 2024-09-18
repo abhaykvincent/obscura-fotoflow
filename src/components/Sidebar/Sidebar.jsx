@@ -5,6 +5,7 @@ import { GrUpgrade } from "react-icons/gr";
 import { logout, selectUser, selectUserStudio } from '../../app/slices/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import AdminRoute from '../AdminRoute/AdminRoute';
+import { trackEvent } from '../../analytics/utils';
 function Sidebar() {
   
   const dispatch = useDispatch();
@@ -107,7 +108,7 @@ function Sidebar() {
       </div>
 
       <div className="profile-settings">
-        <div className="profile-options" onClick={toggleProfileOption}>
+        <div className={`profile-options  ${profileOptionActive?'active':''}`} onClick={toggleProfileOption}>
           <div className="profile"
           >
             <div className="profile-image"></div>
@@ -130,6 +131,8 @@ function Sidebar() {
             onClick={
               ()=>{
                 dispatch(logout())
+
+      trackEvent('logout')
                 // navigate('/')
                 navigate(`/`)
               }

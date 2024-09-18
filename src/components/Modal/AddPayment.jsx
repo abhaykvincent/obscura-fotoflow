@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
 import { formatDecimal } from '../../utils/stringUtils';
 import { selectDomain } from '../../app/slices/authSlice';
+import { trackEvent } from '../../analytics/utils';
 
 function AddPaymentModal({ project }) {
   const dispatch = useDispatch();
@@ -61,6 +62,10 @@ function AddPaymentModal({ project }) {
     if (validateForm()) {
       dispatch(addPayment({domain, projectId: project.id, paymentData }))
         .then((data) => {
+          trackEvent('transactions_added', {
+            type:'payment',
+            amount: data.amount,
+        });
           dispatch(showAlert({type:'success', message:`<b>${paymentData.name}</b> payment added successfully!`}));
           onClose();
         })

@@ -6,6 +6,9 @@ import { useNavigate } from 'react-router';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
 import { selectStudio } from '../../app/slices/studioSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
+import { trackEvent } from '../../analytics/utils';
+import { analytics } from '../../firebase/app';
+import { logEvent } from 'firebase/analytics';
 
 function AddProjectModal() {
     const dispatch = useDispatch();
@@ -79,6 +82,11 @@ function AddProjectModal() {
             let newProjectData = response.payload;
             console.log(response)
               onClose();
+              // trigger analytics event  project_created
+              trackEvent('project_created', {
+                project_type: newProjectData.type,
+                project_email: newProjectData.email,
+              });
               dispatch(showAlert({type:'success', message:`New Project created!`}));
             
               navigate(`/${domain}/project/${newProjectData.id}`);

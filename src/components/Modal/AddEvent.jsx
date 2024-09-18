@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
 import './AddEvent.scss'
 import { selectDomain } from '../../app/slices/authSlice';
+import { trackEvent } from '../../analytics/utils';
 
 function AddEventModal({ project, visible, onClose}) {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ function AddEventModal({ project, visible, onClose}) {
   const handleSubmit = () => {
     dispatch(addEvent({domain,projectId:project.id,newEvent:EventData}))
     .then((data)=>{
+      trackEvent('event_added')
       dispatch(showAlert({type:'success', message:`Event <b>${data.payload.newEvent.type}</b> added successfully!`}));
     })
     onClose('createEvent');

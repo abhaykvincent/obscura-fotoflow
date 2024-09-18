@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
 import { selectCollectionsLimit, selectStudio } from '../../app/slices/studioSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
+import { trackEvent } from '../../analytics/utils';
 
 function AddCollectionModal({ project }) {
   const dispatch = useDispatch();
@@ -30,21 +31,35 @@ function AddCollectionModal({ project }) {
         [name]: value,
       }));
   };
-  const handleSubmit = () => {
-    console.log(collectionsLength.length)
-    console.log(collectionsLimit)
-    const domain= defaultStudio.domain
-    if(collectionsLength.length < collectionsLimit.perProject)
-    {dispatch(addCollection({ domain:domain, projectId: project.id, newCollection: CollectionData }))
-    .then((id)=>{
-      dispatch(showAlert({type:'success', message:`Collection <b>${CollectionData.name}</b> added successfully!`}));
-        navigate(`/${defaultStudio.domain}/gallery/${project.id}/${id.payload.collection.id}`);
-    })}
-    else{
-      dispatch(showAlert({type:'error', message:`Project <b>${CollectionData.name}</b>'s Collection limit reached! Upgrade`}));
-    }
-    onClose();
-  };
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+const handleSubmit = () => {
+  if (isSubmitting) return;  // Prevent multiple submissions
+  setIsSubmitting(true);
+
+  console.log(collectionsLength.length)
+  console.log(collectionsLimit)
+  const domain= defaultStudio.domain;
+  
+  if(collectionsLength.length < collectionsLimit.perProject) {
+    dispatch(addCollection({ domain, projectId: project.id, newCollection: CollectionData }))
+    .then((id) => {
+      trackEvent('collection_created', {
+        project_id: project.id,
+        collection_id: id.payload.collection.id
+      });
+      dispatch(showAlert({ type: 'success', message: `Collection <b>${CollectionData.name}</b> added successfully!` }));
+      navigate(`/${defaultStudio.domain}/gallery/${project.id}/${id.payload.collection.id}`);
+    })
+    .finally(() => {
+      setIsSubmitting(false);  // Re-enable the button after submission
+    });
+  } else {
+    dispatch(showAlert({ type: 'error', message: `Project <b>${CollectionData.name}</b>'s Collection limit reached! Upgrade` }));
+  }
+  onClose();
+};
+
 
   if (!visible.createCollection) {
     return null;

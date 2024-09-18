@@ -89,7 +89,6 @@ export default function App() {
           <Sidebar />
           <Alert />
           <UploadProgress/>
-          <AddProjectModal />
         </>
       ) : 
       (<>{ !isPublicPage() && <LoginModal/> }</>)}

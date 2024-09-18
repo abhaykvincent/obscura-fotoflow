@@ -116,9 +116,15 @@
     
                 }
                 .download{
+                    opacity: 0.2;
+                    cursor: not-allowed;
+
                     background-image: url('../../assets/img/icons/download.svg');
                 }
                 .share{
+                    opacity: 0.2;
+                    cursor: not-allowed;
+
                     background-image: url('../../assets/img/icons/share.svg');
                 }
                 .set-cover{

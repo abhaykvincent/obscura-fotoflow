@@ -75,6 +75,8 @@ function Projects() {
                     )
                 }
             </div>
+
+          <AddProjectModal />
             {/* Refresh Projects Data from cloud */}
             <Refresh/>
             
