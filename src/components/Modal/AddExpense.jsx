@@ -58,7 +58,7 @@ function AddExpenseModal({ project }) {
     if (validateForm()) {
       dispatch(addExpense({ domain,projectId: project.id, paymentData:expenseData }))
         .then((data) => {
-          trackEvent('transactions_added', {
+          trackEvent('transaction_recorded', {
             type:'expance',
             amount: data.amount,
         });

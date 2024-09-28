@@ -5,13 +5,13 @@ import { getAnalytics, isSupported, logEvent } from "firebase/analytics";
 import { getAuth, connectAuthEmulator, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 // Enable Firebase debug mode
-/* if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development') {
     console.log('DEV MODE');
     window.firebase = window.firebase || {};  // for debugging
     window.firebase.DEBUG = true;  // Enable verbose logging
 } else {
     console.log('PROD MODE');
-} */
+}
 
 const firebaseConfig = {
     apiKey: "AIzaSyATMISVaGPMkJANWrzgmOGqgMGHprnrT04",
@@ -31,7 +31,7 @@ const auth = getAuth(app);
 const analytics = getAnalytics(app);
 
 
-if (process.env.NODE_ENV === 'development') {
+/* if (process.env.NODE_ENV === 'development') {
     const EMULATOR_HOST = process.env.REACT_APP_EMULATOR_HOST;
     const EMULATOR_PORT = process.env.REACT_APP_EMULATOR_PORT;
     const EMULATOR_FIRESTORE_PORT = process.env.REACT_APP_EMULATOR_FIRESTORE_PORT;
@@ -41,7 +41,7 @@ if (process.env.NODE_ENV === 'development') {
     connectStorageEmulator(storage, EMULATOR_HOST, EMULATOR_PORT);
     connectFirestoreEmulator(db, EMULATOR_HOST, EMULATOR_FIRESTORE_PORT);
     connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${EMULATOR_AUTH_PORT}`);
-}
+} */
 
 const provider = new GoogleAuthProvider();
 

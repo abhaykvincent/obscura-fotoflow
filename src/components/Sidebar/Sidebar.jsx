@@ -20,6 +20,7 @@ function Sidebar() {
   const location = useLocation();
   const params = useParams()
   const studioName = defaultStudio?.domain ?? {domain:'guest',name:'guest'}; 
+  console.log(defaultStudio)
   
   if(user==='no-studio-found')
     return 
@@ -114,7 +115,7 @@ function Sidebar() {
             <div className="profile-image"></div>
             <div className="account-name">
               <div className="studio-name">{defaultStudio?.name}</div>
-              <div className="profile-name">{user?.displayName} <div className="role">{user.studio?.roles[0]}</div></div>
+              <div className="profile-name">{user?.displayName} <div className="role">{user.studio?.roles[0] && user.studio?.roles[0]}</div></div>
             </div>
           </div>
           <div className="option-icon"></div>

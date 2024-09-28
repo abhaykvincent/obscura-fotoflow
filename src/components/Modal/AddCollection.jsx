@@ -44,6 +44,7 @@ const handleSubmit = () => {
   if(collectionsLength.length < collectionsLimit.perProject) {
     dispatch(addCollection({ domain, projectId: project.id, newCollection: CollectionData }))
     .then((id) => {
+      console.log(id)
       trackEvent('collection_created', {
         project_id: project.id,
         collection_id: id.payload.collection.id

@@ -50,6 +50,9 @@ const LoginModal = () => {
 
           navigate('/onboarding');
         }
+        else{
+          navigate(`/${response.payload.studio.domain}`);
+        }
     } catch (error) {
         console.log("Error during sign-in:", error);
         // Handle Errors here.

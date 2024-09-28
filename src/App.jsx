@@ -37,6 +37,7 @@ import Onboarding from './features/Onboarding/Onboarding';
 import AdminPanel from './features/AdminPanel/AdminPanel';
 import useAdminAuth from './hooks/useAdminAuth';
 import { selectModal } from './app/slices/modalSlice';
+
 //import AdminRoute from './components/AdminRoute/AdminRoute';
 // Wrapper component to pass studio name to pages
 const StudioWrapper = ({ Component }) => {
@@ -57,12 +58,13 @@ export default function App() {
   const user = useSelector(selectUser);
   useEffect(() => {
     console.log(isLoading)
+    
   }, [isLoading]);
   // ON Render
   useEffect(() => {
     console.log(currentDomain)
 
-    dispatch(checkAuthStatus())
+      dispatch(checkAuthStatus())
      dispatch(checkStudioStatus())
     currentDomain !== 'guest' && dispatch(fetchProjects({currentDomain}))
   }, [currentDomain]);
@@ -71,7 +73,7 @@ export default function App() {
       if (modalStates.some(state => state)) {
         window.scrollTo(0, 0);
         document.body.style.overflow = 'hidden';
-        debugger
+        
       } else {
         document.body.style.overflow = 'auto';
       }
@@ -106,7 +108,7 @@ export default function App() {
                 </AdminRoute> 
               }/> */}
 
-              <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}`} replace />} />
+              <Route exact path="/" element={<Navigate to={`/`} replace />} />
               <Route exact path="/:studioName/" element={<Home />} />
               <Route exact path="/:studioName/project/:id" element={<Project />} />
               <Route exact path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />

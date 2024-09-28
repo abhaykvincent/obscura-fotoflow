@@ -88,7 +88,7 @@ export default function Project() {
           </div>
           <DashboardEvents project={project} />
         </div>
-        <SidePanel />
+        <SidePanel  project={project}/>
         {/* Modals */}
         <AddCollectionModal project={project} />
         <AddPaymentModal project={project} />

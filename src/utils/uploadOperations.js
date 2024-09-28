@@ -17,6 +17,8 @@ import { trackEvent } from "../analytics/utils";
 
 // File Single upload function
 export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
+    console.log(file)
+    
     const MAX_RETRIES = 5;
     const INITIAL_RETRY_DELAY = 500;
     let retries = 0;
@@ -84,6 +86,7 @@ export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
                     })
                     resolve({
                         name: file.name,
+                        lastModified:file.lastModified,
                         url
                     }); // Resolve the promise when the file is successfully uploaded
                 }
@@ -201,7 +204,7 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
                 addUploadedFilesToFirestore(domain,id, collectionId,importFileSize, uploadedFiles)
                     .then(() => {
                         showAlert('success', 'All files uploaded successfully!')
-                        trackEvent('files_uploaded', {
+                        trackEvent('gallery_uploaded', {
                             domain: domain,
                             size: importFileSize,
                             files: uploadedFiles.length,

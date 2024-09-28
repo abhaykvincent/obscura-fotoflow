@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { getStorage, ref, listAll, getDownloadURL } from 'firebase/storage';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import { trackEvent } from '../../analytics/utils';
 
 const DownloadFiles = ({ folderPath ,className, project,collection}) => {
   const [loading, setLoading] = useState(false);
@@ -31,7 +32,10 @@ const DownloadFiles = ({ folderPath ,className, project,collection}) => {
 
       // Wait for all files to be added to the zip
       await Promise.all(filePromises);
-
+      trackEvent('gallery_downloaded', {
+        project_id: project.id,
+        collection_id: collection.id
+    });
       // Generate the zip and download it
       const zipBlob = await zip.generateAsync({ type: 'blob' });
       saveAs(zipBlob, `${project.name} | ${collection.name}.zip`);
@@ -39,12 +43,13 @@ const DownloadFiles = ({ folderPath ,className, project,collection}) => {
       console.error('Error downloading files:', error);
     } finally {
       setLoading(false);
+
     }
   };
 
   return (
     <div className={className }>
-      <button className={' button primary'} onClick={downloadAllFiles} disabled={loading}>
+      <button className={' button secondary'} onClick={downloadAllFiles} disabled={loading}>
         {loading ? 'Downloading...' : 'Download Files'}
       </button>
     </div>

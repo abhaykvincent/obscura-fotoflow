@@ -21,7 +21,7 @@ export default function Galleries({}) {
   const defaultStudio = useSelector(selectUserStudio)
   const domain = useSelector(selectDomain)
   const navigate = useNavigate();
-  let { id,collectionId } = useParams();
+  let { studioName, id,collectionId } = useParams();
   // State
   const projects = useSelector(selectProjects)
   const [project, setProject] = useState(undefined)
@@ -56,10 +56,13 @@ export default function Galleries({}) {
   // If the collection is not found, redirect to the project page and return
   if (defaultCollectionId==='Collection not found' && defaultCollectionId!=='') {
     setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}`);},100)
+
     return;
   }
-  if(!collectionId&&defaultCollectionId!==''){
-    setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}/${targetCollectionId}`);},100)
+  if(!defaultCollectionId!==''){
+    console.log(collectionId,defaultCollectionId)
+
+    setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}/${collectionId}`);},100)
     return
   }
   console.log(findCollectionById(projectTemp, collectionId || defaultCollectionId))
