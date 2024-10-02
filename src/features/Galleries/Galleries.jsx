@@ -52,16 +52,15 @@ export default function Galleries({}) {
 
   setTargetCollectionId(collectionId || defaultCollectionId)
   setCollection(findCollectionById(projectTemp, collectionId || defaultCollectionId))
-  // If the collection is not found, redirect to the project page and return
-  if (defaultCollectionId==='Collection not found' && defaultCollectionId!=='') {
-    setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}`);},100)
-
-    return;
-  }
-  if(!defaultCollectionId!==''){
-    setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}/${collectionId}`);},100)
-    return
-  }
+ // If the collection is not found, redirect to the project page and return
+ if (defaultCollectionId==='Collection not found' && defaultCollectionId!=='') {
+  setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}`);},100)
+  return;
+}
+if(!collectionId&&defaultCollectionId!==''){
+  setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}/${targetCollectionId}`);},100)
+  return
+}
   document.title = `${projectTemp.name}'s ${projectTemp.type}`
 }, [projects, id, collectionId, navigate]);
 
