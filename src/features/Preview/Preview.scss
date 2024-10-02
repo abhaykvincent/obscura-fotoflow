@@ -7,7 +7,7 @@
 .preview{
     position: fixed;
     top: -($header-height );
-    left: -($sidebar-width);
+    left: -8px*24;
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.8);
@@ -20,11 +20,11 @@
         justify-items: center;
         .image{
             height: calc(100% - 8px * 18);
-            width: 100%;
+            width: 100vw;
             background-position: center;
             transition: background-size 0.1s ease;
 
-    
+            background-size: auto 100% ;
         }
     }
     .controls{
@@ -271,4 +271,31 @@
 
     top: 0px;
     left: 0px;
+}
+
+@media only screen and (max-width: 1200px) {
+    .App{
+        .preview{
+            left: -8px*8;
+            top: -($header-height );
+          }
+    }
+}
+@media only screen and (max-width: 520px) {
+    .App{
+        .preview{
+            left: -8px*0;
+            top: -($header-height );
+            .image-wrap{
+                .image{
+                    height: 100vh;
+                    width: 100vw;
+                    background-position: center;
+                    transition: background-size 0.1s ease;
+                    background-size: 100% auto;
+            
+                }
+            }
+          }
+    }
 }

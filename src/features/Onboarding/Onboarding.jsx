@@ -8,7 +8,7 @@ import UserContact from './UserContact.jsx'
 import { useNavigate } from 'react-router'
 import { createStudio, createUser } from '../../firebase/functions/firestore.js'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectUser, setCurrentStudio, setUser } from '../../app/slices/authSlice.js'
+import { login, selectUser, setCurrentStudio, setUser } from '../../app/slices/authSlice.js'
 import { showAlert } from '../../app/slices/alertSlice.js'
 import { signInWithPopup } from 'firebase/auth'
 import { analytics, auth, provider } from '../../firebase/app.js'
@@ -18,6 +18,7 @@ function Onboarding() {
   const navigate = useNavigate()
   const dispatch = useDispatch();
   const user = useSelector(selectUser)
+  console.log(user)
   const [currentScreen, setCurrentScreen]= useState('create-studio')
   const [createAccountData, setCreateAccountData] = useState({
     studioName: '',
@@ -47,12 +48,12 @@ function Onboarding() {
       createStudio(response.studio)
           .then((response) => {
             console.log(response)
-              dispatch(showAlert({type:'success', message:`New Project created!`}));
-            
+              dispatch(showAlert({type:'success', message:`New Studio created!`}));
+              dispatch(login(user))
               navigate(`/${response.domain}`);
           })
           .catch((error) => {
-              console.error('Error creating project:', error);
+              console.error('Error creating Studio:', error);
               dispatch(showAlert({type:'error', message:`error`}));
               // Handle error scenarios, e.g., show an error message
           });
@@ -69,22 +70,22 @@ function Onboarding() {
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const token = credential.accessToken;
       // The signed-in user info.
-      const user = result.user;
+       let loginUser = result.user;
       // IdP data available using getAdditionalUserInfo(result)
       // ...
       console.log("Logged in as " + user.email )
       // EROR: Login.jsx:27 A non-serializable value was detected in an action, in the path: `payload`. Value: 
       const serializedUser = {
-        userId: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
+        userId: loginUser.uid,
+        email: loginUser.email,
+        displayName: loginUser.displayName,
+        photoURL: loginUser.photoURL,
         access: '',
         studio: [],
       };
       dispatch(setUser(serializedUser))
 
-      analytics.setUserId(user.uid);
+      analytics.setUserId(loginUser.uid);
 
     }).catch((error) => {
       // Handle Errors here.

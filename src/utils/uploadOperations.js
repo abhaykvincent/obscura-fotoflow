@@ -4,19 +4,19 @@ import {
     ref,
     list,
 } from "firebase/storage";
-import { arrayUnion, getDoc, getDocs, setDoc, writeBatch } from "firebase/firestore";
 import { db, storage } from '../firebase/app';
-import { collection, doc, updateDoc } from "firebase/firestore";
 import { delay } from "./generalUtils";
-import { generateMemorablePIN } from "./stringUtils";
 import { showAlert } from "../app/slices/alertSlice";
 import { trackEvent } from "../analytics/utils";
+import { addUploadedFilesToFirestore } from "../firebase/functions/firestore";
 
 
 // Firebase Cloud Storage
 
 // File Single upload function
 export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
+    console.log(file)
+    
     const MAX_RETRIES = 5;
     const INITIAL_RETRY_DELAY = 500;
     let retries = 0;
@@ -84,6 +84,7 @@ export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
                     })
                     resolve({
                         name: file.name,
+                        lastModified:file.lastModified,
                         url
                     }); // Resolve the promise when the file is successfully uploaded
                 }
@@ -157,6 +158,7 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
 
     return results;
 };
+
 // Upload ENTRY POINT
 export const handleUpload = async (domain,files, id, collectionId,importFileSize, setUploadLists,setUploadStatus, retries = 2) => {
     setUploadLists(files)
@@ -201,7 +203,7 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
                 addUploadedFilesToFirestore(domain,id, collectionId,importFileSize, uploadedFiles)
                     .then(() => {
                         showAlert('success', 'All files uploaded successfully!')
-                        trackEvent('files_uploaded', {
+                        trackEvent('gallery_uploaded', {
                             domain: domain,
                             size: importFileSize,
                             files: uploadedFiles.length,
@@ -227,43 +229,3 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
 
 
 // Firestore Database
-const addUploadedFilesToFirestore = async (domain, projectId, collectionId, importFileSize, uploadedFiles) => {
-    let color = domain === '' ? 'gray' : '#0099ff';
-    console.log(`%cAdding Uploaded Files to Project ${projectId} in ${domain ? domain : 'undefined'}`, `color: ${color}; `);
-
-    const batch = writeBatch(db);
-    const studioDocRef = doc(db, 'studios', domain);
-    const projectsCollectionRef = collection(studioDocRef, 'projects');
-    const projectDocRef = doc(projectsCollectionRef, projectId);
-    const subCollectionId = `${collectionId}`;
-    const collectionDocRef = doc(projectDocRef, 'collections', subCollectionId);
-
-    const projectData = await getDoc(projectDocRef);
-
-    if (projectData.exists()) {
-        const collectionData = await getDoc(collectionDocRef);
-
-        if (!collectionData.exists()) {
-            // Create the subcollection document if it doesn't exist
-            batch.set(collectionDocRef, { uploadedFiles: [] });
-        }
-
-        batch.update(collectionDocRef, { uploadedFiles: arrayUnion(...uploadedFiles) });
-
-        const projectCover = uploadedFiles[0]?.url || '';
-        batch.update(projectDocRef, {
-            uploadedFilesCount: projectData.data().uploadedFilesCount + uploadedFiles.length,
-            totalFileSize: importFileSize + projectData.data().totalFileSize,
-            projectCover: projectCover,
-            status: "uploaded",
-            pin: projectData.data().pin || generateMemorablePIN(4),
-        });
-
-        await batch.commit();
-        color = '#54a134';
-        console.log(`%cUploaded files and project document updated successfully for project ${projectId} in ${domain}`, `color: ${color}; `);
-    } else {
-        console.error('Project not found.');
-        throw new Error('Project not found.');
-    }
-};

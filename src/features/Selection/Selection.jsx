@@ -9,6 +9,7 @@ import PaginationControl from '../../components/PaginationControl/PaginationCont
 import './Selection.scss';
 import { selectDomain } from '../../app/slices/authSlice';
 import { useSelector } from 'react-redux';
+import { trackEvent } from '../../analytics/utils';
 
 export default function Selection() {
   let { projectId, collectionId } = useParams();
@@ -24,7 +25,8 @@ export default function Selection() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalCollections, setTotalCollections] = useState(0);
   const [currentCollectionIndex, setCurrentCollectionIndex] = useState(0);
-  const [selectionCompleted, setSelectionCompleted] = useState(true);
+  const [selectionCompleted, setSelectionCompleted] = useState(false);
+  const [isInitialSelection, setIsInitialSelection] = useState(true);
   const domain = useSelector(selectDomain)
   const defaultOptions = {
     loop: false,
@@ -41,7 +43,10 @@ export default function Selection() {
   }, []);
   useEffect(() => {
     console.log(selectionCompleted)
-    
+    if(selectionCompleted)  {
+      isInitialSelection && setIsInitialSelection(false);
+      
+  }
   }, [selectionCompleted]);
 
   // Fetch project and image URLs
@@ -101,6 +106,8 @@ export default function Selection() {
     }
   };
 
+  
+
 
   // handle selection completed
   const saveSelection = async () => {
@@ -116,9 +123,14 @@ export default function Selection() {
   };
 
   const completeSelection = () => {
-    setSelectionCompleted(true);
-    
-    saveSelection()
+    if (!selectionCompleted) {
+      setSelectionCompleted(true); // This triggers a re-render
+      saveSelection();
+      
+      trackEvent('selection_completed', {
+        project_id: project.id
+      });
+    }
   };
   const handleAddOrRemoveSelectedImages = async () => {
     try {
