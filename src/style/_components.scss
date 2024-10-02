@@ -11,7 +11,7 @@
     font-weight: 600;
     opacity: 0.9;
     text-align: center;
-    line-height: 1.2rem;
+    line-height: 1.1rem;
     cursor: pointer;
     transition-duration: 0.1s;
     &:hover{
@@ -29,25 +29,16 @@
         opacity: 0.5;
     }
     &.primary{
-        background: linear-gradient(330deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 1)) ,linear-gradient(0deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
-        border: 1px solid rgba(98, 98, 98, 0.5);
-        border-top: 1px solid white;
-        border-left: 1px solid white;
-        border-right: 1px solid rgba(98, 98, 98, 0.5);
-        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0);
-        color: black;
+        background: linear-gradient(330deg, $green-dark-accessible-light, $green-accessible-light);
+        border: 1px solid $green-default-light;
         &.outline {
-            background: $dark-2;
+            background: none;
+            border: 1px solid $green-dark-accessible-light;
             color: $green-default-light;
-            font-weight: 500;border: 1px solid rgba(98, 98, 98, 0.5);
-            border-top: 1px solid rgba(255, 255, 255, 0.4);
-            border-left: 1px solid rgba(255, 255, 255, 0.4);
-            border-right: 1px solid rgba(98, 98, 98, 0.5);
-            &:hover{
-                background: linear-gradient(330deg, rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.4));
-                border: 1px solid rgba(255, 255, 255, 0.4);
-            }
+            font-weight: 500;
         }
+
+    
         &.light-mode{
             background-color: white;
             border: 1px solid $green-accessible-light;
@@ -58,10 +49,6 @@
                 color: $gray-default-dark;
             }
               
-        }
-        &:hover{
-
-        background: linear-gradient(330deg, rgba(255, 255, 255, 0.7),rgba(255, 255, 255, 0.8));
         }
 
     }
@@ -128,9 +115,10 @@
             background-size: 100%;
             background-position: center;
             background-repeat: no-repeat;
+            filter: drop-shadow(1px 1px 1px #222);
         }
         &.add::before{
-            background-image: url('https://img.icons8.com/ios-filled/500/1A1A1A/plus-math.png');
+            background-image: url('https://img.icons8.com/ios-filled/500/ffffff/plus-math.png');
 
         }
         &.confirmed::before{
@@ -145,6 +133,13 @@
         &.new::before{
             background-size: 80%;
             background-image: url('https://img.icons8.com/?size=100&id=Y1Jzb9yc1jLC&format=png&color=FFFFFF');
+        }
+        &.download::before{
+            margin-right: -6px;
+            margin-left: -6px;
+            background-size: 90%;
+            background-position: top 4px center;
+            background-image: url('https://img.icons8.com/?size=100&id=366&format=png&color=FFFFFF');
         }
     }
 }

@@ -3,8 +3,8 @@ import TimelineEvent from '../../Timeline/TimelineEvent'
 import { timelineData } from '../../../data/timeline'
 import ProjectExpiration from '../../ProjectExpiration/ProjectExpiration'
 
-function SidePanel() {
-  return (
+function SidePanel({project}) {
+return (
     <div className="side-panel box">
         <ProjectExpiration createdAt={1724348248766} />
         <div className="headings">
@@ -25,19 +25,19 @@ function SidePanel() {
             <div className="client-details">
                 <div className="client-field client-name">
                     <div className="icon profile"></div>
-                    <p className='name highlight'>Ethan K Ross</p>
+                    <p className='name highlight'>{project.name}</p>
                 </div>
                 <div className="client-field client-email">
                     <div className="icon email"></div>
-                    <p className='name'>ethan.ross@gmail.com</p>
+                    <p className='name'>{project.email}</p>
                 </div>
                 <div className="client-field client-phone">
                     <div className="icon phone"></div>
-                    <p className='name'>+1 354 123-9998</p>
+                    <p className='name'>{project.phone}</p>
                 </div>
                 <div className="client-field client-location">
                     <div className="icon location"></div>
-                    <p className='name'>Toronto, ON</p>
+                    <p className='name'></p>
                 </div>
             </div>
         </div>

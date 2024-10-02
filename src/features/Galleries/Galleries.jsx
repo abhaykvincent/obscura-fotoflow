@@ -21,7 +21,7 @@ export default function Galleries({}) {
   const defaultStudio = useSelector(selectUserStudio)
   const domain = useSelector(selectDomain)
   const navigate = useNavigate();
-  let { id,collectionId } = useParams();
+  let { studioName, id,collectionId } = useParams();
   // State
   const projects = useSelector(selectProjects)
   const [project, setProject] = useState(undefined)
@@ -33,7 +33,6 @@ export default function Galleries({}) {
   const onDeleteConfirm = () => dispatch(deleteProject(id))
 
   useEffect(() => {
-    console.log(projects)
     // If no projects are available, return early
     if (!projects) return;
     // Find the project with the given id
@@ -50,19 +49,18 @@ export default function Galleries({}) {
 
   // Determine the collectionId to use
   const defaultCollectionId = projectTemp?.collections && (projectTemp.collections.length > 0 ? projectTemp.collections[0].id : '');
-  console.log(defaultCollectionId)
+
   setTargetCollectionId(collectionId || defaultCollectionId)
   setCollection(findCollectionById(projectTemp, collectionId || defaultCollectionId))
-  // If the collection is not found, redirect to the project page and return
-  if (defaultCollectionId==='Collection not found' && defaultCollectionId!=='') {
-    setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}`);},100)
-    return;
-  }
-  if(!collectionId&&defaultCollectionId!==''){
-    setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}/${targetCollectionId}`);},100)
-    return
-  }
-  console.log(findCollectionById(projectTemp, collectionId || defaultCollectionId))
+ // If the collection is not found, redirect to the project page and return
+ if (defaultCollectionId==='Collection not found' && defaultCollectionId!=='') {
+  setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}`);},100)
+  return;
+}
+if(!collectionId&&defaultCollectionId!==''){
+  setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}/${targetCollectionId}`);},100)
+  return
+}
   document.title = `${projectTemp.name}'s ${projectTemp.type}`
 }, [projects, id, collectionId, navigate]);
 

@@ -45,19 +45,19 @@ export const login = createAsyncThunk(
     const fontSize ='0.8rem';
     console.log(`%cLogging in as ${serializedUser.email}`, `color: ${color}; font-size: ${fontSize}`);
     
+          // store user
+          localStorage.setItem('user', JSON.stringify(serializedUser));
+          console.log('Stored '+ serializedUser +' to local storage...')
       // Perform the login logic here (e.g., API call, validation, etc.)
       // For example, assume fullAccess is an async function that checks user access
       
       const users = await fetchUsers()
       const user = users.find(user => {
-      console.log(user)
-
       if(user.email === serializedUser.email){
-      console.log(user)
-      return user
-      }
-    } 
-      )
+        console.log(user)
+        return user
+        }
+      })
       color= '#54a134'
       console.log(`%cUser found in ${user.studio.name} `, `color: ${color}; font-size: ${fontSize}`);
       console.log(user)
@@ -71,6 +71,7 @@ export const login = createAsyncThunk(
           // store user
           localStorage.setItem('user', JSON.stringify(user));
           console.log('Stored '+ user +' to local storage...')
+          
           return {
             ...user
           }
@@ -80,6 +81,11 @@ export const login = createAsyncThunk(
         color= '#54a134'
         console.log(`%c${serializedUser.email} Authenticated as  ${serializedUser.displayName}`, `color: ${color}; font-size: ${fontSize}`);
         localStorage.setItem('authenticated', 'true');
+
+          // store user
+          localStorage.setItem('user', JSON.stringify(user));
+          console.log('Stored '+ user +' to local storage...')
+          
         return user
       }
       
@@ -157,7 +163,16 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload;
         console.log(action.payload)
-        if(action.payload !== 'no-studio-found') {state.currentStudio = action.payload.studio;}
+        if(action.payload !== 'no-studio-found') {
+          state.currentStudio = action.payload.studio;
+        }
+        else{
+          // get user from local storage 
+          let userFromLocalStorage = JSON.parse(localStorage.getItem('user'));
+          console.log(userFromLocalStorage)
+          state.user = userFromLocalStorage;
+          
+        }
         state.isAuthenticated = true;
         state.error = null;
       })

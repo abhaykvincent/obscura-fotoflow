@@ -6,7 +6,7 @@ import { selectUserStudio } from '../../../app/slices/authSlice';
 
 function ProjectCard({project}) {   
   const defaultStudio = useSelector(selectUserStudio)
-
+console.log(project.name,project.projectCover )
     //Project's selected photos count
     const getProjectSelectedPhotosCount = (project) => {
         return project.collections.flatMap(collection => collection.uploadedFiles)
@@ -48,18 +48,15 @@ function ProjectCard({project}) {
                     </div> :
                     <div className="project-summary">
                         <div className="summary-left">
-                            <div className={`summary-item photos-count ${project.uploadedFilesCount>0?'active':''}`}>
-                                <div className="icon"></div>
-                                <p>{project.uploadedFilesCount}</p>
-                            </div>
                             <div className={`summary-item collection-count ${project.collections.length>0?'active':''}`}>
                                 <div className="icon"></div>
                                 <p>{project.collections.length}</p>
                             </div>
-                            <div className={`summary-item invoice-count ${project.payments?.length>0?'active':''}`}>
+                            <div className={`summary-item photos-count ${project.uploadedFilesCount>0?'active':''}`}>
                                 <div className="icon"></div>
-                                <p>{project.payments&&project.payments.length}</p>
+                                <p>{project.uploadedFilesCount}</p>
                             </div>
+                            
                             
 
                         </div>

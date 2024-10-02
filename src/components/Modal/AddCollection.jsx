@@ -37,13 +37,14 @@ const handleSubmit = () => {
   if (isSubmitting) return;  // Prevent multiple submissions
   setIsSubmitting(true);
 
-  console.log(collectionsLength.length)
+  console.log('collection length' + collectionsLength.length)
   console.log(collectionsLimit)
   const domain= defaultStudio.domain;
   
   if(collectionsLength.length < collectionsLimit.perProject) {
     dispatch(addCollection({ domain, projectId: project.id, newCollection: CollectionData }))
     .then((id) => {
+      console.log(id)
       trackEvent('collection_created', {
         project_id: project.id,
         collection_id: id.payload.collection.id

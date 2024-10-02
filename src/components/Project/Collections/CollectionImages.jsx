@@ -10,6 +10,7 @@ import animationData from '../../../assets/animations/UploadFiles.json';
 import { selectDomain } from '../../../app/slices/authSlice';
 import DownloadFiles from '../../DownloadFiles/DownloadFiles';
 import { findCollectionById } from '../../../utils/CollectionQuery';
+import { openModal } from '../../../app/slices/modalSlice';
 
 const CollectionImages = ({ id, collectionId, project }) => {
     const dispatch = useDispatch();
@@ -119,11 +120,18 @@ const CollectionImages = ({ id, collectionId, project }) => {
                     <div className="empty-message"></div>
                 )}
                 <div className="open-buttons ">
-                    
-                <div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
-                    Open in <div className="lr button secondary">Lightroom</div>
-                </div>
-                <DownloadFiles className={`open-in ${showAllPhotos ? 'disabled' : ''}`} folderPath={`${domain}/${id}/${collectionId}/`} project={project} collection={findCollectionById(project, collectionId)}/>
+                    { !showAllPhotos ?
+                    <><div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
+                        Open in <div className="lr button secondary">Lightroom</div>
+                    </div>
+                        <DownloadFiles className={`open-in ${showAllPhotos ? 'disabled' : ''}`} folderPath={`${domain}/${id}/${collectionId}/`} project={project} collection={findCollectionById(project, collectionId)}/>
+                        </>:
+                    <>
+                    <div className="button secondery pin" 
+                    onClick={()=>{}} 
+                    >PIN : {project?.pin}</div>
+                    <div className="button primary share" onClick={()=>dispatch(openModal('shareGallery'))} target="_blank">Share</div>
+                </>}
                 </div>
             </div>
             {imageUrls.length > 0 ? (
