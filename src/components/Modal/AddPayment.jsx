@@ -62,7 +62,7 @@ function AddPaymentModal({ project }) {
     if (validateForm()) {
       dispatch(addPayment({domain, projectId: project.id, paymentData }))
         .then((data) => {
-          trackEvent('transactions_added', {
+          trackEvent('transaction_recorded', {
             type:'payment',
             amount: data.amount,
         });

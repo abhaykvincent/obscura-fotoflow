@@ -7,7 +7,7 @@ import { showAlert } from './alertSlice';
 
 const initialState = {
   data: [],
-  status: 'succeeded',
+  status: '',
   loading : false,
   error: null,
 };

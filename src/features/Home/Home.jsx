@@ -34,25 +34,15 @@ function Home() {
                 <div className="welcome-section">
                     <div className="welcome-content">
                         <div className='welcome-message-top user-name'>
-                            <h1 className='welcome-message '>Hello,</h1>
-                            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                                {/* Define the linear gradient */}
-                                <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" style={{ stopColor: '#54a134', stopOpacity: 1 }} />
-                                    <stop offset="100%" style={{ stopColor: '#3f7528', stopOpacity: 1 }} />
-                                </linearGradient>
-                                {/* Apply the gradient to the text */}
-                                <text x="104px" y="44px" fontFamily="Arial" fontSize="3rem" fontWeight="800" fill="url(#textGradient)" textAnchor="middle">
-                                    {defaultStudio.name}
-                                </text>
-                            </svg>
+                            <h1 className='welcome-message '>Hello, <span className='iconic-gradient'>{defaultStudio?.domain} </span></h1>
+                            
                         </div>
                         <h1 className='welcome-message'>Let's manage your Snaps </h1>
                     </div>
 
                     <div className="storage-pie-wrap" >
-                        <StoragePie height={120} totalSpace={1000} usedSpace={10} active/>
-                        <StoragePie height={120}totalSpace={1000} usedSpace={10} />
+                        {/* <StoragePie height={120} totalSpace={1000} usedSpace={10} active/>
+                        <StoragePie height={120}totalSpace={1000} usedSpace={10} /> */}
                     </div>
 
                     <div className="actions">
@@ -123,6 +113,7 @@ function Home() {
                         </div>
                     </>)
                 }
+                
                 
           <AddProjectModal />
                 <Refresh/>

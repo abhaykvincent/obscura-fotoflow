@@ -11,7 +11,6 @@ function Sidebar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector(selectUser);
-  console.log(user)
   const [profileOptionActive, setProfileOptionActive] = useState(false)
   const toggleProfileOption = () => {
     setProfileOptionActive((prevState) => !prevState);
@@ -114,7 +113,7 @@ function Sidebar() {
             <div className="profile-image"></div>
             <div className="account-name">
               <div className="studio-name">{defaultStudio?.name}</div>
-              <div className="profile-name">{user?.displayName} <div className="role">{user.studio?.roles[0]}</div></div>
+              <div className="profile-name">{user?.displayName} <div className="role">{user.studio?.roles[0] && user.studio?.roles[0]}</div></div>
             </div>
           </div>
           <div className="option-icon"></div>
