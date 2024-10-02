@@ -12,28 +12,21 @@
     align-items: center;
         .welcome-message-top{
             display: FLEX;
-            svg{
-                opacity: 0;
-                animation: fadeInLeft 0.5s ease-out 0s;
-                animation-fill-mode: forwards;
-                animation-timing-function: ease-out;
-                height: 4rem;
-                text{
-                    font-weight: 600;
-                    opacity: 1;
-                    font-family: "Product Sans";
-                }
-            }
-            h1{
+                justify-content: start;
+                margin-top: 8px;
+                margin-bottom: 8px;
+                h1{
+                font-weight: 500 !important;
+                font-size: 3rem !important;
 
             opacity: 0;
             animation: fadeInLeft 0.5s ease-out 0s;
             animation-fill-mode: forwards;
             animation-timing-function: ease-out;
             }
+            
         }
         .welcome-message{
-            font-size:3rem;
             font-weight: 600;
             color: $gray2-default-dark;
             &:last-child{
