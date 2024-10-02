@@ -70,22 +70,22 @@ function Onboarding() {
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const token = credential.accessToken;
       // The signed-in user info.
-       user = result.user;
+       let loginUser = result.user;
       // IdP data available using getAdditionalUserInfo(result)
       // ...
       console.log("Logged in as " + user.email )
       // EROR: Login.jsx:27 A non-serializable value was detected in an action, in the path: `payload`. Value: 
       const serializedUser = {
-        userId: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
+        userId: loginUser.uid,
+        email: loginUser.email,
+        displayName: loginUser.displayName,
+        photoURL: loginUser.photoURL,
         access: '',
         studio: [],
       };
       dispatch(setUser(serializedUser))
 
-      analytics.setUserId(user.uid);
+      analytics.setUserId(loginUser.uid);
 
     }).catch((error) => {
       // Handle Errors here.

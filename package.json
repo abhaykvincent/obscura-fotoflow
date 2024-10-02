@@ -31,8 +31,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "emulator": "firebase emulators:start",
     "start": "dotenv -e .env.development react-scripts start",
+    "emulator": "firebase emulators:start",
     "build": "dotenv -e .env.production react-scripts build",
     "deploy": "firebase deploy --only hosting",
     "firebase-login": "firebase firebase login",

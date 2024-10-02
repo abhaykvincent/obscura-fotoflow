@@ -3,18 +3,39 @@ import AddEventModal from '../../Modal/AddEvent'
 import AddCrewModal from '../../Modal/AddCrew';
 import CrewCard from '../../Cards/CrewCard/CrewCard';
 import { getUserByID, teams } from '../../../data/teams';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../../app/slices/modalSlice';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { showAlert } from '../../../app/slices/alertSlice';
+import DashboardPayments from '../Payments/Payments';
+import DashboardExpances from '../Expances/Expances';
+import DashboardEvents from '../Events/Events';
+import DashboardTabs from './DashboardTabs/DashboardTabs';
 
 function DashboardProjects({project}){
   const dispatch =useDispatch()
   const navigate = useNavigate();
+  const [projectDashboardView, setProjectDashboardView] = useState('dashboard')
   return (
     <>
+     <div className="project-dashboard-header">
+          <div className="control-wrap">
+            <div className="controls">
+            <div className={`control ctrl-active ${projectDashboardView === 'dashboard' ? 'active' : ''}`}
+                  onClick={()=>setProjectDashboardView('dashboard')}
+                ><div className="icon list-view"></div></div>
+                <div className={`control ctrl-all ${projectDashboardView === 'abstract' ? 'active' : ''}`}
+                  onClick={()=>setProjectDashboardView('abstract')}
+                ><div className="icon card-view"></div></div>
+                
+            </div>
+            <div className={`active`}></div>
+        </div>
+      </div>
+      
     {
-      project.collections.length === 0 ? (
+      projectDashboardView === 'abstract'?
+      (project.collections.length === 0 ? (
       <>  
           <div className="gallery new" 
           onClick={()=>dispatch(openModal('createCollection'))}>
@@ -34,8 +55,10 @@ function DashboardProjects({project}){
           </div>
           
         </div>
+
       </>
     ) : (
+      <>
       <div className="gallery-overview">
         <div className="galleries">
           <div className="heading-shoots heading-section">
@@ -44,7 +67,8 @@ function DashboardProjects({project}){
               onClick={ ()=>{}}>New
             </div>
           </div>
-          <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/obscura/gallery/${project.id}`}>
+          
+          <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/${project.id}/gallery/${project.id}`}>
             <div className="thumbnails">
               <div className="thumbnail thumb1">
                 <div className="backthumb bthumb1"
@@ -73,7 +97,7 @@ function DashboardProjects({project}){
                     `url(${project.projectCover?project.projectCover:''})`
                 }}>
                 
-                {project.uploadedFilesCount!==0? project.uploadedFilesCount+' Photos': 'otos'}</div>
+                {project.uploadedFilesCount!==0? project.uploadedFilesCount+' Photos': '0 Photos'}</div>
                 <div className="backthumb bthumb2"></div>
                 <div className="backthumb bthumb3"></div>
               </div>
@@ -101,7 +125,18 @@ function DashboardProjects({project}){
           
         </div>
       </div>
-    )}
+
+<div className="financials-overview">
+<DashboardPayments project={project} />
+<DashboardExpances project={project} />
+</div>
+<DashboardEvents project={project} />
+</>
+    ))
+    :<>
+      <DashboardTabs project={project} />
+    </>
+    }
     </>
   )
 }

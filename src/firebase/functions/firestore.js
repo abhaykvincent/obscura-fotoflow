@@ -1,7 +1,7 @@
 
 import { db } from "../app";
-import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion} from "firebase/firestore";
-import {generateRandomString} from "../../utils/stringUtils";
+import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, writeBatch} from "firebase/firestore";
+import {generateMemorablePIN, generateRandomString} from "../../utils/stringUtils";
 import { deleteCollectionFromStorage, deleteProjectFromStorage } from "../../utils/storageOperations";
 import { update } from "firebase/database";
 
@@ -89,7 +89,7 @@ export const fetchProjectsFromFirestore = async (domain) => {
     }));
     color='#54a134';
     console.log(`%cFetched all ${projectsData.length} Projects from ${domain ? domain : 'undefined'}`, `color: ${color}; `);
-    console.log(projectsData)
+
     return projectsData;
 };
 // Function to fetch a specific project from a specific studio
@@ -119,8 +119,7 @@ export const fetchProject = async (domain, projectId) => {
 };
 export const fetchImages = async (domain, projectId, collectionId) => {
     let color = domain === '' ? 'gray' : '#0099ff';
-    console.log(`%cFetching Images from Project ${projectId} in ${domain ? domain : 'undefined'}`, `color: ${color}; `);
-
+   
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
     const projectDocRef = doc(projectsCollectionRef, projectId);
@@ -130,8 +129,17 @@ export const fetchImages = async (domain, projectId, collectionId) => {
 
     if (collectionSnapshot.exists()) {
         const collectionsData = collectionSnapshot.data();
-        color = '#54a134';
-        console.log(`%cFetched Images successfully for Project ${projectId} in ${domain}`, `color: ${color}; `);
+        if(collectionsData.uploadedFiles?.length > 0){
+            // green
+            color = '#54a134';
+            console.log(`%cFetched Images from ${collectionId}`, `color: ${color}; `);
+        }
+        else{
+            // yellow
+            color = '#ffa500';
+            color = 
+            console.log(`%cNo Images found on  ${collectionId}`, `color: ${color}; `);
+        }
         return collectionsData.uploadedFiles;
     } else {
         return []
@@ -651,5 +659,46 @@ export const setCoverPhotoInFirestore = async (domain, projectId, image) => {
     } catch (error) {
         console.error(`%cError updating cover photo for project: ${projectId} - ${error.message}`, 'color: red;');
         throw error;
+    }
+};
+// Uploaded Files
+export const addUploadedFilesToFirestore = async (domain, projectId, collectionId, importFileSize, uploadedFiles) => {
+    let color = domain === '' ? 'gray' : '#0099ff';
+    console.log(`%cAdding Uploaded Files to Project ${projectId} in ${domain ? domain : 'undefined'}`, `color: ${color}; `);
+
+    const batch = writeBatch(db);
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+    const subCollectionId = `${collectionId}`;
+    const collectionDocRef = doc(projectDocRef, 'collections', subCollectionId);
+
+    const projectData = await getDoc(projectDocRef);
+
+    if (projectData.exists()) {
+        const collectionData = await getDoc(collectionDocRef);
+
+        if (!collectionData.exists()) {
+            // Create the subcollection document if it doesn't exist
+            batch.set(collectionDocRef, { uploadedFiles: [] });
+        }
+
+        batch.update(collectionDocRef, { uploadedFiles: arrayUnion(...uploadedFiles) });
+
+        const projectCover = uploadedFiles[0]?.url || '';
+        batch.update(projectDocRef, {
+            uploadedFilesCount: projectData.data().uploadedFilesCount + uploadedFiles.length,
+            totalFileSize: importFileSize + projectData.data().totalFileSize,
+            projectCover: projectCover,
+            status: "uploaded",
+            pin: projectData.data().pin || generateMemorablePIN(4),
+        });
+
+        await batch.commit();
+        color = '#54a134';
+        console.log(`%cUploaded files and project document updated successfully for project ${projectId} in ${domain}`, `color: ${color}; `);
+    } else {
+        console.error('Project not found.');
+        throw new Error('Project not found.');
     }
 };

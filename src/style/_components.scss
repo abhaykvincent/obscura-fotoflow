@@ -146,6 +146,13 @@
             background-size: 80%;
             background-image: url('https://img.icons8.com/?size=100&id=Y1Jzb9yc1jLC&format=png&color=FFFFFF');
         }
+        &.download::before{
+            margin-right: -6px;
+            margin-left: -6px;
+            background-size: 90%;
+            background-position: top 4px center;
+            background-image: url('https://img.icons8.com/?size=100&id=366&format=png&color=FFFFFF');
+        }
     }
 }
 .disabled{

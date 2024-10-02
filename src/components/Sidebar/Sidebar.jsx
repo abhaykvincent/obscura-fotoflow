@@ -11,7 +11,6 @@ function Sidebar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector(selectUser);
-  console.log(user)
   const [profileOptionActive, setProfileOptionActive] = useState(false)
   const toggleProfileOption = () => {
     setProfileOptionActive((prevState) => !prevState);
@@ -20,7 +19,6 @@ function Sidebar() {
   const location = useLocation();
   const params = useParams()
   const studioName = defaultStudio?.domain ?? {domain:'guest',name:'guest'}; 
-  console.log(defaultStudio)
   
   if(user==='no-studio-found')
     return 

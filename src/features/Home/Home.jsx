@@ -123,68 +123,7 @@ function Home() {
                         </div>
                     </>)
                 }
-                {
-                    projects.length > 0 ? (
-                        <>
-                            <div className="section recent">
-                                <h3 className='section-heading'>Recent Projects</h3>
-                                <div className="projects">
-                                {
-                                    recentProjects.length !== 0? (
-                                    recentProjects.map((project, index) => (
-                                        <ProjectCard
-                                            project={project}
-                                            key={project.id}
-                                        /> 
-                                    ))
-                                    ) : (
-                                        <p className="message">No recent projects</p>)
-                                }
-                                <Link className="project all" to={`/${defaultStudio.domain}/projects`} >
-                                    <div className="project-cover"
-                                    ></div>
-                                    <div className="project-details">
-                                        <div className="details-top">
-
-                                            <h4 className="project-title">See all Projects</h4>
-                                            <p className="project-type"></p>
-                                        </div>
-                                    </div>
-                                    <div className="project-options">
-                                        
-                                    </div>
-                                </Link>
-                                </div>
-                            </div>
-
-                        </>
-                    ):
-                    (<>
-                        <div className="section recent">
-                            <h3 className='section-heading'>You dont have any projects created</h3>
-                        </div>
-                        <div className="projects-list">
-
-                        <div className="project new" 
-                            
-                        onClick={()=>dispatch(openModal('createProject'))}
-                        >
-                            <div className="project-cover"
-                            ></div>
-                            <div className="project-details">
-                                <div className="details-top">
-
-                                    <h4 className="project-title">Create Your First Project</h4>
-                                    <p className="project-type"></p>
-                                </div>
-                            </div>
-                            <div className="project-options">
-                                
-                            </div>
-                        </div >
-                        </div>
-                    </>)
-                }
+                
                 
           <AddProjectModal />
                 <Refresh/>

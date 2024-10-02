@@ -190,12 +190,14 @@
         display: grid;
         grid-template-columns: 8px*10 auto;
         gap: 8px*1;
+        align-items: center;
         .client-image{
             .profile-picture{
                 width: 8px*10;
                 height: 8px*10;
-                background-size: 100%;
-                background-image: url('https://img.icons8.com/?size=100&id=96471&format=png&color=FFFFFF');
+                background-size: 70%;
+                background-position: center;
+                background-image: url('https://img.icons8.com/?size=100&id=11730&format=png&color=FFFFFF');
             }
         }
 

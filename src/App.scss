@@ -1537,11 +1537,14 @@ margin-left: 4px;
       }
         .project-collection .header {
           display: grid;
-          grid-template-columns: 2fr auto;
+          grid-template-columns: 2fr auto 2fr;
           padding-bottom: 16px;
           align-items: center;
           .label{
             display: none;
+          }
+          .open-buttons{
+            display: none
           }
         }
         .photos{
@@ -1555,7 +1558,6 @@ margin-left: 4px;
     
             }
         }
-
         .button.disabled{
         }
       }

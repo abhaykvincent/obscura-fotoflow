@@ -49,8 +49,8 @@ const DownloadFiles = ({ folderPath ,className, project,collection}) => {
 
   return (
     <div className={className }>
-      <button className={' button secondary'} onClick={downloadAllFiles} disabled={loading}>
-        {loading ? 'Downloading...' : 'Download Files'}
+      <button className={' button secondary icon download'} onClick={downloadAllFiles} disabled={loading}>
+        {loading ? 'Downloading...' : ''}
       </button>
     </div>
   );

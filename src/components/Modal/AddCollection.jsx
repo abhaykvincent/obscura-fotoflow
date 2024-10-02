@@ -37,7 +37,7 @@ const handleSubmit = () => {
   if (isSubmitting) return;  // Prevent multiple submissions
   setIsSubmitting(true);
 
-  console.log(collectionsLength.length)
+  console.log('collection length' + collectionsLength.length)
   console.log(collectionsLimit)
   const domain= defaultStudio.domain;
   

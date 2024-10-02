@@ -79,14 +79,11 @@ export default function Project() {
 
   return (
     <>
+    
       <main className='project-page'>
+       
         <div className="project-dashboard">
           <DashboardProjects project={project} />
-          <div className="financials-overview">
-            <DashboardPayments project={project} />
-            <DashboardExpances project={project} />
-          </div>
-          <DashboardEvents project={project} />
         </div>
         <SidePanel  project={project}/>
         {/* Modals */}

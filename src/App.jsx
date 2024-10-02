@@ -58,7 +58,6 @@ export default function App() {
   const user = useSelector(selectUser);
   useEffect(() => {
     console.log(isLoading)
-    
   }, [isLoading]);
   // ON Render
   useEffect(() => {
@@ -108,7 +107,7 @@ export default function App() {
                 </AdminRoute> 
               }/> */}
 
-              <Route exact path="/" element={<Navigate to={`/`} replace />} />
+              <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}`} replace />} />
               <Route exact path="/:studioName/" element={<Home />} />
               <Route exact path="/:studioName/project/:id" element={<Project />} />
               <Route exact path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
