@@ -7,6 +7,7 @@ import DashboardPayments from '../../Payments/Payments';
 import DashboardExpances from '../../Expances/Expances';
 import { showAlert } from '../../../../app/slices/alertSlice';
 import { selectUserStudio } from '../../../../app/slices/authSlice';
+import DashboardEvents from '../../Events/Events';
 
 function DashboardTabs({ project }) {
   const dispatch = useDispatch();
@@ -102,31 +103,17 @@ function DashboardTabs({ project }) {
 
       case 'shoots':
         return (
-          <div className="shoots-overview">
-            <h3>Shoots</h3>
-            {/* Replace with shoots card display logic */}
-            <div className="button primary outline" onClick={() => dispatch(openModal('addShoot'))}>
-              Add New Shoot
-            </div>
-          </div>
+          <DashboardEvents project={project}/>
         );
 
       case 'invoices':
         return (
-          <div className="invoices-overview">
-            <h3>Invoices</h3>
-            {/* Add Invoice Logic */}
-            <div>No invoices yet.</div>
-          </div>
+          <DashboardPayments project={project} />
         );
 
       case 'payments':
         return (
-          <div className="payments-overview">
-            <h3>Payments</h3>
-            <DashboardPayments project={project} />
-            <DashboardExpances project={project} />
-          </div>
+          <DashboardExpances project={project} />             
         );
 
       default:

@@ -47,9 +47,9 @@ const CollectionImages = ({ id, collectionId, project }) => {
         dispatch(setUploadStatuss(uploadStatus));
     }, [uploadStatus]);
 
-    useEffect(() => {
+    /* useEffect(() => {
         dispatch(setUploadList(uploadList));
-    }, [uploadList]);
+    }, [uploadList]); */
 
     // Initial collection images fetch
     useEffect(() => {

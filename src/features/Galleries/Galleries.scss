@@ -8,7 +8,80 @@
 	right: 8px*2;
 	height: 8px*4;
 	.header{
-	}
+	}.controls{
+		border-radius: $border-radius-1+1;
+		transition-duration: 0.15s;
+		background: linear-gradient(120deg, $dark-1 -80%, $dark-2 20%,$dark-2 60%, $dark-3 100%);
+		border: 1px solid $gray6-accessible-dark;
+		border-top: 1px solid $gray5-accessible-dark;
+		border-bottom: 1px solid $gray6-accessible-dark;;
+		box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);;
+		opacity: 0;
+	
+		animation: fadeInLeft 0.25s ease-out 0.2s;
+		animation-fill-mode: forwards;
+		animation-timing-function: ease-out;
+		&:hover{
+		  transition-duration: 0.1s;
+		}
+		display:flex;
+		.control{
+		  padding: 6px 8px*1.5;
+		  font-weight: 400;
+		  border-radius: $border-radius-1;
+		  border-right: 1px solid rgba(255, 255, 255, 0.02);
+		  color: $gray4-accessible-dark;
+		  white-space: nowrap;
+		  cursor: pointer;
+		  transition-duration: 0.15s;
+		  &:hover{
+			  border-radius: 2px;
+			  background-color: $dark-2;
+			  color: $gray2-accessible-dark;
+			  transition-duration: 0.1s;
+			  &:last-child{
+				  border-radius: 8px;
+			  }
+		  }
+		  &.active{
+			color: $light-0;
+			background-color: $dark-4;
+			border: 1px solid $gray5-accessible-dark;
+			border-top: 1px solid $gray3-accessible-dark;
+			border-left: 1px solid $gray3-accessible-dark;
+			border-bottom: 1px solid $gray5-accessible-dark;
+			border-radius: 6px !important;
+			box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);;
+			transform: scale(1.1);
+			&:hover{
+			  background-color: $dark-1;
+			  border: 1px solid $gray3-accessible-dark;
+			  transition-duration: 0.1s;
+			}
+			
+			.icon{
+	
+			  background-size: 120%;
+			}
+		  }
+		  &.disabled{
+			  opacity: 0.2;
+			}
+		  .icon{
+			  width: 8px*1.8;
+			  height: 8px*1.8;
+			  background-position: center;
+			  background-size: 110%;
+			  &.card-view{
+				  background-image: url('https://img.icons8.com/sf-black-filled/64/FFFFFF/four-squares.png');
+			  }
+			  &.list-view{
+				  background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/list.png');
+			  }
+		  }
+		  
+		}
+	  }
 }
 .dashboard-tabs{
 	min-width: 46vw;
@@ -33,6 +106,7 @@
 			&:hover{
 				background-color: $dark-3;
 				color: $gray4-accessible-light;
+				border-bottom: 1px solid $green-accessible-dark;
 				transform: translateY(0px);
 				border: 1px solid $dark-1;
 			}
@@ -40,7 +114,7 @@
 
 				background-color: $dark-3;
 				border: 1px solid $dark-1;
-				border-bottom: 1px solid white;
+				border-bottom: 1px solid $green-accessible-dark;
 				color: white;
 				opacity: 0.8;
 				}
@@ -48,14 +122,14 @@
 		.active{
 			background-color: $dark-3;
 			border: 1px solid $dark-1;
-			border-bottom: 1px solid white;
+			border-bottom: 1px solid $green-accessible-light;
 			color: white;
 			border-radius: 2px;
 			&:hover{
 
 			background-color: $dark-3;
 			border: 1px solid $dark-1;
-			border-bottom: 1px solid white;
+			border-bottom: 1px solid $green-accessible-dark;;
 			color: white;
 			}
 			
@@ -224,187 +298,188 @@
 		justify-content: start;
 		gap: 8px*3;
 		grid-template-columns: auto auto;
-		.payments{
-			.card{
+		
+	}
+	.payments{
+		.card{
+			display: grid;
+			grid-template-columns: 8px*15 3fr;
+			gap: 8px;
+			.payments-list{
+				min-width: 8px*12;
 				display: grid;
-				grid-template-columns: 8px*15 3fr;
-				gap: 8px;
-				.payments-list{
-					min-width: 8px*12;
-					display: grid;
-					align-content: start;
-					gap: 4px;
-					.amount-card{
-						display: flex;
-						gap: 6px;
-						justify-content: space-between;
-						height: 8px*3.5;
-						padding: 4px 4px;
-						padding-right: 8px*2.5;
-						font-size: 0.8rem;
-						border-radius: 4px;
-						transition-duration: 0.1s;
-						transition-timing-function: ease-out;
-						cursor: pointer;
-						color: $gray-default-dark;
-						line-height:8px*2.2;
-						&:hover{
-							transition-duration: 0.1s;
-							transition-timing-function: ease-in;
-							transform: scale(1.01);
-							box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
-							border: 1px solid $gray-default-light;
-							color: $gray5-default-light;
-						}
-						span.direction{
-							color: $gray-default-dark;
-
-						}
-						&.balance{
-							color: $gray2-default-dark;
-
-						}
-						&.draft{
-							border: 1px solid $gray5-default-dark;
-							background-color: $dark-2;
-							box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5) , inset 1px 1px 2px rgba(0, 0, 0, 0.5);
-							opacity: 0.8;
-							&:hover{
-								transform: none;
-								box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4);
-								border: 1px solid $gray4-default-dark;
-								color: $gray5-default-light;
-							}
-						}
-						.percentage{
-							font-size: 0.7rem;
-							color: $gray2-default-dark;
-						}
-						.status{
-							top: 4px;
-						}
-						
-						.pending {
-							.signal {
-							  background-color: $orange-accessible-dark;
-							  box-shadow: 
-								0px 0px 2px 2px rgba(0, 0, 0, 0.5),
-								0px 0px 4px #96843c79,
-								0px 0px 2px 4px #a19b3415,
-								0px 0px 8px 8px #95791f21;
-							  
-							  animation: blink 4s infinite;
-							}
-						  }
-						  .draft{
-							.signal{
-								background-color: $gray4-accessible-dark;
-								box-shadow: 
-								0px 0px 2px 2px rgba(0, 0, 0, 0.5),
-								0px 0px 4px #97979633,
-								0px 0px 2px 4px #a5a5a515,
-								0px 0px 8px 8px #8787870a;
-							  
-							}
-						  }
-						  @for $i from 1 through 5 { // Adjust the number based on how many .signal elements you have
-							&:nth-child(#{$i}) {
-							  .signal{
-								  animation-delay: #{1+$i * 0.5}s; // 0.2s delay between each child
-							  }
-							}
-						  }
-						  @keyframes blink {
-							0%, 100% {
-							  opacity: 1;
-							}
-							90% {
-							  opacity: 0.4;
-							}
-						  }
-					}
-					.button{
-						margin: 0;
-						margin-top: 4px;
-					}
-				}
-				.chart{
-					min-height: 8px*20;
-					display: grid;
-					grid-template-rows: auto auto;
-					gap: 8px;
-					border: 1px solid $dark-0;;;
-					padding: 8px;
-					.message{
-						font-size: 0.8rem;
-						text-align: center;
-						color: $gray-accessible-dark;
-					}
-					.button{
-						width: 100%;
-						margin: 0;
-					}
+				align-content: start;
+				gap: 4px;
+				.amount-card{
+					display: flex;
+					gap: 6px;
+					justify-content: space-between;
+					height: 8px*3.5;
+					padding: 4px 4px;
+					padding-right: 8px*2.5;
+					font-size: 0.8rem;
+					border-radius: 4px;
 					transition-duration: 0.1s;
 					transition-timing-function: ease-out;
 					cursor: pointer;
-					&:hover
-					{
-						transform: scale(1.02) translateY(-2px);
-						box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.773);
-						transition-timing-function: ease-in;							
-						border: 1px solid $dark-0;
+					color: $gray-default-dark;
+					line-height:8px*2.2;
+					&:hover{
+						transition-duration: 0.1s;
+						transition-timing-function: ease-in;
+						transform: scale(1.01);
+						box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+						border: 1px solid $gray-default-light;
+						color: $gray5-default-light;
+					}
+					span.direction{
+						color: $gray-default-dark;
 
-						.circle.green{
-						border: 5px solid $gray-default-light;
-						box-shadow: 
-							0px 0px 2px rgba(1, 17, 1, 0.5), 
-							inset 0px 0px 4px rgba(1, 17, 1, 0.5), 
-							0px 0px 4px rgba(4, 146, 4, 0.5), 
-							inset 2px 2px 4px rgba(4, 146, 4, 0.5),
-							0px 0px 20px rgba(4, 146, 4, 0.4,), 
-							inset 2px 2px 20px rgba(4, 146, 4, 0.4,);
-							transition-duration: 0.1s;
+					}
+					&.balance{
+						color: $gray2-default-dark;
 
-						}	
-						.status.large .signal{
-							background-color: #6ff535;
-							transition-delay: 0.1s;
-							transition-duration: 0.1s;
+					}
+					&.draft{
+						border: 1px solid $gray5-default-dark;
+						background-color: $dark-2;
+						box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5) , inset 1px 1px 2px rgba(0, 0, 0, 0.5);
+						opacity: 0.8;
+						&:hover{
+							transform: none;
+							box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4);
+							border: 1px solid $gray4-default-dark;
+							color: $gray5-default-light;
+						}
+					}
+					.percentage{
+						font-size: 0.7rem;
+						color: $gray2-default-dark;
+					}
+					.status{
+						top: 4px;
+					}
+					
+					.pending {
+						.signal {
+						  background-color: $orange-accessible-dark;
+						  box-shadow: 
+							0px 0px 2px 2px rgba(0, 0, 0, 0.5),
+							0px 0px 4px #96843c79,
+							0px 0px 2px 4px #a19b3415,
+							0px 0px 8px 8px #95791f21;
+						  
+						  animation: blink 4s infinite;
+						}
+					  }
+					  .draft{
+						.signal{
+							background-color: $gray4-accessible-dark;
 							box-shadow: 
-							0px 0px 4px 1px  rgba(0, 0, 0, 0.8),
-							0px 0px 8px  #6fd145e5,
-							0px 0px 2px 4px  #55a13415,
-							0px 0px 8px 8px  #42951f2e;
+							0px 0px 2px 2px rgba(0, 0, 0, 0.5),
+							0px 0px 4px #97979633,
+							0px 0px 2px 4px #a5a5a515,
+							0px 0px 8px 8px #8787870a;
+						  
+						}
+					  }
+					  @for $i from 1 through 5 { // Adjust the number based on how many .signal elements you have
+						&:nth-child(#{$i}) {
+						  .signal{
+							  animation-delay: #{1+$i * 0.5}s; // 0.2s delay between each child
+						  }
+						}
+					  }
+					  @keyframes blink {
+						0%, 100% {
+						  opacity: 1;
+						}
+						90% {
+						  opacity: 0.4;
+						}
+					  }
+				}
+				.button{
+					margin: 0;
+					margin-top: 4px;
+				}
+			}
+			.chart{
+				min-height: 8px*20;
+				display: grid;
+				grid-template-rows: auto auto;
+				gap: 8px;
+				border: 1px solid $dark-0;;;
+				padding: 8px;
+				.message{
+					font-size: 0.8rem;
+					text-align: center;
+					color: $gray-accessible-dark;
+				}
+				.button{
+					width: 100%;
+					margin: 0;
+				}
+				transition-duration: 0.1s;
+				transition-timing-function: ease-out;
+				cursor: pointer;
+				&:hover
+				{
+					transform: scale(1.02) translateY(-2px);
+					box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.773);
+					transition-timing-function: ease-in;							
+					border: 1px solid $dark-0;
+
+					.circle.green{
+					border: 5px solid $gray-default-light;
+					box-shadow: 
+						0px 0px 2px rgba(1, 17, 1, 0.5), 
+						inset 0px 0px 4px rgba(1, 17, 1, 0.5), 
+						0px 0px 4px rgba(4, 146, 4, 0.5), 
+						inset 2px 2px 4px rgba(4, 146, 4, 0.5),
+						0px 0px 20px rgba(4, 146, 4, 0.4,), 
+						inset 2px 2px 20px rgba(4, 146, 4, 0.4,);
+						transition-duration: 0.1s;
+
+					}	
+					.status.large .signal{
+						background-color: #6ff535;
+						transition-delay: 0.1s;
+						transition-duration: 0.1s;
+						box-shadow: 
+						0px 0px 4px 1px  rgba(0, 0, 0, 0.8),
+						0px 0px 8px  #6fd145e5,
+						0px 0px 2px 4px  #55a13415,
+						0px 0px 8px 8px  #42951f2e;
+					}
+				}
+			}
+			&:hover{
+				.payments-list{
+					.amount-card{
+						animation-name: sub-card-reveal;
+						animation-duration: 0.6s;
+						box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.773);	
+						&:nth-child(1){
+							animation-delay: 0.4s;
+						}
+						&:nth-child(2){
+							animation-delay: 0.45s;
+						}
+						&:nth-child(3){
+							animation-delay: 0.5s;
+						}
+						&:nth-child(4){
+							animation-delay: 0.55s;
 						}
 					}
 				}
-				&:hover{
-					.payments-list{
-						.amount-card{
-							animation-name: sub-card-reveal;
-							animation-duration: 0.6s;
-							box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.773);	
-							&:nth-child(1){
-								animation-delay: 0.4s;
-							}
-							&:nth-child(2){
-								animation-delay: 0.45s;
-							}
-							&:nth-child(3){
-								animation-delay: 0.5s;
-							}
-							&:nth-child(4){
-								animation-delay: 0.55s;
-							}
-						}
-					}
-				}
-				&.single{
-					grid-template-columns: auto;
-				}
 			}
-			&.expenses{
+			&.single{
+				grid-template-columns: auto;
 			}
+		}
+		&.expenses{
 		}
 	}
 	.templates{

@@ -9,7 +9,9 @@ import { useSelector } from 'react-redux';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 
 export default function ShareProject() {
-const studio = useSelector(selectUserStudio)
+  // studio =  get the url and the name is lorem for url http://localhost:3000/lorem/gallery/william-thomas-b23Sg/birthday-qr22E
+  
+  const { studioName } = useParams();
 
   
   // set body color to white
@@ -84,7 +86,7 @@ const domain = useSelector(selectDomain)
           `}
         >
           {
-          <Link to={collection.uploadedFiles !== undefined && `/share/${project.id}/${collection.id}`}>{collection.name}</Link>
+          <Link to={collection.uploadedFiles !== undefined && `/${studioName}/share/${project.id}/${collection.id}`}>{collection.name}</Link>
           
         }
         </div>
@@ -96,7 +98,7 @@ const domain = useSelector(selectDomain)
     <div className="share-project">
       <div className="project-header">
         <img className='banner' src={project.projectCover} alt="" srcset="" />
-        <div className="studio">{studio.name} Studio</div>
+        <div className="studio">{studioName} Studio</div>
         <div className="gallery-info">
           <h1 className='projet-name'>{project.name}</h1>
           <p>10th October, 2023</p>
