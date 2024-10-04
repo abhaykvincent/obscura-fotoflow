@@ -104,6 +104,7 @@ const ImageGallery = React.memo(({ projectId, imageUrls }) => {
   const timeThreshold = 0.1;
   const timeThrottle = 0.5; 
   const groupedImages = useMemo(() => groupImagesByLastModified(imageUrls, timeThreshold,timeThrottle), [imageUrls, timeThreshold]);
+  console.log(groupedImages)
 
   // Hide header, sidebar on Image Preview
   useEffect(() => {
@@ -124,7 +125,7 @@ const ImageGallery = React.memo(({ projectId, imageUrls }) => {
           <div className="photos">
             <TimestampDisplay timestamp={group[0].lastModified} />
 
-            {group.map((fileUrl, index) => index < 8 && (
+            {group.map((fileUrl, index) =>  (
               <div className="photo-wrap" key={index} onClick={() => openPreview(index)}>
                 <div className="hover-options-wrap">
                   <div className="hover-options">

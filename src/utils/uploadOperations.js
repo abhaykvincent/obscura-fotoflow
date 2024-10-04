@@ -11,7 +11,9 @@ import { trackEvent } from "../analytics/utils";
 import { addUploadedFilesToFirestore } from "../firebase/functions/firestore";
 
 import imageCompression from 'browser-image-compression';
+import { addAllFileSizesToMB } from "./fileUtils";
 const compressImages = async (files) => {
+    const startTime = Date.now()
     const compressedFiles = await Promise.all(files.map(async (file) => {
         const options = {
             maxSizeMB: 1, // Max size of each file in MB
@@ -20,20 +22,23 @@ const compressImages = async (files) => {
         };
         try {
             const compressedFile = await imageCompression(file, options);
-            console.log(file.size, compressedFile.size)
+            
             return compressedFile;
         } catch (error) {
             console.error('Image compression failed:', error);
             return file; // Return original file if compression fails
         }
     }));
+    const endTime = Date.now();  // Record the end time
+    const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
+    console.log(`%c Compression time : ${duration} seconds`, 'color:#0099ff');
     return compressedFiles;
 };
 // Firebase Cloud Storage
 
 // File Single upload function
 export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
-    console.log(file)
+
     
     const MAX_RETRIES = 5;
     const INITIAL_RETRY_DELAY = 500;
@@ -45,7 +50,6 @@ export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
         let uploadTask;
 
         try {
-            console.log(`Uploading ${file.name}...`)
             uploadTask = uploadBytesResumable(storageRef, file);
 
             uploadTask.on('state_changed',
@@ -83,9 +87,8 @@ export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
                 },
                 async () => {
                     // Handle successful uploads on complete 
-                    console.log(`%c ${file.name} File uploaded successfully in the first try`, 'color:green');
+                    
                     let url = await getDownloadURL(uploadTask.snapshot.ref);
-                    console.log(`Download URL for ${file.name}: ${url}`);
                     /* await setUploadLists((prevState) => {
                         return prevState.map((fileProgress) => {
                             if (fileProgress.name === file.name) {
@@ -166,24 +169,29 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
             return {file};
         })
     }) */
-    
+        
+        // find slice file size
+        
         const compressedFiles = await compressImages(slice);
-    
+
+       
+        // slice file compression speed
+        
         const uploadPromises = compressedFiles.map(file => {
         return uploadFile(domain,id, collectionId, file,setUploadLists);
     });
 
     // Use Promise.all to initiate all file uploads simultaneously
     const results = await Promise.all(uploadPromises);
-    console.log("!!!! inside slice", 'color:red');
-
+    
     return results;
 };
 
 // Upload ENTRY POINT
 export const handleUpload = async (domain,files, id, collectionId,importFileSize, setUploadLists,setUploadStatus, retries = 2) => {
+
     setUploadLists(files)
-    const startTime = Date.now()
+    
     // Slice the files array into smaller arrays of size sliceSize
     const sliceSize = 5;
     console.log('%c ' + files.length + ' files to upload', 'color:yellow');
@@ -194,8 +202,18 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
         const slice = files.slice(i, i + sliceSize);
         try {
             // Upload Single Slice
+
+            const startTime = Date.now()
+
+            console.groupCollapsed('Uploading Slice ' + (i / sliceSize + 1) + ' of ' + Math.ceil(files.length / sliceSize));
             const results = await sliceUpload(domain,slice, id, collectionId,setUploadLists);
             uploadedFiles.push(...results);
+            const endTime = Date.now();  // Record the end time
+            const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
+            console.log(`%c Slice upload duration : ${duration} seconds`, 'color:#0099ff');
+            //console group end
+            
+            console.groupEnd();
         } catch (error) {
             console.error("Error uploading files:", error);
             throw error; // Propagate the error if needed
@@ -226,9 +244,6 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
                     .then(() => {
 
                         showAlert('success', 'All files uploaded successfully!')
-                        const endTime = Date.now();  // Record the end time
-                        const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
-                        console.log(`%c Upload session duration: ${duration} seconds`, 'color:#0099ff');
                         
                         trackEvent('gallery_uploaded', {
                             domain: domain,
