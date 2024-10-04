@@ -33,7 +33,7 @@ function DashboardTabs({ project }) {
                       <div className="thumbnail thumb1">
                         <div className="backthumb bthumb1"
                         >
-                    <div className="button primary outline">New Gallery</div></div>
+                    <div className="button primary outline">New </div></div>
                         <div className="backthumb bthumb2"></div>
                         <div className="backthumb bthumb3"></div>
                         <div className="backthumb bthumb4"></div>
@@ -49,9 +49,9 @@ function DashboardTabs({ project }) {
                   <div className="galleries">
                     
                     {
-                      project.collections.map((collection)=>{
+                      project.collections.map((collection,index)=>{
                         return(
-                          <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/${defaultStudio.domain}/gallery/${project.id}/${collection.id}`}>
+                          <Link key={index} className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/${defaultStudio.domain}/gallery/${project.id}/${collection.id}`}>
                             <div className="thumbnails">
                               <div className="thumbnail thumb1">
                                 <div className="backthumb bthumb1"
