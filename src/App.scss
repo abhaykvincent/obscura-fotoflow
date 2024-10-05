@@ -192,6 +192,8 @@ body{
       animation: gallery-page-reveal 0.4s ease-out forwards;
     }
     &.gallery-page{
+      
+    grid-template-columns: auto ;
       opacity: 0;
       transform: translateY(-8px);
       animation: gallery-page-reveal 0.2s ease-out forwards;
@@ -290,7 +292,7 @@ body{
       padding: 8px*2;
       margin: 8px;
       margin-top: 8px*0;
-      background-color: $dark-2;
+      background-color: $dark-3;
       border-radius: $border-radius-1;
       @include boxed;
       @include boxShadow;
@@ -414,27 +416,31 @@ body{
       .drop-upload{
         cursor: pointer;
         .drop-area{
-          height: 8px*20;
+          display: grid;
+          align-items: center;
+          align-content: center;
+          height: calc(100vh - 8px*50);
           border-radius: 8px*1;
-          border: 1px double $green-default-dark;
+          border: 1px double $dark-0;
           stroke-dashoffset: 20px 10px;
           opacity: 0.8;
+          text-align: center;
           background-size: 80%;;
+          background-color: $dark-3;
           //background: url('https://img.icons8.com/ios/100/FFFFFF/drag-and-drop.png') ;
           background-repeat: no-repeat;
           background-position: center;
           transition-duration: 0.1s;
           &:hover{
           opacity: 1;
-          border: 1px double $green-default-light;
+          border: 1px double $gray-default-light;
 
           }
           p{
-            margin-top: 8px*2;
+            margin-top: 8px*0;
             font-size: 1rem;
             text-align: center;
             color: $gray2-default-dark;
-            border: 1px solid $dark-3;
             padding: 4px 8px*2;
             border-radius: 4px;
             
@@ -1355,7 +1361,7 @@ margin-left: 4px;
       }
       &:hover{
         border: 1px solid $dark-0;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: $dark-1;
         transition-duration: 0.05s;
         transition-timing-function: ease-in;
         border-radius: 2px;

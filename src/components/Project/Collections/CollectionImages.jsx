@@ -47,9 +47,9 @@ const CollectionImages = ({ id, collectionId, project }) => {
         dispatch(setUploadStatuss(uploadStatus));
     }, [uploadStatus]);
 
-    /* useEffect(() => {
+    useEffect(() => {
         dispatch(setUploadList(uploadList));
-    }, [uploadList]); */
+    }, [uploadList]);
 
     // Initial collection images fetch
     useEffect(() => {
@@ -127,10 +127,13 @@ const CollectionImages = ({ id, collectionId, project }) => {
                         <DownloadFiles className={`open-in ${showAllPhotos ? 'disabled' : ''}`} folderPath={`${domain}/${id}/${collectionId}/`} project={project} collection={findCollectionById(project, collectionId)}/>
                         </>:
                     <>
-                    <div className="button secondery pin" 
-                    onClick={()=>{}} 
-                    >PIN : {project?.pin}</div>
-                    <div className="button primary share" onClick={()=>dispatch(openModal('shareGallery'))} target="_blank">Share</div>
+                    <div className="control-wrap">
+                        <div className="controls">
+                            <div className={`control ctrl-all active`} ><div className="icon card-view"></div></div>
+                            <div className={`control ctrl-active disabled`} ><div className="icon list-view"></div></div>
+                        </div>
+                    <div className={`active`}></div>
+                </div>
                 </>}
                 </div>
             </div>
@@ -139,8 +142,9 @@ const CollectionImages = ({ id, collectionId, project }) => {
             ) : (
                 <label htmlFor="fileInput" className="drop-upload">
                     <div className="drop-area">
-                        <p>Click here to upload</p>
                         <Lottie options={defaultOptions} height={150} width={150} />
+                        <h2>Drop files here</h2>
+                        <p>or use the "Upload" Button</p>
                     </div>
                 </label>
             )}

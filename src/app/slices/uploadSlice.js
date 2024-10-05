@@ -14,6 +14,7 @@ const uploadSlice = createSlice({
   reducers: {
     setUploadList: (state, action) => {
       if(action.payload.length >0){
+        state.uploadList = action.payload;
         state.uploadStatus = 'open';
       }
     },
