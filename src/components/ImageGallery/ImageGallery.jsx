@@ -112,12 +112,29 @@ const ImageGallery = React.memo(({ projectId, imageUrls }) => {
       document.getElementsByClassName('header')[0].style.display = 'none';
       document.getElementsByClassName('sidebar')[0].style.display = 'none';
       document.getElementsByClassName('project-info')[0].style.display = 'none';
+      // lock scroll
+      document.body.style.overflow = 'hidden';
     } else {
       document.getElementsByClassName('header')[0].style.display = 'grid';
       document.getElementsByClassName('sidebar')[0].style.display = 'block';
       document.getElementsByClassName('project-info')[0].style.display = 'grid';
+      // unlock scroll
+      document.body.style.overflow = 'auto';
     }
   }, [isPreviewOpen]);
+  
+  useEffect(() => {
+    function updateDisplayStyles() {
+      document.getElementsByClassName('header')[0].style.display = 'grid';
+      document.getElementsByClassName('sidebar')[0].style.display = 'block';
+      //document.getElementsByClassName('project-info')[0].style.display = 'grid';
+      // unlock scroll
+      document.body.style.overflow = 'auto';
+    }
+    window.addEventListener('popstate', function() {
+      updateDisplayStyles();
+    });
+  }, []);
 
   return (
     <div className="gallary">

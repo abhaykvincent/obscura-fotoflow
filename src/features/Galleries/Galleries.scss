@@ -865,7 +865,7 @@
 .active-box{
 	position: absolute;
 	width: 8px*25.5;
-	height: 8px*20.5;
+	height: 8px*21.5;
 	left: 8px*4;
 	margin-left: -8px*1;
 	margin-top: -8px*2;
@@ -875,6 +875,7 @@
 	z-index: -1;
 	transition-duration: 0.2s;
 	transition-timing-function: ease-in-out;
+	letter-spacing: 4px;
 }
 .shoots{
 

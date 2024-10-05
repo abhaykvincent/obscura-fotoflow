@@ -59,6 +59,10 @@ export default function App() {
   useEffect(() => {
     console.log(isLoading)
   }, [isLoading]);
+  useEffect(() => {
+  
+  }, []);
+ 
   // ON Render
   useEffect(() => {
     console.log(currentDomain)

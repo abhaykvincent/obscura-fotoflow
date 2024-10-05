@@ -37,9 +37,7 @@ const compressImages = async (files) => {
 // Firebase Cloud Storage
 
 // File Single upload function
-export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
-
-    
+export const uploadFile = (domain,id, collectionId, file,sliceIndex,setUploadLists) => {
     const MAX_RETRIES = 5;
     const INITIAL_RETRY_DELAY = 500;
     let retries = 0;
@@ -49,6 +47,9 @@ export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
         const storageRef = ref(storage, `${domain}/${id}/${collectionId}/${file.name}`);
         let uploadTask;
 
+        // set initial with sliceIndex
+        setTimeout(() =>
+        {
         try {
             uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -57,7 +58,9 @@ export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
                 (snapshot) => {
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     //setUploadList aarraay of filee object  matches file.name with the progress of the upload
-                    /* setUploadLists((prevState) => {
+                    console.log(`%c Uploading ${file.name} ${progress}%`, 'color:#0099ff');
+
+                    setUploadLists((prevState) => {
                         return prevState.map((fileProgress) => {
                             if (fileProgress.name === file.name) {
                                 return {
@@ -70,7 +73,7 @@ export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
                             }
                             return fileProgress;
                         })
-                    }) */
+                    })
                     
                 },
                 (error) => {
@@ -110,22 +113,23 @@ export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
                     }); // Resolve the promise when the file is successfully uploaded
                 }
             );
-        } catch (error) {
+        } 
+        catch (error) {
             console.error("Error uploading file:", error);
             return reject(error); // Reject the promise with the error  
         }
 
         async function retryUpload() {
             uploadTask.cancel(); // Cancel the current upload task
-
+    
             if (retries < MAX_RETRIES) {
                 let retryDelay = INITIAL_RETRY_DELAY * Math.pow(2, retries); // Exponential backoff
-
+    
                 console.log(`Retrying upload of ${file.name} in ${retryDelay / 1000} seconds`);
                 await new Promise(resolve => setTimeout(resolve, retryDelay));
-
+    
                 uploadTask = uploadBytesResumable(storageRef, file);
-
+    
                 uploadTask.on('state_changed',
                     () => {},
                     async (error) => {
@@ -149,6 +153,7 @@ export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
                 reject(new Error(`Exceeded maximum retries (${MAX_RETRIES}) for ${file.name}`));
             }
         }
+    }, (sliceIndex-1)*1000)
 
     });
 };
@@ -177,8 +182,8 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
        
         // slice file compression speed
         
-        const uploadPromises = compressedFiles.map(file => {
-        return uploadFile(domain,id, collectionId, file,setUploadLists);
+        const uploadPromises = compressedFiles.map((file,sliceIndex) => {
+        return uploadFile(domain,id, collectionId, file,sliceIndex,setUploadLists);
     });
 
     // Use Promise.all to initiate all file uploads simultaneously
