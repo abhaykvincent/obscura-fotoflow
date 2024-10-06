@@ -116,7 +116,7 @@ const domain = useSelector(selectDomain)
 
       </div>
 
-      <div className="controls">
+      <div className="controls middle">
             {(previewIndex >= imagesLength - 1) ||
           <div className="next"
             onClick={() => {

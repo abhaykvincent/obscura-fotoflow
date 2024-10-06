@@ -11,16 +11,18 @@ import { selectDomain } from '../../../app/slices/authSlice';
 import DownloadFiles from '../../DownloadFiles/DownloadFiles';
 import { findCollectionById } from '../../../utils/CollectionQuery';
 import { openModal } from '../../../app/slices/modalSlice';
+import ImageGalleryGrid from '../../ImageGallery/ImageGalleryGrid';
 
 const CollectionImages = ({ id, collectionId, project }) => {
     const dispatch = useDispatch();
+    const domain = useSelector(selectDomain);
 
     // Files
     const [collectionImages, setCollectionImages] = useState([]);
     const [imageUrls, setImageUrls] = useState([]);
     const [selectedImages, setSelectedImages] = useState([]);
     const [isPhotosImported, setIsPhotosImported] = useState(false);
-    const domain = useSelector(selectDomain);
+    const [galleryView, setGalleryView] = useState('grid');
 
     // Import size
     const [showAllPhotos, setShowAllPhotos] = useState(true);
@@ -129,8 +131,12 @@ const CollectionImages = ({ id, collectionId, project }) => {
                     <>
                     <div className="control-wrap">
                         <div className="controls">
-                            <div className={`control ctrl-all active`} ><div className="icon card-view"></div></div>
-                            <div className={`control ctrl-active disabled`} ><div className="icon list-view"></div></div>
+                            <div className={`control ctrl-all ${galleryView === 'grid' ? 'active' : ''}`} 
+                                onClick={() => setGalleryView('grid')} 
+                            ><div className="icon card-view"></div></div>
+                            <div className={`control ctrl-active  ${galleryView === 'list' ? 'active' : ''}`} 
+                                onClick={() => setGalleryView('list')}
+                            ><div className="icon list-view"></div></div>
                         </div>
                     <div className={`active`}></div>
                 </div>
@@ -138,8 +144,10 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 </div>
             </div>
             {imageUrls.length > 0 ? (
+                galleryView === 'grid' ?
+                <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id }} />:
                 <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id }} />
-            ) : (
+        ) : (
                 <label htmlFor="fileInput" className="drop-upload">
                     <div className="drop-area">
                         <Lottie options={defaultOptions} height={150} width={150} />

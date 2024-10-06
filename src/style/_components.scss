@@ -6,7 +6,7 @@
     font-size: 0.95rem;
     line-height: 1.1rem;
 	letter-spacing: 0.5px;
-
+    white-space: nowrap;
     text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.6);
     box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2), 1px 1px 2px  rgba(0, 0, 0, 0.2);
     
@@ -102,7 +102,7 @@
     }
     &.large{
         height: 8px*5;
-        padding: 8px*1 8px*3;
+        padding: 8px*1 8px*2.5;
         font-size: 1rem;
     }
     &.icon{
@@ -155,7 +155,7 @@
         &.upload::before{
             margin-right: 6px;
             margin-bottom: -4px;
-            background-size: 80%;
+            background-size: 70%;
             background-position: center center;
             background-image: url('https://img.icons8.com/?size=100&id=71204&format=png&color=FFFFFF');
             
