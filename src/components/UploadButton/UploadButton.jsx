@@ -43,7 +43,7 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, imageUrls, setIma
 
   return (
     <>
-      <label htmlFor="fileInput" className={`button icon upload large ${isPhotosImported ? 'secondary' : 'primary'}`}>
+      <label htmlFor="fileInput" className={`button icon upload ${isPhotosImported ? 'secondary' : 'primary'}`}>
         Upload
       </label>
       <input id="fileInput" type="file" multiple onChange={handleFileInputChange} />

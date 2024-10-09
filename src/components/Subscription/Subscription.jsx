@@ -36,8 +36,8 @@ const initialPlans = [
     defaultStorage: 1000,
     defaultPlan: 0,
     features: ['512 GB Cold Storage', 'Everything in Freelancer plan', 'Online Payments', 'Cold Storage Access'],
-    coreFeatures: ['AI', 'Bookings', 'Teams', '1024 GB storage'],
-    extraFeatures: { AI: 'BETA', Bookings: 'Unlimited' },
+    coreFeatures: ['AI', 'Teams', 'Bookings', '1024 GB storage'],
+    extraFeatures: { AI: 'Beta',Teams: 'Beta', Bookings: 'Unlimited' },
     isWaitlist: true,
   },
 ];
@@ -141,7 +141,7 @@ const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
         <>
           <p className='waitlist-label'>{plan.isWaitlist ? 'Apply for next available batch.' : 'Pay Later in 7 days'}</p>
           <div className={`button primary ${plan.isWaitlist ? 'outline' : ''}`}>
-            {plan.isWaitlist ? 'Join Waitlist' : 'Purchase'}
+            {plan.isWaitlist ? 'Join Waitlist' : 'Upgrade'}
           </div>
         </>
       )}

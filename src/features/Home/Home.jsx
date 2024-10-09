@@ -34,7 +34,7 @@ function Home() {
                 <div className="welcome-section">
                     <div className="welcome-content">
                         <div className='welcome-message-top user-name'>
-                            <h1 className='welcome-message '>Hello, <span className='iconic-gradient'>{defaultStudio?.domain} </span></h1>
+                            <h1 className='welcome-message '>Hello, <span className='iconic-gradient'>{defaultStudio?.name} </span></h1>
                             
                         </div>
                         <h1 className='welcome-message'>Let's manage your Snaps </h1>
@@ -69,17 +69,15 @@ function Home() {
                                         <p className="message">No recent projects</p>)
                                 }
                                 <Link className="project all" to={`/${defaultStudio.domain}/projects`} >
-                                    <div className="project-cover"
-                                    ></div>
+                                    <div className="cover-wrap">
+                                        <div className="project-cover"></div>
+                                    </div>
                                     <div className="project-details">
                                         <div className="details-top">
 
                                             <h4 className="project-title">See all Projects</h4>
                                             <p className="project-type"></p>
                                         </div>
-                                    </div>
-                                    <div className="project-options">
-                                        
                                     </div>
                                 </Link>
                                 </div>

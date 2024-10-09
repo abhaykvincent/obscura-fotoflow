@@ -98,8 +98,8 @@ export default function App() {
       ) : 
       (<>{ !isPublicPage() && <LoginModal/> }</>)}
       {
-        isLoading!== 'succeeded' && isAuthenticated? (
-          <Loading/>
+        isLoading!== 'succeeded' && isAuthenticated  ? (
+           (!isPublicPage()) &&  <Loading/>
         ) : (
           <Routes>
             {isAuthenticated && (

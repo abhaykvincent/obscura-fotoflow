@@ -146,8 +146,8 @@ function Sidebar() {
         <div className="message">Upgrade to <span>STUDIO</span></div>
         <div className="button primary outline"
           
-        >Waitlist</div>
-        <p className="plan">Current Plan: Freelancer</p>
+        >Upgrade</div>
+        <p className="plan">Current Plan: Core</p>
       </div>
     </div>
   );
