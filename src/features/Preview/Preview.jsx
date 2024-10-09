@@ -109,7 +109,7 @@ const domain = useSelector(selectDomain)
             backgroundImage: `url("${image.url}")`,
             backgroundPositionX: zoomValue>100?`${imagePosition.x}px`:'center',
             backgroundPositionY: zoomValue>100?`${imagePosition.y}px`:'center',
-            backgroundSize: `auto ${zoomValue}%`
+            backgroundSize: `contain`/* */
           }}>
             
         </div>
@@ -161,11 +161,11 @@ const domain = useSelector(selectDomain)
           <div className="icon set-cover"
             onClick={() => setCoverPhotoInFirestore(domain,projectId, image.url)}
           >Set as cover</div>
-          <div className="icon download"></div>
-          <div className="icon share"></div>
+          <div className="icon download"></div>{/* 
+          <div className="icon share"></div> */}
         </div>
         <div className="center-controls">
-          <div className="magnifier">
+          {/* <div className="magnifier">
             <div className="zoom-out"
               onClick={() => zoomOut()}
             ></div>
@@ -176,7 +176,7 @@ const domain = useSelector(selectDomain)
             <div className={`zoom-reset ${zoomValue !== 100 ? 'show' : ''}`}
               onClick={zoomReset}
             >Reset</div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -4,11 +4,11 @@ import { logout } from '../../app/slices/authSlice';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 
-const UserContact = ({active,next,createAccountData,updateAccountData}) => {
+const UserContact = ({active,next,createAccountData,updateAccountData,user}) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [contactNumber, setContactNumber] = useState('');
-
+  console.log(user)
   const handleContactNumberChange = (e) => {
     const name = e.target.value;
     setContactNumber(name);
@@ -16,7 +16,8 @@ const UserContact = ({active,next,createAccountData,updateAccountData}) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     updateAccountData({contactNumber})
-    next()
+    if(user.email)
+      next()
   };
 
   if (!active) {
@@ -43,8 +44,7 @@ const UserContact = ({active,next,createAccountData,updateAccountData}) => {
             required
           />
         </div>
-        <div className="button tertiary large" onClick={next} >Skip</div>
-        <div className="button primary large"
+        <div className={`button primary large ${!user.email ? 'disabled' : ''}`}
           onClick={handleSubmit}
         >Open App</div>
       </form>

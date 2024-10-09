@@ -7,6 +7,7 @@ import DashboardPayments from '../../Payments/Payments';
 import DashboardExpances from '../../Expances/Expances';
 import { showAlert } from '../../../../app/slices/alertSlice';
 import { selectUserStudio } from '../../../../app/slices/authSlice';
+import DashboardEvents from '../../Events/Events';
 
 function DashboardTabs({ project }) {
   const dispatch = useDispatch();
@@ -32,7 +33,7 @@ function DashboardTabs({ project }) {
                       <div className="thumbnail thumb1">
                         <div className="backthumb bthumb1"
                         >
-                    <div className="button primary outline">New Gallery</div></div>
+                    <div className="button primary outline">New </div></div>
                         <div className="backthumb bthumb2"></div>
                         <div className="backthumb bthumb3"></div>
                         <div className="backthumb bthumb4"></div>
@@ -48,9 +49,9 @@ function DashboardTabs({ project }) {
                   <div className="galleries">
                     
                     {
-                      project.collections.map((collection)=>{
+                      project.collections.map((collection,index)=>{
                         return(
-                          <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/${defaultStudio.domain}/gallery/${project.id}/${collection.id}`}>
+                          <Link key={index} className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/${defaultStudio.domain}/gallery/${project.id}/${collection.id}`}>
                             <div className="thumbnails">
                               <div className="thumbnail thumb1">
                                 <div className="backthumb bthumb1"
@@ -102,31 +103,17 @@ function DashboardTabs({ project }) {
 
       case 'shoots':
         return (
-          <div className="shoots-overview">
-            <h3>Shoots</h3>
-            {/* Replace with shoots card display logic */}
-            <div className="button primary outline" onClick={() => dispatch(openModal('addShoot'))}>
-              Add New Shoot
-            </div>
-          </div>
+          <DashboardEvents project={project}/>
         );
 
       case 'invoices':
         return (
-          <div className="invoices-overview">
-            <h3>Invoices</h3>
-            {/* Add Invoice Logic */}
-            <div>No invoices yet.</div>
-          </div>
+          <DashboardPayments project={project} />
         );
 
       case 'payments':
         return (
-          <div className="payments-overview">
-            <h3>Payments</h3>
-            <DashboardPayments project={project} />
-            <DashboardExpances project={project} />
-          </div>
+          <DashboardExpances project={project} />             
         );
 
       default:

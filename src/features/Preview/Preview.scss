@@ -23,8 +23,7 @@
             width: 100vw;
             background-position: center;
             transition: background-size 0.1s ease;
-
-            background-size: auto 100% ;
+            background-size: 100% auto;
         }
     }
     .controls{
@@ -37,8 +36,11 @@
             margin: 8px*2;
             background-image: url('../../assets/img/icons/back.png');
             background-size: contain;
-            opacity: 0.5;
+            opacity: 0.8;
             transition-duration: 0.2s;
+            filter: drop-shadow(1px 1px 2px #000000);
+
+
             cursor: pointer;
             &:hover{
                 opacity: 1;
@@ -54,14 +56,18 @@
             background-image: url('../../assets/img/icons/back.png');
             background-size: contain;
             transform: rotate(180deg);
-            opacity: 0.5;
+            opacity: 0.8;
             transition-duration: 0.2s;
+            filter: drop-shadow(1px 1px 2px #000000);
             cursor: pointer;
             &:hover{
                 opacity: 1;
             }
         }
         &.top{
+            position: fixed;
+            top: -8px;
+            width: 100vw;
             margin-top: 8px;
             .left-controls{
                 display: flex;
@@ -213,6 +219,10 @@
                 }
             }
         }
+        &.middle{
+            position: absolute;
+            top:0;
+        }
         &.bottom{
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -222,6 +232,8 @@
             bottom: 0px;
             width: 100%;
             height: 8px*6;
+            background: none;
+            border:none;
         }
     }
 }

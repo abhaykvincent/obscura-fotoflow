@@ -27,7 +27,7 @@ function DashboardExpances({project}){
                 <div className="button primary outline"
                 onClick={()=>dispatch(openModal('addExpense'))}
                 >
-                  Add Expense
+                  Add
                 </div>
               ) :
               (

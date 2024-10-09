@@ -663,7 +663,7 @@ export const setCoverPhotoInFirestore = async (domain, projectId, image) => {
 };
 // Uploaded Files
 export const addUploadedFilesToFirestore = async (domain, projectId, collectionId, importFileSize, uploadedFiles) => {
-    let color = domain === '' ? 'gray' : '#0099ff';
+    let color = domain === '' ? 'gray' : 'green';
     console.log(`%cAdding Uploaded Files to Project ${projectId} in ${domain ? domain : 'undefined'}`, `color: ${color}; `);
 
     const batch = writeBatch(db);
@@ -696,7 +696,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
 
         await batch.commit();
         color = '#54a134';
-        console.log(`%cUploaded files and project document updated successfully for project ${projectId} in ${domain}`, `color: ${color}; `);
+       
     } else {
         console.error('Project not found.');
         throw new Error('Project not found.');

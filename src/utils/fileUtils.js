@@ -12,3 +12,14 @@ export const getUsedSpace = (projects) =>{
     },0)
     return usedSpace
 }
+
+// File type validation
+export const validateFileTypes = (files) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    for (let file of files) {
+        if (!allowedTypes.includes(file.type)) {
+            return false;
+        }
+    }
+    return true;
+};

@@ -11,21 +11,23 @@ import { selectDomain } from '../../../app/slices/authSlice';
 import DownloadFiles from '../../DownloadFiles/DownloadFiles';
 import { findCollectionById } from '../../../utils/CollectionQuery';
 import { openModal } from '../../../app/slices/modalSlice';
+import ImageGalleryGrid from '../../ImageGallery/ImageGalleryGrid';
 
 const CollectionImages = ({ id, collectionId, project }) => {
     const dispatch = useDispatch();
+    const domain = useSelector(selectDomain);
 
     // Files
     const [collectionImages, setCollectionImages] = useState([]);
     const [imageUrls, setImageUrls] = useState([]);
     const [selectedImages, setSelectedImages] = useState([]);
     const [isPhotosImported, setIsPhotosImported] = useState(false);
-    const domain = useSelector(selectDomain);
+    const [galleryView, setGalleryView] = useState('grid');
 
     // Import size
     const [showAllPhotos, setShowAllPhotos] = useState(true);
     const [page, setPage] = useState(1);
-    const [size, setSize] = useState(15);
+    const [size, setSize] = useState(30);
 
     // Upload progress
     const [uploadList, setUploadLists] = useState([]);
@@ -127,20 +129,30 @@ const CollectionImages = ({ id, collectionId, project }) => {
                         <DownloadFiles className={`open-in ${showAllPhotos ? 'disabled' : ''}`} folderPath={`${domain}/${id}/${collectionId}/`} project={project} collection={findCollectionById(project, collectionId)}/>
                         </>:
                     <>
-                    <div className="button secondery pin" 
-                    onClick={()=>{}} 
-                    >PIN : {project?.pin}</div>
-                    <div className="button primary share" onClick={()=>dispatch(openModal('shareGallery'))} target="_blank">Share</div>
+                    <div className="control-wrap">
+                        <div className="controls">
+                            <div className={`control ctrl-all ${galleryView === 'grid' ? 'active' : ''}`} 
+                                onClick={() => setGalleryView('grid')} 
+                            ><div className="icon card-view"></div></div>
+                            <div className={`control ctrl-active  ${galleryView === 'list' ? 'active' : ''}`} 
+                                onClick={() => setGalleryView('list')}
+                            ><div className="icon list-view"></div></div>
+                        </div>
+                    <div className={`active`}></div>
+                </div>
                 </>}
                 </div>
             </div>
             {imageUrls.length > 0 ? (
+                galleryView === 'grid' ?
+                <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id }} />:
                 <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id }} />
-            ) : (
+        ) : (
                 <label htmlFor="fileInput" className="drop-upload">
                     <div className="drop-area">
-                        <p>Click here to upload</p>
                         <Lottie options={defaultOptions} height={150} width={150} />
+                        <h2>Drop files here</h2>
+                        <p>or use the "Upload" Button</p>
                     </div>
                 </label>
             )}

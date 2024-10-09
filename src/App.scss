@@ -27,7 +27,7 @@ a{
   color: inherit;
 }
 body{
-  background: $dark-2;
+  background: $dark-3;
 
 }
 .App{
@@ -52,8 +52,9 @@ body{
     width: 100vw;
     height: $header-height;
     background-color: $dark-3;
-    box-shadow:  -1px 1px 4px rgba(0, 0, 0, 0.3);
+    box-shadow:  -1px 1px 4px rgba(0, 0, 0, 0);
     @include boxed;
+    border:none;
     border-right: none;
     border-left: none;
     border-top: none;
@@ -174,11 +175,15 @@ body{
     position: relative;
     top: $header-height ;
     left: $sidebar-width;
-    width: calc(100vw - #{$sidebar-width});
+    width: calc(100vw - #{$sidebar-width} - 6px);
     min-height: calc(100vh - #{$header-height});
     padding: 0 8px*2;
     padding-top: 8px*1;
     z-index: 10;
+    border: 1px solid $dark-1;
+    border-radius: 8px;
+    box-shadow: -1px -1px 1px  rgba(0, 0, 0, 1);
+    background-color: $dark-2;
     &.project-page{
       display: grid;
       grid-template-columns: auto auto;
@@ -192,6 +197,8 @@ body{
       animation: gallery-page-reveal 0.4s ease-out forwards;
     }
     &.gallery-page{
+      
+    grid-template-columns: auto ;
       opacity: 0;
       transform: translateY(-8px);
       animation: gallery-page-reveal 0.2s ease-out forwards;
@@ -287,10 +294,9 @@ body{
     }
     .project-collection{
       position: relative;
-      padding: 8px*2;
       margin: 8px;
       margin-top: 8px*0;
-      background-color: $dark-2;
+      background-color: $dark-3;
       border-radius: $border-radius-1;
       @include boxed;
       @include boxShadow;
@@ -299,7 +305,14 @@ body{
         display: grid;
         grid-template-columns: 1fr 2fr 8px*40;
         padding-bottom: 8px*2;
+        padding: 8px*1;
+        margin-bottom: 8px;
         align-items: center;
+        position: sticky !important;
+        top:8px*8;
+        z-index:40;
+        background-color: $dark-3;
+        border-radius: 6px;
         .label{
           margin: 8px;
         }
@@ -323,15 +336,19 @@ body{
             }
           }
           .controls{
-            @include boxed;
-            border-radius: 6px;
-            transition-duration: 0.15s;
-            &:hover{
-              border: 1px solid $gray4-accessible-dark;
-              transition-duration: 0.1s;
-              background-color: rgba(0, 0, 0, 0.1);
-            }
-            display:flex;
+            display: flex;;
+    border-radius: $border-radius-1+1;
+    transition-duration: 0.15s;
+    background: linear-gradient(120deg, $dark-1 -80%, $dark-2 20%,$dark-2 60%, $dark-3 100%);
+    border: 1px solid $gray6-accessible-dark;
+    border-top: 1px solid $gray5-accessible-dark;
+    border-bottom: 1px solid $gray6-accessible-dark;;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);;
+    opacity: 0;
+
+    animation: fadeInLeft 0.25s ease-out 0.2s;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-out;
             .control{
             display:flex;
 
@@ -410,27 +427,32 @@ body{
       .drop-upload{
         cursor: pointer;
         .drop-area{
-          height: 8px*20;
+          display: grid;
+          align-items: center;
+          align-content: center;
+          height: calc(100vh - 8px*52);
           border-radius: 8px*1;
-          border: 1px double $green-default-dark;
+          border: 1px double $dark-0;
           stroke-dashoffset: 20px 10px;
           opacity: 0.8;
+          margin: 8px;
+          text-align: center;
           background-size: 80%;;
+          background-color: $dark-3;
           //background: url('https://img.icons8.com/ios/100/FFFFFF/drag-and-drop.png') ;
           background-repeat: no-repeat;
           background-position: center;
           transition-duration: 0.1s;
           &:hover{
           opacity: 1;
-          border: 1px double $green-default-light;
+          border: 1px double $gray-default-light;
 
           }
           p{
-            margin-top: 8px*2;
+            margin-top: 8px*0;
             font-size: 1rem;
             text-align: center;
             color: $gray2-default-dark;
-            border: 1px solid $dark-3;
             padding: 4px 8px*2;
             border-radius: 4px;
             
@@ -1158,14 +1180,11 @@ body{
 
 
 .gallary{
-  width: calc(100vw - $sidebar-width - 8px*10);
+  width: calc(100vw - $sidebar-width - 8px*4);
   display: flex;
   flex-wrap: wrap;
-  gap: 8px*4;
-margin-left: 4px;
+  gap: 8px*2;
   margin-top: 8px*0;
-  padding: 8px;
-  padding-top: 4px;
   .photos{
     display:flex;
     flex-wrap: wrap;
@@ -1174,7 +1193,6 @@ margin-left: 4px;
     gap:8px*0;
       border-radius: 3px;
       margin-top: 8px*3;
-      padding: 8px;
   }
 }
 .project-collection{
@@ -1184,21 +1202,19 @@ margin-left: 4px;
     //display:grid;
     //grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     gap:8px*0;
-      border: 1px solid $dark-1;
-      border-top: 1px solid $dark-0;
       border-radius: 4px;
       margin-top: 8px*3;
-      padding: 8px;
+      padding: 1px;
       box-shadow:  1px 0px 4px black, 0px 0px 4px rgba(255, 255, 255, 0.15);
     &:hover{
-      border: 1px solid $dark-0;
-      box-shadow:  0px 0px 4px 1px black, 0px 0px 2px 2px rgba(255, 255, 255, 0.1), 0px 0px 12px rgba(255, 255, 255, 0.15);
+      box-shadow:  0px 0px 4px 1px black, 0px 0px 2px 2px rgba(255, 255, 255, 0.1), 0px 0px 8px rgba(255, 255, 255, 0.15);
 
 
     }
       .group-date{
       position: absolute;
-      margin-top: -8px*4;
+      margin-top: -8px*3;
+      margin-left: 8px*1.5;
       color: $dark-1;
       font-size: 0.8rem;
       font-weight: bold;
@@ -1208,7 +1224,7 @@ margin-left: 4px;
     }
     .photo-wrap{
 
-      width: calc(100vw/4 - $sidebar-width/4 - 8px * 4);
+      width: calc(100vw/4 - $sidebar-width/4 - 8px);
       position: relative;
       margin-left: -1px;
       margin-top: -1px;
@@ -1351,7 +1367,7 @@ margin-left: 4px;
       }
       &:hover{
         border: 1px solid $dark-0;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: $dark-1;
         transition-duration: 0.05s;
         transition-timing-function: ease-in;
         border-radius: 2px;
@@ -1426,8 +1442,6 @@ margin-left: 4px;
           }
     
         }
-      }
-      .sidebar{
       }
       
     }
@@ -1640,6 +1654,7 @@ margin-left: 4px;
         }
       }
     }
+    
     }
   }
   @media only screen and (max-width: 520px) {
@@ -1682,18 +1697,40 @@ margin-left: 4px;
       .welcome-section .storage-pie-wrap{
         display: none;
       }
-      .gallary{
+      .list .gallery-list{
+        width: calc(100vw - 8PX*20);
+        gap:8px*3;
+
+      }
+      
+      .gallery{
         width: calc(100vw - 8PX*6 - 8px*4);
         
       }
-      main .project-collection .photos .photo-wrap {
+      main {
+        margin:0;
+        &.project-page {
+          padding:0px;
+          .project-collections{
+            .galleries {
+              width: 100%;
+              margin-left:0;
+              .list{
+                gap: 8px*2;
+                margin-top:0;
+                
+              }
+            }
+          }
+        }
+        .project-collection .photos .photo-wrap {
         width: calc(100vw - 8px*14);
         .photo{
 
           width: calc(100vw - 8px*14);
         }
 
-        }
+        }}
     }
   }
   
@@ -1720,7 +1757,6 @@ margin-left: 4px;
     main {
       left: 0;
       width: calc(100vw );
-      padding: 0;
       .photos{
         grid-template-columns: 1fr ;
       }

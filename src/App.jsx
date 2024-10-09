@@ -59,6 +59,10 @@ export default function App() {
   useEffect(() => {
     console.log(isLoading)
   }, [isLoading]);
+  useEffect(() => {
+  
+  }, []);
+ 
   // ON Render
   useEffect(() => {
     console.log(currentDomain)
@@ -94,8 +98,8 @@ export default function App() {
       ) : 
       (<>{ !isPublicPage() && <LoginModal/> }</>)}
       {
-        isLoading!== 'succeeded' && isAuthenticated? (
-          <Loading/>
+        isLoading!== 'succeeded' && isAuthenticated  ? (
+           (!isPublicPage()) &&  <Loading/>
         ) : (
           <Routes>
             {isAuthenticated && (

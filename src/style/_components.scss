@@ -1,19 +1,21 @@
 @import './variables';
 .button{
     display: inline-block;
-    padding: 4px 8px*1.5;
+    padding: 5px 8px*1.8;
     border-radius: 4px;
-    font-size: 0.8rem;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+    font-size: 0.95rem;
+    line-height: 1.1rem;
+	letter-spacing: 0.5px;
+    white-space: nowrap;
+    text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.6);
     box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2), 1px 1px 2px  rgba(0, 0, 0, 0.2);
-    height: 8px*3.5;
+    
     margin: 4px;
     font-weight: 600;
     opacity: 0.9;
     text-align: center;
-    line-height: 1.1rem;
     cursor: pointer;
-    transition-duration: 0.1s;
+    transition-duration: 0.4s;
     &:hover{
         opacity: 1;
         transition-duration: 0.2s;
@@ -30,7 +32,7 @@
     }
     &.primary{
         background: linear-gradient(330deg, $green-dark-accessible-light, $green-accessible-light);
-        border: 1px solid $green-default-light;
+        border: 2px solid $green-default-light;
         &.outline {
             background: none;
             border: 1px solid $green-dark-accessible-light;
@@ -100,7 +102,7 @@
     }
     &.large{
         height: 8px*5;
-        padding: 8px*1.2 8px*4;
+        padding: 8px*1 8px*2.5;
         font-size: 1rem;
     }
     &.icon{
@@ -116,7 +118,16 @@
             background-position: center;
             background-repeat: no-repeat;
             filter: drop-shadow(1px 1px 1px #222);
+             background-size: 100%;
+             
+               
         }
+        &.large{
+            &::before{
+            padding: 8px*2;
+            }
+           }
+
         &.add::before{
             background-image: url('https://img.icons8.com/ios-filled/500/ffffff/plus-math.png');
 
@@ -140,6 +151,14 @@
             background-size: 90%;
             background-position: top 4px center;
             background-image: url('https://img.icons8.com/?size=100&id=366&format=png&color=FFFFFF');
+        }
+        &.upload::before{
+            margin-right: 6px;
+            margin-bottom: -4px;
+            background-size: 70%;
+            background-position: center center;
+            background-image: url('https://img.icons8.com/?size=100&id=71204&format=png&color=FFFFFF');
+            
         }
     }
 }
@@ -199,10 +218,10 @@
     align-items: center;
     justify-content: center;
     position: absolute;
-    top: 8px*10;
+    top: 8px*8;
     left: $sidebar-width + 8px*2;
-    width: calc(100% - $sidebar-width - 8px*6);
-    height: 8px*5;
+    width: calc(100% - $sidebar-width - 8px*4);
+    height: calc(100vh - $header-height - 8px*6);
     margin: 8px;
     padding: 8px*4;
     background-color: $dark-3;
@@ -220,5 +239,21 @@
     }
     .loading-message{
         color: $gray-default-dark;
+    }
+}
+
+@media only screen and (max-width: 1230px) {
+    .loader-wrap{
+
+    left: $sidebar-width - 8px*16;
+    width: calc(100% - $sidebar-width + 8px*12);
+    }
+}
+@media only screen and (max-width: 520px) {
+    .loader-wrap{
+
+    left: 8px*2;
+    width: calc(100% -  8px*6);
+    height: calc(100% -  8px*16);
     }
 }
