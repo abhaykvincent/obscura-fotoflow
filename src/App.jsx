@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { HotKeys } from 'react-hotkeys';
+import { Client } from 'appwrite';
 // Components
 import Alert from './components/Alert/Alert';
 import Header from './components/Header/Header';
@@ -37,6 +38,9 @@ import Onboarding from './features/Onboarding/Onboarding';
 import AdminPanel from './features/AdminPanel/AdminPanel';
 import useAdminAuth from './hooks/useAdminAuth';
 import { selectModal } from './app/slices/modalSlice';
+
+const client = new Client();
+client.setProject('fotoflow-notifications');
 
 //import AdminRoute from './components/AdminRoute/AdminRoute';
 // Wrapper component to pass studio name to pages

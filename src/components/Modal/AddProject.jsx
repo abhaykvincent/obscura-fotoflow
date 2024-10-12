@@ -9,6 +9,7 @@ import { selectUserStudio } from '../../app/slices/authSlice';
 import { trackEvent } from '../../analytics/utils';
 import { analytics } from '../../firebase/app';
 import { logEvent } from 'firebase/analytics';
+import { sendEmailNotification } from '../../utils/Notification/sendEmailNotification';
 
 function AddProjectModal() {
     const dispatch = useDispatch();
@@ -87,8 +88,13 @@ function AddProjectModal() {
                 project_type: newProjectData.type,
                 project_email: newProjectData.email,
               });
+
               dispatch(showAlert({type:'success', message:`New Project created!`}));
-            
+                sendEmailNotification(
+                    "abhaykvincent@gmail.com",
+                    "Photography ",
+                    "Test"
+            )
               navigate(`/${domain}/project/${newProjectData.id}`);
           })
           .catch((error) => {
