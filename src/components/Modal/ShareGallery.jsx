@@ -2,10 +2,16 @@ import React, { useEffect, useState } from 'react';
 import './ShareGallery.scss'
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
-import { getGalleryURL, getShareURL } from '../../utils/stringUtils';
 import { selectDomain } from '../../app/slices/authSlice';
+import { useLocation } from 'react-router';
+import { extractDomain, getGalleryURL } from '../../utils/urlUtils';
 
 function ShareGallery({project }) {
+  // Get the current location object
+  const location = useLocation();
+
+  // Extract the full current URL
+  const currentUrl = window.location.href;
   const dispatch = useDispatch()
   const visible = useSelector(selectModal)
   const onClose = () => dispatch(closeModal('shareGallery'))
@@ -81,13 +87,13 @@ function ShareGallery({project }) {
           <div className="button primary outline" /* Photos */
             onClick={()=>{
               // go to https://wa.me/[phone number]?text=[pre-filled message]
-              window.open(`https://wa.me/+91${project.phone}?text=Hey, I have a project that I'd like to share with you. Check it out at http://obscura-fotoflow.web.app/share/${project.id}/`,'_blank');
+              window.open(`https://wa.me/?text=Hey, I have a project that I'd like to share with you. Check it out at ${getGalleryURL('share',domain,project.id)}/`,'_blank');
             }}
           >Share</div>
           <div className="button primary " /* Photos */
           onClick={()=>{
             // go to https://wa.me/[phone number]?text=[pre-filled message]
-            window.open(`https://wa.me/+91${project.phone}?text=Hey, I have a Gallery for Selection that I'd like to share with you. Check it out at http://obscura-fotoflow.web.app/selection/${project.id}/`,'_blank');
+            window.open(`https://wa.me/?text=Hey, I have a Gallery for Selection that I'd like to share with you. Check it out at ${getGalleryURL('selection',domain,project.id)}/`,'_blank');
           }}
           >Selection</div>
         </div>
