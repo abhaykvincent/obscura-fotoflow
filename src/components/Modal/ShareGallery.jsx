@@ -40,31 +40,40 @@ function ShareGallery({project }) {
               <div className="select-galleries">
                 
               <p className='client-label'>Select galleries</p>
+              <div className="galleries-share-list-selection">
                 {project.collections.map((collection) => {
-                return (
-                  <div className="form-item">
-                  <div className="input">
-                    <input type="checkbox" checked/>
-                  </div>
-                    <div className="label">
-                      <label>{collection.name}</label>
+                  return (
+                    <div className="form-item">
+                      <div className="input">
+                        <input type="checkbox" checked/>
+                      </div>
+                      <div className="label">
+                        <label>{collection.name}</label>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+                
               </div>
               <div className="link-pin">
 
-                <a className='link' href={getGalleryURL('share',domain,project.id)} target='_blank'
-                >{`🔗 Share Gallery`}</a>
+                <div className='link' >
+                  <a className="" href={getGalleryURL('share',domain,project.id)} target='_blank'>{`Gallery`}</a>
+                  <div className="copy-link">Copy</div>
+                </div>
+                
                 <p className='access'>🔓 Public</p>
               </div>
               <div className="link-pin">
 
-              <a className='link' href={getGalleryURL('selection',domain,project.id)} target='_blank'
-                >{`🔗 Selection Gallery`}</a>
+              <div className='link'>
+                  <div className=""  href={getGalleryURL('selection',domain,project.id)} target='_blank'>{`Select Photos`}</div>
+                  <div className="copy-link">Copy</div>
+                </div>
                 <p className='pin'>🔐 {project.pin}</p>
-              </div>
+                </div>
+              
               
               <div className="client-notification">
               <p className='client-label'>Sent link to Whatsapp</p>
@@ -84,18 +93,23 @@ function ShareGallery({project }) {
         <div className="actions">
           <div className="button secondary" onClick={onClose}>Cancel</div>
           
-          <div className="button primary outline" /* Photos */
+          {/* <div className="button primary outline"
             onClick={()=>{
               // go to https://wa.me/[phone number]?text=[pre-filled message]
               window.open(`https://wa.me/?text=Hey, I have a project that I'd like to share with you. Check it out at ${getGalleryURL('share',domain,project.id)}/`,'_blank');
             }}
           >Share</div>
+          <div className="button primary "
+          onClick={()=>{
+            window.open(`https://wa.me/?text=Hey, I have a Gallery for Selection that I'd like to share with you. Check it out at ${getGalleryURL('selection',domain,project.id)}/`,'_blank');
+          }}
+          >Selection</div> */}
           <div className="button primary " /* Photos */
           onClick={()=>{
             // go to https://wa.me/[phone number]?text=[pre-filled message]
             window.open(`https://wa.me/?text=Hey, I have a Gallery for Selection that I'd like to share with you. Check it out at ${getGalleryURL('selection',domain,project.id)}/`,'_blank');
           }}
-          >Selection</div>
+          >Share</div>
         </div>
       </div>
       <div className="modal-backdrop" onClick={onClose}></div>

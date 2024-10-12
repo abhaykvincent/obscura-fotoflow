@@ -23,8 +23,6 @@ const CollectionsPanel = ({ project, collectionId}) => {
               <div className="thumbnails">
                 <div className="thumbnail thumb1">
                   <div className="backthumb bthumb1"></div>
-                  <div className="backthumb bthumb2"></div>
-                  <div className="backthumb bthumb3"></div>
                 </div>
               </div>
               <div className="gallery-name">Upload</div>
@@ -41,20 +39,7 @@ const CollectionsPanel = ({ project, collectionId}) => {
 
                       }}
                     ></div>
-                    <div className="backthumb bthumb2"></div>
-                    <div className="backthumb bthumb3"></div>
-                  </div>
-                  <div className="thumbnail thumb2">
-                    <div className="backthumb bthumb1"style={{ 
-                        backgroundImage: `url(${project.projectCover!==""?project.projectCover:'https://img.icons8.com/external-others-abderraouf-omara/64/FFFFFF/external-images-photography-and-equipements-others-abderraouf-omara.png'})`,
-                        backgroundSize:`${project.projectCover!=""?'':'50%'}`
-                      }}>
-                    </div>
-                    <div className="backthumb bthumb2"></div>
-                    <div className="backthumb bthumb3"></div>
-                  </div>
-                  <div className="thumbnail thumb3">
-                    <div className="backthumb bthumb1 count">{/* {collection.uploadedFilesCount } Photos */}</div>
+
                     <div className="backthumb bthumb2"></div>
                     <div className="backthumb bthumb3"></div>
                   </div>
@@ -75,7 +60,6 @@ const CollectionsPanel = ({ project, collectionId}) => {
             </div>
             <div className="backthumb bthumb2"></div>
             <div className="backthumb bthumb3"></div>
-            <div className="backthumb bthumb4"></div>
           </div>
         </div>
         <div className="gallery-name">New Gallery</div>

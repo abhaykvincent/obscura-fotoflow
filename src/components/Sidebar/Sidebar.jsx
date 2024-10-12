@@ -139,7 +139,7 @@ function Sidebar() {
           >Logout</div>
         </div>
       </div>
-      <div className="subscriptoion status">
+      {/* <div className="subscriptoion status">
         <div className="icon">
         <GrUpgrade />
         </div>
@@ -148,7 +148,7 @@ function Sidebar() {
           
         >Upgrade</div>
         <p className="plan">Current Plan: Core</p>
-      </div>
+      </div> */}
     </div>
   );
 }

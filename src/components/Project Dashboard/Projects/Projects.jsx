@@ -88,26 +88,6 @@ function DashboardProjects({project}){
                 <div className="backthumb bthumb2"></div>
                 <div className="backthumb bthumb3"></div>
               </div>
-              <div className="thumbnail thumb2">
-                <div className="backthumb bthumb1 count"style={
-                  {
-                    backgroundImage:
-                      `url(${project.projectCover?project.projectCover:''})`
-                }}></div>
-                <div className="backthumb bthumb2"></div>
-                <div className="backthumb bthumb3"></div>
-              </div>
-              <div className="thumbnail thumb3">
-                <div className="backthumb bthumb1 count" style={
-                {
-                  backgroundImage:
-                    `url(${project.projectCover?project.projectCover:''})`
-                }}>
-                
-                {project.uploadedFilesCount!==0? project.uploadedFilesCount+' Photos': '0 Photos'}</div>
-                <div className="backthumb bthumb2"></div>
-                <div className="backthumb bthumb3"></div>
-              </div>
             </div>
           </Link>
           {
