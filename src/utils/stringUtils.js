@@ -72,6 +72,3 @@ export function formatDecimalK(amount) {
 // if localhost localhost:port , if production obscura.fotoflow
 // ethan-ross-Ksi9g id projectId and birthday-CLhMa is the collectionId
 
-export function getGalleryURL(page,domain,projectId) {
-  return `${window.location.protocol}//${window.location.host}/${domain}/${page}/${projectId}`;
-}

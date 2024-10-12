@@ -56,7 +56,14 @@ function DashboardProjects({project}){
           
         </div>
 
+
+        <div className="financials-overview">
+      <DashboardPayments project={project} />
+      <DashboardExpances project={project} />
+      </div>
+      <DashboardEvents project={project} />
       </>
+      
     ) : (
       <>
       <div className="gallery-overview">
@@ -126,11 +133,12 @@ function DashboardProjects({project}){
         </div>
       </div>
 
-<div className="financials-overview">
-<DashboardPayments project={project} />
-<DashboardExpances project={project} />
-</div>
-<DashboardEvents project={project} />
+
+      <div className="financials-overview">
+      <DashboardPayments project={project} />
+      <DashboardExpances project={project} />
+      </div>
+      <DashboardEvents project={project} />
 </>
     ))
     :<>
