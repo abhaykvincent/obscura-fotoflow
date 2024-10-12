@@ -12,11 +12,8 @@ if (process.env.NODE_ENV === 'development') {
 } else {
     console.log('Analytics running on PRODUCTION');
 }
-<<<<<<< HEAD
-=======
 
 // Fotoflow-dev
->>>>>>> develop-alpha
 const firebaseConfig = {
     apiKey: "AIzaSyDmAGZJTd1xSofgYgyQeGOYP2dSiLE646U",
     authDomain: "fotoflow-dev.firebaseapp.com",
