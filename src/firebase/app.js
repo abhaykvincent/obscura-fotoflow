@@ -13,6 +13,7 @@ if (process.env.NODE_ENV === 'development') {
     console.log('Analytics running on PRODUCTION');
 }
 
+// Fotoflow-dev
 const firebaseConfig = {
     apiKey: "AIzaSyATMISVaGPMkJANWrzgmOGqgMGHprnrT04",
     authDomain: "obscura-fotoflow.firebaseapp.com",
@@ -22,6 +23,17 @@ const firebaseConfig = {
     appId: "1:541778693405:web:030ac1bcc8e072ea94e5f4",
     measurementId: "G-3P0M36DPY2"
 };
+
+// Obscura
+ /*  const firebaseConfig = {
+    apiKey: "AIzaSyATMISVaGPMkJANWrzgmOGqgMGHprnrT04",
+    authDomain: "obscura-fotoflow.firebaseapp.com",
+    projectId: "obscura-fotoflow",
+    storageBucket: "obscura-fotoflow.appspot.com",
+    messagingSenderId: "541778693405",
+    appId: "1:541778693405:web:030ac1bcc8e072ea94e5f4",
+    measurementId: "G-3P0M36DPY2"
+}; */
 
 const app = initializeApp(firebaseConfig);
 
