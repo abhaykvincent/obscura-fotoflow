@@ -12,7 +12,7 @@ export default function ShareProject() {
   // studio =  get the url and the name is lorem for url http://localhost:3000/lorem/gallery/william-thomas-b23Sg/birthday-qr22E
   
   const { studioName } = useParams();
-
+console.log(studioName)
   
   // set body color to white
   useEffect(() => {
@@ -31,11 +31,10 @@ export default function ShareProject() {
     collectionId  = collectionId || project?.collections[0]?.id
     
     
-const domain = useSelector(selectDomain)
   // Fetch Images based on projectId
   const fetchProjectData = async () => {
     try {
-      const projectData = await fetchProject(domain,projectId);
+      const projectData = await fetchProject(studioName,projectId);
 
       console.log(projectData)
       setProject(projectData);
@@ -45,7 +44,7 @@ const domain = useSelector(selectDomain)
   };
   const fetchImagesData = async () => {
     try {
-      fetchImageUrls(domain, projectId, collectionId, setImageUrls, page, size);
+      fetchImageUrls(studioName, projectId, collectionId, setImageUrls, page, size);
     } catch (error) {
       console.error('Failed to fetch project:', error);
     }
