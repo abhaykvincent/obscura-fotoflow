@@ -5,31 +5,24 @@ import { setCoverPhotoInFirestore } from '../../firebase/functions/firestore'
 import { useState } from 'react'
 import { selectDomain } from '../../app/slices/authSlice'
 import { useSelector } from 'react-redux'
+import { useDebouncedResize } from '../../hooks/debouncedResize'
 
 function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePreview, projectId }) {
-  const [zoomValue, setZoomValue] = useState(100)
-  // get the image width and height 
-  const [imageWidth, setImageWidth] = useState(0)
-  const [imageHeight, setImageHeight] = useState(0)
-  // screeen size
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth)
-  const [screenHeight, setScreenHeight] = useState(window.innerHeight)
-  const [imagePosition, setImagePosition] = useState({
-    x: (screenWidth/2)-imageWidth/1.5,
-    y: (screenHeight/2)-imageHeight/1.5
-  })
-  const [isDragging, setIsDragging] = useState(false);
-const domain = useSelector(selectDomain)
+  const domain = useSelector(selectDomain)
 
-  // function to set image width and height from url
-  const setImageSize = () => {
-    const setimage = new Image();
-    setimage.src = image.url;
-    setimage.onload = () => {
-      setImageWidth(setimage.width)
-      setImageHeight(setimage.height)
-    }
-  }
+  const { screenWidth: screenWidth, screenHeight: screenHeight } = useDebouncedResize();
+  
+  // get the image width and height 
+  const [imageWidth, setImageWidth] = useState(0);
+  const [imageHeight, setImageHeight] = useState(0);
+
+  const [zoomValue, setZoomValue] = useState(100)
+  // screeen size
+  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
+  const [lastMousePosition, setLastMousePosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+
+  
 
   useEffect(() => {
     //scrolltotop
@@ -40,80 +33,95 @@ const domain = useSelector(selectDomain)
   //useeffect side effect
 
   useEffect(() => {
-    setImageSize()
-    zoomReset()
-    console.log(image)
-  }, [image])
+    const setImageSize = () => {
+      const img = new Image();
+      img.src = image.url;
+      img.onload = () => {
+        setImageWidth(img.width);
+        setImageHeight(img.height);
+  
+        // Set initial image position after loading
+        setImagePosition({
+          x: (window.innerWidth / 2) - img.width / 2,
+          y: (window.innerHeight / 2) - img.height / 2,
+        });
+      };
+    };
+    setImageSize();
+  }, [image]);
+  
+
+  
   useEffect(() => {
     console.log(imagePosition)
   }, [imagePosition])
 
   const zoomIn = () => {
-    if (zoomValue < 100) setZoomValue(100)
-    else setZoomValue(zoomValue + 100)
-  }
-
+    setZoomValue((prev) => Math.min(prev + 20, 500)); // Limit to 500% max zoom
+  };
+  
   const zoomOut = () => {
-    if (zoomValue <= 100) setZoomValue(zoomValue - 20)
-    else setZoomValue(zoomValue - 100)
-  }
-
+    setZoomValue((prev) => Math.max(prev - 20, 100)); // Minimum zoom 100%
+  };
+  
   const zoomReset = () => {
-  setTimeout(() => {
-    setZoomValue(100)
-    setImagePosition({ x:'center', y: 'center' })
-  }, 100);
-  }
+    setZoomValue(100);
+    setImagePosition({
+      x: (window.innerWidth / 2) - imageWidth / 2,
+      y: (window.innerHeight / 2) - imageHeight / 2,
+    });
+  };
+  
 
-  const handleMouseDown = () => {
+  const handleMouseDown = (event) => {
+    console.log('mouse down.')
     setIsDragging(true);
-  }
-
+    // Store the starting mouse position when the drag begins
+    setLastMousePosition({ x: event.clientX, y: event.clientY });
+  };
+  
   const handleMouseUp = () => {
+    console.log('mouse up.')
     setIsDragging(false);
-  }
-
-  const handleDrag = (event) => {
-    event.preventDefault();
-    if (!isDragging || zoomValue===100) return;
-
-    const { movementX, movementY } = event;
-    if(imagePosition.x === 'center' || imagePosition.x === 0)
-    {
-      console.log('A')
-      setImagePosition({
-        x: (screenWidth/2)-imageWidth/1.5 + movementX,
-        y: (screenHeight/2)-imageHeight/1.5 + movementY
-      });
-    }
-    else
-    {
-      console.log('B')
-      setImagePosition({
-      x: imagePosition.x + movementX,
-      y: imagePosition.y + movementY
-    });}
-  }
+    // Clear last mouse position when drag ends
+    setLastMousePosition(null);
+  };
+  
+  const handleMouseMove = (event) => {
+    if (!isDragging || zoomValue === 100) return; // Ignore if not dragging or zoomed out
+  
+    const deltaX = event.clientX - lastMousePosition.x;
+    const deltaY = event.clientY - lastMousePosition.y;
+  
+    setImagePosition((prev) => ({
+      x: prev.x + deltaX,
+      y: prev.y + deltaY,
+    }));
+  
+    setLastMousePosition({ x: event.clientX, y: event.clientY });
+  };
 
   return (
     <div className="preview-wrapper">
       <div
       className='preview'
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      onMouseMove={handleDrag}
+      onMouseDown={(e) => {
+        setIsDragging(true);
+        setLastMousePosition({ x: e.clientX, y: e.clientY });
+      }}
+      onMouseUp={() => setIsDragging(false)}
+      onMouseMove={handleMouseMove}
     >
       <div className="image-wrap">
-        <div className="image"
-          style={{
-            backgroundImage: `url("${image.url}")`,
-            backgroundPositionX: zoomValue>100?`${imagePosition.x}px`:'center',
-            backgroundPositionY: zoomValue>100?`${imagePosition.y}px`:'center',
-            backgroundSize: `contain`/* */
-          }}>
-            
-        </div>
-
+      <div
+        className="image"
+        style={{
+          backgroundImage: `url("${image.url}")`,
+          backgroundPositionX: zoomValue > 100 ? `${imagePosition.x}px` : 'center',
+          backgroundPositionY: zoomValue > 100 ? `${imagePosition.y}px` : 'center',
+          backgroundSize: `${zoomValue}%`,
+        }}
+      ></div>
       </div>
 
       <div className="controls">
@@ -165,7 +173,7 @@ const domain = useSelector(selectDomain)
           <div className="icon share"></div> */}
         </div>
         <div className="center-controls">
-          {/* <div className="magnifier">
+          <div className="magnifier">
             <div className="zoom-out"
               onClick={() => zoomOut()}
             ></div>
@@ -176,7 +184,7 @@ const domain = useSelector(selectDomain)
             <div className={`zoom-reset ${zoomValue !== 100 ? 'show' : ''}`}
               onClick={zoomReset}
             >Reset</div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>

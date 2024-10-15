@@ -139,3 +139,18 @@
     }
   }
 }
+@media only screen and (max-width: 520px) {
+  .App .share-project{
+    .shared-collection{
+      padding: 8px;
+    }
+    .gallary{
+      width: calc(100vw - 8px*2);
+      .photos{
+        grid-template-columns: 1fr;
+        .photo{
+        }
+      }
+    }
+  }
+}
