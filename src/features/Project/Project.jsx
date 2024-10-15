@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { Helmet } from 'react-helmet-async';
 // Components
 import DashboardEvents from '../../components/Project Dashboard/Events/Events';
 import SidePanel from '../../components/Project/SidePanel/SidePanel';
@@ -79,6 +79,20 @@ export default function Project() {
 
   return (
     <>
+     {/* Meta tags for SEO and social sharing */}
+     <Helmet>
+        <title>{`${project.name} - ${project.type}`}</title>
+        <meta name="description" content={`Explore the project ${project.name}, a ${project.type} photography project.`} />
+        <meta property="og:title" content={project.name} />
+        <meta property="og:description" content={`Explore the project ${project.name}, a ${project.type} photography project.`} />
+        <meta property="og:image" content={project.projectCover || 'default-thumbnail.jpg'} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={window.location.href} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={project.name} />
+        <meta name="twitter:description" content={`Explore the project ${project.name}, a ${project.type} photography project.`} />
+        <meta name="twitter:image" content={project.projectCover || 'default-thumbnail.jpg'} />
+      </Helmet>
     
       <main className='project-page'>
        
