@@ -21,7 +21,9 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
   const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
   const [lastMousePosition, setLastMousePosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
-
+// NEW: Track touch positions for swipe handling.
+const [touchStartX, setTouchStartX] = useState(0);
+const [touchEndX, setTouchEndX] = useState(0);
   
 
   useEffect(() => {
@@ -29,8 +31,6 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
     window.scrollTo(0, 0);
     console.log(image)
   }, [])
-
-  //useeffect side effect
 
   useEffect(() => {
     const setImageSize = () => {
@@ -50,12 +50,12 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
     setImageSize();
   }, [image]);
   
-
-  
   useEffect(() => {
     console.log(imagePosition)
   }, [imagePosition])
 
+
+  // Preview ZOOM 
   const zoomIn = () => {
     setZoomValue((prev) => Math.min(prev + 20, 500)); // Limit to 500% max zoom
   };
@@ -72,21 +72,6 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
     });
   };
   
-
-  const handleMouseDown = (event) => {
-    console.log('mouse down.')
-    setIsDragging(true);
-    // Store the starting mouse position when the drag begins
-    setLastMousePosition({ x: event.clientX, y: event.clientY });
-  };
-  
-  const handleMouseUp = () => {
-    console.log('mouse up.')
-    setIsDragging(false);
-    // Clear last mouse position when drag ends
-    setLastMousePosition(null);
-  };
-  
   const handleMouseMove = (event) => {
     if (!isDragging || zoomValue === 100) return; // Ignore if not dragging or zoomed out
   
@@ -101,8 +86,45 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
     setLastMousePosition({ x: event.clientX, y: event.clientY });
   };
 
+  const handlePrev = () => {
+    if (previewIndex > 0) {
+      setPreviewIndex(previewIndex - 1);
+    }
+  };
+  const handleNext = () => {
+    if (previewIndex < imagesLength - 1) {
+      setPreviewIndex(previewIndex + 1);
+    }
+  };
+
+  // 1️⃣ NEW: Handle touch start event to track the initial touch point.
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  // 2️⃣ NEW: Handle touch move event to update the end position.
+  const handleTouchMove = (e) => {
+    setTouchEndX(e.touches[0].clientX);
+  };
+
+  // 3️⃣ NEW: Handle touch end event to determine swipe direction.
+  const handleTouchEnd = () => {
+    const swipeDistance = touchEndX - touchStartX;
+
+    if (swipeDistance > 50) {
+      handlePrev(); // Swipe right -> Go to previous image.
+    } else if (swipeDistance < -50) {
+      handleNext(); // Swipe left -> Go to next image.
+    }
+  };
+
   return (
-    <div className="preview-wrapper">
+    <div className="preview-wrapper"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+
+    >
       <div
       className='preview'
       onMouseDown={(e) => {

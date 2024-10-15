@@ -21,6 +21,7 @@
     "lucide-react": "^0.441.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-helmet-async": "^2.0.5",
     "react-hotkeys": "^2.0.0",
     "react-icons": "^5.0.1",
     "react-lottie": "^1.2.4",
@@ -28,6 +29,7 @@
     "react-router": "^6.22.0",
     "react-router-dom": "^6.22.0",
     "react-scripts": "5.0.1",
+    "react-snap": "^1.23.0",
     "sass": "1.67.0",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
@@ -38,6 +40,7 @@
     "emulator": "firebase emulators:start",
     "build": "dotenv -e .env.production react-scripts build",
     "deploy": "firebase deploy --only hosting",
+    "postbuild": "react-snap",
     "firebase-login": "firebase firebase login",
     "firebase-logout": "firebase firebase logout"
   },
