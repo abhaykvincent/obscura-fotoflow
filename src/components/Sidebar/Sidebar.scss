@@ -5,7 +5,7 @@
     left: 0%;
     width: $sidebar-width;
     height: 100vh;
-    background: linear-gradient(160deg, $dark-3 0%, $dark-2 50%, $dark-3 80%, $dark-3 100%);
+    background: $dark-3;
         
     @include boxed;
     border: 1px none;

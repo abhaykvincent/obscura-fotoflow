@@ -49,7 +49,6 @@
     display: flex;
     justify-content: center;
     margin-top: 8px*5;
-    transform: translate(8px*1, 8px*0);
     z-index: 1;
     .collection-tab{
       display: flex;
@@ -131,6 +130,21 @@
       padding: 8px;
     }
     .gallary{
+      .photos{
+        grid-template-columns: 1fr;
+        .photo{
+        }
+      }
+    }
+  }
+}
+@media only screen and (max-width: 520px) {
+  .App .share-project{
+    .shared-collection{
+      padding: 8px;
+    }
+    .gallary{
+      width: calc(100vw - 8px*2);
       .photos{
         grid-template-columns: 1fr;
         .photo{

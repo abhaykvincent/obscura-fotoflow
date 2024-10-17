@@ -10,7 +10,7 @@
     left: -8px*24;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.97);
     backdrop-filter: blur(4px);
     .image-wrap{
         display: flex;
@@ -283,6 +283,15 @@
 
     top: 0px;
     left: 0px;
+    .controls{
+        &.top .right-controls .set-cover{
+            display: none;
+        }
+        &.bottom {
+            display: none;
+
+        }
+    }
 }
 
 @media only screen and (max-width: 1200px) {
@@ -292,7 +301,14 @@
             top: -($header-height );
           }
     }
+    .shared-collection .preview{
+
+        top: 0px;
+        left: 0px;
+    }
 }
+
+// Mobile
 @media only screen and (max-width: 520px) {
     .App{
         .preview{
@@ -308,6 +324,24 @@
             
                 }
             }
+            .controls{
+                .prev{
+                    top: 80vh;
+                    left: 0px;
+                }
+                .next{
+                    top: 78vh;
+                    right: 0vh;
+                    &:hover{
+                        opacity: 1;
+                    }
+                }
+            }
           }
+          .shared-collection .preview{
+
+            top: 0px;
+            left: 0px;
+        }
     }
 }

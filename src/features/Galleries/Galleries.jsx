@@ -15,6 +15,12 @@ import { openModal } from '../../app/slices/modalSlice';
 import './Galleries.scss';
 import { selectStudio, setAvailableStortage } from '../../app/slices/studioSlice';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
+import { DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger, } from '@radix-ui/react-dropdown-menu';
 
 export default function Galleries({}) {
   const dispatch= useDispatch();
@@ -81,6 +87,10 @@ if(!collectionId&&defaultCollectionId!==''){
           >PIN : {project?.pin}
         </div>
         <div className="button primary share" onClick={()=>dispatch(openModal('shareGallery'))} target="_blank">Share</div>
+
+
+
+      
       </div>
     </div>
     {/* Page Main */}

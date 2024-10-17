@@ -18,7 +18,8 @@
             animation-timing-function: ease-out;
             span.iconic-gradient{
                 line-height: 1rem;
-                background: linear-gradient(90deg,  $green-accessible-light 0%,$green-accessible-dark 20%,  $green-dark-accessible-light 90%);
+                
+    background: radial-gradient(circle, #295117, #509135);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 transition-duration: 2s;

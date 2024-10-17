@@ -40,6 +40,8 @@
                 animation-fill-mode: forwards;
                 animation-timing-function: ease-out;
             }
+            &.sub-message{
+            }
             span{
                 
             }
@@ -252,7 +254,14 @@
             margin-top:8px;
             .welcome-message{
                 &:last-child{
-                    line-height: 2.5rem;
+                    margin-top: 8px*1;
+                    line-height: 2.8rem;
+
+                }
+                &.sub-message{
+                    font-size: 1.5rem;
+                    line-height: 2rem;
+                    margin-bottom: 8px*1;
 
                 }
             }

@@ -8,6 +8,7 @@ import DashboardExpances from '../../Expances/Expances';
 import { showAlert } from '../../../../app/slices/alertSlice';
 import { selectUserStudio } from '../../../../app/slices/authSlice';
 import DashboardEvents from '../../Events/Events';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 
 function DashboardTabs({ project }) {
   const dispatch = useDispatch();
@@ -58,34 +59,26 @@ function DashboardTabs({ project }) {
                                 style={
                                   {
                                     backgroundImage:
-                                    `url(${project.projectCover!==""?project.projectCover:'https://img.icons8.com/external-others-abderraouf-omara/64/FFFFFF/external-images-photography-and-equipements-others-abderraouf-omara.png'})`
+                                    `url(${project.projectCover!==""?project.projectCover:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`
                                   }}
                                 ></div>
-                                <div className="backthumb bthumb2"></div>
-                                <div className="backthumb bthumb3"></div>
-                              </div>
-                              <div className="thumbnail thumb2">
-                                <div className="backthumb bthumb1 count"style={
-                                  {
-                                    backgroundImage:
-                                      `url(${project.projectCover?project.projectCover:''})`
-                                }}></div>
-                                <div className="backthumb bthumb2"></div>
-                                <div className="backthumb bthumb3"></div>
-                              </div>
-                              <div className="thumbnail thumb3">
-                                <div className="backthumb bthumb1 count" style={
-                                {
-                                  backgroundImage:
-                                    `url(${project.projectCover?project.projectCover:''})`
-                                }}>
-                                
-                                {project.uploadedFilesCount!==0? project.uploadedFilesCount+' Photos': '0 Photos'}</div>
-                                <div className="backthumb bthumb2"></div>
-                                <div className="backthumb bthumb3"></div>
                               </div>
                             </div>
+                            <div className="card-gallery-name">
                               <h3 className='collection-name'>{collection.name}</h3>
+                              <div className="options-menu-button">
+
+                              {/* <DropdownMenu>
+                                <DropdownMenuTrigger >
+                                  <div className="icon options"></div>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                  <p>Open Gallery</p>
+                                  <p>Delete</p>
+                                </DropdownMenuContent>
+                              </DropdownMenu> */}
+                              </div>
+                            </div>
                           </Link>
                         )
                       })
