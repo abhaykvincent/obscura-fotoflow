@@ -4,9 +4,12 @@
 
 .project-dashboard-header{
 	position: absolute;
-	top: 8px*3;
+	display: flex;
+	align-items: center;
+	gap: 8px*2;
+	top: 8px*2;
 	right: 8px*2;
-	height: 8px*4;
+	height: 8px*5;
 	.header{
 	}.controls{
 		border-radius: $border-radius-1+1;
@@ -143,6 +146,7 @@
 		width: 8px*24;
 		height: 8px*16;
 		margin-bottom: 8px;
+		
 	}
 	.collection-name{
 		text-align: start;
@@ -492,14 +496,14 @@
 .galleries{
 	margin-left: 8px*2;
 	.list{
-		margin-top: 8px*3;
+		margin-top: 8px*0.5;
 		margin-bottom: 8px*1;
 		display: flex;
 		gap: 8px*6;
 		.gallery-list{
 
 			display: flex;
-			gap: 8px*5.2;
+			gap: 8px*4;
 			margin-bottom: 0px;
 			padding: 8px;
 			padding-top: 8px*2;
@@ -584,7 +588,6 @@
 				height: 100%;
 				@include boxed;
 				border-radius: 4px;
-				background-color: $dark-3;
 				border: 1px solid $gray4-default-dark;
 				box-shadow: -2px -1px 4px rgba(0, 0, 0, 0.6);
 			}
@@ -624,6 +627,25 @@
 		text-align: center;
 		color: $gray-default-dark;
 	}
+	.card-gallery-name{
+		display:flex;
+		justify-content: space-between;
+		[data-radix-popper-content-wrapper]{
+			margin-left: -8px*6;
+			margin-top: -8px*8;
+			padding: 0;
+			background-color: $dark-2;
+			border-radius: 4px;
+			border: 1px solid $dark-0;
+			p{
+			  padding: 8px 8px*2;
+			  cursor: pointer;
+			  &:hover{
+				background-color: $dark-1;
+			  }
+			}
+		  }
+	}
 	&:hover,&.active{
 		transition-duration: 0.1s;
 		transition-delay: 0.1s;
@@ -636,13 +658,14 @@
 				transition-timing-function: ease-in;
 				.backthumb{
 					box-shadow: 6px 4px 6px rgba(0, 0, 0, 0.4);
-					background-color: $dark-2;
+					
+				background-color: $dark-3;
 
 				}
 				.bthumb1{
 					position: absolute;
 					transform: rotate(0deg);
-					border: 1px solid $gray-default-dark;
+					border: 1px solid $gray3-default-dark;
 					background-blend-mode: normal,color-dodge;
 				}
 				.bthumb2{
@@ -652,7 +675,7 @@
 					transition-duration: 0.1s;
 					transition-delay: 0.0s;
 					transition-timing-function: ease-in;
-					border: 1px solid $gray2-default-dark;
+					border: 1px solid $gray3-default-dark;
 					box-shadow: 3px 1px 2px rgba(0, 0, 0, 0.5);
 				}
 				.bthumb3{
@@ -862,14 +885,15 @@
 }
 .active-box{
 	position: absolute;
-	width: 8px*25.5;
+	width: 8px*27;
 	height: 8px*21.5;
-	left: 8px*4;
-	margin-left: -8px*1;
+	left: 8px*6;
+	margin-left: -8px*2;
 	margin-top: -8px*2;
-	border: 1px solid $dark-0;
+	border: 1px solid $dark-3;
 	border-radius: 4px;
 	background-color: $dark-3;
+	opacity: 0.2;
 	z-index: -1;
 	transition-duration: 0.2s;
 	transition-timing-function: ease-in-out;
@@ -1233,7 +1257,7 @@
 
 		}
 		.shoots{
-			grid-column: inherit;
+			grid-column: 1/3;
 		}
 	}
 }
@@ -1243,7 +1267,7 @@
 
 		}
 		.shoots{
-			grid-column: inherit;
+			grid-column: 1/3;
 		}
 	}
 }

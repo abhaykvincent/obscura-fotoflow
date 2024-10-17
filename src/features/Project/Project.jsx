@@ -85,7 +85,7 @@ export default function Project() {
         <div className="project-dashboard">
           <DashboardProjects project={project} />
         </div>
-        <SidePanel  project={project}/>
+        {/* <SidePanel  project={project}/> */}
         {/* Modals */}
         <AddCollectionModal project={project} />
         <AddPaymentModal project={project} />
@@ -104,9 +104,9 @@ export default function Project() {
           <h1>{project.name}</h1>
           <div className="type">{project.type}</div>
         </div>
-        <div className="project-options">
+        <div className="project-options options">
 
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger ><div className="icon options"></div></DropdownMenuTrigger>
           <DropdownMenuContent>
           <p>New Gallery</p>
@@ -115,7 +115,7 @@ export default function Project() {
           <p>Delete</p>
           <p>Update Cover</p>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
 
         </div>
       </div>

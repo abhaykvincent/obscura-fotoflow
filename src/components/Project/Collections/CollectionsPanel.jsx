@@ -34,14 +34,12 @@ const CollectionsPanel = ({ project, collectionId}) => {
                     style={
                       { 
                         backgroundImage: 
-                        `url(${project.projectCover!=""?project.projectCover:'https://img.icons8.com/external-others-abderraouf-omara/64/FFFFFF/external-images-photography-and-equipements-others-abderraouf-omara.png'})`,
-                        backgroundSize:`${project.projectCover!=""?'':'50%'}`
+                        `url(${project.projectCover!=""?project.projectCover:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`,
+                        backgroundSize:`${project.projectCover!=""?'':'40%'}`
 
                       }}
                     ></div>
 
-                    <div className="backthumb bthumb2"></div>
-                    <div className="backthumb bthumb3"></div>
                   </div>
                 </div>
                 <div className="gallery-name">{collection.name}</div>

@@ -37,7 +37,7 @@ function Home() {
                             <h1 className='welcome-message '>Hello, <span className='iconic-gradient'>{defaultStudio?.name} </span></h1>
                             
                         </div>
-                        <h1 className='welcome-message'>Let's manage your Snaps </h1>
+                        <h1 className='welcome-message sub-message'>Let's manage your Snaps </h1>
                     </div>
 
                     <div className="storage-pie-wrap" >
@@ -87,7 +87,7 @@ function Home() {
                     ):
                     (<>
                         <div className="section recent">
-                            <h3 className='section-heading'>You dont have any projects created</h3>
+                            <h3 className='section-heading'>Create Your First Project</h3>
                         </div>
                         <div className="projects-list">
 
@@ -100,7 +100,7 @@ function Home() {
                             <div className="project-details">
                                 <div className="details-top">
 
-                                    <h4 className="project-title">Create Your First Project</h4>
+                                    <h4 className="project-title">Create Project</h4>
                                     <p className="project-type"></p>
                                 </div>
                             </div>

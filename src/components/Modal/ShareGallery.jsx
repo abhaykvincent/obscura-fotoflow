@@ -68,7 +68,7 @@ function ShareGallery({project }) {
               <div className="link-pin">
 
               <div className='link'>
-                  <div className=""  href={getGalleryURL('selection',domain,project.id)} target='_blank'>{`Select Photos`}</div>
+                  <div className=""  href={getGalleryURL('selection',domain,project.id)} target='_blank'>{`Photo Selection`}</div>
                   <div className="copy-link">Copy</div>
                 </div>
                 <p className='pin'>🔐 {project.pin}</p>
