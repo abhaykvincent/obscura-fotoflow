@@ -9,6 +9,7 @@ import { showAlert } from '../../../../app/slices/alertSlice';
 import { selectUserStudio } from '../../../../app/slices/authSlice';
 import DashboardEvents from '../../Events/Events';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import CollectionsPanel from '../../../Project/Collections/CollectionsPanel';
 
 function DashboardTabs({ project }) {
   const dispatch = useDispatch();
@@ -26,66 +27,24 @@ function DashboardTabs({ project }) {
                 <>  
                     <div className="gallery new" 
                     onClick={()=>dispatch(openModal('createCollection'))}>
-                      <div className="heading-section">
-
-                  <h3 className='heading'>Galleries <span>{project.collections.length}</span></h3>
-                      </div>
+                      
                     <div className="thumbnails">
                       <div className="thumbnail thumb1">
                         <div className="backthumb bthumb1"
-                        >
-                    <div className="button primary outline">New </div></div>
+                        ></div>
                         <div className="backthumb bthumb2"></div>
                         <div className="backthumb bthumb3"></div>
                         <div className="backthumb bthumb4"></div>
                       </div>
                     </div>
-                    
+                    <p>New Gallery</p>
                   </div>
 
                 </>
               ) : (
                 <>
-                <div className="gallery-overview">
-                  <div className="galleries">
-                    
-                    {
-                      project.collections.map((collection,index)=>{
-                        return(
-                          <Link key={index} className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/${defaultStudio.domain}/gallery/${project.id}/${collection.id}`}>
-                            <div className="thumbnails">
-                              <div className="thumbnail thumb1">
-                                <div className="backthumb bthumb1"
-                                style={
-                                  {
-                                    backgroundImage:
-                                    `url(${project.projectCover!==""?project.projectCover:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`
-                                  }}
-                                ></div>
-                              </div>
-                            </div>
-                            <div className="card-gallery-name">
-                              <h3 className='collection-name'>{collection.name}</h3>
-                              <div className="options-menu-button">
-
-                              {/* <DropdownMenu>
-                                <DropdownMenuTrigger >
-                                  <div className="icon options"></div>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                  <p>Open Gallery</p>
-                                  <p>Delete</p>
-                                </DropdownMenuContent>
-                              </DropdownMenu> */}
-                              </div>
-                            </div>
-                          </Link>
-                        )
-                      })
-                    }
-                    
-                  </div>
-                </div>
+               
+            <CollectionsPanel {...{project,collectionId:project.collections[0]?.id}}/>
           </>
                 
                 )
