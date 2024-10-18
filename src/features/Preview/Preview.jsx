@@ -6,10 +6,12 @@ import { useState } from 'react'
 import { selectDomain } from '../../app/slices/authSlice'
 import { useSelector } from 'react-redux'
 import { useDebouncedResize } from '../../hooks/debouncedResize'
+import { useParams } from 'react-router'
 
 function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePreview, projectId }) {
   const domain = useSelector(selectDomain)
 
+  const { studioName } = useParams();
   const { screenWidth: screenWidth, screenHeight: screenHeight } = useDebouncedResize();
   
   // get the image width and height 
@@ -189,13 +191,33 @@ const [touchEndX, setTouchEndX] = useState(0);
         </div>
         <div className="right-controls">
           <div className="icon set-cover"
-            onClick={() => setCoverPhotoInFirestore(domain,projectId, image.url)}
+            onClick={() => setCoverPhotoInFirestore(studioName,projectId, image.url)}
           >Set as cover</div>
-          <div className="icon download"></div>{/* 
+          <div className="icon download"
+          onClick={async () => {
+            try {
+              const response = await fetch(image.url);
+              const blob = await response.blob();
+              const url = window.URL.createObjectURL(blob);
+        
+              const link = document.createElement("a");
+              link.href = url;
+              link.download = image.name; // Use the file name for the download
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+        
+              // Release memory for the object URL
+              window.URL.revokeObjectURL(url);
+            } catch (error) {
+              console.error("Download failed", error);
+            }
+          }}
+          ></div>{/* 
           <div className="icon share"></div> */}
         </div>
         <div className="center-controls">
-          <div className="magnifier">
+          {/* <div className="magnifier">
             <div className="zoom-out"
               onClick={() => zoomOut()}
             ></div>
@@ -206,7 +228,7 @@ const [touchEndX, setTouchEndX] = useState(0);
             <div className={`zoom-reset ${zoomValue !== 100 ? 'show' : ''}`}
               onClick={zoomReset}
             >Reset</div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

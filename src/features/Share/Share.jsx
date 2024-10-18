@@ -7,6 +7,7 @@ import { fetchProject, fetchProjectsFromFirestore } from '../../firebase/functio
 import ShareGallery from '../../components/ImageGallery/ShareGallery';
 import { useSelector } from 'react-redux';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
+import { toTitleCase } from '../../utils/stringUtils';
 
 export default function ShareProject() {
   // studio =  get the url and the name is lorem for url http://localhost:3000/lorem/gallery/william-thomas-b23Sg/birthday-qr22E
@@ -74,7 +75,14 @@ console.log(studioName)
   // Collections panel
   const CollectionsPanel = () => {
     return (
+      <div className="">
       <div className="collections-panel">
+        <div class={`collection-tab client-selection-tab`}  >
+          <Link to={`/${studioName}/selection/${project.id}`}>Photo Selection</Link>
+        </div>
+        </div>
+      <div className="collections-panel">
+        
       {project.collections.map((collection, index) => (
         <div
           key={collection.id}
@@ -91,6 +99,7 @@ console.log(studioName)
         </div>
       ))}
     </div>
+    </div>
     );
   };
   return (
@@ -99,7 +108,7 @@ console.log(studioName)
         <img className='banner' src={project.projectCover} alt="" srcset="" />
         <div className="studio">{studioName} Studio</div>
         <div className="gallery-info">
-          <h1 className='projet-name'>{project.name}</h1>
+          <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
           <p>10th October, 2023</p>
           <CollectionsPanel/>
         </div>
@@ -108,7 +117,7 @@ console.log(studioName)
       </div>
         <div className="shared-collection">
           <ShareGallery images={imageUrls} projectId={projectId}/>
-
+          <p className='studio-tag-line'>{`Smile with ${studioName}`}</p>
         </div>
     </div>
   );

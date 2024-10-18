@@ -46,7 +46,7 @@ const ImageGalleryGrid = React.memo(({ projectId, imageUrls }) => {
   return (
     <div className="gallary">
       <div className="photos">
-        {imageUrls.map((fileUrl, index) => index <8 &&(
+        {imageUrls.map((fileUrl, index) => (
           <div className="photo-wrap"
           key={index}
             onClick={()=>openPreview(index)}>

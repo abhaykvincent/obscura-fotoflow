@@ -106,7 +106,7 @@ export default function Project() {
         </div>
         <div className="project-options options">
 
-        {/* <DropdownMenu>
+        <DropdownMenu>
           <DropdownMenuTrigger ><div className="icon options"></div></DropdownMenuTrigger>
           <DropdownMenuContent>
           <p>New Gallery</p>
@@ -115,7 +115,7 @@ export default function Project() {
           <p>Delete</p>
           <p>Update Cover</p>
           </DropdownMenuContent>
-        </DropdownMenu> */}
+        </DropdownMenu>
 
         </div>
       </div>

@@ -1116,7 +1116,7 @@ body{
       width: calc(100vw - 8px*7.5);
     }
     .gallary{
-      width: calc(100vw - 8PX*7 - 8px*8);
+      width: calc(100vw - 8PX*7 - 8px*6);
     }
   }
 }
@@ -1219,7 +1219,7 @@ body{
       
 
       .photo{
-        width: calc(100vw/4 - $sidebar-width/4 - 8px * 4);
+        width: calc(100vw/4 - $sidebar-width/4 - 8px * 1);
         height: 100%;
         top: 0;
         height: 100%;
@@ -1416,10 +1416,10 @@ body{
           
           .photo-wrap{
 
-            width: calc(100vw/3 - 8px*8 + 8px * 1.5);
+            width: calc(100vw/3 - 8px*8 + 8px * 3.7);
             .photo{
 
-            width: calc(100vw/3 - 8px*8 + 8px * 1.5);
+            width: 100%;
             }
           }
     
@@ -1580,10 +1580,10 @@ body{
       .project-collection .photos{
         grid-template-columns: 1fr 1fr ;
         .photo-wrap {
-          width: calc(50vw - 8px*11);
+          width: calc(50vw - 8px*8);
           .photo{
   
-            width: calc(50vw - 8px*11);
+            width: 100%
           }
   
           }
@@ -1703,10 +1703,10 @@ body{
           }
         }
         .project-collection .photos .photo-wrap {
-        width: calc(100vw - 8px*14);
+        width: calc(100vw - 8px*3);
         .photo{
 
-          width: calc(100vw - 8px*14);
+          width: 100%
         }
 
         }}

@@ -39,9 +39,22 @@ export function shortenFileName(fileName){
       ? `${fileName.substring(0, 10)}...${fileName.substring(fileName.length - 10)}`
       : fileName
 }
+
 export const capitalizeFirstLetter = (str) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
+export const toTitleCase = (input) =>{
+  // Trim any leading/trailing whitespace and split the string into words
+  return input
+    .trim() // Remove extra spaces from the beginning and end
+    .toLowerCase() // Convert the whole string to lowercase
+    .split(/\s+/) // Split the string by any whitespace (handles multiple spaces)
+    .filter(word => word) // Remove empty strings caused by extra spaces
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize first letter of each word
+    .join(' '); // Join the words back into a single string
+}
+
+// Test 
 export function convertMegabytes(megabytes, decimalPlaces = 0) {
   const sizes = ['MB', 'GB', 'TB'];
 
