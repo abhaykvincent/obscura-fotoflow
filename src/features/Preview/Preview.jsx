@@ -119,6 +119,31 @@ const [touchEndX, setTouchEndX] = useState(0);
       handleNext(); // Swipe left -> Go to next image.
     }
   };
+  const downloadImage = async (url, fileName) => {
+    try {
+      const response = await fetch(url, { mode: 'no-cors' }); // Use CORS mode explicitly
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
+      const blob = await response.blob(); // Get the response as a Blob
+      const objectURL = URL.createObjectURL(blob); // Create an object URL for the Blob
+  
+      const link = document.createElement("a"); // Create a temporary download link
+      link.href = objectURL;
+      link.download = fileName; // Set the desired file name
+      document.body.appendChild(link);
+      link.click(); // Trigger the download
+      document.body.removeChild(link);
+  
+      // Release the object URL to free up memory
+      URL.revokeObjectURL(objectURL);
+      console.log("Download successful");
+    } catch (error) {
+      console.error("Download failed", error);
+    }
+  };
+  
 
   return (
     <div className="preview-wrapper"
@@ -195,23 +220,7 @@ const [touchEndX, setTouchEndX] = useState(0);
           >Set as cover</div>
           <div className="icon download"
           onClick={async () => {
-            try {
-              const response = await fetch(image.url);
-              const blob = await response.blob();
-              const url = window.URL.createObjectURL(blob);
-        
-              const link = document.createElement("a");
-              link.href = url;
-              link.download = image.name; // Use the file name for the download
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-        
-              // Release memory for the object URL
-              window.URL.revokeObjectURL(url);
-            } catch (error) {
-              console.error("Download failed", error);
-            }
+            downloadImage(image.url, image.name);
           }}
           ></div>{/* 
           <div className="icon share"></div> */}

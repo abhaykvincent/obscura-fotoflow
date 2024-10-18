@@ -67,12 +67,27 @@ body{
         height: 8px*4;
       }
     }
-    .logo{
-      width: 8px*24;
-      height: 100%;
-      background-image: url('./assets/img/fotoflow-pro-logo.svg');
-      background-position: 8px*2 center;
-      background-size: auto 50%;
+    .logo-wrapper{
+      display: grid;
+      grid-template-columns: 8px*7 auto;;
+      padding-left :8px;
+        width: 8px*23;
+        height: 100%;
+        align-items:center;
+        gap: 8px;
+        overflow: hidden;
+      .logo{
+        width: 8px*6;
+        height: 8px*8;
+        background-image: url('./assets/img/fotoflow-pro-logo.svg');
+        background-position: 8px*2 center;
+        background-size: auto 40%;
+
+      }
+      .studio-name-logo{
+        font-size: 1.3rem;
+        font-weight: 800;
+      }
     }
     .search-bar{
       .search-input{
