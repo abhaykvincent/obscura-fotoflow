@@ -89,6 +89,7 @@
 .dashboard-tabs{
 	min-width: 46vw;
 	.tabs{
+		display:flex;
 		margin-bottom: 8px*2;
 		.button{
 			margin: 0;
@@ -155,8 +156,6 @@
 .project-dashboard{
 	position: relative;
 	display: grid;
-	grid-template-columns: auto auto;
-	grid-template-rows: 8px*24 auto;
 	align-content: normal;
 	justify-content: start;
 	justify-items: start;
@@ -540,7 +539,7 @@
 	position: relative;
 	top:8px*1;
 	border-radius: 8px;
-	transition-duration: 0.01s;
+	transition-duration: 0.3s;
 	.thumbnails{
 		display: grid;
 		grid-template-columns: 1fr ;
@@ -548,6 +547,7 @@
 		height: 8px*14;
 		width: 8px*22;
 		transition-duration: 0.2S;
+		opacity: 0.6;
 		.thumbnail{
 			position: relative;
 			transform: translateY(0px);
@@ -647,12 +647,13 @@
 		  }
 	}
 	&:hover,&.active{
-		transition-duration: 0.1s;
-		transition-delay: 0.1s;
+		transform: translate(0px,-4px) scale(1.05);
+		transition-duration: 0.2s;
+		transition-delay: 0.0s;
 		transition-timing-function: ease-in;
 		.thumbnails{
+			opacity: 1;
 			.thumbnail{
-				transform: translate(-4px,-2px)  scale(1.05);
 				transition-duration: 0.2s;
 				transition-delay: 0.0s;
 				transition-timing-function: ease-in;
@@ -665,7 +666,7 @@
 				.bthumb1{
 					position: absolute;
 					transform: rotate(0deg);
-					border: 1px solid $gray3-default-dark;
+					border: 1px solid $gray-default-dark;
 					background-blend-mode: normal,color-dodge;
 				}
 				.bthumb2{
@@ -767,9 +768,7 @@
 
 	&.new{
 		margin-top: -8px*0;
-		width: 8px*20;
 		.thumbnails{
-			margin-top: 8px*2;
 			width: 8px*20;
 			height: 8px*14;
 			grid-template-columns: 1fr;

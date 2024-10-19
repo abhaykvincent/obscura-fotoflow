@@ -50,15 +50,18 @@ const CollectionsPanel = ({ project, collectionId}) => {
 
                   </div>
                 </div>
-                <div className="gallery-name">{collection.name}</div>
+                <div className="gallery-name">
+                  
+                  <p>
+                  {collection.name}
+                  </p>
+                  
+                  </div>
               </Link>
 
             
           ))}
-          {/* <div className="active-box box"></div> */}
-        </div>:''
-      }
-      <div className="gallery new" 
+          <div className="gallery new" 
         onClick={() => dispatch(openModal('createCollection'))}>
         <div className="thumbnails">
           <div className="thumbnail thumb1">
@@ -68,6 +71,10 @@ const CollectionsPanel = ({ project, collectionId}) => {
         </div>
         <div className="gallery-name">New Gallery</div>
       </div>
+          {/* <div className="active-box box"></div> */}
+        </div>:''
+      }
+      
     </div>
   </div>
 }
