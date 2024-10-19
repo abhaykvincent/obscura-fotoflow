@@ -9,8 +9,7 @@ import { useDebouncedResize } from '../../hooks/debouncedResize'
 import { useParams } from 'react-router'
 
 function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePreview, projectId }) {
-  const domain = useSelector(selectDomain)
-
+  
   const { studioName } = useParams();
   const { screenWidth: screenWidth, screenHeight: screenHeight } = useDebouncedResize();
   
