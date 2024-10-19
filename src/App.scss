@@ -1448,7 +1448,7 @@ body{
     .App{
       .header{
         grid-template-columns: $header-height 1fr 1fr 1fr;
-        .logo{
+        .logo-wrapper{
           display: none;
         }
         .hamburger{
@@ -1691,14 +1691,42 @@ body{
       .welcome-section .storage-pie-wrap{
         display: none;
       }
-      .list .gallery-list{
-        width: calc(100vw - 8PX*20);
-        gap:8px*3;
+      .list{
+        display: grid;
+        margin-top: 8px*5;
+        .gallery-list{
+          display:grid;
+          grid-template-columns: 1fr 1fr;
+          padding: 8px*1;
+          width: calc(100vw - 8px*3);
+          gap:8px*3;
+          row-gap: 8px*1;
+          .gallery-name{
+          }
+        }
+      } 
 
+      .gallery-page{
+        .list{
+        .gallery-list{
+          margin-left: 8px*1.5;
+          margin-top: 8px*1;
+        }
+      } 
       }
       
       .gallery{
-        width: calc(100vw - 8PX*6 - 8px*4);
+        width: 100%;
+        .thumbnails {
+          width: 100%;
+          height: 8px*14;
+        }
+        &.new{
+          .thumbnails {
+            width: 100%;
+            height: 8px*14;
+          }
+        }
         
       }
       main {
@@ -1725,7 +1753,10 @@ body{
         }
 
         }}
-    }
+        .project-dashboard-header{
+          top: 8px*8
+        }
+      }
   }
   
     

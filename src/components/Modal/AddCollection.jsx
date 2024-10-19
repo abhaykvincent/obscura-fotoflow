@@ -18,7 +18,7 @@ function AddCollectionModal({ project }) {
   }
   let collectionsLength= project?.collections?project.collections:0
   const [CollectionData, setCollectionData] = useState({
-    name: 'Birthday',
+    name: '',
     status: 'empty',
     images: [],
     imagesUrl: []
