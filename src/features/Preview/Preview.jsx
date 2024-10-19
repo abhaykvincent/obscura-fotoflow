@@ -121,7 +121,7 @@ const [touchEndX, setTouchEndX] = useState(0);
   };
   const downloadImage = async (url, fileName) => {
     try {
-      const response = await fetch(url, { mode: 'no-cors' }); // Use CORS mode explicitly
+      const response = await fetch(url); // Use CORS mode explicitly
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
