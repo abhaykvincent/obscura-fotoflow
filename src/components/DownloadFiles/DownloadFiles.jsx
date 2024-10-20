@@ -23,7 +23,7 @@ const DownloadFiles = ({ folderPath ,className, project,collection}) => {
         const fileName = itemRef.name;
 
         // Fetch the file data as a blob
-        const response = await fetch(fileURL, { mode: 'no-cors' });
+        const response = await fetch(fileURL);
         const blob = await response.blob();
 
         // Add the blob to the zip with the corresponding file name

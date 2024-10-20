@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { selectUserStudio } from '../../app/slices/authSlice';
 const checkForSelectedImages = (images) => {
   // Checks if any of the images have a 'selected' status.
@@ -77,7 +77,7 @@ export default function PaginationControl({
   const isLastPage = currentPage === totalPages || totalPages === 0;
   const isLastCollection = currentCollectionIndex === totalCollections;
   
-  const currentStudio = useSelector(selectUserStudio)
+  const { studioName } = useParams();
   return (
     <nav className="pagination" aria-label="Pagination">
 
@@ -122,7 +122,7 @@ export default function PaginationControl({
             Finish
           </PaginationButton>
         ) : (
-          <Link to={`/${currentStudio.domain}/selection/${project.id}/${project.collections[currentCollectionIndex].id}`}>
+          <Link to={`/${studioName}/selection/${project.id}/${project.collections[currentCollectionIndex].id}`}>
             <PaginationButton
             highlight={true} 
               onClick={() => {
