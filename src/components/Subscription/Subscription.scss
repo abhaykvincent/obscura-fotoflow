@@ -30,19 +30,21 @@
         h2{
             margin-top: -0.5rem;
             margin-bottom: 0.5rem;
-            font-size:1.6rem;
+            font-size:1.2rem;
             line-height: 2.4rem;
             color: $gray4-default-dark;
             opacity: 0;
             animation: fadeInLeft 0.5s ease-out 0.40s;
             animation-fill-mode: forwards;
             animation-timing-function: ease-out;
+            font-weight: 400;
+
         }
     }
     .welcome-message{
         font-size:3rem;
         font-weight: 600;
-        color: $gray2-default-dark;
+        color: $gray-default-dark;
         min-height: 8px*7;
         
             
@@ -51,7 +53,7 @@
         }
         span{
             &.bold{
-                color: $gray2-accessible-light;
+                color: $gray3-accessible-dark;
             }
         }
         .actions{
@@ -73,6 +75,24 @@
     }
     
 
+}
+.projects-coming-soon{
+    .welcome-section{
+        .welcome-message-top{
+            h1{
+                span.iconic-gradient{
+                    line-height: 1rem;
+                    
+        background: radial-gradient(circle, #3b4238, #1f251c);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    transition-duration: 2s;
+                    font-weight: 600;
+                }
+            
+            }
+        }
+    }
 }
 .subscription{ 
     text-align: center;

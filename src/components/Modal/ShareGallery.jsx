@@ -107,7 +107,7 @@ function ShareGallery({project }) {
           <div className="button primary " /* Photos */
           onClick={()=>{
             // go to https://wa.me/[phone number]?text=[pre-filled message]
-            window.open(`https://wa.me/?text=Hey, I have a Gallery for Selection that I'd like to share with you. Check it out at ${getGalleryURL('selection',domain,project.id)}/`,'_blank');
+            window.open(`https://wa.me/?text=Hey, I have a project that I'd like to share with you. Check it out at ${getGalleryURL('share',domain,project.id)}/`,'_blank');
           }}
           >Share</div>
         </div>

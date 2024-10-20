@@ -6,10 +6,11 @@ import { useState } from 'react'
 import { selectDomain } from '../../app/slices/authSlice'
 import { useSelector } from 'react-redux'
 import { useDebouncedResize } from '../../hooks/debouncedResize'
+import { useParams } from 'react-router'
 
 function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePreview, projectId }) {
-  const domain = useSelector(selectDomain)
-
+  
+  const { studioName } = useParams();
   const { screenWidth: screenWidth, screenHeight: screenHeight } = useDebouncedResize();
   
   // get the image width and height 
@@ -117,6 +118,31 @@ const [touchEndX, setTouchEndX] = useState(0);
       handleNext(); // Swipe left -> Go to next image.
     }
   };
+  const downloadImage = async (url, fileName) => {
+    try {
+      const response = await fetch(url); // Use CORS mode explicitly
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
+      const blob = await response.blob(); // Get the response as a Blob
+      const objectURL = URL.createObjectURL(blob); // Create an object URL for the Blob
+  
+      const link = document.createElement("a"); // Create a temporary download link
+      link.href = objectURL;
+      link.download = fileName; // Set the desired file name
+      document.body.appendChild(link);
+      link.click(); // Trigger the download
+      document.body.removeChild(link);
+  
+      // Release the object URL to free up memory
+      URL.revokeObjectURL(objectURL);
+      console.log("Download successful");
+    } catch (error) {
+      console.error("Download failed", error);
+    }
+  };
+  
 
   return (
     <div className="preview-wrapper"
@@ -189,13 +215,17 @@ const [touchEndX, setTouchEndX] = useState(0);
         </div>
         <div className="right-controls">
           <div className="icon set-cover"
-            onClick={() => setCoverPhotoInFirestore(domain,projectId, image.url)}
+            onClick={() => setCoverPhotoInFirestore(studioName,projectId, image.url)}
           >Set as cover</div>
-          <div className="icon download"></div>{/* 
+          <div className="icon download"
+          onClick={async () => {
+            downloadImage(image.url, image.name);
+          }}
+          ></div>{/* 
           <div className="icon share"></div> */}
         </div>
         <div className="center-controls">
-          <div className="magnifier">
+          {/* <div className="magnifier">
             <div className="zoom-out"
               onClick={() => zoomOut()}
             ></div>
@@ -206,7 +236,7 @@ const [touchEndX, setTouchEndX] = useState(0);
             <div className={`zoom-reset ${zoomValue !== 100 ? 'show' : ''}`}
               onClick={zoomReset}
             >Reset</div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -10,6 +10,7 @@ import './Selection.scss';
 import { selectDomain } from '../../app/slices/authSlice';
 import { useSelector } from 'react-redux';
 import { trackEvent } from '../../analytics/utils';
+import { toTitleCase } from '../../utils/stringUtils';
 
 export default function Selection() {
   let { studioName,projectId, collectionId } = useParams();
@@ -174,7 +175,7 @@ export default function Selection() {
       <div className="project-header">
         <img className='banner' src={images[0]?images[0].url:''} alt="" srcset="" />
         <div className="gallery-info">
-          <h1 className='projet-name'>{project.name}</h1>
+          <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
           <p>10th October, 2023</p>
         </div>
         <div className="banner" />

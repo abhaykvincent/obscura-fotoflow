@@ -67,12 +67,27 @@ body{
         height: 8px*4;
       }
     }
-    .logo{
-      width: 8px*24;
-      height: 100%;
-      background-image: url('./assets/img/fotoflow-pro-logo.svg');
-      background-position: 8px*2 center;
-      background-size: auto 50%;
+    .logo-wrapper{
+      display: grid;
+      grid-template-columns: 8px*7 auto;;
+      padding-left :8px;
+        width: 8px*23;
+        height: 100%;
+        align-items:center;
+        gap: 8px;
+        overflow: hidden;
+      .logo{
+        width: 8px*6;
+        height: 8px*8;
+        background-image: url('./assets/img/fotoflow-pro-logo.svg');
+        background-position: 8px*2 center;
+        background-size: auto 40%;
+
+      }
+      .studio-name-logo{
+        font-size: 1.3rem;
+        font-weight: 800;
+      }
     }
     .search-bar{
       .search-input{
@@ -1116,7 +1131,7 @@ body{
       width: calc(100vw - 8px*7.5);
     }
     .gallary{
-      width: calc(100vw - 8PX*7 - 8px*8);
+      width: calc(100vw - 8PX*7 - 8px*6);
     }
   }
 }
@@ -1219,7 +1234,7 @@ body{
       
 
       .photo{
-        width: calc(100vw/4 - $sidebar-width/4 - 8px * 4);
+        width: calc(100vw/4 - $sidebar-width/4 - 8px * 1);
         height: 100%;
         top: 0;
         height: 100%;
@@ -1416,10 +1431,10 @@ body{
           
           .photo-wrap{
 
-            width: calc(100vw/3 - 8px*8 + 8px * 1.5);
+            width: calc(100vw/3 - 8px*8 + 8px * 3.7);
             .photo{
 
-            width: calc(100vw/3 - 8px*8 + 8px * 1.5);
+            width: 100%;
             }
           }
     
@@ -1433,7 +1448,7 @@ body{
     .App{
       .header{
         grid-template-columns: $header-height 1fr 1fr 1fr;
-        .logo{
+        .logo-wrapper{
           display: none;
         }
         .hamburger{
@@ -1580,10 +1595,10 @@ body{
       .project-collection .photos{
         grid-template-columns: 1fr 1fr ;
         .photo-wrap {
-          width: calc(50vw - 8px*11);
+          width: calc(50vw - 8px*8);
           .photo{
   
-            width: calc(50vw - 8px*11);
+            width: 100%
           }
   
           }
@@ -1676,14 +1691,42 @@ body{
       .welcome-section .storage-pie-wrap{
         display: none;
       }
-      .list .gallery-list{
-        width: calc(100vw - 8PX*20);
-        gap:8px*3;
+      .list{
+        display: grid;
+        margin-top: 8px*5;
+        .gallery-list{
+          display:grid;
+          grid-template-columns: 1fr 1fr;
+          padding: 8px*1;
+          width: calc(100vw - 8px*3);
+          gap:8px*3;
+          row-gap: 8px*1;
+          .gallery-name{
+          }
+        }
+      } 
 
+      .gallery-page{
+        .list{
+        .gallery-list{
+          margin-left: 8px*1.5;
+          margin-top: 8px*1;
+        }
+      } 
       }
       
       .gallery{
-        width: calc(100vw - 8PX*6 - 8px*4);
+        width: 100%;
+        .thumbnails {
+          width: 100%;
+          height: 8px*14;
+        }
+        &.new{
+          .thumbnails {
+            width: 100%;
+            height: 8px*14;
+          }
+        }
         
       }
       main {
@@ -1703,14 +1746,17 @@ body{
           }
         }
         .project-collection .photos .photo-wrap {
-        width: calc(100vw - 8px*14);
+        width: calc(100vw - 8px*3);
         .photo{
 
-          width: calc(100vw - 8px*14);
+          width: 100%
         }
 
         }}
-    }
+        .project-dashboard-header{
+          top: 8px*8
+        }
+      }
   }
   
     

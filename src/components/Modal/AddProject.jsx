@@ -40,15 +40,21 @@ function AddProjectModal() {
         'Jackson Young',
     ]
     const randomName = dummyName[Math.floor(Math.random() * dummyName.length)];
-    const randomEmail = `${randomName.toLowerCase()}@gmail.com`;
+    // replace space with .
+    
+    const randomEmail = `${randomName.replace(' ','.').toLowerCase()}@gmail.com`;
     const randomType = ['Wedding', 'Birthday', 'Baptism'][Math.floor(Math.random() * 3)];
     const randomPhone = Math.floor(Math.random() * 9000000000) + 1000000000;
-
+    if (process.env.NODE_ENV === 'development') {
+        console.log('DEV MODE');
+        window.firebase = window.firebase || {};  // for debugging
+        window.firebase.DEBUG = true;  // Enable verbose logging
+    }
   const [projectData, setProjectData] = useState({
-      name: randomName,
-      type: randomType,
-      email: randomEmail,
-      phone: '3656992278',
+      name: process.env.NODE_ENV === 'development'?randomName:'',
+      type: process.env.NODE_ENV === 'development'?randomType:'',
+      email: process.env.NODE_ENV === 'development'?randomEmail:'',
+      phone: process.env.NODE_ENV === 'development'?'623099329':'',
       collections: [],
       events: [],
       payments: [],

@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { MdOutlineMenu } from "react-icons/md";
 import { MdClose } from "react-icons/md";
+import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
+import { selectUserStudio } from '../../app/slices/authSlice';
 const Header = () => {
+
+  const defaultStudio = useSelector(selectUserStudio)
+
   const [searchQuery, setSearchQuery] = useState('');
-  // hamburger state
   const [hamburgerActive, setHamburgerActive] = useState(false);
   //handle hamburger active
   const handleHamburger = ()=>{
     setHamburgerActive(!hamburgerActive)
   }
+  
   useEffect(() => {
     if(hamburgerActive){
       document.getElementsByClassName('sidebar')[0].classList.remove('hide')
@@ -41,7 +46,10 @@ const Header = () => {
         
 
       </div>
-      <div className="logo"></div>
+      <div className="logo-wrapper">
+        <div className="logo"></div>
+        <div className="studio-name-logo">{defaultStudio?.name}</div>
+      </div>
       <div className="search-bar">
         {/* <div className="search-input">
           <input
