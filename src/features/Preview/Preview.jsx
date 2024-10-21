@@ -218,7 +218,8 @@ const [touchEndX, setTouchEndX] = useState(0);
             onClick={() => setCoverPhotoInFirestore(studioName,projectId, image.url)}
           >Set as cover</div>
           <div className="icon download"
-          onClick={async () => {
+          onClick={async (event) => {
+            event.stopPropagation();
             downloadImage(image.url, image.name);
           }}
           ></div>{/* 
