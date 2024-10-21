@@ -26,7 +26,7 @@
     background-size: 100%;
     .banner{
       align-items: center;
-      max-height: calc(100vh - 8px*60);
+      max-height: calc(100vh - 8px*30);
       max-width: calc(100vw);
       position: relative;
       top: 0;
@@ -137,6 +137,7 @@
     margin-bottom: 8px*3;
   }
 }
+// media query for landscape orientation
 
 @media only screen and (max-width: 830px) {
   .share-project{

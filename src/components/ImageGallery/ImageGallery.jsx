@@ -88,7 +88,7 @@ const TimestampDisplay = ({ timestamp }) => {
   );
 };
 
-const ImageGallery = React.memo(({ projectId, imageUrls }) => {
+const ImageGallery = ({ projectId, imageUrls }) => {
   // Preview
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
@@ -99,7 +99,9 @@ const ImageGallery = React.memo(({ projectId, imageUrls }) => {
   const closePreview = () => {
     setIsPreviewOpen(false);
   };
-
+  useEffect(() => {
+    closePreview()
+  }, [])
   // Group images by lastModified
   const timeThreshold = 0.1;
   const timeThrottle = 0.5; 
@@ -178,6 +180,6 @@ const ImageGallery = React.memo(({ projectId, imageUrls }) => {
       {isPreviewOpen && <Preview image={imageUrls[previewIndex]} {...{ previewIndex, setPreviewIndex, imagesLength: imageUrls.length, closePreview, projectId }} />}
     </div>
   );
-});
+};
 
 export default ImageGallery;

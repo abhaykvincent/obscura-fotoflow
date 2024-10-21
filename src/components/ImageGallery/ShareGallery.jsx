@@ -19,6 +19,7 @@ const ShareGallery = ({ images,projectId }) => {
 
   useEffect(() => {
     setLoadedImages(images.slice(0, size));
+    setIsPreviewOpen(false)
   }, [images])
 
   const observer = useRef()

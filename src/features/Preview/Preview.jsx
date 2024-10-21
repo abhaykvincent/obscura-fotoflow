@@ -167,7 +167,7 @@ const [touchEndX, setTouchEndX] = useState(0);
           backgroundImage: `url("${image.url}")`,
           backgroundPositionX: zoomValue > 100 ? `${imagePosition.x}px` : 'center',
           backgroundPositionY: zoomValue > 100 ? `${imagePosition.y}px` : 'center',
-          backgroundSize: `${zoomValue}%`,
+          backgroundSize: `contain`,
         }}
       ></div>
       </div>
@@ -218,7 +218,8 @@ const [touchEndX, setTouchEndX] = useState(0);
             onClick={() => setCoverPhotoInFirestore(studioName,projectId, image.url)}
           >Set as cover</div>
           <div className="icon download"
-          onClick={async () => {
+          onClick={async (event) => {
+            event.stopPropagation();
             downloadImage(image.url, image.name);
           }}
           ></div>{/* 
