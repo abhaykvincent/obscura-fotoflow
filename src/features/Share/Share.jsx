@@ -106,10 +106,8 @@ console.log(studioName)
     <div className="share-project">
       <div className="project-header">
         <img className='banner' src={project.projectCover} alt="" srcset="" />
-        <div className="studio">{studioName} Studio</div>
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
-          <p>10th October, 2023</p>
           <CollectionsPanel/>
         </div>
         
@@ -117,7 +115,7 @@ console.log(studioName)
       </div>
         <div className="shared-collection">
           <ShareGallery images={imageUrls} projectId={projectId}/>
-          <p className='studio-tag-line'>{`Smile with ${studioName}`}</p>
+          <p className='studio-tag-line'>{`smile with ${studioName}`}</p>
         </div>
     </div>
   );
