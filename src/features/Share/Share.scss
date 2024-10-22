@@ -2,6 +2,14 @@
 @import '../../style/components';
 //https://github.com/googlefonts/great-vibes/blob/master/fonts/webfonts/GreatVibes-Regular.woff2
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+@font-face {
+  font-family: 'Lastri';
+  src: 
+       url('../../fonts/LastriRegular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .share-project{
   .gallery-info{
     position: relative;
@@ -9,8 +17,8 @@
     color: rgba(0, 0, 0, 0.9);
     text-align: center;
     .projet-name{
-        font-family: 'Great Vibes', cursive;
-        font-size: 4rem;
+      font-family: 'Lastri', sans-serif;
+        font-size: 2rem;
         color: rgba(0, 0, 0, 0.9);
     }
     p{
@@ -45,13 +53,18 @@
 .shared-collection{
     padding: 0 8px*5;
     .studio-tag-line{
+      display: grid;
+      align-items: center;
       text-align: center;
+      height: 8px*10;
       color: $dark-3;
     }
 }
 .collections-panel{
     display: flex;
     justify-content: center;
+    overflow-x :scroll;
+    width: 100vw;
     margin-top: 8px*5;
     z-index: 1;
     .collection-tab{

@@ -176,7 +176,7 @@ export default function Selection() {
         <img className='banner' src={images[0]?images[0].url:''} alt="" srcset="" />
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
-          <p>10th October, 2023</p>
+          
         </div>
         <div className="banner" />
       </div>

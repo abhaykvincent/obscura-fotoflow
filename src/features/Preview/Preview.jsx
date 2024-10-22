@@ -56,36 +56,7 @@ const [touchEndX, setTouchEndX] = useState(0);
   }, [imagePosition])
 
 
-  // Preview ZOOM 
-  const zoomIn = () => {
-    setZoomValue((prev) => Math.min(prev + 20, 500)); // Limit to 500% max zoom
-  };
   
-  const zoomOut = () => {
-    setZoomValue((prev) => Math.max(prev - 20, 100)); // Minimum zoom 100%
-  };
-  
-  const zoomReset = () => {
-    setZoomValue(100);
-    setImagePosition({
-      x: (window.innerWidth / 2) - imageWidth / 2,
-      y: (window.innerHeight / 2) - imageHeight / 2,
-    });
-  };
-  
-  const handleMouseMove = (event) => {
-    if (!isDragging || zoomValue === 100) return; // Ignore if not dragging or zoomed out
-  
-    const deltaX = event.clientX - lastMousePosition.x;
-    const deltaY = event.clientY - lastMousePosition.y;
-  
-    setImagePosition((prev) => ({
-      x: prev.x + deltaX,
-      y: prev.y + deltaY,
-    }));
-  
-    setLastMousePosition({ x: event.clientX, y: event.clientY });
-  };
 
   const handlePrev = () => {
     if (previewIndex > 0) {
@@ -93,11 +64,12 @@ const [touchEndX, setTouchEndX] = useState(0);
     }
   };
   const handleNext = () => {
-    if (previewIndex < imagesLength - 1) {
+    if (previewIndex < imagesLength - 8) {
       setPreviewIndex(previewIndex + 1);
     }
   };
 
+  
   // 1️⃣ NEW: Handle touch start event to track the initial touch point.
   const handleTouchStart = (e) => {
     setTouchStartX(e.touches[0].clientX);
@@ -114,8 +86,10 @@ const [touchEndX, setTouchEndX] = useState(0);
 
     if (swipeDistance > 50) {
       handlePrev(); // Swipe right -> Go to previous image.
+      console.log("Swiped right");
     } else if (swipeDistance < -50) {
       handleNext(); // Swipe left -> Go to next image.
+      console.log("Swiped left");
     }
   };
   const downloadImage = async (url, fileName) => {
@@ -146,31 +120,12 @@ const [touchEndX, setTouchEndX] = useState(0);
 
   return (
     <div className="preview-wrapper"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
 
     >
       <div
       className='preview'
-      onMouseDown={(e) => {
-        setIsDragging(true);
-        setLastMousePosition({ x: e.clientX, y: e.clientY });
-      }}
-      onMouseUp={() => setIsDragging(false)}
-      onMouseMove={handleMouseMove}
     >
-      <div className="image-wrap">
-      <div
-        className="image"
-        style={{
-          backgroundImage: `url("${image.url}")`,
-          backgroundPositionX: zoomValue > 100 ? `${imagePosition.x}px` : 'center',
-          backgroundPositionY: zoomValue > 100 ? `${imagePosition.y}px` : 'center',
-          backgroundSize: `contain`,
-        }}
-      ></div>
-      </div>
+     
 
       <div className="controls">
             {(previewIndex >= imagesLength - 1) ||
@@ -219,7 +174,7 @@ const [touchEndX, setTouchEndX] = useState(0);
           >Set as cover</div>
           <div className="icon download"
           onClick={async (event) => {
-            event.stopPropagation();
+            event.stopPropagation(); // Prevent the next image navigation
             downloadImage(image.url, image.name);
           }}
           ></div>{/* 
@@ -239,6 +194,22 @@ const [touchEndX, setTouchEndX] = useState(0);
             >Reset</div>
           </div> */}
         </div>
+      </div>
+
+      <div className="image-wrap">
+      <div
+        className="image"
+
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+        style={{
+          backgroundImage: `url("${image.url}")`,
+          backgroundPositionX: zoomValue > 100 ? `${imagePosition.x}px` : 'center',
+          backgroundPositionY: zoomValue > 100 ? `${imagePosition.y}px` : 'center',
+          backgroundSize: `contain`,
+        }}
+      ></div>
       </div>
     </div>
 
