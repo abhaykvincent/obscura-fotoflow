@@ -29,7 +29,9 @@ export const addProject = createAsyncThunk(
 
 export const deleteProject = createAsyncThunk(
   'projects/deleteProject',
-  (domain,projectId) => { deleteProjectFromFirestore(domain, projectId);
+  ({domain,projectId}) => { 
+    console.log()
+    deleteProjectFromFirestore(domain, projectId);
     return projectId;
   }
 );
@@ -47,6 +49,7 @@ export const addCollection = createAsyncThunk(
 export const deleteCollection = createAsyncThunk(
   'projects/deleteCollection',
   async ({ domain,projectId, collectionId }, { dispatch }) => {
+    console.log(domain, projectId, collectionId)
     await deleteCollectionFromFirestore(domain,projectId, collectionId);
     return { projectId, collectionId };
   }
@@ -150,6 +153,7 @@ const projectsSlice = createSlice({
       })
       .addCase(deleteProject.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        console.log("deleted id is "+action.payload)
         state.loading = false;
         state.data = state.data.filter(project => project.id !== action.payload);
       })
