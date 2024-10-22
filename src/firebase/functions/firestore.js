@@ -241,10 +241,12 @@ export const addCollectionToStudioProject = async (domain, projectId, collection
 };
 
 export const deleteCollectionFromFirestore = async (domain, projectId, collectionId) => {
+    console.log('deleteCollectionFromFirestore')
+    console.log(domain, projectId, collectionId)
     if (!domain || !projectId || !collectionId) {
         throw new Error('Domain, Project ID, and Collection ID are required for deletion.');
     }
-
+    
     let color = domain === '' ? 'gray' : '#0099ff';
     console.log(`%cDeleting Collection ${collectionId} from Project ${projectId} in ${domain ? domain : 'undefined'}`, `color: ${color};`);
 
@@ -663,7 +665,7 @@ export const setCoverPhotoInFirestore = async (domain, projectId, image) => {
 };
 // Uploaded Files
 export const addUploadedFilesToFirestore = async (domain, projectId, collectionId, importFileSize, uploadedFiles) => {
-    let color = domain === '' ? 'gray' : '#0099ff';
+    let color = domain === '' ? 'gray' : 'green';
     console.log(`%cAdding Uploaded Files to Project ${projectId} in ${domain ? domain : 'undefined'}`, `color: ${color}; `);
 
     const batch = writeBatch(db);
@@ -696,7 +698,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
 
         await batch.commit();
         color = '#54a134';
-        console.log(`%cUploaded files and project document updated successfully for project ${projectId} in ${domain}`, `color: ${color}; `);
+       
     } else {
         console.error('Project not found.');
         throw new Error('Project not found.');

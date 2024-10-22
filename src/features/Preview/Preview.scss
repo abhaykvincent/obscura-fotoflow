@@ -6,11 +6,11 @@
   }
 .preview{
     position: fixed;
-    top: -($header-height );
+    top: -$header-height + 5px;
     left: -8px*24;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.97);
     backdrop-filter: blur(4px);
     .image-wrap{
         display: flex;
@@ -19,12 +19,11 @@
         align-items: center;
         justify-items: center;
         .image{
-            height: calc(100% - 8px * 18);
+            height: calc(100vh);
             width: 100vw;
             background-position: center;
             transition: background-size 0.1s ease;
-
-            background-size: auto 100% ;
+            background-size: 100% auto;
         }
     }
     .controls{
@@ -37,8 +36,11 @@
             margin: 8px*2;
             background-image: url('../../assets/img/icons/back.png');
             background-size: contain;
-            opacity: 0.5;
+            opacity: 0.4;
             transition-duration: 0.2s;
+            filter: drop-shadow(1px 1px 2px #000000);
+
+
             cursor: pointer;
             &:hover{
                 opacity: 1;
@@ -54,14 +56,18 @@
             background-image: url('../../assets/img/icons/back.png');
             background-size: contain;
             transform: rotate(180deg);
-            opacity: 0.5;
+            opacity: 0.4;
             transition-duration: 0.2s;
+            filter: drop-shadow(1px 1px 2px #000000);
             cursor: pointer;
             &:hover{
                 opacity: 1;
             }
         }
         &.top{
+            position: fixed;
+            top: -8px;
+            width: 100vw;
             margin-top: 8px;
             .left-controls{
                 display: flex;
@@ -78,7 +84,8 @@
                     border-radius: 100%;
                     background-image: url('../../assets/img/icons/arrow-round-back.svg');
                     background-position: center center;
-                    background-size: 40% auto;
+                    background-size: 60% auto;
+                    filter: drop-shadow(0 0 4px  rgba(0, 0, 0, 0.8));
                     cursor: pointer;
                     transition-duration: 0.2s;
                 &:hover{
@@ -87,7 +94,9 @@
                 }
                 }
                 .file-name{
-                    color: $gray-accessible-dark;
+                    color: white;
+                    opacity: 0.5;
+                    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
                     font-size: 0.9rem;
                     font-weight: 600;
                 }
@@ -99,7 +108,6 @@
                 position: fixed;
                 top: 8px;
                 right: 0px;
-                width: 8px*40;
                 height: 8px*3;
                 margin: 8px*2;
                 .icon{
@@ -116,9 +124,11 @@
     
                 }
                 .download{
-                    opacity: 0.2;
+                    opacity: 0.9;
                     cursor: not-allowed;
 
+                    background-size: 70% auto;
+                    filter: drop-shadow(0 0 4px  rgba(0, 0, 0, 0.8));
                     background-image: url('../../assets/img/icons/download.svg');
                 }
                 .share{
@@ -213,6 +223,10 @@
                 }
             }
         }
+        &.middle{
+            position: absolute;
+            top:0;
+        }
         &.bottom{
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -222,6 +236,8 @@
             bottom: 0px;
             width: 100%;
             height: 8px*6;
+            background: none;
+            border:none;
         }
     }
 }
@@ -271,6 +287,15 @@
 
     top: 0px;
     left: 0px;
+    .controls{
+        &.top .right-controls .set-cover{
+            display: none;
+        }
+        &.bottom {
+            display: none;
+
+        }
+    }
 }
 
 @media only screen and (max-width: 1200px) {
@@ -280,7 +305,14 @@
             top: -($header-height );
           }
     }
+    .shared-collection .preview{
+
+        top: 0px;
+        left: 0px;
+    }
 }
+
+// Mobile
 @media only screen and (max-width: 520px) {
     .App{
         .preview{
@@ -296,6 +328,22 @@
             
                 }
             }
+            .controls{
+                .prev{
+                    left: 0px;
+                }
+                .next{
+                    right: 0vh;
+                    &:hover{
+                        opacity: 1;
+                    }
+                }
+            }
           }
+          .shared-collection .preview{
+
+            top: 0px;
+            left: 0px;
+        }
     }
 }

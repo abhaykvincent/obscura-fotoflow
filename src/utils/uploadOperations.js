@@ -10,13 +10,34 @@ import { showAlert } from "../app/slices/alertSlice";
 import { trackEvent } from "../analytics/utils";
 import { addUploadedFilesToFirestore } from "../firebase/functions/firestore";
 
-
+import imageCompression from 'browser-image-compression';
+import { addAllFileSizesToMB } from "./fileUtils";
+const compressImages = async (files) => {
+    const startTime = Date.now()
+    const compressedFiles = await Promise.all(files.map(async (file) => {
+        const options = {
+            maxSizeMB: 1, // Max size of each file in MB
+            maxWidthOrHeight: 1920, // Resize image to max 1920px width or height
+            useWebWorker: true,
+        };
+        try {
+            const compressedFile = await imageCompression(file, options);
+            
+            return compressedFile;
+        } catch (error) {
+            console.error('Image compression failed:', error);
+            return file; // Return original file if compression fails
+        }
+    }));
+    const endTime = Date.now();  // Record the end time
+    const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
+    console.log(`%c Compression time : ${duration} seconds`, 'color:#0099ff');
+    return compressedFiles;
+};
 // Firebase Cloud Storage
 
 // File Single upload function
-export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
-    console.log(file)
-    
+export const uploadFile = (domain,id, collectionId, file,sliceIndex,setUploadLists) => {
     const MAX_RETRIES = 5;
     const INITIAL_RETRY_DELAY = 500;
     let retries = 0;
@@ -26,8 +47,10 @@ export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
         const storageRef = ref(storage, `${domain}/${id}/${collectionId}/${file.name}`);
         let uploadTask;
 
+        // set initial with sliceIndex
+        setTimeout(() =>
+        {
         try {
-            console.log(`Uploading ${file.name}...`)
             uploadTask = uploadBytesResumable(storageRef, file);
 
             uploadTask.on('state_changed',
@@ -35,6 +58,8 @@ export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
                 (snapshot) => {
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     //setUploadList aarraay of filee object  matches file.name with the progress of the upload
+                    console.log(`%c Uploading ${file.name} ${progress}%`, 'color:#0099ff');
+
                     setUploadLists((prevState) => {
                         return prevState.map((fileProgress) => {
                             if (fileProgress.name === file.name) {
@@ -65,10 +90,9 @@ export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
                 },
                 async () => {
                     // Handle successful uploads on complete 
-                    console.log(`%c ${file.name} File uploaded successfully in the first try`, 'color:green');
+                    
                     let url = await getDownloadURL(uploadTask.snapshot.ref);
-                    console.log(`Download URL for ${file.name}: ${url}`);
-                    await setUploadLists((prevState) => {
+                    /* await setUploadLists((prevState) => {
                         return prevState.map((fileProgress) => {
                             if (fileProgress.name === file.name) {
                                 return {
@@ -81,7 +105,7 @@ export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
                             }
                             return fileProgress;
                         })
-                    })
+                    }) */
                     resolve({
                         name: file.name,
                         lastModified:file.lastModified,
@@ -89,22 +113,23 @@ export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
                     }); // Resolve the promise when the file is successfully uploaded
                 }
             );
-        } catch (error) {
+        } 
+        catch (error) {
             console.error("Error uploading file:", error);
             return reject(error); // Reject the promise with the error  
         }
 
         async function retryUpload() {
             uploadTask.cancel(); // Cancel the current upload task
-
+    
             if (retries < MAX_RETRIES) {
                 let retryDelay = INITIAL_RETRY_DELAY * Math.pow(2, retries); // Exponential backoff
-
+    
                 console.log(`Retrying upload of ${file.name} in ${retryDelay / 1000} seconds`);
                 await new Promise(resolve => setTimeout(resolve, retryDelay));
-
+    
                 uploadTask = uploadBytesResumable(storageRef, file);
-
+    
                 uploadTask.on('state_changed',
                     () => {},
                     async (error) => {
@@ -128,13 +153,14 @@ export const uploadFile = (domain,id, collectionId, file,setUploadLists) => {
                 reject(new Error(`Exceeded maximum retries (${MAX_RETRIES}) for ${file.name}`));
             }
         }
+    }, (sliceIndex-1)*1000)
 
     });
 };
 // Upload a slice of files with sliceSize : 5
 const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
     //update uploadList files that maatches current slice eaach files status as initializing
-    setUploadLists(prevState => {
+    /* setUploadLists(prevState => {
         return prevState.map((file, index) => {
             if (slice[index] && file.name === slice[index].name) {
                 console.log('%c ' + file.name + ' file status changed to initializing', 'color:yellow');
@@ -145,23 +171,32 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
                     status: 'initializing'
                 }
             }
-            return file;
+            return {file};
         })
-    })
-    const uploadPromises = slice.map(file => {
-        return uploadFile(domain,id, collectionId, file,setUploadLists);
+    }) */
+        
+        // find slice file size
+        
+        const compressedFiles = await compressImages(slice);
+
+       
+        // slice file compression speed
+        
+        const uploadPromises = compressedFiles.map((file,sliceIndex) => {
+        return uploadFile(domain,id, collectionId, file,sliceIndex,setUploadLists);
     });
 
     // Use Promise.all to initiate all file uploads simultaneously
     const results = await Promise.all(uploadPromises);
-    console.log("!!!! inside slice", 'color:red');
-
+    
     return results;
 };
 
 // Upload ENTRY POINT
 export const handleUpload = async (domain,files, id, collectionId,importFileSize, setUploadLists,setUploadStatus, retries = 2) => {
+
     setUploadLists(files)
+    
     // Slice the files array into smaller arrays of size sliceSize
     const sliceSize = 5;
     console.log('%c ' + files.length + ' files to upload', 'color:yellow');
@@ -172,8 +207,18 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
         const slice = files.slice(i, i + sliceSize);
         try {
             // Upload Single Slice
+
+            const startTime = Date.now()
+
+            console.groupCollapsed('Uploading Slice ' + (i / sliceSize + 1) + ' of ' + Math.ceil(files.length / sliceSize));
             const results = await sliceUpload(domain,slice, id, collectionId,setUploadLists);
             uploadedFiles.push(...results);
+            const endTime = Date.now();  // Record the end time
+            const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
+            console.log(`%c Slice upload duration : ${duration} seconds`, 'color:#0099ff');
+            //console group end
+            
+            console.groupEnd();
         } catch (error) {
             console.error("Error uploading files:", error);
             throw error; // Propagate the error if needed
@@ -202,12 +247,15 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
 
                 addUploadedFilesToFirestore(domain,id, collectionId,importFileSize, uploadedFiles)
                     .then(() => {
+
                         showAlert('success', 'All files uploaded successfully!')
+                        
                         trackEvent('gallery_uploaded', {
                             domain: domain,
                             size: importFileSize,
                             files: uploadedFiles.length,
                         });
+
                     })
                     .catch((error) => {
                         console.error('Error adding uploaded files to project:', error.message);

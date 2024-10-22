@@ -139,16 +139,16 @@ function Sidebar() {
           >Logout</div>
         </div>
       </div>
-      <div className="subscriptoion status">
+      {/* <div className="subscriptoion status">
         <div className="icon">
         <GrUpgrade />
         </div>
         <div className="message">Upgrade to <span>STUDIO</span></div>
         <div className="button primary outline"
           
-        >Waitlist</div>
-        <p className="plan">Current Plan: Freelancer</p>
-      </div>
+        >Upgrade</div>
+        <p className="plan">Current Plan: Core</p>
+      </div> */}
     </div>
   );
 }

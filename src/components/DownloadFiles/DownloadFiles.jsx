@@ -16,7 +16,7 @@ const DownloadFiles = ({ folderPath ,className, project,collection}) => {
     try {
       // List all files in the folder
       const res = await listAll(folderRef);
-
+      
       // Iterate over each file and add it to the zip
       const filePromises = res.items.map(async (itemRef) => {
         const fileURL = await getDownloadURL(itemRef);

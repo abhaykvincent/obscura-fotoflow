@@ -5,31 +5,27 @@ import { setCoverPhotoInFirestore } from '../../firebase/functions/firestore'
 import { useState } from 'react'
 import { selectDomain } from '../../app/slices/authSlice'
 import { useSelector } from 'react-redux'
+import { useDebouncedResize } from '../../hooks/debouncedResize'
+import { useParams } from 'react-router'
 
 function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePreview, projectId }) {
-  const [zoomValue, setZoomValue] = useState(100)
+  
+  const { studioName } = useParams();
+  const { screenWidth: screenWidth, screenHeight: screenHeight } = useDebouncedResize();
+  
   // get the image width and height 
-  const [imageWidth, setImageWidth] = useState(0)
-  const [imageHeight, setImageHeight] = useState(0)
-  // screeen size
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth)
-  const [screenHeight, setScreenHeight] = useState(window.innerHeight)
-  const [imagePosition, setImagePosition] = useState({
-    x: (screenWidth/2)-imageWidth/1.5,
-    y: (screenHeight/2)-imageHeight/1.5
-  })
-  const [isDragging, setIsDragging] = useState(false);
-const domain = useSelector(selectDomain)
+  const [imageWidth, setImageWidth] = useState(0);
+  const [imageHeight, setImageHeight] = useState(0);
 
-  // function to set image width and height from url
-  const setImageSize = () => {
-    const setimage = new Image();
-    setimage.src = image.url;
-    setimage.onload = () => {
-      setImageWidth(setimage.width)
-      setImageHeight(setimage.height)
-    }
-  }
+  const [zoomValue, setZoomValue] = useState(100)
+  // screeen size
+  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
+  const [lastMousePosition, setLastMousePosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+// NEW: Track touch positions for swipe handling.
+const [touchStartX, setTouchStartX] = useState(0);
+const [touchEndX, setTouchEndX] = useState(0);
+  
 
   useEffect(() => {
     //scrolltotop
@@ -37,84 +33,99 @@ const domain = useSelector(selectDomain)
     console.log(image)
   }, [])
 
-  //useeffect side effect
-
   useEffect(() => {
-    setImageSize()
-    zoomReset()
-    console.log(image)
-  }, [image])
+    const setImageSize = () => {
+      const img = new Image();
+      img.src = image.url;
+      img.onload = () => {
+        setImageWidth(img.width);
+        setImageHeight(img.height);
+  
+        // Set initial image position after loading
+        setImagePosition({
+          x: (window.innerWidth / 2) - img.width / 2,
+          y: (window.innerHeight / 2) - img.height / 2,
+        });
+      };
+    };
+    setImageSize();
+  }, [image]);
+  
   useEffect(() => {
     console.log(imagePosition)
   }, [imagePosition])
 
-  const zoomIn = () => {
-    if (zoomValue < 100) setZoomValue(100)
-    else setZoomValue(zoomValue + 100)
-  }
 
-  const zoomOut = () => {
-    if (zoomValue <= 100) setZoomValue(zoomValue - 20)
-    else setZoomValue(zoomValue - 100)
-  }
+  
 
-  const zoomReset = () => {
-  setTimeout(() => {
-    setZoomValue(100)
-    setImagePosition({ x:'center', y: 'center' })
-  }, 100);
-  }
-
-  const handleMouseDown = () => {
-    setIsDragging(true);
-  }
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  }
-
-  const handleDrag = (event) => {
-    event.preventDefault();
-    if (!isDragging || zoomValue===100) return;
-
-    const { movementX, movementY } = event;
-    if(imagePosition.x === 'center' || imagePosition.x === 0)
-    {
-      console.log('A')
-      setImagePosition({
-        x: (screenWidth/2)-imageWidth/1.5 + movementX,
-        y: (screenHeight/2)-imageHeight/1.5 + movementY
-      });
+  const handlePrev = () => {
+    if (previewIndex > 0) {
+      setPreviewIndex(previewIndex - 1);
     }
-    else
-    {
-      console.log('B')
-      setImagePosition({
-      x: imagePosition.x + movementX,
-      y: imagePosition.y + movementY
-    });}
-  }
+  };
+  const handleNext = () => {
+    if (previewIndex < imagesLength - 8) {
+      setPreviewIndex(previewIndex + 1);
+    }
+  };
+
+  
+  // 1️⃣ NEW: Handle touch start event to track the initial touch point.
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  // 2️⃣ NEW: Handle touch move event to update the end position.
+  const handleTouchMove = (e) => {
+    setTouchEndX(e.touches[0].clientX);
+  };
+
+  // 3️⃣ NEW: Handle touch end event to determine swipe direction.
+  const handleTouchEnd = () => {
+    const swipeDistance = touchEndX - touchStartX;
+
+    if (swipeDistance > 50) {
+      handlePrev(); // Swipe right -> Go to previous image.
+      console.log("Swiped right");
+    } else if (swipeDistance < -50) {
+      handleNext(); // Swipe left -> Go to next image.
+      console.log("Swiped left");
+    }
+  };
+  const downloadImage = async (url, fileName) => {
+    try {
+      const response = await fetch(url); // Use CORS mode explicitly
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
+      const blob = await response.blob(); // Get the response as a Blob
+      const objectURL = URL.createObjectURL(blob); // Create an object URL for the Blob
+  
+      const link = document.createElement("a"); // Create a temporary download link
+      link.href = objectURL;
+      link.download = fileName; // Set the desired file name
+      document.body.appendChild(link);
+      link.click(); // Trigger the download
+      document.body.removeChild(link);
+  
+      // Release the object URL to free up memory
+      URL.revokeObjectURL(objectURL);
+      console.log("Download successful");
+    } catch (error) {
+      console.error("Download failed", error);
+    }
+  };
+  
 
   return (
-    <div className="preview-wrapper">
+    <div className="preview-wrapper"
+
+    >
       <div
       className='preview'
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      onMouseMove={handleDrag}
     >
-      <div className="image-wrap">
-        <div className="image"
-          style={{
-            backgroundImage: `url("${image.url}")`,
-            backgroundPositionX: zoomValue>100?`${imagePosition.x}px`:'center',
-            backgroundPositionY: zoomValue>100?`${imagePosition.y}px`:'center',
-            backgroundSize: `auto ${zoomValue}%`
-          }}>
-            
-        </div>
-
-      </div>
+     
 
       <div className="controls">
             {(previewIndex >= imagesLength - 1) ||
@@ -159,13 +170,18 @@ const domain = useSelector(selectDomain)
         </div>
         <div className="right-controls">
           <div className="icon set-cover"
-            onClick={() => setCoverPhotoInFirestore(domain,projectId, image.url)}
+            onClick={() => setCoverPhotoInFirestore(studioName,projectId, image.url)}
           >Set as cover</div>
-          <div className="icon download"></div>
-          <div className="icon share"></div>
+          <div className="icon download"
+          onClick={async (event) => {
+            event.stopPropagation(); // Prevent the next image navigation
+            downloadImage(image.url, image.name);
+          }}
+          ></div>{/* 
+          <div className="icon share"></div> */}
         </div>
         <div className="center-controls">
-          <div className="magnifier">
+          {/* <div className="magnifier">
             <div className="zoom-out"
               onClick={() => zoomOut()}
             ></div>
@@ -176,8 +192,24 @@ const domain = useSelector(selectDomain)
             <div className={`zoom-reset ${zoomValue !== 100 ? 'show' : ''}`}
               onClick={zoomReset}
             >Reset</div>
-          </div>
+          </div> */}
         </div>
+      </div>
+
+      <div className="image-wrap">
+      <div
+        className="image"
+
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+        style={{
+          backgroundImage: `url("${image.url}")`,
+          backgroundPositionX: zoomValue > 100 ? `${imagePosition.x}px` : 'center',
+          backgroundPositionY: zoomValue > 100 ? `${imagePosition.y}px` : 'center',
+          backgroundSize: `contain`,
+        }}
+      ></div>
       </div>
     </div>
 

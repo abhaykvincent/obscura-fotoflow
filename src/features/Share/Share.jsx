@@ -7,10 +7,13 @@ import { fetchProject, fetchProjectsFromFirestore } from '../../firebase/functio
 import ShareGallery from '../../components/ImageGallery/ShareGallery';
 import { useSelector } from 'react-redux';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
+import { toTitleCase } from '../../utils/stringUtils';
 
 export default function ShareProject() {
-const studio = useSelector(selectUserStudio)
-
+  // studio =  get the url and the name is lorem for url http://localhost:3000/lorem/gallery/william-thomas-b23Sg/birthday-qr22E
+  
+  const { studioName } = useParams();
+console.log(studioName)
   
   // set body color to white
   useEffect(() => {
@@ -29,11 +32,10 @@ const studio = useSelector(selectUserStudio)
     collectionId  = collectionId || project?.collections[0]?.id
     
     
-const domain = useSelector(selectDomain)
   // Fetch Images based on projectId
   const fetchProjectData = async () => {
     try {
-      const projectData = await fetchProject(domain,projectId);
+      const projectData = await fetchProject(studioName,projectId);
 
       console.log(projectData)
       setProject(projectData);
@@ -43,7 +45,7 @@ const domain = useSelector(selectDomain)
   };
   const fetchImagesData = async () => {
     try {
-      fetchImageUrls(domain, projectId, collectionId, setImageUrls, page, size);
+      fetchImageUrls(studioName, projectId, collectionId, setImageUrls, page, size);
     } catch (error) {
       console.error('Failed to fetch project:', error);
     }
@@ -73,7 +75,14 @@ const domain = useSelector(selectDomain)
   // Collections panel
   const CollectionsPanel = () => {
     return (
+      <div className="">
       <div className="collections-panel">
+        <div class={`collection-tab client-selection-tab`}  >
+          <Link to={`/${studioName}/selection/${project.id}`}>Photo Selection</Link>
+        </div>
+        </div>
+      <div className="collections-panel">
+        
       {project.collections.map((collection, index) => (
         <div
           key={collection.id}
@@ -84,11 +93,12 @@ const domain = useSelector(selectDomain)
           `}
         >
           {
-          <Link to={collection.uploadedFiles !== undefined && `/share/${project.id}/${collection.id}`}>{collection.name}</Link>
+          <Link to={collection.uploadedFiles !== undefined && `/${studioName}/share/${project.id}/${collection.id}`}>{collection.name}</Link>
           
         }
         </div>
       ))}
+    </div>
     </div>
     );
   };
@@ -96,10 +106,8 @@ const domain = useSelector(selectDomain)
     <div className="share-project">
       <div className="project-header">
         <img className='banner' src={project.projectCover} alt="" srcset="" />
-        <div className="studio">{studio.name} Studio</div>
         <div className="gallery-info">
-          <h1 className='projet-name'>{project.name}</h1>
-          <p>10th October, 2023</p>
+          <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
           <CollectionsPanel/>
         </div>
         
@@ -107,7 +115,7 @@ const domain = useSelector(selectDomain)
       </div>
         <div className="shared-collection">
           <ShareGallery images={imageUrls} projectId={projectId}/>
-
+          <p className='studio-tag-line'>{`smile with ${studioName}`}</p>
         </div>
     </div>
   );

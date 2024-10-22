@@ -10,20 +10,21 @@
     @include boxed;
     transition-duration: 0.2s;
     transform: scale(1) translateY(-8px);
-    border: 1px solid $gray6-accessible-dark;
+    border: 1px solid $gray5-accessible-dark;
     border-top: 1px solid rgba(186, 230, 186, 0.2);
     border-right: 1px solid rgba(162, 194, 156, 0.1);
     margin-top: 0px;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     opacity: 0;
+    transition-timing-function: ease-in;
+    cursor: pointer;
     &:hover{
-        border-right: 1px solid rgba(185, 209, 180, 0.25);
         border-top: 1px solid rgba(139, 185, 139, 0.25);
         transition-duration: 0.4s;
         box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 8px 4px #14562413;
-        background: linear-gradient(30deg, $dark-4, $dark-3);
+        background: linear-gradient(30deg, $dark-2, $dark-3);
         transition-duration: 0.3s;
-        transition-timing-function: ease-in;
+        transition-timing-function: ease-out;
         .cover-wrap{
             transform: scale(1.02);
             transition-duration: 0.1s;
@@ -39,6 +40,7 @@
             background-size: 100%;
             transition-timing-function: ease-in;
             opacity: 1;
+            transform: scale(1.1);
         }
         .project-details{
             transition-duration: 0.2s !important;
@@ -95,8 +97,8 @@
         width: 8px*15;
         border-radius: 8px;
         border: 1px solid $gray3-accessible-dark;
-        border-top: 1px solid $gray2-accessible-dark;
-        border-left: 1px solid $gray2-accessible-dark;
+        border-top: 1px solid $gray3-accessible-dark;
+        border-left: 1px solid $gray3-accessible-dark;
         background-color: $dark-3;
         background-image: url('../../../assets/img/icons/cake.svg');
         background-size: cover;
@@ -310,13 +312,21 @@
         }
     }
     &.new{
+    grid-template-columns: 8px*15 auto;
+
         .project-cover{
-        background-size: 20%;
+        background-size: 40%;
+        background-image: url('https://img.icons8.com/?size=100&id=11153&format=png&color=FFFFFF');
+
         }
         .project-details{
             align-content: center;
             text-align: center;
             margin: 8px*2;
+            .project-title{
+                font-size: 1.2REM;
+                font-weight: 500;
+            }
         }
         
     }

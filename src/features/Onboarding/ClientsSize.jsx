@@ -63,7 +63,7 @@ const ClientsSize = ({active,next,createAccountData,updateAccountData}) => {
             <div className="option"
               onClick={() => setProjectSize('8')}
             >
-              <p>8 GB</p>
+              <p>5 GB</p>
               <p className='description'>1600 Photos x 5MB</p>
             </div>
             <div className="option"

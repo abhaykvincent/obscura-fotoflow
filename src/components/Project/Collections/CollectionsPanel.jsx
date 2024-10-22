@@ -19,16 +19,22 @@ const CollectionsPanel = ({ project, collectionId}) => {
           {project.collections.map((collection) => (
             
             collection.pin=="" ?
-            <div className={`gallery  no-images `} key={collection.id} onClick={()=>{}}>
-              <div className="thumbnails">
-                <div className="thumbnail thumb1">
-                  <div className="backthumb bthumb1"></div>
-                  <div className="backthumb bthumb2"></div>
-                  <div className="backthumb bthumb3"></div>
+              <div className={`gallery  no-images `} key={collection.id} onClick={()=>{}}>
+                <div className="thumbnails">
+                  <div className="thumbnail thumb1">
+                    <div className="backthumb bthumb1"
+                    style={
+                      { 
+                        backgroundImage: 
+                        `url(${project.projectCover!=""?project.projectCover:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`,
+                        backgroundSize:`${project.projectCover!=""?'':'40%'}`
+
+                      }}
+                    ></div>
+                  </div>
                 </div>
+                <div className="gallery-name">Upload</div>
               </div>
-              <div className="gallery-name">Upload</div>
-            </div>
             : <Link  key={collection.id} className={`gallery ${collectionId===collection.id && 'active'}`} to={`/${defaultStudio.domain}/gallery/${project.id}/${collection.id}`}>
                 <div className="thumbnails">
                   <div className="thumbnail thumb1">
@@ -36,50 +42,39 @@ const CollectionsPanel = ({ project, collectionId}) => {
                     style={
                       { 
                         backgroundImage: 
-                        `url(${project.projectCover!=""?project.projectCover:'https://img.icons8.com/external-others-abderraouf-omara/64/FFFFFF/external-images-photography-and-equipements-others-abderraouf-omara.png'})`,
-                        backgroundSize:`${project.projectCover!=""?'':'50%'}`
+                        `url(${project.projectCover!=""?project.projectCover:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`,
+                        backgroundSize:`${project.projectCover!=""?'':'40%'}`
 
                       }}
                     ></div>
-                    <div className="backthumb bthumb2"></div>
-                    <div className="backthumb bthumb3"></div>
-                  </div>
-                  <div className="thumbnail thumb2">
-                    <div className="backthumb bthumb1"style={{ 
-                        backgroundImage: `url(${project.projectCover!==""?project.projectCover:'https://img.icons8.com/external-others-abderraouf-omara/64/FFFFFF/external-images-photography-and-equipements-others-abderraouf-omara.png'})`,
-                        backgroundSize:`${project.projectCover!=""?'':'50%'}`
-                      }}>
-                    </div>
-                    <div className="backthumb bthumb2"></div>
-                    <div className="backthumb bthumb3"></div>
-                  </div>
-                  <div className="thumbnail thumb3">
-                    <div className="backthumb bthumb1 count">{/* {collection.uploadedFilesCount } Photos */}</div>
-                    <div className="backthumb bthumb2"></div>
-                    <div className="backthumb bthumb3"></div>
+
                   </div>
                 </div>
-                <div className="gallery-name">{collection.name}</div>
+                <div className="gallery-name">
+                  
+                  <p>
+                  {collection.name}
+                  </p>
+                  
+                  </div>
               </Link>
 
             
           ))}
-          <div className="active-box box"></div>
-        </div>:''
-      }
-      <div className="gallery new" 
+          <div className="gallery new" 
         onClick={() => dispatch(openModal('createCollection'))}>
         <div className="thumbnails">
           <div className="thumbnail thumb1">
             <div className="backthumb bthumb1">
             </div>
-            <div className="backthumb bthumb2"></div>
-            <div className="backthumb bthumb3"></div>
-            <div className="backthumb bthumb4"></div>
           </div>
         </div>
         <div className="gallery-name">New Gallery</div>
       </div>
+          {/* <div className="active-box box"></div> */}
+        </div>:''
+      }
+      
     </div>
   </div>
 }

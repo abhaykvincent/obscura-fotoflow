@@ -5,15 +5,16 @@
     left: 0%;
     width: $sidebar-width;
     height: 100vh;
-    background: linear-gradient(160deg, $dark-3 0%, $dark-2 50%, $dark-3 80%, $dark-3 100%);
+    background: $dark-3;
         
     @include boxed;
+    border: 1px none;
     z-index: 11;
     padding-top: $header-height ;
-    box-shadow:  -1px 1px 4px rgba(0, 0, 0, 0.3);
+    box-shadow:  -1px 1px 4px rgba(0, 0, 0, 0);
     transition-duration: 0.2s;
     .menu-list{
-        padding: 8px*2;
+        padding: 0 8px*2;
 
         a{
         .label{
@@ -22,6 +23,7 @@
             transform: translateX(8px*0);
             display: flex;
             width: 8px*8;
+            color: $gray-accessible-dark;
             text-align: center;
         }
         @for $i from 1 through 20 {
@@ -84,9 +86,12 @@
             box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
             opacity: 1;
-            .icon{
-                opacity: 0.9;
-            }
+                .icon{
+                    opacity: 0.9;
+                }
+                .label{
+                    color: $gray4-accessible-light
+                }
             }
             &.disabled{
             &:hover{
@@ -271,9 +276,9 @@
         top: 100vh;
         padding: 8px*1;
         padding-right: 0;
-        margin-left: -1px;
-        margin-bottom: -4px;
-        width: $sidebar-width;
+        margin-left: 8px;
+        margin-top: -8px;
+        width: $sidebar-width - 20px;
         transform: translateY(-100%);
         cursor: pointer;
         z-index: 21;
@@ -427,7 +432,7 @@
             margin-bottom: 8px;
             .profile{
                 .account-name{
-                    display: none;
+                    display: block;
                 }
             }
         }
@@ -437,12 +442,22 @@
             }
         }
         .option-icon{
-            display:none
+            display:block
         }
       }
     }
       
   }
+  /* @media only screen and (max-width: 1230px) {
+    .App .sidebar{ 
+        .option-icon {
+            display: block;
+        }
+        .account-name {
+            display: block;
+        }
+    }
+  } */
   @media only screen and (max-width: 520px) {
     .App{
       .sidebar{
@@ -466,6 +481,21 @@
                 }
                 } 
             }
+        }.profile-options{
+            margin-bottom: 8px;
+            .profile{
+                .account-name{
+                    display: block;
+                }
+            }
+        }
+        .profile-settings{
+            .profile-options-window.active{
+                bottom: 8px*7;
+            }
+        }
+        .option-icon{
+            display:block
         }
         
     }

@@ -117,29 +117,17 @@ function Onboarding() {
       </div>
 
         <CreateStudio   active={currentScreen==='create-studio'} 
-          next={()=>setCurrentScreen('profession-type')}
-          updateAccountData={updateAccountData}
-          createAccountData={createAccountData}
-        />
-
-        <ProfessionType active={currentScreen==='profession-type'} 
-          next={()=>setCurrentScreen('client-size')}
-          updateAccountData={updateAccountData}
-          createAccountData={createAccountData}
-
-        />
-
-        <ClientsSize    active={currentScreen==='client-size'} 
           next={()=>setCurrentScreen('user-contact')}
           updateAccountData={updateAccountData}
           createAccountData={createAccountData}
-
         />
+
 
         <UserContact    active={currentScreen==='user-contact'} 
           next={()=>createAccountAndNavigate()}
           updateAccountData={updateAccountData}
           createAccountData={createAccountData}
+          user={user}
 
         />
     </main>

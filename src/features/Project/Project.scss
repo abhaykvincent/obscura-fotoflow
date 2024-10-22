@@ -33,10 +33,9 @@
         display: grid;
         grid-template-columns: 2px auto ;
         opacity: 0.2;
-        max-height: calc(100vh - 8px*70);
         overflow-y: scroll;
-        .events{
-            display: grid;
+        .events{display: flex;
+            flex-direction: column-reverse;
             gap: 8px*0;
             border-radius: 4px;
             .timeline-event{
@@ -284,6 +283,6 @@
     .side-panel{
         width: calc(100% - 8px*5);
         margin-left: 8px*2.5;
-        margin-top: 0;
+        margin-top: 8px*5;
     }
 }

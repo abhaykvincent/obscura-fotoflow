@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './UploadProgress.scss'
-import { convertMegabytes } from '../../utils/stringUtils';
+import { convertMegabytes, shortenFileName } from '../../utils/stringUtils';
 import { useSelector } from 'react-redux';
 import { selectUploadList, selectUploadStatus } from '../../app/slices/uploadSlice';
 
@@ -9,7 +9,9 @@ function UploadProgress({}) {
     const uploadStatus = useSelector(selectUploadStatus)
     const [uploadPercent,setUploadPercent] = useState(0)
     const [totalProgress,setTotalProgress]  = useState(0)
+    const [modalState, setModalState] = useState('open')
     useEffect(() => {
+        console.log(uploadList)
         setTotalProgress(0)
         let totalFilesCount= uploadList.length;
         uploadList.forEach(item => {
@@ -20,7 +22,6 @@ function UploadProgress({}) {
         })
          setUploadPercent(totalProgress/totalFilesCount*100);
     }, [uploadList])
-    const [modalState, setModalState] = useState('open')
 
     useEffect(() => {
         if(uploadStatus == 'completed'){
@@ -58,7 +59,7 @@ function UploadProgress({}) {
             </div>:
             <div className="header-title">
                 <h4>Uploading {totalProgress} of {uploadList.length}</h4>
-                <p>128MB Remaining</p>
+                <p></p>
             </div>
         }
         <div className="modal-controls">
@@ -83,12 +84,18 @@ function UploadProgress({}) {
                 {
                 uploadList.map((file, index) => (
                     <div className={`upload-task ${file.status}`} key={index}>
-                    <div className="task-cover"></div>
-                    <div className="task-name">
-                        <p className="file-name">{file.name}</p>
-                        <p className="file-progress">Uploading {file.progress?file.progress+'%':''} . {convertMegabytes(file.size/1000000,2)}</p>
-                    </div>
-                    <div className="task-status"></div>
+                        <div className="task-cover"></div>
+                        <div className="task-name">
+                            <p className="file-name">{ shortenFileName(file.name)}</p>
+                            <p className="file-progress-percentage"> {convertMegabytes(file.size/1000000,2)}</p>
+                        </div>
+                        <div className={`task-status ${file.progress==100 && 'done' }`}></div>
+                        <div className="file-progress">
+                            <div className={`file-progress-bar ${file.progress==100 && 'done' }`}
+                                style={{width:file.progress<100 ? file.progress+'%':'0px' }}
+                            ></div>
+
+                        </div>
                     </div>
                 ))
                 }

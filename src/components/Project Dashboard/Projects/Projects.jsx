@@ -31,6 +31,13 @@ function DashboardProjects({project}){
             </div>
             <div className={`active`}></div>
         </div>
+        <div className="project-options">
+        {/* <div className="button secondery pin" 
+          onClick={()=>{}} 
+          >PIN : {project?.pin}
+        </div> */}
+        <div className="button primary share" onClick={()=>dispatch(openModal('shareGallery'))} target="_blank">Share</div>
+      </div>
       </div>
       
     {
@@ -56,7 +63,14 @@ function DashboardProjects({project}){
           
         </div>
 
+
+        <div className="financials-overview">
+      <DashboardPayments project={project} />
+      <DashboardExpances project={project} />
+      </div>
+      <DashboardEvents project={project} />
       </>
+      
     ) : (
       <>
       <div className="gallery-overview">
@@ -75,31 +89,9 @@ function DashboardProjects({project}){
                 style={
                   {
                     backgroundImage:
-                    `url(${project.projectCover!==""?project.projectCover:'https://img.icons8.com/external-others-abderraouf-omara/64/FFFFFF/external-images-photography-and-equipements-others-abderraouf-omara.png'})`
+                    `url(${project.projectCover!==""?project.projectCover:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`
                   }}
                 ></div>
-                <div className="backthumb bthumb2"></div>
-                <div className="backthumb bthumb3"></div>
-              </div>
-              <div className="thumbnail thumb2">
-                <div className="backthumb bthumb1 count"style={
-                  {
-                    backgroundImage:
-                      `url(${project.projectCover?project.projectCover:''})`
-                }}></div>
-                <div className="backthumb bthumb2"></div>
-                <div className="backthumb bthumb3"></div>
-              </div>
-              <div className="thumbnail thumb3">
-                <div className="backthumb bthumb1 count" style={
-                {
-                  backgroundImage:
-                    `url(${project.projectCover?project.projectCover:''})`
-                }}>
-                
-                {project.uploadedFilesCount!==0? project.uploadedFilesCount+' Photos': '0 Photos'}</div>
-                <div className="backthumb bthumb2"></div>
-                <div className="backthumb bthumb3"></div>
               </div>
             </div>
           </Link>
@@ -126,11 +118,12 @@ function DashboardProjects({project}){
         </div>
       </div>
 
-<div className="financials-overview">
-<DashboardPayments project={project} />
-<DashboardExpances project={project} />
-</div>
-<DashboardEvents project={project} />
+
+      <div className="financials-overview">
+      <DashboardPayments project={project} />
+      <DashboardExpances project={project} />
+      </div>
+      <DashboardEvents project={project} />
 </>
     ))
     :<>

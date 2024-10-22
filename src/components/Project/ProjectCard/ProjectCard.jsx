@@ -30,7 +30,7 @@ console.log(project.name,project.projectCover )
                     <h4 className="project-title">{project.name}</h4>
                     <p className="project-type">{project.type}</p>
                     <div className="info-bar">
-                        <div className="">{project?.budgets?.amount &&<p className=" project-budget tag"> ₹ ${project?.budgets?.amount}</p>}
+                        <div className="">{project?.budgets?.amount &&<p className=" project-budget tag"> ₹ {project?.budgets?.amount}</p>}
                         </div>
                        {/*  open in Lightroom  */}
                        <div className={`button lr mini ${project.status==="selected"?'':'disabled'}`}>Lr</div>

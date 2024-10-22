@@ -6,13 +6,20 @@ function CommingSoon(
 	{title}
 ) {
   return (
-	<main className="gallery projects-coming-soon">
+	<main className="projects-coming-soon">
 		<div className="welcome-section">
 			<div className="welcome-content">
 				<div className='welcome-message-top user-name'>
 					<h1 className='welcome-message'> <span className='iconic-gradient'>{title} </span>Coming Soon</h1>
-					
-				<h2 className='welcome-message sub'>Stay  for <span className="bold">Updates </span>!</h2>
+					{
+						title === 'Store' && <h2 className='welcome-message sub'>Sell <span className="bold">Prints </span> & <span className="bold">Frames </span>!</h2>
+					}
+					{
+						title === 'Financials' && <h2 className='welcome-message sub'>Send <span className="bold">Invoices </span> & Track <span className="bold">Payments </span>!</h2>
+					}
+					{
+						title === 'Calendar' && <h2 className='welcome-message sub'>Sync with <span className="bold">Google Calendar </span>!</h2>
+					}
 				<p>Apply for early Access</p>
 				<Link to="/subscription" className="button primary">Join</Link>
 				</div>

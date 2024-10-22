@@ -7,6 +7,9 @@ import DashboardPayments from '../../Payments/Payments';
 import DashboardExpances from '../../Expances/Expances';
 import { showAlert } from '../../../../app/slices/alertSlice';
 import { selectUserStudio } from '../../../../app/slices/authSlice';
+import DashboardEvents from '../../Events/Events';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import CollectionsPanel from '../../../Project/Collections/CollectionsPanel';
 
 function DashboardTabs({ project }) {
   const dispatch = useDispatch();
@@ -24,74 +27,24 @@ function DashboardTabs({ project }) {
                 <>  
                     <div className="gallery new" 
                     onClick={()=>dispatch(openModal('createCollection'))}>
-                      <div className="heading-section">
-
-                  <h3 className='heading'>Galleries <span>{project.collections.length}</span></h3>
-                      </div>
+                      
                     <div className="thumbnails">
                       <div className="thumbnail thumb1">
                         <div className="backthumb bthumb1"
-                        >
-                    <div className="button primary outline">New Gallery</div></div>
+                        ></div>
                         <div className="backthumb bthumb2"></div>
                         <div className="backthumb bthumb3"></div>
                         <div className="backthumb bthumb4"></div>
                       </div>
                     </div>
-                    
+                    <p>New Gallery</p>
                   </div>
 
                 </>
               ) : (
                 <>
-                <div className="gallery-overview">
-                  <div className="galleries">
-                    
-                    {
-                      project.collections.map((collection)=>{
-                        return(
-                          <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/${defaultStudio.domain}/gallery/${project.id}/${collection.id}`}>
-                            <div className="thumbnails">
-                              <div className="thumbnail thumb1">
-                                <div className="backthumb bthumb1"
-                                style={
-                                  {
-                                    backgroundImage:
-                                    `url(${project.projectCover!==""?project.projectCover:'https://img.icons8.com/external-others-abderraouf-omara/64/FFFFFF/external-images-photography-and-equipements-others-abderraouf-omara.png'})`
-                                  }}
-                                ></div>
-                                <div className="backthumb bthumb2"></div>
-                                <div className="backthumb bthumb3"></div>
-                              </div>
-                              <div className="thumbnail thumb2">
-                                <div className="backthumb bthumb1 count"style={
-                                  {
-                                    backgroundImage:
-                                      `url(${project.projectCover?project.projectCover:''})`
-                                }}></div>
-                                <div className="backthumb bthumb2"></div>
-                                <div className="backthumb bthumb3"></div>
-                              </div>
-                              <div className="thumbnail thumb3">
-                                <div className="backthumb bthumb1 count" style={
-                                {
-                                  backgroundImage:
-                                    `url(${project.projectCover?project.projectCover:''})`
-                                }}>
-                                
-                                {project.uploadedFilesCount!==0? project.uploadedFilesCount+' Photos': '0 Photos'}</div>
-                                <div className="backthumb bthumb2"></div>
-                                <div className="backthumb bthumb3"></div>
-                              </div>
-                            </div>
-                              <h3 className='collection-name'>{collection.name}</h3>
-                          </Link>
-                        )
-                      })
-                    }
-                    
-                  </div>
-                </div>
+               
+            <CollectionsPanel {...{project,collectionId:project.collections[0]?.id}}/>
           </>
                 
                 )
@@ -102,31 +55,17 @@ function DashboardTabs({ project }) {
 
       case 'shoots':
         return (
-          <div className="shoots-overview">
-            <h3>Shoots</h3>
-            {/* Replace with shoots card display logic */}
-            <div className="button primary outline" onClick={() => dispatch(openModal('addShoot'))}>
-              Add New Shoot
-            </div>
-          </div>
+          <DashboardEvents project={project}/>
         );
 
       case 'invoices':
         return (
-          <div className="invoices-overview">
-            <h3>Invoices</h3>
-            {/* Add Invoice Logic */}
-            <div>No invoices yet.</div>
-          </div>
+          <DashboardPayments project={project} />
         );
 
       case 'payments':
         return (
-          <div className="payments-overview">
-            <h3>Payments</h3>
-            <DashboardPayments project={project} />
-            <DashboardExpances project={project} />
-          </div>
+          <DashboardExpances project={project} />             
         );
 
       default:

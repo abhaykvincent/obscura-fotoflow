@@ -16,6 +16,7 @@
                 margin-top: 8px;
                 margin-bottom: 8px;
                 h1{
+                    color: $gray-default-light !important;
                 font-weight: 500 !important;
                 font-size: 3rem !important;
 
@@ -39,6 +40,8 @@
                 animation-fill-mode: forwards;
                 animation-timing-function: ease-out;
             }
+            &.sub-message{
+            }
             span{
                 
             }
@@ -53,7 +56,7 @@
             right: 8px*5;
             display: flex;
             justify-content: flex-end;
-            z-index: 99;
+            z-index: 10;
             
         }
         
@@ -239,7 +242,7 @@
         }
     }
 }
-  @media only screen and (max-width: 430px) {
+  @media only screen and (max-width: 520px) {
 
     .home .section .projects{
         grid-template-columns: 1fr  ;
@@ -248,10 +251,17 @@
     {
         .welcome-section{
             grid-template-columns: 1fr;
+            margin-top:8px;
             .welcome-message{
                 &:last-child{
-                    margin-top: 0;
-                    line-height: 2.5rem;
+                    margin-top: 8px*1;
+                    line-height: 2.8rem;
+
+                }
+                &.sub-message{
+                    font-size: 1.5rem;
+                    line-height: 2rem;
+                    margin-bottom: 8px*1;
 
                 }
             }
@@ -259,7 +269,7 @@
                 position: relative;
                 right: 0;
                 justify-content: flex-start;
-                margin-top: 8px*4;
+                margin-top: 8px*2;
             }
         }
         .section .projects{

@@ -6,14 +6,16 @@
     color: rgba(0, 0, 0, 0.9);
   }
   .button{
+    color: rgba(255, 255, 255, 0.9);
+
   }
   .gallery-info{
     position: relative;
     z-index: 3;
     text-align: center;
     .projet-name{
-        font-family: 'Great Vibes', cursive;
-        font-size: 4rem;
+      font-family: 'Lastri', sans-serif;
+        font-size: 2rem;
         color: rgba(0, 0, 0, 0.9);
     }
     p{
@@ -49,6 +51,9 @@
   }
   .shared-collection{
       padding: 0 8px*1;
+      .gallery:hover
+      {transform: translate(0px, 0px) scale(1);
+      }
   }
   .collections-panel{
       display: flex;

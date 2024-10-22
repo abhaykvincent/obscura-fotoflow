@@ -10,9 +10,10 @@ import './Selection.scss';
 import { selectDomain } from '../../app/slices/authSlice';
 import { useSelector } from 'react-redux';
 import { trackEvent } from '../../analytics/utils';
+import { toTitleCase } from '../../utils/stringUtils';
 
 export default function Selection() {
-  let { projectId, collectionId } = useParams();
+  let { studioName,projectId, collectionId } = useParams();
   //Project
   const [project, setProject] = useState();
   const [images, setImages] = useState([]);
@@ -27,7 +28,6 @@ export default function Selection() {
   const [currentCollectionIndex, setCurrentCollectionIndex] = useState(0);
   const [selectionCompleted, setSelectionCompleted] = useState(false);
   const [isInitialSelection, setIsInitialSelection] = useState(true);
-  const domain = useSelector(selectDomain)
   const defaultOptions = {
     loop: false,
     autoplay: true,
@@ -87,7 +87,7 @@ export default function Selection() {
   // Fetch project data and set Selected Images  
   const fetchProjectData = async () => {
     try {
-      const projectData = await fetchProject(domain, projectId);
+      const projectData = await fetchProject(studioName, projectId);
       console.log(projectData)
 
       setProject(projectData);
@@ -113,7 +113,7 @@ export default function Selection() {
   const saveSelection = async () => {
     try {
       handleAddOrRemoveSelectedImages()
-      await updateProjectStatusInFirestore(domain,projectId, 'selected')
+      await updateProjectStatusInFirestore(studioName,projectId, 'selected')
 
     }
     catch (error) {
@@ -136,10 +136,10 @@ export default function Selection() {
     try {
       console.log(selectedImages)
       if (selectedImages.length > 0) {
-        await addSelectedImagesToFirestore(domain, projectId, collectionId, selectedImages, page, size, totalPages);
+        await addSelectedImagesToFirestore(studioName, projectId, collectionId, selectedImages, page, size, totalPages);
       } 
       if (unselectedImages.length > 0) {
-        await removeUnselectedImagesFromFirestore(domain, projectId, collectionId, unselectedImages, page, size, totalPages);
+        await removeUnselectedImagesFromFirestore(studioName, projectId, collectionId, unselectedImages, page, size, totalPages);
       }
     } catch (error) {
       console.error('Error updating selected/unselected images:', error);
@@ -160,7 +160,7 @@ export default function Selection() {
           `}
         >
           {
-          <Link to={collection.uploadedFiles !== undefined && `/${domain}/selection/${project.id}/${collection.id}`}>{collection.name}</Link>
+          <Link to={collection.uploadedFiles !== undefined && `/${studioName}/selection/${project.id}/${collection.id}`}>{collection.name}</Link>
           
         }
         </div>
@@ -175,8 +175,8 @@ export default function Selection() {
       <div className="project-header">
         <img className='banner' src={images[0]?images[0].url:''} alt="" srcset="" />
         <div className="gallery-info">
-          <h1 className='projet-name'>{project.name}</h1>
-          <p>10th October, 2023</p>
+          <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
+          
         </div>
         <div className="banner" />
       </div>

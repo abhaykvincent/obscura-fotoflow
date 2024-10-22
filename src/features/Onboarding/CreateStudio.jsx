@@ -33,22 +33,22 @@ const CreateStudio = ({active,next,createAccountData,updateAccountData}) => {
   return (
 
     <div className={`screen create-studio `}>
-      <h2 className='screen-title'>Create Your Studio</h2>
-      <p className='section-intro'>Let's start with a name for your Studio </p>
+     
+      <p className='section-intro'>Let's start with a  <span className="name-label">Name</span> for your Studio </p>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <input
             type="text"
             id="studioName"
             value={studioName}
-            placeholder='Enter your Studio name'
+            placeholder='Studio name'
             onChange={handleStudioNameChange}
             required
           />
-          <p className='studio-domain'  >photoflow.in/<span className={`available`} contentEditable>{studioDomain}</span></p>
+          <p className='studio-domain'  >fotoflow.web.app/<span className={`available`} contentEditable>{studioDomain}</span></p>
 
         </div>
-        <div className="button primary large"
+        <div className={`button primary large ${studioDomain=='' ? 'disabled':''}`}
           onClick={handleSubmit}
         >Create Studio</div>
       </form>

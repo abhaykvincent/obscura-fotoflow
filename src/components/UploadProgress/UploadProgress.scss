@@ -72,7 +72,7 @@
         }
     }
     .body{
-        height: 8px*32;
+        height: 8px*40;
         padding: 0 8px*2;
         overflow: scroll;
         background: linear-gradient(120deg, $dark-2 0%, $dark-3 100%);
@@ -93,7 +93,7 @@
                     font-size: 0.9rem;
                     font-weight: bold;
                 }
-                .file-progress{
+                .file-progress-percentage{
                     font-size: 0.8rem;
                     color: $gray4-accessible-dark;
                     margin-top: 2px;
@@ -101,8 +101,31 @@
                 .task-status{
                     background-image: url('https://media.tenor.com/t5DMW5PI8mgAAAAi/loading-green-loading.gif');
                     background-position: center;
-                    background-size: auto 40%;
+                    background-size: auto 50%;
                     opacity: 0;
+                    &.done{
+                        background-image: url('https://img.icons8.com/?size=256&id=a4l6bA9mSmBh&format=png&color=40C057');
+                        transition-delay: 0.8s;
+                        background-size: auto 70%;
+                        filter: saturate(1) brightness(1) !important;
+                    }
+                }
+                .file-progress{
+                    height: 2px;
+                    width : 100%;
+                    grid-column-start: 1;
+                    grid-column-end:4;
+                    .file-progress-bar{
+                        height: 2px;
+                        width : 10%;
+                        transition-duration: 0.5s;
+                        transition-timing-function: ease-in-out;
+                        background-color: $green-accessible-dark;
+                        &.done{
+                        transition-delay: 0.5s;
+                            margin-left: 100%;
+                        }
+                    }
                 }
                 &.initializing{
                     .task-status{

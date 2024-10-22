@@ -203,3 +203,33 @@
         }
     }
 }
+
+@media only screen and (max-width: 1230px) {
+    .App .onboarding-container{
+        padding-left: 8px*8;
+        width: 100vw;
+        height: 100vh;
+        .screen{
+            width: 100%;
+            .section-intro{
+                width: 100%;
+                span.name-label{
+                    color: $gray2-default-light;
+                }
+            }
+            .form-group input{
+                width: 100%;
+            }
+        }
+    }
+}
+@media only screen and (max-width: 520px) {
+    .App .onboarding-container{
+        padding-left: 8px*4;
+        width: 100vw;
+        height: 100vh;
+        .screen{
+    
+        }
+    }
+}

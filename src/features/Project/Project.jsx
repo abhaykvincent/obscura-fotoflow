@@ -40,8 +40,13 @@ export default function Project() {
   const defaultStudio = useSelector(selectUserStudio);
   const projects = useSelector(selectProjects);
   const projectsStatus = useSelector(selectProjectsStatus);
-  const { confirmDeleteProject } = useSelector(selectModal);
   const domain = useSelector(selectDomain);
+
+  const [confirmDeleteProject,setConfirmDeleteProject] = useState(false)
+  // Delete Project Modal
+  const onDeleteConfirmClose = () => setConfirmDeleteProject(false)
+  const onDeleteConfirm = () => dispatch(deleteProject({domain,projectId:id}))
+
 
   // Local state for the project
   const [project, setProject] = useState(null);
@@ -85,7 +90,7 @@ export default function Project() {
         <div className="project-dashboard">
           <DashboardProjects project={project} />
         </div>
-        <SidePanel  project={project}/>
+        {/* <SidePanel  project={project}/> */}
         {/* Modals */}
         <AddCollectionModal project={project} />
         <AddPaymentModal project={project} />
@@ -93,7 +98,6 @@ export default function Project() {
         <AddBudgetModal project={project} />
 
       <ShareGallery   project={project} />
-        {confirmDeleteProject && <DeleteConfirmationModal onDeleteConfirm={handleDeleteConfirm} />}
         <Refresh />
       </main>
       <div className="project-info">
@@ -104,18 +108,26 @@ export default function Project() {
           <h1>{project.name}</h1>
           <div className="type">{project.type}</div>
         </div>
-        <div className="project-options">
+        <div className="project-options options">
 
         <DropdownMenu>
-          <DropdownMenuTrigger ><div className="icon options"></div></DropdownMenuTrigger>
+          <DropdownMenuTrigger >
+            <div className="icon options"></div>
+          </DropdownMenuTrigger>
           <DropdownMenuContent>
-          <p>New Gallery</p>
-          <p>Share</p>
+          <DropdownMenuItem>New Gallery</DropdownMenuItem>
             <DropdownMenuSeparator />
-          <p>Delete</p>
-          <p>Update Cover</p>
+            <DropdownMenuItem
+              onSelect={() => {
+                // Your action for Delete
+                setConfirmDeleteProject(true);
+              }}
+            >
+              Delete Project
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        {confirmDeleteProject && <DeleteConfirmationModal itemType="project" itemName={project.name}  onDeleteConfirm={onDeleteConfirm} />}
 
         </div>
       </div>

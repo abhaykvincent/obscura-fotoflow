@@ -9,12 +9,18 @@ import ShareGallery from '../../components/Modal/ShareGallery'
 import CollectionsPanel from '../../components/Project/Collections/CollectionsPanel';
 import CollectionImages from '../../components/Project/Collections/CollectionImages';
 // Actions
-import { deleteProject, selectProjects } from '../../app/slices/projectsSlice';
+import { deleteCollection, deleteProject, selectProjects } from '../../app/slices/projectsSlice';
 import { openModal } from '../../app/slices/modalSlice';
 
 import './Galleries.scss';
 import { selectStudio, setAvailableStortage } from '../../app/slices/studioSlice';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
+import { DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger, } from '@radix-ui/react-dropdown-menu';
 
 export default function Galleries({}) {
   const dispatch= useDispatch();
@@ -27,10 +33,10 @@ export default function Galleries({}) {
   const [project, setProject] = useState(undefined)
   const [collection, setCollection] = useState('')
   const [targetCollectionId, setTargetCollectionId] = useState('')
-  const [confirmDeleteProject,setConfirmDeleteProject] = useState(false)
+  const [confirmDeleteCollection,setConfirmDeleteCollection] = useState(false)
   // Delete Project Modal
-  const onDeleteConfirmClose = () => setConfirmDeleteProject(false)
-  const onDeleteConfirm = () => dispatch(deleteProject(id))
+  const onDeleteConfirmClose = () => setConfirmDeleteCollection(false)
+  const onDeleteConfirm = () => dispatch(deleteCollection({domain,projectId:id,collectionId:targetCollectionId}))
 
   useEffect(() => {
     // If no projects are available, return early
@@ -81,6 +87,29 @@ if(!collectionId&&defaultCollectionId!==''){
           >PIN : {project?.pin}
         </div>
         <div className="button primary share" onClick={()=>dispatch(openModal('shareGallery'))} target="_blank">Share</div>
+
+
+        <DropdownMenu>
+          <DropdownMenuTrigger >
+            <div className="icon options"></div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+          <DropdownMenuItem>New Gallery</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onSelect={() => {
+                // Your action for Delete
+                setConfirmDeleteCollection(true);
+              }}
+            >
+              Delete Gallery
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+
+
+      
       </div>
     </div>
     {/* Page Main */}
@@ -95,7 +124,7 @@ if(!collectionId&&defaultCollectionId!==''){
       }
       <AddCollectionModal project={project}/>
       <ShareGallery   project={project} />
-      {confirmDeleteProject ? <DeleteConfirmationModal onDeleteConfirm={onDeleteConfirm} onClose={onDeleteConfirmClose}/>:''}
+      {confirmDeleteCollection ? <DeleteConfirmationModal itemType="collection" itemName={collection.name} onDeleteConfirm={onDeleteConfirm} />:''}
     </main>
     
   </>

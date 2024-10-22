@@ -2,6 +2,14 @@
 @import '../../style/components';
 //https://github.com/googlefonts/great-vibes/blob/master/fonts/webfonts/GreatVibes-Regular.woff2
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+@font-face {
+  font-family: 'Lastri';
+  src: 
+       url('../../fonts/LastriRegular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .share-project{
   .gallery-info{
     position: relative;
@@ -9,8 +17,8 @@
     color: rgba(0, 0, 0, 0.9);
     text-align: center;
     .projet-name{
-        font-family: 'Great Vibes', cursive;
-        font-size: 4rem;
+      font-family: 'Lastri', sans-serif;
+        font-size: 2rem;
         color: rgba(0, 0, 0, 0.9);
     }
     p{
@@ -26,7 +34,7 @@
     background-size: 100%;
     .banner{
       align-items: center;
-      max-height: calc(100vh - 8px*60);
+      max-height: calc(100vh - 8px*30);
       max-width: calc(100vw);
       position: relative;
       top: 0;
@@ -44,34 +52,52 @@
 }
 .shared-collection{
     padding: 0 8px*5;
+    .studio-tag-line{
+      display: grid;
+      align-items: center;
+      text-align: center;
+      height: 8px*10;
+      color: $dark-3;
+    }
 }
 .collections-panel{
     display: flex;
     justify-content: center;
+    overflow-x :scroll;
+    width: 100vw;
     margin-top: 8px*5;
-    transform: translate(8px*1, 8px*0);
     z-index: 1;
     .collection-tab{
       display: flex;
       gap: 8px*1;
-      padding: 8px 8px*2 ;
+      padding: 8px 8px*5 ;
       margin-left: -1px;
-      background-color: $light-2;
-      border-radius: 4px;
-      @include boxShadow;
-      border: 1px solid $gray3-default-light;
+      background-color: $light-3;
+      border-radius: 0px;
+      border: 1px solid none;
+      border-bottom: 2px solid $gray5-accessible-light;
       color: $gray3-accessible-light ;
+      &.client-selection-tab{
+        border: 1px solid $green-accessible-light;
+        padding: 8px 8px*2;
+        margin-right: 8px;
+        border-radius: 4px;
+        a{
+        padding: 0;
+        color: $green-default-light ;
+      }
+
+      }
       a{
         padding: 0;
         color: $gray-accessible-light;
       }
       &.active{
-        border: 1px solid $gray2-default-dark;
+        border-bottom: 2px solid $dark-3;
         z-index: 10 !important;
         a{
           color: black;
         }
-        background-color: $light-3;
       }
 
     }
@@ -124,6 +150,7 @@
     margin-bottom: 8px*3;
   }
 }
+// media query for landscape orientation
 
 @media only screen and (max-width: 830px) {
   .share-project{
@@ -131,6 +158,21 @@
       padding: 8px;
     }
     .gallary{
+      .photos{
+        grid-template-columns: 1fr;
+        .photo{
+        }
+      }
+    }
+  }
+}
+@media only screen and (max-width: 520px) {
+  .App .share-project{
+    .shared-collection{
+      padding: 8px;
+    }
+    .gallary{
+      width: calc(100vw - 8px*2);
       .photos{
         grid-template-columns: 1fr;
         .photo{

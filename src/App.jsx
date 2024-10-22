@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { HotKeys } from 'react-hotkeys';
+import { Client } from 'appwrite';
 // Components
 import Alert from './components/Alert/Alert';
 import Header from './components/Header/Header';
@@ -38,6 +39,9 @@ import AdminPanel from './features/AdminPanel/AdminPanel';
 import useAdminAuth from './hooks/useAdminAuth';
 import { selectModal } from './app/slices/modalSlice';
 
+const client = new Client();
+client.setProject('fotoflow-notifications');
+
 //import AdminRoute from './components/AdminRoute/AdminRoute';
 // Wrapper component to pass studio name to pages
 const StudioWrapper = ({ Component }) => {
@@ -59,6 +63,10 @@ export default function App() {
   useEffect(() => {
     console.log(isLoading)
   }, [isLoading]);
+  useEffect(() => {
+  
+  }, []);
+ 
   // ON Render
   useEffect(() => {
     console.log(currentDomain)
@@ -83,7 +91,7 @@ export default function App() {
   return (
     <div className="App">
       <HotKeys keyMap={keyMap} handlers={handlers}>
-      <SupportIcon/>
+      {/* <SupportIcon/> */}
       {isAuthenticated && user!=='no-studio-found' && (!isPublicPage())? (
         <>
           <Header />
@@ -94,8 +102,8 @@ export default function App() {
       ) : 
       (<>{ !isPublicPage() && <LoginModal/> }</>)}
       {
-        isLoading!== 'succeeded' && isAuthenticated? (
-          <Loading/>
+        isLoading!== 'succeeded' && isAuthenticated  ? (
+           (!isPublicPage()) &&  <Loading/>
         ) : (
           <Routes>
             {isAuthenticated && (
