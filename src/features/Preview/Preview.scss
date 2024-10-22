@@ -6,7 +6,7 @@
   }
 .preview{
     position: fixed;
-    top: -($header-height );
+    top: -$header-height + 5px;
     left: -8px*24;
     width: 100vw;
     height: 100vh;
@@ -19,7 +19,7 @@
         align-items: center;
         justify-items: center;
         .image{
-            height: calc(99%);
+            height: calc(100vh);
             width: 100vw;
             background-position: center;
             transition: background-size 0.1s ease;

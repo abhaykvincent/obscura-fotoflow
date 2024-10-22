@@ -241,10 +241,12 @@ export const addCollectionToStudioProject = async (domain, projectId, collection
 };
 
 export const deleteCollectionFromFirestore = async (domain, projectId, collectionId) => {
+    console.log('deleteCollectionFromFirestore')
+    console.log(domain, projectId, collectionId)
     if (!domain || !projectId || !collectionId) {
         throw new Error('Domain, Project ID, and Collection ID are required for deletion.');
     }
-
+    
     let color = domain === '' ? 'gray' : '#0099ff';
     console.log(`%cDeleting Collection ${collectionId} from Project ${projectId} in ${domain ? domain : 'undefined'}`, `color: ${color};`);
 

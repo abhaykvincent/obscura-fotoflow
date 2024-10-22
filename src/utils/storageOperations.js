@@ -68,8 +68,8 @@ export const fetchImageInfo = async (domain, projectId, collectionId) => {
 };
 
 
-export const deleteCollectionFromStorage = async (id, collectionId) => {
-const storageRef = ref(storage, `${id}/${collectionId}`);
+export const deleteCollectionFromStorage = async (domain,id, collectionId) => {
+const storageRef = ref(storage, `${domain}/${id}/${collectionId}`);
 const listResult = await list(storageRef);
 
 for (const item of listResult.items) {
