@@ -327,6 +327,7 @@ body{
         z-index:40;
         background-color: $dark-3;
         border-radius: 6px;
+        border-bottom: 1px solid $dark-2;
         .label{
           margin: 8px;
         }
@@ -476,6 +477,11 @@ body{
       .pagination{
         display: flex;
         justify-content: center;
+      }
+      .image-gallery-bottom-panel{
+        display: flex;
+        justify-content: center;
+        padding: 8px;
       }
     }
     .fixed-wrap{
@@ -1253,6 +1259,18 @@ body{
         transition-duration: 0.1s;
         transition-timing-function: ease-out;
         transition: transform 0.1s;
+        animation: gallery-photo-reveal 0.2s;
+        animation-timing-function: ease-in;
+      }
+      @keyframes gallery-photo-reveal {
+          0%{
+            transform: scale(0.5);
+            opacity: 0;
+          }
+          100%{
+            transform: scale(0.98);
+            opacity: 1;
+          }
       }
       .hover-options-wrap{
           position: absolute;
@@ -1367,7 +1385,7 @@ body{
       }
       &:hover{
         border: 1px solid $dark-0;
-        background-color: $dark-1;
+        background-color: black;
         transition-duration: 0.05s;
         transition-timing-function: ease-in;
         border-radius: 2px;
