@@ -77,7 +77,7 @@ console.log(studioName)
     return (
       <div className="">
       <div className="collections-panel">
-        <div class={`collection-tab client-selection-tab`}  >
+        <div className={`collection-tab client-selection-tab`}  >
           <Link to={`/${studioName}/selection/${project.id}`}>Photo Selection</Link>
         </div>
         </div>
@@ -105,7 +105,7 @@ console.log(studioName)
   return (
     <div className="share-project">
       <div className="project-header">
-        <img className='banner' src={project.projectCover} alt="" srcset="" />
+        <img className='banner' src={project.projectCover} alt="" />
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
           <CollectionsPanel/>

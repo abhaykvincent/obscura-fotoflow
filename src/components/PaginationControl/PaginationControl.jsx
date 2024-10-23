@@ -136,7 +136,7 @@ export default function PaginationControl({
         )
       ) : (
         <PaginationButton
-          onClick={() => handlePageChange(currentPage + 1)}
+          onClick={() => {handlePageChange(currentPage + 1)}}
           disabled={currentPage === totalPages}
           highlight={true} 
         >

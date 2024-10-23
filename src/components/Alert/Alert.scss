@@ -1,8 +1,8 @@
 @import '../../style/variables';
 .alert {
     position: fixed;
-    bottom: 8px*2.5;
-    right: 8px*10;
+    top: 8px*2.5;
+    left: 50vw;
     transform: translate(8px*5,0);
     padding: 8px*1 8px*2;
     border-radius: 4px;
@@ -13,6 +13,23 @@
 		box-shadow: 1px 1px 4px  rgba(0, 0, 0, 0.8);
     opacity: 0;
     color: white;
+    background-color: $dark-2;
+  }
+  .App .select-project{
+    .alert{
+      color: white;
+      background-color: $light-0;
+      *{
+
+    color: white;
+      }
+    }
+  .alert.success {
+
+    color: white;
+    background-color: $green-accessible-light;
+    border: 1px solid $green-accessible-light;
+    }
   }
   
   .alert.show {
@@ -22,21 +39,18 @@
   }
   
   .alert.success {
-    background-color: $dark-2;
     border: 1px solid $green-accessible-dark;
     color: white;
-    opacity: 0.8;
+    opacity: 0.9;
     transition-timing-function: ease-out;
   }
 
   .alert.success-negative{
-    background-color: $dark-2;
     border: 1px solid $red-default-light;
     opacity: 0.5;  
   }
   
   .alert.error {
-    background-color: $dark-2;
     border: 1px solid $red-accessible-dark;
     color: white;
     opacity: 0.8;

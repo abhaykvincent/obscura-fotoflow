@@ -31,7 +31,7 @@ const [touchEndX, setTouchEndX] = useState(0);
     //scrolltotop
     window.scrollTo(0, 0);
     console.log(image)
-  }, [])
+  }, [image])
 
   useEffect(() => {
     const setImageSize = () => {

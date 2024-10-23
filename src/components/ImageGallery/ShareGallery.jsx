@@ -19,42 +19,47 @@ const ShareGallery = ({ images,projectId }) => {
 
   useEffect(() => {
     setLoadedImages(images.slice(0, size));
-    setIsPreviewOpen(false)
-  }, [images])
+    setHasMore(true); // Reset infinite scroll tracking
+    setIsPreviewOpen(false);
+  }, [images, size]);
 
   const observer = useRef()
-  const lastPhotoElementRef = useCallback(node => {
-    if (loading) return
-    if (observer.current) observer.current.disconnect()
-    observer.current = new IntersectionObserver(entries => {
+  const lastPhotoElementRef = useCallback((node) => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+    
+    observer.current = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && hasMore) {
-        setLoadedImages(prevLoadedImages => {
-          let newLoadedImages = [...prevLoadedImages];
-          for (let i = 1; i <= size; i++) {
-            if (prevLoadedImages.length + i <= images.length) {
-              newLoadedImages.push(images[prevLoadedImages.length + i - 1]);
-            }
-          }
-          setLoading(false);
+        setLoading(true);
+        setLoadedImages((prevLoadedImages) => {
+          const newLoadedImages = [
+            ...prevLoadedImages,
+            ...images.slice(prevLoadedImages.length, prevLoadedImages.length + size),
+          ];
           setHasMore(newLoadedImages.length < images.length);
           return newLoadedImages;
         });
+        setTimeout(() => {
+          setLoading(false);
+      }, 1000);
+
       }
-    })
-    if (node) observer.current.observe(node)
-  }, [loadedImages,images])
+    });
+
+    if (node) observer.current.observe(node);
+  }, [loading, hasMore, images]);
   return (
     <div className="gallary">
       <div className="photos">
         {
           loadedImages.map((file, index) => (
             index + 1 === loadedImages.length ?
-            <img className="photo" key={index} src={file.url} alt={`File ${index}`} 
+            <img className="photo" key={file.url} src={file.url} alt={`File ${index}`} 
             ref={lastPhotoElementRef}
             onClick={()=>openPreview(index)}>
             </img>
             : 
-            <img className="photo" key={index} src={file.url} alt={`File ${index}`} 
+            <img className="photo" key={file.url} src={file.url} alt={`File ${index}`} 
             onClick={()=>openPreview(index)}></img>
           ))
         }

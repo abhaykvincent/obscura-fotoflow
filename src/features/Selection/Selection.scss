@@ -44,9 +44,13 @@
   }
   .selected-completed{
     margin: 0 auto;
+    margin-top: 8px*4;
     text-align: center;
     .completed-animation{
       
+    }
+    .selected-files-count{
+      margin-bottom: 8px*5;
     }
   }
   .shared-collection{
@@ -54,15 +58,44 @@
       .gallery:hover
       {transform: translate(0px, 0px) scale(1);
       }
+      .view-control{
+        justify-content: center;
+        color: rgba(0, 0, 0, 0.7);
+        margin-top: 8px*4;
+        margin-bottom: 8px*0;
+        font-size: 0.7rem;
+        width: calc(100% - 8px*1);
+        overflow-x: scroll;
+        .control-wrap{
+
+        }
+        .controls{
+          box-shadow: none;
+          border: 1px solid $dark-0;
+          background: linear-gradient(120deg, #dfdfdf -80%, #ececec 20%, #eaeaea 60%, #f3f3f3 100%);
+          .control{
+            &.active{
+              background-color: white;
+              color: black;
+          border: 1px solid $dark-3;
+          box-shadow: none;
+            }
+          }
+        }
+      }
   }
   .collections-panel{
       display: flex;
+      width: calc(100% - 8px*1);
+      overflow-x: scroll;
+
       justify-content: center;
       margin-top: 8px*5;
       transform: translate(8px*1, 8px*0);
       z-index: 1;
       .collection-tab{
         display: flex;
+        white-space: nowrap;
         gap: 8px*1;
         padding: 8px 8px*2 ;
         margin-left: -1px;
@@ -112,23 +145,27 @@
   .gallery{
 
     margin: 0 auto;
-    margin-top: 8px*2;
+    margin-top: 8px*1;
     padding: 8px;
-    //max-height: calc(100vh - 8px*40);
+   min-height: calc(100vh - 8px*40);
     max-width: 8px*140;
     .photos{
       width: 100%;
       display: grid;
+      
+      justify-content: center;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); // This will create a responsive grid
       gap: 8px;
       .photo{
+        min-height: 200px;
+        width: calc(100% - 8px*1);
         position: relative;
         background-color: $light-0;
         border-radius: 2px;
         background-size: cover;
         border: 1px solid transparent;
         .img{
-
+          
           width: 100%;
         }
         &:hover input[type="checkbox"] {
@@ -173,6 +210,8 @@
     align-items: center;
     margin-bottom: 8px*1;
     margin-top: 8px*2;
+    width: calc(100% - 8px*1);
+    overflow-x: scroll;
     
     .button{
       text-shadow: none;
@@ -204,6 +243,36 @@
         .photo{
         }
       }
+    }
+  }
+}
+@media only screen and (max-width: 520px) {
+  .App .select-project{
+    .collections-panel{
+      padding-left: 4px;
+      justify-content: start;
+      padding-bottom: 6px;
+      }
+    .shared-collection{
+      padding: 8px;
+      
+    }
+    .gallary{
+      .photos{
+
+        justify-content: start;
+        grid-template-columns: 1fr;
+        .photo{
+        }
+      }
+    }
+    .project-header .banner{
+    }
+    .control-label.label-all-photos{
+      display: none;
+    }
+    .pagination{
+      justify-content: end;
     }
   }
 }
