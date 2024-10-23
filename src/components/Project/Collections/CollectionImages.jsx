@@ -163,7 +163,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
             <div className="image-gallery-bottom-panel">
                 {/* <div className="button secondary">Load All</div> */}
                 
-                <div className={`button primary ${collectionImages.length === imageUrls.length ? 'disabled' : ''}`}
+                <div className={`button primary ${collectionImages?.length === imageUrls.length ? 'disabled' : ''}`}
                     onClick={() => setPage(page + 1)}
                 >Load More</div>
             </div>
