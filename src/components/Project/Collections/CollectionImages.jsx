@@ -53,6 +53,11 @@ const CollectionImages = ({ id, collectionId, project }) => {
         dispatch(setUploadList(uploadList));
     }, [uploadList]);
 
+    useEffect(() => {
+        console.log(imageUrls);
+    }, [imageUrls]);
+
+
     // Initial collection images fetch
     useEffect(() => {
         setShowAllPhotos(true);
@@ -71,20 +76,19 @@ const CollectionImages = ({ id, collectionId, project }) => {
             setImageUrls([]);
             return;
         }
-        let start = (page - 1) * size;
+        let start = 0;
         let end = page * size;
         let images = collectionImages.slice(start, end);
         setImageUrls(images);
-        console.log(collectionImages);
+        console.log(page);
         setSelectedImages(collectionImages.filter((image) => image.status === 'selected'));
     }, [collectionImages, page]);
 
     // Show All Photos
     useEffect(() => {
         if (!collectionImages) return;
-        setPage(1);
         if (showAllPhotos) {
-            let start = (page - 1) * size;
+            let start = 0;
             let end = page * size;
             let images = collectionImages.slice(start, end);
             setImageUrls(images);
@@ -147,7 +151,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 galleryView === 'grid' ?
                 <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id }} />:
                 <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id }} />
-        ) : (
+            ) : (
                 <label htmlFor="fileInput" className="drop-upload">
                     <div className="drop-area">
                         <Lottie options={defaultOptions} height={150} width={150} />
@@ -156,6 +160,13 @@ const CollectionImages = ({ id, collectionId, project }) => {
                     </div>
                 </label>
             )}
+            <div className="image-gallery-bottom-panel">
+                {/* <div className="button secondary">Load All</div> */}
+                
+                <div className={`button primary ${collectionImages.length === imageUrls.length ? 'disabled' : ''}`}
+                    onClick={() => setPage(page + 1)}
+                >Load More</div>
+            </div>
         </div>
     );
 };

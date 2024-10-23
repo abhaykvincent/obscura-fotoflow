@@ -85,7 +85,7 @@ export default function Selection() {
   useEffect(() => {
     const photosDiv = document.querySelector('.gallery');
     if (photosDiv) {
-      photosDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      photosDiv.scrollIntoView({ behavior: 'auto', block: 'start' });
     }
   }, [page,collectionId]); // Trigger scroll on both page and collection changes
 
