@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react'
 import './Preview.scss'
 import { shortenFileName } from '../../utils/stringUtils'
-import { setCoverPhotoInFirestore } from '../../firebase/functions/firestore'
+import { setCoverPhotoInFirestore, setGalleryCoverPhotoInFirestore } from '../../firebase/functions/firestore'
 import { useState } from 'react'
 import { selectDomain } from '../../app/slices/authSlice'
 import { useSelector } from 'react-redux'
 import { useDebouncedResize } from '../../hooks/debouncedResize'
 import { useParams } from 'react-router'
 
-function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePreview, projectId }) {
+function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePreview, projectId,collectionId }) {
   
   const { studioName } = useParams();
   const { screenWidth: screenWidth, screenHeight: screenHeight } = useDebouncedResize();
@@ -171,7 +171,14 @@ const [touchEndX, setTouchEndX] = useState(0);
         <div className="right-controls">
           <div className="icon set-cover"
             onClick={() => setCoverPhotoInFirestore(studioName,projectId, image.url)}
-          >Set as cover</div>
+          >Set Project cover</div>
+          <div className="icon set-cover"
+            onClick={() => {
+              console.log(studioName,projectId,collectionId, image.url)
+              setGalleryCoverPhotoInFirestore(studioName,projectId,collectionId, image.url)}
+            
+            }
+              >Set Gallery cover</div>
           <div className="icon download"
           onClick={async (event) => {
             event.stopPropagation(); // Prevent the next image navigation

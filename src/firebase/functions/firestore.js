@@ -663,6 +663,44 @@ export const setCoverPhotoInFirestore = async (domain, projectId, image) => {
         throw error;
     }
 };
+export const setGalleryCoverPhotoInFirestore = async (domain, projectId, collectionId, image) => {
+    if (!domain || !projectId || !collectionId || !image) {
+        throw new Error('Domain, Project ID, Collection ID, and Image are required.');
+    }
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
+        }
+
+        const projectData = projectSnapshot.data();
+        const { collections } = projectData;
+
+        // Find the specific collection by collectionId
+        const collectionIndex = collections.findIndex(c => c.id === collectionId);
+        if (collectionIndex === -1) {
+            throw new Error('Collection ID does not exist.');
+        }
+
+        // Update the galleryCover for the found collection
+        const updatedCollections = [...collections];
+        updatedCollections[collectionIndex] = {
+            ...updatedCollections[collectionIndex],
+            galleryCover: image
+        };
+
+        // Save the updated collections array back to Firestore
+        await updateDoc(projectDocRef, { collections: updatedCollections });
+
+        console.log(`%cGallery cover photo updated successfully for project: ${projectId}, collection: ${collectionId}.`, `color: #54a134;`);
+    } catch (error) {
+        console.error(`%cError updating gallery cover photo for project: ${projectId}, collection: ${collectionId} - ${error.message}`, 'color: red;');
+        throw error;
+    }
+};
 // Uploaded Files
 export const addUploadedFilesToFirestore = async (domain, projectId, collectionId, importFileSize, uploadedFiles) => {
     let color = domain === '' ? 'gray' : 'green';

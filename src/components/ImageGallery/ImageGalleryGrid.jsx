@@ -2,8 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Preview from '../../features/Preview/Preview';
 import { shortenFileName } from '../../utils/stringUtils';
 
-const ImageGalleryGrid = React.memo(({ projectId, imageUrls }) => {
+const ImageGalleryGrid = React.memo(({ projectId,collectionId, imageUrls }) => {
   // Preview
+  console.log(collectionId)
   const [isPreviewOpen,setIsPreviewOpen] = useState(false);
   const [previewIndex,setPreviewIndex] = useState(0);
   const openPreview = (index) => {
@@ -85,7 +86,7 @@ const ImageGalleryGrid = React.memo(({ projectId, imageUrls }) => {
           </div>
         ))}
       </div>
-      {isPreviewOpen && <Preview image={imageUrls[previewIndex] } {...{previewIndex,setPreviewIndex,imagesLength:imageUrls.length,closePreview,projectId}}/>}
+      {isPreviewOpen && <Preview image={imageUrls[previewIndex] } {...{previewIndex,setPreviewIndex,imagesLength:imageUrls.length,closePreview,projectId,collectionId}}/>}
     </div>
   );
 });

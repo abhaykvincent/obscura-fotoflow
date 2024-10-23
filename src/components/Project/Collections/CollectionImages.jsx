@@ -149,8 +149,8 @@ const CollectionImages = ({ id, collectionId, project }) => {
             </div>
             {imageUrls.length > 0 ? (
                 galleryView === 'grid' ?
-                <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id }} />:
-                <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id }} />
+                <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id,collectionId }} />:
+                <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId }} />
             ) : (
                 <label htmlFor="fileInput" className="drop-upload">
                     <div className="drop-area">
