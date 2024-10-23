@@ -114,7 +114,7 @@
     margin: 0 auto;
     margin-top: 8px*2;
     padding: 8px;
-    //max-height: calc(100vh - 8px*40);
+   min-height: calc(100vh - 8px*40);
     max-width: 8px*140;
     .photos{
       width: 100%;
@@ -122,13 +122,14 @@
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); // This will create a responsive grid
       gap: 8px;
       .photo{
+        min-height: 200px;
         position: relative;
         background-color: $light-0;
         border-radius: 2px;
         background-size: cover;
         border: 1px solid transparent;
         .img{
-
+          
           width: 100%;
         }
         &:hover input[type="checkbox"] {

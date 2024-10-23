@@ -57,9 +57,9 @@ export default function Selection() {
   // Update images when project or collectionId changes
   useEffect(() => {
     if(!project) return
-    setTotalCollections(project.collections.length)
-    
     document.title = project.name+' | Selection'
+
+    setTotalCollections(project.collections.length)
     setCurrentCollectionIndex(project.collections.findIndex(collection => collection.id === collectionId))
     let newImages = project?.collections.find((collection)=>collection.id===collectionId)?.uploadedFiles || []
     console.log(newImages)
@@ -77,11 +77,11 @@ export default function Selection() {
     return imagesTemp.slice((page-1)*size,page*size);
   }, [images, page]);
   useEffect(() => {
-    const photosDiv = document.querySelector('.gallary');
+    const photosDiv = document.querySelector('.gallery');
     if (photosDiv) {
-      photosDiv.scrollTop = 0;
+      photosDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [page]);
+  }, [page,collectionId]); // Trigger scroll on both page and collection changes
 
 
   // Fetch project data and set Selected Images  
@@ -180,7 +180,6 @@ export default function Selection() {
         </div>
         <div className="banner" />
       </div>
-      {selectionCompleted ? 'true':'false'}
       {!selectionCompleted ? 
       (<>
         <CollectionsPanel/>
@@ -202,8 +201,9 @@ export default function Selection() {
                 currentPage={page}
                 totalPages={totalPages}
                 completeSelection={completeSelection}
-                handlePageChange={(newPage) => {
+                handlePageChange={async (newPage) => {
                   handleAddOrRemoveSelectedImages()
+
                   setPage(newPage)
                 }}
                 saveSelection={saveSelection}
