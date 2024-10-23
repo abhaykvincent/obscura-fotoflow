@@ -39,7 +39,10 @@ const ShareGallery = ({ images,projectId }) => {
           setHasMore(newLoadedImages.length < images.length);
           return newLoadedImages;
         });
-        setLoading(false);
+        setTimeout(() => {
+          setLoading(false);
+      }, 1000);
+
       }
     });
 
@@ -48,17 +51,18 @@ const ShareGallery = ({ images,projectId }) => {
   return (
     <div className="gallary">
       <div className="photos">
-      {loadedImages.map((file, index) => (
-          <img
-            className="photo"
-            key={index}
-            src={file.url}
-            alt={`File ${index}`}
-            ref={index + 1 === loadedImages.length ? lastPhotoElementRef : null}
-            onClick={() => openPreview(index)}
-            loading="lazy" // This attribute helps with lazy loading
-          />
-        ))}
+        {
+          loadedImages.map((file, index) => (
+            index + 1 === loadedImages.length ?
+            <img className="photo" key={file.url} src={file.url} alt={`File ${index}`} 
+            ref={lastPhotoElementRef}
+            onClick={()=>openPreview(index)}>
+            </img>
+            : 
+            <img className="photo" key={file.url} src={file.url} alt={`File ${index}`} 
+            onClick={()=>openPreview(index)}></img>
+          ))
+        }
       </div>
         {
             isPreviewOpen && <Preview image={images[previewIndex] } {...{previewIndex,setPreviewIndex,imagesLength:images.length,closePreview,projectId}}/>
