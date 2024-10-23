@@ -26,7 +26,6 @@ console.log(studioName)
   const defaultStudio = useSelector(selectUserStudio)
 
   const [page,setPage]=useState(1);
-  const [size,setSize]=useState(100);
   // Fetch Images
 // if co collectionIs is passed, use the first collectionId
     collectionId  = collectionId || project?.collections[0]?.id
@@ -43,20 +42,14 @@ console.log(studioName)
       console.error('Failed to fetch project:', error);
     }
   };
-  const fetchImagesData = async () => {
-    try {
-      fetchImageUrls(studioName, projectId, collectionId, setImageUrls, page, size);
-    } catch (error) {
-      console.error('Failed to fetch project:', error);
-    }
-  };
   const findCollectionById= (collections, collectionId) => {
     return collections.find((collection) => collection.id === collectionId);
   }
 
+
+  
   useEffect(() => {
     fetchProjectData();
-    //fetchImagesData()
   }, []);
 
   useEffect(() => {
