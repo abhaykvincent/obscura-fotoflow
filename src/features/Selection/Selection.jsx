@@ -8,9 +8,11 @@ import SelectionGallery from '../../components/ImageGallery/SelectionGallery';
 import PaginationControl from '../../components/PaginationControl/PaginationControl';
 import './Selection.scss';
 import { selectDomain } from '../../app/slices/authSlice';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { trackEvent } from '../../analytics/utils';
 import { toTitleCase } from '../../utils/stringUtils';
+import { showAlert } from '../../app/slices/alertSlice';
+import Alert from '../../components/Alert/Alert';
 
 export default function Selection() {
   let { studioName,projectId, collectionId } = useParams();
@@ -28,6 +30,8 @@ export default function Selection() {
   const [currentCollectionIndex, setCurrentCollectionIndex] = useState(0);
   const [selectionCompleted, setSelectionCompleted] = useState(false);
   const [isInitialSelection, setIsInitialSelection] = useState(true);
+
+  const dispatch = useDispatch();
   const defaultOptions = {
     loop: false,
     autoplay: true,
@@ -141,6 +145,8 @@ export default function Selection() {
       if (unselectedImages.length > 0) {
         await removeUnselectedImagesFromFirestore(studioName, projectId, collectionId, unselectedImages, page, size, totalPages);
       }
+      
+      dispatch(showAlert({type:'success', message:`Selection saved!`})); 
     } catch (error) {
       console.error('Error updating selected/unselected images:', error);
     }
@@ -172,6 +178,8 @@ export default function Selection() {
 
   return (
     <div className="select-project">
+
+<Alert />
       <div className="project-header">
         <img className='banner' src={images[0]?images[0].url:''} alt="" srcset="" />
         <div className="gallery-info">
@@ -216,13 +224,14 @@ export default function Selection() {
       </>)
       :
         <div className="selected-completed">
-            <h4>Selection Complected</h4>
+            <h4>Selection Completed</h4>
           <div className="completed-animation">
           <Lottie
             options={defaultOptions}
             height={200}
             width={200}
-          />
+            />
+            <p className='selected-files-count'>Selected <b>{selectedImages.length}</b> out of {project.uploadedFilesCount}</p>
           <div className="button primary"
             onClick={() => setSelectionCompleted(false)}
           >
