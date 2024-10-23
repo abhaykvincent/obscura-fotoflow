@@ -31,6 +31,8 @@ export default function Selection() {
   const [selectionCompleted, setSelectionCompleted] = useState(false);
   const [isInitialSelection, setIsInitialSelection] = useState(true);
 
+  const [showAllPhotos, setShowAllPhotos] = useState(true);
+
   const dispatch = useDispatch();
   const defaultOptions = {
     loop: false,
@@ -179,14 +181,13 @@ export default function Selection() {
   return (
     <div className="select-project">
 
-<Alert />
+      <Alert />
       <div className="project-header">
         <img className='banner' src={images[0]?images[0].url:''} alt="" srcset="" />
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
           
         </div>
-        <div className="banner" />
       </div>
       {!selectionCompleted ? 
       (<>
@@ -194,15 +195,26 @@ export default function Selection() {
         {
           authenticated?
             <div className="shared-collection">
+              <div className="view-control">
+                        <div className="control-label label-all-photos">{project.collections[currentCollectionIndex].uploadedFiles.length} Photos</div>
+                        <div className="control-wrap">
+                            <div className="controls">
+                                <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All</div>
+                                <div className={`control ${!showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(false)}>Selected  {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
+                            </div>
+                            <div className={`active`}></div>
+                        </div>
+                        <div className={`control-label label-selected-photos ${selectedImages.length>0&&' active'}`}>{selectedImages.length} Photos</div>
+                    </div>
               {
                 paginatedImages.length>0?
-                <SelectionGallery images={paginatedImages} {...{selectedImages,setSelectedImages,setUnselectedImages,setSelectedImagesInCollection}} />
+                (<SelectionGallery images={showAllPhotos ? paginatedImages:selectedImages} {...{selectedImages,setSelectedImages,setUnselectedImages,setSelectedImagesInCollection}} />)
                 :
                 <div className="no-images-message">
                   <p>There are no photos in this collection</p>
                 </div>
               }
-              <PaginationControl
+              {showAllPhotos && <PaginationControl
                 images={paginatedImages}
                 currentCollectionIndex={currentCollectionIndex+1}
                 totalCollections={totalCollections}
@@ -217,6 +229,7 @@ export default function Selection() {
                 saveSelection={saveSelection}
                 project={project}
               />
+}
             </div> 
         :
           <GalleryPIN{...{setAuthenticated,projectPin:project.pin}}/>
