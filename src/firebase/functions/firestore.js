@@ -1,9 +1,11 @@
 
-import { db } from "../app";
-import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, writeBatch} from "firebase/firestore";
+import { db, storage } from "../app";
+import { collection, doc, getDocs, getDoc, setDoc, deleteDoc,arrayRemove, updateDoc, arrayUnion, writeBatch} from "firebase/firestore";
 import {generateMemorablePIN, generateRandomString} from "../../utils/stringUtils";
 import { deleteCollectionFromStorage, deleteProjectFromStorage } from "../../utils/storageOperations";
 import { update } from "firebase/database";
+import { ref, deleteObject } from "firebase/storage";
+import { showAlert } from "../../app/slices/alertSlice";
 
 
 // Studio
@@ -637,6 +639,32 @@ export const updateProjectStatusInFirestore = async (domain, projectId, status) 
         throw error;
     }
 };
+export const updateProjectLastOpenedInFirestore = async (domain, projectId) => {
+    if (!domain || !projectId) {
+        throw new Error('Domain and Project ID are required.');
+    }
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+
+        if (projectSnapshot.exists()) {
+            // Update the lastOpened field to the current time
+            await updateDoc(projectDocRef, { lastOpened: new Date().getTime() });
+            console.log(`%cProject lastOpened updated successfully for project: ${projectId}.`, `color: #54a134;`);
+        } else {
+            console.log(`%cProject ${projectId} does not exist.`, 'color: red;');
+            throw new Error('Project does not exist.');
+        }
+    } catch (error) {
+        console.error(`%cError updating lastOpened for project: ${projectId} - ${error.message}`, 'color: red;');
+        throw error;
+    }
+};
+
 
 // Set cover photo
 export const setCoverPhotoInFirestore = async (domain, projectId, image) => {
@@ -663,6 +691,44 @@ export const setCoverPhotoInFirestore = async (domain, projectId, image) => {
         throw error;
     }
 };
+export const setGalleryCoverPhotoInFirestore = async (domain, projectId, collectionId, image) => {
+    if (!domain || !projectId || !collectionId || !image) {
+        throw new Error('Domain, Project ID, Collection ID, and Image are required.');
+    }
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
+        }
+
+        const projectData = projectSnapshot.data();
+        const { collections } = projectData;
+
+        // Find the specific collection by collectionId
+        const collectionIndex = collections.findIndex(c => c.id === collectionId);
+        if (collectionIndex === -1) {
+            throw new Error('Collection ID does not exist.');
+        }
+
+        // Update the galleryCover for the found collection
+        const updatedCollections = [...collections];
+        updatedCollections[collectionIndex] = {
+            ...updatedCollections[collectionIndex],
+            galleryCover: image
+        };
+
+        // Save the updated collections array back to Firestore
+        await updateDoc(projectDocRef, { collections: updatedCollections });
+
+        console.log(`%cGallery cover photo updated successfully for project: ${projectId}, collection: ${collectionId}.`, `color: #54a134;`);
+    } catch (error) {
+        console.error(`%cError updating gallery cover photo for project: ${projectId}, collection: ${collectionId} - ${error.message}`, 'color: red;');
+        throw error;
+    }
+};
 // Uploaded Files
 export const addUploadedFilesToFirestore = async (domain, projectId, collectionId, importFileSize, uploadedFiles) => {
     let color = domain === '' ? 'gray' : 'green';
@@ -682,15 +748,29 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
 
         if (!collectionData.exists()) {
             // Create the subcollection document if it doesn't exist
-            batch.set(collectionDocRef, { uploadedFiles: [] });
+            batch.set(collectionDocRef, { uploadedFiles: [], filesCount: 0 });
         }
+        console.log(collectionData.data()?.filesCount)
 
-        batch.update(collectionDocRef, { uploadedFiles: arrayUnion(...uploadedFiles) });
+        // Update collection with new data, including filesCount
+        batch.update(collectionDocRef, {
+            uploadedFiles: arrayUnion(...uploadedFiles),
+        });
 
-        const projectCover = uploadedFiles[0]?.url || '';
+        const projectCover = uploadedFiles[0]?.url || ''
         batch.update(projectDocRef, {
-            uploadedFilesCount: projectData.data().uploadedFilesCount + uploadedFiles.length,
+            collections: projectData.data().collections.map(collection => {
+                if (collection.id === collectionId) {
+                    return {
+                        ...collection,
+                        galleryCover : collection?.galleryCover? collection.galleryCover : projectCover,
+                        filesCount: (collection.filesCount || 0) + uploadedFiles.length,
+                    };
+                }
+                return collection; // Return the original collection if id doesn’t match
+            }),
             totalFileSize: importFileSize + projectData.data().totalFileSize,
+            uploadedFilesCount: projectData.data().uploadedFilesCount + uploadedFiles.length,
             projectCover: projectCover,
             status: "uploaded",
             pin: projectData.data().pin || generateMemorablePIN(4),
@@ -702,5 +782,43 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
     } else {
         console.error('Project not found.');
         throw new Error('Project not found.');
+    }
+};
+
+
+// Delete file
+export const deleteFileFromFirestoreAndStorage = async (domain, projectId, collectionId, fileUrl, fileName) => {
+    // Validate required parameters
+    if (!domain || !projectId || !collectionId || !fileUrl || !fileName) {
+        throw new Error('Domain, Project ID, Collection ID, File URL, and File Name are required.');
+    }
+
+    console.log(`Deleting file ${fileName} from project: ${projectId}, collection: ${collectionId}`);
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+    const collectionDocRef = doc(projectDocRef, 'collections', collectionId);
+
+    try {
+        // 1. Delete from Firebase Storage
+        const storageRef = ref(storage, `${domain}/${projectId}/${collectionId}/${fileName}`);
+        await deleteObject(storageRef);
+        console.log(`File ${fileName} deleted from Firebase Storage`);
+
+        // 2. Remove from Firestore
+        const collectionSnapshot = await getDoc(collectionDocRef);
+        if (!collectionSnapshot.exists()) {
+            throw new Error('Collection does not exist.');
+        }
+
+        const collectionData = collectionSnapshot.data();
+        const updatedFiles = collectionData.uploadedFiles.filter(file => file.url !== fileUrl || file.name !== fileName);
+
+        await updateDoc(collectionDocRef, { ...collectionData, uploadedFiles: updatedFiles });
+        console.log(`File ${fileName} removed from Firestore`);
+    } catch (error) {
+        console.error('Error deleting file:', error.message);
+        throw error;
     }
 };

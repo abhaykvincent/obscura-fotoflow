@@ -27,7 +27,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
     // Import size
     const [showAllPhotos, setShowAllPhotos] = useState(true);
     const [page, setPage] = useState(1);
-    const [size, setSize] = useState(30);
+    const [size, setSize] = useState(15);
 
     // Upload progress
     const [uploadList, setUploadLists] = useState([]);
@@ -149,8 +149,8 @@ const CollectionImages = ({ id, collectionId, project }) => {
             </div>
             {imageUrls.length > 0 ? (
                 galleryView === 'grid' ?
-                <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id }} />:
-                <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id }} />
+                <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id,collectionId }} />:
+                <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId }} />
             ) : (
                 <label htmlFor="fileInput" className="drop-upload">
                     <div className="drop-area">
@@ -163,7 +163,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
             <div className="image-gallery-bottom-panel">
                 {/* <div className="button secondary">Load All</div> */}
                 
-                <div className={`button primary ${collectionImages.length === imageUrls.length ? 'disabled' : ''}`}
+                <div className={`button primary ${collectionImages?.length === imageUrls.length ? 'disabled' : ''}`}
                     onClick={() => setPage(page + 1)}
                 >Load More</div>
             </div>

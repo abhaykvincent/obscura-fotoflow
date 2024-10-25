@@ -7,13 +7,15 @@ import Refresh from '../../components/Refresh/Refresh';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectProjects } from '../../app/slices/projectsSlice';
 import { openModal } from '../../app/slices/modalSlice';
+import { getRecentProjects } from '../../utils/projectFilters';
 
 function Projects() {
     const dispatch = useDispatch()
+    
     const projects = useSelector(selectProjects)
+    const [recentProjects, setRecentProjects] = useState([])
     useEffect(() => {
-
-    console.log(projects)
+        setRecentProjects(getRecentProjects(projects))
     }, [projects]);
     return (
         <main className="projects">
@@ -43,8 +45,8 @@ function Projects() {
             </div>
             <div className="projects-list">
                 { 
-                projects.length !== 0? (
-                    projects.map((project, index) => (
+                recentProjects.length !== 0? (
+                    recentProjects.map((project, index) => (
                         <ProjectCard 
                         project={project}
                         key={project.id}

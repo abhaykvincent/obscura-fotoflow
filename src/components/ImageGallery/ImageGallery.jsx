@@ -88,7 +88,7 @@ const TimestampDisplay = ({ timestamp }) => {
   );
 };
 
-const ImageGallery = ({ projectId, imageUrls }) => {
+const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
   // Preview
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
@@ -177,7 +177,7 @@ const ImageGallery = ({ projectId, imageUrls }) => {
             ))}
           </div>
       ))}
-      {isPreviewOpen && <Preview image={imageUrls[previewIndex]} {...{ previewIndex, setPreviewIndex, imagesLength: imageUrls.length, closePreview, projectId }} />}
+      {isPreviewOpen && <Preview image={imageUrls[previewIndex]} {...{ previewIndex, setPreviewIndex, imagesLength: imageUrls.length, closePreview, projectId,collectionId }} />}
     </div>
   );
 };
