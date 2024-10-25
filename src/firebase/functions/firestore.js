@@ -763,7 +763,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
                 if (collection.id === collectionId) {
                     return {
                         ...collection,
-                        galleryCover : projectCover,
+                        galleryCover : collection?.galleryCover? collection.galleryCover : projectCover,
                         filesCount: (collection.filesCount || 0) + uploadedFiles.length,
                     };
                 }
