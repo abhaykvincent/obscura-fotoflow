@@ -1,9 +1,11 @@
 
-import { db } from "../app";
-import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, writeBatch} from "firebase/firestore";
+import { db, storage } from "../app";
+import { collection, doc, getDocs, getDoc, setDoc, deleteDoc,arrayRemove, updateDoc, arrayUnion, writeBatch} from "firebase/firestore";
 import {generateMemorablePIN, generateRandomString} from "../../utils/stringUtils";
 import { deleteCollectionFromStorage, deleteProjectFromStorage } from "../../utils/storageOperations";
 import { update } from "firebase/database";
+import { ref, deleteObject } from "firebase/storage";
+import { showAlert } from "../../app/slices/alertSlice";
 
 
 // Studio
@@ -740,5 +742,42 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
     } else {
         console.error('Project not found.');
         throw new Error('Project not found.');
+    }
+};
+
+// Delete file
+export const deleteFileFromFirestoreAndStorage = async (domain, projectId, collectionId, fileUrl, fileName) => {
+    // Validate required parameters
+    if (!domain || !projectId || !collectionId || !fileUrl || !fileName) {
+        throw new Error('Domain, Project ID, Collection ID, File URL, and File Name are required.');
+    }
+
+    console.log(`Deleting file ${fileName} from project: ${projectId}, collection: ${collectionId}`);
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+    const collectionDocRef = doc(projectDocRef, 'collections', collectionId);
+
+    try {
+        // 1. Delete from Firebase Storage
+        const storageRef = ref(storage, `${domain}/${projectId}/${collectionId}/${fileName}`);
+        await deleteObject(storageRef);
+        console.log(`File ${fileName} deleted from Firebase Storage`);
+
+        // 2. Remove from Firestore
+        const collectionSnapshot = await getDoc(collectionDocRef);
+        if (!collectionSnapshot.exists()) {
+            throw new Error('Collection does not exist.');
+        }
+
+        const collectionData = collectionSnapshot.data();
+        const updatedFiles = collectionData.uploadedFiles.filter(file => file.url !== fileUrl || file.name !== fileName);
+
+        await updateDoc(collectionDocRef, { ...collectionData, uploadedFiles: updatedFiles });
+        console.log(`File ${fileName} removed from Firestore`);
+    } catch (error) {
+        console.error('Error deleting file:', error.message);
+        throw error;
     }
 };

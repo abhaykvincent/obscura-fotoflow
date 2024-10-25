@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react'
 import './Preview.scss'
 import { shortenFileName } from '../../utils/stringUtils'
-import { setCoverPhotoInFirestore, setGalleryCoverPhotoInFirestore } from '../../firebase/functions/firestore'
+import { deleteFileFromFirestoreAndStorage, setCoverPhotoInFirestore, setGalleryCoverPhotoInFirestore } from '../../firebase/functions/firestore'
 import { useState } from 'react'
 import { selectDomain } from '../../app/slices/authSlice'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useDebouncedResize } from '../../hooks/debouncedResize'
 import { useParams } from 'react-router'
+import { deleteFile, deleteFileFromCollection, deleteFileFromState } from '../../app/slices/projectsSlice'
 
 function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePreview, projectId,collectionId }) {
   
@@ -25,7 +26,36 @@ function Preview({ image, previewIndex,setPreviewIndex,imagesLength, closePrevie
 // NEW: Track touch positions for swipe handling.
 const [touchStartX, setTouchStartX] = useState(0);
 const [touchEndX, setTouchEndX] = useState(0);
-  
+const dispatch = useDispatch();
+
+const handleDelete = async () => {
+  try {
+    
+    // Delete the file from Firebase Storage and Firestore
+    await dispatch(deleteFile({
+      studioName,
+      projectId,
+      collectionId,
+      imageUrl: image.url, // Change this as per your requirement
+      imageName: image.name,
+    }));
+    
+
+
+    // Move to the next or previous image based on availability
+    if (previewIndex < imagesLength - 1) {
+      setPreviewIndex(previewIndex + 1); // Move to next image
+    } else if (previewIndex > 0) {
+      setPreviewIndex(previewIndex - 1); // Move to previous image if last image was deleted
+    } else {
+      closePreview(); // Close preview if no images left
+    }
+  } catch (error) {
+    console.error('Error deleting file:', error);
+  }
+};
+
+
 
   useEffect(() => {
     //scrolltotop
@@ -179,12 +209,15 @@ const [touchEndX, setTouchEndX] = useState(0);
             
             }
               >Set Gallery cover</div>
+              <div className="icon delete" onClick={handleDelete}>Delete</div>
           <div className="icon download"
           onClick={async (event) => {
             event.stopPropagation(); // Prevent the next image navigation
             downloadImage(image.url, image.name);
           }}
-          ></div>{/* 
+          ></div>
+          
+          {/* 
           <div className="icon share"></div> */}
         </div>
         <div className="center-controls">

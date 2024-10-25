@@ -288,7 +288,7 @@
     top: 0px;
     left: 0px;
     .controls{
-        &.top .right-controls .set-cover{
+        &.top .right-controls .set-cover,.delete{
             display: none;
         }
         &.bottom {
