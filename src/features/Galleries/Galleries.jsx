@@ -73,6 +73,8 @@ if(!collectionId&&defaultCollectionId!==''){
   return (
   <>
     {/* Page Header */}
+    <DeleteConfirmationModal itemType="collection" itemName={collection.name} onDeleteConfirm={onDeleteConfirm} />
+
     <div className="project-info">
       <div className="breadcrumbs">
         <Link className="back highlight" to={`/${domain}/project/${encodeURIComponent(id)}`}>{project?.name}</Link>
@@ -99,7 +101,7 @@ if(!collectionId&&defaultCollectionId!==''){
             <DropdownMenuItem
               onSelect={() => {
                 // Your action for Delete
-                setConfirmDeleteCollection(true);
+                dispatch(openModal('confirmDeletecollection'));
               }}
             >
               Delete Gallery
@@ -114,6 +116,7 @@ if(!collectionId&&defaultCollectionId!==''){
     </div>
 
     <AddCollectionModal project={project} />
+
     {/* Page Main */}
     <main className='project-page gallery-page'>
       {
@@ -124,9 +127,8 @@ if(!collectionId&&defaultCollectionId!==''){
           </div>
         )
       }
-      <ShareGallery   project={project} />
-      {confirmDeleteCollection ? <DeleteConfirmationModal itemType="collection" itemName={collection.name} onDeleteConfirm={onDeleteConfirm} />:''}
     </main>
+    <ShareGallery   project={project} />
     
   </>
   )}
