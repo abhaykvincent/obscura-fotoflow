@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, selectModal } from '../../app/slices/modalSlice';
 import { formatDecimal } from '../../utils/stringUtils';
 import { selectDomain } from '../../app/slices/authSlice';
+import { useModalFocus } from '../../hooks/modalInputFocus';
 
 export default function AddBudgetModal({ project }) {
   const dispatch = useDispatch();
@@ -61,10 +62,12 @@ export default function AddBudgetModal({ project }) {
         });
     }
   };
+
+const modalRef = useModalFocus(visible.addBudget);
   if (!visible.addBudget) return null;
 
   return (
-    <div className="modal-container">
+    <div className="modal-container"  ref={modalRef} >
       <div className="modal add-payment">
         <div className='modal-header'>
           <div className="modal-controls">

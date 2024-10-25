@@ -5,15 +5,17 @@ import { showAlert } from '../../app/slices/alertSlice';
 import './AddEvent.scss'
 import { selectDomain } from '../../app/slices/authSlice';
 import { trackEvent } from '../../analytics/utils';
+import { useModalFocus } from '../../hooks/modalInputFocus';
 
 function AddEventModal({ project, visible, onClose}) {
   const dispatch = useDispatch();
   const [EventData, setEventData] = useState({
-    type: 'Wedding day',
+    type: process.env.NODE_ENV === 'development'?'Wedding day':'',
     date: new Date().toISOString().split('T')[0],
     // default time morining "8:00 AM" exactily an convert to a date time format
     time: '09:00',
-    location:'Kochi, India',
+    location: process.env.NODE_ENV === 'development'?'Kochi, India':'',
+
     crews: []
   });
   const domain = useSelector(selectDomain)
@@ -34,12 +36,13 @@ function AddEventModal({ project, visible, onClose}) {
     onClose('createEvent');
   };
 
+  const modalRef = useModalFocus(visible);
   if (!visible) {
     return null;
   }
 
   return (
-    <div className="modal-container">
+    <div className="modal-container" ref={modalRef} >
       <div className="modal create-event">
         <div className='modal-header'>
           <div className="modal-controls">

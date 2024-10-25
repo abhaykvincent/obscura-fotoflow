@@ -6,6 +6,7 @@ import { closeModal, selectModal } from '../../app/slices/modalSlice';
 import { formatDecimal } from '../../utils/stringUtils';
 import { selectDomain } from '../../app/slices/authSlice';
 import { trackEvent } from '../../analytics/utils';
+import { useModalFocus } from '../../hooks/modalInputFocus';
 
 function AddExpenseModal({ project }) {
   const dispatch = useDispatch();
@@ -75,10 +76,11 @@ function AddExpenseModal({ project }) {
     validateForm()
   },[expenseData])
 
+  const modalRef = useModalFocus(visible.addExpense);
   if (!visible.addExpense) return null;
 
   return (
-    <div className="modal-container">
+    <div className="modal-container"  ref={modalRef}>
       <div className="modal add-payment">
         <div className='modal-header'>
           <div className="modal-controls">
