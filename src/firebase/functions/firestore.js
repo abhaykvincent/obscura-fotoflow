@@ -639,6 +639,32 @@ export const updateProjectStatusInFirestore = async (domain, projectId, status) 
         throw error;
     }
 };
+export const updateProjectLastOpenedInFirestore = async (domain, projectId) => {
+    if (!domain || !projectId) {
+        throw new Error('Domain and Project ID are required.');
+    }
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+
+        if (projectSnapshot.exists()) {
+            // Update the lastOpened field to the current time
+            await updateDoc(projectDocRef, { lastOpened: new Date().getTime() });
+            console.log(`%cProject lastOpened updated successfully for project: ${projectId}.`, `color: #54a134;`);
+        } else {
+            console.log(`%cProject ${projectId} does not exist.`, 'color: red;');
+            throw new Error('Project does not exist.');
+        }
+    } catch (error) {
+        console.error(`%cError updating lastOpened for project: ${projectId} - ${error.message}`, 'color: red;');
+        throw error;
+    }
+};
+
 
 // Set cover photo
 export const setCoverPhotoInFirestore = async (domain, projectId, image) => {
