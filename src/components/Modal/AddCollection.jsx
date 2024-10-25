@@ -64,7 +64,6 @@ const handleSubmit = () => {
 };
 
 const modalRef = useModalFocus(visible.createCollection);
-
   if (!visible.createCollection) {
     return null;
   }

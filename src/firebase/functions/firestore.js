@@ -639,6 +639,32 @@ export const updateProjectStatusInFirestore = async (domain, projectId, status) 
         throw error;
     }
 };
+export const updateProjectLastOpenedInFirestore = async (domain, projectId) => {
+    if (!domain || !projectId) {
+        throw new Error('Domain and Project ID are required.');
+    }
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+
+        if (projectSnapshot.exists()) {
+            // Update the lastOpened field to the current time
+            await updateDoc(projectDocRef, { lastOpened: new Date().getTime() });
+            console.log(`%cProject lastOpened updated successfully for project: ${projectId}.`, `color: #54a134;`);
+        } else {
+            console.log(`%cProject ${projectId} does not exist.`, 'color: red;');
+            throw new Error('Project does not exist.');
+        }
+    } catch (error) {
+        console.error(`%cError updating lastOpened for project: ${projectId} - ${error.message}`, 'color: red;');
+        throw error;
+    }
+};
+
 
 // Set cover photo
 export const setCoverPhotoInFirestore = async (domain, projectId, image) => {
@@ -722,15 +748,29 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
 
         if (!collectionData.exists()) {
             // Create the subcollection document if it doesn't exist
-            batch.set(collectionDocRef, { uploadedFiles: [] });
+            batch.set(collectionDocRef, { uploadedFiles: [], filesCount: 0 });
         }
+        console.log(collectionData.data()?.filesCount)
 
-        batch.update(collectionDocRef, { uploadedFiles: arrayUnion(...uploadedFiles) });
+        // Update collection with new data, including filesCount
+        batch.update(collectionDocRef, {
+            uploadedFiles: arrayUnion(...uploadedFiles),
+        });
 
-        const projectCover = uploadedFiles[0]?.url || '';
+        const projectCover = uploadedFiles[0]?.url || ''
         batch.update(projectDocRef, {
-            uploadedFilesCount: projectData.data().uploadedFilesCount + uploadedFiles.length,
+            collections: projectData.data().collections.map(collection => {
+                if (collection.id === collectionId) {
+                    return {
+                        ...collection,
+                        galleryCover : projectCover,
+                        filesCount: (collection.filesCount || 0) + uploadedFiles.length,
+                    };
+                }
+                return collection; // Return the original collection if id doesn’t match
+            }),
             totalFileSize: importFileSize + projectData.data().totalFileSize,
+            uploadedFilesCount: projectData.data().uploadedFilesCount + uploadedFiles.length,
             projectCover: projectCover,
             status: "uploaded",
             pin: projectData.data().pin || generateMemorablePIN(4),
@@ -744,6 +784,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         throw new Error('Project not found.');
     }
 };
+
 
 // Delete file
 export const deleteFileFromFirestoreAndStorage = async (domain, projectId, collectionId, fileUrl, fileName) => {

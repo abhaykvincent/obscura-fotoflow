@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Home.scss';
-import { getProjectsByStatus, getRecentProjects } from '../../utils/projectFilters';
+import { getProjectsByLastUpdated, getProjectsByStatus, getRecentProjects } from '../../utils/projectFilters';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
 import Refresh from '../../components/Refresh/Refresh';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,7 +20,7 @@ function Home() {
 
     const [recentProjects, setRecentProjects] = useState([])
     useEffect(() => {
-        setRecentProjects(getRecentProjects(projects, 4))
+        setRecentProjects(getProjectsByLastUpdated(projects, 8))
     }, [])
 
     return (

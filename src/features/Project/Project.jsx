@@ -31,6 +31,7 @@ import { DropdownMenu,
   DropdownMenuSeparator,
   DropdownMenuTrigger, } from '@radix-ui/react-dropdown-menu';
 import ShareGallery from '../../components/Modal/ShareGallery';
+import { updateProjectLastOpenedInFirestore } from '../../firebase/functions/firestore';
 
 export default function Project() {
   const { id } = useParams();
@@ -65,6 +66,7 @@ export default function Project() {
     if (project) {
       console.log(project)
       document.title = `${project.name} - ${project.type}`;
+      updateProjectLastOpenedInFirestore(domain, project.id);
     }
   }, [project]);
   useEffect(() => {
@@ -85,6 +87,10 @@ export default function Project() {
   return (
     <>
     
+      <AddCollectionModal project={project} />
+        <AddPaymentModal project={project} />
+        <AddExpenseModal project={project} />
+        <AddBudgetModal project={project} />
       <main className='project-page'>
        
         <div className="project-dashboard">
@@ -92,10 +98,6 @@ export default function Project() {
         </div>
         {/* <SidePanel  project={project}/> */}
         {/* Modals */}
-        <AddCollectionModal project={project} />
-        <AddPaymentModal project={project} />
-        <AddExpenseModal project={project} />
-        <AddBudgetModal project={project} />
 
       <ShareGallery   project={project} />
         <Refresh />
