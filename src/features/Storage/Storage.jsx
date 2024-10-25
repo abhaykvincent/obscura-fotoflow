@@ -44,7 +44,7 @@ function Storage() {
                         <p>Free Storage</p>
                     </div>
                     <div className="action">
-                        <Link to="/${defaultStudio.domain}/subscriptions" className="button secondary large">Add More Storage</Link>
+                        <Link to="/${defaultStudio.domain}/subscriptions" className="button secondary large">Add Storage</Link>
                     </div>
                 </div>
                 <div className="row subscription-group">
