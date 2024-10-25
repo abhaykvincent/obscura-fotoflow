@@ -87,6 +87,10 @@ export default function Project() {
   return (
     <>
     
+      <AddCollectionModal project={project} />
+        <AddPaymentModal project={project} />
+        <AddExpenseModal project={project} />
+        <AddBudgetModal project={project} />
       <main className='project-page'>
        
         <div className="project-dashboard">
@@ -94,10 +98,6 @@ export default function Project() {
         </div>
         {/* <SidePanel  project={project}/> */}
         {/* Modals */}
-        <AddCollectionModal project={project} />
-        <AddPaymentModal project={project} />
-        <AddExpenseModal project={project} />
-        <AddBudgetModal project={project} />
 
       <ShareGallery   project={project} />
         <Refresh />

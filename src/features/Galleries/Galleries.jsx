@@ -112,6 +112,8 @@ if(!collectionId&&defaultCollectionId!==''){
       
       </div>
     </div>
+
+    <AddCollectionModal project={project} />
     {/* Page Main */}
     <main className='project-page gallery-page'>
       {
@@ -122,7 +124,6 @@ if(!collectionId&&defaultCollectionId!==''){
           </div>
         )
       }
-      <AddCollectionModal project={project}/>
       <ShareGallery   project={project} />
       {confirmDeleteCollection ? <DeleteConfirmationModal itemType="collection" itemName={collection.name} onDeleteConfirm={onDeleteConfirm} />:''}
     </main>
