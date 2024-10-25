@@ -27,7 +27,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
     // Import size
     const [showAllPhotos, setShowAllPhotos] = useState(true);
     const [page, setPage] = useState(1);
-    const [size, setSize] = useState(30);
+    const [size, setSize] = useState(15);
 
     // Upload progress
     const [uploadList, setUploadLists] = useState([]);
