@@ -30,7 +30,10 @@ const CollectionsPanel = ({ project, collectionId}) => {
                         backgroundSize:`${collection?.galleryCover?'':'40%'}`
 
                       }}
-                    ></div>
+                    >
+
+                      
+                    </div>
                   </div>
                 </div>
                 <div className="gallery-name">Upload</div>
@@ -46,7 +49,14 @@ const CollectionsPanel = ({ project, collectionId}) => {
                         backgroundSize:`${collection?.galleryCover?'':'40%'}`
 
                       }}
-                    ></div>
+                    >
+
+<div className="filesCount">
+                        {
+                          collection?.filesCount ? collection?.filesCount+' Photos':'No photos'
+                        } 
+                      </div>
+                    </div>
 
                   </div>
                 </div>
