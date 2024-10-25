@@ -26,11 +26,14 @@ const CollectionsPanel = ({ project, collectionId}) => {
                     style={
                       { 
                         backgroundImage: 
-                        `url(${project.projectCover!=""?project.projectCover:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`,
-                        backgroundSize:`${project.projectCover!=""?'':'40%'}`
+                        `url(${collection?.galleryCover ? collection.galleryCover:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`,
+                        backgroundSize:`${collection?.galleryCover?'':'40%'}`
 
                       }}
-                    ></div>
+                    >
+
+                      
+                    </div>
                   </div>
                 </div>
                 <div className="gallery-name">Upload</div>
@@ -42,11 +45,19 @@ const CollectionsPanel = ({ project, collectionId}) => {
                     style={
                       { 
                         backgroundImage: 
-                        `url(${project.projectCover!=""?project.projectCover:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`,
-                        backgroundSize:`${project.projectCover!=""?'':'40%'}`
+                        `url(${collection?.galleryCover ? collection.galleryCover:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`,
+                        backgroundSize:`${collection?.galleryCover?'':'40%'}`
 
                       }}
-                    ></div>
+                    >
+{
+                          collection?.filesCount ?
+                  <div className="filesCount">
+                         {collection?.filesCount+' Photos'
+                        } 
+                      </div>:''
+                      }
+                    </div>
 
                   </div>
                 </div>

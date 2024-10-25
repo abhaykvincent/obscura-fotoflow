@@ -1,7 +1,7 @@
 // slices/authSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
-import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteProjectFromFirestore, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
+import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 
 
@@ -97,7 +97,15 @@ export const addBudget =  createAsyncThunk(
     console.log(budgetData)
     return {projectId,budgetData};
   }
+);export const deleteFile = createAsyncThunk(
+  'projects/deleteFile',
+  async ({ studioName, projectId, collectionId, imageUrl, imageName }, { dispatch }) => {
+    // Call the function to delete the file
+    await deleteFileFromFirestoreAndStorage(studioName, projectId, collectionId, imageUrl, imageName);
+    return { projectId, collectionId, fileName: imageName }; // Return necessary data
+  }
 );
+
 
 
 const projectsSlice = createSlice({
@@ -106,7 +114,9 @@ const projectsSlice = createSlice({
   reducers: {
     setProjects_temp: (state, action) => {
       state.data = action.payload;
-    },
+    }
+    
+  
   },
   extraReducers: (builder) => {
 
@@ -208,6 +218,16 @@ const projectsSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+      builder
+      .addCase(deleteFile.pending, (state) => {
+      })
+      
+      .addCase(deleteFile.fulfilled, (state, action) => {
+      })
+    
+      .addCase(deleteFile.rejected, (state, action) => {
+        state.error = action.error.message;
+      });
       // Add Event
       builder
       .addCase(addEvent.pending, (state) => {

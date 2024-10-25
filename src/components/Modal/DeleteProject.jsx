@@ -1,19 +1,25 @@
 import React from 'react';
-import { closeModal } from '../../app/slices/modalSlice';
-import { useDispatch } from 'react-redux';
+import { closeModal, selectModal } from '../../app/slices/modalSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useModalFocus } from '../../hooks/modalInputFocus';
 
 function DeleteConfirmationModal({ itemType, itemName, onDeleteConfirm }) {
   console.log({ itemType, itemName, onDeleteConfirm })
   const dispatch = useDispatch();
   
+  const visible = useSelector(selectModal);
   const handleDelete = () => {
     // Call the delete function upon confirmation
     onDeleteConfirm();
+    dispatch(closeModal(`confirmDelete${itemType}`));
   };
 
+
+  
+  if (!visible.confirmDeleteproject && !visible.confirmDeletecollection) return null;
   return (
-    <div className="modal-container">
-      <div className="modal delete-item">
+    <div className="modal-container"  >
+      <div className="modal island delete-item">
         <div className="modal-header">
           <div className="modal-controls">
             <div 

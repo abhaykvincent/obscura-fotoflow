@@ -5,8 +5,8 @@ const initialState = {
     createProject: false,
     createCollection: false,
     shareGallery: false,
-    confirmDeleteProject:false,
-    confirmDeleteCollection:false,
+    confirmDeleteproject:false,
+    confirmDeletecollection:false,
     addPayment:false,
     addExpense:false,
     addBudget: false,
@@ -22,6 +22,7 @@ const modalSlice = createSlice({
       console.log('Opening '+action.payload +' Modal ...')
       window.scrollTo(0, 0);
       document.body.style.overflow = 'hidden';
+      //
     },
     closeModal: (state, action) => {
       state[action.payload] = false;

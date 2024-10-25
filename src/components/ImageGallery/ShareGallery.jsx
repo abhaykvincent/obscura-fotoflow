@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Preview from '../../features/Preview/Preview';
 
-const ShareGallery = ({ images,projectId }) => {
+const ShareGallery = ({ images,projectId,collectionId }) => {
   const [size, setSize] = useState(12);
   const[loadedImages, setLoadedImages] = useState(images.slice(0, size));
   const [loading, setLoading] = useState(false)
@@ -65,7 +65,7 @@ const ShareGallery = ({ images,projectId }) => {
         }
       </div>
         {
-            isPreviewOpen && <Preview image={images[previewIndex] } {...{previewIndex,setPreviewIndex,imagesLength:images.length,closePreview,projectId}}/>
+            isPreviewOpen && <Preview image={images[previewIndex] } {...{previewIndex,setPreviewIndex,imagesLength:images.length,closePreview,projectId,collectionId}}/>
         }
     </div>
   );

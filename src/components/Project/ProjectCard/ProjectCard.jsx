@@ -21,6 +21,7 @@ console.log(project.name,project.projectCover )
                 style={{
                     backgroundImage: project.projectCover ? `url(${project.projectCover})` : '',
                     backgroundSize: project.projectCover ? 'cover' : '',
+                    backgroundBlendMode: project.projectCover ? '' : 'soft-light',
                 }}
             />
         </div>

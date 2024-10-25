@@ -114,7 +114,7 @@ console.log(studioName)
         
       </div>
         <div className="shared-collection">
-          <ShareGallery images={imageUrls} projectId={projectId}/>
+          <ShareGallery images={imageUrls} projectId={projectId} collectionId={collectionId}/>
           <p className='studio-tag-line'>{`smile with ${studioName}`}</p>
         </div>
     </div>
