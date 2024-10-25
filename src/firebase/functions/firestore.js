@@ -770,6 +770,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
                 return collection; // Return the original collection if id doesn’t match
             }),
             totalFileSize: importFileSize + projectData.data().totalFileSize,
+            uploadedFilesCount: projectData.data().uploadedFilesCount + uploadedFiles.length,
             projectCover: projectCover,
             status: "uploaded",
             pin: projectData.data().pin || generateMemorablePIN(4),
