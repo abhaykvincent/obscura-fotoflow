@@ -50,12 +50,13 @@ const CollectionsPanel = ({ project, collectionId}) => {
 
                       }}
                     >
-
-<div className="filesCount">
-                        {
-                          collection?.filesCount ? collection?.filesCount+' Photos':'No photos'
+{
+                          collection?.filesCount ?
+                  <div className="filesCount">
+                         {collection?.filesCount+' Photos'
                         } 
-                      </div>
+                      </div>:''
+                      }
                     </div>
 
                   </div>

@@ -730,6 +730,15 @@ body{
     animation-fill-mode: forwards;
     z-index: 21;
     animation-timing-function: ease-out;
+    &.island{
+
+      top: calc(50vh);
+      left: calc(50vw );
+      height: auto;
+      transform: translate(-50%,calc(-50% - $header-height)) scale(0.9);
+      animation: none;
+      opacity: 1;
+    }
     &:hover{
       animation-duration: 0.2;
       transition-duration: 0.2s;

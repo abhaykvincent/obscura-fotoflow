@@ -5,6 +5,7 @@ import { closeModal, selectModal } from '../../app/slices/modalSlice';
 import { selectDomain } from '../../app/slices/authSlice';
 import { useLocation } from 'react-router';
 import { extractDomain, getGalleryURL } from '../../utils/urlUtils';
+import { useModalFocus } from '../../hooks/modalInputFocus';
 
 function ShareGallery({project }) {
   // Get the current location object
@@ -16,6 +17,8 @@ function ShareGallery({project }) {
   const visible = useSelector(selectModal)
   const onClose = () => dispatch(closeModal('shareGallery'))
   const domain = useSelector(selectDomain)
+
+const modalRef = useModalFocus(visible.shareGallery);
   if (!visible.shareGallery) {
     return null;
   }

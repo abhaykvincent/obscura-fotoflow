@@ -43,9 +43,7 @@ export default function Project() {
   const projectsStatus = useSelector(selectProjectsStatus);
   const domain = useSelector(selectDomain);
 
-  const [confirmDeleteProject,setConfirmDeleteProject] = useState(false)
   // Delete Project Modal
-  const onDeleteConfirmClose = () => setConfirmDeleteProject(false)
   const onDeleteConfirm = () => dispatch(deleteProject({domain,projectId:id}))
 
 
@@ -86,6 +84,8 @@ export default function Project() {
 
   return (
     <>
+      <ShareGallery   project={project} />
+      <DeleteConfirmationModal itemType="project" itemName={project.name}  onDeleteConfirm={onDeleteConfirm} />
     
       <AddCollectionModal project={project} />
         <AddPaymentModal project={project} />
@@ -99,7 +99,6 @@ export default function Project() {
         {/* <SidePanel  project={project}/> */}
         {/* Modals */}
 
-      <ShareGallery   project={project} />
         <Refresh />
       </main>
       <div className="project-info">
@@ -122,17 +121,17 @@ export default function Project() {
             <DropdownMenuItem
               onSelect={() => {
                 // Your action for Delete
-                setConfirmDeleteProject(true);
+                dispatch(openModal('confirmDeleteproject'));
               }}
             >
               Delete Project
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        {confirmDeleteProject && <DeleteConfirmationModal itemType="project" itemName={project.name}  onDeleteConfirm={onDeleteConfirm} />}
 
         </div>
       </div>
+
     </>
   );
 }
