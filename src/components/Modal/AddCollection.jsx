@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { addCollection } from '../../app/slices/projectsSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,6 +7,8 @@ import { closeModal, selectModal } from '../../app/slices/modalSlice';
 import { selectCollectionsLimit, selectStudio } from '../../app/slices/studioSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import { trackEvent } from '../../analytics/utils';
+import { useModalFocus } from '../../hooks/modalInputFocus';
+
 
 function AddCollectionModal({ project }) {
   const dispatch = useDispatch();
@@ -61,13 +63,14 @@ const handleSubmit = () => {
   onClose();
 };
 
+const modalRef = useModalFocus(visible.createCollection);
 
   if (!visible.createCollection) {
     return null;
   }
 
   return (
-    <div className="modal-container">
+    <div className="modal-container" ref={modalRef} >
       <div className="modal create-project">
         <div className='modal-header'>
           <div className="modal-controls">

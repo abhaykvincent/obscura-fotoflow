@@ -10,6 +10,7 @@ import { trackEvent } from '../../analytics/utils';
 import { analytics } from '../../firebase/app';
 import { logEvent } from 'firebase/analytics';
 import { sendEmailNotification } from '../../utils/Notification/sendEmailNotification';
+import { useModalFocus } from '../../hooks/modalInputFocus';
 
 function AddProjectModal() {
     const dispatch = useDispatch();
@@ -111,12 +112,16 @@ function AddProjectModal() {
   };
 
 
+  const modalRef = useModalFocus(visible.createProject);
   if (!visible.createProject) {
-    return null;
-  }
-
-  return (
-    <div className="modal-container">
+      return null;
+    }
+    
+    return (
+        <div className="modal-container"
+        ref={modalRef} 
+    
+    >
         <div className="modal create-project">
             <div className='modal-header'>
                 <div className="modal-controls">
