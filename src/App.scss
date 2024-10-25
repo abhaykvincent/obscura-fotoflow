@@ -445,7 +445,7 @@ body{
           display: grid;
           align-items: center;
           align-content: center;
-          height: calc(100vh - 8px*52);
+          MIN-height: calc(100vh - 8px*52);
           border-radius: 8px*1;
           border: 1px double $dark-0;
           stroke-dashoffset: 20px 10px;
