@@ -137,6 +137,21 @@
 
             background-image: url('https://img.icons8.com/?size=100&id=11695&format=png&color=FFFFFF');
         }
+        &.user::before{
+            background-size: 100%;
+
+            background-image: url('https://img.icons8.com/?size=100&id=12438&format=png&color=FFFFFF');
+        }
+        &.delete::before{
+            background-size: 90%;
+
+            background-image: url('https://img.icons8.com/?size=100&id=67884&format=png&color=FFFFFFF');
+        }
+        &.invitation::before{
+            background-size: 100%;
+
+            background-image: url('https://img.icons8.com/?size=100&id=1074&format=png&color=FFFFFF');
+        }
         &.edit::before{
             background-size: 80%;
             background-image: url('https://img.icons8.com/?size=100&id=114093&format=png&color=FFFFFF');

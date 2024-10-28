@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { addBudget, addPayment } from '../../app/slices/projectsSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeModal, selectModal } from '../../app/slices/modalSlice';
+import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
 import { formatDecimal } from '../../utils/stringUtils';
 import { selectDomain } from '../../app/slices/authSlice';
 import { useModalFocus } from '../../hooks/modalInputFocus';
@@ -11,7 +11,7 @@ export default function AddBudgetModal({ project }) {
   const dispatch = useDispatch();
   const domain = useSelector(selectDomain)
   const visible = useSelector(selectModal);
-  const onClose = () => dispatch(closeModal('addBudget'));
+  const onClose = () => dispatch(closeModalWithAnimation('addBudget'));
   
   const [budgetData, setBudgetData] = useState({
     amount: null

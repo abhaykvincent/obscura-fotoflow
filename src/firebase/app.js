@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Fotoflow-dev
-const firebaseConfig = {
+/* const firebaseConfig = {
     apiKey: "AIzaSyDmAGZJTd1xSofgYgyQeGOYP2dSiLE646U",
     authDomain: "fotoflow-dev.firebaseapp.com",
     projectId: "fotoflow-dev",
@@ -22,10 +22,10 @@ const firebaseConfig = {
     messagingSenderId: "180761954293",
     appId: "1:180761954293:web:2756c328ad6f8d792e82bc",
     measurementId: "G-HMJWHV4W3X"
-  };
+  }; */
 
 // Obscura
- /*  const firebaseConfig = {
+  const firebaseConfig = {
     apiKey: "AIzaSyATMISVaGPMkJANWrzgmOGqgMGHprnrT04",
     authDomain: "obscura-fotoflow.firebaseapp.com",
     projectId: "obscura-fotoflow",
@@ -33,7 +33,7 @@ const firebaseConfig = {
     messagingSenderId: "541778693405",
     appId: "1:541778693405:web:030ac1bcc8e072ea94e5f4",
     measurementId: "G-3P0M36DPY2"
-}; */
+};
 
 const app = initializeApp(firebaseConfig);
 

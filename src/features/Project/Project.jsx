@@ -19,7 +19,7 @@ import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 
 // Redux
 import { deleteProject, selectProjects, selectProjectsStatus } from '../../app/slices/projectsSlice';
-import { closeModal, openModal, selectModal } from '../../app/slices/modalSlice';
+import { closeModal, closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 
@@ -74,7 +74,7 @@ export default function Project() {
   const handleDeleteConfirm = () => {
     dispatch(deleteProject(domain, id)).then(() => {
       navigate(`/${defaultStudio.domain}/projects`);
-      dispatch(closeModal('confirmDeleteProject'));
+      dispatch(closeModalWithAnimation('confirmDeleteProject'));
       dispatch(showAlert({ type: 'success-negative', message: `Project <b>${project.name}</b> deleted successfully!` }));
     });
   };

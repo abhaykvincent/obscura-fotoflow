@@ -256,7 +256,7 @@
                 
             }
             &.active{
-                bottom: 8px*6;
+                bottom: 8px*7;
 
                 padding: 8px;
                 height: 8PX*24;
@@ -276,14 +276,14 @@
         top: 100vh;
         padding: 8px*1;
         padding-right: 0;
-        margin-left: 8px;
-        margin-top: -8px;
-        width: $sidebar-width - 20px;
+        margin-left: 4px;
+        margin-top: -4px;
+        width: $sidebar-width - 8px;
         transform: translateY(-100%);
         cursor: pointer;
         z-index: 21;
-        background-color: #000000;
-        border: 1px solid $gray3-default-dark;
+        background-color: $dark-3;
+        border: 1px solid $gray5-default-dark;
         border-radius: 4px;
         &:hover{
             border: 1px solid $gray2-default-dark;

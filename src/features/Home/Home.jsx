@@ -25,6 +25,7 @@ function Home() {
 
     return (
         <>
+          <AddProjectModal />
         
             <div className="home-header">
                 
@@ -113,9 +114,9 @@ function Home() {
                 }
                 
                 
-          <AddProjectModal />
                 <Refresh/>
             </main>
+
         </>
     );
 }

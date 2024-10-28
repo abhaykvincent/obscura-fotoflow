@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './ShareGallery.scss'
 import { useDispatch, useSelector } from 'react-redux';
-import { closeModal, selectModal } from '../../app/slices/modalSlice';
+import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
 import { selectDomain } from '../../app/slices/authSlice';
 import { useLocation } from 'react-router';
 import { extractDomain, getGalleryURL } from '../../utils/urlUtils';
@@ -15,7 +15,7 @@ function ShareGallery({project }) {
   const currentUrl = window.location.href;
   const dispatch = useDispatch()
   const visible = useSelector(selectModal)
-  const onClose = () => dispatch(closeModal('shareGallery'))
+  const onClose = () => dispatch(closeModalWithAnimation('shareGallery'))
   const domain = useSelector(selectDomain)
 
 const modalRef = useModalFocus(visible.shareGallery);

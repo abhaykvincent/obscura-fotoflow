@@ -18,6 +18,9 @@ function Projects() {
         setRecentProjects(getRecentProjects(projects))
     }, [projects]);
     return (
+        <>
+          <AddProjectModal />
+
         <main className="projects">
             <div className="projects-header">
                 <h1>Projects</h1>
@@ -75,11 +78,11 @@ function Projects() {
                 }
             </div>
 
-          <AddProjectModal />
             {/* Refresh Projects Data from cloud */}
             <Refresh/>
             
         </main>
+        </>
     );
 }
 

@@ -38,6 +38,7 @@ import Onboarding from './features/Onboarding/Onboarding';
 import AdminPanel from './features/AdminPanel/AdminPanel';
 import useAdminAuth from './hooks/useAdminAuth';
 import { selectModal } from './app/slices/modalSlice';
+import InvitationPage from './features/Invitation/InvitationPage';
 
 const client = new Client();
 client.setProject('fotoflow-notifications');
@@ -119,6 +120,8 @@ export default function App() {
               <Route exact path="/:studioName/" element={<Home />} />
               <Route exact path="/:studioName/project/:id" element={<Project />} />
               <Route exact path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
+              <Route exact path="/:studioName/invitation/:id" element={<InvitationPage/>} />
+              <Route path="/:studioName/projects" element={<Projects />} />
               <Route path="/:studioName/projects" element={<Projects />} />
               <Route path="/:studioName/storage" element={<Storage />} />
               <Route path="/:studioName/notifications" element={<Notifications />} />

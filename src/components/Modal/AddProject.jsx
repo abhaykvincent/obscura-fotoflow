@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
 import { addProject } from '../../app/slices/projectsSlice';
 import { useNavigate } from 'react-router';
-import { closeModal, selectModal } from '../../app/slices/modalSlice';
+import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
 import { selectStudio } from '../../app/slices/studioSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import { trackEvent } from '../../analytics/utils';
@@ -17,7 +17,7 @@ function AddProjectModal() {
     const navigate = useNavigate();
     const visible = useSelector(selectModal)
     const currentStudio = useSelector(selectUserStudio)
-    const onClose = () => dispatch(closeModal('createProject'))
+    const onClose = () => dispatch(closeModalWithAnimation('createProject'))
     // Dummny datas for the new project for random data
     const dummyName = [
         'Ethan Ross',
@@ -84,12 +84,16 @@ function AddProjectModal() {
             const domain = parts[3];
             console.log(domain,projectData) */
 
+            onClose();
             const domain = currentStudio.domain;
+            //delat 500ms
+            setTimeout(() => {
+           
             dispatch(addProject({domain,projectData}))
           .then((response) => {
             let newProjectData = response.payload;
             console.log(response)
-              onClose();
+              
               // trigger analytics event  project_created
               trackEvent('project_created', {
                 project_type: newProjectData.type,
@@ -109,6 +113,7 @@ function AddProjectModal() {
               dispatch(showAlert({type:'error', message:`error`}));
               // Handle error scenarios, e.g., show an error message
           });
+        }, 500);
   };
 
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { closeModal, selectModal } from '../../app/slices/modalSlice';
+import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 
@@ -11,7 +11,7 @@ function DeleteConfirmationModal({ itemType, itemName, onDeleteConfirm }) {
   const handleDelete = () => {
     // Call the delete function upon confirmation
     onDeleteConfirm();
-    dispatch(closeModal(`confirmDelete${itemType}`));
+    dispatch(closeModalWithAnimation(`confirmDelete${itemType}`));
   };
 
 
@@ -24,7 +24,7 @@ function DeleteConfirmationModal({ itemType, itemName, onDeleteConfirm }) {
           <div className="modal-controls">
             <div 
               className="control close" 
-              onClick={() => dispatch(closeModal(`confirmDelete${itemType}`))}
+              onClick={() => dispatch(closeModalWithAnimation(`confirmDelete${itemType}`))}
             ></div>
           </div>
           <div className="modal-title">Confirm Deletion</div>
@@ -42,7 +42,7 @@ function DeleteConfirmationModal({ itemType, itemName, onDeleteConfirm }) {
         <div className="actions">
           <div 
             className="button secondary" 
-            onClick={() => dispatch(closeModal(`confirmDelete${itemType}`))}
+            onClick={() => dispatch(closeModalWithAnimation(`confirmDelete${itemType}`))}
           >
             Cancel
           </div>
@@ -51,7 +51,7 @@ function DeleteConfirmationModal({ itemType, itemName, onDeleteConfirm }) {
       </div>
       <div 
         className="modal-backdrop" 
-        onClick={() => dispatch(closeModal(`confirmDelete${itemType}`))}
+        onClick={() => dispatch(closeModalWithAnimation(`confirmDelete${itemType}`))}
       ></div>
     </div>
   );

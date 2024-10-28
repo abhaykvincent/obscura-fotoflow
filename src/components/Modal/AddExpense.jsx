@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { addExpense, addPayment } from '../../app/slices/projectsSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeModal, selectModal } from '../../app/slices/modalSlice';
+import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
 import { formatDecimal } from '../../utils/stringUtils';
 import { selectDomain } from '../../app/slices/authSlice';
 import { trackEvent } from '../../analytics/utils';
@@ -12,7 +12,7 @@ function AddExpenseModal({ project }) {
   const dispatch = useDispatch();
   const domain = useSelector(selectDomain)
   const visible = useSelector(selectModal);
-  const onClose = () => dispatch(closeModal('addExpense'));
+  const onClose = () => dispatch(closeModalWithAnimation('addExpense'));
   
   
 

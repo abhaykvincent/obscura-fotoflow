@@ -85,6 +85,12 @@
 		  
 		}
 	  }
+	  .tools{
+		margin-right: 8px*2;
+		.button{
+			line-height: 1.5rem;
+		}
+	  }
 }
 .dashboard-tabs{
 	min-width: 46vw;
@@ -294,6 +300,7 @@
 		grid-template-columns: 1fr;
 		.galleries{
 			margin-left: 8px*0;
+			max-width: calc(100vw - 8px*16);
 		}
 	}
 	.financials-overview{
@@ -495,6 +502,7 @@
 .galleries{
 	margin-left: 8px*2;
 	.list{
+		width: 100%;
 		margin-top: 8px*0.5;
 		margin-bottom: 8px*1;
 		display: flex;

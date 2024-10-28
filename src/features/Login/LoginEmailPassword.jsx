@@ -5,7 +5,7 @@ import { Navigate, useNavigate } from 'react-router';
 import { fullAccess, getOwnerFromTeams } from '../../data/teams';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, loginEmailPassword } from '../../app/slices/authSlice';
-import { closeModal, openModal, selectModal } from '../../app/slices/modalSlice';
+import { closeModal, closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
 
 const LoginEmailPassword = () => {
   const dispatch = useDispatch();
@@ -15,7 +15,7 @@ const LoginEmailPassword = () => {
     password: '',
   });
   const visible = useSelector(selectModal)
-  const onClose = () => dispatch(closeModal('loginEmailPassword'))
+  const onClose = () => dispatch(closeModalWithAnimation('loginEmailPassword'))
   document.title = `Login`
   if (!visible.loginEmailPassword) {
     return null;
