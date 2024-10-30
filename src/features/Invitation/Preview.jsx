@@ -152,7 +152,7 @@ END:VCALENDAR`.trim();
       <div className="screen-wrap">
         <div className="screen" style={{ background: data.backgroundColor + "05" }}>
           <div className='project-cover' alt="Cover">
-            <img src={project?.projectCover} alt="" srcset="" />
+            <img src={data?.projectCover} alt="" srcset="" />
           </div>
           <div className="container"
             style={{

@@ -14,7 +14,9 @@ const CoverPhotoUploader = ({ coverPhoto, onChange }) => {
 
   return (
     <div className="cover-photo-uploader">
-        <div className="cover-upload-button">
+        <div className="cover-upload-button"
+          style={coverPhoto ? { backgroundImage: `url(${coverPhoto})` } : {}}
+        >
 
         <label htmlFor="cover-file-upload" className="upload-button"></label>
         <input
@@ -24,6 +26,9 @@ const CoverPhotoUploader = ({ coverPhoto, onChange }) => {
         onChange={handleUpload}
         style={{ display: 'none' }} // Hide the input
       />
+        </div>
+        <div className="cover-photo-label">
+          Cover Photo
         </div>
     </div>
   );

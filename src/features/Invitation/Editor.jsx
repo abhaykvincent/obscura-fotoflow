@@ -5,6 +5,7 @@ import ColorPicker from '../../components/ColourPicker/ColourPicker';
 import BackgroundPicker from './BackgroundPicker';
 
 const Editor = ({ data, onChange }) => {
+  console.log(data)
   return (
     <div className="editor">
       <div className="editor-row two">

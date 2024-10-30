@@ -11,9 +11,8 @@
 
 
 .invitation-page {
-    width: calc(100vw - $sidebar-width);
     display: grid;
-    grid-template-columns: 8px*80 auto;
+    grid-template-columns: 8px*60 auto;
     display: grid;
     gap: 8px*5;
     padding: 8px*3;
@@ -30,13 +29,13 @@
         width: 100%;
         min-height: calc(100vh - 8px*20);
         border: 8px*2 solid white;
-        border-top: 8px*2 solid white;
+        border-top: 8px*3 solid white;
         border-radius: 8px*2;
-        border-bottom: 8px*2 solid white;
+        border-bottom: 8px*4 solid white;
         background:white;
         text-shadow:none;
         text-align:center;
-        box-shadow: inset 0px 0px 2px 1px rgba(0, 0, 0, 0.4);
+        box-shadow: inset 0px 0px 2px 1px rgba(0, 0, 0, 0.2);
         .power-button{
           width: 8px*5;
           height: 4px;
@@ -61,6 +60,7 @@
           }
         }
         .project-cover{
+          display: grid;
             width: 100%;height: 100%;
             background-color: rgba(163, 153, 153, 0.4);
             img{
@@ -72,6 +72,7 @@
             min-height: 8px*30;
             background-size: cover;
             background-position: center;
+            box-shadow: inset 0px 0px 2px 2px rgba(0, 0, 0, 0.2);
             .countdown{
               display: flex;
               align-items: end;
@@ -157,7 +158,7 @@
   
   .editor-row {
     display: flex;
-    gap: 20px;
+    gap: 8px*5;
     margin-bottom: 8px*2;
     align-items: start;
     &.two{
@@ -197,34 +198,59 @@
 .colour-picket-input{
   height: 8px*5;
   border-radius: 4px;
+  cursor: crosshair;
 }
 .cover-photo-uploader{
   height: 8px*16;
+  overflow: hidden;
     .cover-upload-button{
       height: 100%;
+      background-size: cover;
 
         .upload-button{
           display: grid;
           align-items: center;
           height: 100%;
           justify-content: center;
-          background-color: $dark-3;
+          background-color: rgba(0, 0, 0, 0.5);
           padding: 8px;
           border-radius: 4px;
           border: 1px solid $dark-0;
           background-position:   center;
           background-size: auto 70%;
-          background-image: url('https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=aaaaaa');
-        
-    opacity: 0;
-    animation: fadeInLeft 0.15s ease-out 0.15s;
-    animation-fill-mode: forwards;
+          background-image: url('https://img.icons8.com/?size=200&id=UVEiJZnIRQiE&format=png&color=aaaaaa');
+          opacity: 0.5;
+          transition-duration: 0.2s;
+          cursor: pointer;
+
         }
+  }
+  .cover-photo-label{
+    text-align: center;
+    margin-top: -8px*0;
+    transition-duration: 0.2s;
+    opacity: 0;
+  }
+  &:hover{
+    .cover-upload-button{
+      .upload-button{
+        background-size: auto 60%;
+        background-position:center 30% ;
+        opacity: 1;
+        transition-duration: 0.2s;
+      }
+    }
+    .cover-photo-label{
+      margin-top: -8px*3;
+      transition-duration: 0.2s;
+    opacity: 1;
+
+    }
   }
 }
 .background-photo-uploader{
-  height: 8px*12;
-  width: 8px*16;
+  height: 8px*10;
+  width: 8px*10;
   margin-left: 8px*0;
     .background-upload-button{
       height: 100%;
@@ -255,7 +281,7 @@
         display:grid;
         gap: 8px*2;
         &.four{
-            grid-template-columns: 8px*20 8px*20 8px*15 8px*8 8px*2;
+            grid-template-columns: 2fr 2fr 1fr 1fr;
             .field{
               input,select{
                 width: 100%;
@@ -299,7 +325,7 @@
       margin-top: 8px*1;
       &.four{
         display:grid;
-        grid-template-columns: 8px*16  8px*18 8px*16 8px*16 8px*5;
+        grid-template-columns: 8px*16  8px*14 8px*16 8px*16 8px*5;
         gap: 8px*2;
         padding: 8px*1.5;
       }
@@ -415,14 +441,27 @@
 }
 
 .color-option {
-  border: 3px solid #ccc;
+  border: 2px solid #ccc;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transform: scale(1.0);
+    transition-duration: 0.1s;
+    transition-timing-function: ease-in;
+    opacity: 0.3;
+  &:hover{
+  transition-duration: 0.05s;
+    transform: scale(1.2);
+    transition-timing-function: ease-out;
+    border: 3px solid #ccc;
+    opacity: 1;
+  }
 }
-label{
+/* label{
   color: $gray-default-light;
-}
+} */
 .background-picker{
   display: grid;
+  width: 100%;
+  overflow-x: scroll;
   .predefined-backgrounds{
   gap:8px*2;
   display: flex;
@@ -436,8 +475,8 @@ label{
     margin-bottom: 8px;
   }
   .background-option{
-    width: 8px*12;
-    height: 8px*12;
+    width: 8px*10;
+    height: 8px*10;
     background-color: $gray4-default-light;
       border: 4px solid rgba(255, 255, 255, 0);
       border-radius: 4px;

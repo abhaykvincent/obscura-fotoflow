@@ -38,16 +38,8 @@ const BackgroundPicker = ({ background, onChange }) => {
     <div className="background-picker">
       <label htmlFor="">Choose Theme</label>
       <div className="predefined-backgrounds">
-        {predefinedBackgrounds.map((bg, index) => (
-          <div
-            key={index}
-            alt={`Background ${index + 1}`}
-            className={`background-option background-option-${index+1} ${selectedBackground === bg ? 'selected' : ''}`}
-            onClick={() => handleSelectImage(bg)}
-          ></div>
-        ))}
 
-        <div className="background-photo-uploader">
+      <div className="background-photo-uploader">
           <div className='background-upload-button'>
             <label htmlFor="file-upload" className="upload-button"></label>
             <input
@@ -59,6 +51,15 @@ const BackgroundPicker = ({ background, onChange }) => {
             />
           </div>
         </div>
+        {predefinedBackgrounds.map((bg, index) => (
+          <div
+            key={index}
+            alt={`Background ${index + 1}`}
+            className={`background-option background-option-${index+1} ${selectedBackground === bg ? 'selected' : ''}`}
+            onClick={() => handleSelectImage(bg)}
+          ></div>
+        ))}
+
         
       </div>
       

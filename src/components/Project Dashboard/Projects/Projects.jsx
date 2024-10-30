@@ -28,7 +28,9 @@ function DashboardProjects({project}){
       </Link>
         <div className="button secondary icon user" >Client</div>
       </div>
-          <div className="control-wrap">
+      <div className="view-cta">
+
+      <div className="control-wrap">
             <div className="controls">
             <div className={`control ctrl-active ${projectDashboardView === 'dashboard' ? 'active' : ''}`}
                   onClick={()=>setProjectDashboardView('dashboard')}
@@ -39,19 +41,20 @@ function DashboardProjects({project}){
                 
             </div>
             <div className={`active`}></div>
-        </div>
-        <div className="project-options">
-        {/* <div className="button secondery pin" 
-          onClick={()=>{}} 
-          >PIN : {project?.pin}
-        </div> */}
-        <div className={`button primary share ${project?.uploadedFilesCount>0 ? '':'disabled'}`} 
-        onClick={()=>{
-          (project.collections.length > 0 && project.uploadedFilesCount>0) && 
-            dispatch(openModal('shareGallery')) 
-        }
-      }
-        target="_blank">Share</div>
+          </div>
+          <div className="project-options">
+            {/* <div className="button secondery pin" 
+              onClick={()=>{}} 
+              >PIN : {project?.pin}
+            </div> */}
+            <div className={`button primary share ${project?.uploadedFilesCount>0 ? '':'disabled'}`} 
+            onClick={()=>{
+              (project.collections.length > 0 && project.uploadedFilesCount>0) && 
+                dispatch(openModal('shareGallery')) 
+            }
+          }
+            target="_blank">Share</div>
+          </div>
       </div>
       </div>
       

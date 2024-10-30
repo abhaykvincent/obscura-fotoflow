@@ -19,7 +19,7 @@ const InvitationPage = () => {
 
   const [project, setProject] = useState(null);
   const [invitationData, setInvitationData] = useState({
-    coverPhoto: null,
+    coverPhoto: project?.projectCover,
     backgroundColor: '#FF5733',
     groomName: project?.name,
     brideName: '',
@@ -50,8 +50,19 @@ console.log(project)
 
   useEffect(() => {
     const selectedProject = projects?.find((p) => p.id === id);
-    setProject(selectedProject);
+    setProject();
+    setInvitationData((prevData) => ({
+      ...prevData,
+      groomName: selectedProject?.name,
+      projectCover: selectedProject?.projectCover,
+      background: {
+        value: 'background-option-1.png'
+      }
+    }));
   }, [projects, id]);
+  useEffect(() => {
+    console.log('invitationData:', invitationData);
+  }, [invitationData]);
 
 
   const handleDataChange = (updatedData) => {
