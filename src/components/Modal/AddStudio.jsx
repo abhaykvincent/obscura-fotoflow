@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
 import { addProject } from '../../app/slices/projectsSlice';
 import { useNavigate } from 'react-router';
-import { closeModal, selectModal } from '../../app/slices/modalSlice';
+import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
 import { selectStudio } from '../../app/slices/studioSlice';
 import { selectCreateStudioModal, selectUserStudio } from '../../app/slices/authSlice';
 import { createStudio } from '../../firebase/functions/firestore';
@@ -13,7 +13,7 @@ function AddStudio() {
     const navigate = useNavigate();
     const defaultStudio = useSelector(selectUserStudio)
     const visible = useSelector(selectCreateStudioModal)
-    const onClose = () => dispatch(closeModal('createStudio'))
+    const onClose = () => dispatch(closeModalWithAnimation('createStudio'))
   const [studioData, setStudioData] = useState({
       name: 'Sixty Frames',
       domain: 'sixty-frames',

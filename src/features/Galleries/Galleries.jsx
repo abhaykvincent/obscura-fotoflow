@@ -116,6 +116,7 @@ if(!collectionId&&defaultCollectionId!==''){
     </div>
 
     <AddCollectionModal project={project} />
+    <ShareGallery   project={project} />
 
     {/* Page Main */}
     <main className='project-page gallery-page'>
@@ -128,7 +129,6 @@ if(!collectionId&&defaultCollectionId!==''){
         )
       }
     </main>
-    <ShareGallery   project={project} />
     
   </>
   )}

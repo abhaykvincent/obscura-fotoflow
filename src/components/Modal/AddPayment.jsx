@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { addPayment } from '../../app/slices/projectsSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeModal, selectModal } from '../../app/slices/modalSlice';
+import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
 import { formatDecimal } from '../../utils/stringUtils';
 import { selectDomain } from '../../app/slices/authSlice';
 import { trackEvent } from '../../analytics/utils';
@@ -11,7 +11,7 @@ function AddPaymentModal({ project }) {
   const dispatch = useDispatch();
   const visible = useSelector(selectModal);
   const domain = useSelector(selectDomain)
-  const onClose = () => dispatch(closeModal('addPayment'));
+  const onClose = () => dispatch(closeModalWithAnimation('addPayment'));
   
   const [paymentData, setPaymentData] = useState({
     name: 'Advance',

@@ -6,7 +6,7 @@ import { hideAlert, selectAlertMessage, selectAlertShow, selectAlertType, } from
 const Alert = () => {
   const dispatch = useDispatch();
 
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   const show = useSelector(selectAlertShow);
   const type = useSelector(selectAlertType);
   const message = useSelector(selectAlertMessage);

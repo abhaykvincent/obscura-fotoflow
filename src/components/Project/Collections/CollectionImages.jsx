@@ -32,6 +32,9 @@ const CollectionImages = ({ id, collectionId, project }) => {
     // Upload progress
     const [uploadList, setUploadLists] = useState([]);
     const [uploadStatus, setUploadStatus] = useState('close');
+
+    const [copyStatus, setCopyStatus] = useState('Lightroom');
+    
     const defaultOptions = {
         loop: true,
         autoplay: true,
@@ -99,9 +102,11 @@ const CollectionImages = ({ id, collectionId, project }) => {
 
     // Handle "Open in Lightroom" click
     const handleOpenInLightroom = () => {
-        const selectedFilenames = selectedImages.map((image) => image.name); // Assuming 'filename' is a property of the image object
-        console.log('Selected filenames for Lightroom:', selectedFilenames);
-        // Perform any additional actions here, e.g., open Lightroom with the selected files
+        const selectedFilenames = selectedImages.map((image) => image.name).join(', ');
+        navigator.clipboard.writeText(selectedFilenames).then(() => {
+            setCopyStatus('Copied');
+            setTimeout(() => setCopyStatus('Lightroom'), 2000);
+        });
     };
 
     return (
@@ -128,7 +133,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 <div className="open-buttons ">
                     { !showAllPhotos ?
                     <><div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
-                        Open in <div className="lr button secondary">Lightroom</div>
+                        Open in <div className="lr button secondary">{copyStatus}</div>
                     </div>
                         <DownloadFiles className={`open-in ${showAllPhotos ? 'disabled' : ''}`} folderPath={`${domain}/${id}/${collectionId}/`} project={project} collection={findCollectionById(project, collectionId)}/>
                         </>:

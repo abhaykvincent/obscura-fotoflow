@@ -12,7 +12,17 @@ const initialState = {
     addBudget: false,
     loginEmailPassword: false,
 };
-
+export const closeModalWithAnimation = createAsyncThunk(
+  'projects/closeModalWithAnimation',
+  async (modalName, { dispatch }) => {
+    const modalElement = document.querySelector(`.modal-container`);
+    if (modalElement) {
+      modalElement.classList.add('closingModal');
+    }
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    dispatch(closeModal(modalName));
+  }
+);
 const modalSlice = createSlice({
   name: 'projects',
   initialState,

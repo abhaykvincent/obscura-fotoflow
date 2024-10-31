@@ -85,3 +85,15 @@ export function formatDecimalK(amount) {
 // if localhost localhost:port , if production obscura.fotoflow
 // ethan-ross-Ksi9g id projectId and birthday-CLhMa is the collectionId
 
+export const hexToRgb = (hex) => {
+  // Remove the leading '#' if present
+  hex = hex.replace(/^#/, '');
+  
+  // Parse r, g, b values
+  const bigint = parseInt(hex, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  
+  return `${r}, ${g}, ${b}`; // Return as a string
+};

@@ -3,7 +3,7 @@ import { addCollection } from '../../app/slices/projectsSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { closeModal, selectModal } from '../../app/slices/modalSlice';
+import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
 import { selectCollectionsLimit, selectStudio } from '../../app/slices/studioSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import { trackEvent } from '../../analytics/utils';
@@ -25,7 +25,7 @@ function AddCollectionModal({ project }) {
     images: [],
     imagesUrl: []
   });
-  const onClose = () => dispatch(closeModal('createCollection'))
+  const onClose = () => dispatch(closeModalWithAnimation('createCollection'))
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setCollectionData((prevData) => ({
@@ -35,15 +35,16 @@ function AddCollectionModal({ project }) {
   };
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-const handleSubmit = () => {
+const handleSubmit =  () => {
   if (isSubmitting) return;  // Prevent multiple submissions
   setIsSubmitting(true);
 
   console.log('collection length' + collectionsLength.length)
   console.log(collectionsLimit)
   const domain= defaultStudio.domain;
-  
+  onClose()
   if(collectionsLength.length < collectionsLimit.perProject) {
+    setTimeout(() => {
     dispatch(addCollection({ domain, projectId: project.id, newCollection: CollectionData }))
     .then((id) => {
       console.log(id)
@@ -57,10 +58,10 @@ const handleSubmit = () => {
     .finally(() => {
       setIsSubmitting(false);  // Re-enable the button after submission
     });
+  },500)
   } else {
     dispatch(showAlert({ type: 'error', message: `Project <b>${CollectionData.name}</b>'s Collection limit reached! Upgrade` }));
   }
-  onClose();
 };
 
 const modalRef = useModalFocus(visible.createCollection);

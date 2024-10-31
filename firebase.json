@@ -12,7 +12,7 @@
     }]
   },
   "storage": {
-    "rules": "firebase/storage.rules"
+    "rules": "storage.rules"
   },
   "emulators": {
     "hosting": {

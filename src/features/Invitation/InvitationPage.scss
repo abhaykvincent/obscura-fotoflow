@@ -1,0 +1,657 @@
+@import '../../style/variables';
+@import '../../style/components';
+@font-face {
+    font-family: 'Lastri';
+    src: 
+         url('../../fonts/LastriRegular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+.App {
+
+  .project-info.invitation-page-header{
+    padding-top:8px*1.25 ;
+    .view-control{
+      margin: 0;
+    }
+  }
+  .invitation-preview{
+    width: 100vw;
+    height: 100vh;
+    top: 0px;
+    left: 0;
+    padding: 0;
+    .preview-window{
+      padding: 0;
+      .screen-wrap .screen{
+        border: none;
+        min-height: 100vh;
+      }
+    }
+  }
+.invitation-page {
+    display: grid;
+    grid-template-columns: 8px*70 auto;
+    align-items: start;
+    display: grid;
+    gap: 8px*5;
+    padding: 8px*3;
+    
+  }
+  .publish-button {
+    &.publishing {
+      background: linear-gradient(90deg, #387d16c8  30%,#a1ed08 45%,#a1ed08 48%, #70981fbc 55%, #132d0679 90%);
+      background-size: 200%;
+      background-position: 0%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transition-duration: 2s;
+      font-weight: 600;
+      animation: loadingGradient 1s infinite alternate linear;
+    }
+  }
+  @keyframes loadingGradient {
+    0% {
+      background-position: 100%;
+    }
+    20% {
+      background-position: 100%;
+    }
+    80% {
+      background-position: 0%;
+    }
+    100% {
+      background-position: 0%;
+    }
+  }
+  .editor, .preview-window {
+    .screen-wrap{
+        width: 100%;
+        background-color: white;
+        border-radius: 8px*4;
+        
+
+    .screen{
+        width: 100%;
+        min-height: calc(100vh - 8px*49);
+        border: 8px*2 solid white;
+        border-top: 8px*3 solid white;
+        border-radius: 8px*2;
+        border-bottom: 8px*4 solid white;
+        background:white;
+        text-shadow:none;
+        text-align:center;
+        box-shadow: inset 0px 0px 2px 1px rgba(0, 0, 0, 0.2);
+        .power-button{
+          width: 8px*5;
+          height: 4px;
+          background-color: rgb(216, 216, 216);
+          position: absolute;
+          right: 8px*10;
+          top: 8px*1.7;
+          border-radius: 2px 2px 0 0;
+          z-index: -1;
+        }
+        .volume-button{
+          height: 8px*6;
+          width: 4px;
+          background-color: rgb(216, 216, 216);
+          position: absolute;
+          right: 8px*1.7;
+          top: 8px*10;
+          border-radius: 0 2px 2px 0 ;
+          z-index: -1;
+          &.two{
+            margin-top: 8px*7;
+          }
+        }
+        .project-cover{
+          display: grid;
+            width: 100%;height: 100%;
+            background-color: rgba(163, 153, 153, 0.4);
+            img{
+              width: 100%;
+            }
+        }
+        .container{
+            padding: 8px*4;
+            min-height: 8px*30;
+            background-size: cover;
+            background-position: center;
+            box-shadow: inset 0px 0px 2px 2px rgba(0, 0, 0, 0.2);
+            .countdown{
+              display: flex;
+              align-items: end;
+              justify-content: center;
+              color: $gray2-default-light;
+              font-size: 0.9rem;
+              font-weight: 200;
+              padding: 8px 8px*3;
+              border-radius: 8px;
+              // background filter b;ue
+              backdrop-filter: blur(4px);
+              .countdown-element{
+              font-size: 1.3rem;
+              margin-left: 8px;
+                margin-right: 2px;
+                color: $dark-0;
+                font-weight: 100;
+              }
+              
+            }
+        .events{
+          display: grid;
+          grid-template-columns: 1fr ;
+          margin-top: 8px*5;
+          gap: 8px*4;
+          justify-items: center;
+          .event{
+            
+            .event-type{
+              font-size: 1.2rem;
+              margin-bottom: 8px;
+            }
+            .event-location{
+              font-size: 0.9rem;
+              color:$dark-0;
+              margin-top: 4px;
+            }
+            h3{
+              font-weight: 400;
+              font-size: 1rem;
+              color: $dark-3;
+            }
+            p{
+
+              color: $dark-3;
+              .bold{
+                font-weight: 600;
+                color: $gray6-default-dark;
+              }
+            }
+          }
+          .events-cta{
+            display: grid;
+            gap: 8px;
+            transform: scale(0.8);
+            .button{
+              height: 8px*5;
+              line-height: 8px*3;
+              margin: 0;
+              color: white;
+              opacity: 1;
+              font-weight: 600;
+              text-shadow: 1px 1px 2px 0px  rgba(0, 0, 0, 0.06);
+            }
+          }
+          .photographer-branding{
+            padding: 8px 8px*2;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(4px);
+            p{
+                font-size: 0.8rem;
+                color: $gray-default-light;
+
+              &.footer-branding-name{
+                color: black;
+                font-size: 0.9rem;
+              }
+            }
+          }
+        }
+        .host-message{
+          p{
+            font-size: 0.8rem;
+            color:$dark-0;
+            &.hosts-name{
+              font-weight: 600;
+              margin-top: 8px;
+            }
+          }
+        }
+        
+        }
+        .invitation-project-name{
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: rgba(0, 0, 0, 0.8);
+            font-family: 'Lastri', sans-serif;
+
+            span{
+                font-family: 'Lastri', sans-serif;
+                font-size: 2rem;
+            }
+        }
+        .invitation-project-title{
+            font-size: 0.8rem;
+            margin-top: 8px*2;
+            font-weight: 200;
+            color: rgba(0, 0, 0, 0.8);
+        }
+    }
+}
+  }
+  .editor{
+    display: grid;
+    height: auto;
+    gap: 8px*2;
+  }
+  .editor-row {
+    display: flex;
+    gap: 8px*4;
+    align-items: start;
+    border-bottom: 1px solid $dark-1;
+    padding-top: 8px*1;
+    padding-bottom: 8px*4;
+    &.two{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  .preview-window {
+    border :1px solid $dark-0;
+    padding: 8px*2;
+    border-radius: 28px;
+
+    opacity: 0;
+    animation: fadeInLeft 0.5s ease-out 0.5s;
+    animation-fill-mode: forwards;
+  }
+  .color-picker {
+  display: grid;
+  height: 100%;
+  align-items: center;
+  grid-template-rows:8px*4 auto ;
+  justify-content: start;
+  label{
+    margin-bottom: 0px;
+  }
+  .box-body{
+    display: flex;
+    margin-top: 0px;
+    gap: 8px;
+
+    opacity: 0;
+    animation: fadeInLeft 0.15s ease-out 0.1s;
+    animation-fill-mode: forwards;
+  }
+  
+}
+.colour-picket-input{
+  height: 8px*5;
+  border-radius: 4px;
+  box-shadow:  -1px -1px 2px 1px  rgba(0, 0, 0, 0.9) , 0px 0px 3px 1px  rgba(255, 255, 255, 0.5) ;
+  cursor: crosshair;
+}
+.cover-photo-uploader{
+  height: 8px*16;
+  overflow: hidden;
+    .cover-upload-button{
+      height: 100%;
+      background-size: cover;
+
+        .upload-button{
+          display: grid;
+          align-items: center;
+          height: 100%;
+          justify-content: center;
+          background-color: rgba(0, 0, 0, 0.5);
+          padding: 8px;
+          border-radius: 4px;
+          border: 1px solid $dark-0;
+          background-position:   center;
+          background-size: auto 70%;
+          background-image: url('https://img.icons8.com/?size=200&id=UVEiJZnIRQiE&format=png&color=aaaaaa');
+          opacity: 0.5;
+          transition-duration: 0.2s;
+          cursor: pointer;
+
+        }
+  }
+  .cover-photo-label{
+    text-align: center;
+    margin-top: -8px*0;
+    transition-duration: 0.2s;
+    opacity: 0;
+  }
+  &:hover{
+    .cover-upload-button{
+      .upload-button{
+        background-size: auto 60%;
+        background-position:center 30% ;
+        opacity: 1;
+        transition-duration: 0.2s;
+      }
+    }
+    .cover-photo-label{
+      margin-top: -8px*3;
+      transition-duration: 0.2s;
+    opacity: 1;
+
+    }
+  }
+}
+.background-photo-uploader{
+  height: 8px*10;
+  width: 8px*10;
+  margin-left: 8px*0;
+    .background-upload-button{
+      height: 100%;
+        .upload-button{
+          display: grid;
+          align-items: center;
+          height: 100%;
+          justify-content: center;
+          background-color: $dark-2;
+          padding: 8px;
+          border-radius: 4px;
+          border: 1px solid $dark-0;
+          cursor: pointer;
+          background-position:   center;
+          background-size: auto 60%;
+          background-image: url('https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=444444');
+        }
+  }
+}
+.content-editor{
+  display: grid;
+  gap: 8px*2;
+  margin-top: 8px*2;
+  .form-section{
+      margin:0  ;
+      display: grid;
+      gap: 8px;
+      
+      opacity: 0;
+      animation: fadeInLeft 0.15s ease-out 0.25s;
+      animation-fill-mode: forwards;
+      .row{
+          display:grid;
+          gap: 8px*2;
+          &.four{
+              grid-template-columns: 2fr 2fr 1fr 1fr;
+              .field{
+                input,select{
+                  width: 100%;
+                  background-color: $dark-3;
+                  font-size: 1rem;
+                  border-radius: 8px;
+                  &.secondery{
+                    background-color: $dark-2;
+                    border:none;
+                  }
+                  
+                }
+                select{
+  
+                }
+              }
+          }
+
+          &.two{
+            grid-template-columns: 1fr  1fr;
+          }
+      }
+      .event-row{
+        background-color: $dark-3;
+        padding: 8px;
+        border: 1px solid $gray5-accessible-dark;
+        border-radius: 4px;
+        &.field input{
+          border: 1px solid transparent;
+        background-color: $dark-3;
+          &.focus{
+            background-color: $dark-2;
+                      
+          }
+        }
+      }
+      
+      .field{
+        display: grid;
+        grid-template-columns: auto;
+        align-items: center;
+        gap: 8px*1;
+        margin: 0px;
+        font-size: 0.9rem;
+        margin-top: 8px*1;
+        &.four{
+          display:grid;
+          grid-template-columns: 8px*16  8px*15 8px*10 8px*20 8px*5;
+          gap: 8px*0;
+          padding: 8px*1.5;
+        }
+        
+        &.font-select{
+          width: 8px*15;
+        }
+        label{
+          text-align: left ;
+          color: $gray-default-dark;
+          font-size: 1rem;
+          &.ai-label{
+            color: $green-default-light;
+            opacity: 0;
+            font-size: 0.8rem;
+        $delay: 0.5s;
+        animation: fadeInLeft 0.1s ease-out 0.35s;
+        animation-fill-mode: forwards;
+          }
+        } 
+        input,select{
+          background-color: $dark-3;
+          font-size: 1rem;
+          border-radius: 4px;
+          height: 8px*5;
+          padding: 4px 8px;
+          padding-right: 4px;
+          @include boxed;
+          border: 1px solid $gray5-accessible-dark;
+          padding: 8px*0 8px*2;
+          //placeholder
+          //   color: $gray-default-dark;
+          &::placeholder{
+            color: $gray4-default-dark;
+          }
+  
+        }
+  
+        select{
+          width: 100%;
+          border: none;
+          background:none;
+        }
+        .symbol{
+          position: relative;
+          &::before{
+            content: "%";
+            position: relative;
+            top:0;
+            left:0;
+            height: 8PX*2;
+            width: 8PX*2;
+            color: red
+          }
+        }
+        .bigger{
+          font-size: 1.2rem;
+        }
+        &.ai-suggestion{
+          margin-bottom: 8px*3;
+          label{
+            opacity:0
+          }
+        }
+  
+        @for $i from 1 through 12 {
+          &:nth-child(#{$i}){
+            animation-delay: 0.03s * $i;
+          }
+        }
+  
+        &:hover{
+          label{
+            color: $gray3-default-light;
+          }
+        }
+        &.three{
+          
+        }
+      }
+      .error{
+        margin-top: -8px;
+        margin-bottom: 8px;
+        margin-left: 8px*15;
+        font-size: 0.8rem;
+        color: $red-accessible-dark
+      }
+    }
+}
+.event-editor{
+  margin-top: 8px*5;
+  opacity: 0;
+  animation: fadeInLeft 0.15s ease-out 0.4s;
+  animation-fill-mode: forwards;
+  .label-row{
+    display: grid;
+    grid-template-columns: 8px*25 8px*20 auto auto;
+  }
+  .add-event{
+    display: flex;
+    justify-content: end;
+    margin-top: 8px;
+    opacity: 0;
+    animation: fadeInLeft 0.15s ease-out 0.45s;
+    animation-fill-mode: forwards;
+  }
+}
+.name-editor{
+  margin-top: 8px*4;
+}
+.color-suggestions {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.color-option {
+  border: 2px solid #ccc;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transform: scale(1.0);
+    transition-duration: 0.1s;
+    transition-timing-function: ease-in;
+    opacity: 0.3;
+  &:hover{
+  transition-duration: 0.05s;
+    transform: scale(1.2);
+    transition-timing-function: ease-out;
+    border: 3px solid #ccc;
+    opacity: 1;
+  }
+  &.active{
+    transition-duration: 0.05s;
+    transform: scale(1.2);
+    transition-timing-function: ease-out;
+    border: 3px solid #ccc;
+    opacity: 1;
+  }
+}
+/* label{
+  color: $gray-default-light;
+} */
+.background-picker{
+  display: grid;
+  width: 100%;
+  overflow-x: scroll;
+  .predefined-backgrounds{
+  gap:8px*2;
+  display: flex;
+  margin-top: 8px*1;
+
+  opacity: 0;
+  animation: fadeInLeft 0.15s ease-out 0.15s;
+  animation-fill-mode: forwards;
+  }
+  label{
+    margin-bottom: 8px;
+  }
+  .background-option{
+    width: 8px*10;
+    height: 8px*10;
+    background-color: $gray4-default-light;
+      border: 4px solid rgba(255, 255, 255, 0);
+      border-radius: 4px;
+      opacity: 0.6;
+      cursor: pointer;
+      &.background-option-1{
+        background-position: top left;
+        background-size: 120%;
+        background-image: url('../../assets/img/background-options/background-option-1.png');
+      }
+      &.background-option-2{
+        background-position: top right;
+        background-size: 100%;
+        background-image: url('../../assets/img/background-options/background-option-2.png');
+      }
+      &.background-option-3{
+        background-position: top left;
+        background-size: 100%;
+        background-image: url('../../assets/img/background-options/background-option-3.png');
+      }
+      &.background-option-4{
+        background-position: center;
+        background-size: cover;
+        background-image: url('../../assets/img/background-options/background-option-4.png');
+      }
+    &.selected{
+      border: 4px solid white;
+      opacity: 1;
+      margin-left: 0;
+    }
+
+  }
+}
+
+}
+
+@media only screen and (max-width: 580px) {
+  .App{
+    
+    .invitation-page {
+      width: calc(100vw );
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      padding: 24px;
+      .editor{
+        width: 100%;
+
+      order: 2;
+
+      }
+      .preview{
+        order: 1;
+
+      }
+      .editor-row{
+        width: 100%;
+        &.two {      
+          grid-template-columns: 1fr;
+        }
+      }
+      .background-picker .predefined-backgrounds{
+        width: calc(100vw - 8px*5);
+        overflow:scroll;
+      }
+      .form-section .row.four {
+        grid-template-columns: 1fr 1fr;
+      }
+      .form-section .field.four {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+    }
+  } 
+}

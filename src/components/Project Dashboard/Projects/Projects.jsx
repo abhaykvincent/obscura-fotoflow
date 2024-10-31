@@ -5,7 +5,7 @@ import CrewCard from '../../Cards/CrewCard/CrewCard';
 import { getUserByID, teams } from '../../../data/teams';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../../app/slices/modalSlice';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { showAlert } from '../../../app/slices/alertSlice';
 import DashboardPayments from '../Payments/Payments';
 import DashboardExpances from '../Expances/Expances';
@@ -15,11 +15,22 @@ import DashboardTabs from './DashboardTabs/DashboardTabs';
 function DashboardProjects({project}){
   const dispatch =useDispatch()
   const navigate = useNavigate();
+
+  const { studioName } = useParams();
   const [projectDashboardView, setProjectDashboardView] = useState('dashboard')
   return (
     <>
      <div className="project-dashboard-header">
-          <div className="control-wrap">
+      <div className="tools">
+        
+      <Link to={`/${studioName}/invitation-creator/${project.id}`}>
+        <div className="button secondary  icon  invitation" > Invitation</div>
+      </Link>
+        <div className="button secondary icon user" >Client</div>
+      </div>
+      <div className="view-cta">
+
+        <div className="control-wrap">
             <div className="controls">
             <div className={`control ctrl-active ${projectDashboardView === 'dashboard' ? 'active' : ''}`}
                   onClick={()=>setProjectDashboardView('dashboard')}
@@ -30,13 +41,20 @@ function DashboardProjects({project}){
                 
             </div>
             <div className={`active`}></div>
-        </div>
-        <div className="project-options">
-        {/* <div className="button secondery pin" 
-          onClick={()=>{}} 
-          >PIN : {project?.pin}
-        </div> */}
-        <div className="button primary share" onClick={()=>dispatch(openModal('shareGallery'))} target="_blank">Share</div>
+          </div>
+          <div className="project-options">
+            {/* <div className="button secondery pin" 
+              onClick={()=>{}} 
+              >PIN : {project?.pin}
+            </div> */}
+            <div className={`button primary share ${project?.uploadedFilesCount>0 ? '':'disabled'}`} 
+            onClick={()=>{
+              (project.collections.length > 0 && project.uploadedFilesCount>0) && 
+                dispatch(openModal('shareGallery')) 
+            }
+          }
+            target="_blank">Share</div>
+          </div>
       </div>
       </div>
       

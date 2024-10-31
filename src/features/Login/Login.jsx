@@ -68,7 +68,7 @@ const LoginModal = () => {
 
   return (
     <>
-    <div className="modal loginModal">
+    <div className="modal island loginModal">
       <div className="modal-header">
         <div className="modal-controls">
           <div className="control close"></div>
