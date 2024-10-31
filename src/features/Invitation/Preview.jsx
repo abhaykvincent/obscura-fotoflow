@@ -3,18 +3,24 @@ import backgroundOptionImage1 from '../../assets/img/background-options/backgrou
 import backgroundOptionImage2 from '../../assets/img/background-options/background-option-2.png';
 import backgroundOptionImage3 from '../../assets/img/background-options/background-option-3.png';
 import backgroundOptionImage4 from '../../assets/img/background-options/background-option-4.png';
-import { formatDate } from '../../utils/dateUtils';
-import { hexToRgb } from '../../utils/stringUtils';
+import { formatDate, formatTime } from '../../utils/dateUtils';
+import { capitalizeFirstLetter, hexToRgb } from '../../utils/stringUtils';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectDomain } from '../../app/slices/authSlice';
+import { useParams } from 'react-router';
 
-const Preview = ({ data,project }) => {
+const Preview = ({ editor, data,project }) => {
+  console.log(editor?'Editor':'Preview')
+  const dispatch = useDispatch();
+  const { studioName } = useParams();
   const [backgroundOptionImage, setBackgroundOptionImage] = useState('');
   const [countdown, setCountdown] = useState('');
-  const [selectedColor, setSelectedColor] = useState(data.backgroundColor || '#ffffff'); // Default to white if no color
+  const [selectedColor, setSelectedColor] = useState(data?.backgroundColor || '#ffffff'); // Default to white if no color
 
   useEffect(() => {
     let selectedBackground = '';
-    if (!data.background) return;
-    if (data.background.value === 'background-option-1.png') {
+    if (!data?.background) return;
+    if (data?.background.value === 'background-option-1') {
       selectedBackground = backgroundOptionImage1;
     } else if (data.background.value === 'background-option-2.png') {
       selectedBackground = backgroundOptionImage2;
@@ -28,14 +34,14 @@ const Preview = ({ data,project }) => {
 
   // Calculate countdown to the final event date
   useEffect(() => {
-    const eventDates = data.events
+    const eventDates = data?.events
       .map((event) => new Date(event.date))
       .filter((date) => !isNaN(date)); // Filter out invalid dates
 
-    if (eventDates.length === 0) return;
+    if (eventDates?.length === 0) return;
 
     // Find the latest (final) event date
-    const finalDate = new Date(Math.max(...eventDates));
+    const finalDate = eventDates ?new Date(Math.max(...eventDates)):'';
 
     const updateCountdown = () => {
       const now = new Date();
@@ -64,7 +70,7 @@ const Preview = ({ data,project }) => {
     const intervalId = setInterval(updateCountdown, 1000);
 
     return () => clearInterval(intervalId);
-  }, [data.events]);
+  }, [data?.events]);
 
   // Handle color change
   const handleColorChange = (event) => {
@@ -73,7 +79,7 @@ const Preview = ({ data,project }) => {
 
  const saveDateEvent = () => {
   // Validate and convert event dates to Date objects
-  const eventDates = data.events
+  const eventDates = data?.events
     .map((event) => {
       const parsedDate = new Date(event.date);
       return isNaN(parsedDate.getTime()) ? null : parsedDate; // Filter out invalid dates
@@ -92,9 +98,9 @@ const Preview = ({ data,project }) => {
   }
 
   const cleanString = (str) => str.replace(/[\n\r]+/g, ' ').trim();
-  const eventTitle = cleanString(`${data.groomName} & ${data.brideName} - ${data.title}`);
-  const eventLocation = cleanString(data.events.map((event) => event.location).join(', '));
-  const eventDescription = cleanString(`Save the date for the wedding of ${data.groomName} and ${data.brideName}`);
+  const eventTitle = cleanString(`${data?.groomName} & ${data?.brideName} - ${data?.title}`);
+  const eventLocation = cleanString(data?.events.map((event) => event.location).join(', '));
+  const eventDescription = cleanString(`Save the date for the wedding of ${data?.groomName} and ${data.brideName}`);
 
   // Convert finalDate to UTC and format to iCalendar's required format
   const toICALDate = (date) =>
@@ -148,44 +154,54 @@ END:VCALENDAR`.trim();
   
 
   return (
-    <div className="preview-window">
+    <div className={`preview-window`}>
       <div className="screen-wrap">
-        <div className="screen" style={{ background: data.backgroundColor + "05" }}>
+        <div className="screen" style={{ background: data?.backgroundColor + "05" }}>
           <div className='project-cover' alt="Cover">
-            <img src={data?.projectCover} alt="" srcset="" />
+            <img src={data?.coverPhoto} alt="" srcset="" />
           </div>
           <div className="container"
             style={{
-              backgroundImage: `linear-gradient(rgba(${hexToRgb(data.backgroundColor)}, 0.5), rgba(${hexToRgb(data.backgroundColor)}, 0.4)), url(${backgroundOptionImage})`,
+              backgroundImage: `linear-gradient(rgba(${hexToRgb(data?.backgroundColor || '123123')}, 0.5), rgba(${hexToRgb(data?.backgroundColor|| '123123')}, 0.4)), url(${backgroundOptionImage})`,
               backgroundBlendMode: 'overlay' // Apply the overlay effect
             }}
             
           >
             <h2 className="invitation-project-name">
-              {data.groomName} {data.brideName ? <span style={{ color: data.backgroundColor + "aa" }}> & </span> : ''}{data.brideName}
+              {data?.groomName} {data?.brideName ? <span style={{ color: data?.backgroundColor + "aa" }}> & </span> : ''}{data?.brideName}
             </h2>
-            <p className="invitation-project-title">{data.title}</p>
+            <p className="invitation-project-title">{data?.title}</p>
 
             <div className="events">
+
+            {data?.events.map((event, index) => (
+                <div key={index} className="event">
+                <h3 className={`${event.name ? 'event-type' : 'dummy'}`} style={{ color: data?.backgroundColor + "ba" }}>{event.name}</h3>
+                <p dangerouslySetInnerHTML={{ __html: event.date ? formatDate(event.date) : 'Add date' }}></p>
+                <p className="event-time">{formatTime(event.time)}</p>
+                <p className="event-location">{event.location}</p>
+              </div>
+              ))}
+              <div className="p host-message">
+                <p>Join us as we say 'I do!' 🌸</p><p>We invite you to celebrate their wedding day. We can't wait to share this beautiful moment with you!</p>
+                <p className='hosts-name'>- {data?.groomName} {data?.brideName && '& '+data?.brideName}</p>
+              </div>
               <div className="events-cta">
                 <p className="countdown"
-                  style={{ backgroundColor: data.backgroundColor + "12" }}
+                  style={{ backgroundColor: data?.backgroundColor + "12" }}
                 >In {countdown}</p>
                 <div className="button primary"
-                  style={{ background: data.backgroundColor + "77", border: '2px solid ' + data.backgroundColor + '66' }}
+                  style={{ background: data?.backgroundColor + "77", border: '2px solid ' + data?.backgroundColor + '66' }}
                   onClick={saveDateEvent} // Add onClick handler
                 >
                   Save the Date
                 </div>
               </div>
+              <div className="photographer-branding">
+                <p>Monemts Capturing by </p>
+                <p className='footer-branding-name'>{capitalizeFirstLetter(studioName)}</p>
+              </div>
 
-              {data.events.map((event, index) => (
-                <div key={index} className="event">
-                  <h3 className={`${event.name ? 'event-type' : 'dummy'}`} style={{ color: data.backgroundColor + "ba" }}>{event.name}</h3>
-                  <p>{event.date ? formatDate(event.date) : 'Add date'}</p>
-                  <p className="event-location">{event.location}</p>
-                </div>
-              ))}
             </div>
 
           </div>

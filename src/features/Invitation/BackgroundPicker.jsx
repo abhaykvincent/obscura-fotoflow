@@ -28,11 +28,6 @@ const BackgroundPicker = ({ background, onChange }) => {
     }
   };
 
-  const handleColorChange = (e) => {
-    const color = e.target.value;
-    setSelectedBackground(color);
-    onChange({ type: 'color', value: color });
-  };
 
   return (
     <div className="background-picker">

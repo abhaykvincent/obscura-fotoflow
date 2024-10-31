@@ -522,6 +522,7 @@ body{
     width: calc(100vw - $sidebar-width);
     position: fixed; 
     display: grid;
+    align-items: center;
     grid-template-columns: auto auto auto;
     justify-content: space-between;
     justify-items: stretch;
@@ -556,15 +557,18 @@ body{
         font-size: 0.8rem;
       }
     }
-    .icon{
-      padding: 8px*2;
-      background-size: 100%;
-      &.options{
-        transform: rotate(90deg);
+    button{
 
-        background-image: url('https://img.icons8.com/?size=100&id=Mli429zE5QBn&format=png&color=ffffff');
-        background-size: 60%;
-        background-position: center;
+      .icon{
+        padding: 8px*2;
+        background-size: 100%;
+        &.options{
+          transform: rotate(90deg);
+  
+          background-image: url('https://img.icons8.com/?size=100&id=Mli429zE5QBn&format=png&color=ffffff');
+          background-size: 60%;
+          background-position: center;
+        }
       }
     }
     //data-radix-popper-content-wrapper

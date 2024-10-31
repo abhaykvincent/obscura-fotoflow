@@ -23,14 +23,14 @@ function DashboardProjects({project}){
      <div className="project-dashboard-header">
       <div className="tools">
         
-      <Link to={`/${studioName}/invitation/${project.id}`}>
-        <div className="button primary outline icon  invitation" > Invitation</div>
+      <Link to={`/${studioName}/invitation-creator/${project.id}`}>
+        <div className="button secondary  icon  invitation" > Invitation</div>
       </Link>
         <div className="button secondary icon user" >Client</div>
       </div>
       <div className="view-cta">
 
-      <div className="control-wrap">
+        <div className="control-wrap">
             <div className="controls">
             <div className={`control ctrl-active ${projectDashboardView === 'dashboard' ? 'active' : ''}`}
                   onClick={()=>setProjectDashboardView('dashboard')}

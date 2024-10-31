@@ -10,12 +10,15 @@ const Editor = ({ data, onChange }) => {
     <div className="editor">
       <div className="editor-row two">
         <ColorPicker color={data.backgroundColor} onChange={(color) => onChange({ backgroundColor: color })} />
-        <CoverPhotoUploader coverPhoto={data.coverPhoto} onChange={(photo) => onChange({ coverPhoto: photo })} />
+        <CoverPhotoUploader projectCover={data.coverPhoto} onChange={(photo) => onChange({ coverPhoto: photo })} />
       </div>
       <div className="editor-row">
         <BackgroundPicker background={data.background} onChange={(bg) => onChange({ background: bg })} />
       </div>
+      <div className="editor-row">
+
       <InvitationContentEditor data={data} onChange={onChange} />
+      </div>
     </div>
   );
 };

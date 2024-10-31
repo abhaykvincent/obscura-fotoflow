@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CoverPhotoUploader = ({ coverPhoto, onChange }) => {
+const CoverPhotoUploader = ({ projectCover, onChange }) => {
   const handleUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -15,7 +15,7 @@ const CoverPhotoUploader = ({ coverPhoto, onChange }) => {
   return (
     <div className="cover-photo-uploader">
         <div className="cover-upload-button"
-          style={coverPhoto ? { backgroundImage: `url(${coverPhoto})` } : {}}
+          style={projectCover ? { backgroundImage: `url(${projectCover})` } : {}}
         >
 
         <label htmlFor="cover-file-upload" className="upload-button"></label>
