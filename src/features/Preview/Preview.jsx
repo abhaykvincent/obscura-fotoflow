@@ -174,7 +174,19 @@ const handleDelete = async () => {
       </div>
 
       <div className="controls bottom">
-        <div className="left-controls"></div>
+        <div className="left-controls">
+
+        <div className="icon set-cover"
+            onClick={() => setCoverPhotoInFirestore(studioName,projectId, image.url)}
+          >Set Project cover</div>
+          <div className="icon set-cover"
+            onClick={() => {
+              console.log(studioName,projectId,collectionId, image.url)
+              setGalleryCoverPhotoInFirestore(studioName,projectId,collectionId, image.url)}
+            
+            }
+              >Set Gallery cover</div>
+        </div>
         <div className="center-controls">
           <div className="tool">{image.status=="selected"?
             <div className="selected-button active">
@@ -188,7 +200,10 @@ const handleDelete = async () => {
             </div>}
           </div>
         </div>
-        <div className="right-controls"></div>
+        <div className="right-controls">
+
+        <div className="icon delete" onClick={handleDelete}>Delete</div>
+        </div>
       </div>
 
       <div className="controls top">
@@ -199,17 +214,8 @@ const handleDelete = async () => {
           <div className="file-name">{shortenFileName(image.name)}</div>
         </div>
         <div className="right-controls">
-          <div className="icon set-cover"
-            onClick={() => setCoverPhotoInFirestore(studioName,projectId, image.url)}
-          >Set Project cover</div>
-          <div className="icon set-cover"
-            onClick={() => {
-              console.log(studioName,projectId,collectionId, image.url)
-              setGalleryCoverPhotoInFirestore(studioName,projectId,collectionId, image.url)}
-            
-            }
-              >Set Gallery cover</div>
-              <div className="icon delete" onClick={handleDelete}>Delete</div>
+          
+              
           <div className="icon download"
           onClick={async (event) => {
             event.stopPropagation(); // Prevent the next image navigation

@@ -52,10 +52,10 @@ function AddProjectModal() {
         window.firebase.DEBUG = true;  // Enable verbose logging
     }
   const [projectData, setProjectData] = useState({
-      name: process.env.NODE_ENV === 'development'?randomName:'',
-      type: process.env.NODE_ENV === 'development'?randomType:'',
-      email: process.env.NODE_ENV === 'development'?randomEmail:'',
-      phone: process.env.NODE_ENV === 'development'?'623099329':'',
+      name: process.env.NODE_ENV === 'development'?'':'',
+      type: process.env.NODE_ENV === 'development'?'':'',
+      email: process.env.NODE_ENV === 'development'?'':'',
+      phone: process.env.NODE_ENV === 'development'?'':'',
       collections: [],
       events: [],
       payments: [],

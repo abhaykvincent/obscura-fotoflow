@@ -1,7 +1,7 @@
 // slices/authSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
-import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
+import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateInvitationInFirebase } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 
 
@@ -103,6 +103,21 @@ export const addBudget =  createAsyncThunk(
     // Call the function to delete the file
     await deleteFileFromFirestoreAndStorage(studioName, projectId, collectionId, imageUrl, imageName);
     return { projectId, collectionId, fileName: imageName }; // Return necessary data
+  }
+);
+// Invitations
+export const updateInvitation = createAsyncThunk(
+  'projects/updateInvitation',
+  async ({ domain, projectId, invitationData }, { dispatch }) => {
+    const updatedInvitationId = await updateInvitationInFirebase(domain, projectId, invitationData);
+    return { projectId, invitationData, updatedInvitationId };
+  }
+);
+export const fetchInvitation = createAsyncThunk(
+  'invitations/fetchInvitation',
+  async ({ domain, projectId }) => {
+    const invitation = await fetchInvitationFromFirebase(domain, projectId);
+    return invitation;
   }
 );
 
@@ -353,6 +368,41 @@ const projectsSlice = createSlice({
         state.status = 'failed';
         state.loading = false;
         state.error = action.error.message;
+      });
+
+      // INVITATION
+      // Add the cases to the slice reducer
+      builder
+      .addCase(updateInvitation.pending, (state) => {
+        state.status = 'loading';
+        state.loading = true;
+      })
+      .addCase(updateInvitation.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.loading = false;
+        const { projectId, invitationData } = action.payload;
+        state.data = state.data.map((project) => {
+          if (project.id === projectId) {
+            return { ...project, invitation: { ...project.invitation, ...invitationData } };
+          }
+          return project;
+        });
+        console.log('Invitation data updated:', invitationData);
+      })
+      .addCase(updateInvitation.rejected, (state, action) => {
+        state.status = 'failed';
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(fetchInvitation.fulfilled, (state, action) => {
+        const { projectId } = action.payload;
+        //find project and add invitation
+        state.data = state.data.map((project) => {
+          if (project.id === projectId) {
+            return { ...project, invitation: action.payload.invitation };
+          }
+          return project;
+        });
       });
   },
 });

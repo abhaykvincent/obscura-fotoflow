@@ -1,6 +1,6 @@
 import React from 'react';
 
-const NameEditor = ({ groomName, brideName, font, size, onChange }) => {
+const NameEditor = ({ groomName, brideName, font, size, title, message,onChange }) => {
   return (
     <div className="form-section name-editor ">
       <div className="row four">
@@ -43,6 +43,24 @@ const NameEditor = ({ groomName, brideName, font, size, onChange }) => {
             max="100"
             />
         </div>
+      </div>
+      <div className="row two">
+        <div className='field'>
+            <label>Context</label>
+            <input
+            type="text"
+            value={title}
+            onChange={(e) => onChange({ title: e.target.value })}
+            />
+          </div>
+        <div className='field'>
+            <label>Message</label>
+            <input
+            type="text"
+            value={message}
+            onChange={(e) => onChange({ message: e.target.value })}
+            />
+          </div>
       </div>
     </div>
   );

@@ -39,6 +39,8 @@ import AdminPanel from './features/AdminPanel/AdminPanel';
 import useAdminAuth from './hooks/useAdminAuth';
 import { selectModal } from './app/slices/modalSlice';
 import InvitationPage from './features/Invitation/InvitationPage';
+import Preview from './features/Preview/Preview';
+import InvitationPreview from './features/Invitation/InvitationPreview';
 
 const client = new Client();
 client.setProject('fotoflow-notifications');
@@ -120,7 +122,7 @@ export default function App() {
               <Route exact path="/:studioName/" element={<Home />} />
               <Route exact path="/:studioName/project/:id" element={<Project />} />
               <Route exact path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
-              <Route exact path="/:studioName/invitation/:id" element={<InvitationPage/>} />
+              <Route exact path="/:studioName/invitation-creator/:projectId" element={<InvitationPage/>} />
               <Route path="/:studioName/projects" element={<Projects />} />
               <Route path="/:studioName/projects" element={<Projects />} />
               <Route path="/:studioName/storage" element={<Storage />} />
@@ -139,6 +141,7 @@ export default function App() {
 
             <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>
             <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>
+            <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>
             <Route path="/masanory-grid" element={<ImageGallery />}/>
           </Routes>
         )}

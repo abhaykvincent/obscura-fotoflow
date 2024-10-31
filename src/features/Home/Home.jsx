@@ -49,7 +49,7 @@ function Home() {
                     <div className="actions">
                         <div className="button primary icon add"
                             onClick={()=>dispatch(openModal('createProject'))}
-                        >Create Project</div>
+                        >New Project</div>
                     </div>
                 </div>
                 {
@@ -101,7 +101,7 @@ function Home() {
                             <div className="project-details">
                                 <div className="details-top">
 
-                                    <h4 className="project-title">Create Project</h4>
+                                    <h4 className="project-title">New Project</h4>
                                     <p className="project-type"></p>
                                 </div>
                             </div>

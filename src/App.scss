@@ -41,7 +41,7 @@ body{
   header{
     position: fixed;
     display:grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: auto 1fr 1fr;
     top:  0px;
     width: 100vw;
     height: $header-height;
@@ -65,7 +65,7 @@ body{
       display: grid;
       grid-template-columns: 8px*7 auto;;
       padding-left :0px;
-        width: 8px*23;
+        width: auto;
         height: 100%;
         align-items:center;
         gap: 8px;
@@ -438,11 +438,11 @@ body{
           display: grid;
           align-items: center;
           align-content: center;
-          -height: calc(100vh - 8px*52);
+          height: calc(100vh - 8px*52);
           border-radius: 8px*1;
           border: 1px double $dark-0;
           stroke-dashoffset: 20px 10px;
-          opacity: 0.8;
+          opacity: 0.4;
           margin: 8px;
           text-align: center;
           background-size: 80%;;
@@ -522,6 +522,7 @@ body{
     width: calc(100vw - $sidebar-width);
     position: fixed; 
     display: grid;
+    align-items: center;
     grid-template-columns: auto auto auto;
     justify-content: space-between;
     justify-items: stretch;
@@ -556,15 +557,18 @@ body{
         font-size: 0.8rem;
       }
     }
-    .icon{
-      padding: 8px*2;
-      background-size: 100%;
-      &.options{
-        transform: rotate(90deg);
+    button{
 
-        background-image: url('https://img.icons8.com/?size=100&id=Mli429zE5QBn&format=png&color=ffffff');
-        background-size: 60%;
-        background-position: center;
+      .icon{
+        padding: 8px*2;
+        background-size: 100%;
+        &.options{
+          transform: rotate(90deg);
+  
+          background-image: url('https://img.icons8.com/?size=100&id=Mli429zE5QBn&format=png&color=ffffff');
+          background-size: 60%;
+          background-position: center;
+        }
       }
     }
     //data-radix-popper-content-wrapper
@@ -1660,6 +1664,14 @@ body{
               }
             }
           }
+        }
+        .project-dashboard-header {
+          top: 64px;
+          width: calc(100% - 8px*3);
+          display: flex;
+          justify-content: space-between;
+          gap: 4px;
+          left: 12px;
       }
         .project-collection .header {
           display: grid;

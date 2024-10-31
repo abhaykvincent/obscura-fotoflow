@@ -35,7 +35,7 @@
         border: 2px solid $green-default-light;
         &.outline {
             background: none;
-            border: 1px solid $green-dark-accessible-light;
+            border: 2px solid $green-dark-accessible-light;
             color: $green-default-light;
             font-weight: 500;
         }
@@ -47,7 +47,7 @@
             color: rgb(255, 255, 255);
             &.outline {
                 background: $gray-accessible-dark;
-                border: 1px solid $green-dark-accessible-light;
+                border: 2px solid $green-dark-accessible-light;
                 color: $gray-default-dark;
             }
               
@@ -90,7 +90,7 @@
     }
     &.warnning{
         padding: 4px 8px;
-        border: 1px solid $red-default-dark;
+        border: 1px solid $gray-default-dark;
         &:hover{
             border: 1px solid $red-default-dark;
         }
@@ -106,6 +106,13 @@
         font-size: 1rem;
     }
     &.icon{
+        &.icon-only{
+            padding: 2px 8px;
+            &::before{
+                margin-right: 0;
+                background-position: center;
+            }
+        }
         &::before{
             content: '.';
             margin-right: 4px;
@@ -142,10 +149,24 @@
 
             background-image: url('https://img.icons8.com/?size=100&id=12438&format=png&color=FFFFFF');
         }
-        &.delete::before{
-            background-size: 90%;
-
-            background-image: url('https://img.icons8.com/?size=100&id=67884&format=png&color=FFFFFFF');
+        &.delete
+        {
+            &:hover{
+                &::before{background-image: url('https://img.icons8.com/?size=100&id=67884&format=png&color=ff6961');
+    
+                }}
+            &::before{
+                background-size: 90%;
+    
+                background-image: url('https://img.icons8.com/?size=100&id=67884&format=png&color=ffffff');
+                
+            }
+        }
+        &.random::before{
+            margin-left: 0px;
+            background-size: 100%;
+            background-image: url('https://img.icons8.com/?size=100&id=RBNIqU8jJHdD&format=png&color=FFFFFF');
+            
         }
         &.invitation::before{
             background-size: 100%;
@@ -175,10 +196,26 @@
             background-image: url('https://img.icons8.com/?size=100&id=71204&format=png&color=FFFFFF');
             
         }
+        &.preview-icon::before{
+            margin-right: 6px;
+            margin-bottom: -4px;
+            background-size: 80%;
+            background-position: center center;
+            background-image: url('https://img.icons8.com/?size=100&id=60022&format=png&color=FFFFFF');
+            
+        }
+        &.publish-icon::before{
+            margin-right: 6px;
+            margin-bottom: -4px;
+            background-size: 90%;
+            background-position: center center;
+            background-image: url('https://img.icons8.com/?size=100&id=nIyBXaDJIW9G&format=png&color=FFFFFF');
+            
+        }
     }
 }
 .disabled{
-    color: $gray4-accessible-dark;
+    color: $gray5-accessible-light;
     opacity: 0.5;
     *{
 
