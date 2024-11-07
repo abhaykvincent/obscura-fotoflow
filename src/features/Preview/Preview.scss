@@ -6,8 +6,8 @@
   }
 .preview{
     position: fixed;
-    top: -$header-height + 5px;
-    left: -8px*24;
+    top: -8px*31;
+    left: -8px*27;
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.97);
@@ -103,6 +103,7 @@
             }
             .right-controls{
                 display: flex;
+                gap: 8px;
                 align-items: center;
                 justify-content: end;
                 position: fixed;
@@ -111,15 +112,22 @@
                 height: 8px*3;
                 margin: 8px*2;
                 .icon{
-                    padding: 8px*2.5;
+                    padding: 8px*2;
                     border-radius: 100%;
                     background-position: center center;
                     background-size: 50% auto;
                     cursor: pointer;
                     transition-duration: 0.2s;
+                    &.options{
+                            background-color: none;
+                        }
+                    
                     &:hover{
                         background-color: rgba(255, 255, 255, 0.1);
                         transform: scale(1.1);
+                        &.options{
+                            background-color: none;
+                        }
                     }
     
                 }
@@ -235,7 +243,7 @@
             position: fixed;
             bottom: 0px;
             width: 100%;
-            margin-bottom: 8px;
+            margin-bottom: 8px*3;
             background: none;
             border:none;
             .left-controls{
@@ -267,6 +275,10 @@
                     background-color: rgba(0, 0, 0, 0.3);
                     cursor: pointer;
                 }
+            }
+            .icon{
+
+            color: $gray-accessible-light;
             }
             
         }
@@ -341,14 +353,26 @@
         top: 0px;
         left: 0px;
     }
+    .project-collection .preview{
+
+        top: -8px*31;
+        left: -8px*10.5;
+    }
 }
 
 // Mobile
 @media only screen and (max-width: 520px) {
     .App{
+        .project-collection{
+                
+        .preview{
+            left: -8px*1;
+            top: -8px*49;}
+        }
         .preview{
             left: -8px*0;
             top: -($header-height );
+            
             .image-wrap{
                 .image{
                     height: 100vh;
