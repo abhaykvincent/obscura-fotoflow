@@ -20,8 +20,8 @@ function CommingSoon(
 					{
 						title === 'Calendar' && <h2 className='welcome-message sub'>Sync with <span className="bold">Google Calendar </span>!</h2>
 					}
-				<p>Apply for early Access</p>
-				<Link to="/subscription" className="button primary">Join</Link>
+				<p className='apply-label'>Apply for early Access</p>
+				<Link  to="/subscription" className="button primary apply-button">Join</Link>
 				</div>
 			</div>
 		</div>

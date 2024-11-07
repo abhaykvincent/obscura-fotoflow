@@ -9,19 +9,18 @@ const initialPlans = [
       { storage: 8, monthlyPrice: 'Free', yearlyPrice: '₹0', specialOffer: 'First 2 years are on us' },
     ],
     features: ['Selection', 'Gallery', 'Events', 'Teams', 'Financials'],
-    coreFeatures: ['Unlimited Projects', '8 GB Storage'],
+    coreFeatures: ['Unlimited Projects', '5 GB Storage'],
     expiry: '31 July 2026',
     defaultPlan: 0,
   },
   {
     name: 'Freelancer',
     pricing: [
-      { storage: 120, monthlyPrice: '₹1,000', yearlyPrice: '₹10,000', specialOffer: 'First 2 months on us' },
-      { storage: 500, monthlyPrice: '₹2,000', yearlyPrice: '₹20,000', specialOffer: 'First 2 months on us',defaultPlan: true  },
-      { storage: 1000, monthlyPrice: '₹3,000', yearlyPrice: '₹30,000', specialOffer: 'First 2 months on us' },
+      { storage: 100, monthlyPrice: '₹1,500', yearlyPrice: '₹15,000', specialOffer: 'First 2 months on us',defaultPlan: true   },
+      { storage: 1000, monthlyPrice: '₹3,000', yearlyPrice: '₹30,000', specialOffer: 'First 2 months on us'},
     ],
-    defaultPlan: 1,
-    defaultStorage: 500,
+    defaultPlan: 0,
+    defaultStorage: 1000,
     features: ['256 GB Cold Storage', 'Everything in Core plan', 'Full Resolution', 'Timeline'],
     coreFeatures: ['Gallery','Financials', 'Cold Storage','128 GB storage'],
     extraFeatures: { Gallery: 'Unlimited',Financials: 'Unlimited','Cold Storage': 'Limited'},
@@ -29,11 +28,11 @@ const initialPlans = [
   {
     name: 'Studio',
     pricing: [
-      { storage: 500, monthlyPrice: '₹3,000', yearlyPrice: '₹30,000', specialOffer: 'First 2 months on us'},
-      { storage: 1000, monthlyPrice: '₹4,000', yearlyPrice: '₹40,000', specialOffer: 'First 2 months on us',defaultPlan: true },
-      { storage: 2000, monthlyPrice: '₹6,000', yearlyPrice: '₹60,000', specialOffer: 'First 2 months on us' },
+      { storage: 500, monthlyPrice: '₹3,000', yearlyPrice: '₹30,000', specialOffer: 'First 2 months on us',defaultPlan: true},
+      { storage: 1000, monthlyPrice: '₹4,000', yearlyPrice: '₹40,000', specialOffer: 'First 2 months on us'},
+      { storage: 5000, monthlyPrice: '₹10,000', yearlyPrice: '₹60,000', specialOffer: 'First 2 months on us' },
     ],
-    defaultStorage: 1000,
+    defaultStorage: 2000,
     defaultPlan: 0,
     features: ['512 GB Cold Storage', 'Everything in Freelancer plan', 'Online Payments', 'Cold Storage Access'],
     coreFeatures: ['AI', 'Teams', 'Bookings', '1024 GB storage'],
@@ -101,10 +100,6 @@ const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
       <div className="plan-pricing amount monthly">
         <h1>{currentPricing?.monthlyPrice}</h1>
         {currentPricing?.monthlyPrice == 'Free'?<div className="unit"> * </div>:<div className="unit">/ month</div>}
-      </div>
-      <div className="plan-pricing amount yearly">
-        <h1>{currentPricing?.yearlyPrice}</h1>
-        <div className="unit"><span>{plan.yearlyDiscount}</span> / year</div>
       </div>
       <div className="plan-pricing yearly">
         <div className="first-month">{currentPricing?.specialOffer}</div>
@@ -187,11 +182,29 @@ function Subscription() {
         </div>
       </div>
       <div className="plans-container">
+
+      <div className="subscriptions-header">
+
+        <div className="left-section"></div>
         <h1 className='subscriptions-heading'>
           Pricing 
           <span className="tag green">BATCH 02</span>
           <span className="tag white">Limited Time</span>
-          </h1>
+        </h1>
+        <div className='subscriptions-options'>
+          <div className="view-control">
+            <div className="control-wrap">
+              <div className="controls">
+                  <div className={`control ctrl-draft`} >Monthly</div>
+                  <div className={`control ctrl-all active`} >Annual</div>
+              </div>
+              <div className={`active`}></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
         <div className="plans">
           {plans.map((plan, index) => (
             <PlanCard key={index} plan={plan} plans={plans} defaultPlan={plan.defaultPlan} defaultStorage={plan.defaultStorage} onStorageChange={handleStorageChange} />

@@ -22,7 +22,7 @@ const NameEditor = ({ groomName, brideName, font, size, title, message,onChange 
             />
         </div>
 
-        <div className='field font-select'>
+        {/* <div className='field font-select'>
             <label>Font</label>
             <select className='secondery'
             value={font}
@@ -42,7 +42,7 @@ const NameEditor = ({ groomName, brideName, font, size, title, message,onChange 
             min="10"
             max="100"
             />
-        </div>
+        </div> */}
       </div>
       <div className="row two">
         <div className='field'>

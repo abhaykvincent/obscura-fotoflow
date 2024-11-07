@@ -8,10 +8,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectProjects } from '../../app/slices/projectsSlice';
 import { openModal } from '../../app/slices/modalSlice';
 import { getRecentProjects } from '../../utils/projectFilters';
+import { selectUserStudio } from '../../app/slices/authSlice';
 
 function Projects() {
+    const defaultStudio = useSelector(selectUserStudio)
     const dispatch = useDispatch()
-    
+    document.title = `${defaultStudio.name} | Projects`;
+
     const projects = useSelector(selectProjects)
     const [recentProjects, setRecentProjects] = useState([])
     useEffect(() => {

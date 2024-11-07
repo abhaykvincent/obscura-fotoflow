@@ -27,6 +27,7 @@ function DashboardProjects({project}){
         <div className="button secondary  icon  invitation" > Invitation</div>
       </Link>
         <div className="button secondary icon user" >Client</div>
+        <div className="button tertiary icon pin" >{project?.pin }</div>
       </div>
       <div className="view-cta">
 
@@ -47,7 +48,7 @@ function DashboardProjects({project}){
               onClick={()=>{}} 
               >PIN : {project?.pin}
             </div> */}
-            <div className={`button primary share ${project?.uploadedFilesCount>0 ? '':'disabled'}`} 
+            <div className={`button primary share icon ${project?.uploadedFilesCount>0 ? '':'disabled'}`} 
             onClick={()=>{
               (project.collections.length > 0 && project.uploadedFilesCount>0) && 
                 dispatch(openModal('shareGallery')) 
@@ -107,7 +108,7 @@ function DashboardProjects({project}){
                 style={
                   {
                     backgroundImage:
-                    `url(${project.projectCover!==""?project.projectCover:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`
+                    `url(${project.projectCover!==""?encodeURI(project.projectCover):'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`
                   }}
                 ></div>
               </div>

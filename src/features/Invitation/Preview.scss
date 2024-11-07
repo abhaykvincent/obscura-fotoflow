@@ -1,0 +1,159 @@
+@import '../../style/variables';
+@import '../../style/components';
+@font-face {
+    font-family: 'Lastri';
+    src: 
+         url('../../fonts/LastriRegular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+@media only screen and (min-width: 1201px) {
+    .App .preview-window
+    {
+        &.editor-preview{
+            display: grid;
+            justify-self: center;
+            width: 100%;
+            max-width: 8px*52;
+        }
+        &.preview-preview{
+            .screen-wrap .screen
+            {
+                .invitation-project-name {
+                    font-size: 3rem;
+                    font-weight: 400;
+                    color: rgba(0, 0, 0, 0.8);
+                    font-family: "Lastri", sans-serif;
+                }
+                .project-cover{
+                    display: grid;
+                    height: 70vh;
+                    justify-content: center;
+                    align-content: center;
+                    overflow: hidden;
+                } 
+                img {
+                    height: 100%;
+                }
+                .container{
+                    .events .events-cta {
+                        display: flex;
+                        gap: 8px;
+                        transform: scale(0.8);
+                    }
+                    .host-message p {
+                        font-size: 1rem;
+                        max-width: 8px*50;
+                        color: #535353cf;
+                    }
+                    .invitation-project-title{
+                        font-size: 1.2rem;
+
+                    }
+                } 
+            } 
+        }
+    }
+    
+}
+@media only screen and (max-width: 1200px) {
+    .App .preview-window
+    {
+        &.editor-preview{
+
+        }
+        &.preview-preview{
+            .screen-wrap .screen
+            {
+                .invitation-project-name {
+                    font-size: 2.5rem;
+                    font-weight: 400;
+                    color: rgba(0, 0, 0, 0.8);
+                    font-family: "Lastri", sans-serif;
+                }
+
+                .invitation-project-title{
+                    font-size: 1.5rem;
+                    color: $dark-0;
+                }
+                .project-cover{
+                    display: grid;
+                    height: 100%;
+                    justify-content: center;
+                    align-content: center;
+                    overflow: hidden;
+                } img {
+                    height: 100%;
+                }
+                .container{
+                    .events .events-cta {
+                        display: flex;
+                        gap: 8px;
+                        transform: scale(0.8);
+                    }
+                    .events .event{
+
+                        .event-type {
+                            font-size: 1.5rem;
+                            margin-bottom: 8px;
+                        }
+                        p.event-time {
+                            font-size: 1rem;
+                        }
+                        .event-location {
+                            font-size: 1rem;
+                        }
+                    } 
+                    .host-message p {
+                        font-size: 1.2rem;
+                        max-width: 8px*50;
+                        color: #535353cf;
+                    }
+                    .invitation-project-title{
+                        font-size: 1.2rem;
+
+                    }
+                } 
+            } 
+        }
+    }
+    
+}
+@media only screen and (max-width: 720px) {
+    .App .preview-window
+    {
+        &.editor-preview{
+
+        }
+        &.preview-preview{
+            .screen-wrap .screen
+            {
+                .invitation-project-name {
+                    font-size: 2rem;
+                    font-weight: 400;
+                    color: rgba(0, 0, 0, 0.8);
+                    font-family: "Lastri", sans-serif;
+                }
+                .invitation-project-title{
+                    font-size: 1rem;
+                    font-weight: 100;
+                    color: rgba(0, 0, 0, 0.7);
+                }
+                .project-cover{
+                    display: grid;
+                    justify-content: center;
+                    align-content: center;
+                    overflow: hidden;
+                } 
+                
+                img {
+                    height: 100%;
+                }
+            } 
+        }
+    }
+    
+}
+    
+

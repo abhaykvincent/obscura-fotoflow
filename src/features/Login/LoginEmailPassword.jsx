@@ -16,7 +16,6 @@ const LoginEmailPassword = () => {
   });
   const visible = useSelector(selectModal)
   const onClose = () => dispatch(closeModalWithAnimation('loginEmailPassword'))
-  document.title = `Login`
   if (!visible.loginEmailPassword) {
     return null;
   }

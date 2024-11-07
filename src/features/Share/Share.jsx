@@ -8,16 +8,18 @@ import ShareGallery from '../../components/ImageGallery/ShareGallery';
 import { useSelector } from 'react-redux';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 import { toTitleCase } from '../../utils/stringUtils';
+import { trackEvent } from '../../analytics/utils';
 
 export default function ShareProject() {
   // studio =  get the url and the name is lorem for url http://localhost:3000/lorem/gallery/william-thomas-b23Sg/birthday-qr22E
   
   const { studioName } = useParams();
-console.log(studioName)
   
   // set body color to white
   useEffect(() => {
     document.body.style.backgroundColor = 'white';
+    
+
   }, []);
   // Get project from fetchProject and store in state
   let  { projectId, collectionId } = useParams();
@@ -36,9 +38,10 @@ console.log(studioName)
   const fetchProjectData = async () => {
     try {
       const projectData = await fetchProject(studioName,projectId);
-
-      console.log(projectData)
       setProject(projectData);
+      trackEvent('gallery_viewed', {
+        project_id: projectId
+      });
     } catch (error) {
       console.error('Failed to fetch project:', error);
     }

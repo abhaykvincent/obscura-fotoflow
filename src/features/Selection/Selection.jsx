@@ -48,7 +48,6 @@ export default function Selection() {
     document.body.style.backgroundColor = 'white';
   }, []);
   useEffect(() => {
-    console.log(selectionCompleted)
     if(selectionCompleted)  {
       isInitialSelection && setIsInitialSelection(false);
       
@@ -68,14 +67,10 @@ export default function Selection() {
     setTotalCollections(project.collections.length)
     setCurrentCollectionIndex(project.collections.findIndex(collection => collection.id === collectionId))
     let newImages = project?.collections.find((collection)=>collection.id===collectionId)?.uploadedFiles || []
-    console.log(newImages)
     newImages.length>0?setImages(newImages):setImages([])
     setTotalPages(Math.ceil(newImages.length/size))
     setPage(1)
   }, [project, collectionId]);
-  useEffect(() => {
-    console.log(selectedImages)
-  }, [selectedImages]);
 
   // Paginate images
   const paginatedImages = useMemo(() => {
@@ -94,7 +89,6 @@ export default function Selection() {
   const fetchProjectData = async () => {
     try {
       const projectData = await fetchProject(studioName, projectId);
-      console.log(projectData)
 
       setProject(projectData);
       // get all images url with status 'selected' from projectData as set
@@ -140,15 +134,15 @@ export default function Selection() {
   };
   const handleAddOrRemoveSelectedImages = async () => {
     try {
-      console.log(selectedImages)
       if (selectedImages.length > 0) {
         await addSelectedImagesToFirestore(studioName, projectId, collectionId, selectedImages, page, size, totalPages);
       } 
       if (unselectedImages.length > 0) {
         await removeUnselectedImagesFromFirestore(studioName, projectId, collectionId, unselectedImages, page, size, totalPages);
       }
-      
       dispatch(showAlert({type:'success', message:`Selection saved!`})); 
+
+      
     } catch (error) {
       console.error('Error updating selected/unselected images:', error);
     }
@@ -183,7 +177,7 @@ export default function Selection() {
 
       <Alert />
       <div className="project-header">
-        <img className='banner' src={images[0]?images[0].url:''} alt="" srcset="" />
+        <img className='banner' src={images[0]?images[0].url:''} />
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
           
@@ -196,7 +190,7 @@ export default function Selection() {
           authenticated?
             <div className="shared-collection">
               <div className="view-control">
-                        <div className="control-label label-all-photos">{project.collections[currentCollectionIndex].uploadedFiles.length} Photos</div>
+                        <div className="control-label label-all-photos">{project.collections[currentCollectionIndex]?.uploadedFiles?.length} Photos</div>
                         <div className="control-wrap">
                             <div className="controls">
                                 <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All</div>

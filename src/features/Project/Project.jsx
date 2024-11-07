@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -18,7 +18,7 @@ import AddCollectionModal from '../../components/Modal/AddCollection';
 import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 
 // Redux
-import { deleteProject, selectProjects, selectProjectsStatus } from '../../app/slices/projectsSlice';
+import { deleteProject, selectProjects, selectProjectsStatus, updateProjectName } from '../../app/slices/projectsSlice';
 import { closeModal, closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
@@ -50,20 +50,25 @@ export default function Project() {
   // Local state for the project
   const [project, setProject] = useState(null);
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState("");
   // Update project whenever projects or id changes
+  const selectedProject = useMemo(
+    () => projects?.find((p) => p.id === id),
+    [projects, id]
+  );
+  
   useEffect(() => {
-    const selectedProject = projects?.find((p) => p.id === id);
-    setProject(selectedProject);
-
     if (projectsStatus === 'succeeded' && !selectedProject) {
       navigate(`/${defaultStudio.domain}/projects`);
     }
-  }, [projects, id, projectsStatus, defaultStudio.domain, navigate]);
+    setProject(selectedProject);
+  }, [projectsStatus, selectedProject, defaultStudio.domain, navigate]);
 
   useEffect(() => {
     if (project) {
       console.log(project)
-      document.title = `${project.name} - ${project.type}`;
+      document.title = `${project.name}'s ${project.type} | ${defaultStudio.name}`;
       updateProjectLastOpenedInFirestore(domain, project.id);
     }
   }, [project]);
@@ -81,12 +86,30 @@ export default function Project() {
 
   // If the project is not found, return null
   if (!project) return null;
+  const handleSave = () => {
+    if (newName && newName !== project.name) {
+      dispatch(updateProjectName({ domain, projectId: id, newName })).then(() => {
+        setIsEditing(false);
+        // Update local project state in Redux
+        setProject({ ...project, name: newName });
+      });
+    }
+  };
+
+  const handleCancel = () => setIsEditing(false);
+  const handleNameDoubleClick = () => {
+
+    setIsEditing(true);
+    setNewName(project.name);
+  };
+
 
   return (
     <>
       <ShareGallery   project={project} />
       <DeleteConfirmationModal itemType="project" itemName={project.name}  onDeleteConfirm={onDeleteConfirm} />
     
+        {/* Modals */}
       <AddCollectionModal project={project} />
         <AddPaymentModal project={project} />
         <AddExpenseModal project={project} />
@@ -97,16 +120,29 @@ export default function Project() {
           <DashboardProjects project={project} />
         </div>
         {/* <SidePanel  project={project}/> */}
-        {/* Modals */}
 
         <Refresh />
       </main>
-      <div className="project-info">
+      <div className="project-info gallary-page-info project-page-info">
         <div className="breadcrumbs">
           <Link className="back" to={`/${defaultStudio.domain}/projects`}>Projects</Link>
         </div>
         <div className="client">
-          <h1>{project.name}</h1>
+        {isEditing ? (
+          <div className="editable-data ">
+            <input
+              type="text"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+            />
+            <div className="input-edit-actions">
+              <button className={`${newName === project.name ? 'disabled' : ''} button primary icon icon-only check`} onClick={handleSave}></button>
+              <button className="button secondary  icon icon-only close" onClick={handleCancel}></button>
+            </div>
+          </div>
+        ) : (
+          <h1 onDoubleClick={handleNameDoubleClick}>{project.name}</h1>
+        )}
           <div className="type">{project.type}</div>
         </div>
         <div className="project-options options">
@@ -116,16 +152,20 @@ export default function Project() {
             <div className="icon options"></div>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-          <DropdownMenuItem>New Gallery</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onSelect={() => {
-                // Your action for Delete
-                dispatch(openModal('confirmDeleteproject'));
-              }}
-            >
-              Delete Project
-            </DropdownMenuItem>
+
+            <DropdownMenuItem>New Gallery</DropdownMenuItem>
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem
+                onSelect={() => { dispatch(openModal('confirmDeleteproject'))}}>
+                Delete Project
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onSelect={() => { handleNameDoubleClick()}}>
+                Edit Project name
+              </DropdownMenuItem>
+
           </DropdownMenuContent>
         </DropdownMenu>
 
