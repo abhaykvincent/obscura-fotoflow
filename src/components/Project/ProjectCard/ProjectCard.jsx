@@ -6,7 +6,6 @@ import { selectUserStudio } from '../../../app/slices/authSlice';
 
 function ProjectCard({project}) {   
   const defaultStudio = useSelector(selectUserStudio)
-console.log(project.name,project.projectCover )
     //Project's selected photos count
     const getProjectSelectedPhotosCount = (project) => {
         return project.collections.flatMap(collection => collection.uploadedFiles)

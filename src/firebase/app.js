@@ -25,7 +25,7 @@ const firebaseConfig = {
   };
 
 // Obscura
-  /* const firebaseConfig = {
+/*   const firebaseConfig = {
     apiKey: "AIzaSyATMISVaGPMkJANWrzgmOGqgMGHprnrT04",
     authDomain: "obscura-fotoflow.firebaseapp.com",
     projectId: "obscura-fotoflow",

@@ -110,13 +110,11 @@ export const fetchProject = async (domain, projectId) => {
         const collectionSnapshot = await getDoc(collectionDoc);
     
         if (collectionSnapshot.exists()) {
-            console.log(collectionSnapshot.data());
             return { ...collection, ...collectionSnapshot.data(), id: collection.id };
         } else {
             throw new Error('Collection does not exist.');
         }
     }));
-    console.log(projectData);
     
     return projectData;
 };
@@ -203,6 +201,16 @@ export const deleteProjectFromFirestore = async (domain, projectId) => {
         throw error;
     }
 };
+export const updateProjectNameInFirestore = async (domain, projectId, newName) => {
+    try {
+      const projectDocRef = doc(db, 'studios', domain, 'projects', projectId);
+      await updateDoc(projectDocRef, { name: newName });
+      console.log('Project name updated successfully 🎉');
+    } catch (error) {
+      console.error('Error updating project name:', error.message);
+      throw error;
+    }
+  };
 
   
 // Collection Operations
@@ -281,6 +289,16 @@ export const deleteCollectionFromFirestore = async (domain, projectId, collectio
         throw error;
     }
 };
+export const updateCollectionNameInFirestore = async (domain, projectId, collectionId, newName) => {
+    try {
+      const collectionDocRef = doc(db, 'studios', domain, 'projects', projectId, 'collections', collectionId);
+      await updateDoc(collectionDocRef, { name: newName });
+      console.log('Collection name updated successfully 🎉');
+    } catch (error) {
+      console.error('Error updating collection name:', error.message);
+      throw error;
+    }
+  };
 
 
 // Function to create new event for a project in the cloud firestore
@@ -757,7 +775,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         batch.update(collectionDocRef, {
             uploadedFiles: arrayUnion(...uploadedFiles),
         });
-
+        const pin = generateMemorablePIN(4)
         const projectCover = uploadedFiles[0]?.url || ''
         batch.update(projectDocRef, {
             collections: projectData.data().collections.map(collection => {
@@ -778,6 +796,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         });
 
         await batch.commit();
+        return({pin})
         color = '#54a134';
        
     } else {

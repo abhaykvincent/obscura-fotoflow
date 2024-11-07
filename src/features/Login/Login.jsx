@@ -18,7 +18,6 @@ const LoginModal = () => {
 
  
 
-  document.title = `Login`
   const handleGoogleSignIn = async () => {
     try {
         const result = await signInWithPopup(auth, provider);

@@ -3,7 +3,7 @@ export function formatDate(dateInput) {
   const now = new Date();
 
   // Calculate differences for "Today", "Tomorrow", etc.
-  const diffInDays = Math.floor((date - now) / (1000 * 60 * 60 * 24));
+  const diffInDays = Math.floor((date - now) / (1000 * 60 * 60 * 24)+1);
   
   // Handle "Today", "Tomorrow", etc.
   if (diffInDays === 0) return 'Today';

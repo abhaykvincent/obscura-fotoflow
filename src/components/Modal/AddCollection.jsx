@@ -45,6 +45,7 @@ const handleSubmit =  () => {
   onClose()
   if(collectionsLength.length < collectionsLimit.perProject) {
     setTimeout(() => {
+
     dispatch(addCollection({ domain, projectId: project.id, newCollection: CollectionData }))
     .then((id) => {
       console.log(id)
@@ -53,14 +54,15 @@ const handleSubmit =  () => {
         collection_id: id.payload.collection.id
       });
       dispatch(showAlert({ type: 'success', message: `Collection <b>${CollectionData.name}</b> added successfully!` }));
+      setIsSubmitting(false);  // Re-enable the button after submission
+      
       navigate(`/${defaultStudio.domain}/gallery/${project.id}/${id.payload.collection.id}`);
     })
-    .finally(() => {
-      setIsSubmitting(false);  // Re-enable the button after submission
-    });
   },500)
   } else {
-    dispatch(showAlert({ type: 'error', message: `Project <b>${CollectionData.name}</b>'s Collection limit reached! Upgrade` }));
+    setIsSubmitting(false);  // Re-enable the button after submission
+
+    dispatch(showAlert({ id:project.id,type: 'error', message: `Project <b>${CollectionData.name}</b>'s Collection limit reached! Upgrade` }));
   }
 };
 

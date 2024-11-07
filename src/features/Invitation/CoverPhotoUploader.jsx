@@ -28,7 +28,7 @@ const CoverPhotoUploader = ({ projectCover, onChange }) => {
       />
         </div>
         <div className="cover-photo-label">
-          Cover Photo
+          Change Cover
         </div>
     </div>
   );

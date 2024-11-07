@@ -10,11 +10,12 @@ import { openModal } from '../../app/slices/modalSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import StoragePie from '../../components/StoragePie/StoragePie';
 import AddProjectModal from '../../components/Modal/AddProject';
+import {  toast } from 'sonner'
 function Home() {
     const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
     const defaultStudio = useSelector(selectUserStudio)
-    document.title = `FotoFlow | Home`;
+    document.title = `FotoFlow | ${defaultStudio.name}`;
     const selectionCompletedProjects = getProjectsByStatus(projects, 'selection-completed');
     const requestPendingProjects = getProjectsByStatus(projects, 'request-pending');
 
@@ -49,7 +50,7 @@ function Home() {
                     <div className="actions">
                         <div className="button primary icon add"
                             onClick={()=>dispatch(openModal('createProject'))}
-                        >New Project</div>
+                        >New</div>
                     </div>
                 </div>
                 {

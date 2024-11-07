@@ -14,7 +14,6 @@ function Teams() {
     const dispatch = useDispatch()
     const teams = useSelector(selectTeams)
     useEffect(() => {
-      console.log(teams)
     }, [teams]);
     return (
         <main className="teams">

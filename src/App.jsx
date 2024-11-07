@@ -41,7 +41,7 @@ import { selectModal } from './app/slices/modalSlice';
 import InvitationPage from './features/Invitation/InvitationPage';
 import Preview from './features/Preview/Preview';
 import InvitationPreview from './features/Invitation/InvitationPreview';
-
+import { Toaster } from 'sonner';
 const client = new Client();
 client.setProject('fotoflow-notifications');
 
@@ -72,7 +72,6 @@ export default function App() {
  
   // ON Render
   useEffect(() => {
-    console.log(currentDomain)
 
       dispatch(checkAuthStatus())
      dispatch(checkStudioStatus())
@@ -146,6 +145,7 @@ export default function App() {
           </Routes>
         )}
         </HotKeys>
+
     </div>
     
   );

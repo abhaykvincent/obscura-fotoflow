@@ -244,10 +244,10 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
                 setUploadStatus('completed')
                 console.log("%c All files uploaded successfully!", 'color:green');
                 
-
+                let getPIN ;
                 addUploadedFilesToFirestore(domain,id, collectionId,importFileSize, uploadedFiles)
-                    .then(() => {
-
+                    .then((response) => {
+                        getPIN = response.pin
                         showAlert('success', 'All files uploaded successfully!')
                         
                         trackEvent('gallery_uploaded', {
@@ -256,13 +256,14 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
                             files: uploadedFiles.length,
                         });
 
+                        return {uploadedFiles,pin:response.pin}
                     })
                     .catch((error) => {
                         console.error('Error adding uploaded files to project:', error.message);
                         showAlert('error', error.message)
                         throw error;
                     });
-                return uploadedFiles;
+                    return {uploadedFiles,pin:getPIN}
             } else {
                 console.log("Some files failed to upload. Reuploading missed files...");
                 return handleUpload(domain, failedFiles, id, collectionId,setUploadLists, retries - 1);

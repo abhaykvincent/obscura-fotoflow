@@ -9,7 +9,7 @@ import ShareGallery from '../../components/Modal/ShareGallery'
 import CollectionsPanel from '../../components/Project/Collections/CollectionsPanel';
 import CollectionImages from '../../components/Project/Collections/CollectionImages';
 // Actions
-import { deleteCollection, deleteProject, selectProjects } from '../../app/slices/projectsSlice';
+import { deleteCollection, deleteProject, selectProjects, updateCollectionName } from '../../app/slices/projectsSlice';
 import { openModal } from '../../app/slices/modalSlice';
 
 import './Galleries.scss';
@@ -21,6 +21,7 @@ import { DropdownMenu,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger, } from '@radix-ui/react-dropdown-menu';
+import { showAlert } from '../../app/slices/alertSlice';
 
 export default function Galleries({}) {
   const dispatch= useDispatch();
@@ -34,10 +35,25 @@ export default function Galleries({}) {
   const [collection, setCollection] = useState('')
   const [targetCollectionId, setTargetCollectionId] = useState('')
   const [confirmDeleteCollection,setConfirmDeleteCollection] = useState(false)
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState("");
   // Delete Project Modal
   const onDeleteConfirmClose = () => setConfirmDeleteCollection(false)
   const onDeleteConfirm = () => dispatch(deleteCollection({domain,projectId:id,collectionId:targetCollectionId}))
+  
+   const handleDoubleClick = () => {
 
+    setIsEditing(true);
+    setNewName(collection.name);
+  };
+  const handleSave = () => {
+    if (newName && newName !== collection.name) {
+        dispatch(updateCollectionName({ domain, projectId:id, collectionId: collection.id, newName })).then(() => {
+        setIsEditing(false);
+      });
+    }
+  };
   useEffect(() => {
     // If no projects are available, return early
     if (!projects) return;
@@ -67,7 +83,7 @@ if(!collectionId&&defaultCollectionId!==''){
   setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}/${targetCollectionId}`);},100)
   return
 }
-  document.title = `${projectTemp.name}'s ${projectTemp.type}`
+  document.title = `${projectTemp.name}'s ${projectTemp.type } Gallery`
 }, [projects, id, collectionId, navigate]);
 
   return (
@@ -75,20 +91,52 @@ if(!collectionId&&defaultCollectionId!==''){
     {/* Page Header */}
     <DeleteConfirmationModal itemType="collection" itemName={collection.name} onDeleteConfirm={onDeleteConfirm} />
 
-    <div className="project-info">
+    <div className="project-info gallery-page-info">
       <div className="breadcrumbs">
         <Link className="back highlight" to={`/${domain}/project/${encodeURIComponent(id)}`}>{project?.name}</Link>
       </div>
       <div className="client">
-        <h1>{collection.name}</h1>
+        {isEditing ? (
+          <div  className="editable-data">
+            <input
+              type="text"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+            />
+
+            <div className="input-edit-actions">
+
+              <button
+                onClick={handleSave}
+                className={`save-button ${newName === collection.name ? 'disabled' : ''}  button primary icon icon-only check`}
+                
+              ></button>
+              <button className="button secondary  icon icon-only close" onClick={() => setIsEditing(false)}></button>
+            </div>
+          </div>
+        ) : (
+          <h1 onDoubleClick={handleDoubleClick}>{collection.name}</h1>
+        )}
         <div className="type"></div>
       </div>
-      <div className="project-options">
-        <div className="button secondery pin" 
+      <div className={`project-options ${project?.pin?'':'disabled'}`}>
+      {project?.pin &&
+        <div className="button secondery pin icon" 
           onClick={()=>{}} 
-          >PIN : {project?.pin}
+          >{project.pin}
         </div>
-        <div className="button primary share" onClick={()=>dispatch(openModal('shareGallery'))} target="_blank">Share</div>
+      }
+        <div className="button primary share" onClick={()=>
+          {project?.pin 
+            ? dispatch(openModal('shareGallery'))
+            : dispatch(showAlert({
+              type:'error',
+              message:'Upload Images and Refresh the page',
+              
+            }
+            ))
+          }
+        } target="_blank">Share</div>
 
 
         <DropdownMenu>
@@ -96,16 +144,21 @@ if(!collectionId&&defaultCollectionId!==''){
             <div className="icon options"></div>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-          <DropdownMenuItem>New Gallery</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onSelect={() => {
-                // Your action for Delete
-                dispatch(openModal('confirmDeletecollection'));
-              }}
-            >
-              Delete Gallery
-            </DropdownMenuItem>
+              <DropdownMenuItem>New Gallery</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onSelect={() => {
+                  // Your action for Delete
+                  dispatch(openModal('confirmDeletecollection'));
+                }}
+              >
+                Delete Gallery
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onSelect={() => { handleDoubleClick()}}>
+                Edit Gallery name
+              </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 

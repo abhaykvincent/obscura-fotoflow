@@ -27,7 +27,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
     // Import size
     const [showAllPhotos, setShowAllPhotos] = useState(true);
     const [page, setPage] = useState(1);
-    const [size, setSize] = useState(15);
+    const [size, setSize] = useState(16);
 
     // Upload progress
     const [uploadList, setUploadLists] = useState([]);
@@ -57,7 +57,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
     }, [uploadList]);
 
     useEffect(() => {
-        console.log(imageUrls);
+        imageUrls.length>0 && console.log(imageUrls);
     }, [imageUrls]);
 
 
@@ -71,6 +71,8 @@ const CollectionImages = ({ id, collectionId, project }) => {
             .catch((error) => {
                 console.log(error);
             });
+    document.title = `${project.name}'s ${collectionId } Gallery`
+
     }, [collectionId]);
 
     // Fetch Images
@@ -83,7 +85,6 @@ const CollectionImages = ({ id, collectionId, project }) => {
         let end = page * size;
         let images = collectionImages.slice(start, end);
         setImageUrls(images);
-        console.log(page);
         setSelectedImages(collectionImages.filter((image) => image.status === 'selected'));
     }, [collectionImages, page]);
 
@@ -115,9 +116,9 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 <div className="options">
                     <UploadButton {...{ isPhotosImported, setIsPhotosImported, imageUrls, setImageUrls, setUploadStatus, id, collectionId, setUploadLists }} />
                 </div>
-                {collectionImages?.length > 0 ? (
+                {collectionImages?.length > 0 || imageUrls.length > 0  ? (
                     <div className="view-control">
-                        <div className="control-label label-all-photos">{collectionImages.length} Photos</div>
+                        <div className="control-label label-all-photos">{collectionImages?.length ? collectionImages?.length: imageUrls.length} Photos</div>
                         <div className="control-wrap">
                             <div className="controls">
                                 <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All photos</div>
@@ -165,13 +166,18 @@ const CollectionImages = ({ id, collectionId, project }) => {
                     </div>
                 </label>
             )}
-            <div className="image-gallery-bottom-panel">
+            {collectionImages?.length>imageUrls.length && <div className="image-gallery-bottom-panel">
                 {/* <div className="button secondary">Load All</div> */}
                 
                 <div className={`button primary ${collectionImages?.length === imageUrls.length ? 'disabled' : ''}`}
                     onClick={() => setPage(page + 1)}
                 >Load More</div>
+
+                {imageUrls.length !==0 && <p className='caughtup-label label'>You are all cought up!</p>}
+                
             </div>
+}
+            
         </div>
     );
 };
