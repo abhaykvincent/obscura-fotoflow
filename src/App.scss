@@ -1873,13 +1873,14 @@ body{
       .list{
         display: grid;
         margin-top: 8px*5;
-        .gallery-list{
-          display:grid;
-          grid-template-columns: 1fr 1fr;
-          padding: 8px*1;
-          width: calc(100vw - 8px*3);
-          gap:8px*3;
-          row-gap: 8px*1;
+        .gallery-list{    
+          display: flex;
+          gap: 32px;
+          margin-bottom: 0px;
+          padding: 8px;
+          padding-top: 16px;
+          overflow-x: scroll;
+          overflow-y: auto;
           .gallery-name{
           }
         }

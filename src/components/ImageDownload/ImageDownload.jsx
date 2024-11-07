@@ -18,9 +18,7 @@ async function downloadImage(url, fileName) {
 
 function DownloadImage({ url, fileName }) {
   return (
-    <button className="download-button" onClick={() => downloadImage(url, fileName)}>
-      Download
-    </button>
+    <div className="icon download" onClick={() => downloadImage(url, fileName)}></div>
   );
 }
 

@@ -12,14 +12,15 @@ function ImageDisplay({ image }) {
   }, [image.url]);
 
   return (
-    <div
-      className="image"
-      style={{
-        backgroundImage: `url("${image.url}")`,
-        backgroundPosition: `${position.x}px ${position.y}px`,
-        backgroundSize: 'contain'
-      }}
-    ></div>
+    <div className="image-wrap">
+        <div
+          className="image"
+          style={{
+            backgroundImage: `url("${encodeURI(image.url)}")`,
+            backgroundSize: 'contain'
+          }}
+        ></div>
+    </div>
   );
 }
 
