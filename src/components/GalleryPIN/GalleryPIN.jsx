@@ -1,67 +1,64 @@
-import React, { useState, createRef, useEffect } from 'react';
+// GalleryPIN.jsx
+import React, { useState, useRef, useEffect } from 'react';
 import { MdLockOutline } from 'react-icons/md';
+import { isPinValid, savePinToLocalStorage, PIN_LENGTH } from '../../utils/pinUtils';
 import './GalleryPIN.scss';
 
-const PIN_STORAGE_KEY = 'gallery_pin';
-const PIN_EXPIRY_KEY = 'pin_expiry';
-
-// Helper to check if the stored PIN is still valid
-const isPinValid = () => {
-  const storedExpiry = localStorage.getItem(PIN_EXPIRY_KEY);
-  return storedExpiry && new Date().getTime() < parseInt(storedExpiry, 10);
-};
-
 function GalleryPIN({ setAuthenticated, projectPin }) {
-  const [pin, setPin] = useState(['', '', '', '']);
+  const [pin, setPin] = useState(new Array(PIN_LENGTH).fill(''));
   const [pinError, setPinError] = useState(false);
-  const pinInputs = pin.map(() => createRef());
+  const pinInputs = useRef([]);
 
+  // Focus first input or authenticate if a valid PIN is in storage
   useEffect(() => {
-    // Check if there is a valid PIN stored in localStorage
-    const storedPin = localStorage.getItem(PIN_STORAGE_KEY);
-    if (storedPin && isPinValid()) {
-      setAuthenticated(true); // Automatically authenticate if the PIN is valid
+    if (isPinValid()) {
+      setAuthenticated(true);
     } else {
-      pinInputs[0].current.focus(); // Otherwise, focus on the first input
+      pinInputs.current[0]?.focus();
     }
-  }, [setAuthenticated, pinInputs]);
+  }, [setAuthenticated]);
 
-  const handlePinCheck = (enteredPin) => {
+
+  const handlePinCheck = (newPin) => {
+    const enteredPin = newPin.join('');
     if (enteredPin === projectPin) {
       setAuthenticated(true);
-      savePinToLocalStorage(enteredPin); // Save the valid PIN to localStorage
+      savePinToLocalStorage(enteredPin);
     } else {
       setPinError(true);
-      setTimeout(() => {
-        setPinError(false);
-        setPin(['', '', '', '']);
-        pinInputs[0]?.current?.focus();
-      }, 500);
+      setTimeout(() => resetPin(), 500);
     }
   };
 
-  const savePinToLocalStorage = (enteredPin) => {
-    const expiryTime = new Date().getTime() + 24 * 60 * 60 * 1000; // 24 hours from now
-    localStorage.setItem(PIN_STORAGE_KEY, enteredPin);
-    localStorage.setItem(PIN_EXPIRY_KEY, expiryTime.toString());
+  const resetPin = () => {
+    setPin(new Array(PIN_LENGTH).fill(''));
+    setPinError(false);
+    pinInputs.current[0]?.focus();
   };
 
   const handlePinChange = (index, value) => {
-    const sanitizedValue = value.replace(/[^0-9]/g, '');
+    const sanitizedValue = value.replace(/[^0-9]/g, '').slice(0, 1); // Allow only one digit
+    if (!sanitizedValue) return;
+
     const newPin = [...pin];
-    newPin[index] = sanitizedValue.slice(0, 1); // Take only the first digit
+    newPin[index] = sanitizedValue;
     setPin(newPin);
 
-    if (index < 3 && sanitizedValue !== '') {
-      pinInputs[index + 1].current.focus();
-    } else if (sanitizedValue !== '') {
-      const enteredPin = newPin.join('');
-      if (enteredPin.length === 4) handlePinCheck(enteredPin);
+    // Move focus or check PIN after entering the last digit
+    if (index === PIN_LENGTH - 1) {
+      handlePinCheck(newPin);
+    } else {
+      pinInputs.current[index + 1]?.focus();
     }
+  };
 
-    // Handle backspace or empty input
-    if (sanitizedValue === '' && index > 0) {
-      pinInputs[index - 1].current.focus();
+  const handleBackspace = (index) => {
+    if (pin[index] === '') {
+      if (index > 0) pinInputs.current[index - 1]?.focus();
+    } else {
+      const newPin = [...pin];
+      newPin[index] = '';
+      setPin(newPin);
     }
   };
 
@@ -70,25 +67,24 @@ function GalleryPIN({ setAuthenticated, projectPin }) {
       <MdLockOutline className="lock-icon" />
       <p>Enter your PIN</p>
       <div className="pin-inputs-container">
-        {pinInputs.map((inputRef, index) => (
+        {Array.from({ length: PIN_LENGTH }, (_, index) => (
           <input
-            className={`pin-input ${pinError ? 'error' : ''}`}
             key={index}
-            type="number"
+            ref={(el) => (pinInputs.current[index] = el)}
+            className={`pin-input ${pinError ? 'error' : ''}`}
+            type="text"
             inputMode="numeric"
-            pattern="[0-9]*"
             maxLength="1"
             value={pin[index]}
             onChange={(e) => handlePinChange(index, e.target.value)}
-            onFocus={() => inputRef.current.select()}
-            ref={inputRef}
+            onKeyDown={(e) => {
+              if (e.key === 'Backspace') handleBackspace(index);
+            }}
+            onFocus={(e) => e.target.select()}
           />
         ))}
       </div>
-      <button
-        className="button primary"
-        onClick={() => handlePinCheck(pin.join(''))}
-      >
+      <button className="button primary" onClick={() => handlePinCheck()}>
         Submit
       </button>
     </div>

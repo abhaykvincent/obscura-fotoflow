@@ -45,33 +45,23 @@ export const login = createAsyncThunk(
     const fontSize ='0.8rem';
     console.log(`%cLogging in as ${serializedUser.email}`, `color: ${color}; font-size: ${fontSize}`);
     
-          // store user
-          localStorage.setItem('user', JSON.stringify(serializedUser));
-          console.log('Stored '+ serializedUser +' to local storage...')
-      // Perform the login logic here (e.g., API call, validation, etc.)
-      // For example, assume fullAccess is an async function that checks user access
-      
+      // store user
+      localStorage.setItem('user', JSON.stringify(serializedUser));
       const users = await fetchUsers()
       const user = users.find(user => {
       if(user.email === serializedUser.email){
-        console.log(user)
         return user
         }
       })
       color= '#54a134'
       console.log(`%cUser found in ${user.studio.name} `, `color: ${color}; font-size: ${fontSize}`);
-      console.log(user)
 
       if (user) {
         localStorage.setItem('authenticated', 'true');
         if(user.studio){
-          console.log( JSON.stringify(user.studio))
           localStorage.setItem('studio', JSON.stringify(user.studio));
-          console.log('Stored '+ user.studio +' to local storage...')
           // store user
           localStorage.setItem('user', JSON.stringify(user));
-          console.log('Stored '+ user +' to local storage...')
-          
           return {
             ...user
           }
@@ -84,7 +74,6 @@ export const login = createAsyncThunk(
 
           // store user
           localStorage.setItem('user', JSON.stringify(user));
-          console.log('Stored '+ user +' to local storage...')
           
         return user
       }
@@ -130,7 +119,6 @@ const authSlice = createSlice({
     },
     checkStudioStatus: (state) => {
       const studioLocal = localStorage.getItem('studio');
-      console.log(JSON.parse(studioLocal))
       state.currentStudio = JSON.parse(studioLocal);
     },
     setUser: (state, action) => {
@@ -143,7 +131,6 @@ const authSlice = createSlice({
       state.error = action.payload;
     },
     setCurrentStudio: (state, action) => {
-      console.log(action.payload)
       state.currentStudio = action.payload;
       localStorage.setItem('studio',JSON.parse(action.payload))
     },
@@ -162,14 +149,12 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
-        console.log(action.payload)
         if(action.payload !== 'no-studio-found') {
           state.currentStudio = action.payload.studio;
         }
         else{
           // get user from local storage 
           let userFromLocalStorage = JSON.parse(localStorage.getItem('user'));
-          console.log(userFromLocalStorage)
           state.user = userFromLocalStorage;
           
         }

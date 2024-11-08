@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 
 const EventEditor = ({ events, onChange }) => {
   const dispatch = useDispatch();
-  console.log(events)
   // Handles changes to individual event fields
   const handleEventChange = (index, updatedEvent) => {
     const updatedEvents = [...events];

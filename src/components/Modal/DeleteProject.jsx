@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 
 function DeleteConfirmationModal({ itemType, itemName, onDeleteConfirm }) {
-  console.log({ itemType, itemName, onDeleteConfirm })
   const dispatch = useDispatch();
   
   const visible = useSelector(selectModal);
@@ -37,7 +36,6 @@ function DeleteConfirmationModal({ itemType, itemName, onDeleteConfirm }) {
             <strong>Note:</strong> This action is permanent and will result in the loss of all associated data related to this {itemType.toLowerCase()}.
           </p>
           <br />
-          <p className="note">Refresh after Deleting</p>
         </div>
         <div className="actions">
           <div 

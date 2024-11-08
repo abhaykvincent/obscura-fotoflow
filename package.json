@@ -30,6 +30,7 @@
     "react-router-dom": "^6.22.0",
     "react-scripts": "5.0.1",
     "sass": "1.67.0",
+    "sonner": "^1.7.0",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "web-vitals": "^2.1.4"

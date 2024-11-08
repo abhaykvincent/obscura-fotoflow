@@ -1,17 +1,21 @@
 @import '../../style/variables';
+
+.Notifications{
+  margin-top: 8px*10;
+  ol{
+    --offset: 62px
+  }
+}
+
 .alert {
-    position: fixed;
-    top: $header-height + 9px;
-    left: 50vw;
-    transform: translate(8px*5,0);
+  display: flex;
+  justify-content: center;
     padding: 8px*1 8px*2;
     border-radius: 4px;
     text-align: center;
     text-shadow:  1px 1px 4px  rgba(0, 0, 0, 0.5);
     transition-duration: 0.1s;
-    z-index: 30;
 		box-shadow: 1px 1px 4px  rgba(0, 0, 0, 0);
-    opacity: 0;
     color: white;
     background-color: $dark-2;
   }
@@ -28,32 +32,27 @@
 
     color: white;
     background-color: $green-accessible-light;
-    border: 1px solid $green-accessible-light;
+    border: 1px solid $green-dark-accessible-light;
     }
   }
   
   .alert.show {
-    transform: translate(0px,-50%);
     transition-duration: 0.2s;
-    opacity: 1;
   }
   
   .alert.success {
-    border: 1px solid $green-accessible-dark;
+    border: 1px solid $green-default-dark;
     color: white;
-    opacity: 0.9;
     transition-timing-function: ease-out;
   }
 
   .alert.success-negative{
     border: 1px solid $red-default-light;
-    opacity: 0.5;  
   }
   
   .alert.error {
     border: 1px solid $red-accessible-dark;
     color: white;
-    opacity: 0.8;
 
     animation: shake 0.5s ease-in-out;
     animation-delay: 0.15s;

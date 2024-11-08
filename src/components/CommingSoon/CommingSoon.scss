@@ -24,10 +24,35 @@
 			//background-color: $dark-3;
 			background-size: auto 100% ;
 			background-position: center ;
+			transform: scale(0.5);
 			background-image: url('../../assets/img/page\ illustrations/image.png');
+			animation-name: coming-soon-zoom-in;
+			animation-duration: 5s;
+			opacity: 0;
+			animation-delay: 0.5s;
+			//animation repeat infinit to and fro
+			animation-iteration-count: infinite;
+			animation-timing-function: ease-in-out;
 			&.gallery-illustration{
 				background-image: url('');
 			}
 		}
+	}
+}
+
+@keyframes coming-soon-zoom-in {
+	0%{
+		opacity: 0;
+
+		transform: scale(0.9);
+	}
+	10%{
+		opacity: 0.3;
+
+	}
+	100%{		
+		opacity: 1;
+		transform: scale(1);
+
 	}
 }

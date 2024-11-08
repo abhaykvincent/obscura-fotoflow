@@ -22,14 +22,14 @@ const CollectionsPanel = ({ project, collectionId}) => {
               <div className={`gallery  no-images `} key={collection.id} onClick={()=>{}}>
                 <div className="thumbnails">
                   <div className="thumbnail thumb1">
-                    <div className="backthumb bthumb1"
-                    style={
-                      { 
-                        backgroundImage: 
-                        `url(${collection?.galleryCover ? collection.galleryCover:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`,
-                        backgroundSize:`${collection?.galleryCover?'':'40%'}`
-
-                      }}
+                    <div className={`backthumb bthumb1 ${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29')}`}
+                    style={{
+                      backgroundImage: collection?.galleryCover 
+                        ? `url("${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29')}")` 
+                        : 'url(https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333)',
+                      backgroundSize: collection?.galleryCover ? 'cover' : '40%',
+                    }}
+                    
                     >
 
                       
@@ -41,14 +41,14 @@ const CollectionsPanel = ({ project, collectionId}) => {
             : <Link  key={collection.id} className={`gallery ${collectionId===collection.id && 'active'}`} to={`/${defaultStudio.domain}/gallery/${project.id}/${collection.id}`}>
                 <div className="thumbnails">
                   <div className="thumbnail thumb1">
-                    <div className="backthumb bthumb1"
-                    style={
-                      { 
-                        backgroundImage: 
-                        `url(${collection?.galleryCover ? collection.galleryCover:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`,
-                        backgroundSize:`${collection?.galleryCover?'':'40%'}`
-
-                      }}
+                  <div className={`backthumb bthumb1 ${decodeURIComponent(collection.galleryCover)}`}
+                    style={{
+                      backgroundImage: collection?.galleryCover 
+                        ? `url("${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29')}")` 
+                        : 'url(https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333)',
+                      backgroundSize: collection?.galleryCover ? 'cover' : '40%',
+                    }}
+                    
                     >
 {
                           collection?.filesCount ?

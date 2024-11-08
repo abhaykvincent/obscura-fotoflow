@@ -44,19 +44,18 @@ const modalRef = useModalFocus(visible.shareGallery);
                 
               <p className='client-label'>Select galleries</p>
               <div className="galleries-share-list-selection">
-                {project.collections.map((collection) => {
-                  return (
-                    <div className="form-item">
-                      <div className="input">
-                        <input type="checkbox" checked/>
-                      </div>
-                      <div className="label">
-                        <label>{collection.name}</label>
-                      </div>
+                {project.collections.map((collection, index) => (
+                  <div className="form-item" key={index}>
+                    <div className="input">
+                      <input type="checkbox" checked={true} />
                     </div>
-                  );
-                })}
+                    <div className="label">
+                      <label>{collection.name}</label>
+                    </div>
+                  </div>
+                ))}
               </div>
+
                 
               </div>
               <div className="link-pin">
@@ -82,7 +81,7 @@ const modalRef = useModalFocus(visible.shareGallery);
               <p className='client-label'>Sent link to Whatsapp</p>
                   <div className="form-item">
                   <div className="input">
-                    <input type="checkbox" checked/>
+                    <input type="checkbox" checked={true}/>
                   </div>
                     <div className="label">
                       <label>{project.name}</label>

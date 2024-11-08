@@ -13,7 +13,6 @@ function InvitationPreview() {
     const fetchProjectData = async () => {
         try {
           const projectData = await fetchProject(studioName,projectId);
-    
           console.log(projectData)
           setProject(projectData);
         } catch (error) {
@@ -27,7 +26,7 @@ function InvitationPreview() {
   return (
     <main className={`invitation-preview  client-POV`}>
 
-        <Preview data={project?.invitation} project={project} />
+        <Preview  data={project?.invitation} project={project} />
     </main>
   )
 }

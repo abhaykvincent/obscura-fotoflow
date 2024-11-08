@@ -4,6 +4,8 @@ import { handleUpload } from '../../utils/uploadOperations';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectDomain, selectStorageLimit } from '../../app/slices/authSlice';
 import { showAlert } from '../../app/slices/alertSlice';
+import { fetchProject } from '../../firebase/functions/firestore';
+import { fetchProjects } from '../../app/slices/projectsSlice';
 
 function UploadButton({ isPhotosImported, setIsPhotosImported, imageUrls, setImageUrls, id, collectionId, setUploadLists, setUploadStatus }) {
   const dispatch = useDispatch();
@@ -28,11 +30,16 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, imageUrls, setIma
     if (importFileSize < storageLimit.available) {
       try {
         setUploadStatus('open');
-        const uploadedImages = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, setUploadLists, setUploadStatus);
+        const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, setUploadLists, setUploadStatus);
+        const uploadedImages = resp.uploadedFiles
+        const galleryPIN = resp.pin
+        console.log(uploadedImages,galleryPIN)
         setImageUrls(prevUrls => [...prevUrls, ...uploadedImages]);
       } catch (error) {
         dispatch(showAlert({ type: 'error', message: 'Upload failed, please try again!' }));
       } finally {
+        dispatch(showAlert({ type: 'success', message: 'Upload Complete' }));
+
         setIsPhotosImported(false);
       }
     } else {
@@ -43,7 +50,7 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, imageUrls, setIma
 
   return (
     <>
-      <label htmlFor="fileInput" className={`button icon upload ${isPhotosImported ? 'secondary' : 'primary'}`}>
+      <label htmlFor="fileInput" className={`button icon upload publishing ${isPhotosImported ? 'secondary' : 'primary'}`}>
         Upload
       </label>
       <input id="fileInput" type="file" multiple onChange={handleFileInputChange} />

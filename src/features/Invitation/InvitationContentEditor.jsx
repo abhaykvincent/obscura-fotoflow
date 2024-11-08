@@ -5,7 +5,6 @@ import EventEditor from './EventEditor';
 
 
 const InvitationContentEditor = ({ data, onChange }) => {
-  console.log(data)
   return (
     <div className="content-editor">
       <NameEditor

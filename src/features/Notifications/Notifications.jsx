@@ -6,7 +6,7 @@ import NotificationCard from '../../components/Notofications/NotificationCard'
 function Notifications(notifications) {
   return (
 	<div className="notifications-page">
-		<div className="project-info">
+		<div className="project-info notifications-page-info">
 			<div className="breadcrumbs">
 				<Link className="back " to={`/`}>Home </Link>
 			</div>

@@ -1,7 +1,7 @@
 // slices/authSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
-import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateInvitationInFirebase } from '../../firebase/functions/firestore';
+import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 
 
@@ -25,7 +25,22 @@ export const addProject = createAsyncThunk(
     console.log(domain,projectData)
     return addProjectToStudio(domain,projectData)}
 );
-
+export const updateProjectName = createAsyncThunk(
+  'projects/updateProjectName',
+  async ({ domain, projectId, newName }, { dispatch }) => {
+    // Call Firestore function to update project name
+    await updateProjectNameInFirestore(domain, projectId, newName);
+    return { projectId, newName };
+  }
+);
+export const updateCollectionName = createAsyncThunk(
+  'projects/updateCollectionName',
+  async ({ domain, projectId, collectionId, newName }, { dispatch }) => {
+    // Call Firestore function to update collection name
+    await updateCollectionNameInFirestore(domain, projectId, collectionId, newName);
+    return { projectId, collectionId, newName };
+  }
+);
 
 export const deleteProject = createAsyncThunk(
   'projects/deleteProject',
@@ -169,7 +184,24 @@ const projectsSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       });
-
+      builder
+      .addCase(updateProjectName.pending, (state) => {
+        state.status = 'loading';
+        state.loading = true;
+      })
+      .addCase(updateProjectName.fulfilled, (state, action) => {
+        const { projectId, newName } = action.payload;
+        state.data = state.data.map((project) => 
+          project.id === projectId ? { ...project, name: newName } : project
+        );
+        state.loading = false;
+        state.status = 'succeeded';
+      })
+      .addCase(updateProjectName.rejected, (state, action) => {
+        state.status = 'failed';
+        state.loading = false;
+        state.error = action.error.message;
+      });
       // Delete project
       builder
       .addCase(deleteProject.pending, (state) => {
@@ -194,8 +226,6 @@ const projectsSlice = createSlice({
         state.loading = true;
       })
       .addCase(addCollection.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.loading = false;
         const { projectId, collection } = action.payload;
         state.data = state.data.map((project) => {
           if (project.id === projectId) {
@@ -204,6 +234,9 @@ const projectsSlice = createSlice({
           }
           return project;
         });
+        state.loading = false;
+        state.status = 'succeeded';
+
       })
       .addCase(addCollection.rejected, (state, action) => {
         state.status = 'failed';
@@ -233,6 +266,30 @@ const projectsSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+      builder
+      .addCase(updateCollectionName.pending, (state) => {
+        state.status = 'loading';
+        state.loading = true;
+      })
+      .addCase(updateCollectionName.fulfilled, (state, action) => {
+        const { projectId, collectionId, newName } = action.payload;
+        state.data = state.data.map((project) => {
+          if (project.id === projectId) {
+            const updatedCollections = project.collections.map((collection) =>
+              collection.id === collectionId ? { ...collection, name: newName } : collection
+            );
+            return { ...project, collections: updatedCollections };
+          }
+          return project;
+        });
+        state.loading = false;
+        state.status = 'succeeded';
+      })
+      .addCase(updateCollectionName.rejected, (state, action) => {
+        state.status = 'failed';
+        state.loading = false;
+        state.error = action.error.message;
+      });
       builder
       .addCase(deleteFile.pending, (state) => {
       })

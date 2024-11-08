@@ -19,43 +19,52 @@ function AddProjectModal() {
     const currentStudio = useSelector(selectUserStudio)
     const onClose = () => dispatch(closeModalWithAnimation('createProject'))
     // Dummny datas for the new project for random data
-    const dummyName = [
-        'Ethan Ross',
-        'Julia Smith',
-        'Michael Johnson',
-        'Emily Davis',
-        'David Wilson',
-        'Olivia Brown',
-        'Daniel Taylor',
-        'Sophia Anderson',
-        'William Thomas',
-        'Ava Martinez',
-        'James Lee',
-        'Isabella Garcia',
-        'Benjamin Hernandez',
-        'Mia Clark',
-        'Alexander Lewis',
-        'Charlotte Walker',
-        'Henry Hall',
-        'Amelia Allen',
-        'Jackson Young',
-    ]
-    const randomName = dummyName[Math.floor(Math.random() * dummyName.length)];
-    // replace space with .
+   
+    const generateRandomData = () => {
+        const dummyName = [
+            'Ethan Ross',
+            'Julia Smith',
+            'Michael Johnson',
+            'Emily Davis',
+            'David Wilson',
+            'Olivia Brown',
+            'Daniel Taylor',
+            'Sophia Anderson',
+            'William Thomas',
+            'Ava Martinez',
+            'James Lee',
+            'Isabella Garcia',
+            'Benjamin Hernandez',
+            'Mia Clark',
+            'Alexander Lewis',
+            'Charlotte Walker',
+            'Henry Hall',
+            'Amelia Allen',
+            'Jackson Young',
+        ]
+        const randomName = dummyName[Math.floor(Math.random() * dummyName.length)];
+        const randomEmail = `${randomName.replace(' ', '.').toLowerCase()}@gmail.com`;
+        const randomType = ['Wedding', 'Birthday', 'Baptism'][Math.floor(Math.random() * 3)];
+        const randomPhone = Math.floor(Math.random() * 9000000000) + 1000000000;
     
-    const randomEmail = `${randomName.replace(' ','.').toLowerCase()}@gmail.com`;
-    const randomType = ['Wedding', 'Birthday', 'Baptism'][Math.floor(Math.random() * 3)];
-    const randomPhone = Math.floor(Math.random() * 9000000000) + 1000000000;
+        return {
+            randomName,
+            randomType,
+            randomEmail,
+            randomPhone,
+        };
+    };
+    console.log(generateRandomData().randomName)
     if (process.env.NODE_ENV === 'development') {
         console.log('DEV MODE');
         window.firebase = window.firebase || {};  // for debugging
         window.firebase.DEBUG = true;  // Enable verbose logging
     }
   const [projectData, setProjectData] = useState({
-      name: process.env.NODE_ENV === 'development'?'':'',
-      type: process.env.NODE_ENV === 'development'?'':'',
-      email: process.env.NODE_ENV === 'development'?'':'',
-      phone: process.env.NODE_ENV === 'development'?'':'',
+      name: process.env.NODE_ENV === 'development'?generateRandomData().randomName:'',
+      type: process.env.NODE_ENV === 'development'?generateRandomData().randomType:'',
+      email: process.env.NODE_ENV === 'development'?generateRandomData().randomEmail:'',
+      phone: process.env.NODE_ENV === 'development'?generateRandomData().randomPhone:'',
       collections: [],
       events: [],
       payments: [],
@@ -134,7 +143,7 @@ function AddProjectModal() {
                     <div className="control minimize"></div>
                     <div className="control maximize"></div>
                 </div>
-                <div className="modal-title">Create Project</div>
+                <div className="modal-title">New Project</div>
             </div>
             <div className='modal-body'>
                 <div className="form-section">
