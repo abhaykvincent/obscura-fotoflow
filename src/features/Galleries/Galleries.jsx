@@ -172,7 +172,7 @@ if(!collectionId&&defaultCollectionId!==''){
     <ShareGallery   project={project} />
 
     {/* Page Main */}
-    <main className='project-page gallery-page'>
+    <main className='gallery-page'>
       {
         project?.collections && project.collections.length !== 0 && (
           <div className="project-collections">

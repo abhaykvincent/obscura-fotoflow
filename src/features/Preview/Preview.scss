@@ -2,12 +2,15 @@
 .preview-wrapper{
     position: fixed;
     left: 0;
+    top: 0;
     z-index: 50;
   }
 .App .preview{
     position: fixed;
-    top: -8px*31.5;
-    left: -8px*28.2;
+    /* top: -8px*31.5;
+    left: -8px*28.2; */
+    left:0;
+    right:0;
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.97);
@@ -387,8 +390,8 @@
     }
     .project-collection .preview{
 
-        top: -8px*31;
-        left: -8px*12.5;
+        top: 0;
+        left: 0;
     } .shared-collection .preview{
 
         top: -8px*0;
@@ -402,8 +405,8 @@
         .project-collection{
                 
         .preview{
-            left: -8px*1;
-            top: -8px*32.8}
+            left: -8px*0;
+            top: -8px*0}
         }
         .preview{
             left: -8px*0;
