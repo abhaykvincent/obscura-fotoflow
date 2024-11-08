@@ -210,9 +210,9 @@ body{
     &.gallery-page{
       
     grid-template-columns: auto ;
-      opacity: 0;
+      /* opacity: 0;
       transform: translateY(-8px);
-      animation: gallery-page-reveal 0.2s ease-out forwards;
+      animation: gallery-page-reveal 0.2s ease-out forwards; */
     }
     
     .add-collection{
@@ -310,11 +310,11 @@ body{
       border-radius: $border-radius-1;
       @include boxed;
       @include boxShadow;
-      z-index: 3;
+      z-index: 3;/* 
       opacity: 0;
       animation: fadeInUp 0.4s ease-out 0.5s;
             animation-fill-mode: forwards;
-            animation-timing-function: ease-out;
+            animation-timing-function: ease-out; */
       .header{
         display: grid;
         grid-template-columns: 1fr 2fr 8px*40;
