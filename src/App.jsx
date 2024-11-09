@@ -116,13 +116,13 @@ export default function App() {
                   <AdminPanel /> 
                 </AdminRoute> 
               }/> */}
+            <Route path="/masanory-grid" element={<ImageGallery />}/>
 
               <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}`} replace />} />
               <Route exact path="/:studioName/" element={<Home />} />
               <Route exact path="/:studioName/project/:id" element={<Project />} />
               <Route exact path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
               <Route exact path="/:studioName/invitation-creator/:projectId" element={<InvitationPage/>} />
-              <Route path="/:studioName/projects" element={<Projects />} />
               <Route path="/:studioName/projects" element={<Projects />} />
               <Route path="/:studioName/storage" element={<Storage />} />
               <Route path="/:studioName/notifications" element={<Notifications />} />
@@ -141,7 +141,6 @@ export default function App() {
             <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>
             <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>
             <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>
-            <Route path="/masanory-grid" element={<ImageGallery />}/>
           </Routes>
         )}
         </HotKeys>

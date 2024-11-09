@@ -10,7 +10,7 @@ import SwipeHandler from './SwipeHandler';
 import { deleteFile } from '../../app/slices/projectsSlice';
 import PreviewControls from './PreviewControls';
 
-function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePreview, projectId, collectionId }) {
+function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePreview,projectId, collectionId }) {
   const { studioName } = useParams();
   const dispatch = useDispatch();
   // States for managing controls visibility and interaction timeout

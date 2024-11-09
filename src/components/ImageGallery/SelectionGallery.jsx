@@ -1,6 +1,10 @@
 import React, { useCallback, memo } from 'react';
+import { useDispatch } from 'react-redux';
+import { showAlert } from '../../app/slices/alertSlice';
 
 const SelectionGallery = ({ images, selectedImages,setUnselectedImages, setSelectedImages }) => {
+  
+  const dispatch = useDispatch()
   const handleImageClick = useCallback((fileUrl) => {
     const index = selectedImages.indexOf(fileUrl);
   
@@ -9,7 +13,10 @@ const SelectionGallery = ({ images, selectedImages,setUnselectedImages, setSelec
       const newSelectedImages = [...selectedImages];
       newSelectedImages.splice(index, 1);
       setSelectedImages(newSelectedImages);
-  
+      dispatch(showAlert({
+        type: 'warning',
+        message: 'Image Unselected!',
+      }));
       // Add to unselected images
       setUnselectedImages((prevUnselected) => [...prevUnselected, fileUrl]);
     } else {

@@ -18,6 +18,27 @@ function DashboardProjects({project}){
 
   const { studioName } = useParams();
   const [projectDashboardView, setProjectDashboardView] = useState('dashboard')
+  // Inside your component
+const [pinText, setPinText] = useState(project?.pin );
+const [pinIconClass, setPinIconClass] = useState('');
+  const handlePinClick = () => {
+    // Copy pin to clipboard
+    navigator.clipboard.writeText(project.pin).then(() => {
+      setPinIconClass('copying'); // Temporarily add copying class
+      setPinText('Coping'); // Temporarily change text to "Copied"
+
+      setTimeout(() => {
+        setPinIconClass(''); // Reset icon class after 1 second
+        setPinText('Copied  '); // Reset text after 5 seconds
+      }, 1000);
+
+      setTimeout(() => {
+        setPinText(project?.pin); // Reset text after 5 seconds
+      }, 8000);
+    }).catch(err => {
+      console.error("Failed to copy pin:", err);
+    });
+  };
   return (
     <>
      <div className="project-dashboard-header">
@@ -27,7 +48,7 @@ function DashboardProjects({project}){
         <div className="button secondary  icon  invitation" > Invitation</div>
       </Link>
         <div className="button secondary icon user" >Client</div>
-        <div className="button tertiary icon pin" >{project?.pin }</div>
+        <div className={`button tertiary icon pin ${pinIconClass}`} onClick={handlePinClick}>{pinText}</div>
       </div>
       <div className="view-cta">
 

@@ -105,6 +105,31 @@
 	  .tools{
 		.button{
 			line-height: 1.1rem;
+			&.pin.copying {
+				background: linear-gradient(90deg, #387d16c8  30%,#a1ed08 45%,#a1ed08 48%, #70981fbc 55%, #132d0679 90%);
+				background-size: 200%;
+				border: 2px solid $green-dark-accessible-light;
+				background-position: 0%;
+				-webkit-background-clip: text;
+				font-weight: 200;
+				-webkit-text-fill-color: transparent;
+				transition-duration: 0.1s;
+				font-weight: 600;
+				animation: copyingGradient 0.5s infinite alternate linear;
+			  }
+		}
+	  } @keyframes copyingGradient {
+		0% {
+		  background-position: 100%;
+		}
+		20% {
+		  background-position: 100%;
+		}
+		80% {
+		  background-position: 0%;
+		}
+		100% {
+		  background-position: 0%;
 		}
 	  }
 }

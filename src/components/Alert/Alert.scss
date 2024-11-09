@@ -18,11 +18,20 @@
 		box-shadow: 1px 1px 4px  rgba(0, 0, 0, 0);
     color: white;
     background-color: $dark-2;
+    opacity: 0.8;
+    button{
+      &[data-close-button]{
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+    }
   }
   .App .select-project{
     .alert{
       color: white;
       background-color: $light-0;
+      &.warning{
+        background-color: $orange-default-light;
+      }
       *{
 
     color: white;
@@ -57,6 +66,8 @@
     animation: shake 0.5s ease-in-out;
     animation-delay: 0.15s;
   }
+  // data-close-button
+  
   
   .alert.warning {
     background-color: $orange-accessible-light;

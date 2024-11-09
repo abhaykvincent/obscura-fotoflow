@@ -26,14 +26,15 @@ const Alert = () => {
                 id: id,
                 className: type + ' alert',
                 description: 'My description',
-                duration: 4000,
+                duration: 8000,
                 position: 'top-center',
+                closeButton:true,
                 icon: <MonitorPlayIcon />,
             }
         );
         setTimeout(() => {
             dispatch(hideAlert());
-        }, 4000);
+        }, 8000);
     }
 }, [id]);
 ;
@@ -45,6 +46,16 @@ const Alert = () => {
 
         
         <Toaster theme="dark" offset={'52px'}  position='top-center'
+        toastOptions={{
+            classNames: {
+              toast: 'flex items-center relative',
+              closeButton: 'absolute right-2 top-2'  // Position close button at top-right
+            },
+            style: {
+              // Adding padding to account for close button position
+              paddingRight: '35px'
+            }
+          }}
         />
 
     </div>

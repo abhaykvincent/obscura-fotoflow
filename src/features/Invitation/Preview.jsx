@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import backgroundOptionImage1 from '../../assets/img/background-options/background-option-1.png';
 import backgroundOptionImage2 from '../../assets/img/background-options/background-option-2.png';
 import backgroundOptionImage3 from '../../assets/img/background-options/background-option-3.png';
 import backgroundOptionImage4 from '../../assets/img/background-options/background-option-4.png';
-import { formatDate, formatTime } from '../../utils/dateUtils';
+import { formatDate, formatInvitationDate, formatTime } from '../../utils/dateUtils';
 import { capitalizeFirstLetter, hexToRgb } from '../../utils/stringUtils';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectDomain } from '../../app/slices/authSlice';
 import { useParams } from 'react-router';
+import { getGoogleMapsUrl } from '../../utils/urlUtils';
+import ImageGallery from '../../x-draft/masanory-grid';
+import WishMessages from './WishMessages';
 
 const Preview = ({ editor, data,project }) => {
   console.log(editor?'Editor':'Preview')
@@ -19,6 +22,7 @@ const Preview = ({ editor, data,project }) => {
   const [countdown, setCountdown] = useState('');
   const [selectedColor, setSelectedColor] = useState(data?.backgroundColor || '#ffffff'); // Default to white if no color
 
+  const galleryRef = useRef(null);
   useEffect(() => {
 
   console.log(data)
@@ -77,9 +81,6 @@ useEffect(() => {
     }
   };
 
-  const intervalId = setInterval(updateCountdown, 1000);
-
-  return () => clearInterval(intervalId);
 }, [data?.events]);
 
   // Handle color change
@@ -151,11 +152,16 @@ useEffect(() => {
 };
 
 document.title = `${project?.name}'s ${project?.type} Invitation`
+const initialMessages = [
+  { id: 1, text: 'Congratulations!' ,sender:'Abhay'},
+  { id: 2, text: 'Wishing you all the best!' ,sender:'Abhay'},
+  { id: 3, text: 'Wishing you all the best!' ,sender:'Abhay'},
+];
 
   
 
   return (
-    <div className={`preview-window ${editor?'editor-preview':'preview-preview'}`}>
+    <div className={`preview-window ${editor?'editor-preview':'preview-preview'}`} ref={galleryRef}>
       <div className="screen-wrap">
         <div className="screen" style={{ background: data?.backgroundColor + "05" }}>
           <div className='project-cover' alt="Cover">
@@ -178,10 +184,23 @@ document.title = `${project?.name}'s ${project?.type} Invitation`
 
             {data?.events.map((event, index) => (
                 <div key={index} className="event">
-                <h3 className={`${event.name ? 'event-type' : 'dummy'}`} style={{ color: data?.backgroundColor + "ba" }}>{event.name}</h3>
-                <p dangerouslySetInnerHTML={{ __html: event.date ? formatDate(event.date) : 'Add date' }}></p>
-                <p className="event-time">{formatTime(event.time)}</p>
-                <p className="event-location">{event.location}</p>
+                  <div className="left">
+                    <p dangerouslySetInnerHTML={{ __html: event.date ? formatInvitationDate(event.date) : 'Add date' }}></p>
+                  </div>
+                  <div className="right">
+                    <h3 className={`${event.name ? 'event-type' : 'dummy'}`} style={{ color: data?.backgroundColor + "ba" }}>{event.name}</h3>
+                    <p className="event-location">at {event.location} at {formatTime(event.time)}</p>
+
+                    <a href={getGoogleMapsUrl(event.location)} target="_blank" rel="noopener noreferrer"  className="button  secondary icon location"
+                      style={{ 
+                        background: data?.backgroundColor + "11", 
+                        border: '1px solid ' + data?.backgroundColor + '00'}}
+                    >
+                      Location
+                    </a>
+                    <p className="event-time"></p>
+
+                  </div>
               </div>
               ))}
               <div className="events-cta">
@@ -207,10 +226,18 @@ document.title = `${project?.name}'s ${project?.type} Invitation`
             </div>
 
           </div>
+          <WishMessages initialMessages={initialMessages} />
           <div className="invitation-image-gallery">
-            {
-
-            }
+            <ImageGallery imageUrls={[
+              "http://127.0.0.1:9199/v0/b/fotoflow-dev.appspot.com/o/lorem%2Fcharlotte-walker-uQais%2Fpoiuyy-cTlPq%2FIM_00077.jpg?alt=media&token=a85e9ad5-6d31-4dac-81d7-b5ef3c67366c",
+              "http://127.0.0.1:9199/v0/b/fotoflow-dev.appspot.com/o/lorem%2Fmichael-johnson-YjWna%2F-MQNYs%2FIM_00077.jpg?alt=media&token=3cd06776-da32-4634-91a3-3c2c2eb93831",
+              "http://127.0.0.1:9199/v0/b/fotoflow-dev.appspot.com/o/lorem%2Fmichael-johnson-YjWna%2F-MQNYs%2FIM_00064%20(3).jpg?alt=media&token=2945dc6b-e561-4abf-9a47-762fc8af5461",
+              "http://127.0.0.1:9199/v0/b/fotoflow-dev.appspot.com/o/lorem%2Fmichael-johnson-YjWna%2F-MQNYs%2FIM_00062.jpg?alt=media&token=39e8ca15-48ac-4dd6-b499-c976779c86c7",
+              "http://127.0.0.1:9199/v0/b/fotoflow-dev.appspot.com/o/lorem%2Fmichael-johnson-YjWna%2F-MQNYs%2FIM_00057.jpg?alt=media&token=9d91f2ce-dd2f-40ce-98b5-0de8cde993c4"
+            ]}
+            
+            galleryRef ={galleryRef}
+            />
           </div>
           <div className="power-button"></div>
           <div className="volume-button"></div>
