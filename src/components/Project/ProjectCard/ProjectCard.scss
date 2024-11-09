@@ -494,7 +494,7 @@
 
     
     @for $i from 1 through 20 {
-        &:nth-child(#{$i}) {
+        &:nth-of-type(#{$i}) {
             $delay: 0.4s + 0.05s * ($i - 1);
             animation: fadeInUp 0.4s ease-out $delay;
             animation-fill-mode: forwards;

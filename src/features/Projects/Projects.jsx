@@ -39,7 +39,6 @@ function Projects() {
                         <div className="project-details">
                             <div className="details-top">
                                 <h4 className="project-title">Create Your First Project</h4>
-                                <p className="project-type"></p>
                             </div>
                         </div>
                         <div className="project-options"></div>
@@ -47,11 +46,41 @@ function Projects() {
                 </>
             );
         }
-
-        return recentProjects.map((project) => (
-            <ProjectCard project={project} key={project.id} />
+    
+        // Group projects by month
+        const groupedProjects = recentProjects.reduce((groups, project) => {
+            const projectMonth = new Date(project.createdAt).toLocaleString('default', { month: 'long', year: 'numeric' });
+            if (!groups[projectMonth]) {
+                groups[projectMonth] = [];
+            }
+            groups[projectMonth].push(project);
+            return groups;
+        }, {});
+    
+        // Render projects grouped by month
+        return Object.keys(groupedProjects).map((month,index) => (
+            <>
+            <div key={month} className="month-group" style={{ '--group-index': index + 1 }} >
+                <h3 className="month-name">{month}</h3>
+                <div className="projects-list">
+                {groupedProjects[month].map((project) => (
+                    <ProjectCard project={project} key={project.id} />
+                ))}
+                </div>
+            </div>
+            <div key={month} className="month-group" style={{ '--group-index': index + 2 }} >
+                <h3 className="month-name">{month}</h3>
+                <div className="projects-list">
+                {groupedProjects[month].map((project) => (
+                    <ProjectCard project={project} key={project.id} />
+                ))}
+                </div>
+            </div>
+            
+            </>
         ));
     };
+    
 
     return (
         <>
@@ -87,9 +116,7 @@ function Projects() {
                     </div>
                 </div>
 
-                <div className="projects-list">
                     {renderProjectList()}
-                </div>
 
                 <Refresh />
             </main>
