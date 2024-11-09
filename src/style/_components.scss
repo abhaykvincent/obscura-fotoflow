@@ -203,6 +203,16 @@
             background-image: url('https://img.icons8.com/?size=100&id=60022&format=png&color=FFFFFF');
             
         }
+        &.location::before{
+            opacity: 0.8;
+            margin-right: 6px;
+            margin-bottom: -4px;
+            background-size: 80%;
+            filter: drop-shadow(1px 1px 1px #656565);
+            background-position: center center;
+            background-image: url('https://img.icons8.com/?size=100&id=85353&format=png&color=000000');
+
+        }
         &.publish-icon::before{
             margin-right: 6px;
             margin-bottom: -4px;

@@ -1,16 +1,18 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Preview from '../../features/Preview/Preview';
 import { shortenFileName } from '../../utils/stringUtils';
 
 const ImageGalleryGrid = React.memo(({ projectId,collectionId, imageUrls }) => {
   // Preview
   console.log(collectionId)
-  const [isPreviewOpen,setIsPreviewOpen] = useState(false);
-  const [previewIndex,setPreviewIndex] = useState(0);
+  // Preview
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(0);
+  const containerRef = useRef(null);
   const openPreview = (index) => {
-    setIsPreviewOpen(true)
-    setPreviewIndex(index)
-  }
+    setIsPreviewOpen(true);
+    setPreviewIndex(index);
+  };
   const closePreview = () => {
     setIsPreviewOpen(false)
   }
@@ -32,6 +34,25 @@ const ImageGalleryGrid = React.memo(({ projectId,collectionId, imageUrls }) => {
   }, [isPreviewOpen]);
   
   useEffect(() => {
+    console.log(previewIndex)
+
+    const scrollToImage = () => {
+      // Find the target image
+      const targetImage = containerRef.current?.querySelector(`[alt="File ${previewIndex}"]`);
+      
+      if (targetImage) {
+        // Scroll the image into view with smooth behavior
+        targetImage.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',     // Centers vertically
+          inline: 'nearest'    // Minimizes horizontal movement
+        });
+      }
+    };
+
+    scrollToImage();
+  }, [previewIndex]); 
+  useEffect(() => {
     function updateDisplayStyles() {
       document.getElementsByClassName('header')[0].style.display = 'grid';
       document.getElementsByClassName('sidebar')[0].style.display = 'block';
@@ -49,7 +70,7 @@ const ImageGalleryGrid = React.memo(({ projectId,collectionId, imageUrls }) => {
       {isPreviewOpen && <Preview image={imageUrls[previewIndex] } {...{previewIndex,setPreviewIndex,imagesLength:imageUrls.length,closePreview,projectId,collectionId}}/>}
     
       <div className="gallary">
-        <div className="photos">
+        <div className="photos" ref={containerRef}>
           {imageUrls.map((fileUrl, index) => (
             <div className="photo-wrap"
             key={index}

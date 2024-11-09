@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react';
 
-const useLoadedImages = (imageUrls) => {
+const useLoadedImages = (initialImageUrls) => {
   const [loadedImages, setLoadedImages] = useState([]);
 
+  // Load initial images
   useEffect(() => {
+    loadImages(initialImageUrls);
+  }, [initialImageUrls]);
+
+  // Function to load new images and add them to the gallery
+  const loadImages = (imageUrls) => {
     const imagePromises = imageUrls.map((src) => {
       return new Promise((resolve) => {
         const img = new Image();
@@ -12,10 +18,12 @@ const useLoadedImages = (imageUrls) => {
       });
     });
 
-    Promise.all(imagePromises).then(setLoadedImages);
-  }, [imageUrls]);
+    Promise.all(imagePromises).then((newImages) => {
+      setLoadedImages((prevImages) => [...prevImages, ...newImages]);
+    });
+  };
 
-  return loadedImages;
+  return { loadedImages, loadImages };
 };
 
 export default useLoadedImages;

@@ -74,7 +74,7 @@
         
 
     .screen{
-        width: 100%;
+      width: 8px*48;
         min-height: calc(100vh - 8px*49);
         border: 8px*2 solid white;
         border-top: 8px*3 solid white;
@@ -116,7 +116,7 @@
             }
         }
         .container{
-            padding: 8px*4;
+            padding: 8px*2;
             min-height: 8px*30;
             background-size: cover;
             background-position: center;
@@ -150,7 +150,29 @@
           gap: 8px*4;
           justify-items: center;
           .event{
-            
+            display: grid;
+            grid-template-columns: 8px*12 auto ;
+            align-items: start;
+            .left{
+              border-right: 1px solid $gray5-accessible-light;
+            }
+            .right{
+              padding-left: 8px*2;
+              .button.secondary{
+                height: 24px;
+                line-height: 12px;
+                margin: 0;
+                color: $gray-accessible-light;
+                opacity: 1;
+                font-size: 0.8rem;
+                font-weight: 200;
+                text-shadow: none;
+                box-shadow: none;
+                margin: 8px*1;
+
+                
+              }
+            }
             .event-type{
               font-size: 1.2rem;
               margin-bottom: 8px;
@@ -160,17 +182,35 @@
               color:$dark-0;
               margin-top: 4px;
             }
+            
             h3{
               font-weight: 400;
               font-size: 1rem;
               color: $dark-3;
             }
             p{
-
-              color: $dark-3;
+              display: grid;
+              text-align: center;
+              color: $dark-1;
               .bold{
-                font-weight: 600;
-                color: $gray6-default-dark;
+                font-weight: 400;
+              font-size: 1rem;
+
+                color: $gray4-default-dark;
+              }
+              .day{
+                font-size: 2rem;
+                font-weight: 200;
+              }
+              .month{
+                font-size: 1rem;
+                font-weight: 200;
+              font-size: 0.8rem;
+
+              }
+              .year{
+                font-size: 1rem;
+                font-weight: 200;
               }
             }
           }
@@ -234,6 +274,23 @@
             color: rgba(0, 0, 0, 0.8);
         }
     }
+    .invitation-image-gallery{
+      .gallery-container{
+        padding: 0;
+        .gallery{
+          &:hover{
+            transform: scale(1);
+          }
+        }
+        .scale-control{
+          margin-bottom: 0;
+          *{
+
+            color: black;
+          }
+        }
+      }
+    }
 }
   }
   .editor{
@@ -270,6 +327,7 @@
 
           max-height: calc(100vh - 8px*20);
           overflow-y: scroll;
+          box-shadow: -4px 0px  1px 1px black, -4px 0px  4px 2px rgba(255, 255, 255, 0.1);
         }
       }
     }
