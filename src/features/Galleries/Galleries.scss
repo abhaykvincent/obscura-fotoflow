@@ -350,7 +350,7 @@
 		grid-template-columns: 1fr;
 		.galleries{
 			margin-left: 8px*0;
-			max-width: calc(100vw - 8px*16);
+			max-width: calc(100vw - 8px*13);
 		}
 	}
 	.financials-overview{
@@ -861,7 +861,7 @@
 					background-position: center 40%, center;
 					transition-duration: 0.2s;
 
-					transform: rotate(1deg) translateY(0px) translateX(0px) scale(1);
+					transform: rotate(0deg) translateY(0px) translateX(0px) scale(1);
 					.button{
 						position: absolute;
 						bottom: 4px;	

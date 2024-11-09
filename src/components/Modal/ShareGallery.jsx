@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
 import { selectDomain } from '../../app/slices/authSlice';
 import { useLocation } from 'react-router';
-import { extractDomain, getGalleryURL } from '../../utils/urlUtils';
+import { copyToClipboard, extractDomain, getGalleryURL } from '../../utils/urlUtils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 
 function ShareGallery({project }) {
@@ -58,24 +58,16 @@ const modalRef = useModalFocus(visible.shareGallery);
 
                 
               </div>
-              <div className="link-pin">
+              <a className='linkToGallery' href={getGalleryURL('share',domain,project.id)} target='_blank' >.../{domain}{getGalleryURL('share',domain,project.id).split(domain)[1]}</a>
 
+              <div className="link-pin">
                 <div className='link' >
                   <a className="" href={getGalleryURL('share',domain,project.id)} target='_blank'>{`Gallery`}</a>
-                  <div className="copy-link">Copy</div>
+                  <div className="copy-link button icon copy" onClick={() => copyToClipboard(getGalleryURL('share',domain,project.id))}>Copy</div>
                 </div>
                 
-                <p className='access'>🔓 Public</p>
-              </div>
-              <div className="link-pin">
-
-              <div className='link'>
-                  <div className=""  href={getGalleryURL('selection',domain,project.id)} target='_blank'>{`Photo Selection`}</div>
-                  <div className="copy-link">Copy</div>
-                </div>
                 <p className='pin'>🔐 {project.pin}</p>
-                </div>
-              
+              </div>
               
               <div className="client-notification">
               <p className='client-label'>Sent link to Whatsapp</p>

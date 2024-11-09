@@ -6,14 +6,17 @@ import './Share.scss';
 import { fetchProject, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
 import ShareGallery from '../../components/ImageGallery/ShareGallery';
 import { useSelector } from 'react-redux';
-import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
+import { selectDomain, selectIsAuthenticated, selectUser, selectUserStudio } from '../../app/slices/authSlice';
 import { toTitleCase } from '../../utils/stringUtils';
-import { trackEvent } from '../../analytics/utils';
+import { setUserType, trackEvent } from '../../analytics/utils';
 
 export default function ShareProject() {
   // studio =  get the url and the name is lorem for url http://localhost:3000/lorem/gallery/william-thomas-b23Sg/birthday-qr22E
   
   const { studioName } = useParams();
+  
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
   
   // set body color to white
   useEffect(() => {
@@ -60,6 +63,10 @@ export default function ShareProject() {
   useEffect(() => {
     fetchProjectData();
     //fetchImagesData()
+    if(!isAuthenticated || user=='no-studio-found'){
+      setUserType('Guest');
+    }
+
   }, []);
 
   useEffect(() => {

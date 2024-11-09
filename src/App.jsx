@@ -42,6 +42,7 @@ import InvitationPage from './features/Invitation/InvitationPage';
 import Preview from './features/Preview/Preview';
 import InvitationPreview from './features/Invitation/InvitationPreview';
 import { Toaster } from 'sonner';
+import { setUserType } from './analytics/utils';
 const client = new Client();
 client.setProject('fotoflow-notifications');
 
@@ -58,17 +59,18 @@ export default function App() {
 
   const { keyMap, handlers } = useShortcutsConfig();
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
   const isLoading = useSelector(selectProjectsStatus);
   const projects = useSelector(selectProjects);
   const defaultStudio = useSelector(selectUserStudio)
   const currentDomain = defaultStudio?.domain ?? 'guest'; 
-  const user = useSelector(selectUser);
   useEffect(() => {
-    console.log(isLoading)
   }, [isLoading]);
   useEffect(() => {
-  
-  }, []);
+    if(isAuthenticated && user!=='no-studio-found'){
+      setUserType('Photographer');
+    }
+  }, [isAuthenticated]);
  
   // ON Render
   useEffect(() => {
@@ -77,6 +79,7 @@ export default function App() {
      dispatch(checkStudioStatus())
     currentDomain !== 'guest' && dispatch(fetchProjects({currentDomain}))
   }, [currentDomain]);
+
     useEffect(() => {
       const modalStates = Object.values(selectModal);
       if (modalStates.some(state => state)) {
