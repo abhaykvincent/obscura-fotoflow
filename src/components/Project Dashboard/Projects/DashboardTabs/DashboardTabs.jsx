@@ -22,9 +22,8 @@ function DashboardTabs({ project }) {
         return (
           <div className="gallery-overview">
             {/* Replace with gallery card display logic */}
-            <div className="galleries">
               {project.collections.length === 0 ? (
-                <>  
+            <div className="galleries">
                     <div className="gallery new" 
                     onClick={()=>dispatch(openModal('createCollection'))}>
                       
@@ -40,7 +39,7 @@ function DashboardTabs({ project }) {
                     <p>New Gallery</p>
                   </div>
 
-                </>
+                  </div>
               ) : (
                 <>
                
@@ -49,7 +48,6 @@ function DashboardTabs({ project }) {
                 
                 )
               }
-            </div>
           </div>
         );
 

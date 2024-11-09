@@ -37,6 +37,11 @@
         padding-bottom: 8px*2;
         border-bottom: 1px solid $dark-1;
     }
+    .linkToGallery{
+        color: $green-accessible-dark;
+        text-decoration: underline;
+        text-decoration-color: $green-dark-accessible-light;
+    }
     .link-pin{
         display: grid;
         grid-template-columns: 8px*24 auto;

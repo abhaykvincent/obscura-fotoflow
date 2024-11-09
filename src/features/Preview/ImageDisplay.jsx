@@ -16,7 +16,7 @@ function ImageDisplay({ image }) {
         <div
           className="image"
           style={{
-            backgroundImage: `url("${encodeURI(image.url)}")`,
+            backgroundImage: `url("${image.url}")`,
             backgroundSize: 'contain'
           }}
         ></div>

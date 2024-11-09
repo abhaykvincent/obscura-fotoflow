@@ -15,3 +15,9 @@ export const getGoogleMapsUrl = (location) => {
 
   return `${baseUrl}${encodedLocation}`;
 };
+export const copyToClipboard = (url) => {
+  navigator.clipboard.writeText(url).then(() => {
+  }).catch((err) => {
+    console.error('Failed to copy: ', err);
+  });
+};
