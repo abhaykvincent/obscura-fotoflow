@@ -1,0 +1,33 @@
+@import '../../style/variables';
+@import '../../style/components';
+.wish-messages{
+    *{
+        color: black;
+    }
+    input{
+        background-color: white;
+    }
+    ul{
+        display: flex;
+        width: 100%;
+        overflow-x: scroll;
+        gap: 8px*2;
+        margin: 8px*2 0;
+        padding-bottom: 8px*2;
+
+        li{
+            list-style: none;
+            padding: 8px*2;
+            margin: 8px;
+            min-width: 8px*20;
+            background-color: $light-1;
+            border-radius: 4px;
+            border: 1px solid  $light-0;
+            box-shadow: 1px 1px 1px $gray-accessible-dark;
+        }
+    }
+    .message-input{
+        display: grid;
+        gap: 8px;
+    }
+}

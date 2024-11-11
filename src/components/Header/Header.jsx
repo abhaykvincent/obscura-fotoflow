@@ -4,6 +4,7 @@ import { MdClose } from "react-icons/md";
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import { selectUserStudio } from '../../app/slices/authSlice';
+import SearchInput from '../Search/SearchInput';
 const Header = () => {
 
   const defaultStudio = useSelector(selectUserStudio)
@@ -51,14 +52,7 @@ const Header = () => {
         <div className="studio-name-logo">{defaultStudio?.name}</div>
       </div>
       <div className="search-bar">
-        {/* <div className="search-input">
-          <input
-            type="text"
-            placeholder="Search projects"
-            value={searchQuery}
-            onChange={handleSearchInputChange}
-          />
-        </div> */}
+
       </div>
       
     </header>

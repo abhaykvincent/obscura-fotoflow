@@ -108,6 +108,7 @@ export const fetchProject = async (domain, projectId) => {
         const subCollectionId = collection.id;
         const collectionDoc = doc(projectDoc, 'collections', subCollectionId);
         const collectionSnapshot = await getDoc(collectionDoc);
+        console.log(collectionSnapshot.data())
     
         if (collectionSnapshot.exists()) {
             return { ...collection, ...collectionSnapshot.data(), id: collection.id };

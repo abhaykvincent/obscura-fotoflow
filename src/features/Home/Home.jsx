@@ -11,6 +11,7 @@ import { selectUserStudio } from '../../app/slices/authSlice';
 import StoragePie from '../../components/StoragePie/StoragePie';
 import AddProjectModal from '../../components/Modal/AddProject';
 import {  toast } from 'sonner'
+import SearchInput from '../../components/Search/SearchInput';
 function Home() {
     const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
@@ -29,7 +30,9 @@ function Home() {
           <AddProjectModal />
         
             <div className="home-header">
-                
+            <div className="search-bar">
+                <SearchInput />
+            </div>
             </div>
             <main className="home">
                 {/*  */}

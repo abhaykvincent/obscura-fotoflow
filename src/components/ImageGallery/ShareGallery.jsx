@@ -9,6 +9,7 @@ const ShareGallery = ({ images,projectId,collectionId }) => {
   //Preview
   const [isPreviewOpen,setIsPreviewOpen] = useState(false);
   const [previewIndex,setPreviewIndex] = useState(0);
+  const containerRef = useRef(null);
   const openPreview = (index) => {
     setIsPreviewOpen(true)
     setPreviewIndex(index)
@@ -22,6 +23,25 @@ const ShareGallery = ({ images,projectId,collectionId }) => {
     setHasMore(true); // Reset infinite scroll tracking
     setIsPreviewOpen(false);
   }, [images, size]);
+  useEffect(() => {
+    console.log(previewIndex)
+
+    const scrollToImage = () => {
+      // Find the target image
+      const targetImage = containerRef.current?.querySelector(`[alt="File ${previewIndex}"]`);
+      
+      if (targetImage) {
+        // Scroll the image into view with smooth behavior
+        targetImage.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',     // Centers vertically
+          inline: 'nearest'    // Minimizes horizontal movement
+        });
+      }
+    };
+
+    scrollToImage();
+  }, [previewIndex]); 
 
   const observer = useRef()
   const lastPhotoElementRef = useCallback((node) => {
@@ -50,7 +70,7 @@ const ShareGallery = ({ images,projectId,collectionId }) => {
   }, [loading, hasMore, images]);
   return (
     <div className="gallary">
-      <div className="photos">
+      <div className="photos" ref={containerRef}>
         {
           loadedImages.map((file, index) => (
             index + 1 === loadedImages.length ?

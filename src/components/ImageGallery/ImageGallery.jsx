@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Preview from '../../features/Preview/Preview';
 import { shortenFileName } from '../../utils/stringUtils';
 
@@ -92,6 +92,8 @@ const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
   // Preview
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
+
+  const containerRef = useRef(null);
   const openPreview = (index) => {
     setIsPreviewOpen(true);
     setPreviewIndex(index);
@@ -102,6 +104,27 @@ const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
   useEffect(() => {
     closePreview()
   }, [])
+  useEffect(() => {
+    console.log(previewIndex)
+    debugger
+
+    const scrollToImage = () => {
+      // Find the target image
+      const targetImage = containerRef.current?.querySelector(`img[alt="File ${previewIndex}"]`);
+      
+      if (targetImage) {
+        // Scroll the image into view with smooth behavior
+        targetImage.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center'
+        });
+      }
+    };
+
+    scrollToImage();
+  }, [previewIndex]); // Effect runs when previewIndex changes
+
   // Group images by lastModified
   const timeThreshold = 0.1;
   const timeThrottle = 0.5; 
@@ -141,7 +164,7 @@ const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
   return (
     <div className="gallary">
       {groupedImages.map((group, groupIndex) => (
-          <div className="photos">
+          <div className="photos" ref={containerRef}>
             <TimestampDisplay timestamp={group[0].lastModified} />
 
             {group.map((fileUrl, index) =>  (
@@ -177,7 +200,7 @@ const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
             ))}
           </div>
       ))}
-      {isPreviewOpen && <Preview image={imageUrls[previewIndex]} {...{ previewIndex, setPreviewIndex, imagesLength: imageUrls.length, closePreview, projectId,collectionId }} />}
+      {isPreviewOpen && <Preview image={imageUrls[previewIndex]} {...{ previewIndex, setPreviewIndex, imagesLength: imageUrls.length, closePreview, projectId,collectionId,setPreviewIndex }} />}
     </div>
   );
 };

@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MdLockOutline } from 'react-icons/md';
 import { isPinValid, savePinToLocalStorage, PIN_LENGTH } from '../../utils/pinUtils';
 import './GalleryPIN.scss';
+import { setUserType } from '../../analytics/utils';
 
 function GalleryPIN({ setAuthenticated, projectPin }) {
   const [pin, setPin] = useState(new Array(PIN_LENGTH).fill(''));
@@ -13,6 +14,7 @@ function GalleryPIN({ setAuthenticated, projectPin }) {
   useEffect(() => {
     if (isPinValid()) {
       setAuthenticated(true);
+
     } else {
       pinInputs.current[0]?.focus();
     }
@@ -24,6 +26,8 @@ function GalleryPIN({ setAuthenticated, projectPin }) {
     if (enteredPin === projectPin) {
       setAuthenticated(true);
       savePinToLocalStorage(enteredPin);
+      setUserType('Client');
+
     } else {
       setPinError(true);
       setTimeout(() => resetPin(), 500);

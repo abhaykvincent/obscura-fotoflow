@@ -5,6 +5,7 @@ import firebase from 'firebase/app';
 import { auth } from '../../firebase/app';
 import { fetchUsers } from '../../firebase/functions/firestore';
 import { useRevalidator } from 'react-router';
+import { setUserType } from '../../analytics/utils';
 
 const initialState = {
   user: {
@@ -156,7 +157,6 @@ const authSlice = createSlice({
           // get user from local storage 
           let userFromLocalStorage = JSON.parse(localStorage.getItem('user'));
           state.user = userFromLocalStorage;
-          
         }
         state.isAuthenticated = true;
         state.error = null;

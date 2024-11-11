@@ -139,10 +139,10 @@
             background-image: url('https://img.icons8.com/ios-filled/500/ffffff/plus-math.png');
 
         }
-        &.confirmed::before{
-            background-size: 90%;
+        &.search::before{
+            background-size: 100%;
 
-            background-image: url('https://img.icons8.com/?size=100&id=11695&format=png&color=FFFFFF');
+            background-image: url('https://img.icons8.com/?size=100&id=7695&format=png&color=FFFFFF');
         }
         &.user::before{
             background-size: 100%;
@@ -203,6 +203,16 @@
             background-image: url('https://img.icons8.com/?size=100&id=60022&format=png&color=FFFFFF');
             
         }
+        &.location::before{
+            opacity: 0.8;
+            margin-right: 6px;
+            margin-bottom: -4px;
+            background-size: 80%;
+            filter: drop-shadow(1px 1px 1px #656565);
+            background-position: center center;
+            background-image: url('https://img.icons8.com/?size=100&id=85353&format=png&color=000000');
+
+        }
         &.publish-icon::before{
             margin-right: 6px;
             margin-bottom: -4px;
@@ -229,12 +239,21 @@
         }
         &.check{
             padding:  4px;
-
             &::before{
                 margin: 0;
                 background-size: 80%;
                 background-position: center center;
                 background-image: url('https://img.icons8.com/?size=100&id=W9RS5YNuHAdG&format=png&color=FFFFFF');
+                
+            }
+        }
+        &.copy{
+            padding:  4px;
+            &::before{
+                margin: 0;
+                background-size: 80%;
+                background-position: center center;
+                background-image: url('https://img.icons8.com/?size=100&id=8yBXUwihe10f&format=png&color=FFFFFF');
                 
             }
         }

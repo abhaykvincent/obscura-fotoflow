@@ -42,6 +42,8 @@ import InvitationPage from './features/Invitation/InvitationPage';
 import Preview from './features/Preview/Preview';
 import InvitationPreview from './features/Invitation/InvitationPreview';
 import { Toaster } from 'sonner';
+import { setUserType } from './analytics/utils';
+import SearchResults from './components/Search/SearchResults';
 const client = new Client();
 client.setProject('fotoflow-notifications');
 
@@ -58,17 +60,18 @@ export default function App() {
 
   const { keyMap, handlers } = useShortcutsConfig();
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
   const isLoading = useSelector(selectProjectsStatus);
   const projects = useSelector(selectProjects);
   const defaultStudio = useSelector(selectUserStudio)
   const currentDomain = defaultStudio?.domain ?? 'guest'; 
-  const user = useSelector(selectUser);
   useEffect(() => {
-    console.log(isLoading)
   }, [isLoading]);
   useEffect(() => {
-  
-  }, []);
+    if(isAuthenticated && user!=='no-studio-found'){
+      setUserType('Photographer');
+    }
+  }, [isAuthenticated]);
  
   // ON Render
   useEffect(() => {
@@ -77,6 +80,7 @@ export default function App() {
      dispatch(checkStudioStatus())
     currentDomain !== 'guest' && dispatch(fetchProjects({currentDomain}))
   }, [currentDomain]);
+
     useEffect(() => {
       const modalStates = Object.values(selectModal);
       if (modalStates.some(state => state)) {
@@ -116,13 +120,14 @@ export default function App() {
                   <AdminPanel /> 
                 </AdminRoute> 
               }/> */}
+            <Route path="/masanory-grid" element={<ImageGallery />}/>
 
               <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}`} replace />} />
+              <Route path="/search" element={<SearchResults />} />
               <Route exact path="/:studioName/" element={<Home />} />
               <Route exact path="/:studioName/project/:id" element={<Project />} />
               <Route exact path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
               <Route exact path="/:studioName/invitation-creator/:projectId" element={<InvitationPage/>} />
-              <Route path="/:studioName/projects" element={<Projects />} />
               <Route path="/:studioName/projects" element={<Projects />} />
               <Route path="/:studioName/storage" element={<Storage />} />
               <Route path="/:studioName/notifications" element={<Notifications />} />
@@ -141,7 +146,6 @@ export default function App() {
             <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>
             <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>
             <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>
-            <Route path="/masanory-grid" element={<ImageGallery />}/>
           </Routes>
         )}
         </HotKeys>

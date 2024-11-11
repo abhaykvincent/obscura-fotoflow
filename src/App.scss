@@ -84,28 +84,10 @@ body{
         font-weight: 800;
       }
     }
-    .search-bar{
-      .search-input{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        input{
-          width: 8px*40;
-          height: 8px*4;
-          padding: 8px;
-          background-color: $dark-2;
-          border: 1px solid $dark-1;
-          box-shadow: inset -1px 1px 2px rgba(0, 0, 0, 0.3);
-          border-radius: 8px;
-          ::placeholder{
-            text-shadow: inset -1px 1px 2px rgba(0, 0, 0, 0.3);
-          }
-        }
-      }
-    }
+    
     
   }
+  
   .breadcrumbs{
     display: flex;
     padding: 4px 8px;
@@ -210,9 +192,9 @@ body{
     &.gallery-page{
       
     grid-template-columns: auto ;
-      opacity: 0;
+      /* opacity: 0;
       transform: translateY(-8px);
-      animation: gallery-page-reveal 0.2s ease-out forwards;
+      animation: gallery-page-reveal 0.2s ease-out forwards; */
     }
     
     .add-collection{
@@ -310,11 +292,11 @@ body{
       border-radius: $border-radius-1;
       @include boxed;
       @include boxShadow;
-      z-index: 3;
+      z-index: 3;/* 
       opacity: 0;
       animation: fadeInUp 0.4s ease-out 0.5s;
             animation-fill-mode: forwards;
-            animation-timing-function: ease-out;
+            animation-timing-function: ease-out; */
       .header{
         display: grid;
         grid-template-columns: 1fr 2fr 8px*40;
@@ -510,6 +492,22 @@ body{
       background-color: red;
       top: -200px;
     }
+  }
+    .projects-page-header {
+      position: fixed;
+      left: 50vw;
+      top: 0vw;
+      margin: 8px;
+      transform: translateX(-50%);
+      z-index: 50;
+  }
+    .home-header,.search-header {
+      position: fixed;
+      left: 50vw;
+      top: 0vw;
+      margin: 8px;
+      transform: translateX(-50%);
+      z-index: 50;
   }
   .refresh{
     bottom: 8px*2;
@@ -1356,7 +1354,7 @@ body{
     }
     .photo-wrap{
 
-      width: calc(100vw/4 - $sidebar-width/4 - 8px);
+      width: calc(100vw/4 - $sidebar-width/4 - 8px*2);
       position: relative;
       margin-left: -1px;
       margin-top: -1px;
@@ -1581,7 +1579,7 @@ body{
           
           .photo-wrap{
 
-            width: calc(100vw/3 - 8px*8 + 8px * 3.7);
+            width: calc(100vw/3 - 8px*8 + (8px * 3.5) - 1px);
             .photo{
 
             width: 100%;
@@ -1738,7 +1736,7 @@ body{
   @media only screen and (max-width: 720px) {
   .App{
     .gallary{
-      width: calc(100vw - 56PX - 80px);
+      width: calc(100vw - 8px*14);
     }
     header{
 
@@ -1758,7 +1756,7 @@ body{
       .project-collection .photos{
         grid-template-columns: 1fr 1fr ;
         .photo-wrap {
-          width: calc(50vw - 8px*8);
+          width: calc(50vw - 8px*9);
           .photo{
   
             width: 100%
@@ -1871,7 +1869,6 @@ body{
         display: none;
       }
       .list{
-        display: grid;
         margin-top: 8px*5;
         .gallery-list{    
           display: flex;
@@ -1898,11 +1895,9 @@ body{
       .gallery{
         width: 100%;
         .thumbnails {
-          width: 100%;
           height: 8px*14;
         }
         &.new{
-          width:auto;
           .thumbnails {
             width: 100%;
             height: 8px*14;
@@ -1927,7 +1922,7 @@ body{
           }
         }
         .project-collection .photos .photo-wrap {
-        width: calc(100vw - 8px*3);
+        width: calc(100vw - 8px*6.5);
         .photo{
 
           width: 100%

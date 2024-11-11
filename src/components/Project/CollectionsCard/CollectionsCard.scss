@@ -1,0 +1,261 @@
+@import '../../../style/variables';
+
+.collection {
+    width: 80%;
+    display: grid;
+    grid-template-columns: 8px*12 auto;
+    background: linear-gradient(120deg, $dark-2 50%, $dark-3 100%);
+    border-radius: $border-radius-1;
+    @include boxShadow;
+    @include boxed;
+    transition-duration: 0.2s;
+    transform: scale(1) translateY(2px);
+    border: 1px solid $gray5-accessible-dark;
+    border-top: 1px solid rgba(186, 230, 186, 0.2);
+    border-right: 1px solid rgba(162, 194, 156, 0.1);
+    margin-top: 0px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    opacity: 1;
+    transition-timing-function: ease-in;
+    cursor: pointer;
+    transition-duration: 0.09s;
+
+    &:hover {
+        border-top: 1px solid rgba(139, 185, 139, 0.25);
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 8px 4px #14562413;
+        background: linear-gradient(30deg, $dark-2, $dark-3);
+        transition-timing-function: ease-out !important;
+        transform: scale(1) translateY(2px) !important;
+        transition-duration: 0.09s !important;
+
+        .cover-wrap {
+            transform: scale(1.01);
+            transition-duration: 0.1s;
+            transition-timing-function: ease-in;
+        }
+
+        .collection-cover {
+            height: 100%;
+            min-height: 8px*9;
+            width: 8px*12;
+            border-radius: 8px;
+            border: 1px solid $gray4-accessible-dark;
+            background-size: 100%;
+            transition-timing-function: ease-in;
+            opacity: 1;
+            transition-duration: 0.15s;
+            transform: scale(1.1) translateY(-2px) translateX(-3px);
+            box-shadow: 4px 4px 4px 1px rgba(0, 0, 0, 0.4), inset 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .collection-details {
+            transition-duration: 0.2s !important;
+            transition-timing-function: ease-out;
+        }
+
+        .collection-summary {
+            opacity: 1 !important;
+        }
+
+        .collection-title {
+            transform: scale(1.02) translateY(-1px) translateX(1%) !important;
+            transition-duration: 0.15s !important;
+            transition-timing-function: ease-in;
+        }
+
+        .collection-type {
+            transform: translateY(-1px) !important;
+            transition-duration: 0.15s !important;
+            transition-timing-function: ease-in;
+        }
+
+        &.draft {
+            .collection-details .details-top .right .status-signal {
+                box-shadow: 0 0 8px 4px #252525a3;
+            }
+        }
+
+        &.uploaded {
+            .collection-details .details-top .right .status-signal {
+                background-color: $yellow-default-dark;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #6758002e, 0 0 10px 5px #ffd70038, 0 0 4px 2px #ffd90058, 0 0 20px 10px hsla(60, 100%, 50%, 0.1) !important;
+            }
+        }
+
+        &.designing {
+            .collection-details .details-top .right .status-signal {
+                background-color: $purple-accessible-dark;
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #5e2a7e2e, 0 0 10px 5px #9b59b638, 0 0 4px 2px #9c59b6a9, 0 0 20px 10px hsla(270, 96%, 53%, 0.4) !important;
+            }
+        }
+
+        .right {
+            .status-signal {
+                transform: scale(1.1);
+                box-shadow: 0 1px 1px 1px #022002a3, 0 0 10px 5px #00ff0024, 0 0 4px 2px #00ff0061, 0 0 20px 10px hsla(120, 100%, 50%, 0.2) !important;
+                transition-delay: 0.1s;
+            }
+        }
+    }
+
+    &:active {
+        transition-duration: 0.2s;
+        transition-timing-function: ease-in;
+        transform: scale(0.99) translateY(0px) !important;
+        box-shadow: 0px 0px 0px rgba(0, 0, 0, 1);
+    }
+
+    .cover-wrap {
+        transition-duration: 0.1s;
+        transition-timing-function: ease-out;
+    }
+
+    .collection-cover {
+        height: 100%;
+        min-height: 8px*9;
+        width: 8px*12;
+        border-radius: 8px;
+        border: 1px solid $gray3-accessible-dark;
+        background-color: rgba(0, 0, 0, 0.2);
+        background-size: cover;
+        background-position: center;
+        opacity: 1;
+        transition-duration: 0.1s;
+        transform: scale(1.05) translateX(0px) translateY(0px);
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), inset 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .collection-details {
+        display: grid;
+        align-content: space-between;
+        margin: 8px*2;
+        margin-right: 8px*1.5;
+        margin-bottom: 8px*1;
+        margin-top: 8px*1.5;
+        gap: 8px*0.2;
+        transition-duration: 0.1s;
+
+        .details-top {
+            display: grid;
+            grid-template-columns: auto 8px;
+
+            .collection-title {
+                transition-duration: 0.1s;
+                transform: scale(1) translateX(0px) translateY(0px);
+                font-size: 0.9rem;
+            }
+
+            .collection-type {
+                margin-top: -2px;
+                line-height: 8px*2.5;
+                font-weight: 400;
+                font-size: 0.8rem;
+                color: $gray3-default-dark;
+            }
+
+
+            .right {
+                .status-signal {
+                    height: 8px;
+                    width: 8px;
+                    border-radius: 50%;
+                    background-color: $green-default-light;
+                    box-shadow: 0 1px 1px 1px #022002a3, 0 0 10px 5px #00ff0024, 0 0 4px 1px #00ff0021, 0 0 20px 10px #00ff000e;
+                    transform: scale(1);
+                    transition-duration: 0.2s;
+
+                    &:hover {
+                        background-color: $green-default-dark;
+                    }
+                }
+            }
+        }
+    }
+    .collection-summary{
+        display: flex;
+        height: 100%;
+        font-size: 0.8rem;
+        gap: 4px;
+        justify-content: space-between;
+        transition-duration: 0.2s;align-items: center;
+        .summary-left{
+            display: flex;
+            align-items: end;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .summary-right{
+            display: grid;
+            justify-items: end;
+            gap: 4px;
+            .quick-actions{
+
+            display: flex;
+            gap: 4px;
+            }
+            .pin {
+                display: flex;
+                opacity: 0.5;
+                background-color: #2B2B2B;
+                border-radius: 4px;
+                border: 1px solid #535353;
+                padding: 1px 8px;
+                gap: 0px;
+            }
+            
+        }
+        .summary-item{
+            display: flex;
+            gap: 2px;
+            &:hover{
+                .icon{
+                    transform: scale(1.4);
+                    transition-duration: 0.2s;
+                }
+            }
+            p{
+                font-size: 0.7rem;
+                color: $gray3-accessible-dark;
+                line-height: 1rem;
+            }
+            .icon{
+                padding: 8px*1;
+                background-size: 80%;
+                background-position: center;
+                opacity: 0.5;
+            }
+        }
+        .collection-count{
+            .icon{
+                background-image: url('../../../assets/img/icons/folders.svg');
+            }
+        }
+        .invoice-count{
+            .icon{
+                background-image: url('https://img.icons8.com/pastel-glyph/64/FFFFFF/invoice-1.png');
+            }
+        }
+        .photos-count{
+            .icon{
+                background-image: url('../../../assets/img/icons/images.svg');
+            }
+        }
+        .selected-count{
+            .icon{
+                background-image: url('../../../assets/img/icons/selected.svg');
+            }
+        }
+        .share{
+            .icon{
+                background-image: url('../../../assets/img/icons/play-circle.svg');
+            }
+        }
+        .select{
+            .icon{
+                background-image: url('../../../assets/img/icons/checkmark.svg');
+            }
+        }
+    }
+}
