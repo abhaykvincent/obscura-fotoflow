@@ -1,8 +1,4 @@
-Here’s a streamlined, stylized, and **minimal** version of the README in Markdown, along with proprietary notices.
 
----
-
-```markdown
 # FotoFlow
 
 FotoFlow is a comprehensive **workflow management tool** built for **event photographers**. It offers streamlined solutions for project management, client interaction, image selection, financial tracking, and gallery sharing.
@@ -92,13 +88,8 @@ REACT_APP_FIREBASE_APP_ID=your-app-id
 
 ## Contact
 
-For inquiries or support, please reach out at [your-email@example.com].
+For inquiries or support, please reach out at [fotoflow.web@gmail.com].
 
 ---
 
 © [Year] FotoFlow. All rights reserved. **Proprietary Software**. No permission is granted to copy, modify, or distribute.
-``` 
-
---- 
-
-This README includes only the essentials, emphasizes proprietary rights, and keeps a clear, professional layout.
