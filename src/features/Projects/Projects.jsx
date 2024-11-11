@@ -12,6 +12,7 @@ import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
 import Refresh from '../../components/Refresh/Refresh';
 // Styles
 import './Projects.scss';
+import SearchInput from '../../components/Search/SearchInput';
 
 function Projects() {
     const defaultStudio = useSelector(selectUserStudio);
@@ -68,14 +69,6 @@ function Projects() {
                 ))}
                 </div>
             </div>
-            <div key={month} className="month-group" style={{ '--group-index': index + 2 }} >
-                <h3 className="month-name">{month}</h3>
-                <div className="projects-list">
-                {groupedProjects[month].map((project) => (
-                    <ProjectCard project={project} key={project.id} />
-                ))}
-                </div>
-            </div>
             
             </>
         ));
@@ -85,6 +78,12 @@ function Projects() {
     return (
         <>
             <AddProjectModal />
+
+            <div className="projects-page-header">
+            <div className="search-bar">
+                <SearchInput />
+            </div>
+            </div>
             <main className="projects">
                 <div className="projects-header">
                     <h1>Projects</h1>
