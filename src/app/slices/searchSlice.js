@@ -2,6 +2,7 @@
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { selectProjects } from './projectsSlice';
+import { format } from 'date-fns'; // Use date-fns for date formatting
 
 // src/slices/searchSlice.js
 
@@ -10,15 +11,30 @@ export const searchProjects = createAsyncThunk(
     async (query, { getState }) => {
       const projects = selectProjects(getState());
       const queries = query.toLowerCase().split(' ').filter(Boolean); // Split query by space
+      const monthMap = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+      // Helper function to match dates
+      const isDateMatch = (createdAt, query) => {
+        const date = new Date(createdAt);
+        console.log(new Date(createdAt).getDate())
+        const month = monthMap[date.getMonth()] // Months are 0-indexed
+        const day = date.getDate().toString()
+        console.log(month, day)
+        // Check if query matches day or part of the month name
+        const monthMatch = Object.keys(monthMap).some(
+            month => monthMap[month].includes(query)
+        );
+        console.log(monthMatch)
+        return monthMatch || query.includes(day);
+      };
   
-      // Separate filtering for projects and collections
-      
       const projectResults = projects.filter((project) =>
         queries.every(q =>
           project.name.toLowerCase().includes(q) ||
-          project.type.toLowerCase().includes(q)
+          project.type.toLowerCase().includes(q) ||
+          isDateMatch(project.createdAt, q)
         )
       );
+  
       const collectionResults = projects.flatMap(project =>
         project.collections.filter(collection =>
           queries.every(q =>
@@ -34,6 +50,9 @@ export const searchProjects = createAsyncThunk(
       return { projectResults, collectionResults };
     }
   );
+  
+
+
   
 
   
