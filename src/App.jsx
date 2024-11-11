@@ -43,6 +43,7 @@ import Preview from './features/Preview/Preview';
 import InvitationPreview from './features/Invitation/InvitationPreview';
 import { Toaster } from 'sonner';
 import { setUserType } from './analytics/utils';
+import SearchResults from './components/Search/SearchResults';
 const client = new Client();
 client.setProject('fotoflow-notifications');
 
@@ -122,6 +123,7 @@ export default function App() {
             <Route path="/masanory-grid" element={<ImageGallery />}/>
 
               <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}`} replace />} />
+              <Route path="/search" element={<SearchResults />} />
               <Route exact path="/:studioName/" element={<Home />} />
               <Route exact path="/:studioName/project/:id" element={<Project />} />
               <Route exact path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
