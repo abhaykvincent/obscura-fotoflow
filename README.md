@@ -36,7 +36,7 @@ FotoFlow is a comprehensive **workflow management tool** built for **event photo
 ### Steps
 1. **Clone** the repository:
    ```bash
-   git clone https://your-repo-url/fotoflow.git
+   git clone url
    cd fotoflow
    ```
 2. **Install dependencies**:
@@ -92,4 +92,4 @@ For inquiries or support, please reach out at [fotoflow.web@gmail.com].
 
 ---
 
-© [Year] FotoFlow. All rights reserved. **Proprietary Software**. No permission is granted to copy, modify, or distribute.
+© 2024 FotoFlow. All rights reserved. **Proprietary Software**. No permission is granted to copy, modify, or distribute.
