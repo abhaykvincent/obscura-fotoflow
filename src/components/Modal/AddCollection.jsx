@@ -16,7 +16,7 @@ function AddCollectionModal({ project }) {
   const visible = useSelector(selectModal)
   const defaultStudio = useSelector(selectUserStudio)
   const collectionsLimit ={
-    perProject: 3
+    perProject: defaultStudio.domain==='monalisa'? 24 : 3
   }
   let collectionsLength= project?.collections?project.collections:0
   const [CollectionData, setCollectionData] = useState({
