@@ -30,23 +30,15 @@ function CollectionCard({ collection }) {
 
         <div className="collection-summary">
           <div className="summary-left">
-            <div className={`summary-item item-count ${collection.itemsCount > 0 ? 'active' : ''}`}>
-              <div className="icon"></div>
-              <p>{collection.itemsCount}</p>
-            </div>
             <div className={`summary-item photos-count ${collection.uploadedFilesCount > 0 ? 'active' : ''}`}>
               <div className="icon"></div>
-              <p>{collection.uploadedFilesCount}</p>
+              <p>{collection.filesCount}</p>
             </div>
           </div>
           <div className="summary-right">
-            {
-              collection.pin ?
               <div className="pin">
-                <p className="pin-number">{collection.pin}</p>
+                <p className="pin-number"> Open Gallery</p>
               </div>
-              : ''
-            }
           </div>
         </div>
       </div>
