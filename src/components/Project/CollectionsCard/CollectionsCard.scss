@@ -1,9 +1,9 @@
 @import '../../../style/variables';
 
 .collection {
-    width: 100%;
+    width: 80%;
     display: grid;
-    grid-template-columns: 8px*15 auto;
+    grid-template-columns: 8px*12 auto;
     background: linear-gradient(120deg, $dark-2 50%, $dark-3 100%);
     border-radius: $border-radius-1;
     @include boxShadow;
@@ -155,42 +155,6 @@
                 color: $gray3-default-dark;
             }
 
-            .info-bar {
-                display: grid;
-                grid-template-columns: auto auto;
-                justify-content: space-between;
-                align-items: center;
-
-                .lr.button.mini {
-                    height: 8px*3;
-                    line-height: 8px*2.5;
-                    padding: 0px 8px;
-                    margin-right: -8px;
-                    background-color: #001b30;
-                    color: #2fa3f7;
-                    border: 1px solid #2fa3f7;
-                    box-shadow: -1px -1px 4px #000000, -1px 0px 8px #2fa4f79c;
-
-                    &.disabled {
-                        display: none;
-                        border: 1px solid #39454f;
-                        color: #1368a4;
-                        background-color: #071b2b;
-                    }
-                }
-            }
-
-            .collection-budget {
-                padding: 2px 4px;
-                margin: 0px;
-                margin-bottom: 4px;
-                background-color: $dark-1;
-                color: $gray-default-dark;
-                font-size: 0.7rem;
-                display: inline-block;
-                border-radius: 4px;
-                border: 1px solid $dark-0;
-            }
 
             .right {
                 .status-signal {
@@ -206,6 +170,91 @@
                         background-color: $green-default-dark;
                     }
                 }
+            }
+        }
+    }
+    .collection-summary{
+        display: flex;
+        height: 100%;
+        font-size: 0.8rem;
+        gap: 4px;
+        justify-content: space-between;
+        transition-duration: 0.2s;align-items: center;
+        .summary-left{
+            display: flex;
+            align-items: end;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .summary-right{
+            display: grid;
+            justify-items: end;
+            gap: 4px;
+            .quick-actions{
+
+            display: flex;
+            gap: 4px;
+            }
+            .pin {
+                display: flex;
+                opacity: 0.5;
+                background-color: #2B2B2B;
+                border-radius: 4px;
+                border: 1px solid #535353;
+                padding: 1px 8px;
+                gap: 0px;
+            }
+            
+        }
+        .summary-item{
+            display: flex;
+            gap: 2px;
+            &:hover{
+                .icon{
+                    transform: scale(1.4);
+                    transition-duration: 0.2s;
+                }
+            }
+            p{
+                font-size: 0.7rem;
+                color: $gray3-accessible-dark;
+                line-height: 1rem;
+            }
+            .icon{
+                padding: 8px*1;
+                background-size: 80%;
+                background-position: center;
+                opacity: 0.5;
+            }
+        }
+        .collection-count{
+            .icon{
+                background-image: url('../../../assets/img/icons/folders.svg');
+            }
+        }
+        .invoice-count{
+            .icon{
+                background-image: url('https://img.icons8.com/pastel-glyph/64/FFFFFF/invoice-1.png');
+            }
+        }
+        .photos-count{
+            .icon{
+                background-image: url('../../../assets/img/icons/images.svg');
+            }
+        }
+        .selected-count{
+            .icon{
+                background-image: url('../../../assets/img/icons/selected.svg');
+            }
+        }
+        .share{
+            .icon{
+                background-image: url('../../../assets/img/icons/play-circle.svg');
+            }
+        }
+        .select{
+            .icon{
+                background-image: url('../../../assets/img/icons/checkmark.svg');
             }
         }
     }
