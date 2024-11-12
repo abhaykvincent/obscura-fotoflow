@@ -138,6 +138,8 @@ const authSlice = createSlice({
     setAvailableStortage: (state, action) => {
       const available = state.limits.storage.total-getUsedSpace(action.payload)
       state.limits.storage.available=available
+      console.log(available)
+      debugger
     },
     resetAuth: () => initialState,
   },
