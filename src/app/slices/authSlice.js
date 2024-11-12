@@ -22,7 +22,7 @@ const initialState = {
       // In MB 
       // 1 GB - 1000
       total: 5000,
-      available:email === 'ashishvincent@gmail.com'?2000:2000
+      available:2000
     },
     projects:{
 
@@ -138,6 +138,8 @@ const authSlice = createSlice({
     setAvailableStortage: (state, action) => {
       const available = state.limits.storage.total-getUsedSpace(action.payload)
       state.limits.storage.available=available
+      console.log(available)
+      debugger
     },
     resetAuth: () => initialState,
   },
