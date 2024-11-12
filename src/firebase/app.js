@@ -9,8 +9,6 @@ if (process.env.NODE_ENV === 'development') {
     console.log('DEV MODE');
     window.firebase = window.firebase || {};  // for debugging
     window.firebase.DEBUG = true;  // Enable verbose logging
-} else {
-    console.log('Analytics running on PRODUCTION');
 }
 
 // Fotoflow-dev
@@ -48,7 +46,7 @@ if (process.env.NODE_ENV === 'development') {
     const EMULATOR_PORT = process.env.REACT_APP_EMULATOR_PORT;
     const EMULATOR_FIRESTORE_PORT = process.env.REACT_APP_EMULATOR_FIRESTORE_PORT;
     const EMULATOR_AUTH_PORT = process.env.REACT_APP_EMULATOR_AUTH_PORT;
-
+    console.log(EMULATOR_HOST, EMULATOR_PORT, EMULATOR_FIRESTORE_PORT, EMULATOR_AUTH_PORT);
     // Enable Firebase EMULATORS
     connectStorageEmulator(storage, EMULATOR_HOST, EMULATOR_PORT);
     connectFirestoreEmulator(db, EMULATOR_HOST, EMULATOR_FIRESTORE_PORT);
@@ -58,6 +56,7 @@ if (process.env.NODE_ENV === 'development') {
 else {
     // Enable ANALYTICS only on PRODUCTION
      analytics = getAnalytics(app);
+     console.log('Analytics running on PRODUCTION');
 }
 
 const provider = new GoogleAuthProvider();

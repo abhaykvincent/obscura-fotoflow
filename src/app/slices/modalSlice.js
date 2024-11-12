@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     createProject: false,
+    createPortfolio: false,
     createCollection: false,
     shareGallery: false,
     confirmDeleteproject:false,

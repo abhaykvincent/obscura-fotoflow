@@ -153,7 +153,7 @@ export const fetchImages = async (domain, projectId, collectionId) => {
 export const addProjectToStudio = async (domain, project) => {
     
     console.log(domain, project)
-    const id = `${project.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
+    const id = project.type !== 'Portfolio'?`${project.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`:'portfolio';
     const projectData = {
       id,
       ...project

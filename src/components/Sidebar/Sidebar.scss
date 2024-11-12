@@ -81,7 +81,7 @@
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
             opacity: 1;
             }
-            &.selected{
+            &.active{
             background-color: $dark-2;
             border: 1px solid $dark-0;
             box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
@@ -114,6 +114,10 @@
             &.projects .icon{
                 background-size: 85%;
             background-image: url('https://img.icons8.com/ios-filled/150/FFFFFF/business.png');
+            }
+            &.portfolio .icon{
+                background-size: 85%;
+            background-image: url('https://img.icons8.com/?size=100&id=25049&format=png&color=FFFFFF');
             }
             &.storage .icon{
             background-size: 80%;
