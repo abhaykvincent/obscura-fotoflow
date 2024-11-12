@@ -173,7 +173,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                     onClick={() => setPage(page + 1)}
                 >Load More</div>
 
-                {imageUrls.length !==0 && <p className='caughtup-label label'>You are all cought up!</p>}
+                {imageUrls.length !==0 && <p className='caughtup-label label'>You are all caught up!</p>}
                 
             </div>
 }
