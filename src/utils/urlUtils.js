@@ -4,7 +4,10 @@
         
         return `${window.location.protocol}//${window.location.host}/${domain}/${page}/${projectId}`;
       }
-
+// get website url at https://www.website.com/domain
+export function getWebsiteURL(domain) {
+    return `${window.location.protocol}//${window.location.host}/${domain}`;
+  }
 export const getGoogleMapsUrl = (location) => {
   if (!location || typeof location !== 'string') {
     throw new Error('A valid location string must be provided.');

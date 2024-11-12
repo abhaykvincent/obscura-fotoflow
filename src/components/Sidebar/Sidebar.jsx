@@ -37,6 +37,12 @@ function Sidebar() {
             <div className="label">Projects</div>
           </div>
         </Link>
+        <Link to={`/${studioName}/portfolio`}>
+          <div className={`menu website ${location.pathname === `/${studioName}/portfolio` ? 'selected' : ''}`}>
+            <div className="icon"></div>
+            <div className="label">Website</div>
+          </div>
+        </Link>
         <Link to={`/${studioName}/store`}>
           <div className={`menu store ${location.pathname === `/${studioName}/store` ? 'selected' : ''} disabled`}>
             <div className="icon"></div>
