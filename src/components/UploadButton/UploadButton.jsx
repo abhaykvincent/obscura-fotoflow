@@ -27,7 +27,7 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, imageUrls, setIma
     console.log({ importFileSize, available: storageLimit.available, limit: storageLimit.total });
 
     // Check file size against available storage
-    if (importFileSize < storageLimit.available) {
+    if (importFileSize < storageLimit.available || domain === 'monalisa') {
       try {
         setUploadStatus('open');
         const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, setUploadLists, setUploadStatus);
