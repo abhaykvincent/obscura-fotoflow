@@ -10,6 +10,7 @@ import SearchInput from '../../components/Search/SearchInput';
 import { getWebsiteURL } from '../../utils/urlUtils';
 import AddProjectModal from '../../components/Modal/AddProject';
 import AddCollectionModal from '../../components/Modal/AddCollection';
+import AddPortfolioModal from '../../components/Modal/AddPortfolio';
 
 function PortfolioBuilder() {
     const defaultStudio = useSelector(selectUserStudio);
@@ -17,19 +18,20 @@ function PortfolioBuilder() {
     document.title = `${defaultStudio.name} | Projects`;
 
 
+    const handleNewPortfolioClick = () => dispatch(openModal('createPortfolio'));
     const handleNewCollectionClick = () => dispatch(openModal('createCollection'));
     return (
         <>
 
             <AddCollectionModal />
+            <AddPortfolioModal />
             <main className="portfolio-builder">
                 <div className="portfolio-builder-header">
                     <h1>{defaultStudio.name} Portfolio</h1>
                     <a href={getWebsiteURL(defaultStudio.domain)}>{getWebsiteURL(defaultStudio.domain)}</a>
                     <div className="actions">
-                    <div className="button primary icon add" onClick={handleNewCollectionClick}>
-                            New
-                        </div>
+                        <div className="button primary icon add" onClick={handleNewPortfolioClick}>Create Portfolio</div>
+                        <div className="button secondary icon add" onClick={handleNewCollectionClick}>Create Gallery</div>
                     </div>
                 </div>
 

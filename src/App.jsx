@@ -125,7 +125,7 @@ export default function App() {
 
               <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
               <Route path="/search" element={<SearchResults />} />
-              <Route exact path="/:studioName/portfolio" element={<PortfolioWebsite />} />
+              <Route exact path="/:studioName/portfolio-editor" element={<PortfolioWebsite />} />
               <Route exact path="/:studioName/home" element={<Home />} />
               <Route exact path="/:studioName/project/:id" element={<Project />} />
               <Route exact path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />

@@ -25,44 +25,44 @@ function Sidebar() {
   return (
     <div className="sidebar">
       <div className="menu-list">
-        <Link to={`/${studioName}/`}>
-          <div className={`menu home ${location.pathname === `/${studioName}/` ? 'selected' : ''}`}>
+        <Link to={`/${studioName}/home`}>
+          <div className={`menu home ${location.pathname === `/${studioName}/` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Home</div>
           </div>
         </Link>
         <Link to={`/${studioName}/projects`}>
-          <div className={`menu projects ${location.pathname === `/${studioName}/projects` ? 'selected' : ''}`}>
+          <div className={`menu projects ${location.pathname === `/${studioName}/projects` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Projects</div>
           </div>
         </Link>
-        <Link to={`/${studioName}/portfolio`}>
-          <div className={`menu website ${location.pathname === `/${studioName}/portfolio` ? 'selected' : ''}`}>
+        <Link to={`/${studioName}/portfolio-editor`}>
+          <div className={`menu portfolio ${location.pathname === `/${studioName}/portfolio-editor` ? 'active' : ''}`}>
             <div className="icon"></div>
-            <div className="label">Website</div>
+            <div className="label">Portfolio</div>
           </div>
         </Link>
         <Link to={`/${studioName}/store`}>
-          <div className={`menu store ${location.pathname === `/${studioName}/store` ? 'selected' : ''} disabled`}>
+          <div className={`menu store ${location.pathname === `/${studioName}/store` ? 'active' : ''} disabled`}>
             <div className="icon"></div>
             <div className="label">Store</div>
           </div>
         </Link>
         <Link to={`/${studioName}/calendar`}>
-          <div className={`menu calendar ${location.pathname === `/${studioName}/calendar` ? 'selected' : ''} disabled`}>
+          <div className={`menu calendar ${location.pathname === `/${studioName}/calendar` ? 'active' : ''} disabled`}>
             <div className="icon"></div>
             <div className="label">Calendar</div>
           </div>
         </Link>
         <Link to={`/${studioName}/invoices`}>
-          <div className={`menu invoices ${location.pathname === `/${studioName}/invoices` ? 'selected' : ''} disabled`}>
+          <div className={`menu invoices ${location.pathname === `/${studioName}/invoices` ? 'active' : ''} disabled`}>
             <div className="icon"></div>
             <div className="label">Financials</div>
           </div>
         </Link>
         <Link to={`/${studioName}/team`}>
-          <div className={`menu team ${location.pathname === `/${studioName}/team` ? 'selected' : ''}`}>
+          <div className={`menu team ${location.pathname === `/${studioName}/team` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Team</div>
           </div>
@@ -70,19 +70,19 @@ function Sidebar() {
         {/* Admin */}
         <p className="label">ADMIN</p>
         <Link to={`/${studioName}/notifications`}>
-          <div className={`menu notifications disabled ${location.pathname === `/${studioName}/notifications` ? 'selected' : ''}`}>
+          <div className={`menu notifications disabled ${location.pathname === `/${studioName}/notifications` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Notifications</div>
           </div>
         </Link>
         <Link to={`/${studioName}/storage`}>
-          <div className={`menu storage ${location.pathname === `/${studioName}/storage` ? 'selected' : ''}`}>
+          <div className={`menu storage ${location.pathname === `/${studioName}/storage` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Storage</div>
           </div>
         </Link>
         <Link to={`/${studioName}/subscription`}>
-          <div className={`menu subscription ${location.pathname === `/${studioName}/subscription` ? 'selected' : ''}`}>
+          <div className={`menu subscription ${location.pathname === `/${studioName}/subscription` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Subscription</div>
           </div>

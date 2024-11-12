@@ -109,6 +109,24 @@
       }
   }
   .projects {
+    .section-heading{
+        
+        display: inline-block;
+        width: auto;
+        font-weight: 400;
+        padding: 8px*1 0;
+        padding-top: 0;
+        padding-right: 8px*2;
+        margin-left: 8px;
+        margin-top: 8px*2;
+        margin-bottom: 8px*1;
+        border-bottom: 2px solid $gray6-default-dark;
+        color: $gray3-default-light;
+        transition-duration: 0.2s;
+        opacity: 0;
+        animation: fadeInUp 0.5s ease-out forwards;
+        animation-delay: 0.5s;
+    }
     .month-group {
       margin-bottom: 16px; // Simplified calculation of 8px * 2
       margin-top: 16px; // Simplified calculation of 8px * 2
@@ -141,6 +159,13 @@
                 }
         }
       }
+    }
+    .project{
+        &.new{
+
+            animation-duration: 0.6s;
+        animation-delay: 0.65s;
+        }
     }
   }
   

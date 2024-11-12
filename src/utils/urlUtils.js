@@ -8,6 +8,15 @@
 export function getWebsiteURL(domain) {
     return `${window.location.protocol}//${window.location.host}/${domain}`;
   }
+  export function isDomainOnlyURL(url) {
+    const host = `${window.location.protocol}//${window.location.host}`;
+    
+    // Regular expression to match the pattern `${host}/<domain>/`
+    const regex = new RegExp(`^${host}/[^/]+/$`);
+  
+    return regex.test(url);
+  }
+  
 export const getGoogleMapsUrl = (location) => {
   if (!location || typeof location !== 'string') {
     throw new Error('A valid location string must be provided.');
