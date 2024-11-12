@@ -22,8 +22,8 @@ $yellow-accessible-dark: #ffd426;
 $green-default-light: #66b346;
 $green-default-dark: #54a134;
 $green-accessible-light: #54a134;
-$green-accessible-dark: #54a134;
-$green-dark-accessible-light: #1c3810;
+$green-accessible-dark: #428924;
+$green-dark-accessible-light: #336c1b;
 
 // Mint
 $mint-default-light: #00c7be;
@@ -124,12 +124,12 @@ $light-3:#FFFFFF;
 
 // Dimentions
 $header-height: 8px*7.5;
-$sidebar-width: 8px*24;
+$sidebar-width: 8px*20;
 @media only screen and (max-width: 1080px) {
-  $sidebar-width: 8px*5;
+  $sidebar-width: 8px*4;
 }
 @media only screen and (max-width: 768px) {
-  $sidebar-width: 8px*5;
+  $sidebar-width: 8px*4;
 }
 
 $border-radius-1: 8px*1;

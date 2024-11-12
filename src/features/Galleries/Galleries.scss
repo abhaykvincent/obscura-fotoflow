@@ -801,7 +801,6 @@
 		.gallery-name{
 			margin-left: 0;
 			color: $gray6-default-light;
-			font-weight: bold;
 		}
 		&.new{
 			.thumbnails {
@@ -902,6 +901,8 @@
 		.gallery-name{
 			margin-top: 8px*1;
 			text-align: center;
+			display:flex;
+			align-self: center;
 		}
 	}
 	&.no-images{

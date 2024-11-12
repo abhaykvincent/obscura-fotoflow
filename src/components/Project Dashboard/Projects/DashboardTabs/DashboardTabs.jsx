@@ -36,7 +36,7 @@ function DashboardTabs({ project }) {
                         <div className="backthumb bthumb4"></div>
                       </div>
                     </div>
-                    <p>New Gallery</p>
+                    <p className='button primary outline '>New Gallery</p>
                   </div>
 
                   </div>
