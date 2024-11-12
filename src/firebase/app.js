@@ -48,7 +48,7 @@ if (process.env.NODE_ENV === 'development') {
     const EMULATOR_PORT = process.env.REACT_APP_EMULATOR_PORT;
     const EMULATOR_FIRESTORE_PORT = process.env.REACT_APP_EMULATOR_FIRESTORE_PORT;
     const EMULATOR_AUTH_PORT = process.env.REACT_APP_EMULATOR_AUTH_PORT;
-
+    console.log(EMULATOR_HOST, EMULATOR_PORT, EMULATOR_FIRESTORE_PORT, EMULATOR_AUTH_PORT)
     // Enable Firebase EMULATORS
     connectStorageEmulator(storage, EMULATOR_HOST, EMULATOR_PORT);
     connectFirestoreEmulator(db, EMULATOR_HOST, EMULATOR_FIRESTORE_PORT);

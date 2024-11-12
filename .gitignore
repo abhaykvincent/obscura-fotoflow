@@ -7,6 +7,3 @@ firestore-debug.log
 
 build/
 
-*.development
-
-src/firebase/app.js
