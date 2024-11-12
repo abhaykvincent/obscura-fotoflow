@@ -22,7 +22,7 @@ const initialState = {
       // In MB 
       // 1 GB - 1000
       total: 5000,
-      available:2000
+      available:email === 'ashishvincent@gmail.com'?2000:2000
     },
     projects:{
 
