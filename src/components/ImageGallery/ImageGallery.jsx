@@ -106,8 +106,6 @@ const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
   }, [])
   useEffect(() => {
     console.log(previewIndex)
-    debugger
-
     const scrollToImage = () => {
       // Find the target image
       const targetImage = containerRef.current?.querySelector(`img[alt="File ${previewIndex}"]`);
