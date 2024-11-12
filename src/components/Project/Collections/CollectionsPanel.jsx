@@ -80,7 +80,7 @@ const CollectionsPanel = ({ project, collectionId}) => {
             </div>
           </div>
         </div>
-        <div className="gallery-name">New Gallery</div>
+        <div className="button primary outline  gallery-name">New Gallery</div>
       </div>
           {/* <div className="active-box box"></div> */}
         </div>:''
