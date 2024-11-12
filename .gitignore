@@ -6,3 +6,7 @@ firestore-debug.log
 .firebase/hosting.YnVpbGQ.cache
 
 build/
+
+*.development
+
+src/firebase/app.js
