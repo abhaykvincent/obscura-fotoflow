@@ -17,7 +17,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
     const dispatch = useDispatch();
     const domain = useSelector(selectDomain);
     // dark light mode
-    const [displayMode, setDisplayMode] = useState('lightMode');
+    const [displayMode, setDisplayMode] = useState('darkMode');
 
 
     // Files

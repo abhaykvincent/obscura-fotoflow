@@ -21,7 +21,7 @@ function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePrev
   const handleUserInteraction = () => {
     setShowControls(true);  // Show controls on interaction
     clearTimeout(hideControlsTimeout);  // Reset timer if it exists
-    hideControlsTimeout = setTimeout(() => setShowControls(false), 1000); // Hide after 3s
+    hideControlsTimeout = setTimeout(() => setShowControls(false), 3000); // Hide after 3s
   };
   
   const handleDelete = async () => {

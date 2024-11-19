@@ -49,13 +49,13 @@ export default function ShareProject() {
       console.error('Failed to fetch project:', error);
     }
   };
-  const fetchImagesData = async () => {
+  /* const fetchImagesData = async () => {
     try {
       fetchImageUrls(studioName, projectId, collectionId, setImageUrls, page, size);
     } catch (error) {
       console.error('Failed to fetch project:', error);
     }
-  };
+  }; */
   const findCollectionById= (collections, collectionId) => {
     return collections.find((collection) => collection.id === collectionId);
   }

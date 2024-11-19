@@ -111,7 +111,14 @@ export const fetchProject = async (domain, projectId) => {
         console.log(collectionSnapshot.data())
     
         if (collectionSnapshot.exists()) {
-            return { ...collection, ...collectionSnapshot.data(), id: collection.id };
+            const collectionData = collectionSnapshot.data();
+            
+            // Sort files by file name
+            if (collectionData.uploadedFiles && Array.isArray(collectionData.uploadedFiles)) {
+                collectionData.uploadedFiles.sort((a, b) => a.name.localeCompare(b.name));
+            }
+
+            return { ...collection, ...collectionData, id: collection.id };
         } else {
             throw new Error('Collection does not exist.');
         }
@@ -132,6 +139,7 @@ export const fetchImages = async (domain, projectId, collectionId) => {
     if (collectionSnapshot.exists()) {
         const collectionsData = collectionSnapshot.data();
         if(collectionsData.uploadedFiles?.length > 0){
+            collectionsData.uploadedFiles.sort((a, b) => a.name.localeCompare(b.name));
             // green
             color = '#54a134';
             console.log(`%cFetched Images from ${collectionId}`, `color: ${color}; `);
