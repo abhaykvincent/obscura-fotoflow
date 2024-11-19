@@ -304,93 +304,20 @@ body{
         padding: 8px*1;
         align-items: center;
         position: sticky !important;
-        top:8px*6;
+        top:8px*7.37;
         z-index:40;
         background-color: $dark-3;
         border-radius: 6px;
-        border-bottom: 1px solid $dark-2;
+        border:1px solid $dark-1;
+        box-shadow: 0px 1px 1px black;
         .label{
           margin: 8px;
-        }
-        .view-control{
-          display:flex;
-          justify-content: center;
-          align-items: center;
-          margin: 4px;
-          font-size: 0.9rem;
-          .control-label{
-            color: $gray3-default-dark;
-            padding: 8px;
-            &.label-all-photos{
-              color: $gray2-default-dark;
-            }
-            &.label-selected-photos{
-              &.active{
-
-                color: $gray4-default-light;
-              }
-            }
-          }
-          .controls{
-            display: flex;;
-    border-radius: $border-radius-1+1;
-    transition-duration: 0.15s;
-    background: linear-gradient(120deg, $dark-1 -80%, $dark-2 20%,$dark-2 60%, $dark-3 100%);
-    border: 1px solid $gray6-accessible-dark;
-    border-top: 1px solid $gray5-accessible-dark;
-    border-bottom: 1px solid $gray6-accessible-dark;;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);;
-    opacity: 0;
-
-    animation: fadeInLeft 0.25s ease-out 0.2s;
-    animation-fill-mode: forwards;
-    animation-timing-function: ease-out;
-            .control{
-            display:flex;
-
-              padding: 8px*0.5 8px*1.5;
-              font-weight: 500;
-              font-size: 0.8rem;
-              border-radius: 6px;
-              cursor: pointer;
-              transition-duration: 0.15s;
-              .favorite{
-                width: 8px*1;
-                height: 8px*2;
-                opacity: 1;
-                padding: 8px*1;
-                cursor: pointer;
-                margin-left: 0
-                ;
-                &.selected{
-                  opacity: 1;
-                  background-image: url('./assets/img/icons/heart.svg');
-                  background-size: 50%;
-                  background-position: center;
-                  transform: translateX(1px);
-                  transition-duration: 0.1s;
-                  &:hover{
-                    background-image: url('./assets/img/icons/heart-dislike.svg');
-      
-                  }
-                }
-              }
-              &.active{
-                background-color: $dark-1;
-                border: 1px solid $dark-0;
-                &:hover{
-                  background-color: $dark-2;
-                  border: 1px solid $gray2-accessible-dark;
-                  transition-duration: 0.1s;
-                }
-              }
-            }
-          }
         }
         .open-buttons{
           display: flex;
           justify-content: flex-end;
         }
+        
         .open-in{
           font-size: 0.8rem;
           color: $gray-default-dark;
@@ -430,6 +357,159 @@ body{
             transition-duration: 2s;
             font-weight: 600;
             animation: loadingGradient 1s infinite alternate linear;
+          }
+        }
+      }
+      .view-control{
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        margin: 4px;
+        font-size: 0.9rem;
+        .control-label{
+          color: $gray3-default-dark;
+          padding: 8px;
+          &.label-all-photos{
+            color: $gray2-default-dark;
+          }
+          &.label-selected-photos{
+            &.active{
+
+              color: $gray4-default-light;
+            }
+          }
+        }
+        .controls{
+          display: flex;;
+  border-radius: $border-radius-1+1;
+  transition-duration: 0.15s;
+  background: linear-gradient(120deg, $dark-1 -80%, $dark-2 20%,$dark-2 60%, $dark-3 100%);
+  border: 1px solid $gray6-accessible-dark;
+  border-top: 1px solid $gray5-accessible-dark;
+  border-bottom: 1px solid $gray6-accessible-dark;;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);;
+  opacity: 0;
+
+  animation: fadeInLeft 0.25s ease-out 0.2s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+          .control{
+          display:flex;
+
+            padding: 8px*0.5 8px*1.5;
+            font-weight: 500;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition-duration: 0.15s;
+            .favorite{
+              width: 8px*1;
+              height: 8px*2;
+              opacity: 1;
+              padding: 8px*1;
+              cursor: pointer;
+              margin-left: 0
+              ;
+              &.selected{
+                opacity: 1;
+                background-image: url('./assets/img/icons/heart.svg');
+                background-size: 50%;
+                background-position: center;
+                transform: translateX(1px);
+                transition-duration: 0.1s;
+                &:hover{
+                  background-image: url('./assets/img/icons/heart-dislike.svg');
+    
+                }
+              }
+            }
+            &.active{
+              background-color: $dark-1;
+              border: 1px solid $dark-0;
+              &:hover{
+                background-color: $dark-2;
+                border: 1px solid $gray2-accessible-dark;
+                transition-duration: 0.1s;
+              }
+            }
+          }
+          .control{
+        padding: 6px 8px*1.5;
+        font-weight: 400;
+        border-radius: $border-radius-1;
+        border-right: 1px solid rgba(255, 255, 255, 0.02);
+        color: $gray4-accessible-dark;
+        white-space: nowrap;
+        cursor: pointer;
+        transition-duration: 0.15s;
+        &:hover{
+            border-radius: 2px;
+            background-color: $dark-2;
+            color: $gray2-accessible-dark;
+            transition-duration: 0.1s;
+            &:last-child{
+                border-radius: 8px;
+            }
+        }
+        &.active{
+          color: $light-0;
+          border: 1px solid $gray5-accessible-dark;
+          border-top: 1px solid $gray3-accessible-dark;
+          border-left: 1px solid $gray3-accessible-dark;
+          border-bottom: 1px solid $gray5-accessible-dark;
+          border-radius: 6px !important;
+          box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);;
+          transform: scale(1);
+          &:hover{
+            background-color: $dark-1;
+            border: 1px solid $gray3-accessible-dark;
+            transition-duration: 0.1s;
+          }
+          
+          .icon{
+  
+            background-size: 120%;
+          }
+        }
+        &.disabled{
+            opacity: 0.2;
+          }
+        .icon{
+            width: 8px*1.8;
+            height: 8px*1.8;
+            background-position: center;
+            background-size: 110%;
+            &.card-view{
+                background-image: url('https://img.icons8.com/sf-black-filled/64/FFFFFF/four-squares.png');
+            }
+            &.list-view{
+                background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/list.png');
+            }
+            &.light-view{
+                background-image: url('https://img.icons8.com/?size=100&id=SyBDr18WdUcD&format=png&color=FFFFFF');
+            }
+            &.dark-view{
+                background-image: url('https://img.icons8.com/?size=100&id=45475&format=png&color=FFFFFF');
+            }
+        }
+        
+      }
+        }
+      }
+      .dark-light-mode{
+        position: fixed;
+        top:8px*8.5;
+        z-index: 41;
+        right:8px*4;
+        .lightMode{
+          &:hover{
+            background-color: $gray6-accessible-light;
+          }
+        }
+        .darkMode{
+          &:hover{
+            background-color: black;
+
           }
         }
       }
@@ -473,7 +553,7 @@ body{
         justify-content: center;
       }
       .image-gallery-bottom-panel{
-        display: flex;
+        display: grid;
         justify-content: center;
         padding: 8px;
       }
@@ -483,6 +563,49 @@ body{
         padding: 8px;
         font-size: 0.9rem;
         margin-top: 8px*4;
+      }
+
+      &.lightMode{
+        background-color: $light-0;
+        .photos{
+          .photo-wrap{
+            background-color: $light-0;
+            &:hover{
+              border: 1px solid $gray3-default-light;
+            }
+          }
+        }
+        .header{
+          background-color: $light-2;
+          border: 1px solid $gray4-accessible-light;
+          box-shadow: 1px 1px 2px  rgba(0, 0, 0, 0.05);
+          .view-control{
+            .controls {
+              background: $gray5-accessible-light;
+              border: 1px solid $gray3-accessible-light;
+              box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+              .control{
+                color: $gray4-accessible-dark;
+  
+                &.active{
+                  border: 1px solid $gray2-accessible-light;
+
+                  background-color: $gray5-accessible-light;
+                  color: $gray6-accessible-dark;
+                  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+                }
+              } 
+            }
+          }
+        }
+        .drop-area{
+          background-color: $light-2;
+          border: 1px solid $gray5-accessible-light;
+          h2{
+            color: $gray6-default-dark;
+          }
+        }
+
       }
     }
     .fixed-wrap{

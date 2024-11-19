@@ -11,11 +11,23 @@ import { getWebsiteURL } from '../../utils/urlUtils';
 import AddProjectModal from '../../components/Modal/AddProject';
 import AddCollectionModal from '../../components/Modal/AddCollection';
 import AddPortfolioModal from '../../components/Modal/AddPortfolio';
+import CollectionsPanel from '../../components/Project/Collections/CollectionsPanel';
+import CollectionImages from '../../components/Project/Collections/CollectionImages';
 
 function PortfolioBuilder() {
     const defaultStudio = useSelector(selectUserStudio);
+    const projects = useSelector(selectProjects);
     const dispatch = useDispatch();
     document.title = `${defaultStudio.name} | Projects`;
+
+    const [portfolio , setPortfolio] = useState(null);
+
+    useEffect(() => {
+        setPortfolio(projects.find(project => project.type === 'Portfolio'));
+    }, [projects]);
+    useEffect(() => {
+        console.log(portfolio)
+    }, [portfolio]);
 
 
     const handleNewPortfolioClick = () => dispatch(openModal('createPortfolio'));
@@ -23,18 +35,20 @@ function PortfolioBuilder() {
     return (
         <>
 
-            <AddCollectionModal />
+            <AddCollectionModal project={portfolio}/>
             <AddPortfolioModal />
             <main className="portfolio-builder">
                 <div className="portfolio-builder-header">
                     <h1>{defaultStudio.name} Portfolio</h1>
-                    <a href={getWebsiteURL(defaultStudio.domain)}>{getWebsiteURL(defaultStudio.domain)}</a>
+                    <a className href={getWebsiteURL(defaultStudio.domain)}>{getWebsiteURL(defaultStudio.domain)}</a>
                     <div className="actions">
-                        <div className="button primary icon add" onClick={handleNewPortfolioClick}>Create Portfolio</div>
-                        <div className="button secondary icon add" onClick={handleNewCollectionClick}>Create Gallery</div>
+                    { !portfolio && <div className="button primary icon add" onClick={handleNewPortfolioClick}>Create Portfolio</div>}
+                    { portfolio && !portfolio.collections[0] && <div className="button secondary icon add" onClick={handleNewCollectionClick}>Create Gallery</div>}
                     </div>
-                </div>
 
+                </div>
+                {(portfolio && portfolio?.collections[0]?.id) &&  <CollectionsPanel project={portfolio} collectionId={portfolio?.collections[0]?.id}/>}
+                
             </main>
         </>
     );

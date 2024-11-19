@@ -10,6 +10,7 @@ const useLoadedImages = (initialImageUrls) => {
 
   // Function to load new images and add them to the gallery
   const loadImages = (imageUrls) => {
+    if(!initialImageUrls) return
     const imagePromises = imageUrls.map((src) => {
       return new Promise((resolve) => {
         const img = new Image();

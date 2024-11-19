@@ -9,6 +9,9 @@ import { format } from 'date-fns'; // Use date-fns for date formatting
 export const searchProjects = createAsyncThunk(
     'search/searchProjects',
     async (query, { getState }) => {
+      if(query.length < 3) {
+        return { projectResults: [], collectionResults: [] };
+      }
       const projects = selectProjects(getState());
       const queries = query.toLowerCase().split(' ').filter(Boolean); // Split query by space
       const monthMap = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];

@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import { selectUserStudio } from '../../app/slices/authSlice';
+import { trackEvent } from '../../analytics/utils';
 const checkForSelectedImages = (images) => {
   // Checks if any of the images have a 'selected' status.
   for (let i = 0; i < images.length; i++) {
@@ -118,6 +119,10 @@ export default function PaginationControl({
             
             saveSelection() 
             completeSelection()
+            
+            trackEvent('selection_completed', {
+              project_id: project.id
+            });
             }}>
             Finish
           </PaginationButton>

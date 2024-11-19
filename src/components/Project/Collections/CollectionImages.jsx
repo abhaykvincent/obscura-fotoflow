@@ -16,6 +16,9 @@ import ImageGalleryGrid from '../../ImageGallery/ImageGalleryGrid';
 const CollectionImages = ({ id, collectionId, project }) => {
     const dispatch = useDispatch();
     const domain = useSelector(selectDomain);
+    // dark light mode
+    const [displayMode, setDisplayMode] = useState('lightMode');
+
 
     // Files
     const [collectionImages, setCollectionImages] = useState([]);
@@ -111,7 +114,27 @@ const CollectionImages = ({ id, collectionId, project }) => {
     };
 
     return (
-        <div className="project-collection">
+        <div className={`project-collection ${displayMode}`}>
+            <div className="dark-light-mode">
+                <div className="view-control">
+                    <div className="control-wrap">
+                        <div className="controls">
+                            <div className={`control lightMode ${displayMode === 'lightMode'?'active':''} `}
+                                onClick={() => setDisplayMode('lightMode')}
+                            >
+                                <div className="icon light-view"></div>
+                            </div>
+                            <div className={`control darkMode ${displayMode === 'darkMode'?'active':''} `}
+                                onClick={() => setDisplayMode('darkMode')}
+                            >
+                                <div className="icon dark-view"></div>
+                            </div>
+                        </div>
+                        <div className="active"></div>
+                    </div>
+                </div>
+            </div>
+            
             <div className="header">
                 <div className="options">
                     <UploadButton {...{ isPhotosImported, setIsPhotosImported, imageUrls, setImageUrls, setUploadStatus, id, collectionId, setUploadLists }} />
@@ -131,6 +154,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 ) : (
                     <div className="empty-message"></div>
                 )}
+                
                 <div className="open-buttons ">
                     { !showAllPhotos ?
                     <><div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>

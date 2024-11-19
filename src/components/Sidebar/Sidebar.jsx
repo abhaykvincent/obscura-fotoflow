@@ -37,16 +37,27 @@ function Sidebar() {
             <div className="label">Projects</div>
           </div>
         </Link>
+        {
+          // only on developement
+          process.env.NODE_ENV === 'development' &&
         <Link to={`/${studioName}/portfolio-editor`}>
           <div className={`menu portfolio ${location.pathname === `/${studioName}/portfolio-editor` ? 'active' : ''}`}>
             <div className="icon"></div>
-            <div className="label">Portfolio</div>
+            <div className="label">Website</div>
           </div>
         </Link>
+
+}
         <Link to={`/${studioName}/store`}>
           <div className={`menu store ${location.pathname === `/${studioName}/store` ? 'active' : ''} disabled`}>
             <div className="icon"></div>
             <div className="label">Store</div>
+          </div>
+        </Link>
+        <Link to={`/${studioName}/bookings`}>
+          <div className={`menu store ${location.pathname === `/${studioName}/bookings` ? 'active' : ''} disabled`}>
+            <div className="icon"></div>
+            <div className="label">Bookings</div>
           </div>
         </Link>
         <Link to={`/${studioName}/calendar`}>

@@ -78,7 +78,8 @@ function AddPortfolioModal() {
                     "Photography ",
                     "Test"
             )
-              navigate(`/${domain}/project/${newProjectData.id}`);
+            newProjectData.type === 'Portfolio' ? navigate(`/${currentStudio.domain}/portfolio-editor`) :
+            navigate(`/${domain}/project/${newProjectData.id}`);
           })
           .catch((error) => {
               console.error('Error creating project:', error);

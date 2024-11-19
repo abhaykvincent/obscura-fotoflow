@@ -8,7 +8,9 @@ import CollectionCard from '../Project/CollectionsCard/CollectionsCard';
 import SearchInput from './SearchInput';
 
 const SearchResultsMessage = ({ projectResults, collectionResults }) => {
-    const renderMessage = () => {
+  const dispatch = useDispatch();
+  
+  const renderMessage = () => {
       const totalResults = projectResults.length + collectionResults.length;
       if (totalResults === 0) {
         return 'No results found';
@@ -17,9 +19,19 @@ const SearchResultsMessage = ({ projectResults, collectionResults }) => {
     };
   
     return (
+
+      <>
       <h4 className="welcome-message sub-message">
         {renderMessage()}
+        <div className="button secondary"
+          onClick={
+            () => dispatch(resetSearchQuery())
+          }
+        >Clear</div>
       </h4>
+      
+
+      </>
     );
 };
 
@@ -38,6 +50,7 @@ const SearchResults = () => {
 
   useEffect(() => {
     dispatch(searchProjects(query));
+    console.log(query)
   }, [query, dispatch]);
 
   if (status === 'loading') return <p>Loading...</p>;
@@ -53,7 +66,16 @@ const SearchResults = () => {
         <div className="welcome-section">
             <div className="welcome-content">
             <div className='welcome-message-top user-name'>
-                <h1 className='welcome-message '>Search results for '<span className='iconic-gradient'>{query}</span>'</h1>
+            <h1 className='welcome-message'>
+            {
+              query.length > 0 ? (
+                <>Search results for <span className='iconic-gradient'>{query}</span></>
+              ) : (
+                <>Search Projects, Galleries and more</>
+              )
+            }
+          </h1>
+
             </div>
             <SearchResultsMessage projectResults={projectResults} collectionResults={collectionResults}/>
             </div>

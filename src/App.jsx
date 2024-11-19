@@ -121,7 +121,7 @@ export default function App() {
                   <AdminPanel /> 
                 </AdminRoute> 
               }/> */}
-            <Route path="/masanory-grid" element={<ImageGallery />}/>
+            <Route path="/masanory-grid" element={<ImageGallery  />} />
 
               <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
               <Route path="/search" element={<SearchResults />} />

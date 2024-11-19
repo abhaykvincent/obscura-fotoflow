@@ -124,12 +124,8 @@ export default function Selection() {
 
   const completeSelection = () => {
     if (!selectionCompleted) {
-      setSelectionCompleted(true); // This triggers a re-render
+      setSelectionCompleted(true); 
       saveSelection();
-      
-      trackEvent('selection_completed', {
-        project_id: project.id
-      });
     }
   };
   const handleAddOrRemoveSelectedImages = async () => {
