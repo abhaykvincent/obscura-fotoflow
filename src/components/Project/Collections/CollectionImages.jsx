@@ -190,15 +190,15 @@ const CollectionImages = ({ id, collectionId, project }) => {
                     </div>
                 </label>
             )}
-            {collectionImages?.length>imageUrls.length && <div className="image-gallery-bottom-panel">
+            {<div className="image-gallery-bottom-panel">
                 {/* <div className="button secondary">Load All</div> */}
                 
-                <div className={`button primary ${collectionImages?.length === imageUrls.length ? 'disabled' : ''}`}
+                {collectionImages?.length !== imageUrls.length && <div className={`button primary`}
                     onClick={() => setPage(page + 1)}
-                >Load More</div>
+                >Load More</div>}
 
-                {imageUrls.length !==0 && <p className='caughtup-label label'>You are all caught up!</p>}
-                
+                {(imageUrls.length !==0 && collectionImages?.length === imageUrls.length)  && <p className='caughtup-label label'>You are all caught up!</p>}
+
             </div>
 }
             
