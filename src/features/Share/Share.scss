@@ -66,6 +66,7 @@
     overflow-x :scroll;
     width: 100vw;
     margin-top: 8px*3;
+    margin-left: 8px*0.5;
     z-index: 1;
     .collection-tab{
       display: flex;
@@ -77,6 +78,7 @@
       border: 1px solid none;
       border-bottom: 2px solid $gray5-accessible-light;
       color: $gray3-accessible-light ;
+      white-space: nowrap;
       &.client-selection-tab{
         border: 1px solid $green-accessible-light;
         padding: 8px 8px*2;

@@ -785,13 +785,13 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
             uploadedFiles: arrayUnion(...uploadedFiles),
         });
         const pin = generateMemorablePIN(4)
-        const projectCover = uploadedFiles[0]?.url || ''
+        console.log(projectData.data().projectCover)
         batch.update(projectDocRef, {
             collections: projectData.data().collections.map(collection => {
                 if (collection.id === collectionId) {
                     return {
                         ...collection,
-                        galleryCover : collection?.galleryCover? collection.galleryCover : projectCover,
+                        galleryCover : collection?.galleryCover? collection.galleryCover : uploadedFiles[0]?.url,
                         filesCount: (collection.filesCount || 0) + uploadedFiles.length,
                     };
                 }
@@ -799,7 +799,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
             }),
             totalFileSize: importFileSize + projectData.data().totalFileSize,
             uploadedFilesCount: projectData.data().uploadedFilesCount + uploadedFiles.length,
-            projectCover: projectCover,
+            projectCover: projectData.data().projectCover === '' ? uploadedFiles[0]?.url : projectData.data().projectCover,
             status: "uploaded",
             pin: projectData.data().pin || generateMemorablePIN(4),
         });
