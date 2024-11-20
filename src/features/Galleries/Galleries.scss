@@ -809,10 +809,10 @@
 						background-blend-mode: normal,color-dodge;
 						transition-duration: 0.3s;
 						opacity: 1;
-						background-size: calc(50% - 8px*1.5) ,110%;
+						background-size: calc(50%) ,110%;
 						background-blend-mode: normal,color-dodge;
 						background-repeat: no-repeat;
-						background-position: center calc(50% - 8px*2), center;
+						background-position: center calc(50%), center;
 		
 					}
 				}
@@ -869,7 +869,7 @@
 					background-size: 40% ,110%;
 					background-blend-mode: normal,color-dodge;
 					background-repeat: no-repeat;
-					background-position: center calc(50% - 8px*1.5), center;
+					background-position: center calc(50%), center;
 					transition-duration: 0.2s;
 
 					transform: rotate(0deg) translateY(0px) translateX(0px) scale(1);
@@ -909,7 +909,7 @@
 				p{
 					width: 100%;
 					position: absolute;
-					bottom: 8px*1.5;
+					bottom: -8px*3.5;
 					color: $green-default-light;
 					z-index: 6;
 					text-align: center;
