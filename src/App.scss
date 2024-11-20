@@ -196,6 +196,17 @@ body{
       transform: translateY(-8px);
       animation: gallery-page-reveal 0.2s ease-out forwards; */
     }
+    .galleries{
+      .list{
+        .gallery-list
+        .gallary{
+          &.new{
+            margin-top: 0;
+          }
+        }
+      }
+    }
+    
     
     .add-collection{
       margin-left: 8px;

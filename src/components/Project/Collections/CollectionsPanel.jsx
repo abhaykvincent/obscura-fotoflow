@@ -22,10 +22,11 @@ const CollectionsPanel = ({ project, collectionId}) => {
             <div className="thumbnails">
               <div className="thumbnail thumb1">
                 <div className="backthumb bthumb1">
+
                 </div>
+                <p>Create Gallery</p>
               </div>
             </div>
-            <div className="button primary outline  gallery-name">New Gallery</div>
           </div>
           {project.collections.map((collection) => (
             
