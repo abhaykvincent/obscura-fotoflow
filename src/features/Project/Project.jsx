@@ -115,7 +115,17 @@ export default function Project() {
         <AddExpenseModal project={project} />
         <AddBudgetModal project={project} />
       <main className='project-page'>
-       
+        <div className="project-page-cover"
+          style={{
+            backgroundImage:  `url(${project.projectCover})`
+          }}
+        >
+
+          <div className="cover-tools">
+            <div className="button transparent-button secondary icon image">Change Cover</div>
+            <div className="button transparent-button secondary icon set-focus">Set focus</div>
+          </div>
+        </div>
         <div className="project-dashboard">
           <DashboardProjects project={project} />
         </div>

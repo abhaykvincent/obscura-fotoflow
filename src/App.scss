@@ -165,7 +165,7 @@ body{
   main{
     position: relative;
     top: $header-height ;
-    left: $sidebar-width;
+    left: $sidebar-width - 6px;
     width: calc(100vw - #{$sidebar-width} - 6px);
     min-height: calc(100vh - #{$header-height});
     padding: 0 8px*2;
@@ -184,10 +184,61 @@ body{
       opacity: 0;
       gap: 8px*1;
       align-items: start;
-
+      min-height: calc(100vh - 120px);
       padding-right: 8px;
       transform: translateY(-8px*2);
       animation: gallery-page-reveal 0.4s ease-out forwards;
+      overflow: hidden;
+      .project-page-cover{
+        position: relative;
+        width: calc(100% + 8px*3);
+        margin-left: -8px*2;
+        margin-top: -8px*1;
+        padding-top: 40%;
+        background-size: cover;
+        background-position: center;
+        overflow: hidden;
+        .cover-tools{
+          position: absolute;
+          z-index: 10;
+          bottom: 8px*0.5;
+          right: 8px*0.5;
+          transition-duration: 0.1s;
+          .button{
+            @for $i from 1 through 3 {
+              &:nth-child(#{$i}) {
+              // slight transition delay increment
+              transition-delay: 0.05s * $i;
+              transform: translateY(8px*8);
+              opacity: 0;
+              }
+            }
+          }
+
+          .set-focus{
+
+          }
+        }
+        // project-page-cover hover
+        &:hover{
+          .cover-tools{
+            .button{
+              @for $i from 1 through 3 {
+                &:nth-child(#{$i}) {
+                // slight transition delay increment
+                transition-delay: 0.1s * 1/$i;
+                
+                transition-duration: 0.1s;
+
+                opacity: 1;
+                transform: translateY(8px*0);
+                }
+              }
+            }
+          }
+        }
+
+      }
     }
     &.gallery-page{
       
@@ -195,17 +246,20 @@ body{
       /* opacity: 0;
       transform: translateY(-8px);
       animation: gallery-page-reveal 0.2s ease-out forwards; */
-    }
-    .galleries{
-      .list{
-        .gallery-list
-        .gallary{
-          &.new{
-            margin-top: 0;
+      .galleries{
+        .list{
+          .gallery-list
+          .gallery{
+            opacity: 1;
+            animation: none !important;
+            &.new{
+              margin-top: 0;
+            }
           }
         }
       }
     }
+    
     
     
     .add-collection{
@@ -1643,7 +1697,6 @@ body{
       }
       &:hover{
         border: 1px solid $dark-0;      
-        background-color: $gray5-accessible-light;
 
         transition-duration: 0.05s;
         transition-timing-function: ease-in;
