@@ -67,11 +67,10 @@ export const ProjectCover = ({ project }) => {
     return (
         <div
             className={`project-page-cover ${isSetFocusButton ? "focus-button-active" : ""}`}
-            style={{
-                height: "400px", // Ensure the container height
-                backgroundImage: `url(${project.projectCover})`,
-                backgroundPosition: `${focusPointLocal.x * 100}% ${focusPointLocal.y * 100}%`,
-                backgroundSize: "cover", // Ensure image scaling
+            style={{ // Ensure the container height
+                backgroundImage: `url(${project?.projectCover || 'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=1f1f1f'})`,
+                backgroundPosition: `${focusPointLocal?.x * 100}% ${focusPointLocal?.y * 100}%`,
+                backgroundSize: `${project?.projectCover ? "cover":"20%"}`, // Ensure image scaling
             }}
             onClick={handleFocusClick}
         >
@@ -92,12 +91,12 @@ export const ProjectCover = ({ project }) => {
                         </div>
                     </div>
                 }
-            {isSetFocusButton && (
+            {isSetFocusButton && project?.projectCover && (
                 <div
                     className="focus-indicator"
                     style={{
-                        left: `${focusPointLocal.x * 100}%`,
-                        top: `${focusPointLocal.y * 400}px`, // Position relative to the container's height
+                        left: `${focusPointLocal?.x * 100}%`,
+                        top: `${focusPointLocal?.y * 400}px`, // Position relative to the container's height
                         transform: "translate(-50%, -50%)", // Center the indicator at the focus point
                     }}
                 ></div>
