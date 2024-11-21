@@ -180,7 +180,7 @@ body{
     &.project-page{
       display: grid;
       grid-template-columns: auto ;
-      grid-template-rows: 8px*30 auto auto;
+      grid-template-rows: 8px*60 auto auto;
       opacity: 0;
       gap: 8px*1;
       align-items: start;
@@ -194,7 +194,7 @@ body{
         width: calc(100% + 8px*3);
         margin-left: -8px*2;
         margin-top: -8px*1;
-        padding-top: 8px*30;
+        padding-top: 8px*60;
         background-size: cover;
         background-position: center;
         overflow: hidden;
