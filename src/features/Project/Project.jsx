@@ -32,6 +32,7 @@ import { DropdownMenu,
   DropdownMenuTrigger, } from '@radix-ui/react-dropdown-menu';
 import ShareGallery from '../../components/Modal/ShareGallery';
 import { updateProjectLastOpenedInFirestore } from '../../firebase/functions/firestore';
+import { ProjectCover } from '../../components/ProjectPageCover/ProjectPageCover';
 
 export default function Project() {
   const { id } = useParams();
@@ -46,8 +47,7 @@ export default function Project() {
   // Delete Project Modal
   const onDeleteConfirm = () => dispatch(deleteProject({domain,projectId:id}))
 
-
-  // Local state for the project
+ 
   const [project, setProject] = useState(null);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -57,7 +57,28 @@ export default function Project() {
     () => projects?.find((p) => p.id === id),
     [projects, id]
   );
-  
+  const handlePinClick = () => {
+    // Copy pin to clipboard
+    navigator.clipboard.writeText(project.pin).then(() => {
+      setPinIconClass('copying'); // Temporarily add copying class
+      setPinText('Coping'); // Temporarily change text to "Copied"
+
+      setTimeout(() => {
+        setPinIconClass(''); // Reset icon class after 1 second
+        setPinText('Copied  '); // Reset text after 5 seconds
+      }, 1000);
+
+      setTimeout(() => {
+        setPinText(project?.pin); // Reset text after 5 seconds
+      }, 8000);
+    }).catch(err => {
+      console.error("Failed to copy pin:", err);
+    });
+  };
+
+  const [pinText, setPinText] = useState(project?.pin );
+  const [pinIconClass, setPinIconClass] = useState('');
+  // Local state for the project
   useEffect(() => {
     if (projectsStatus === 'succeeded' && !selectedProject) {
       navigate(`/${defaultStudio.domain}/projects`);
@@ -115,7 +136,7 @@ export default function Project() {
         <AddExpenseModal project={project} />
         <AddBudgetModal project={project} />
       <main className='project-page'>
-       
+        <ProjectCover project={project} />
         <div className="project-dashboard">
           <DashboardProjects project={project} />
         </div>
@@ -143,10 +164,18 @@ export default function Project() {
         ) : (
           <h1 onDoubleClick={handleNameDoubleClick}>{project.name}</h1>
         )}
-          <div className="type">{project.type}</div>
+          <div className="type">{project?.type}</div>
         </div>
         <div className="project-options options">
-
+          
+        <div className={`button tertiary icon pin ${pinIconClass}`} onClick={handlePinClick}>{pinText}</div>
+            <div className={`button primary share icon ${project?.uploadedFilesCount>0 ? '':'disabled'}`} 
+            onClick={()=>{
+              (project.collections.length > 0 && project.uploadedFilesCount>0) && 
+                dispatch(openModal('shareGallery')) 
+            }
+          }
+            target="_blank">Share</div>
         <DropdownMenu>
           <DropdownMenuTrigger >
             <div className="icon options"></div>

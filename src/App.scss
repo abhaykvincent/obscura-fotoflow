@@ -165,7 +165,7 @@ body{
   main{
     position: relative;
     top: $header-height ;
-    left: $sidebar-width;
+    left: $sidebar-width - 6px;
     width: calc(100vw - #{$sidebar-width} - 6px);
     min-height: calc(100vh - #{$header-height});
     padding: 0 8px*2;
@@ -180,14 +180,85 @@ body{
     &.project-page{
       display: grid;
       grid-template-columns: auto ;
-      grid-template-rows: auto auto;
+      grid-template-rows: 8px*30 auto auto;
       opacity: 0;
       gap: 8px*1;
       align-items: start;
-
+      min-height: calc(100vh - 120px);
       padding-right: 8px;
       transform: translateY(-8px*2);
       animation: gallery-page-reveal 0.4s ease-out forwards;
+      overflow: hidden;
+      .project-page-cover{
+        position: relative;
+        width: calc(100% + 8px*3);
+        margin-left: -8px*2;
+        margin-top: -8px*1;
+        padding-top: 8px*30;
+        background-size: cover;
+        background-position: center;
+        overflow: hidden;
+        transition-duration: 0.2s;
+        transition-delay: 0.1s;
+        transition-timing-function: ease-in;
+        background-color: $dark-3;
+        background-image: url('https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=FFFFFF');
+        &.focus-button-active{
+          cursor: crosshair;
+        }
+        .cover-tools{
+          position: absolute;
+          z-index: 10;
+          bottom: 8px*2;
+          right: 8px*3;
+          transition-duration: 0.1s;
+          .button{
+            @for $i from 1 through 3 {
+              &:nth-child(#{$i}) {
+              // slight transition delay increment
+              transition-delay: 0.05s * $i;
+              transform: translateY(8px*8);
+              opacity: 0;
+              }
+            }
+          }
+          
+
+          .set-focus{
+
+          }
+        }
+        .focus-indicator{
+          position: absolute;
+          width: 8px*4;
+          height: 8px*4;
+          border-radius: 1px;
+          border: 1px solid $green-accessible-light;
+        }
+        
+        // project-page-cover hover
+        &:hover{
+          .cover-tools{
+            .button{
+              opacity: 0.8;
+              &:hover{
+                opacity: 1;
+              }
+              @for $i from 1 through 3 {
+                &:nth-child(#{$i}) {
+                // slight transition delay increment
+                transition-delay: 0.1s * 1/$i;
+                
+                transition-duration: 0.1s;
+
+                transform: translateY(8px*0);
+                }
+              }
+            }
+          }
+        }
+
+      }
     }
     &.gallery-page{
       
@@ -195,17 +266,20 @@ body{
       /* opacity: 0;
       transform: translateY(-8px);
       animation: gallery-page-reveal 0.2s ease-out forwards; */
-    }
-    .galleries{
-      .list{
-        .gallery-list
-        .gallary{
-          &.new{
-            margin-top: 0;
+      .galleries{
+        .list{
+          .gallery-list
+          .gallery{
+            opacity: 1;
+            animation: none !important;
+            &.new{
+              margin-top: 0;
+            }
           }
         }
       }
     }
+    
     
     
     .add-collection{
@@ -509,9 +583,9 @@ body{
       }
       .dark-light-mode{
         position: fixed;
-        top:8px*8.5;
+        top:8px*10;
         z-index: 41;
-        right:8px*4;
+        right:8px*3;
         .lightMode{
           &:hover{
             background-color: $gray6-accessible-light;
@@ -727,6 +801,8 @@ body{
           cursor: pointer;
         }
       }
+      
+      
     }
     //data-radix-popper-content-wrapper
 
@@ -802,6 +878,18 @@ body{
         margin-right: 8px*0.7;
         //kerling
         font-stretch: expanded;
+        &.copying {
+          background: linear-gradient(90deg, #387d16c8  30%,#a1ed08 45%,#a1ed08 48%, #70981fbc 55%, #132d0679 90%);
+          background-size: 200%;
+          border: 2px solid $green-dark-accessible-light;
+          background-position: 0%;
+          -webkit-background-clip: text;
+          font-weight: 200;
+          -webkit-text-fill-color: transparent;
+          transition-duration: 0.1s;
+          font-weight: 600;
+          animation: copyingGradient 0.5s infinite alternate linear;
+          }
         
         
       }
@@ -1643,7 +1731,6 @@ body{
       }
       &:hover{
         border: 1px solid $dark-0;      
-        background-color: $gray5-accessible-light;
 
         transition-duration: 0.05s;
         transition-timing-function: ease-in;
@@ -1817,7 +1904,7 @@ body{
         &.project-page{
           display: grid;
           grid-template-columns: auto;
-          gap: 8px*5;
+          gap: 8px*2;
           .project-collections{
             width: 100%;
             .galleries{
@@ -1829,7 +1916,7 @@ body{
           }
         }
         .project-dashboard-header {
-          top: 64px;
+          top: 48px;
           width: calc(100% - 8px*3);
           display: flex;
           justify-content: space-between;
@@ -2001,13 +2088,12 @@ body{
         display: none;
       }
       .list{
-        margin-top: 8px*5;
+        margin-top: 8px*0;
         .gallery-list{    
           display: flex;
           gap: 32px;
           margin-bottom: 0px;
           padding: 8px;
-          padding-top: 16px;
           overflow-x: scroll;
           overflow-y: auto;
           .gallery-name{
@@ -2031,7 +2117,6 @@ body{
         }
         &.new{
           .thumbnails {
-            width: 100%;
             height: 8px*14;
           }
         }
