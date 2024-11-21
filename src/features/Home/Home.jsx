@@ -17,14 +17,24 @@ function Home() {
     const projects = useSelector(selectProjects)
     const defaultStudio = useSelector(selectUserStudio)
     document.title = `FotoFlow | ${defaultStudio.name}`;
-    const selectionCompletedProjects = getProjectsByStatus(projects, 'selection-completed');
+    const selectionCompletedProjects = getProjectsByStatus(projects, 'selected');
     const requestPendingProjects = getProjectsByStatus(projects, 'request-pending');
-
+    console.log(selectionCompletedProjects)
+    const [selectedProjects, setSelectedProjects] = useState([])
     const [recentProjects, setRecentProjects] = useState([])
     useEffect(() => {
+        setSelectedProjects(selectionCompletedProjects)
         setRecentProjects(getProjectsByLastUpdated(projects, 8))
     }, [])
-
+    useEffect(() => {
+    
+        // Exclude selectedProjects from recentProjects
+        const filteredRecentProjects = getProjectsByLastUpdated(projects, 8).filter(project => 
+            !selectedProjects.some(selected => selected.id === project.id)
+        );
+    
+        setRecentProjects(filteredRecentProjects);
+    }, [selectedProjects]);
     return (
         <>
           <AddProjectModal />
@@ -59,6 +69,23 @@ function Home() {
                 {
                     projects.length > 0 ? (
                         <>
+                            {selectedProjects.length !== 0 && <div className="section recent">
+                                <h3 className='section-heading'>Selection Completed</h3>
+                                <div className="projects">
+                                {
+                                    selectedProjects.length !== 0? (
+                                        selectionCompletedProjects.map((project, index) => (
+                                        <ProjectCard
+                                            project={project}
+                                            key={project.id}
+                                        /> 
+                                    ))
+                                    ) : (
+                                        <p className="message">Selection completed projects</p>)
+                                }
+                                </div>
+                            </div>
+                            }
                             <div className="section recent">
                                 <h3 className='section-heading'>Recent Projects</h3>
                                 <div className="projects">

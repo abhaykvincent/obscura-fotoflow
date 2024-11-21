@@ -158,7 +158,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 <div className="open-buttons ">
                     { !showAllPhotos ?
                     <><div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
-                        Open in <div className="lr button secondary">{copyStatus}</div>
+                        Copy to <div className="lr button secondary">{copyStatus}</div>
                     </div>
                         <DownloadFiles className={`open-in ${showAllPhotos ? 'disabled' : ''}`} folderPath={`${domain}/${id}/${collectionId}/`} project={project} collection={findCollectionById(project, collectionId)}/>
                         </>:
