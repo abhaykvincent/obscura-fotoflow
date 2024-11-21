@@ -3,6 +3,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
 import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase/app';
 
 
 const initialState = {
@@ -135,6 +137,16 @@ export const fetchInvitation = createAsyncThunk(
     return invitation;
   }
 );
+// Upload Cover
+export const updateProjectCover = createAsyncThunk(
+  "projects/updateProjectCover",
+  async ({ domain, projectId, newCoverUrl, focusPoint }) => {
+      const projectDocRef = doc(db, "studios", domain, "projects", projectId);
+      await updateDoc(projectDocRef, { projectCover: newCoverUrl, focusPoint });
+      return { projectId, newCoverUrl, focusPoint };
+  }
+);
+
 
 
 
