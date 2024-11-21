@@ -5,7 +5,7 @@ import { selectProjects } from '../../app/slices/projectsSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import { openModal } from '../../app/slices/modalSlice';
 // Utility functions
-import { getRecentProjects } from '../../utils/projectFilters';
+import { getProjectsByStatus, getRecentProjects } from '../../utils/projectFilters';
 // Components
 import AddProjectModal from '../../components/Modal/AddProject';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
@@ -13,6 +13,7 @@ import Refresh from '../../components/Refresh/Refresh';
 // Styles
 import './Projects.scss';
 import SearchInput from '../../components/Search/SearchInput';
+import { set } from 'date-fns';
 
 function Projects() {
     const defaultStudio = useSelector(selectUserStudio);
@@ -21,10 +22,18 @@ function Projects() {
 
     const projects = useSelector(selectProjects);
     const [recentProjects, setRecentProjects] = useState([]);
+    const [selectedProjects, setSelectedProjects] = useState([]);
+    const [selectedTab, setSelectedTab] = useState('all');
+
 
     useEffect(() => {
         setRecentProjects(getRecentProjects(projects));
-    }, [projects]);
+        if(selectedTab === 'all') {
+            setRecentProjects(projects);
+        } else if(selectedTab === 'selected') {
+            setRecentProjects(getProjectsByStatus(projects, 'selected'))
+        }
+    }, [projects, selectedTab]);
 
     const handleNewProjectClick = () => dispatch(openModal('createProject'));
 
@@ -99,8 +108,13 @@ function Projects() {
                 {projects.length>0 && <div className="view-control">
                     <div className="control-wrap">
                         <div className="controls">
-                            <div className="control ctrl-all active">All</div>
-                            <div className="control ctrl-draft">Archived</div>
+                            <div className={`${selectedTab === 'all' && 'active'} control ctrl-all`} 
+                                onClick={() => setSelectedTab('all')}
+                            
+                            >All</div>
+                            <div className={`${selectedTab === 'selected' && 'active'} control ctrl-draft`}
+                                onClick={() => setSelectedTab('selected')}
+                            >Selected</div>
                         </div>
                         <div className="active"></div>
                     </div>
