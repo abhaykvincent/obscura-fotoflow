@@ -19,26 +19,6 @@ function DashboardProjects({project}){
   const { studioName } = useParams();
   const [projectDashboardView, setProjectDashboardView] = useState('dashboard')
   // Inside your component
-const [pinText, setPinText] = useState(project?.pin );
-const [pinIconClass, setPinIconClass] = useState('');
-  const handlePinClick = () => {
-    // Copy pin to clipboard
-    navigator.clipboard.writeText(project.pin).then(() => {
-      setPinIconClass('copying'); // Temporarily add copying class
-      setPinText('Coping'); // Temporarily change text to "Copied"
-
-      setTimeout(() => {
-        setPinIconClass(''); // Reset icon class after 1 second
-        setPinText('Copied  '); // Reset text after 5 seconds
-      }, 1000);
-
-      setTimeout(() => {
-        setPinText(project?.pin); // Reset text after 5 seconds
-      }, 8000);
-    }).catch(err => {
-      console.error("Failed to copy pin:", err);
-    });
-  };
   return (
     <>
      <div className="project-dashboard-header">
@@ -48,7 +28,6 @@ const [pinIconClass, setPinIconClass] = useState('');
         <div className="button secondary  icon  invitation" > Invitation</div>
       </Link>
         <div className="button secondary icon user" >Client</div>
-        <div className={`button tertiary icon pin ${pinIconClass}`} onClick={handlePinClick}>{pinText}</div>
       </div>
       <div className="view-cta">
 
@@ -63,19 +42,6 @@ const [pinIconClass, setPinIconClass] = useState('');
                 
             </div>
             <div className={`active`}></div>
-          </div>
-          <div className="project-options">
-            {/* <div className="button secondery pin" 
-              onClick={()=>{}} 
-              >PIN : {project?.pin}
-            </div> */}
-            <div className={`button primary share icon ${project?.uploadedFilesCount>0 ? '':'disabled'}`} 
-            onClick={()=>{
-              (project.collections.length > 0 && project.uploadedFilesCount>0) && 
-                dispatch(openModal('shareGallery')) 
-            }
-          }
-            target="_blank">Share</div>
           </div>
       </div>
       </div>
@@ -135,25 +101,7 @@ const [pinIconClass, setPinIconClass] = useState('');
               </div>
             </div>
           </Link>
-          {
-            project.pin?
-            <div className="ctas">
-            <div className="button secondary outline bold pin " onClick={()=>{
-              navigator.clipboard.writeText(`${project.pin}`)
-              showAlert('success', 'Pin copied to clipboard!')
-            }}>PIN: {project.pin}</div>
-            <div className="button primary outline " onClick={()=>dispatch(openModal('shareGallery'))}>Share</div>
-          </div>
-            :
-            <div className="ctas">
-            <div className="button primary  bold pin " onClick={()=>{
-              //go to project/collection
-              //`/moalisa/gallery/${project.id}/${project.collections[0].id}` with react naigate
-              navigate(`/monalisa/gallery/${project.id}/${project.collections[0].id}`)
-            }}>Upload Images</div>
-            <div className="button secondary outline disabled ">Share</div>
-          </div>
-          }
+          
           
         </div>
       </div>
