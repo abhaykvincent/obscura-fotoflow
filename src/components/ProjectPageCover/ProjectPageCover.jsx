@@ -47,7 +47,7 @@ export const ProjectCover = ({ project }) => {
             let  x = (e.clientX - rect.left) / rect.width
             // round x
             x = Math.round(x * 100) / 100;
-            let  y = (e.clientY - rect.top) / 400; // Normalize relative to the 400px container height
+            let  y = (e.clientY - rect.top) / 600; // Normalize relative to the 400px container height
                 y = Math.round(y * 100) / 100;
             const newFocusPoint = { x, y };
             setFocusPointLocal(newFocusPoint);
@@ -96,7 +96,7 @@ export const ProjectCover = ({ project }) => {
                     className="focus-indicator"
                     style={{
                         left: `${focusPointLocal?.x * 100}%`,
-                        top: `${focusPointLocal?.y * 400}px`, // Position relative to the container's height
+                        top: `${focusPointLocal?.y * 600}px`, // Position relative to the container's height
                         transform: "translate(-50%, -50%)", // Center the indicator at the focus point
                     }}
                 ></div>
