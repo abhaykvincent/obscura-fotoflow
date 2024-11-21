@@ -41,20 +41,27 @@ function Projects() {
         if (recentProjects.length === 0) {
             return (
                 <>
-                    <div className="section recent">
-                        <h3 className="section-heading">Create Your First Project</h3>
-                    </div>
-                    <div className="projects-list">
-                        <div className="project new" onClick={handleNewProjectClick}>
-                            <div className="project-cover"></div>
-                            <div className="project-details">
-                                <div className="details-top">
-                                    <h4 className="project-title">Create Project</h4>
-                                </div>
-                            </div>
-                            <div className="project-options"></div>
+                    {recentProjects.length !== 0  ? 
+                    <>
+                        <div className="section recent">
+                            <h3 className="section-heading">Create Your First Project</h3>
                         </div>
-                    </div>
+                        <div className="projects-list">
+                            <div className="project new" onClick={handleNewProjectClick}>
+                                <div className="project-cover"></div>
+                                <div className="project-details">
+                                    <div className="details-top">
+                                        <h4 className="project-title">Create Project</h4>
+                                    </div>
+                                </div>
+                                <div className="project-options"></div>
+                            </div>
+                        </div>
+                    </>:
+                    <div className="section recent">
+                    <h3 className="section-heading">No selection completed projects found.</h3>
+                </div>
+                    }
                 </>
             );
         }

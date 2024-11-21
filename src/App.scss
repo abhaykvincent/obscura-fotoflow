@@ -779,7 +779,7 @@ body{
       justify-content: start;
       justify-content: center;
       align-items: center;
-      gap: 8px*1;
+      gap: 8px*2;
       position: relative;
       margin-top: 0;
       grid-row: auto;
@@ -840,10 +840,12 @@ body{
       border-radius: 4px;
       font-size: 0.9rem;
       opacity: 0.5;
-      color: $gray2-accessible-light;
+      color: $gray6-default-light;
+      border: 1px solid $dark-0;
+
       &.active{
 
-        color: $gray4-accessible-light;
+        color: $gray6-accessible-light;
         opacity: 0.9;
         background-color: $dark-1;
         &:hover{

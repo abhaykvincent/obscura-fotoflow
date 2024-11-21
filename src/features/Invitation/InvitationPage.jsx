@@ -14,7 +14,6 @@ import { showAlert } from '../../app/slices/alertSlice.js';
 import { delay } from '../../utils/generalUtils.js';
 
 const InvitationPage = () => {
-  debugger
   const dispatch= useDispatch();
   const { projectId } = useParams();
   const domain = useSelector(selectDomain)
@@ -82,7 +81,7 @@ const InvitationPage = () => {
   };
   document.title = `${project?.name} | Invitation Editor`
 
-
+  if (!project) return <div>Loading project data...</div>;
   return (
     <>
     <div className="project-info invitation-page-header">
