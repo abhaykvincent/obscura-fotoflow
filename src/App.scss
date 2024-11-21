@@ -194,10 +194,16 @@ body{
         width: calc(100% + 8px*3);
         margin-left: -8px*2;
         margin-top: -8px*1;
-        padding-top: 40%;
+        padding-top: 8px*50;
         background-size: cover;
         background-position: center;
         overflow: hidden;
+        transition-duration: 0.2s;
+        transition-delay: 0.1s;
+        transition-timing-function: ease-in;
+        &.focus-button-active{
+          cursor: crosshair;
+        }
         .cover-tools{
           position: absolute;
           z-index: 10;
@@ -214,15 +220,28 @@ body{
               }
             }
           }
+          
 
           .set-focus{
 
           }
         }
+        .focus-indicator{
+          position: absolute;
+          width: 8px*4;
+          height: 8px*4;
+          border-radius: 1px;
+          border: 1px solid $green-accessible-light;
+        }
+        
         // project-page-cover hover
         &:hover{
           .cover-tools{
             .button{
+              opacity: 0.5;
+              &:hover{
+                opacity: 1;
+              }
               @for $i from 1 through 3 {
                 &:nth-child(#{$i}) {
                 // slight transition delay increment
@@ -230,7 +249,6 @@ body{
                 
                 transition-duration: 0.1s;
 
-                opacity: 1;
                 transform: translateY(8px*0);
                 }
               }

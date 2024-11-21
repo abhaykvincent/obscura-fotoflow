@@ -3,6 +3,7 @@ import {
     getDownloadURL,
     ref,
     list,
+    uploadBytes,
 } from "firebase/storage";
 import { db, storage } from '../firebase/app';
 import { delay } from "./generalUtils";
@@ -12,6 +13,7 @@ import { addUploadedFilesToFirestore } from "../firebase/functions/firestore";
 
 import imageCompression from 'browser-image-compression';
 import { addAllFileSizesToMB } from "./fileUtils";
+import { doc, updateDoc } from "firebase/firestore";
 const compressImages = async (files) => {
     const startTime = Date.now()
     const compressedFiles = await Promise.all(files.map(async (file) => {
@@ -274,7 +276,16 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
             throw error; // Propagate the error if needed
         });
 }
+export const uploadCover = async (file, project) => {
+    const storageRef = ref(storage, `${project.domain}/${project.id}/covers/${file.name}`);
+    await uploadBytes(storageRef, file);
+    const newCoverUrl = await getDownloadURL(storageRef);
 
+    const projectDocRef = doc(db, "studios", project.domain, "projects", project.id);
+    await updateDoc(projectDocRef, { projectCover: newCoverUrl });
+
+    return newCoverUrl;
+};
 
 
 // Firestore Database

@@ -32,6 +32,7 @@ import { DropdownMenu,
   DropdownMenuTrigger, } from '@radix-ui/react-dropdown-menu';
 import ShareGallery from '../../components/Modal/ShareGallery';
 import { updateProjectLastOpenedInFirestore } from '../../firebase/functions/firestore';
+import { ProjectCover } from '../../components/ProjectPageCover/ProjectPageCover';
 
 export default function Project() {
   const { id } = useParams();
@@ -115,17 +116,7 @@ export default function Project() {
         <AddExpenseModal project={project} />
         <AddBudgetModal project={project} />
       <main className='project-page'>
-        <div className="project-page-cover"
-          style={{
-            backgroundImage:  `url(${project.projectCover})`
-          }}
-        >
-
-          <div className="cover-tools">
-            <div className="button transparent-button secondary icon image">Change Cover</div>
-            <div className="button transparent-button secondary icon set-focus">Set focus</div>
-          </div>
-        </div>
+        <ProjectCover project={project} />
         <div className="project-dashboard">
           <DashboardProjects project={project} />
         </div>
