@@ -91,6 +91,7 @@ export default function Project() {
       console.log(project)
       document.title = `${project.name}'s ${project.type} | ${defaultStudio.name}`;
       updateProjectLastOpenedInFirestore(domain, project.id);
+      setPinText(project?.pin);
     }
   }, [project]);
   useEffect(() => {

@@ -122,8 +122,9 @@ export default function App() {
                 </AdminRoute> 
               }/> */}
             <Route path="/masanory-grid" element={<ImageGallery  />} />
-
+                
               <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
+              <Route exact path="/:studioName" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
               <Route path="/search" element={<SearchResults />} />
               <Route exact path="/:studioName/portfolio-editor" element={<PortfolioWebsite />} />
               <Route exact path="/:studioName/home" element={<Home />} />
