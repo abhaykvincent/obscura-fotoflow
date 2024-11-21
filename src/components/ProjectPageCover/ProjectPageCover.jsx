@@ -66,22 +66,23 @@ export const ProjectCover = ({ project }) => {
     
     return (
         <div
-            className={`project-page-cover ${isSetFocusButton ? "focus-button-active" : ""}`}
+            className={`project-page-cover ${isSetFocusButton ? "focus-button-active" : ""} ${project?.projectCover ? "cover-show" : "cover-hide"}`}
             style={{ // Ensure the container height
-                backgroundImage: `url(${project?.projectCover || 'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=1f1f1f'})`,
+                backgroundImage: `url(${project?.projectCover || 'https://img.icons8.com/?size=256&id=UVEiJZnIRQiE&format=png&color=1f1f1f'})`,
                 backgroundPosition: `${focusPointLocal?.x * 100}% ${focusPointLocal?.y * 100}%`,
-                backgroundSize: `${project?.projectCover ? "cover":"20%"}`, // Ensure image scaling
+                backgroundSize: `${project?.projectCover ? "cover":"auto 50% "}`, // Ensure image scaling
             }}
             onClick={handleFocusClick}
         >
             {
                 !isSetFocusButton ? <div className="cover-tools">
+                    <div
+                        className="button transparent-button secondary icon set-focus"
+                        onClick={setFocusButtonClick}
+                    >Set focus</div>
                     <div className="button transparent-button secondary icon image">Change Cover</div>
-                        <div
-                            className="button transparent-button secondary icon set-focus"
-                            onClick={setFocusButtonClick}
-                        >Set focus</div>
-                    </div>:
+                    </div>
+                    :
                     <div className="cover-tools">
                         <div
                             className="button transparent-button primary icon set-focus"

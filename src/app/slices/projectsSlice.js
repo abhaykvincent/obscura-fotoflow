@@ -21,6 +21,13 @@ export const fetchProjects = createAsyncThunk(
   }
 );
 
+export const checkFirestoreConnection = createAsyncThunk(
+  'projects/checkFirestoreConnection',
+  async () => {
+      return checkFirestoreConnection()
+  }
+)
+
 export const addProject = createAsyncThunk(
   'projects/addProject',
   ({domain,projectData}) => {
@@ -157,7 +164,6 @@ const projectsSlice = createSlice({
     setProjects_temp: (state, action) => {
       state.data = action.payload;
     }
-    
   
   },
   extraReducers: (builder) => {

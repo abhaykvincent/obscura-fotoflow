@@ -18,6 +18,9 @@ const CoverPhotoUploader = ({ projectCover, onChange }) => {
           style={projectCover ? { backgroundImage: `url(${projectCover.replace(/\(/g, '%28').replace(/\)/g, '%29')})` } : {}}
         >
 
+<div className="cover-photo-label">
+          Change Cover
+        </div>
         <label htmlFor="cover-file-upload" className="upload-button"></label>
         <input
         id="cover-file-upload"
@@ -26,9 +29,6 @@ const CoverPhotoUploader = ({ projectCover, onChange }) => {
         onChange={handleUpload}
         style={{ display: 'none' }} // Hide the input
       />
-        </div>
-        <div className="cover-photo-label">
-          Change Cover
         </div>
     </div>
   );

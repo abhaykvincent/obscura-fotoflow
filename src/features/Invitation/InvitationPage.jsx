@@ -14,6 +14,7 @@ import { showAlert } from '../../app/slices/alertSlice.js';
 import { delay } from '../../utils/generalUtils.js';
 
 const InvitationPage = () => {
+  debugger
   const dispatch= useDispatch();
   const { projectId } = useParams();
   const domain = useSelector(selectDomain)

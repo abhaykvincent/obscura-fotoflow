@@ -77,15 +77,44 @@ export const fetchUsers = async () => {
     }));
     return usersData;
 };
+
+const checkFirestoreConnection = async () => {
+    try {
+        const testDocRef = doc(db, "test", "connection-test");
+        const testDoc = await getDoc(testDocRef);
+
+        if (testDoc.exists()) {
+            console.log("%cFirestore connection successful", "color: green;");
+            return true; // Connection successful
+        } else {
+            console.log("%cTest document not found in Firestore", "color: orange;");
+            return false; // Document is missing, but Firestore is reachable
+        }
+    } catch (error) {
+        console.error("%cError connecting to Firestore:", "color: red;", error);
+        return false; // Connection failed
+    }
+};
 // Fetches
 // Function to fetch all projects from a specific studio of domain
 export const fetchProjectsFromFirestore = async (domain) => {
+    try{
     let color = domain === '' ? 'gray' : '#0099ff';
     console.log(`%cFetching Projects from ${domain ? domain : 'undefined'}`, `color: ${color}; `);
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
-    const querySnapshot = await getDocs(projectsCollectionRef);
+    let  querySnapshot 
+    try {
+      querySnapshot = await getDocs(projectsCollectionRef)
+    }
+    catch (error) {
+        let color = 'red';
+        console.error(`%cError fetching projects from ${domain ? domain : 'undefined'}:`, `color: ${color};`, error);
+        return []; // Return an empty array or handle the error appropriately
+    }
+    
 
+    console.log(querySnapshot)
     const projectsData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -94,6 +123,12 @@ export const fetchProjectsFromFirestore = async (domain) => {
     console.log(`%cFetched all ${projectsData.length} Projects from ${domain ? domain : 'undefined'}`, `color: ${color}; `);
 
     return projectsData;
+}
+catch (error) {
+        let color = 'red';
+        console.error(`%cError fetching projects from ${domain ? domain : 'undefined'}:`, `color: ${color};`, error);
+        return []; // Return an empty array or handle the error appropriately
+    }
 };
 // Function to fetch a specific project from a specific studio
 export const fetchProject = async (domain, projectId) => {
