@@ -44,6 +44,7 @@ import InvitationPreview from './features/Invitation/InvitationPreview';
 import { Toaster } from 'sonner';
 import { setUserType } from './analytics/utils';
 import SearchResults from './components/Search/SearchResults';
+import PortfolioWebsite from './features/Website/Website';
 const client = new Client();
 client.setProject('fotoflow-notifications');
 
@@ -120,11 +121,12 @@ export default function App() {
                   <AdminPanel /> 
                 </AdminRoute> 
               }/> */}
-            <Route path="/masanory-grid" element={<ImageGallery />}/>
+            <Route path="/masanory-grid" element={<ImageGallery  />} />
 
-              <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}`} replace />} />
+              <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
               <Route path="/search" element={<SearchResults />} />
-              <Route exact path="/:studioName/" element={<Home />} />
+              <Route exact path="/:studioName/portfolio-editor" element={<PortfolioWebsite />} />
+              <Route exact path="/:studioName/home" element={<Home />} />
               <Route exact path="/:studioName/project/:id" element={<Project />} />
               <Route exact path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
               <Route exact path="/:studioName/invitation-creator/:projectId" element={<InvitationPage/>} />

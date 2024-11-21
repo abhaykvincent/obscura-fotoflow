@@ -55,7 +55,6 @@ const handleSubmit =  () => {
       });
       dispatch(showAlert({ type: 'success', message: `Collection <b>${CollectionData.name}</b> added successfully!` }));
       setIsSubmitting(false);  // Re-enable the button after submission
-      
       navigate(`/${defaultStudio.domain}/gallery/${project.id}/${id.payload.collection.id}`);
     })
   },500)
@@ -80,12 +79,12 @@ const modalRef = useModalFocus(visible.createCollection);
             <div className="control minimize"></div>
             <div className="control maximize"></div>
           </div>
-          <div className="modal-title">Create Collection</div>
+          <div className="modal-title">Create Gallery</div>
         </div>
         <div className='modal-body'>
           <div className="form-section">
             <div className="field">
-              <label className="" htmlFor="">Collection</label>
+              <label className="" htmlFor="">Gallery name</label>
               <input className="" name="name" value={CollectionData.name} type="text" onChange={handleInputChange}/>
             </div>
           </div>

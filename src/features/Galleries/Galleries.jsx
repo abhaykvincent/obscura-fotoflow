@@ -93,7 +93,7 @@ if(!collectionId&&defaultCollectionId!==''){
 
     <div className="project-info gallery-page-info">
       <div className="breadcrumbs">
-        <Link className="back highlight" to={`/${domain}/project/${encodeURIComponent(id)}`}>{project?.name}</Link>
+        <Link className="back highlight" to={project?.type === 'Portfolio'?`/${domain}/portfolio-editor`:`/${domain}/project/${encodeURIComponent(id)}`}>{project?.name}</Link>
       </div>
       <div className="client">
         {isEditing ? (

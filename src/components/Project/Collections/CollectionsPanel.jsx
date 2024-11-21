@@ -13,9 +13,20 @@ const CollectionsPanel = ({ project, collectionId}) => {
 
   return <div className="galleries">
     <div className="list">
+      
       {
       project.collections.length > 0 ? 
         <div className="gallery-list">
+          <div className="gallery new" 
+            onClick={() => dispatch(openModal('createCollection'))}>
+            <div className="thumbnails">
+              <div className="thumbnail thumb1">
+                <div className="backthumb bthumb1">
+                </div>
+                <p>Create Gallery</p>
+              </div>
+            </div>
+          </div>
           {project.collections.map((collection) => (
             
             collection.pin=="" ?
@@ -72,16 +83,7 @@ const CollectionsPanel = ({ project, collectionId}) => {
 
             
           ))}
-          <div className="gallery new" 
-        onClick={() => dispatch(openModal('createCollection'))}>
-        <div className="thumbnails">
-          <div className="thumbnail thumb1">
-            <div className="backthumb bthumb1">
-            </div>
-          </div>
-        </div>
-        <div className="button primary outline  gallery-name">New Gallery</div>
-      </div>
+          
           {/* <div className="active-box box"></div> */}
         </div>:''
       }

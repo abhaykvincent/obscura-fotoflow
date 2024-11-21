@@ -165,7 +165,7 @@ body{
   main{
     position: relative;
     top: $header-height ;
-    left: $sidebar-width;
+    left: $sidebar-width - 6px;
     width: calc(100vw - #{$sidebar-width} - 6px);
     min-height: calc(100vh - #{$header-height});
     padding: 0 8px*2;
@@ -180,14 +180,85 @@ body{
     &.project-page{
       display: grid;
       grid-template-columns: auto ;
-      grid-template-rows: auto auto;
+      grid-template-rows: 8px*30 auto auto;
       opacity: 0;
       gap: 8px*1;
       align-items: start;
-
+      min-height: calc(100vh - 120px);
       padding-right: 8px;
       transform: translateY(-8px*2);
       animation: gallery-page-reveal 0.4s ease-out forwards;
+      overflow: hidden;
+      .project-page-cover{
+        position: relative;
+        width: calc(100% + 8px*3);
+        margin-left: -8px*2;
+        margin-top: -8px*1;
+        padding-top: 8px*30;
+        background-size: cover;
+        background-position: center;
+        overflow: hidden;
+        transition-duration: 0.2s;
+        transition-delay: 0.1s;
+        transition-timing-function: ease-in;
+        background-color: $dark-3;
+        background-image: url('https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=FFFFFF');
+        &.focus-button-active{
+          cursor: crosshair;
+        }
+        .cover-tools{
+          position: absolute;
+          z-index: 10;
+          bottom: 8px*2;
+          right: 8px*3;
+          transition-duration: 0.1s;
+          .button{
+            @for $i from 1 through 3 {
+              &:nth-child(#{$i}) {
+              // slight transition delay increment
+              transition-delay: 0.05s * $i;
+              transform: translateY(8px*8);
+              opacity: 0;
+              }
+            }
+          }
+          
+
+          .set-focus{
+
+          }
+        }
+        .focus-indicator{
+          position: absolute;
+          width: 8px*4;
+          height: 8px*4;
+          border-radius: 1px;
+          border: 1px solid $green-accessible-light;
+        }
+        
+        // project-page-cover hover
+        &:hover{
+          .cover-tools{
+            .button{
+              opacity: 0.8;
+              &:hover{
+                opacity: 1;
+              }
+              @for $i from 1 through 3 {
+                &:nth-child(#{$i}) {
+                // slight transition delay increment
+                transition-delay: 0.1s * 1/$i;
+                
+                transition-duration: 0.1s;
+
+                transform: translateY(8px*0);
+                }
+              }
+            }
+          }
+        }
+
+      }
     }
     &.gallery-page{
       
@@ -195,7 +266,21 @@ body{
       /* opacity: 0;
       transform: translateY(-8px);
       animation: gallery-page-reveal 0.2s ease-out forwards; */
+      .galleries{
+        .list{
+          .gallery-list
+          .gallery{
+            opacity: 1;
+            animation: none !important;
+            &.new{
+              margin-top: 0;
+            }
+          }
+        }
+      }
     }
+    
+    
     
     .add-collection{
       margin-left: 8px;
@@ -304,93 +389,20 @@ body{
         padding: 8px*1;
         align-items: center;
         position: sticky !important;
-        top:8px*6;
+        top:8px*7.37;
         z-index:40;
         background-color: $dark-3;
         border-radius: 6px;
-        border-bottom: 1px solid $dark-2;
+        border:1px solid $dark-1;
+        box-shadow: 0px 1px 1px black;
         .label{
           margin: 8px;
-        }
-        .view-control{
-          display:flex;
-          justify-content: center;
-          align-items: center;
-          margin: 4px;
-          font-size: 0.9rem;
-          .control-label{
-            color: $gray3-default-dark;
-            padding: 8px;
-            &.label-all-photos{
-              color: $gray2-default-dark;
-            }
-            &.label-selected-photos{
-              &.active{
-
-                color: $gray4-default-light;
-              }
-            }
-          }
-          .controls{
-            display: flex;;
-    border-radius: $border-radius-1+1;
-    transition-duration: 0.15s;
-    background: linear-gradient(120deg, $dark-1 -80%, $dark-2 20%,$dark-2 60%, $dark-3 100%);
-    border: 1px solid $gray6-accessible-dark;
-    border-top: 1px solid $gray5-accessible-dark;
-    border-bottom: 1px solid $gray6-accessible-dark;;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);;
-    opacity: 0;
-
-    animation: fadeInLeft 0.25s ease-out 0.2s;
-    animation-fill-mode: forwards;
-    animation-timing-function: ease-out;
-            .control{
-            display:flex;
-
-              padding: 8px*0.5 8px*1.5;
-              font-weight: 500;
-              font-size: 0.8rem;
-              border-radius: 6px;
-              cursor: pointer;
-              transition-duration: 0.15s;
-              .favorite{
-                width: 8px*1;
-                height: 8px*2;
-                opacity: 1;
-                padding: 8px*1;
-                cursor: pointer;
-                margin-left: 0
-                ;
-                &.selected{
-                  opacity: 1;
-                  background-image: url('./assets/img/icons/heart.svg');
-                  background-size: 50%;
-                  background-position: center;
-                  transform: translateX(1px);
-                  transition-duration: 0.1s;
-                  &:hover{
-                    background-image: url('./assets/img/icons/heart-dislike.svg');
-      
-                  }
-                }
-              }
-              &.active{
-                background-color: $dark-1;
-                border: 1px solid $dark-0;
-                &:hover{
-                  background-color: $dark-2;
-                  border: 1px solid $gray2-accessible-dark;
-                  transition-duration: 0.1s;
-                }
-              }
-            }
-          }
         }
         .open-buttons{
           display: flex;
           justify-content: flex-end;
         }
+        
         .open-in{
           font-size: 0.8rem;
           color: $gray-default-dark;
@@ -430,6 +442,159 @@ body{
             transition-duration: 2s;
             font-weight: 600;
             animation: loadingGradient 1s infinite alternate linear;
+          }
+        }
+      }
+      .view-control{
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        margin: 4px;
+        font-size: 0.9rem;
+        .control-label{
+          color: $gray3-default-dark;
+          padding: 8px;
+          &.label-all-photos{
+            color: $gray2-default-dark;
+          }
+          &.label-selected-photos{
+            &.active{
+
+              color: $gray4-default-light;
+            }
+          }
+        }
+        .controls{
+          display: flex;;
+  border-radius: $border-radius-1+1;
+  transition-duration: 0.15s;
+  background: linear-gradient(120deg, $dark-1 -80%, $dark-2 20%,$dark-2 60%, $dark-3 100%);
+  border: 1px solid $gray6-accessible-dark;
+  border-top: 1px solid $gray5-accessible-dark;
+  border-bottom: 1px solid $gray6-accessible-dark;;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);;
+  opacity: 0;
+
+  animation: fadeInLeft 0.25s ease-out 0.2s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+          .control{
+          display:flex;
+
+            padding: 8px*0.5 8px*1.5;
+            font-weight: 500;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition-duration: 0.15s;
+            .favorite{
+              width: 8px*1;
+              height: 8px*2;
+              opacity: 1;
+              padding: 8px*1;
+              cursor: pointer;
+              margin-left: 0
+              ;
+              &.selected{
+                opacity: 1;
+                background-image: url('./assets/img/icons/heart.svg');
+                background-size: 50%;
+                background-position: center;
+                transform: translateX(1px);
+                transition-duration: 0.1s;
+                &:hover{
+                  background-image: url('./assets/img/icons/heart-dislike.svg');
+    
+                }
+              }
+            }
+            &.active{
+              background-color: $dark-1;
+              border: 1px solid $dark-0;
+              &:hover{
+                background-color: $dark-2;
+                border: 1px solid $gray2-accessible-dark;
+                transition-duration: 0.1s;
+              }
+            }
+          }
+          .control{
+        padding: 6px 8px*1.5;
+        font-weight: 400;
+        border-radius: $border-radius-1;
+        border-right: 1px solid rgba(255, 255, 255, 0.02);
+        color: $gray4-accessible-dark;
+        white-space: nowrap;
+        cursor: pointer;
+        transition-duration: 0.15s;
+        &:hover{
+            border-radius: 2px;
+            background-color: $dark-2;
+            color: $gray2-accessible-dark;
+            transition-duration: 0.1s;
+            &:last-child{
+                border-radius: 8px;
+            }
+        }
+        &.active{
+          color: $light-0;
+          border: 1px solid $gray5-accessible-dark;
+          border-top: 1px solid $gray3-accessible-dark;
+          border-left: 1px solid $gray3-accessible-dark;
+          border-bottom: 1px solid $gray5-accessible-dark;
+          border-radius: 6px !important;
+          box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);;
+          transform: scale(1);
+          &:hover{
+            background-color: $dark-1;
+            border: 1px solid $gray3-accessible-dark;
+            transition-duration: 0.1s;
+          }
+          
+          .icon{
+  
+            background-size: 120%;
+          }
+        }
+        &.disabled{
+            opacity: 0.2;
+          }
+        .icon{
+            width: 8px*1.8;
+            height: 8px*1.8;
+            background-position: center;
+            background-size: 110%;
+            &.card-view{
+                background-image: url('https://img.icons8.com/sf-black-filled/64/FFFFFF/four-squares.png');
+            }
+            &.list-view{
+                background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/list.png');
+            }
+            &.light-view{
+                background-image: url('https://img.icons8.com/?size=100&id=SyBDr18WdUcD&format=png&color=FFFFFF');
+            }
+            &.dark-view{
+                background-image: url('https://img.icons8.com/?size=100&id=45475&format=png&color=FFFFFF');
+            }
+        }
+        
+      }
+        }
+      }
+      .dark-light-mode{
+        position: fixed;
+        top:8px*10;
+        z-index: 41;
+        right:8px*3;
+        .lightMode{
+          &:hover{
+            background-color: $gray6-accessible-light;
+          }
+        }
+        .darkMode{
+          &:hover{
+            background-color: black;
+
           }
         }
       }
@@ -473,7 +638,7 @@ body{
         justify-content: center;
       }
       .image-gallery-bottom-panel{
-        display: flex;
+        display: grid;
         justify-content: center;
         padding: 8px;
       }
@@ -483,6 +648,49 @@ body{
         padding: 8px;
         font-size: 0.9rem;
         margin-top: 8px*4;
+      }
+
+      &.lightMode{
+        background-color: $light-0;
+        .photos{
+          .photo-wrap{
+            background-color: $light-0;
+            &:hover{
+              border: 1px solid $gray3-default-light;
+            }
+          }
+        }
+        .header{
+          background-color: $light-2;
+          border: 1px solid $gray4-accessible-light;
+          box-shadow: 1px 1px 2px  rgba(0, 0, 0, 0.05);
+          .view-control{
+            .controls {
+              background: $gray5-accessible-light;
+              border: 1px solid $gray3-accessible-light;
+              box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+              .control{
+                color: $gray4-accessible-dark;
+  
+                &.active{
+                  border: 1px solid $gray2-accessible-light;
+
+                  background-color: $gray5-accessible-light;
+                  color: $gray6-accessible-dark;
+                  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+                }
+              } 
+            }
+          }
+        }
+        .drop-area{
+          background-color: $light-2;
+          border: 1px solid $gray5-accessible-light;
+          h2{
+            color: $gray6-default-dark;
+          }
+        }
+
       }
     }
     .fixed-wrap{
@@ -593,6 +801,8 @@ body{
           cursor: pointer;
         }
       }
+      
+      
     }
     //data-radix-popper-content-wrapper
 
@@ -668,6 +878,18 @@ body{
         margin-right: 8px*0.7;
         //kerling
         font-stretch: expanded;
+        &.copying {
+          background: linear-gradient(90deg, #387d16c8  30%,#a1ed08 45%,#a1ed08 48%, #70981fbc 55%, #132d0679 90%);
+          background-size: 200%;
+          border: 2px solid $green-dark-accessible-light;
+          background-position: 0%;
+          -webkit-background-clip: text;
+          font-weight: 200;
+          -webkit-text-fill-color: transparent;
+          transition-duration: 0.1s;
+          font-weight: 600;
+          animation: copyingGradient 0.5s infinite alternate linear;
+          }
         
         
       }
@@ -1509,7 +1731,6 @@ body{
       }
       &:hover{
         border: 1px solid $dark-0;      
-        background-color: $gray5-accessible-light;
 
         transition-duration: 0.05s;
         transition-timing-function: ease-in;
@@ -1683,7 +1904,7 @@ body{
         &.project-page{
           display: grid;
           grid-template-columns: auto;
-          gap: 8px*5;
+          gap: 8px*2;
           .project-collections{
             width: 100%;
             .galleries{
@@ -1695,7 +1916,7 @@ body{
           }
         }
         .project-dashboard-header {
-          top: 64px;
+          top: 48px;
           width: calc(100% - 8px*3);
           display: flex;
           justify-content: space-between;
@@ -1867,13 +2088,12 @@ body{
         display: none;
       }
       .list{
-        margin-top: 8px*5;
+        margin-top: 8px*0;
         .gallery-list{    
           display: flex;
           gap: 32px;
           margin-bottom: 0px;
           padding: 8px;
-          padding-top: 16px;
           overflow-x: scroll;
           overflow-y: auto;
           .gallery-name{
@@ -1897,7 +2117,6 @@ body{
         }
         &.new{
           .thumbnails {
-            width: 100%;
             height: 8px*14;
           }
         }

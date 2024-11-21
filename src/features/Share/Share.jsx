@@ -49,13 +49,13 @@ export default function ShareProject() {
       console.error('Failed to fetch project:', error);
     }
   };
-  const fetchImagesData = async () => {
+  /* const fetchImagesData = async () => {
     try {
       fetchImageUrls(studioName, projectId, collectionId, setImageUrls, page, size);
     } catch (error) {
       console.error('Failed to fetch project:', error);
     }
-  };
+  }; */
   const findCollectionById= (collections, collectionId) => {
     return collections.find((collection) => collection.id === collectionId);
   }
@@ -73,7 +73,7 @@ export default function ShareProject() {
     if(!project) return
     // find collection name from collection id
     const collection = findCollectionById(project.collections, collectionId);
-    document.title = `${project.name} | ${collection.name} | Gallery`
+    document.title = `${project.name} | ${collection?.name} | Gallery`
     const newImages = project?.collections.find((collection)=>collection.id===collectionId)?.uploadedFiles;
 
     setImageUrls(newImages)
@@ -86,11 +86,7 @@ export default function ShareProject() {
   const CollectionsPanel = () => {
     return (
       <div className="">
-      <div className="collections-panel">
-        <div className={`collection-tab client-selection-tab`}  >
-          <Link to={`/${studioName}/selection/${project.id}`}>Photo Selection</Link>
-        </div>
-        </div>
+      
       <div className="collections-panel">
         
       {project.collections.map((collection, index) => (
@@ -118,15 +114,24 @@ export default function ShareProject() {
         <img className='banner' src={project.projectCover} alt="" />
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
+          <div className="collections-panel">
+        <div className={`collection-tab client-selection-tab`}  >
+          <Link to={`/${studioName}/selection/${project.id}`}>Photo Selection</Link>
+        </div>
+        </div>
           <CollectionsPanel/>
         </div>
-        
+      </div>
+      <div className="shared-collection">
+        <ShareGallery images={imageUrls} projectId={projectId} collectionId={collectionId}/>
+        <p>Other Collections</p>
+        <CollectionsPanel/>
+
+        {
+          project.type !== "FUNERAL" && <p className='studio-tag-line'>{`smile with ${studioName}`}</p>
+        }
         
       </div>
-        <div className="shared-collection">
-          <ShareGallery images={imageUrls} projectId={projectId} collectionId={collectionId}/>
-          <p className='studio-tag-line'>{`smile with ${studioName}`}</p>
-        </div>
     </div>
   );
 }

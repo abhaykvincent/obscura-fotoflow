@@ -111,7 +111,14 @@ export const fetchProject = async (domain, projectId) => {
         console.log(collectionSnapshot.data())
     
         if (collectionSnapshot.exists()) {
-            return { ...collection, ...collectionSnapshot.data(), id: collection.id };
+            const collectionData = collectionSnapshot.data();
+            
+            // Sort files by file name
+            if (collectionData.uploadedFiles && Array.isArray(collectionData.uploadedFiles)) {
+                collectionData.uploadedFiles.sort((a, b) => a.name.localeCompare(b.name));
+            }
+
+            return { ...collection, ...collectionData, id: collection.id };
         } else {
             throw new Error('Collection does not exist.');
         }
@@ -132,6 +139,7 @@ export const fetchImages = async (domain, projectId, collectionId) => {
     if (collectionSnapshot.exists()) {
         const collectionsData = collectionSnapshot.data();
         if(collectionsData.uploadedFiles?.length > 0){
+            collectionsData.uploadedFiles.sort((a, b) => a.name.localeCompare(b.name));
             // green
             color = '#54a134';
             console.log(`%cFetched Images from ${collectionId}`, `color: ${color}; `);
@@ -153,7 +161,7 @@ export const fetchImages = async (domain, projectId, collectionId) => {
 export const addProjectToStudio = async (domain, project) => {
     
     console.log(domain, project)
-    const id = `${project.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
+    const id = project.type !== 'Portfolio'?`${project.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`:'portfolio';
     const projectData = {
       id,
       ...project
@@ -777,13 +785,13 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
             uploadedFiles: arrayUnion(...uploadedFiles),
         });
         const pin = generateMemorablePIN(4)
-        const projectCover = uploadedFiles[0]?.url || ''
+        console.log(projectData.data().projectCover)
         batch.update(projectDocRef, {
             collections: projectData.data().collections.map(collection => {
                 if (collection.id === collectionId) {
                     return {
                         ...collection,
-                        galleryCover : collection?.galleryCover? collection.galleryCover : projectCover,
+                        galleryCover : collection?.galleryCover? collection.galleryCover : uploadedFiles[0]?.url,
                         filesCount: (collection.filesCount || 0) + uploadedFiles.length,
                     };
                 }
@@ -791,7 +799,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
             }),
             totalFileSize: importFileSize + projectData.data().totalFileSize,
             uploadedFilesCount: projectData.data().uploadedFilesCount + uploadedFiles.length,
-            projectCover: projectCover,
+            projectCover: projectData.data().projectCover === '' ? uploadedFiles[0]?.url : projectData.data().projectCover,
             status: "uploaded",
             pin: projectData.data().pin || generateMemorablePIN(4),
         });

@@ -23,21 +23,19 @@ function DashboardTabs({ project }) {
           <div className="gallery-overview">
             {/* Replace with gallery card display logic */}
               {project.collections.length === 0 ? (
-            <div className="galleries">
-                    <div className="gallery new" 
+                  <div className="galleries">
+                    <div className="gallery new empty-gallery" 
                     onClick={()=>dispatch(openModal('createCollection'))}>
                       
-                    <div className="thumbnails">
-                      <div className="thumbnail thumb1">
-                        <div className="backthumb bthumb1"
-                        ></div>
-                        <div className="backthumb bthumb2"></div>
-                        <div className="backthumb bthumb3"></div>
-                        <div className="backthumb bthumb4"></div>
+                      <div className="thumbnails">
+                        <div className="thumbnail thumb1">
+                          <div className="backthumb bthumb1">
+                          </div>
+                          <p>Create Gallery</p>
+                        </div>
                       </div>
+
                     </div>
-                    <p className='button primary outline '>New Gallery</p>
-                  </div>
 
                   </div>
               ) : (

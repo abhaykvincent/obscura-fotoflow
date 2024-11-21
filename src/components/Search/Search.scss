@@ -33,6 +33,9 @@
                 font-size:2rem;
             }
             &.sub-message{
+                .button{
+                    margin-left: 8px*2;
+                }
             }
             span{
                 
@@ -71,7 +74,7 @@
     .search-input-wrapper{
         display: flex;
         align-items: center;
-        margin-top: 2px;
+        margin:8px*0.75 0px;
         .search-input{
           display: flex;
           justify-content: center;
@@ -80,6 +83,7 @@
           border-radius: 8px*1 !important;
           width: 8px*30;
           padding: 8px;
+          height: 8px*4;
         background-color: $dark-2;
         border: 1px solid $dark-1;
         box-shadow: inset -1px 1px 2px rgba(0, 0, 0, 0.3);
