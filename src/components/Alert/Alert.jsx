@@ -45,7 +45,7 @@ const Alert = () => {
     <div >
 
         
-        <Toaster theme="dark" offset={'52px'}  position='top-center'
+        <Toaster theme="dark" offset={'52px'}  position='top-center'  limit={5} 
         toastOptions={{
             classNames: {
               toast: 'flex items-center relative',

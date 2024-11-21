@@ -27,7 +27,7 @@ import CommingSoon from './components/CommingSoon/CommingSoon';
 import { isPublicPage } from './utils/publicPages';
 // Redux 
 import { checkAuthStatus, checkStudioStatus, selectIsAuthenticated, selectUser, selectUserStudio } from './app/slices/authSlice';
-import { selectLoading ,fetchProjects, selectProjects, selectProjectsStatus} from './app/slices/projectsSlice';
+import { selectLoading ,fetchProjects, selectProjects, selectProjectsStatus, checkFirestoreConnection} from './app/slices/projectsSlice';
 // Stylesheets
 import './App.scss';
 import Teams from './features/Teams/Teams';
@@ -45,6 +45,7 @@ import { Toaster } from 'sonner';
 import { setUserType } from './analytics/utils';
 import SearchResults from './components/Search/SearchResults';
 import PortfolioWebsite from './features/Website/Website';
+import { showAlert } from './app/slices/alertSlice';
 const client = new Client();
 client.setProject('fotoflow-notifications');
 
@@ -67,8 +68,6 @@ export default function App() {
   const defaultStudio = useSelector(selectUserStudio)
   const currentDomain = defaultStudio?.domain ?? 'guest'; 
   useEffect(() => {
-  }, [isLoading]);
-  useEffect(() => {
     if(isAuthenticated && user!=='no-studio-found'){
       setUserType('Photographer');
     }
@@ -76,22 +75,27 @@ export default function App() {
  
   // ON Render
   useEffect(() => {
+    dispatch(checkAuthStatus())
+    dispatch(checkStudioStatus())
+    currentDomain !== 'guest' && dispatch(fetchProjects({currentDomain})).then((res)=>{
+      console.log(res)
+    })
+    .catch((err)=>{
+      dispatch(showAlert({ type: 'error', message: 'Check internet connection' }));
+    })
 
-      dispatch(checkAuthStatus())
-     dispatch(checkStudioStatus())
-    currentDomain !== 'guest' && dispatch(fetchProjects({currentDomain}))
   }, [currentDomain]);
 
-    useEffect(() => {
-      const modalStates = Object.values(selectModal);
-      if (modalStates.some(state => state)) {
-        window.scrollTo(0, 0);
-        document.body.style.overflow = 'hidden';
-        
-      } else {
-        document.body.style.overflow = 'auto';
-      }
-    }, [selectModal]);
+  useEffect(() => {
+    const modalStates = Object.values(selectModal);
+    if (modalStates.some(state => state)) {
+      window.scrollTo(0, 0);
+      document.body.style.overflow = 'hidden';
+      
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [selectModal]);
 
 
   // RENDER

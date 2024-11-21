@@ -9,6 +9,10 @@
     }
     .galleries-share-list-selection{
         display: flex;
+        gap: 8px*2;
+        input{
+            height: 8px*2.5;
+        }
     }
     .form-item{
         display: flex;
@@ -37,15 +41,39 @@
         padding-bottom: 8px*2;
         border-bottom: 1px solid $dark-1;
     }
-    .linkToGallery{
-        color: $green-accessible-dark;
-        text-decoration: underline;
-        text-decoration-color: $green-dark-accessible-light;
-    }
+    .link-container{
+        padding: 4px;
+        white-space: nowrap;;
+        .linkToGallery{
+            color: $green-accessible-dark;
+            text-decoration: underline;
+            text-decoration-color: $green-dark-accessible-light;
+            transition-duration: 0.1s;
+            
+        }
+        .open-in-new{
+            box-shadow: none;
+            border: none;
+            opacity: 0.4;
+            transform: scale(0.9) translateX(0px) translateY(0px);
+        }
+        &:hover{
+            transform: scale(1);
+            .open-in-new{
+            transform: scale(1.025) translateX(6px) translateY(-1px);
+            opacity: 1;
+            }
+            .linkToGallery{
+            color: $green-accessible-light;
+
+            }
+        }
+}
     .link-pin{
         display: grid;
-        grid-template-columns: 8px*24 auto;
+        grid-template-columns: auto 8px*11 8px*9;
         align-items: center;
+        justify-content: start;
         gap: 8px*1;
         padding: 8px;
         padding-left: 0;
@@ -57,7 +85,7 @@
             align-items: center;
             color: $green-accessible-light;
             background-color: $dark-3;
-            padding: 2px 4px;
+            padding: 4px 4px;
             padding-left: 8px;
             height: 8px*3.5;
             border-radius: 4px;

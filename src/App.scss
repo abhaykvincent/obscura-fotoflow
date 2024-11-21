@@ -179,12 +179,11 @@ body{
     background-color: $dark-2;
     &.project-page{
       display: grid;
-      grid-template-columns: auto ;
-      grid-template-rows: 8px*60 auto auto;
+      grid-template-rows: auto auto auto;
       opacity: 0;
       gap: 8px*1;
       align-items: start;
-      min-height: calc(100vh - 120px);
+      min-height: 50vh;
       padding-right: 8px;
       transform: translateY(-8px*2);
       animation: gallery-page-reveal 0.4s ease-out forwards;
@@ -205,6 +204,10 @@ body{
         background-image: url('https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=FFFFFF');
         &.focus-button-active{
           cursor: crosshair;
+        }
+        &.cover-hide{
+          
+          padding-top: 8px*30;
         }
         .cover-tools{
           position: absolute;
@@ -240,7 +243,7 @@ body{
         &:hover{
           .cover-tools{
             .button{
-              opacity: 0.8;
+              opacity: 1;
               &:hover{
                 opacity: 1;
               }
@@ -466,18 +469,18 @@ body{
         }
         .controls{
           display: flex;;
-  border-radius: $border-radius-1+1;
-  transition-duration: 0.15s;
-  background: linear-gradient(120deg, $dark-1 -80%, $dark-2 20%,$dark-2 60%, $dark-3 100%);
-  border: 1px solid $gray6-accessible-dark;
-  border-top: 1px solid $gray5-accessible-dark;
-  border-bottom: 1px solid $gray6-accessible-dark;;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);;
-  opacity: 0;
+          border-radius: $border-radius-1+1;
+          transition-duration: 0.15s;
+          background: linear-gradient(120deg, $dark-1 -80%, $dark-2 20%,$dark-2 60%, $dark-3 100%);
+          border: 1px solid $gray6-accessible-dark;
+          border-top: 1px solid $gray5-accessible-dark;
+          border-bottom: 1px solid $gray6-accessible-dark;;
+          box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);;
+          opacity: 0;
 
-  animation: fadeInLeft 0.25s ease-out 0.2s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-out;
+          animation: fadeInLeft 0.25s ease-out 0.2s;
+          animation-fill-mode: forwards;
+          animation-timing-function: ease-out;
           .control{
           display:flex;
 
@@ -519,66 +522,74 @@ body{
             }
           }
           .control{
-        padding: 6px 8px*1.5;
-        font-weight: 400;
-        border-radius: $border-radius-1;
-        border-right: 1px solid rgba(255, 255, 255, 0.02);
-        color: $gray4-accessible-dark;
-        white-space: nowrap;
-        cursor: pointer;
-        transition-duration: 0.15s;
-        &:hover{
-            border-radius: 2px;
-            background-color: $dark-2;
-            color: $gray2-accessible-dark;
-            transition-duration: 0.1s;
-            &:last-child{
-                border-radius: 8px;
+            padding: 6px 8px*1.5;
+            font-weight: 400;
+            border-radius: $border-radius-1;
+            border-right: 1px solid rgba(255, 255, 255, 0.02);
+            color: $gray4-accessible-dark;
+            white-space: nowrap;
+            cursor: pointer;
+            transition-duration: 0.15s;
+            &:hover{
+                background-color: $dark-2;
+                color: $gray2-accessible-dark;
+                transition-duration: 0.1s;
+                &:last-child{
+                    border-radius: 8px;
+                }
             }
-        }
-        &.active{
-          color: $light-0;
-          border: 1px solid $gray5-accessible-dark;
-          border-top: 1px solid $gray3-accessible-dark;
-          border-left: 1px solid $gray3-accessible-dark;
-          border-bottom: 1px solid $gray5-accessible-dark;
-          border-radius: 6px !important;
-          box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);;
-          transform: scale(1);
-          &:hover{
-            background-color: $dark-1;
-            border: 1px solid $gray3-accessible-dark;
-            transition-duration: 0.1s;
+            &.active{
+              color: $light-0;
+              border: 1px solid $gray5-accessible-dark;
+              border-top: 1px solid $gray3-accessible-dark;
+              border-left: 1px solid $gray3-accessible-dark;
+              border-bottom: 1px solid $gray5-accessible-dark;
+              border-radius: 6px !important;
+              box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);;
+              transform: scale(1);
+              transition-duration: 0.05s;
+              &:hover{
+                background-color: $dark-1;
+                border: 1px solid $gray3-accessible-dark;
+                transition-duration: 0.1s;
+              }
+              
+              .icon{
+      
+                background-size: 120%;
+              }
+            }
+            &.disabled{
+                opacity: 0.2;
+              }
+            .icon{
+                width: 8px*1.8;
+                height: 8px*1.8;
+                background-position: center;
+                background-size: 110%;
+                &.card-view{
+                    background-image: url('https://img.icons8.com/sf-black-filled/64/FFFFFF/four-squares.png');
+                }
+                &.list-view{
+                    background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/list.png');
+                }
+                &.light-view{
+                    background-image: url('https://img.icons8.com/?size=100&id=SyBDr18WdUcD&format=png&color=FFFFFF');
+                }
+                &.dark-view{
+                    background-image: url('https://img.icons8.com/?size=100&id=45475&format=png&color=FFFFFF');
+                }
+            }
           }
-          
-          .icon{
-  
-            background-size: 120%;
+          &.dark-controls{
+            .active{
+              background-color: $dark-3;
+              &:hover{
+                background-color: $dark-3;
+            }
+            }
+            
           }
-        }
-        &.disabled{
-            opacity: 0.2;
-          }
-        .icon{
-            width: 8px*1.8;
-            height: 8px*1.8;
-            background-position: center;
-            background-size: 110%;
-            &.card-view{
-                background-image: url('https://img.icons8.com/sf-black-filled/64/FFFFFF/four-squares.png');
-            }
-            &.list-view{
-                background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/list.png');
-            }
-            &.light-view{
-                background-image: url('https://img.icons8.com/?size=100&id=SyBDr18WdUcD&format=png&color=FFFFFF');
-            }
-            &.dark-view{
-                background-image: url('https://img.icons8.com/?size=100&id=45475&format=png&color=FFFFFF');
-            }
-        }
-        
-      }
         }
       }
       .dark-light-mode{
@@ -753,7 +764,7 @@ body{
     position: fixed; 
     display: grid;
     align-items: center;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: 1fr auto 1fr;
     justify-content: space-between;
     justify-items: stretch;
     padding: 8px*1.5;
@@ -766,7 +777,7 @@ body{
       justify-items: start;
 
       justify-content: start;
-      justify-content: start;
+      justify-content: center;
       align-items: center;
       gap: 8px*1;
       position: relative;
@@ -939,7 +950,7 @@ body{
     top: 0;
     left: $sidebar-width;
     width: calc(100vw - $sidebar-width);
-    grid-template-columns: auto 1fr 1fr;
+    grid-template-columns: 1fr auto  1fr;
     transition-duration: 0.2s;
     transition-delay: 0.1s;
     .breadcrumbs{
@@ -1007,6 +1018,7 @@ body{
     &.island{
 
       top: calc(50vh);
+      right: auto;
       left: calc(50vw );
       height: auto;
       transform: translate(-50%,calc(-50% - $header-height)) scale(0.9);
@@ -1916,7 +1928,7 @@ body{
           }
         }
         .project-dashboard-header {
-          top: 48px;
+          top: 8px*8;
           width: calc(100% - 8px*3);
           display: flex;
           justify-content: space-between;

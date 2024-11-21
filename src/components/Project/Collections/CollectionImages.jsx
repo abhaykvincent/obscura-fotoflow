@@ -12,6 +12,7 @@ import DownloadFiles from '../../DownloadFiles/DownloadFiles';
 import { findCollectionById } from '../../../utils/CollectionQuery';
 import { openModal } from '../../../app/slices/modalSlice';
 import ImageGalleryGrid from '../../ImageGallery/ImageGalleryGrid';
+import { showAlert } from '../../../app/slices/alertSlice';
 
 const CollectionImages = ({ id, collectionId, project }) => {
     const dispatch = useDispatch();
@@ -106,10 +107,23 @@ const CollectionImages = ({ id, collectionId, project }) => {
 
     // Handle "Open in Lightroom" click
     const handleOpenInLightroom = () => {
+        if(selectedImages.length === 0) {
+            dispatch(showAlert({
+                type:'error',
+                message:'No Images Selected'
+              }
+              ))
+            return;
+        }
         const selectedFilenames = selectedImages.map((image) => image.name).join(', ');
         navigator.clipboard.writeText(selectedFilenames).then(() => {
             setCopyStatus('Copied');
             setTimeout(() => setCopyStatus('Lightroom'), 2000);
+            dispatch(showAlert({
+                type:'success',
+                message:'Link copied to clipboard'
+              }
+              ))
         });
     };
 
@@ -118,8 +132,8 @@ const CollectionImages = ({ id, collectionId, project }) => {
             <div className="dark-light-mode">
                 <div className="view-control">
                     <div className="control-wrap">
-                        <div className="controls">
-                            <div className={`control lightMode ${displayMode === 'lightMode'?'active':''} `}
+                        <div className="controls dark-controls">
+                            <div className={`control  lightMode ${displayMode === 'lightMode'?'active':''} `}
                                 onClick={() => setDisplayMode('lightMode')}
                             >
                                 <div className="icon light-view"></div>
