@@ -95,6 +95,7 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
       setProjectStatusLocal(project.status);
     }
   }, [project]);
+  
   useEffect(() => {
       console.log(projects)
   }, [projects]);
@@ -164,7 +165,7 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
             </div>
           </div>
         ) : (
-          <h1 onDoubleClick={handleNameDoubleClick}>{project.name}</h1>
+          <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
         )}
           <div className="type">{project?.type}</div>
           <div className={`project-status ${projectStatusLocal}`}>
@@ -210,16 +211,19 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
           </DropdownMenuTrigger>
           <DropdownMenuContent>
 
-            <DropdownMenuItem>New Gallery</DropdownMenuItem>
+            <DropdownMenuItem>
+            <div className="icon-show add"></div> New Gallery</DropdownMenuItem>
               <DropdownMenuSeparator />
 
               <DropdownMenuItem
                 onSelect={() => { dispatch(openModal('confirmDeleteproject'))}}>
+                <div className="icon-show delete"></div>
                 Delete Project
               </DropdownMenuItem>
 
               <DropdownMenuItem
                 onSelect={() => { handleNameDoubleClick()}}>
+                <div className="icon-show edit"></div>
                 Edit Project name
               </DropdownMenuItem>
 
