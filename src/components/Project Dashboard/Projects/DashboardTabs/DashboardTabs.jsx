@@ -30,8 +30,8 @@ function DashboardTabs({ project }) {
                       <div className="thumbnails">
                         <div className="thumbnail thumb1">
                           <div className="backthumb bthumb1">
+                            <div className="button primary outline">Create Gallery</div>
                           </div>
-                          <p>Create Gallery</p>
                         </div>
                       </div>
 
