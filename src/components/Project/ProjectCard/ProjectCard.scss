@@ -406,18 +406,6 @@
             }
         }
 
-        /* Upcoming */
-        &.upcoming {
-            .project-details .details-top .right .status-signal {
-                //background-color: $cyan-dark;
-                background-color: #00bfff;
-
-                transform: scale(1.1);
-                box-shadow: 0 1px 1px 1px #00bfff2e, 0 0 10px 5px #00ccff38, 0 0 4px 2px #00ddff6a, 0 0 20px 10px hsla(180, 100%, 50%, 0.05) !important;
-
-                animation: steady 1.5s infinite;
-            }
-        }
 
         /* In Progress */
         &.uploaded {

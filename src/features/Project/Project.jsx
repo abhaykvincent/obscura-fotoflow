@@ -167,7 +167,7 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
           <h1 onDoubleClick={handleNameDoubleClick}>{project.name}</h1>
         )}
           <div className="type">{project?.type}</div>
-          <div className="project-status">
+          <div className={`project-status ${projectStatusLocal}`}>
           <div className="project-status-select">
             <div className="project-status-select-value">
               <select
