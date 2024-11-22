@@ -180,13 +180,10 @@ body{
     &.project-page{
       display: grid;
       grid-template-rows: auto auto auto;
-      opacity: 0;
       gap: 8px*1;
       align-items: start;
       min-height: 50vh;
       padding-right: 8px;
-      transform: translateY(-8px*2);
-      animation: gallery-page-reveal 0.4s ease-out forwards;
       overflow: hidden;
       .project-page-cover{
         position: relative;
@@ -771,6 +768,7 @@ body{
     z-index: 40;
     gap: 8px*1;
     animation: gallery-page-reveal 0.1s ease-out forwards;
+    
     .client{
       display: grid;
       grid-template-columns: auto auto auto;
@@ -784,10 +782,41 @@ body{
       margin-top: 0;
       grid-row: auto;
       grid-column: auto;
+      &:hover{
+          h1{
+            &::after{
+              transition-duration: 0.1s;
+              opacity: 1;
+              top: 8px;
+            }
+          }
+      }
       
       h1{
+        position: relative;
+        display: flex;
         font-size: 1.5rem;
         white-space: nowrap;
+        &::after{
+          transition-duration: 0.1s;
+          content: 'Click to edit';
+          font-size: 0.8rem;
+            top: 0px;
+            color: $dark-0;
+          font-weight: 200;
+          position: absolute;
+          right: -8px*14;
+          margin-left: 8px*2;
+          padding-left: 8px*3;
+          opacity: 0;
+          background-color: $dark-3;
+          width: 8px*10;
+          height: 8px*2;
+          cursor: pointer;
+          background-image: url('https://img.icons8.com/?size=100&id=8192&format=png&color=FFFFFF');
+          background-size: auto 100%;
+          background-repeat: no-repeat;
+        }
       }
       .type{
 
@@ -795,6 +824,7 @@ body{
         color: $gray2-default-dark;
         margin-top: 2px;
         margin-left: 4px;
+        margin-right: 8px*2;
         font-size: 0.9rem;
       }
     }
@@ -912,11 +942,11 @@ body{
       position: relative;
       select {
         height: calc(8px * 4); // Corrected multiplication for SCSS
-        text-align: left;
-        padding-left: 8px*4;
+        text-align: center;
+        padding-left: 8px*3.5;
         // Set position relative to allow proper positioning of pseudo-element
         position: relative;
-      
+      margin: 0;
         // Arrow customization (optional)
         appearance: none; 
         
@@ -1075,7 +1105,7 @@ body{
       position: relative;
       padding-left: 0px;
       top: 0;
-      margin-left: -8px*1;
+      margin-left: 8px*0.5;
     }
     .client{
       position: relative;
@@ -1087,6 +1117,7 @@ body{
     .project-options{
       position: relative;
       top: 0;
+      right: -8px*2;
       // any with aria-haspopup="menu"
       button[aria-haspopup="menu"]{
         background-color: transparent;

@@ -223,7 +223,7 @@ const initialMessages = [
             </div>
 
           </div>
-          <WishMessages initialMessages={initialMessages} />
+          <WishMessages initialMessages={initialMessages} data={data} />
           <div className="invitation-image-gallery">
             <ImageGallery imageUrls={[
               "http://127.0.0.1:9199/v0/b/fotoflow-dev.appspot.com/o/lorem%2Fcharlotte-walker-uQais%2Fpoiuyy-cTlPq%2FIM_00077.jpg?alt=media&token=a85e9ad5-6d31-4dac-81d7-b5ef3c67366c",

@@ -43,7 +43,6 @@ export default function Galleries({}) {
   const onDeleteConfirm = () => dispatch(deleteCollection({domain,projectId:id,collectionId:targetCollectionId}))
   
    const handleDoubleClick = () => {
-
     setIsEditing(true);
     setNewName(collection.name);
   };
@@ -115,7 +114,7 @@ if(!collectionId&&defaultCollectionId!==''){
             </div>
           </div>
         ) : (
-          <h1 onDoubleClick={handleDoubleClick}>{collection.name}</h1>
+          <h1 onClick={handleDoubleClick}>{collection.name}</h1>
         )}
         <div className="type"></div>
       </div>
@@ -144,7 +143,9 @@ if(!collectionId&&defaultCollectionId!==''){
             <div className="icon options"></div>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-              <DropdownMenuItem>New Gallery</DropdownMenuItem>
+              <DropdownMenuItem>
+                <div className="icon-show add"></div>
+                New Gallery</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onSelect={() => {
@@ -152,11 +153,13 @@ if(!collectionId&&defaultCollectionId!==''){
                   dispatch(openModal('confirmDeletecollection'));
                 }}
               >
+                <div className="icon-show delete"></div>
                 Delete Gallery
               </DropdownMenuItem>
 
               <DropdownMenuItem
                 onSelect={() => { handleDoubleClick()}}>
+                <div className="icon-show edit"></div>
                 Edit Gallery name
               </DropdownMenuItem>
           </DropdownMenuContent>
