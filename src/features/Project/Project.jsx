@@ -31,7 +31,7 @@ import { DropdownMenu,
   DropdownMenuSeparator,
   DropdownMenuTrigger, } from '@radix-ui/react-dropdown-menu';
 import ShareGallery from '../../components/Modal/ShareGallery';
-import { updateProjectLastOpenedInFirestore } from '../../firebase/functions/firestore';
+import { updateProjectLastOpenedInFirestore, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
 import { ProjectCover } from '../../components/ProjectPageCover/ProjectPageCover';
 
 export default function Project() {
@@ -43,7 +43,7 @@ export default function Project() {
   const projects = useSelector(selectProjects);
   const projectsStatus = useSelector(selectProjectsStatus);
   const domain = useSelector(selectDomain);
-
+const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
   // Delete Project Modal
   const onDeleteConfirm = () => dispatch(deleteProject({domain,projectId:id}))
 
@@ -92,6 +92,7 @@ export default function Project() {
       document.title = `${project.name}'s ${project.type} | ${defaultStudio.name}`;
       updateProjectLastOpenedInFirestore(domain, project.id);
       setPinText(project?.pin);
+      setProjectStatusLocal(project.status);
     }
   }, [project]);
   useEffect(() => {
@@ -166,9 +167,35 @@ export default function Project() {
           <h1 onDoubleClick={handleNameDoubleClick}>{project.name}</h1>
         )}
           <div className="type">{project?.type}</div>
+          <div className={`project-status ${projectStatusLocal}`}>
+          <div className="project-status-select">
+            <div className="project-status-select-value">
+              <select
+              className="button secondery"
+              value={projectStatusLocal}
+              onChange={(e) => {
+                const newStatus = e.target.value;
+                    setProjectStatusLocal(newStatus);
+                     updateProjectStatusInFirestore(defaultStudio.domain,project.id, newStatus)
+                /* dispatch(updateProjectStatus({ domain, projectId: id, newStatus })); */
+              }}
+              > 
+                  <option value="draft">Draft</option>
+                  <option value="active">Active</option>
+                  <option value="selected">Selected</option>
+                  <option value="completed">Completed</option>
+                  <option value="archived">Archived</option>
+              </select>              
+              <div className="status-signal"></div>
+
+            </div>
+            </div>
+          </div>
         </div>
         <div className="project-options options">
-          
+        {/* Project starus with select with different project state */}
+       
+
         <div className={`button tertiary icon pin ${pinIconClass}`} onClick={handlePinClick}>{pinText}</div>
             <div className={`button primary share icon ${project?.uploadedFilesCount>0 ? '':'disabled'}`} 
             onClick={()=>{

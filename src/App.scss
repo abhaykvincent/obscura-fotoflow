@@ -773,13 +773,13 @@ body{
     animation: gallery-page-reveal 0.1s ease-out forwards;
     .client{
       display: grid;
-      grid-template-columns: auto auto;
+      grid-template-columns: auto auto auto;
       justify-items: start;
 
       justify-content: start;
       justify-content: center;
       align-items: center;
-      gap: 8px*1;
+      gap: 8px*2;
       position: relative;
       margin-top: 0;
       grid-row: auto;
@@ -840,10 +840,12 @@ body{
       border-radius: 4px;
       font-size: 0.9rem;
       opacity: 0.5;
-      color: $gray2-accessible-light;
+      color: $gray6-default-light;
+      border: 1px solid $dark-0;
+
       &.active{
 
-        color: $gray4-accessible-light;
+        color: $gray6-accessible-light;
         opacity: 0.9;
         background-color: $dark-1;
         &:hover{
@@ -868,7 +870,7 @@ body{
     }
     .project-options{
       display: grid;
-      grid-template-columns: auto auto auto;
+      grid-template-columns: auto auto auto auto;
       justify-content: end;
       align-items: center;
       align-self: flex-end;
@@ -904,6 +906,122 @@ body{
         
         
       }
+      
+    }
+    .project-status-select-value{
+      position: relative;
+      select {
+        height: calc(8px * 4); // Corrected multiplication for SCSS
+        text-align: left;
+        padding-left: 8px*4;
+        // Set position relative to allow proper positioning of pseudo-element
+        position: relative;
+      
+        // Arrow customization (optional)
+        appearance: none; 
+        
+        
+      }
+      
+    }
+    .project-status{
+        &.draft {
+          .status-signal {
+              //background-color: $amber-dark;
+              background-color: $gray-default-dark;
+              transform: scale(1.1);
+              box-shadow: 0 1px 1px 1px #151515, 0 0 5px 4px #ffffff16, 0 0 4px 1px #ffffff05, 0 0 20px 10px #ffffff10;
+  
+              animation: steady 1.5s infinite;
+          }
+          &:hover{
+              .project-details .details-top .right .status-signal {
+  
+                  box-shadow: 0 1px 1px 0px #030303, 0 0 10px 5px #ffffff24, 0 0 4px 1px #ffffff05, 0 0 20px 20px #ffffff07 !important
+  
+              }
+          }
+      }
+        &.archived {
+          .status-signal {
+              //background-color: $amber-dark;
+              background-color: $gray-default-dark;
+              transform: scale(1.1);
+              box-shadow: 0 1px 1px 1px #151515, 0 0 5px 4px #ffffff16, 0 0 4px 1px #ffffff05, 0 0 20px 10px #ffffff10;
+  
+              animation: steady 1.5s infinite;
+          }
+          &:hover{
+              .project-details .details-top .right .status-signal {
+  
+                  box-shadow: 0 1px 1px 0px #030303, 0 0 10px 5px #ffffff24, 0 0 4px 1px #ffffff05, 0 0 20px 20px #ffffff07 !important
+  
+              }
+          }
+      }
+      
+      /* Selecting Images */
+      &.selecting{
+          .project-details .details-top .right .status-signal {
+              background-color: $green-default-dark;
+              transform: scale(1.2);
+              box-shadow: 0 1px 1px 1px #006600, 0 0 8px 5px #00ff00b3, 0 0 5px 1px #00ff0061, 0 0 15px 10px #00ff0050;
+      
+              animation: fast-pulse 0.5s infinite;
+          }
+      
+          &:hover {
+              .project-details .details-top .right .status-signal {
+                  box-shadow: 0 1px 1px 1px #006600, 0 0 12px 6px #00ff00cc, 0 0 6px 2px #00ff0075, 0 0 20px 15px #00ff0066 !important;
+              }
+          }
+      }
+      &.selected .status-signal{
+              background-color: $yellow-accessible-dark;
+              transform: scale(1.1);
+              box-shadow: 0 1px 1px 1px #141000, 0 0 7px 4px #ffdd0026, 0 0 4px 1px #ffdd0061, 0 0 15px 10px #ffdd0017;
+              opacity: 0;
+              animation: slow-glow 2s infinite;
+          
+      
+          &:hover {
+              .project-details .details-top .right .status-signal {
+                  box-shadow: 0 1px 1px 1px #1e1900, 0 0 10px 5px #ffdd003e, 0 0 5px 2px #ffdd0075, 0 0 20px 15px #ffdd001a !important;
+              }
+          }
+      }
+      
+      // Define slow-glow animation
+      @keyframes slow-glow {
+          0%, 100% { transform: scale(1.1); opacity: 0.1;}
+          40% { transform: scale(1.15); opacity: 1;}
+      }
+      // Define fast-pulse animation for high blinking rate
+      @keyframes fast-pulse {
+          0%, 100% { transform: scale(1.2); }
+          50% { transform: scale(1.3); }
+      }
+  
+      /* Editing Images */
+      
+      
+      
+
+    }
+    .status-signal{
+      position: absolute;
+      top: 50%; // Center vertically
+      left: 8px*2; // Add some left padding for visual clarity
+      transform: translateY(-50%); // Adjust for vertical centering
+      width: calc(8px * 1);
+      height: calc(8px * 1);
+      background-color: $green-default-dark; // Ensure variable is defined
+      border-radius: 50%; // Makes it circular
+      margin-top: -4px;
+      transform: scale(1.1) translateY(-8px*0);
+      box-shadow: 0 1px 1px 1px #022002a3,0 0 10px 5px #00ff0024,0 0 4px 1px #00ff0021,0 0 20px 10px #00ff000e;
+      transition-delay: 0.1s;
+      
     }
     .client-contact{
       margin-top: 8px;
@@ -1838,8 +1956,9 @@ body{
       }
       .project-info{
         top: 0;
-        left: 8px*7;
+        left: 8px*9.5;
         width: calc(100vw - 8px*7);
+        overflow-x: scroll;
         grid-template-columns: auto 1fr auto;
         .back.highlight{
           max-width: 8px*12;
@@ -2256,10 +2375,8 @@ body{
         padding-right: 0;
       }
       .client{
-        max-width: calc(100vw - 8px*20);
         margin-right: 8px;
-        overflow: hidden;
-        grid-template-columns: auto;
+        grid-template-columns: auto auto auto;
         h1{
           white-space: nowrap;
         }
@@ -2270,7 +2387,6 @@ body{
       .project-options{
 
         .pin{
-          display: none;
         }
       }
     }

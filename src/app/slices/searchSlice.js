@@ -9,7 +9,7 @@ import { format } from 'date-fns'; // Use date-fns for date formatting
 export const searchProjects = createAsyncThunk(
     'search/searchProjects',
     async (query, { getState }) => {
-      if(query.length < 3) {
+      if(query.length < 2) {
         return { projectResults: [], collectionResults: [] };
       }
       const projects = selectProjects(getState());

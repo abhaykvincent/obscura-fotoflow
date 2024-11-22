@@ -14,8 +14,6 @@ import WishMessages from './WishMessages';
 
 const Preview = ({ editor, data,project }) => {
   console.log(editor?'Editor':'Preview')
-  console.log(data)
-  console.log(editor)
   const dispatch = useDispatch();
   const { studioName } = useParams();
   const [backgroundOptionImage, setBackgroundOptionImage] = useState('');
@@ -25,7 +23,6 @@ const Preview = ({ editor, data,project }) => {
   const galleryRef = useRef(null);
   useEffect(() => {
 
-  console.log(data)
     let selectedBackground = '';
     if (!data?.background) return;
     if (data?.background.value === 'background-option-1') {
@@ -189,9 +186,9 @@ const initialMessages = [
                   </div>
                   <div className="right">
                     <h3 className={`${event.name ? 'event-type' : 'dummy'}`} style={{ color: data?.backgroundColor + "ba" }}>{event.name}</h3>
-                    <p className="event-location">at {event.location} at {formatTime(event.time)}</p>
+                    <p className="event-location">at {event?.location} at {formatTime(event?.time)}</p>
 
-                    <a href={getGoogleMapsUrl(event.location)} target="_blank" rel="noopener noreferrer"  className="button  secondary icon location"
+                    <a href={getGoogleMapsUrl(event?.location||'')} target="_blank" rel="noopener noreferrer"  className="button  secondary icon location"
                       style={{ 
                         background: data?.backgroundColor + "11", 
                         border: '1px solid ' + data?.backgroundColor + '00'}}

@@ -74,7 +74,7 @@
         
 
     .screen{
-      width: 8px*48;
+      width: 100%;
         min-height: calc(100vh - 8px*49);
         border: 8px*2 solid white;
         border-top: 8px*3 solid white;
@@ -325,6 +325,7 @@
       .screen-wrap{
         .screen{
 
+        width: 8px*48;
           max-height: calc(100vh - 8px*20);
           overflow-y: scroll;
           box-shadow: -4px 0px  1px 1px black, -4px 0px  4px 2px rgba(255, 255, 255, 0.1);
