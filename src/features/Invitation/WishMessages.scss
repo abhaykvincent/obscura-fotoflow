@@ -7,6 +7,9 @@
     input{
         background-color: white;
     }
+    .wish-title{
+        margin: 8px*2 8px;
+    }
     ul{
         display: flex;
         width: 100%;
@@ -22,12 +25,26 @@
             min-width: 8px*20;
             background-color: $light-1;
             border-radius: 4px;
-            border: 1px solid  $light-0;
-            box-shadow: 1px 1px 1px $gray-accessible-dark;
+            font-size: 0.9rem;
+            border: 1px solid  rgba(255, 255, 255, 0.2);
+            box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+            transform: rotate(359deg);
         }
     }
     .message-input{
         display: grid;
         gap: 8px;
+        align-items: center;
+        input{
+            width: 100%;
+            &.wish-input{
+
+                height: 8px*8;
+            }
+        }
+        button{
+
+            color: white;
+        }
     }
 }

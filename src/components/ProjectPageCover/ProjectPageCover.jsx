@@ -1,19 +1,22 @@
-import { doc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { db } from "../../firebase/app";
-import { selectUserStudio } from "../../app/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { db, storage } from "../../firebase/app";
+import { doc, updateDoc } from "firebase/firestore";
+import { selectUserStudio } from "../../app/slices/authSlice";
 import { showAlert } from "../../app/slices/alertSlice";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { setCoverPhotoInFirestore } from "../../firebase/functions/firestore";
+import { updateProjectCover } from "../../app/slices/projectsSlice";
 
 export const ProjectCover = ({ project }) => {
     const dispatch = useDispatch();
     const currentStudio = useSelector(selectUserStudio);
-    const [isSetFocusButton, setIsSetFocusButton] = useState(false);
-    const [focusPointLocal, setFocusPointLocal] = useState({ x: 0.5, y: 0.5 });
+
     const [focusPoint, setFocusPoint] = useState( { x: 0.5, y: 0.5 });
+    const [focusPointLocal, setFocusPointLocal] = useState({ x: 0.5, y: 0.5 });
+    const [isSetFocusButton, setIsSetFocusButton] = useState(false);
 
     const setFocusButtonClick = (e) => {
-        // fix: this click affecting the click on image 
         e.stopPropagation();
         // show indicator when click
         setIsSetFocusButton(true);
@@ -38,8 +41,6 @@ export const ProjectCover = ({ project }) => {
         });
         
     };
-
-
     const handleFocusClick = (e) => {
 
         if (isSetFocusButton) {
@@ -53,16 +54,42 @@ export const ProjectCover = ({ project }) => {
             setFocusPointLocal(newFocusPoint);
         }
     };
+    const handleCoverChange = async (e) => {
+        e.stopPropagation();
+        const file = e.target.files[0]; // Get the selected file
+        if (!file) return;
+    
+        try {
+            // Define the storage path
+            const storageRef = ref(storage, `studios/${currentStudio.domain}/projects/${project.id}/cover.jpg`);
+    
+            // Upload the file to Firebase Storage
+            await uploadBytes(storageRef, file);
+    
+            // Get the download URL
+            const downloadURL = await getDownloadURL(storageRef);
+    
+            // Dispatch the thunk to update the cover photo and focus point
+            const focusPoint = { x: 0.5, y: 0.5 }; // Default focus point for a new cover
+            dispatch(updateProjectCover({ domain: currentStudio.domain, projectId: project.id, newCoverUrl: downloadURL, focusPoint }));
+            
+            dispatch(showAlert({ type: "success", message: "Cover photo updated successfully!" }));
+        } catch (error) {
+            console.error("Error changing cover photo:", error);
+            dispatch(showAlert({ type: "error", message: "Failed to update cover photo. Please try again." }));
+        }
+    };
+
     useEffect(() => {
         setFocusPointLocal(focusPoint);
-        console.log(focusPointLocal)
     }, [focusPoint]);
-    useEffect(() => {
-        console.log(focusPointLocal)
-    }, [focusPointLocal]);
     useEffect(() => {
         setFocusPoint(project.focusPoint);
     }, [project.focusPoint]);
+
+    useEffect(() => {
+        console.log(project)
+    }, [project]);
     
     return (
         <div
@@ -76,23 +103,33 @@ export const ProjectCover = ({ project }) => {
             onClick={handleFocusClick}
         >
             {
-                !isSetFocusButton ? <div className="cover-tools">
+            !isSetFocusButton ? 
+                <div className="cover-tools">
                     <div
                         className="button transparent-button secondary icon set-focus"
                         onClick={setFocusButtonClick}
                     >Set focus</div>
-                    <div className="button transparent-button secondary icon image">Change Cover</div>
+                    <div className="button transparent-button secondary icon image">
+                        <label htmlFor={`change-cover-${project.id}`} style={{ cursor: "pointer" }}>
+                            Change Cover
+                        </label>
+                        <input
+                            id={`change-cover-${project.id}`}
+                            type="file"
+                            accept="image/*"
+                            style={{ display: "none" }}
+                            onChange={handleCoverChange}
+                        />
                     </div>
-                    :
-                    <div className="cover-tools">
-                        <div
-                            className="button transparent-button primary icon set-focus"
-                            onClick={ () => saveFocusPoint(focusPointLocal)}
-                        >
-                            Save
-                        </div>
-                    </div>
-                }
+                </div>
+                :
+                <div className="cover-tools">
+                    <div
+                        className="button transparent-button primary icon set-focus"
+                        onClick={ () => saveFocusPoint(focusPointLocal)}
+                    >Save</div>
+                </div>
+            }
             {isSetFocusButton && project?.projectCover && (
                 <div
                     className="focus-indicator"

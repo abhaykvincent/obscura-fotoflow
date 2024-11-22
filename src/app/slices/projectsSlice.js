@@ -479,6 +479,32 @@ const projectsSlice = createSlice({
           return project;
         });
       });
+
+      // update project cover
+      builder
+        // Handle pending state
+        .addCase(updateProjectCover.pending, (state) => {
+            state.loading = true;
+        })
+        // Handle fulfilled state
+        .addCase(updateProjectCover.fulfilled, (state, action) => {
+            const { projectId, newCoverUrl, focusPoint } = action.payload;
+            if(projectId){
+                state.data = state.data.map((project) => {
+                    if (project.id === projectId) {
+                        return { ...project, projectCover: newCoverUrl, focusPoint };
+                    }
+                    return project;
+                });
+            }
+            state.loading = false;
+            state.error = null;
+        })
+        // Handle rejected state
+        .addCase(updateProjectCover.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
   },
 });
 
