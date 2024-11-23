@@ -7,13 +7,14 @@ import { showAlert } from "../../app/slices/alertSlice";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { setCoverPhotoInFirestore } from "../../firebase/functions/firestore";
 import { updateProjectCover } from "../../app/slices/projectsSlice";
+import { convertMegabytes } from "../../utils/stringUtils";
 
 export const ProjectCover = ({ project }) => {
     const dispatch = useDispatch();
     const currentStudio = useSelector(selectUserStudio);
 
-    const [focusPoint, setFocusPoint] = useState( { x: 0.5, y: 0.5 });
-    const [focusPointLocal, setFocusPointLocal] = useState({ x: 0.5, y: 0.5 });
+    const [focusPoint, setFocusPoint] = useState( project?.focusPoint);
+    const [focusPointLocal, setFocusPointLocal] = useState(project?.focusPoint);
     const [isSetFocusButton, setIsSetFocusButton] = useState(false);
 
     const setFocusButtonClick = (e) => {
@@ -102,6 +103,39 @@ export const ProjectCover = ({ project }) => {
             }}
             onClick={handleFocusClick}
         >
+            <div className="cover-footer">
+                <div className="static-tools bottom">
+                    {/* <div className="cover-info project-views-count">
+                        <div className="icon-show view"></div>
+                        <p>1.6K <span>Views</span></p>
+                    </div> */}
+                    <div className="cover-info project-size">
+                        <div className="icon-show storage"></div>
+                        <p>{ convertMegabytes(project?.totalFileSize)} <span>. Primary</span> </p>
+                    </div>
+                    <div className="cover-info project-size">
+                        <div className="icon-show image"></div>
+                        <p>
+                            {project?.uploadedFilesCount} <span>Photos . </span>
+                            {project?.collections.length} <span>Galleries</span>
+                        </p>
+                    </div>
+                </div>
+                
+            </div>
+            <div className="static-tools top">
+                    <div className="cover-info project-expiry">
+                        <p>Expires 
+                            <span> in </span> 
+                            {
+                                project?.createdAt ? 
+                                Math.ceil(((new Date(project?.createdAt).getTime() + 360 * 24 * 60 * 60 * 1000) - Date.now()) / (1000 * 60 * 60 * 24))
+                                : 0
+                            } Days</p>
+                        <div className="icon-show expire"></div>
+
+                    </div>
+                </div>
             {
             !isSetFocusButton ? 
                 <div className="cover-tools">

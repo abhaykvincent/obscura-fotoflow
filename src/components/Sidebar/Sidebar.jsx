@@ -55,7 +55,7 @@ function Sidebar() {
           </div>
         </Link>
         <Link to={`/${studioName}/bookings`}>
-          <div className={`menu store ${location.pathname === `/${studioName}/bookings` ? 'active' : ''} disabled`}>
+          <div className={`menu booking ${location.pathname === `/${studioName}/bookings` ? 'active' : ''} disabled`}>
             <div className="icon"></div>
             <div className="label">Bookings</div>
           </div>

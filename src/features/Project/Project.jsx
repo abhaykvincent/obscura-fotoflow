@@ -168,7 +168,12 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
           <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
         )}
           <div className="type">{project?.type}</div>
-          <div className={`project-status ${projectStatusLocal}`}>
+          
+        </div>
+        <div className="project-options options">
+        {/* Project starus with select with different project state */}
+       
+        <div className={`project-status ${projectStatusLocal}`}>
           <div className="project-status-select">
             <div className="project-status-select-value">
               <select
@@ -192,11 +197,6 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
             </div>
             </div>
           </div>
-        </div>
-        <div className="project-options options">
-        {/* Project starus with select with different project state */}
-       
-
         <div className={`button tertiary icon pin ${pinIconClass}`} onClick={handlePinClick}>{pinText}</div>
             <div className={`button primary share icon ${project?.uploadedFilesCount>0 ? '':'disabled'}`} 
             onClick={()=>{

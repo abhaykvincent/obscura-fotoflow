@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
 import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
-import { doc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/app';
 
 
@@ -153,6 +153,24 @@ export const updateProjectCover = createAsyncThunk(
       return { projectId, newCoverUrl, focusPoint };
   }
 );
+// Sub Projects
+export const createSubProject = createAsyncThunk(
+  "projects/createSubProject",
+  async ({ domain, parentProjectId, subProjectData }) => {
+    const subProjectsCollectionRef = collection(
+      db,
+      "studios",
+      domain,
+      "projects",
+      parentProjectId,
+      "subProjects"
+    );
+
+    const subProjectDocRef = await addDoc(subProjectsCollectionRef, subProjectData);
+    return { parentProjectId, subProjectId: subProjectDocRef.id, subProjectData };
+  }
+);
+
 
 
 
@@ -505,6 +523,21 @@ const projectsSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
+
+        builder
+      .addCase(createSubProject.fulfilled, (state, action) => {
+        const { parentProjectId, subProjectId, subProjectData } = action.payload;
+        const parentProject = state.projects.find((p) => p.id === parentProjectId);
+        if (parentProject) {
+          if (!parentProject.subProjects) {
+            parentProject.subProjects = [];
+          }
+          parentProject.subProjects.push({
+            id: subProjectId,
+            ...subProjectData,
+          });
+        }
+      });
   },
 });
 

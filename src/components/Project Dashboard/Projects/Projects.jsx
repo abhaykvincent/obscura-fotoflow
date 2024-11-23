@@ -11,6 +11,7 @@ import DashboardPayments from '../Payments/Payments';
 import DashboardExpances from '../Expances/Expances';
 import DashboardEvents from '../Events/Events';
 import DashboardTabs from './DashboardTabs/DashboardTabs';
+import AddProjectModal from '../../Modal/AddProject';
 
 function DashboardProjects({project}){
   const dispatch =useDispatch()
@@ -115,7 +116,18 @@ function DashboardProjects({project}){
 </>
     ))
     :<>
+    <AddProjectModal />
       <DashboardTabs project={project} />
+      <div className="sub-projects">
+        <h4 className='heading-section heading'>Sub Projects</h4>
+        <div className="sub-projects-body">
+          <div className="actions">
+            <div className="button primary icon add"
+                onClick={()=>dispatch(openModal('createProject'))}
+            >New Sub Project</div>
+        </div>
+        </div>
+      </div>
     </>
     }
     </>
