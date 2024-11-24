@@ -26,9 +26,9 @@ function DashboardProjects({project}){
       <div className="tools">
         
       <Link to={`/${studioName}/invitation-creator/${project.id}`}>
-        <div className="button secondary  icon  invitation" > Invitation</div>
+        <div className="button secondary  icon  invitation disabled" > Invitation</div>
       </Link>
-        <div className="button secondary icon user" >Client</div>
+       {/*  <div className="button secondary icon user disabled" >Client</div> */}
       </div>
       <div className="view-cta">
 
@@ -122,9 +122,9 @@ function DashboardProjects({project}){
         <h4 className='heading-section heading'>Sub Projects</h4>
         <div className="sub-projects-body">
           <div className="actions">
-            <div className="button primary icon add"
+            <div className="button primary outline icon add"
                 onClick={()=>dispatch(openModal('createProject'))}
-            >New Sub Project</div>
+            >Sub-project</div>
         </div>
         </div>
       </div>

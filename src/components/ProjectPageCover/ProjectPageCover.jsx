@@ -111,12 +111,17 @@ export const ProjectCover = ({ project }) => {
                     </div> */}
                     <div className="cover-info project-size">
                         <div className="icon-show storage"></div>
-                        <p>{ convertMegabytes(project?.totalFileSize)} <span>. Primary</span> </p>
+                        <p>{ convertMegabytes(project?.totalFileSize)} <span></span> </p>
                     </div>
                     <div className="cover-info project-size">
                         <div className="icon-show image"></div>
                         <p>
-                            {project?.uploadedFilesCount} <span>Photos . </span>
+                            {project?.uploadedFilesCount} <span>Photos  </span>
+                        </p>
+                    </div>
+                    <div className="cover-info project-size">
+                        <div className="icon-show folder"></div>
+                        <p>
                             {project?.collections.length} <span>Galleries</span>
                         </p>
                     </div>

@@ -325,6 +325,12 @@
         background-size: auto 100%;
         background-image: url('https://img.icons8.com/?size=200&id=XANIzpZcz8xx&format=png&color=FFFFFF');
     }
+    &.folder{
+        height: 8px*2.5;
+        width: 8px*3;
+        background-size: auto 90%;
+        background-image: url('https://img.icons8.com/?size=100&id=CXSefwAlx5SL&format=png&color=FFFFFF');
+    }
     &.expire{
         height: 8px*2.5;
         width: 8px*3;
@@ -354,7 +360,7 @@ input,select{
   }
 .disabled{
     color: $gray5-accessible-light;
-    opacity: 0.3;
+    opacity: 0.3 !important;
     *{
 
         cursor: not-allowed !important;
