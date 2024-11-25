@@ -11,8 +11,19 @@ if (process.env.NODE_ENV === 'development') {
     window.firebase.DEBUG = true;  // Enable verbose logging
 }
 
-// Fotoflow-dev
+// Monalisa Studio
 const firebaseConfig = {
+    apiKey: "AIzaSyAGoygHPVwkRh9x8tJIn_aKqfu38B7QGN0",
+    authDomain: "monalisa-studio.firebaseapp.com",
+    projectId: "monalisa-studio",
+    storageBucket: "monalisa-studio.firebasestorage.app",
+    messagingSenderId: "879876177591",
+    appId: "1:879876177591:web:e750b669a1128585279732",
+    measurementId: "G-K0JNH4BCS5"
+  };
+  
+// Fotoflow-dev !!! Storage Full
+/* const firebaseConfig = {
     apiKey: "AIzaSyDmAGZJTd1xSofgYgyQeGOYP2dSiLE646U",
     authDomain: "fotoflow-dev.firebaseapp.com",
     projectId: "fotoflow-dev",
@@ -20,7 +31,7 @@ const firebaseConfig = {
     messagingSenderId: "180761954293",
     appId: "1:180761954293:web:2756c328ad6f8d792e82bc",
     measurementId: "G-HMJWHV4W3X"
-  };
+  }; */
 
 // Obscura
 /*   const firebaseConfig = {

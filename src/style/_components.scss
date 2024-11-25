@@ -503,10 +503,11 @@ border: 0px solid #535353;
     align-items: center;
     justify-content: center;
     position: absolute;
-    top: 8px*8;
-    left: $sidebar-width + 8px*2;
-    width: calc(100% - $sidebar-width - 8px*4);
-    height: calc(100vh - $header-height - 8px*6);
+    top: -4px;
+    left: -8px;
+    width: calc(100vw );
+    height: calc(100vh );
+    font-size: 1rem;
     margin: 8px;
     padding: 8px*4;
     background-color: $dark-3;
@@ -517,13 +518,28 @@ border: 0px solid #535353;
         height: 8px*3;
         width: 8px*3;
         margin-right: 8px;
-        background-image: url('https://media.tenor.com/t5DMW5PI8mgAAAAi/loading-green-loading.gif');
+        background-image: url('../assets/img/gifs/loading-green-loading.gif');
         background-position: center;
         background-size: auto 80%;
         opacity: 0.5;
     }
     .loading-message{
         color: $gray-default-dark;
+    }
+    &.lightMode{
+        top: 8px*0;
+        left: 8px*0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 100;
+        margin: 0;
+        background-color: $light-2;
+        border: 1px solid transparent;
+        .loading-message{
+            color: $gray4-default-dark;
+        }
+        
+
     }
 }
 

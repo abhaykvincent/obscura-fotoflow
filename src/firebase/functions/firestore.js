@@ -133,6 +133,7 @@ catch (error) {
 // Function to fetch a specific project from a specific studio
 export const fetchProject = async (domain, projectId) => {
     console.log(domain, projectId)
+
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
     const projectDoc = doc(projectsCollectionRef, projectId);
@@ -158,6 +159,7 @@ export const fetchProject = async (domain, projectId) => {
             throw new Error('Collection does not exist.');
         }
     }));
+
     
     return projectData;
 };

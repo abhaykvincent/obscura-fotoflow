@@ -10,7 +10,7 @@ import Sidebar from './components/Sidebar/Sidebar';
 import UploadProgress from './components/UploadProgress/UploadProgress';
 import Subscription from './components/Subscription/Subscription';
 import AddProjectModal from './components/Modal/AddProject';
-import Loading from './components/Loading/Loading';
+import Loading, { LoadingLight } from './components/Loading/Loading';
 // Features
 import Home from './features/Home/Home';
 import Project from './features/Project/Project';
@@ -61,7 +61,7 @@ export default function App() {
   const navigate = useNavigate();
 
   const { keyMap, handlers } = useShortcutsConfig();
-  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const isAuthenticated = useSelector(selectIsAuthenticated) || true;
   const user = useSelector(selectUser);
   const isLoading = useSelector(selectProjectsStatus);
   const projects = useSelector(selectProjects);
@@ -114,7 +114,7 @@ export default function App() {
       (<>{ !isPublicPage() && <LoginModal/> }</>)}
       {
         isLoading!== 'succeeded' && isAuthenticated  ? (
-           (!isPublicPage()) &&  <Loading/>
+           (!isPublicPage()) ?  <Loading/> : <LoadingLight/>
         ) : (
           <Routes>
             {isAuthenticated && (
