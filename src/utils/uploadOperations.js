@@ -18,8 +18,8 @@ const compressImages = async (files) => {
     const startTime = Date.now()
     const compressedFiles = await Promise.all(files.map(async (file) => {
         const options = {
-            maxSizeMB: 1, // Max size of each file in MB
-            maxWidthOrHeight: 1920, // Resize image to max 1920px width or height
+            maxSizeMB: 0.2, // Max size of each file in MB
+            maxWidthOrHeight: 720, // Resize image to max 1920px width or height
             useWebWorker: true,
         };
         try {

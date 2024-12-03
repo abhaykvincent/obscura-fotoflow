@@ -47,6 +47,9 @@ export default function ShareProject() {
       trackEvent('gallery_viewed', {
         project_id: projectId
       });
+      if(!isAuthenticated || user=='no-studio-found'){
+        setUserType('Guest');
+      }
     } catch (error) {
       console.error('Failed to fetch project:', error);
     }
@@ -69,9 +72,7 @@ export default function ShareProject() {
       }, 2000);
     });
     //fetchImagesData()
-    if(!isAuthenticated || user=='no-studio-found'){
-      setUserType('Guest');
-    }
+    
 
   }, []);
 

@@ -97,7 +97,7 @@ export const ProjectCover = ({ project }) => {
             className={`project-page-cover ${isSetFocusButton ? "focus-button-active" : ""} ${project?.projectCover ? "cover-show" : "cover-hide"}`}
             style={{ // Ensure the container height
                 
-                backgroundImage: project?.projectCover ?`url(${project.projectCover.replace(/\(/g, '%28').replace(/\)/g, '%29')})` : `url('https://img.icons8.com/?size=256&id=UVEiJZnIRQiE&format=png&color=1f1f1f')`,
+                backgroundImage: project?.projectCover ?`url(${project.projectCover.replace(/\(/g, '%28').replace(/\)/g, '%29').split('&token=')[0]})` : `url('https://img.icons8.com/?size=256&id=UVEiJZnIRQiE&format=png&color=1f1f1f')`,
                 backgroundPosition: `${focusPointLocal?.x * 100}% ${focusPointLocal?.y * 100}%`,
                 backgroundSize: `${project?.projectCover ? "cover":"auto 50% "}`, // Ensure image scaling
             }}

@@ -201,22 +201,16 @@
 .project-dashboard{
 	position: relative;
 	display: grid;
+	grid-template-rows: 8px*30 auto;
 	align-content: normal;
 	justify-content: start;
 	justify-items: start;
 	align-items: start;
-<<<<<<< Updated upstream
 	padding: 8px*2;
-<<<<<<< Updated upstream
-=======
 	min-height: calc(100vh - 8px*57);
-=======
-	padding: 8px*2 8px*01;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 	margin-top: 8px*0;
 	column-gap: 8px*3;
-	row-gap: 8px*5;
+	row-gap: 8px*0;
 	.headings{
 		display: grid;
 		grid-template-columns: auto auto;

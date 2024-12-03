@@ -214,12 +214,14 @@ body{
           z-index: 10;
           bottom: 8px*2;
           right: 8px*3;
-          transition-duration: 0.1s;
+              transition-duration: 0.1s;
           .button{
+            &:hover{
+              opacity: 1;
+            }
             @for $i from 1 through 3 {
               &:nth-child(#{$i}) {
               // slight transition delay increment
-              transition-delay: 0.05s * $i;
               transform: translateY(8px*8);
               opacity: 0;
               }
@@ -237,8 +239,9 @@ body{
           display: flex;
           gap: 0px;
           right: auto;
-          left: 8px*0.5;
-          bottom: 8px*0.5;
+          left: 8px*2;
+          bottom: 8px*1.5;
+          opacity: 0.5;
           .cover-info{
             display: flex;
             gap: 4px;
@@ -298,14 +301,14 @@ body{
         &:hover{
           .cover-tools{
             .button{
-              opacity: 1;
+              opacity: 0.9;
               &:hover{
                 opacity: 1;
               }
               @for $i from 1 through 3 {
                 &:nth-child(#{$i}) {
                 // slight transition delay increment
-                transition-delay: 0.1s * 1/$i;
+                transition-delay: 0.4s + 0.12s * $i;
                 
                 transition-duration: 0.1s;
 
@@ -1024,16 +1027,21 @@ body{
     }
     .project-status-select-value{
       position: relative;
+      margin-right: 8px*1;
+
       select {
+        width: auto;
         height: calc(8px * 4); // Corrected multiplication for SCSS
         text-align: center;
-        padding-left: 8px*3.5;
+        padding-left: 8px*3.7;
+        padding-right: 8px*3.5;
         // Set position relative to allow proper positioning of pseudo-element
         position: relative;
         margin: 0;
         // Arrow customization (optional) 
-        
-        
+        appearance: none;
+        background: url('https://img.icons8.com/?size=100&id=85327&format=png&color=FFFFFF') no-repeat right 2px center;
+        background-size: 20% auto;
         
       }
       select:after{
@@ -1416,7 +1424,7 @@ body{
     }
     .actions{
       display: flex;
-      justify-content: center;
+      justify-content: flex-end;
       width: 100%;
       position: absolute;
       bottom: 0px;

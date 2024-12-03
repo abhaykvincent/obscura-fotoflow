@@ -96,7 +96,7 @@ function DashboardProjects({project}){
                 style={
                   {
                     backgroundImage:
-                    `url(${project.projectCover!==""?encodeURI(project.projectCover):'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`
+                    `url(${project.projectCover!==""?encodeURI(project.projectCover).split('&token=')[0]:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`
                   }}
                 ></div>
               </div>
@@ -122,7 +122,7 @@ function DashboardProjects({project}){
         <h4 className='heading-section heading'>Sub Projects</h4>
         <div className="sub-projects-body">
           <div className="actions">
-            <div className="button primary outline icon add"
+            <div className="button tertiary outline icon add"
                 onClick={()=>dispatch(openModal('createProject'))}
             >Sub-project</div>
         </div>

@@ -192,7 +192,7 @@ const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
                     </div>
                   </div>
                 </div>
-                <div className="photo" style={{ backgroundImage: `url("${fileUrl.url}")` }} alt={`File ${index}`}>
+                <div className="photo" style={{ backgroundImage: `url("${fileUrl.url.split('&token=')[0]}")` }} alt={`File ${index}`}>
                 </div>
               </div>
             ))}
