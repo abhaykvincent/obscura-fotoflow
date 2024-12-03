@@ -61,7 +61,7 @@ export default function App() {
   const navigate = useNavigate();
 
   const { keyMap, handlers } = useShortcutsConfig();
-  const isAuthenticated = useSelector(selectIsAuthenticated) || true;
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
   const isLoading = useSelector(selectProjectsStatus);
   const projects = useSelector(selectProjects);
