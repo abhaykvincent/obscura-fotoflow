@@ -14,12 +14,11 @@ import { addUploadedFilesToFirestore } from "../firebase/functions/firestore";
 import imageCompression from 'browser-image-compression';
 import { addAllFileSizesToMB } from "./fileUtils";
 import { doc, updateDoc } from "firebase/firestore";
-const compressImages = async (files) => {
+const compressImages = async (files,maxWidthOrHeight) => {
     const startTime = Date.now()
     const compressedFiles = await Promise.all(files.map(async (file) => {
         const options = {
-            maxSizeMB: 0.2, // Max size of each file in MB
-            maxWidthOrHeight: 720, // Resize image to max 1920px width or height
+            maxWidthOrHeight: maxWidthOrHeight, // Resize image to max 1920px width or height
             useWebWorker: true,
         };
         try {
@@ -45,7 +44,7 @@ export const uploadFile = (domain,id, collectionId, file,sliceIndex,setUploadLis
     let retries = 0;
 
     return new Promise((resolve, reject) => {
-        
+        console.log(collectionId)
         const storageRef = ref(storage, `${domain}/${id}/${collectionId}/${file.name}`);
         let uploadTask;
 
@@ -62,20 +61,23 @@ export const uploadFile = (domain,id, collectionId, file,sliceIndex,setUploadLis
                     //setUploadList aarraay of filee object  matches file.name with the progress of the upload
                     console.log(`%c Uploading ${file.name} ${progress}%`, 'color:#0099ff');
 
-                    setUploadLists((prevState) => {
-                        return prevState.map((fileProgress) => {
-                            if (fileProgress.name === file.name) {
-                                return {
-                                    name: file.name,
-                                    size: file.size,
-                                    type: file.type,
-                                    status: 'uploading',
-                                    progress: Math.round(progress)
+                    // if collectionId is not ending in -thumb 
+                    if (!collectionId.endsWith('-thumb')) {
+                        setUploadLists((prevState) => {
+                            return prevState.map((fileProgress) => {
+                                if (fileProgress.name === file.name) {
+                                    return {
+                                        name: file.name,
+                                        size: file.size,
+                                        type: file.type,
+                                        status: 'uploading',
+                                        progress: Math.round(progress)
+                                    }
                                 }
-                            }
-                            return fileProgress;
+                                return fileProgress;
+                            })
                         })
-                    })
+                    }
                     
                 },
                 (error) => {
@@ -108,11 +110,20 @@ export const uploadFile = (domain,id, collectionId, file,sliceIndex,setUploadLis
                             return fileProgress;
                         })
                     }) */
-                    resolve({
-                        name: file.name,
-                        lastModified:file.lastModified,
-                        url
-                    }); // Resolve the promise when the file is successfully uploaded
+                    if (collectionId.endsWith('-thumb')) {
+                        resolve({
+                            name: 'thumb-'+file.name,
+                            lastModified:file.lastModified,
+                            url
+                        }); // Resolve the promise when the file is successfully uploaded
+                    }
+                    else{
+                        resolve({
+                            name: file.name,
+                            lastModified:file.lastModified,
+                            url
+                        }); // Resolve the promise when the file is successfully uploaded
+                    }
                 }
             );
         } 
@@ -161,38 +172,53 @@ export const uploadFile = (domain,id, collectionId, file,sliceIndex,setUploadLis
 };
 // Upload a slice of files with sliceSize : 5
 const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
-    //update uploadList files that maatches current slice eaach files status as initializing
-    /* setUploadLists(prevState => {
-        return prevState.map((file, index) => {
-            if (slice[index] && file.name === slice[index].name) {
-                console.log('%c ' + file.name + ' file status changed to initializing', 'color:yellow');
-                return {
-                    name: file.name,
-                    size: file.size,
-                    type: file.type,
-                    status: 'initializing'
+
+    // update uploadList files that maatches current slice eaach files status as initializing
+    /* 
+        setUploadLists(prevState => {
+            return prevState.map((file, index) => {
+                if (slice[index] && file.name === slice[index].name) {
+                    console.log('%c ' + file.name + ' file status changed to initializing', 'color:yellow');
+                    return {
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                        status: 'initializing'
+                    }
                 }
-            }
-            return {file};
-        })
-    }) */
+                return {file};
+            })
+        }) 
+    */
         
-        // find slice file size
         
-        const compressedFiles = await compressImages(slice);
+    try {
+        // Compress images for full and thumbnail versions
+        const [compressedFiles, compressedThumbnailFiles] = await Promise.all([
+            compressImages(slice, 720), // Full-sized images
+            compressImages(slice, 300), // Thumbnails
+        ]);
 
-       
-        // slice file compression speed
+        // Generate upload promises for files and thumbnails
+        const uploadPromises = compressedFiles.map((file, sliceIndex) => 
+            uploadFile( domain, id, collectionId, file, sliceIndex, setUploadLists)
+        );
         
-        const uploadPromises = compressedFiles.map((file,sliceIndex) => {
-        return uploadFile(domain,id, collectionId, file,sliceIndex,setUploadLists);
-    });
+        const thumbnailUploadPromises = compressedThumbnailFiles.map((file, sliceIndex) => 
+            uploadFile( domain, id, `${collectionId}-thumb`, file, sliceIndex, setUploadLists)
+        );
 
-    // Use Promise.all to initiate all file uploads simultaneously
-    const results = await Promise.all(uploadPromises);
-    
-    return results;
+        // Combine all upload promises and resolve them concurrently
+        const results = await Promise.all([...uploadPromises, ...thumbnailUploadPromises]);
+        
+        return results;
+    } catch (error) {
+        console.error("Error during slice upload:", error);
+        throw error; // Rethrow to allow the caller to handle the error
+    }
 };
+        
+
 
 // Upload ENTRY POINT
 export const handleUpload = async (domain,files, id, collectionId,importFileSize, setUploadLists,setUploadStatus, retries = 2) => {
@@ -238,8 +264,14 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
             results.forEach((result, index) => {
                 if (result.status === 'rejected')
                     failedFiles.push(files[index]);
-                else
-                    uploadedFiles.push(result);
+                else{
+                    // if name does not contails thumb- then 
+                    if(result.name.includes('thumb-')){
+                    }
+                    else{
+                        uploadedFiles.push({...result, thumbAvailable:true});
+                    }
+                }
             });
 
             if (failedFiles.length == 0) {

@@ -72,6 +72,9 @@ export default function App() {
       setUserType('Photographer');
     }
   }, [isAuthenticated]);
+  useEffect(() => {
+    console.log(isLoading)
+  }, [isLoading]);
  
   // ON Render
   useEffect(() => {
@@ -103,7 +106,7 @@ export default function App() {
     <div className="App">
       <HotKeys keyMap={keyMap} handlers={handlers}>
       {/* <SupportIcon/> */}
-      {isAuthenticated && user!=='no-studio-found' && (!isPublicPage())? (
+      {isAuthenticated && (!isPublicPage())? (
         <>
           <Header />
           <Sidebar />
@@ -113,8 +116,8 @@ export default function App() {
       ) : 
       (<>{ !isPublicPage() && <LoginModal/> }</>)}
       {
-        isLoading!== 'succeeded' && isAuthenticated  ? (
-           (!isPublicPage()) ?  <Loading/> : <LoadingLight/>
+        isLoading!== 'succeeded' && isAuthenticated && user!=='no-studio-found'  ? (
+          isLoading!=='login' && (!isPublicPage()) ?  <Loading/> : <LoadingLight/>
         ) : (
           <Routes>
             {isAuthenticated && (
@@ -148,7 +151,7 @@ export default function App() {
             </>
             
             )}
-              <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/onboarding" element={<Onboarding />} />
 
             <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>
             <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>

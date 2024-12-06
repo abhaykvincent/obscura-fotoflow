@@ -135,8 +135,16 @@ export default function ShareProject() {
       </div>
       <div className="shared-collection">
         <ShareGallery images={imageUrls} projectId={projectId} collectionId={collectionId}/>
-        <p>Other Collections</p>
-        <CollectionsPanel/>
+        
+        {/* !!! HIGH Cloud Cost Trigger */}
+        {/* DONOT USE until we have a better way to handle this */}
+        {/* <p className='align-center'>Other Collections</p>
+        {
+          project.collections.length>=1 &&
+            <CollectionsPanel/>
+        }
+        */}
+
 
         {
           project.type !== "FUNERAL" && <p className='studio-tag-line'>{`smile with ${studioName}`}</p>

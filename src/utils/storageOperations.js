@@ -85,17 +85,17 @@ try {
 
     // Iterate through projectList prefixes (collections)
     for (const collectionRef of projectList.prefixes) {
-    const collectionList = await list(collectionRef);
+        const collectionList = await list(collectionRef);
 
-    // Iterate through images in each collection
-    for (const imageRef of collectionList.items) {
-        await deleteObject(imageRef);
-        console.log('Image deleted successfully.');
-    }
+        // Iterate through images in each collection
+        for (const imageRef of collectionList.items) {
+            await deleteObject(imageRef);
+            console.log('Image deleted successfully.');
+        }
 
-    // Delete the collection directory after deleting its contents
-    await deleteObject(collectionRef);
-    console.log('Collection directory deleted successfully.');
+        // Delete the collection directory after deleting its contents
+        await deleteObject(collectionRef);
+        console.log('Collection directory deleted successfully.');
     }
 
     // Delete the project directory after deleting its contents

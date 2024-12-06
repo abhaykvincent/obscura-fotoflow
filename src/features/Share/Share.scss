@@ -11,6 +11,12 @@
 }
 
 .share-project{
+  p{
+    color: black;
+  }
+  .align-center{
+    text-align: center;
+  }
   .gallery-info{
     position: relative;
     z-index: 3;
@@ -145,6 +151,16 @@
         background-size: cover;
       }
     }
+    .loader{
+      height: 8px*10;
+      width: 100%;
+      margin: 8px*2 auto;
+      margin-right: 8px;
+      background-image: url('../../assets/img/gifs/loading-green-loading.gif');
+      background-position: center;
+      background-size: auto 50%;
+      opacity: 0.5;
+  }
   }
   .pagination{
     display: flex;

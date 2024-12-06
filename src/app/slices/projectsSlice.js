@@ -9,7 +9,7 @@ import { db } from '../../firebase/app';
 
 const initialState = {
   data: [],
-  status: '',
+  status: 'login',
   loading : false,
   error: null,
 };
@@ -181,6 +181,10 @@ const projectsSlice = createSlice({
   reducers: {
     setProjects_temp: (state, action) => {
       state.data = action.payload;
+    },
+    updateProjectsStatus: (state, action) => {
+      console.log(action.payload)
+      state.status = action.payload;
     }
   
   },
@@ -541,7 +545,7 @@ const projectsSlice = createSlice({
   },
 });
 
-export const { setProjects_temp } = projectsSlice.actions;
+export const { setProjects_temp,updateProjectsStatus } = projectsSlice.actions;
 export default projectsSlice.reducer;
 
 // Selector to get projects data from the state

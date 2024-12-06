@@ -18,7 +18,17 @@ export const createStudio = async (studioData) => {
     const studiosCollection = collection(db, 'studios');
     const studioDoc = {
         id : id,
-        ...studioData
+        ...studioData,
+        plan: 'free',
+        limits:{
+            projectsPerWeek: 4,
+            galleriesPerProject: 2,
+            imagesPerGallery: 1000,
+        },
+        storage:{
+            used:0,
+            totalLimit: 5 * 1024 * 1024 * 1024,
+        }
     }
     return setDoc(doc(studiosCollection, studioDoc.domain), studioDoc)
 
@@ -62,7 +72,7 @@ export const createUser = async (userData) => {
     const userDoc = {
         displayName:'',
         email : email,
-        studio : studio
+        studio : studio,
     }
     await setDoc(doc(usersCollection, userDoc.email), userDoc)
     return userDoc

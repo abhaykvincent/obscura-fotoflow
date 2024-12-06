@@ -8,7 +8,7 @@ import UserContact from './UserContact.jsx'
 import { useNavigate } from 'react-router'
 import { createStudio, createUser } from '../../firebase/functions/firestore.js'
 import { useDispatch, useSelector } from 'react-redux'
-import { login, selectUser, setCurrentStudio, setUser } from '../../app/slices/authSlice.js'
+import { checkAuthStatus, login, selectUser, setCurrentStudio, setUser } from '../../app/slices/authSlice.js'
 import { showAlert } from '../../app/slices/alertSlice.js'
 import { signInWithPopup } from 'firebase/auth'
 import { analytics, auth, provider } from '../../firebase/app.js'
@@ -96,6 +96,9 @@ function Onboarding() {
       //navigate('/onboarding')
     });
 };
+useEffect(() => {
+dispatch(checkAuthStatus)
+},[])
   useEffect(() => {
     console.log(createAccountData)
   },[createAccountData])

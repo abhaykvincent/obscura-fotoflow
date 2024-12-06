@@ -29,6 +29,9 @@ const CreateStudio = ({active,next,createAccountData,updateAccountData}) => {
   if (!active) {
     return null;
   }
+  // Get the domain from the current URL the www.fotoflow.com part
+  const url = window.location.href;
+  const domain = url.split('/')[2];
 
   return (
 
@@ -45,7 +48,7 @@ const CreateStudio = ({active,next,createAccountData,updateAccountData}) => {
             onChange={handleStudioNameChange}
             required
           />
-          <p className='studio-domain'  >fotoflow.web.app/<span className={`available`} contentEditable>{studioDomain}</span></p>
+          <p className='studio-domain'  >{domain}/<span className={`available`} contentEditable>{studioDomain}</span></p>
 
         </div>
         <div className={`button primary large ${studioDomain=='' ? 'disabled':''}`}

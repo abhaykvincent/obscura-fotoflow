@@ -10,16 +10,20 @@ import LoginEmailPassword from './LoginEmailPassword';
 import AddStudio from '../../components/Modal/AddStudio';
 import { fetchStudiosOfUser } from '../../firebase/functions/firestore';
 import { trackEvent } from '../../analytics/utils';
+import { updateProjectsStatus } from '../../app/slices/projectsSlice';
 
 const LoginModal = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [loading, setLoading] = React.useState(false);
   const defaultStudio = useSelector(selectUserStudio)
 
  
 
   const handleGoogleSignIn = async () => {
     try {
+        setLoading(true);
+
         const result = await signInWithPopup(auth, provider);
         
         // This gives you a Google Access Token. You can use it to access the Google API.
@@ -30,7 +34,7 @@ const LoginModal = () => {
         const user = result.user;
         console.log("Logged in as " + user.email);
 
-      trackEvent('login',{method:'Google'})
+        trackEvent('login',{method:'Google'})
         
         const studiosResponse = await fetchStudiosOfUser(user.email);
         console.log("Studios response:", studiosResponse);
@@ -41,12 +45,13 @@ const LoginModal = () => {
             photoURL: user.photoURL,
             access: studiosResponse,
         };
-        console.log("Serialized user:", serializedUser);
 
         const response=  await dispatch(login(serializedUser));
         console.log("Login response:", response);
-        if(response.payload==='no-studio-found'){
 
+        if(response.payload==='no-studio-found'){
+          debugger
+          dispatch(updateProjectsStatus('login'))
           navigate('/onboarding');
         }
         else{
@@ -68,19 +73,22 @@ const LoginModal = () => {
   return (
     <>
     <div className="modal island loginModal">
-      <div className="modal-header">
-        <div className="modal-controls">
-          <div className="control close"></div>
-        </div>
-        Login
-      </div>
-      <div className="form-section">
-          <p>Open <b> App</b>  with  <b>Google</b></p>
-        <div className="actions">
+     <div className="actions">
           {/* <div className='button secondary outline disable'  onClick={openEmailPassordLogin}>Password Login<div className="email-logo"></div></div> */}
-          <div className='button'  onClick={handleGoogleSignIn}>Sign In with<div className="google-logo"></div></div>
+          {
+              loading? <div className="">
+                <p>Logging in with Google ...</p>
+                <p>Tab opened</p>
+                </div>:
+              <div className='button'  onClick={handleGoogleSignIn}>
+            
+              
+              <>
+                Sign In with<div className="google-logo"></div>
+              </>
+            </div>
+            }
         </div>
-      </div>
       <div className="logo">
         
       </div>
@@ -89,6 +97,7 @@ const LoginModal = () => {
     <LoginEmailPassword/>
     </>
   );
+  debugger
 }
 
 export default LoginModal;

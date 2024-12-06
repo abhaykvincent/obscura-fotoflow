@@ -70,19 +70,19 @@ body{
         width: auto;
         height: 100%;
         align-items:center;
-        gap: 8px;
+        gap: 8px*0.5;
         overflow: hidden;
         cursor:default;
       .logo{
-        width: 8px*6;
+        width: 8px*7;
         height: 8px*8;
         background-image: url('./assets/img/fotoflow-pro-logo.svg');
-        background-position: 8px*2 center;
-        background-size: auto 40%;
+        background-position: 8px*0.75 center;
+        background-size: auto 60%;
 
       }
       .studio-name-logo{
-        font-size: 1.3rem;
+        font-size: 1rem;
         font-weight: 800;
       }
     }
@@ -1454,21 +1454,62 @@ body{
     }
     &.loginModal{
       max-width: 8px*50;
+      min-width: 8px*20;
       left: 50vw;
-      top: 50vH;
-      transform: translate(-50%, -50%);
+      top: 50vh;
       padding: 0;
+      transform: translate(-50%, -40%);
+      opacity: 0;
+      animation-name: login-popup;
+      animation-delay: 2s;
+      animation-duration: 0.2s;
+      animation-fill-mode: forwards;
+      border: none;
+      background: none;
+
+      @keyframes login-popup {
+        0%{
+        transform: translate(-50%, -40%);
+        opacity: 0;
+        }
+        100%{
+          transform: translate(-50%, -50%);
+          opacity: 1;
+        }
+      }
       &.emailPassword{
         width: 8px*42;
       }
       .logo{
         position: absolute;
+        left: 30%;
         top: -8px*16;
-        width: 100%;
+        width: 8px*10;
         height: 8px*10;
-        background-image: url('./assets/img/fotoflow-pro-logo.svg');
-        background-size: 50%;
+        background-image: url('./assets/img/fotoflow-pro-logo.png');
+        background-size: 100%;
         background-position: center;
+        animation: logo-spin infinite;
+        animation-duration:18s;
+        transform: rotate(0deg) scale(1.2);
+        // smooth natural spinning with apuse in itervals
+        @keyframes logo-spin {
+            0%{              
+              opacity: 1;
+              transform: rotate(0deg) ;
+            }
+            99.999%{
+              opacity: 1;
+              transform: rotate(360deg * 4) ;
+            
+            }
+            100%{
+              opacity: 1;
+              transform: rotate(360deg *0) ;
+            }
+          }
+
+        
       }
       .form-section{
         min-width: 8px*30;
@@ -1479,7 +1520,9 @@ body{
         }
       }
       .actions{
-        position: relative;
+      border-top: none;
+      position: relative;
+      justify-content: center;
         .button{
           height: 8px*5;
           display: flex;
@@ -1515,6 +1558,15 @@ body{
           }
         }
       }
+      .loader{
+        height: 8px*3;
+        width: 100%;
+        margin-right: 8px;
+        background-image: url('./assets/img/gifs/loading-green-loading.gif');
+        background-position: center;
+        background-size: auto 80%;
+        opacity: 0.5;
+    }
     }
     &#loginEmailPasswordModal{
     }
