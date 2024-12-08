@@ -145,7 +145,6 @@
 
         &.add::before{
             background-image: url('https://img.icons8.com/ios-filled/500/ffffff/plus-math.png');
-
         }
         &.search::before{
             background-size: 100%;
@@ -278,6 +277,17 @@
                 
             }
         }
+        &.referal{
+            &::before{
+                margin: 0;
+                margin-left: -8px;
+                margin-right: 4px;
+                background-size: 90%;
+                background-position: center center;
+                background-image: url('https://img.icons8.com/?size=100&id=ZsYJzYlThVLD&format=png&color=FFFFFF');
+                
+            }
+        }
         &.close{
 
         padding:  4px;
@@ -288,6 +298,50 @@
             background-position: center center;
             background-image: url('https://img.icons8.com/?size=100&id=vu5kHwGC4PNb&format=png&color=FFFFFF');
         }
+        }
+    }
+}
+.tab-button{
+    &.icon{
+        &::before{
+        content: '.';
+        margin-right: 4px;
+        margin-left: -4px;
+        width: 8px*3;
+        height: 100%;
+        padding: 8px;
+        color: transparent;
+        background-size: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: drop-shadow(1px 1px 1px #222);
+         background-size: 100%;
+         
+           
+    }
+        &.ai::before{
+            background-size: 80%;
+            background-image: url('https://img.icons8.com/?size=100&id=Imv4VIewVo4o&format=png&color=FFFFFF');
+        }
+        &.user::before{
+            background-size: 100%;
+            background-image: url("https://img.icons8.com/?size=100&id=23265&format=png&color=ffffff");
+        }
+        &.referal::before{
+            background-size: 90%;
+            background-image: url("https://img.icons8.com/?size=100&id=ZsYJzYlThVLD&format=png&color=FFFFFF");
+        }
+        &.ticket::before{
+            background-size: 80%;
+            background-image: url("https://img.icons8.com/?size=100&id=8851&format=png&color=FFFFFF");
+        }
+        &.history::before{
+            background-size: 90%;
+            background-image: url("https://img.icons8.com/?size=100&id=PeLgq1OtWrKX&format=png&color=FFFFFF");
+        }
+        &.studio::before{
+            background-size: 90%;
+            background-image: url("https://img.icons8.com/?size=100&id=78230&format=png&color=FFFFFF");
         }
     }
 }

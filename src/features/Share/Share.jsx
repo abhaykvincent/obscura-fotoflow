@@ -120,7 +120,7 @@ export default function ShareProject() {
     {
       loading && <LoadingLight/> 
     }
-    <div className="share-project">
+    <div className="share-project" >
       <div className="project-header">
         <img className='banner' src={project.projectCover} alt="" />
         <div className="gallery-info">

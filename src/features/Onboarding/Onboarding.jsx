@@ -18,7 +18,6 @@ function Onboarding() {
   const navigate = useNavigate()
   const dispatch = useDispatch();
   const user = useSelector(selectUser)
-  console.log(user)
   const [currentScreen, setCurrentScreen]= useState('create-studio')
   const [createAccountData, setCreateAccountData] = useState({
     studioName: '',
@@ -29,40 +28,11 @@ function Onboarding() {
     projectSize: '',
     studioContact:''
   })
+
   const updateAccountData = (data) => {
     setCreateAccountData({...createAccountData, ...data})
   }
-  
-  const createAccountAndNavigate  = () => {
-    console.log(user)
-    createUser({
-      email:user.email, 
-      studio:{
-        name: createAccountData.studioName,
-        domain: createAccountData.studioDomain,
-        roles: ['Admin'],
-      }
-    })
-    .then((response) => {
-      console.log(response)
-      createStudio(response.studio)
-          .then((response) => {
-            console.log(response)
-              dispatch(showAlert({type:'success', message:`New Studio created!`}));
-              dispatch(login(user))
-              navigate(`/${response.domain}`);
-          })
-          .catch((error) => {
-              console.error('Error creating Studio:', error);
-              dispatch(showAlert({type:'error', message:`error`}));
-              // Handle error scenarios, e.g., show an error message
-          });
-      dispatch(showAlert({type:'success', message:`New Studio created!`}));
 
-
-      navigate(`/${response.studio.domain}`)
-    })
-  }
   const handleGoogleSignIn = async () => {
     signInWithPopup(auth, provider)
     .then((result) => {
@@ -95,44 +65,72 @@ function Onboarding() {
       // ...
       //navigate('/onboarding')
     });
-};
-useEffect(() => {
-dispatch(checkAuthStatus)
-},[])
+  };
+  const createAccountAndNavigate  = () => {
+    console.log(user)
+    createUser({
+      email:user.email, 
+      studio:{
+        name: createAccountData.studioName,
+        domain: createAccountData.studioDomain,
+        roles: ['Admin'],
+      }
+    })
+    .then((response) => {
+      console.log(response)
+      createStudio(response.studio)
+          .then((response) => {
+            console.log(response)
+              dispatch(showAlert({type:'success', message:`New Studio created!`}));
+              dispatch(login(user))
+              navigate(`/${response.domain}`);
+          })
+          .catch((error) => {
+              console.error('Error creating Studio:', error);
+              dispatch(showAlert({type:'error', message:`error`}));
+              // Handle error scenarios, e.g., show an error message
+          });
+      dispatch(showAlert({type:'success', message:`New Studio created!`}));
+
+
+      navigate(`/${response.studio.domain}`)
+    })
+  }
+
   useEffect(() => {
-    console.log(createAccountData)
-  },[createAccountData])
+    dispatch(checkAuthStatus)
+  },[])
   return (
     <main className="onboarding-container">
       <div className="user-authentication">
       {
-        !user.email &&
+        !user?.email &&
       <div className='button primary google-login-button'  onClick={handleGoogleSignIn}>Sign In with Google <div className="google-logo"></div></div>
       }
       {
-        user.email &&
+        user?.email &&
         <div className="logged-user">
         <div className="logged-user-info">Logged in as  <span> {user.email}</span></div>
       </div>
       }
       
-
       </div>
 
-        <CreateStudio   active={currentScreen==='create-studio'} 
+        <CreateStudio   
+          active={currentScreen==='create-studio'} 
           next={()=>setCurrentScreen('user-contact')}
           updateAccountData={updateAccountData}
           createAccountData={createAccountData}
+          user={user}
         />
 
-
-        <UserContact    active={currentScreen==='user-contact'} 
+        <UserContact    
+          active={currentScreen==='user-contact'} 
           next={()=>createAccountAndNavigate()}
           updateAccountData={updateAccountData}
           createAccountData={createAccountData}
           user={user}
-
-        />
+      />
     </main>
   )
 }

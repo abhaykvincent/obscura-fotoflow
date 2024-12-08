@@ -75,16 +75,17 @@ function Sidebar() {
         {/* Admin */}
         <p className="label">ADMIN</p>
 
-        <Link to={`/${studioName}/settings`}>
-          <div className={`menu settings ${location.pathname === `/${studioName}/settings` ? 'active' : ''}`}>
-            <div className="icon"></div>
-            <div className="label">Setting</div>
-          </div>
-        </Link>
+        
         <Link to={`/${studioName}/team`}>
           <div className={`menu team ${location.pathname === `/${studioName}/team` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Team</div>
+          </div>
+        </Link>
+        <Link to={`/${studioName}/settings`}>
+          <div className={`menu settings ${location.pathname === `/${studioName}/settings` ? 'active' : ''}`}>
+            <div className="icon"></div>
+            <div className="label">Setting</div>
           </div>
         </Link>
 
@@ -116,6 +117,19 @@ function Sidebar() {
             </div>
           </Link>
         </AdminRoute> */}
+        {
+          user.email =='abhaykvincent@gmail.com' &&
+          <>
+          
+          <p className="label">Operations</p>
+          <Link to={`/admin`}>
+            <div className={`menu admin ${location.pathname === `/admin` ? 'selected' : ''}`}>
+              <div className="icon"></div>
+              <div className="label">Admin</div>
+            </div>
+          </Link>
+          </>
+        }
 
       </div>
 

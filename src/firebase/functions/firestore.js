@@ -42,6 +42,18 @@ export const createStudio = async (studioData) => {
         throw error;
     })
 }
+// checkStudioDomainAvailability
+export const checkStudioDomainAvailability = async (domain) => {
+    const studiosCollection = collection(db, 'studios');
+    const querySnapshot = await getDocs(studiosCollection);
+    const studiosData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    const studio = studiosData.find((studio) => studio.domain === domain);
+    console.log(!studio)
+    return !studio;
+};
 export const fetchStudiosOfUser = async (email) => {
     const usersCollection = collection(db, 'users');
     const querySnapshot = await getDocs(usersCollection);
@@ -109,32 +121,31 @@ const checkFirestoreConnection = async () => {
 // Function to fetch all projects from a specific studio of domain
 export const fetchProjectsFromFirestore = async (domain) => {
     try{
-    let color = domain === '' ? 'gray' : '#0099ff';
-    console.log(`%cFetching Projects from ${domain ? domain : 'undefined'}`, `color: ${color}; `);
-    const studioDocRef = doc(db, 'studios', domain);
-    const projectsCollectionRef = collection(studioDocRef, 'projects');
-    let  querySnapshot 
-    try {
-      querySnapshot = await getDocs(projectsCollectionRef)
+        let color = domain === '' ? 'gray' : '#0099ff';
+        console.log(`%cFetching Projects from ${domain ? domain : 'undefined'}`, `color: ${color}; `);
+        const studioDocRef = doc(db, 'studios', domain);
+        const projectsCollectionRef = collection(studioDocRef, 'projects');
+        let  querySnapshot 
+
+        try {
+        querySnapshot = await getDocs(projectsCollectionRef)
+        }
+        catch (error) {
+            let color = 'red';
+            console.error(`%cError fetching projects from ${domain ? domain : 'undefined'}:`, `color: ${color};`, error);
+            return []; // Return an empty array or handle the error appropriately
+        }
+        
+        const projectsData = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+        color='#54a134';
+        console.log(`%cFetched all ${projectsData.length} Projects from ${domain ? domain : 'undefined'}`, `color: ${color}; `);
+
+        return projectsData;
     }
     catch (error) {
-        let color = 'red';
-        console.error(`%cError fetching projects from ${domain ? domain : 'undefined'}:`, `color: ${color};`, error);
-        return []; // Return an empty array or handle the error appropriately
-    }
-    
-
-    console.log(querySnapshot)
-    const projectsData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-    }));
-    color='#54a134';
-    console.log(`%cFetched all ${projectsData.length} Projects from ${domain ? domain : 'undefined'}`, `color: ${color}; `);
-
-    return projectsData;
-}
-catch (error) {
         let color = 'red';
         console.error(`%cError fetching projects from ${domain ? domain : 'undefined'}:`, `color: ${color};`, error);
         return []; // Return an empty array or handle the error appropriately

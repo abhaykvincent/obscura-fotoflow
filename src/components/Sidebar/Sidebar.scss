@@ -119,7 +119,7 @@
             background-image: url('https://img.icons8.com/?size=100&id=123437&format=png&color=FFFFFF');
             }
             &.storage .icon{
-            background-size: 80%;
+            background-size: 70%;
             background-image: url('https://img.icons8.com/ios-filled/150/FFFFFF/stack.png');
             }
             &.notifications .icon{
@@ -159,12 +159,19 @@
             background-image: url('https://img.icons8.com/?size=100&id=uVgsZ6Ybur44&format=png&color=FFFFFF');
             }
             &.team .icon{
+                
             background-size: 80%;
-            background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/conference.png');
+            background-image: url('https://img.icons8.com/?size=100&id=22458&format=png&color=FFFFFF');
             }
-            &.admin .icon{
-            background-size: 90%;
-            background-image: url('https://img.icons8.com/?size=100&id=vJB83aasOd9i&format=png&color=FFFFFF');
+            &.admin {
+                .label{
+
+                color: #54a134;
+                }
+                .icon{
+                background-size: 90%;
+                background-image: url('https://img.icons8.com/?size=100&id=vJB83aasOd9i&format=png&color=54a134');
+                }
             }
         }
         }
@@ -493,9 +500,14 @@
         }
         .profile-options{
             margin-bottom: 8px;
+            width: calc(100% + 4px);
+            border: 1px $gray4-default-light;
             .profile{
+                .profile-image{
+                    padding: 8px*3;
+                }
                 .account-name{
-                    display: block;
+                    opacity: 0;
                 }
             }
         }

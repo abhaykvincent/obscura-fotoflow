@@ -50,7 +50,7 @@ const LoginModal = () => {
         console.log("Login response:", response);
 
         if(response.payload==='no-studio-found'){
-          debugger
+          
           dispatch(updateProjectsStatus('login'))
           navigate('/onboarding');
         }
@@ -97,7 +97,7 @@ const LoginModal = () => {
     <LoginEmailPassword/>
     </>
   );
-  debugger
+  
 }
 
 export default LoginModal;

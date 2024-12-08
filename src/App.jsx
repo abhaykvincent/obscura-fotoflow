@@ -116,49 +116,52 @@ export default function App() {
       ) : 
       (<>{ !isPublicPage() && <LoginModal/> }</>)}
       {
-        isLoading!== 'succeeded' && isAuthenticated && user!=='no-studio-found'  ? (
-          isLoading!=='login' && (!isPublicPage()) ?  <Loading/> : <LoadingLight/>
-        ) : (
-          <Routes>
-            {isAuthenticated && (
-              
-            <>
-              {/* <Route path="/admin/" element={
-                <AdminRoute> 
-                  <AdminPanel /> 
-                </AdminRoute> 
-              }/> */}
-            <Route path="/masanory-grid" element={<ImageGallery  />} />
+        isLoading!== 'succeeded' && isAuthenticated && user!=='no-studio-found'  ? 
+          (
+            isLoading!=='login' && (!isPublicPage()) ?  <Loading/> : <LoadingLight/>
+          ) : 
+          (
+            <Routes>
+              {isAuthenticated && (
                 
-              <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
-              <Route exact path="/:studioName" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
-              <Route path="/search" element={<SearchResults />} />
-              <Route exact path="/:studioName/portfolio-editor" element={<PortfolioWebsite />} />
-              <Route exact path="/:studioName/home" element={<Home />} />
-              <Route exact path="/:studioName/project/:id" element={<Project />} />
-              <Route exact path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
-              <Route exact path="/:studioName/invitation-creator/:projectId" element={<InvitationPage/>} />
-              <Route path="/:studioName/projects" element={<Projects />} />
-              <Route path="/:studioName/storage" element={<Storage />} />
-              <Route path="/:studioName/notifications" element={<Notifications />} />
-              <Route path="/:studioName/subscription" element={<Subscription />} />
-              <Route path="/:studioName/store" element={<CommingSoon title={'Store'}/>} />
-              <Route path="/:studioName/calendar" element={<CommingSoon title={'Calendar'}/>} />
-              <Route path="/:studioName/invoices" element={<CommingSoon title={'Financials'}/>} />
-              <Route path="/:studioName/accounts" element={<CommingSoon title={'Accounts'}/>} />
-              <Route path="/:studioName/team" element={<Teams />} />
+              <>
+                {/* <Route path="/admin/" element={
+                  <AdminRoute> 
+                    <AdminPanel /> 
+                  </AdminRoute> 
+                }/> */}
+              <Route path="/masanory-grid" element={<ImageGallery  />} />
+                  
+                <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
+                <Route exact path="/:studioName" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
+                <Route path="/search" element={<SearchResults />} />
+                <Route exact path="/:studioName/portfolio-editor" element={<PortfolioWebsite />} />
+                <Route exact path="/:studioName/home" element={<Home />} />
+                <Route exact path="/:studioName/project/:id" element={<Project />} />
+                <Route exact path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
+                <Route exact path="/:studioName/invitation-creator/:projectId" element={<InvitationPage/>} />
+                <Route path="/:studioName/projects" element={<Projects />} />
+                <Route path="/:studioName/storage" element={<Storage />} />
+                <Route path="/:studioName/notifications" element={<Notifications />} />
+                <Route path="/:studioName/subscription" element={<Subscription />} />
+                <Route path="/:studioName/store" element={<CommingSoon title={'Store'}/>} />
+                <Route path="/:studioName/calendar" element={<CommingSoon title={'Calendar'}/>} />
+                <Route path="/:studioName/invoices" element={<CommingSoon title={'Financials'}/>} />
+                <Route path="/:studioName/accounts" element={<CommingSoon title={'Accounts'}/>} />
+                <Route path="/:studioName/team" element={<Teams />} />
+                <Route path="/admin" element={<AdminPanel />} />
 
-            </>
-            
-            )}
-            <Route path="/onboarding" element={<Onboarding />} />
+              </>
+              
+              )}
+              <Route path="/onboarding" element={<Onboarding />} />
 
-            <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>
-            <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>
-            <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>
-          </Routes>
-        )}
-        </HotKeys>
+              <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>
+              <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>
+              <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>
+            </Routes>
+          )}
+          </HotKeys>
 
     </div>
     

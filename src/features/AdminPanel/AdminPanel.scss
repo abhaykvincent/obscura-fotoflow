@@ -2,32 +2,33 @@
 
 .App .admin-panel {
     padding: 8px*1 8px*4;
-    top: 0;
+    top: $header-height;
     z-index: 40;
     .admin-title {
         margin: 0;
-        margin-bottom: 16px; // 8px*2
+        margin-top: 8px; // 8px*2
+        margin-bottom: 8px; // 8px*2
     }
 
     .admin-dashboard {
-        margin: 16px 0; // 8px*2 0
-        margin-bottom: 8px*5;
-        margin-top: 8px*5;
+        margin: 8px 0; // 8px*2 0
+        margin-bottom: 8px*2;
+        margin-top: 8px*3;
         .cards {
             display: flex;
-            gap: 8px*3; // 8px*2
+            gap: 8px*1.618*1.618*1.618; // 8px*2
             margin: 8px 0; // 8px*1 0
             .group{
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 8px*2;
+                gap: 8px*1.618;
             }
             .card {
                 display: grid;
                 align-content: center;
                 justify-items: center;
-                width: 128px; // 8px*16
-                height: 128px; // 8px*16
+                width: 8px*12*1.618; // 8px*16
+                height: 8px*12; // 8px*16
                 padding: 8px;
                 border: 1px solid $dark-1;
                 border-radius: 4px;
@@ -37,7 +38,7 @@
                     font-size: 0.8rem;
                 }
                 .count {
-                    margin-bottom: 8px; // 8px*1
+                    margin-bottom: 8px*0.5; // 8px*1
                     span.icon{
                         width: 8px*10;
                         padding: 8px*2;
@@ -84,7 +85,8 @@
         .admin-actions{
             display: flex;
             gap: 8px*2;
-            margin-top: 8px*4;
+            margin-top: 8px*4.5;
+            margin-bottom: 8px*4;
             .button{
                 margin: 0;
             }
@@ -101,7 +103,8 @@
 
     .tabs {
         display: flex;
-        margin-bottom: 8px*3; // Add margin below tabs
+        margin-bottom: 8px*2; // Add margin below tabs
+        gap: 8px;
         .tab-button {            
             background-color: $dark-2 ;// Adjust with your primary color
             font-size: 1.2rem;
@@ -136,7 +139,7 @@
     .studios-list {
         display: grid;
         gap: 8px; // Space between support cards
-        padding: 8px; // Space around the section
+        padding: 0px; // Space around the section
 
         .studio-card {
             display: grid;
@@ -152,25 +155,45 @@
     .users-list {
         display: grid;
         gap: 8px; // Space between support cards
-        padding: 8px; // Space around the section
-        .user-card {
-            display: grid;
-            align-items: center;
-            grid-template-columns: 8px*16 8px*32 8px*16 auto 8px*16 ;// Updated grid template columns
-            padding: 8px;
-            border: 1px solid $dark-1;
-            border-radius: 4px;
-            &.table-header{
+        padding: 0px; // Space around the section
+        
+    }
+    .user-card {
+        display: grid;
+        align-items: center;
+        grid-template-columns: 8px*16 8px*32 8px*16 auto 8px*16 ;// Updated grid template columns
+        padding: 8px;
+        border: 1px solid $dark-1;
+        border-radius: 4px;
+        &.table-header{
 
-            border: 1px solid $dark-2;
-            padding: 0 8px;
-            margin-bottom: -4px;
-            p{
+        border: 1px solid $dark-2;
+        padding: 0 8px;
+        margin-bottom: -4px;
+        p{
 
-                font-size: 0.8rem;
-                color: $gray4-accessible-dark;
-            }
-            }
+            font-size: 0.8rem;
+            color: $gray4-accessible-dark;
+        }
+        }
+    }
+    .studio-card {
+        display: grid;
+        align-items: center;
+        grid-template-columns: 8px*16 8px*32 8px*16 auto 8px*16 ;// Updated grid template columns
+        padding: 8px 2PX;
+        border: 1px solid $dark-1;
+        border-radius: 4px;
+        &.table-header{
+
+        border: 1px solid $dark-2;
+        padding: 0 8px;
+        margin-bottom: -4px;
+        p{
+
+            font-size: 0.8rem;
+            color: $gray4-accessible-dark;
+        }
         }
     }
     .support-list {
@@ -185,6 +208,45 @@
             padding: 8px;
             border: 1px solid $dark-1;
             border-radius: 4px;
+            p {
+                margin: 0;
+                color: white; // Text color
+            }
+
+            button {
+                align-self: start; // Align button to the top of the card
+                margin: 0;
+            }
+        }
+    }
+    .referal-codes-list {
+        display: grid;
+        gap: 8px; // Space between support cards
+        padding: 8px; // Space around the section
+        margin-top: -8px*7;
+        .actions{
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 8px*0;
+            z-index: -1;
+        }
+        .referal-codes-card {
+            display: grid;
+            align-items: center;
+            grid-template-columns: 8px*12 8px*24 auto 8px*12 8px*36  8px*16 ;// Updated grid template columns
+            padding: 8px;
+            border: 1px solid $dark-1;
+            gap: 4px;
+            border-radius: 4px;
+            &.table-header{
+                border: 1px solid transparent;
+                border-radius: 4px;
+                p {
+                    margin: 0;
+                    font-size: 0.8rem;
+                    color: $gray4-accessible-dark;
+                }
+            }
             p {
                 margin: 0;
                 color: white; // Text color
