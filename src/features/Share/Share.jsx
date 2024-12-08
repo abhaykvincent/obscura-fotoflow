@@ -9,14 +9,16 @@ import { useSelector } from 'react-redux';
 import { selectDomain, selectIsAuthenticated, selectUser, selectUserStudio } from '../../app/slices/authSlice';
 import { toTitleCase } from '../../utils/stringUtils';
 import { setUserType, trackEvent } from '../../analytics/utils';
+import { set } from 'date-fns';
+import { LoadingLight } from '../../components/Loading/Loading';
 
 export default function ShareProject() {
   // studio =  get the url and the name is lorem for url http://localhost:3000/lorem/gallery/william-thomas-b23Sg/birthday-qr22E
   
   const { studioName } = useParams();
-  
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
+  const [loading, setLoading] = useState(true);
   
   // set body color to white
   useEffect(() => {
@@ -45,6 +47,9 @@ export default function ShareProject() {
       trackEvent('gallery_viewed', {
         project_id: projectId
       });
+      if(!isAuthenticated || user=='no-studio-found'){
+        setUserType('Guest');
+      }
     } catch (error) {
       console.error('Failed to fetch project:', error);
     }
@@ -61,11 +66,13 @@ export default function ShareProject() {
   }
 
   useEffect(() => {
-    fetchProjectData();
+    fetchProjectData().then(() => {
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    });
     //fetchImagesData()
-    if(!isAuthenticated || user=='no-studio-found'){
-      setUserType('Guest');
-    }
+    
 
   }, []);
 
@@ -109,7 +116,11 @@ export default function ShareProject() {
     );
   };
   return (
-    <div className="share-project">
+    <>
+    {
+      loading && <LoadingLight/> 
+    }
+    <div className="share-project" >
       <div className="project-header">
         <img className='banner' src={project.projectCover} alt="" />
         <div className="gallery-info">
@@ -124,8 +135,16 @@ export default function ShareProject() {
       </div>
       <div className="shared-collection">
         <ShareGallery images={imageUrls} projectId={projectId} collectionId={collectionId}/>
-        <p>Other Collections</p>
-        <CollectionsPanel/>
+        
+        {/* !!! HIGH Cloud Cost Trigger */}
+        {/* DONOT USE until we have a better way to handle this */}
+        {/* <p className='align-center'>Other Collections</p>
+        {
+          project.collections.length>=1 &&
+            <CollectionsPanel/>
+        }
+        */}
+
 
         {
           project.type !== "FUNERAL" && <p className='studio-tag-line'>{`smile with ${studioName}`}</p>
@@ -133,5 +152,8 @@ export default function ShareProject() {
         
       </div>
     </div>
+      
+    </>
+
   );
 }

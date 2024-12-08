@@ -96,13 +96,13 @@
     .form-group{
         display: grid;
         justify-items: start;
-        margin-bottom: 8px*5;
+        margin-bottom: 8px*18;
         margin-top: 8px*2;
         input{
             height: 4rem;
             width: 35rem;
             font-size: 3rem;
-            margin-left: -8px*2;
+            margin-left: -8px*1;
             padding: 8px*5 8px;
             background-color: rgba(255, 0, 0, 0);
             border: 1px solid transparent;
@@ -127,6 +127,26 @@
                 color: $gray-default-dark;
             }
 
+            }
+        }
+        .message{
+            padding: 8px*2 8px*1;
+            &.error{
+                &.low{
+                    color: $yellow-default-light;
+                    opacity: 0.7;
+                }
+                &.medium{
+                    color: $orange-default-dark;
+                    opacity: 0.8;
+                    
+                }
+                &.high{
+                    color: $red-default-dark;
+                }
+            }
+            &.success{
+                color: $green-default-dark;
             }
         }
         .grid{
@@ -175,24 +195,98 @@
                 }
             }
         }
-        .studio-domain{
+        .studio-domain-selector{
             display: flex;
-            font-size: 1.5rem;
-            color: $dark-0;
-            font-size: 1rem;
+            align-items: center;
             margin-top: 8px*3;
-            border-radius: 8px*2;
-            padding: 8px*0.5 8px*1.5;
-            border: 1px solid $dark-1;
-            span{
-                color: $gray-default-light;
-                &.available{
-                    color: $green-default-dark;
+            margin-left: -8px;
+            gap: 8px*0.5;
+            opacity: 0.2;
+            &.active{
+                opacity: 1;
+            }
+            &.taken{
+                .studio-domain{
+                    border: 1px solid $orange-default-dark;
                 }
-                &.taken{
+                .input-reaction{
                     color: $orange-default-dark;
                 }
             }
+            &.available{
+                .input-reaction{
+                    color: $green-accessible-dark
+                }
+            }
+            .input-reaction{
+                margin-left: 8px;
+                opacity: 0.6;
+            }
+            .web-icon{
+                width: 8px*4;
+                height: 8px*4;
+                background-image: url('https://img.icons8.com/?size=100&id=K6FkUVH0GtOD&format=png&color=777777');
+                background-size: 80%;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+        }
+        .studio-domain{
+            display: flex;
+            font-size: 1.5rem;
+            color: $gray3-accessible-dark;
+            font-size: 1rem;
+            border-radius: 8px*2;
+            padding: 8px*0.5 8px*1.5;
+            border: 1px solid $dark-0;
+            span{
+                color: $gray2-default-light;
+                &.available{
+                    position: relative;
+
+                    color: $gray5-default-light;
+                }
+                &.taken{
+                    position: relative;
+                    color: $gray5-default-dark;
+                }
+                &.suggestions{
+                    position: absolute;
+                    display: grid;
+                    justify-content: start;
+                    justify-items: start;
+                    top :8px*4;
+                    left :-8px*1;
+                    gap: 8px;
+                    
+
+                    &.focus-out{
+                        opacity: 0.2;
+                        transition-duration: 0.1s;
+                        &:hover{
+                            transition-duration: 0.1s;
+                            opacity: 1;
+                        }
+                    }
+                    .suggestion{
+                        padding: 2px 8px;
+                        border-radius: 8px*2;
+                        border: 1px solid $gray5-accessible-dark;
+                        white-space: nowrap;
+                        cursor: pointer;
+                        &:hover{
+                            color: white;
+                        border: 1px solid $gray3-accessible-dark;
+                        }
+                    }
+                }
+            }
+            
+        }
+        p.taken{
+            color: $gray-default-dark;
+            opacity: 0.8;
+            margin-left: 8px;
         }
     }
     #contactNumber{

@@ -48,14 +48,8 @@ function Sidebar() {
         </Link>
 
 }
-        <Link to={`/${studioName}/store`}>
-          <div className={`menu store ${location.pathname === `/${studioName}/store` ? 'active' : ''} disabled`}>
-            <div className="icon"></div>
-            <div className="label">Store</div>
-          </div>
-        </Link>
         <Link to={`/${studioName}/bookings`}>
-          <div className={`menu store ${location.pathname === `/${studioName}/bookings` ? 'active' : ''} disabled`}>
+          <div className={`menu booking ${location.pathname === `/${studioName}/bookings` ? 'active' : ''} disabled`}>
             <div className="icon"></div>
             <div className="label">Bookings</div>
           </div>
@@ -66,22 +60,37 @@ function Sidebar() {
             <div className="label">Calendar</div>
           </div>
         </Link>
-        <Link to={`/${studioName}/invoices`}>
+        <Link to={`/${studioName}/store`}>
+          <div className={`menu store ${location.pathname === `/${studioName}/store` ? 'active' : ''} disabled`}>
+            <div className="icon"></div>
+            <div className="label">Store</div>
+          </div>
+        </Link>
+        {/* <Link to={`/${studioName}/invoices`}>
           <div className={`menu invoices ${location.pathname === `/${studioName}/invoices` ? 'active' : ''} disabled`}>
             <div className="icon"></div>
             <div className="label">Financials</div>
           </div>
-        </Link>
+        </Link> */}
+        {/* Admin */}
+        <p className="label">ADMIN</p>
+
+        
         <Link to={`/${studioName}/team`}>
           <div className={`menu team ${location.pathname === `/${studioName}/team` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Team</div>
           </div>
         </Link>
-        {/* Admin */}
-        <p className="label">ADMIN</p>
+        <Link to={`/${studioName}/settings`}>
+          <div className={`menu settings ${location.pathname === `/${studioName}/settings` ? 'active' : ''}`}>
+            <div className="icon"></div>
+            <div className="label">Setting</div>
+          </div>
+        </Link>
+
         <Link to={`/${studioName}/notifications`}>
-          <div className={`menu notifications disabled ${location.pathname === `/${studioName}/notifications` ? 'active' : ''}`}>
+          <div className={`menu notifications  ${location.pathname === `/${studioName}/notifications` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Notifications</div>
           </div>
@@ -108,6 +117,19 @@ function Sidebar() {
             </div>
           </Link>
         </AdminRoute> */}
+        {
+          user.email =='abhaykvincent@gmail.com' &&
+          <>
+          
+          <p className="label">Operations</p>
+          <Link to={`/admin`}>
+            <div className={`menu admin ${location.pathname === `/admin` ? 'selected' : ''}`}>
+              <div className="icon"></div>
+              <div className="label">Admin</div>
+            </div>
+          </Link>
+          </>
+        }
 
       </div>
 
@@ -118,7 +140,14 @@ function Sidebar() {
             <div className="profile-image"></div>
             <div className="account-name">
               <div className="studio-name">{defaultStudio?.name}</div>
-              <div className="profile-name">{user?.displayName} <div className="role">{user.studio?.roles[0] && user.studio?.roles[0]}</div></div>
+              <div className="profile-name">{user?.displayName} 
+                {/* MArquee one after other in quere repeate */}
+                <div className="roles" direction="left" behavior="scroll" scrollamount="2" scrolldelay="2" loop="3" style={{whiteSpace: 'nowrap'}}>
+                  {user.studio?.roles[0] && <div className="role ">{user.studio?.roles[0]}</div>}
+                  <div className="role">Photographer</div>
+                  
+                  </div>
+                </div>
             </div>
           </div>
           <div className="option-icon"></div>

@@ -54,6 +54,7 @@ export const login = createAsyncThunk(
         return user
         }
       })
+
       color= '#54a134'
       console.log(`%cUser found in ${user.studio.name} `, `color: ${color}; font-size: ${fontSize}`);
 
@@ -110,13 +111,11 @@ const authSlice = createSlice({
     checkAuthStatus: (state) => {
       const isLocalAuthenticated = localStorage.getItem('authenticated');
       state.isAuthenticated = isLocalAuthenticated === 'true';
-      if(state.isAuthenticated) {
-      {
         let color= '#54a134'
         console.log(`%cAuthenticated`, `color: ${color}; font-size: 0.8rem`);
         state.user = JSON.parse(localStorage.getItem('user'));
-      }
-      }
+      
+      
     },
     checkStudioStatus: (state) => {
       const studioLocal = localStorage.getItem('studio');

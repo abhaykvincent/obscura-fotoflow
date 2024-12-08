@@ -2,8 +2,16 @@
 
     
     .create-studio{
-        
-        
+        opacity: 0.4;    
+        .name-label{
+            color: $dark-0;
+        }        
+        &.active{
+                opacity: 1; 
+                .name-label{
+                    color: $gray3-accessible-light;
+                }  
+            }
         
         
     }   

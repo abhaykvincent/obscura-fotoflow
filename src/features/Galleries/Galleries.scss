@@ -201,6 +201,7 @@
 .project-dashboard{
 	position: relative;
 	display: grid;
+	grid-template-rows: 8px*30 auto;
 	align-content: normal;
 	justify-content: start;
 	justify-items: start;
@@ -209,11 +210,21 @@
 	min-height: calc(100vh - 8px*57);
 	margin-top: 8px*0;
 	column-gap: 8px*3;
-	row-gap: 8px*5;
+	row-gap: 8px*0;
 	.headings{
 		display: grid;
 		grid-template-columns: auto auto;
 		gap: 8px*3;
+		
+	}
+	.sub-projects{
+		.headings{
+			display: flex;
+			justify-content: space-between;
+			gap: 8px;
+			border-bottom: 1px solid #2c2c2e;
+			margin-bottom: 16px;
+		}
 	}
 	
 
@@ -844,10 +855,10 @@
 					grid-row: 1/3;
 				}
 				.backthumb{
-					border: 1px solid $gray4-accessible-dark;
+					border: 1px solid $gray4-default-dark;
 					background-color: $dark-3;
 					&:hover{
-					border: 1px solid $gray-default-dark;
+					border: 1px solid $gray4-default-dark;
 						
 					}
 				}
@@ -861,8 +872,8 @@
 					background-blend-mode: normal,color-dodge;
 					background-repeat: no-repeat;
 					background-position: center calc(50% - 8px*2), center;
-					transition-duration: 0.2s;
-
+					transition-duration: 0.1s;
+					border-radius:8px !important;
 					height: 8px*16;
 					transform: rotate(0deg) translateY(0px) translateX(0px) scale(1);
 					.button{

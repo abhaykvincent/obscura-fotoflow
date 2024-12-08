@@ -40,7 +40,7 @@ function AdminPanel() {
             <h1 className="admin-title">Admin Panel</h1>
             <div className="admin-dashboard">
                 <div className="cards">
-                    <div className="group">
+                    <div className="group ">
 
                         <div className="card">
                             <h1 className='count'><span className='icon user'></span>{users.length}</h1>
@@ -53,7 +53,7 @@ function AdminPanel() {
                             <h4 className='cyan'>Total Studios</h4>
                         </div>
 
-                        <div className="card">
+                        {/* <div className="card">
                             <h1 className='count'><span className='icon studio'></span>{users.length}</h1>
                             <p>Monthly</p>
                             <h4  className='green'>Active Users</h4>
@@ -64,30 +64,30 @@ function AdminPanel() {
                             <p>This Month</p>
                             <h4 className='green'>New Users</h4>
 
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="group">
-                        <div className="card">
-                            <h1 className='count'>0</h1>
-                            <p>Active</p>
-                            <h4 className='cyan'>Subscriptions</h4>
-                        </div>
-                        <div className="card ">
-                            <h1 className='count '>$123</h1>
-                            <p>Cloud</p>
-                            <h4 className='orange'>Cost</h4>
-                        </div>
                         <div className="card">
                             <h1 className='count'>64 TB</h1>
                             <p>Firebase</p>
                             <h4 className='purple'>Storage</h4>
                         </div>
+                    <div className="card ">
+                            <h1 className='count '>2</h1>
+                            <p>Referal</p>
+                            <h4 className='cyan'>Code</h4>
+                        </div>
+                        {/* <div className="card ">
+                            <h1 className='count '>$123</h1>
+                            <p>Cloud</p>
+                            <h4 className='orange'>Cost</h4>
+                        </div>
                         <div className="card">
                             <h1 className='count'>$345</h1>
                             <p>Subscription</p>
                             <h4 className='green'>Revenue</h4>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="group">
                         <div className="card">
@@ -100,16 +100,11 @@ function AdminPanel() {
                             <p>Tickets</p>
                             <h4 className='green'>Closed</h4>
                         </div>
-                        <div className="card">
-                            <h1 className='count'><span className='icon ticket'></span>12</h1>
-                            <p>Tickets</p>
-                            <h4 className='orange'>Pending</h4>
-                        </div>
-                        <div className="card">
+                        {/* <div className="card">
                             <h1 className='count'>~2 hrs</h1>
                             <p>Average</p>
                             <h4>Response Time</h4>
-                        </div>
+                        </div> */}
                     </div>
 
                 </div>
@@ -121,16 +116,7 @@ function AdminPanel() {
                         Create Studio
                     </div>
                     <div className="button secondary outline" onClick={() => {/* Implement create studio logic here */}}>
-                        Create Ticket
-                    </div>
-                    <div className="button secondary outline" onClick={() => {/* Implement create studio logic here */}}>
-                        Create Ticket
-                    </div>
-                    <div className="button secondary outline" onClick={() => {/* Implement create studio logic here */}}>
-                        Create Ticket
-                    </div>
-                    <div className="button secondary outline" onClick={() => {/* Implement create studio logic here */}}>
-                        Create Ticket
+                        Create Referal
                     </div>
                     <div className="button secondary outline" onClick={() => {/* Implement create studio logic here */}}>
                         Create Ticket
@@ -140,31 +126,35 @@ function AdminPanel() {
 
             <div className="tabs">
                 <button
-                    className={`tab-button ${selectedTab === 'users' ? 'active' : ''}`}
+                    className={`tab-button icon user ${selectedTab === 'users' ? 'active' : ''}`}
                     onClick={() => handleTabChange('users')}
                 >
                     Users
                 </button>
                 <button
-                    className={`tab-button ${selectedTab === 'studios' ? 'active' : ''}`}
+                    className={`tab-button icon studio ${selectedTab === 'studios' ? 'active' : ''}`}
                     onClick={() => handleTabChange('studios')}
                 >Studios</button>
                 <button
-                    className={`tab-button ${selectedTab === 'support' ? 'active' : ''}`}
+                    className={`tab-button icon ticket ${selectedTab === 'support' ? 'active' : ''}`}
                     onClick={() => handleTabChange('support')}
                 >Support</button>
                 <button
-                    className={`tab-button ${selectedTab === 'ai-ticket' ? 'active' : ''}`}
+                    className={`tab-button icon referal ${selectedTab === 'referal-codes' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('referal-codes')}
+                >Referral & Codes</button>
+                <button
+                    className={`tab-button icon ai ${selectedTab === 'ai-ticket' ? 'active' : ''}`}
                     onClick={() => handleTabChange('ai-ticket')}
                 >AI Ticket</button>
                 <button
-                    className={`tab-button ${selectedTab === 'activity-log' ? 'active' : ''}`}
+                    className={`tab-button icon history ${selectedTab === 'activity-log' ? 'active' : ''}`}
                     onClick={() => handleTabChange('activity-log')}
                 >Activity Logs</button>
-                <button
+                {/* <button
                     className={`tab-button ${selectedTab === 'subscriptions' ? 'active' : ''}`}
                     onClick={() => handleTabChange('subscriptions')}
-                >Subscriptions</button>
+                >Subscriptions</button> */}
             </div>
 
             {selectedTab === 'users' && (
@@ -188,6 +178,12 @@ function AdminPanel() {
             )}
             {selectedTab === 'studios' && (
                 <section className="studios-list">
+                    <div className="studio-card table-header">
+                        <p>NAME</p>
+                        <p>DOMAIN</p>
+                        <p>STUDIOS</p>
+                        <p>ROLES</p>
+                    </div>
                     {studios.map(studio => (
                         <div key={studio.id} className="studio-card">
                             <p>{studio.name}</p>
@@ -198,6 +194,41 @@ function AdminPanel() {
                     ))}
                 </section>
             )}
+            {
+                selectedTab === 'referal-codes' && (
+                    <section className="referal-codes-list">
+                        <div className="actions">
+                            <div className="button primary  icon referal">New</div>
+                        </div>
+                    <div className="referal-codes-card table-header">
+                        <p>ID</p>
+                        <p>CAMPAIN</p>
+                        <p>MEDIUM</p>
+                        <p>USAGE</p>
+                        <p>LINK</p>
+                        <p>CODE</p>
+                    </div>
+                        <div className="referal-codes-card">
+                            <p>#0001</p>
+                            <p>Shutter to Success - A</p>
+                            <p>Whatsapp Group</p>
+                            <p>1/10</p>                            
+                            <p className='button icon open-in-new'>../onboarding&ref=H72HG59</p>
+
+                            <button className="button secondary outline">H72HG59</button>
+                        </div>
+                        <div className="referal-codes-card">
+                            <p>#0002</p>
+                            <p>Shutter to Success- B</p>
+                            <p>Whatsapp Group</p>
+                            <p>1/10</p>
+                            <p className='button icon open-in-new'>../onboarding&ref=GT23RE6</p>
+                            <button className="button secondary outline">GT23RE6</button>
+                        </div>
+                        {/* Add more support tickets here */}
+                    </section>
+                )
+            }
             {
                 selectedTab === 'ai-ticket' && (
                     <section className="support-list">

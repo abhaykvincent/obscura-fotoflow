@@ -9,7 +9,7 @@ function UploadProgress({}) {
     const uploadStatus = useSelector(selectUploadStatus)
     const [uploadPercent,setUploadPercent] = useState(0)
     const [totalProgress,setTotalProgress]  = useState(0)
-    const [modalState, setModalState] = useState('open')
+    const [modalState, setModalState] = useState('close')
     useEffect(() => {
         console.log(uploadList)
         setTotalProgress(0)

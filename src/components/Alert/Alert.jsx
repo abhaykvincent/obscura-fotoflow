@@ -27,7 +27,7 @@ const Alert = () => {
                 className: type + ' alert',
                 description: 'My description',
                 duration: 8000,
-                position: 'bottom-right',
+                position: 'bottom-center',
                 closeButton:true,
                 icon: <MonitorPlayIcon />,
             }
@@ -45,7 +45,7 @@ const Alert = () => {
     <div >
 
         
-        <Toaster theme="dark" offset={'52px'}  position='bottom-right'  limit={5} 
+        <Toaster theme="dark" offset={'52px'}  position='bottom-center'  limit={5} 
         toastOptions={{
             classNames: {
               toast: 'flex items-center relative',

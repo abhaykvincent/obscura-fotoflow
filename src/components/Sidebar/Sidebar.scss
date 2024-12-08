@@ -1,7 +1,7 @@
 @import '../../style/variables';
 .sidebar{
     position: fixed;
-    top:  0px;
+    top:  8px*0;
     left: 0%;
     width: $sidebar-width;
     height: 100vh;
@@ -13,9 +13,8 @@
     padding-top: $header-height ;
     box-shadow:  -1px 1px 4px rgba(0, 0, 0, 0);
     transition-duration: 0.2s;
-    z-index: 0;
     .menu-list{
-        padding: 0 8px*2;
+        padding: 0 8px*1;
 
         a{
         .label{
@@ -57,10 +56,10 @@
         }
         .menu{
             display: grid;
-            grid-template-columns: 8px*3 auto auto;
+            grid-template-columns: 8px*3 auto ;
             align-items: center;
             font-size: 0.95rem;
-            gap:8px;
+            gap:8px*2;
             padding: 6px 8px;
             margin-bottom: 4px;
             border-radius: 8px*0.75;
@@ -120,7 +119,7 @@
             background-image: url('https://img.icons8.com/?size=100&id=123437&format=png&color=FFFFFF');
             }
             &.storage .icon{
-            background-size: 80%;
+            background-size: 70%;
             background-image: url('https://img.icons8.com/ios-filled/150/FFFFFF/stack.png');
             }
             &.notifications .icon{
@@ -128,12 +127,16 @@
             background-image: url('https://img.icons8.com/ios-filled/150/FFFFFF/appointment-reminders--v1.png');
             }
             &.subscription .icon{
-            background-size: 85%;
-            background-image: url('https://img.icons8.com/glyph-neue/64/FFFFFF/bank-card-back-side.png');
+            background-size: 95%;
+            background-image: url('https://img.icons8.com/?size=100&id=15802&format=png&color=54a134');
             }
             &.store .icon{
             background-size: 105%;
             background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/hanging-frame.png');
+            }
+            &.booking .icon{
+            background-size: 105%;
+            background-image: url('https://img.icons8.com/?size=100&id=GF0vR3W7TTHk&format=png&color=FFFFFF');
             }
             &.settings .icon{
             background-size: 100%;
@@ -151,13 +154,24 @@
             background-size: 90%;
             background-image: url('https://img.icons8.com/glyph-neue/64/FFFFFF/bank.png');
             }
-            &.team .icon{
-            background-size: 90%;
-            background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/conference.png');
+            &.settings .icon{
+            background-size: 110%;
+            background-image: url('https://img.icons8.com/?size=100&id=uVgsZ6Ybur44&format=png&color=FFFFFF');
             }
-            &.admin .icon{
-            background-size: 90%;
-            background-image: url('https://img.icons8.com/?size=100&id=vJB83aasOd9i&format=png&color=FFFFFF');
+            &.team .icon{
+                
+            background-size: 80%;
+            background-image: url('https://img.icons8.com/?size=100&id=22458&format=png&color=FFFFFF');
+            }
+            &.admin {
+                .label{
+
+                color: #54a134;
+                }
+                .icon{
+                background-size: 90%;
+                background-image: url('https://img.icons8.com/?size=100&id=vJB83aasOd9i&format=png&color=54a134');
+                }
             }
         }
         }
@@ -214,16 +228,20 @@
             position: absolute;
             bottom: 8px;
             padding: 0px;
-            margin: 8px;
+            margin: 4px;
+            margin-bottom: 8px*0.5;
             height: 0px;
-            width: 172px;
-            background-color: #000000;
-            border: 1px solid $gray3-default-dark;
+            width: 8px*19;
+            background-color: $dark-2;
+            border: 1px solid $gray4-default-dark;
+            box-shadow: 1px 1px 1px 2px black;
             z-index: 20;
             border-radius: 4px;
             overflow: hidden;
             opacity: 0;
-            transition-duration: 0.2s;
+            transition-duration: 0.1s;
+            transition-timing-function: ease-out;
+            transition-delay: 0.15s;
                 .option{
                     display: block;
                     width: 100%;
@@ -262,11 +280,13 @@
             }
             &.active{
                 bottom: 8px*7;
-
+                opacity: 1;
                 padding: 8px;
                 height: 8PX*24;
                 opacity: 1;
-                transition-duration: 0.1s;
+            transition-timing-function: ease-out;
+
+                transition-duration: 0.3s;
             }
         }
     }
@@ -279,25 +299,39 @@
         gap: 0;
         position: absolute;
         top: 100vh;
-        padding: 8px*1;
+        padding: 8px*0.5;
         padding-right: 0;
         margin-left: 4px;
-        margin-top: -4px;
+        margin-top: -8px*0.3;
         width: $sidebar-width - 8px;
-        transform: translateY(-100%);
+        transform: translateY(-100%)scale(1.0);;
         cursor: pointer;
         z-index: 21;
         background-color: $dark-3;
-        border: 1px solid $gray5-default-dark;
-        border-radius: 4px;
+        border: 1px solid $gray4-default-dark;
+        border-radius: 6px;
+            box-shadow: 1px 2px 1px 2px black;
+            transition-duration: 0.15s;
+
         &:hover{
-            border: 1px solid $gray2-default-dark;
+            border: 1px solid $gray3-default-dark;
+            transition-duration: 0.1s;
+            box-shadow: 1px 4px 1px 2px black;
+            margin-top: -8px*0.5;        
+            transform: translateY(-100%) scale(1.01);;
+
         }
         &.active{
-            border: 1px solid $gray-default-dark;
+            margin-top: -8px*0.5;
+            border: 1px solid $gray2-default-dark;
+            transform: translateY(-100%) scale(1.02);;
+        border-radius: 4px;
+        transition-duration: 0.15s;
+        transition-timing-function: ease-out;
             .option-icon{
-                transform: rotate(0deg) translateX(8px*-2);
-                transition-duration: 0.1s;
+                transform: rotate(180deg) translateX(8px*2) translateY(8px*0.5);;
+                
+                margin-top: 4px;
                 transition-timing-function: ease-out;
             }
         }
@@ -319,12 +353,40 @@
             font-weight: 500;
             font-size: 0.8rem;
             color: $gray3-accessible-dark;
+            .roles{
+                position: relative;
+                display: flex;
+                gap: 2px;
+                width: 8px*12;
+                overflow-x: scroll;
+                /* hide s crollbar */
+                scrollbar-width: 0;
+                z-index: -1;
+                &::after{
+                    position: absolute;
+                    right: -2px;
+                    content: '';
+                    padding: 16px 16px;
+                    z-index: 1;
+
+                    background: linear-gradient(to right, rgba(0, 0, 0, 0), $dark-2);
+                }
+                &::before{
+                    position: absolute;
+                    left: 0px;
+                    content: '';
+                    z-index: 1;
+                    padding: 16px 6px;
+                    background: linear-gradient(to right,  rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
+                }
+            }
             .role{
                 content: 'Admin';
                 display: inline-block;
                 color: $green-default-light;
                 font-size: 0.6rem;
-                margin-left: 4px;
+                margin-left: 0px;
+                margin-bottom: 2px;
                 font-weight: 700;
                 padding: 2px 4px;
                 //background-color: $green-accessible-light;
@@ -333,10 +395,12 @@
                 box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9), inset 1px 1px 2px rgba(0, 0, 0, 0.9);
                 text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
                 opacity: 0.6;
+                
             }
+            
         }
         .profile-image{
-            padding: 8px*2.5;
+            padding: 8px*2;
             background-image: url('../../assets/img/profile/sam.jpg');
             background-size: 100%;
             border: 1px solid $gray-accessible-dark;
@@ -347,12 +411,13 @@
         .option-icon{
         width: 8px*1.5;
         height: 8px*2;
+        margin-top: 10px;
         background-image: url('../../assets/img/icons/arrow-dropdown.png');
         background-size: 100%;
         background-position: center center;
-        transform: rotate(-180deg) translateX(8px*2);
+        transform: rotate(0deg) translateX(-8px*2) translateY(-8px*1);
         opacity: 0.5;
-        transition-duration: 0.15s;
+        transition-delay:0.5s ;
         transition-timing-function: ease-out;
         }
     }
@@ -435,9 +500,14 @@
         }
         .profile-options{
             margin-bottom: 8px;
+            width: calc(100% + 4px);
+            border: 1px $gray4-default-light;
             .profile{
+                .profile-image{
+                    padding: 8px*3;
+                }
                 .account-name{
-                    display: block;
+                    opacity: 0;
                 }
             }
         }
