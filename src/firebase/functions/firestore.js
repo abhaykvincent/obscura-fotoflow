@@ -1,6 +1,6 @@
 
 import { db, storage } from "../app";
-import { collection, doc, getDocs, getDoc, setDoc, deleteDoc,arrayRemove, updateDoc, arrayUnion, writeBatch} from "firebase/firestore";
+import { collection, doc, getDocs, getDoc, setDoc, deleteDoc,arrayRemove, updateDoc, arrayUnion, writeBatch, increment} from "firebase/firestore";
 import {generateMemorablePIN, generateRandomString} from "../../utils/stringUtils";
 import { deleteCollectionFromStorage, deleteProjectFromStorage } from "../../utils/storageOperations";
 import { update } from "firebase/database";
@@ -20,15 +20,18 @@ export const createStudio = async (studioData) => {
         id : id,
         ...studioData,
         plan: 'free',
-        limits:{
-            projectsPerWeek: 4,
-            galleriesPerProject: 2,
-            imagesPerGallery: 1000,
+        status: 'trial-period',
+        usage:{
+            storage: {
+                quota: 5*1000, // 5 GB
+                used: 0, // 0 GB
+            },
+            projects: {
+                weeklyUsed: 0,
+                monthlyUsed: 0,
+            },
         },
-        storage:{
-            used:0,
-            totalLimit: 5 * 1024 * 1024 * 1024,
-        }
+        startDate: new Date().toISOString().split('T')[0],
     }
     return setDoc(doc(studiosCollection, studioDoc.domain), studioDoc)
 
@@ -76,6 +79,18 @@ export const fetchStudios = async () => {
     }));
     return studiosData;
 }
+export const fetchStudioByDomain = async (currentDomain) => {
+    const studiosCollection = collection(db, 'studios');
+    const querySnapshot = await getDocs(studiosCollection);
+    const studiosData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    const studio = studiosData.find((studio) => studio.domain === currentDomain);
+    console.log(studio);
+    return studio;
+};
+
 // Users
 export const createUser = async (userData) => {
     const {email,studio} = userData;
@@ -236,6 +251,7 @@ export const addProjectToStudio = async (domain, project) => {
       throw error;
     }
   };
+
 export const deleteProjectFromFirestore = async (domain, projectId) => {
     if (!domain || !projectId) {
         throw new Error('Domain and Project ID are required for deletion.');
@@ -820,12 +836,12 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
     let color = domain === '' ? 'gray' : 'green';
     console.log(`%cAdding Uploaded Files to Project ${projectId} in ${domain ? domain : 'undefined'}`, `color: ${color}; `);
 
-    const batch = writeBatch(db);
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
     const projectDocRef = doc(projectsCollectionRef, projectId);
     const subCollectionId = `${collectionId}`;
     const collectionDocRef = doc(projectDocRef, 'collections', subCollectionId);
+    const targetStudioRef = doc(db, 'studios', domain);
 
     const projectData = await getDoc(projectDocRef);
 
@@ -833,18 +849,23 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         const collectionData = await getDoc(collectionDocRef);
 
         if (!collectionData.exists()) {
-            // Create the subcollection document if it doesn't exist
-            batch.set(collectionDocRef, { uploadedFiles: [], filesCount: 0 });
+            throw new Error('Collection does not exist.');
         }
-        console.log(collectionData.data()?.filesCount)
-
+        console.log(uploadedFiles)
         // Update collection with new data, including filesCount
-        batch.update(collectionDocRef, {
+        updateDoc(collectionDocRef, {
             uploadedFiles: arrayUnion(...uploadedFiles),
+        })
+        .then(() => {
+            console.log(`%cUploaded files added successfully to collection ${collectionId} in project ${projectId}.`, `color: #54a134;`);
+        })
+        .catch(error => {
+            console.error(`%cError adding uploaded files to collection ${collectionId} in project ${projectId}: ${error.message}`, `color: red;`);
+            throw error;
         });
+
         const pin = generateMemorablePIN(4)
-        console.log(projectData.data().projectCover)
-        batch.update(projectDocRef, {
+        updateDoc(projectDocRef, {
             collections: projectData.data().collections.map(collection => {
                 if (collection.id === collectionId) {
                     return {
@@ -860,9 +881,26 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
             projectCover: projectData.data().projectCover === '' ? uploadedFiles[0]?.url : projectData.data().projectCover,
             status: "uploaded",
             pin: projectData.data().pin || generateMemorablePIN(4),
+        })
+        .then(() => {
+            console.log(`%cProject ${projectId} updated successfully.`, `color: #54a134;`);
+        })
+        .catch(error => {
+            console.error(`%cError updating project ${projectId}: ${error.message}`, `color: red;`);
+            throw error;
         });
+            
+        await updateDoc(studioDocRef, {
+            "usage.storage.used": increment(importFileSize)
+        })
+            .then(() => {
+                console.log('Studio storage updated successfully!');
+            })
+            .catch((error) => {
+                console.error('Error updating studio storage:', error);
+            });
+        
 
-        await batch.commit();
         return({pin})
         color = '#54a134';
        

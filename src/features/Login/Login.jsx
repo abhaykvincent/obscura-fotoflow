@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { provider,auth,signInWithPopup } from '../../firebase/app';
 import {GoogleAuthProvider} from 'firebase/auth';
 import { Navigate, useNavigate } from 'react-router';
@@ -17,15 +17,20 @@ const LoginModal = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState(false);
   const defaultStudio = useSelector(selectUserStudio)
-
+  const [googleSignInResult, setGoogleSignInResult] = useState({});
  
-
+  useEffect(()=>{
+    if(googleSignInResult.user){
+      
+    console.log(googleSignInResult?.user)
+    }
+  },[googleSignInResult])
   const handleGoogleSignIn = async () => {
     try {
         setLoading(true);
 
         const result = await signInWithPopup(auth, provider);
-        
+        setGoogleSignInResult(result) 
         // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
@@ -77,8 +82,10 @@ const LoginModal = () => {
           {/* <div className='button secondary outline disable'  onClick={openEmailPassordLogin}>Password Login<div className="email-logo"></div></div> */}
           {
               loading? <div className="">
-                <p>Logging in with Google ...</p>
-                <p>Tab opened</p>
+                { googleSignInResult?.user?
+                <p>Sign-in as <span>{googleSignInResult?.user?.email}</span></p>:
+                <p>Opening Google Sign-in ...</p>
+                }
                 </div>:
               <div className='button'  onClick={handleGoogleSignIn}>
             

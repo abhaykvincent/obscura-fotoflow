@@ -33,7 +33,7 @@ import './App.scss';
 import Teams from './features/Teams/Teams';
 import SupportIcon from './components/Modal/SupportIcon/SupportIcon';
 import { useShortcutsConfig } from './hooks/shortcutsConfig';
-import { selectStudio, setStudio } from './app/slices/studioSlice';
+import { fetchStudio, selectStudio, setStudio } from './app/slices/studioSlice';
 import Onboarding from './features/Onboarding/Onboarding';
 import AdminPanel from './features/AdminPanel/AdminPanel';
 import useAdminAuth from './hooks/useAdminAuth';
@@ -80,12 +80,24 @@ export default function App() {
   useEffect(() => {
     dispatch(checkAuthStatus())
     dispatch(checkStudioStatus())
-    currentDomain !== 'guest' && dispatch(fetchProjects({currentDomain})).then((res)=>{
-      console.log(res)
-    })
-    .catch((err)=>{
-      dispatch(showAlert({ type: 'error', message: 'Check internet connection' }));
-    })
+    if(currentDomain !== 'guest')
+      {
+      dispatch(fetchProjects({currentDomain})).then((res)=>{
+        console.log(res)
+      })
+      .catch((err)=>{
+        dispatch(showAlert({ type: 'error', message: 'Check internet connection' }));
+      })
+
+      console.log(currentDomain)
+      dispatch(fetchStudio({currentDomain}))
+      .then((res)=>{
+        console.log(res)
+      })
+      .catch((err)=>{
+        console.error(err)
+      })
+    }
 
   }, [currentDomain]);
 

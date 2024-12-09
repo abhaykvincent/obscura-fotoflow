@@ -112,7 +112,6 @@ const authSlice = createSlice({
       const isLocalAuthenticated = localStorage.getItem('authenticated');
       state.isAuthenticated = isLocalAuthenticated === 'true';
         let color= '#54a134'
-        console.log(`%cAuthenticated`, `color: ${color}; font-size: 0.8rem`);
         state.user = JSON.parse(localStorage.getItem('user'));
       
       

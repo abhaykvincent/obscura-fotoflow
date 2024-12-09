@@ -11,7 +11,6 @@ function UploadProgress({}) {
     const [totalProgress,setTotalProgress]  = useState(0)
     const [modalState, setModalState] = useState('close')
     useEffect(() => {
-        console.log(uploadList)
         setTotalProgress(0)
         let totalFilesCount= uploadList.length;
         uploadList.forEach(item => {

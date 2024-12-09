@@ -1020,6 +1020,9 @@ body{
           font-weight: 600;
           animation: copyingGradient 0.5s infinite alternate linear;
           }
+          &.hide{
+            display: none;
+          }
         
         
       }
@@ -1261,16 +1264,20 @@ body{
     animation-timing-function: ease-out;
     
     &.island{
-
+      display: grid;
+      grid-template-rows: auto 100%;
       top: calc(50vh);
       right: auto;
       left: calc(50vw );
       height: auto;
+      max-height: 90vh;
       transform: translate(-50%,calc(-50% - $header-height)) scale(0.9);
       animation: none;
       opacity: 1;
       .modal-body{
         margin-top: 8px;
+        height: auto;
+        overflow: scroll;
       }
     }
     &:hover{
@@ -1428,8 +1435,11 @@ body{
       width: 100%;
       position: absolute;
       bottom: 0px;
-      border-top: 1px solid $dark-1;
-      padding: 8px;
+      border: 1px solid $dark-0;
+      border-radius: 4px;
+      padding: 8px*2 8px*2*1.618 ;
+      background-color: $gray6-default-dark;
+      box-shadow: 0px 1px 2px black;
     }
     .modal-body{
       margin-top: 8px*3;
@@ -1520,9 +1530,15 @@ body{
         }
       }
       .actions{
-      border-top: none;
       position: relative;
       justify-content: center;
+      background-color: $dark-3;
+      border: 1px solid $gray6-default-dark;
+      p{
+        span{
+          color: $green-accessible-dark;
+        }
+      }
         .button{
           height: 8px*5;
           display: flex;

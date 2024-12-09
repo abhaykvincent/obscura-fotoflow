@@ -5,6 +5,8 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { update } from 'firebase/database';
 import { checkStudioDomainAvailability } from '../../firebase/functions/firestore';
+import { openModal } from '../../app/slices/modalSlice';
+import PrivacyPolicy from '../PrivacyPolicy/PrivacyPolicy';
 
 const CreateStudio = ({active,next,createAccountData,updateAccountData,user}) => {
   const dispatch = useDispatch();
@@ -110,55 +112,58 @@ const CreateStudio = ({active,next,createAccountData,updateAccountData,user}) =>
   const domain = url.split('/')[2];
 
   return (
+    <>
+      <div className={`screen create-studio ${user?.email && 'active'}`}>
+      
+        <p className='section-intro'>Let's start with the <span className="name-label">name</span> for your studio </p>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <input
+              type="text"
+              id="studioName"
+              value={studioName}
+              placeholder='Studio name'
+              onChange={handleStudioNameChange}
+              autocomplete="off"
+              required
+            />
+            <div className={`studio-domain-selector ${isDomainAvailable ?'available':'taken'} ${studioDomain.length>3 && 'active'}`}>
+              <div className="domain-input-container">
+                <div className="web-icon"></div>
+                <p className={`studio-domain `}>{domain}/
+                    <span className={isDomainAvailable?`available`:`taken`} contentEditable>{studioDomain}
 
-    <div className={`screen create-studio ${user?.email && 'active'}`}>
-     
-      <p className='section-intro'>Let's start with the <span className="name-label">name</span> for your studio </p>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <input
-            type="text"
-            id="studioName"
-            value={studioName}
-            placeholder='Studio name'
-            onChange={handleStudioNameChange}
-            autocomplete="off"
-            required
-          />
-          <div className={`studio-domain-selector ${isDomainAvailable ?'available':'taken'} ${studioDomain.length>3 && 'active'}`}>
-            <div className="web-icon"></div>
-            <p className={`studio-domain `}>{domain}/
-                <span className={isDomainAvailable?`available`:`taken`} contentEditable>{studioDomain}
-
-                {!isSuggestionsAvailable &&  studioDomain.length>3 &&
-                  <span className={`suggestions ${isDomainAvailable && 'focus-out'}` }>
-                    {suggestSubDomains.map((subdomain, index) => (
-                      <span key={index} className='suggestion' onClick={()=>{
-                        setStudioDomain(studioDomain+subdomain)}
-                      }>{studioDomain}{subdomain}</span>
-                    ))}
-                  </span>
-              }
-                </span>
-                  
-            </p>
-            
-            {
-              studioDomain.length>3 &&
-              (isDomainAvailable ?
-                <p className='input-reaction'>{`Sub-domain Available`}</p>:
-                <p className='input-reaction'>{`Sub-domain already taken. `}</p>)
+                    {!isSuggestionsAvailable &&  studioDomain.length>3 &&
+                      <span className={`suggestions ${isDomainAvailable && 'focus-out'}` }>
+                        {suggestSubDomains.map((subdomain, index) => (
+                          <span key={index} className='suggestion' onClick={()=>{
+                            setStudioDomain(studioDomain+subdomain)}
+                          }>{studioDomain}{subdomain}</span>
+                        ))}
+                      </span>
+                  }
+                    </span>
+                      
+                </p>
+              </div>
               
-            }
+              {
+                studioDomain.length>3 &&
+                (isDomainAvailable ?
+                  <p className='input-reaction'>{`Sub-domain Available`}</p>:
+                  <p className='input-reaction'>{`Sub-domain already taken. `}</p>)
+                
+              }
+            </div>
+            
           </div>
-          
-          
-        </div>
-        <div className={`button primary large ${!isDomainAvailable ? 'disabled':''}`}
-          onClick={handleSubmit}
-        >Create Studio</div>
-      </form>
-    </div>
+          <div className={`button primary large ${!isDomainAvailable ? 'disabled':''}`}
+            onClick={handleSubmit}
+          >Create Studio</div>
+        </form>
+      </div>
+    </>
+
   );
 };
 
