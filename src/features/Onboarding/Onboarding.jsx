@@ -101,7 +101,9 @@ function Onboarding() {
     dispatch(checkAuthStatus)
   },[])
   return (
+    <>
     <main className="onboarding-container">
+      <div className="logo"></div>
       <div className="user-authentication">
       {
         !user?.email &&
@@ -132,6 +134,7 @@ function Onboarding() {
           user={user}
       />
     </main>
+    </>
   )
 }
 

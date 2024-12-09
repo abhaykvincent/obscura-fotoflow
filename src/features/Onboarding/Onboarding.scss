@@ -1,7 +1,7 @@
 @import '../../style/_variables.scss';;
 .App .onboarding-container{
     display: grid;
-    grid-template-rows: auto auto;
+    grid-template-rows: auto auto auto;
     top: 0px;
     left :0;
     padding-left: 8px*20;
@@ -32,7 +32,6 @@
 
         }
     }
-
 .user-authentication{
     display: flex;
     margin-bottom: 8px*4;
@@ -91,13 +90,13 @@
         line-height: 2.2rem;
         font-weight: 500;
         color: $gray3-default-dark;
-        margin-bottom: 8px*3;
+        margin-bottom: 8px*0;
     }
     .form-group{
         display: grid;
         justify-items: start;
         margin-bottom: 8px*18;
-        margin-top: 8px*2;
+        margin-top: 8px*0;
         input{
             height: 4rem;
             width: 35rem;
@@ -231,6 +230,9 @@
                 background-position: center;
             }
         }
+        .domain-input-container{
+            display: FLEX;
+        }
         .studio-domain{
             display: flex;
             font-size: 1.5rem;
@@ -297,6 +299,95 @@
         }
     }
 }
+.privacy-policy-modal{
+    width: 80vw;
+.modal-body{
+    padding: 8px 8px*8;
+    padding-top: 8px*3;
+    overflow: hidden;
+    .logo{
+        position: relative;
+        left: calc(50% - 8px*5);
+        top: 0;
+        width: 8px*10;
+        height: 8px*10;
+        background-image: url('../../assets/img/fotoflow-pro-logo.png');
+        background-size: 100%;
+        background-position: center;
+        animation: logo-spin infinite;
+        animation-duration:18s;
+        transform: rotate(0deg) scale(1.2);
+        z-index: 40;
+        opacity: 1;
+        // smooth natural spinning with apuse in itervals
+        @keyframes logo-spin {
+            0%{              
+              opacity: 1;
+              transform: rotate(0deg) ;
+            }
+            99.999%{
+              opacity: 1;
+              transform: rotate(360deg * 4) ;
+            
+            }
+            100%{
+              opacity: 1;
+              transform: rotate(360deg *0) ;
+            }
+          }
+
+        
+      }
+    .privacy-policy{
+        margin-top: 8px*4;
+        margin-bottom: 8px*16;
+            section{
+                margin-bottom: 8px*2*1.618;
+            }
+            h2{
+                margin-bottom: 8px*2;
+            }
+            ul{
+                margin-top: 8px*1;
+                margin-left: 8px*2/1.618;;
+                li{
+                    color: $gray-default-light;
+                    line-height: 1.2rem;
+                    margin-bottom: 8px*2/1.618/1.618;
+                    strong{
+                        color: $gray4-default-light;
+
+                    }
+                }
+            }
+            p{
+                color: $gray2-default-light;
+                strong{
+                    color: $gray6-default-light;
+
+                }
+            }
+        }
+        
+    }
+}    
+.privacy-policy-statment{
+    display: flex;
+    align-items: center;
+    gap: 8px*2;
+    margin-left: 8px;
+    margin-bottom: 8px;
+    input{
+        width: 8px*2;
+        padding: 0 8px;
+    }
+    label{
+        width: 100%;
+        white-space: nowrap;
+        color: $gray2-default-dark;
+        
+    }
+}
 
 @media only screen and (max-width: 1230px) {
     .App .onboarding-container{
@@ -322,8 +413,27 @@
         padding-left: 8px*4;
         width: 100vw;
         height: 100vh;
+        .logo{
+            top: 8px*4;
+            left: 8px*4;
+        }
         .screen{
-    
+            width: 90%;
+            .studio-domain-selector{
+
+                display: grid;
+                .input-reaction{
+                    margin-left: 8px*5;
+                }
+            }
+            span.suggestions{
+                width: calc(100vw - 8px*5);
+                display: flex;
+                flex-wrap: wrap;
+                left: -8px*20;
+                top: 8px*7;
+            }
+            
         }
     }
 }

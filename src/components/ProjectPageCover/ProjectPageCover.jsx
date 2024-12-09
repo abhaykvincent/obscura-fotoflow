@@ -97,12 +97,14 @@ export const ProjectCover = ({ project }) => {
             className={`project-page-cover ${isSetFocusButton ? "focus-button-active" : ""} ${project?.projectCover ? "cover-show" : "cover-hide"}`}
             style={{ // Ensure the container height
                 
-                backgroundImage: project?.projectCover ?`url(${project.projectCover.replace(/\(/g, '%28').replace(/\)/g, '%29').split('&token=')[0]})` : `url('https://img.icons8.com/?size=256&id=UVEiJZnIRQiE&format=png&color=1f1f1f')`,
+                backgroundImage: project?.projectCover ?`url(${project.projectCover.replace(/\(/g, '%28').replace(/\)/g, '%29').replace('-thumb', '').split('&token=')[0]})` : `url('https://img.icons8.com/?size=256&id=UVEiJZnIRQiE&format=png&color=1f1f1f')`,
                 backgroundPosition: `${focusPointLocal?.x * 100}% ${focusPointLocal?.y * 100}%`,
                 backgroundSize: `${project?.projectCover ? "cover":"auto 50% "}`, // Ensure image scaling
             }}
             onClick={handleFocusClick}
         >
+
+            {project.pin&&
             <div className="cover-footer">
                 <div className="static-tools bottom">
                     {/* <div className="cover-info project-views-count">
@@ -127,7 +129,8 @@ export const ProjectCover = ({ project }) => {
                     </div>
                 </div>
                 
-            </div>
+            </div>}
+            {project.pin&&
             <div className="static-tools top">
                     <div className="cover-info project-expiry">
                         <p>Expires 
@@ -141,8 +144,9 @@ export const ProjectCover = ({ project }) => {
 
                     </div>
                 </div>
+            }
             {
-            !isSetFocusButton ? 
+            !isSetFocusButton && project.pin? 
                 <div className="cover-tools">
                     <div
                         className="button transparent-button secondary icon set-focus"

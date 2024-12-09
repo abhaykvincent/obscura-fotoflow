@@ -59,7 +59,7 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
   );
   const handlePinClick = () => {
     // Copy pin to clipboard
-    navigator.clipboard.writeText(project.pin).then(() => {
+    navigator.clipboard.writeText(project?.pin).then(() => {
       setPinIconClass('copying'); // Temporarily add copying class
       setPinText('Coping'); // Temporarily change text to "Copied"
 
@@ -77,7 +77,7 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
   };
 
   const [pinText, setPinText] = useState(project?.pin );
-  const [pinIconClass, setPinIconClass] = useState('');
+  const [pinIconClass, setPinIconClass] = useState(project?.pin?'':'hide');
   // Local state for the project
   useEffect(() => {
     if (projectsStatus === 'succeeded' && !selectedProject) {

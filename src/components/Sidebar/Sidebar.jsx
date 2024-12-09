@@ -6,20 +6,32 @@ import { logout, selectUser, selectUserStudio } from '../../app/slices/authSlice
 import { useDispatch, useSelector } from 'react-redux';
 import AdminRoute from '../AdminRoute/AdminRoute';
 import { trackEvent } from '../../analytics/utils';
+import { selectStudio } from '../../app/slices/studioSlice';
 function Sidebar() {
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector(selectUser);
   const [profileOptionActive, setProfileOptionActive] = useState(false)
-  const toggleProfileOption = () => {
-    setProfileOptionActive((prevState) => !prevState);
-  };
   const defaultStudio = useSelector(selectUserStudio)
   const location = useLocation();
   const params = useParams()
   const studioName = defaultStudio?.domain ?? {domain:'guest',name:'guest'}; 
-  
+  const studio= useSelector(selectStudio)
+  console.log(studio)
+  const [storageUsage , setStorageUsage] = useState({
+  })
+  const toggleProfileOption = () => {
+    setProfileOptionActive((prevState) => !prevState);
+  };
+  useEffect(() => {
+    if(!studio?.usage) return
+    setStorageUsage({
+      used: (studio.usage.storage.used/1000).toFixed(2),
+      quota: (studio.usage.storage.quota/1000).toFixed(0),
+      usedPercentage: (studio.usage.storage.used/studio.usage.storage.quota*100).toFixed(2)
+    })
+    },[studio])
   if(user==='no-studio-found')
     return 
   return (
@@ -47,7 +59,7 @@ function Sidebar() {
           </div>
         </Link>
 
-}
+        }
         <Link to={`/${studioName}/bookings`}>
           <div className={`menu booking ${location.pathname === `/${studioName}/bookings` ? 'active' : ''} disabled`}>
             <div className="icon"></div>
@@ -73,9 +85,8 @@ function Sidebar() {
           </div>
         </Link> */}
         {/* Admin */}
-        <p className="label">ADMIN</p>
-
         
+        <p className="label">ADMIN</p>
         <Link to={`/${studioName}/team`}>
           <div className={`menu team ${location.pathname === `/${studioName}/team` ? 'active' : ''}`}>
             <div className="icon"></div>
@@ -107,6 +118,33 @@ function Sidebar() {
             <div className="label">Subscription</div>
           </div>
         </Link>
+
+        <p className="label">QUOTA</p>
+        <div className="storage-bars">
+          <div className="storage-bar hot">
+            <div className="storage-labels">
+              <div className="icon hot"></div>
+              <p>Hot Storage</p>
+              <p className='usage-label'><span className='bold'>{storageUsage.used}</span>/{storageUsage.quota}GB</p>
+            </div>
+            <div className="used-bar"
+              style={{
+                width: `${storageUsage.usedPercentage}%`
+              }}
+            ></div>
+            <div className="quota-bar"></div>
+          </div>
+          <div className="storage-bar cold">
+
+            <div className="storage-labels">
+            <div className="icon cold"></div>
+              <p>Cold Storage</p>
+              <p className='usage-label'><span className='bold'>27</span>%</p>
+            </div>
+            <div className="used-bar"></div>
+            <div className="quota-bar"></div>
+          </div>
+        </div>
 
         {/* <AdminRoute> 
           <p className="label">Product ADMIN</p>
