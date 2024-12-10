@@ -677,11 +677,12 @@
 				bottom: 4px;
 				padding: 2px 8px;
 				border-radius: 3px;
-				background-color: $dark-1;
+				background-color: rgba(0, 0, 0, 0.2);
+				backdrop-filter: blur(2px);
 				color: $gray6-default-light;
 				font-size: 0.8rem;
 				border: 1px solid  $gray-default-light;
-				opacity: 0.7;
+				opacity: 1;
 			}
 		}
 	}

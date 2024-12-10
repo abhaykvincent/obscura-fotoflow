@@ -7,9 +7,9 @@
     top: 100vh;
     width: 8px*40;
     transform: translateY(calc(-100% - 8px*3));
-    background-color: $dark-3;
+    background-color: rgba(0, 0, 0, 0.6);
     border: 1px solid $dark-0;
-    border-radius: 8px;
+    border-radius: 8px*2;
     overflow: hidden;
     z-index: 12;
     transition-duration: 0.2s;
@@ -17,19 +17,29 @@
     .header{
         position: relative;
         display: grid;
+        align-items: center;
         grid-template-columns: 8px*6 auto 8px*8;
-        padding: 8px;
+        padding: 8px 0;
         height: 8px*7;
         line-height: 1.4em;
-        border-bottom: 1px solid $dark-2;
-        background: linear-gradient(120deg, $dark-2 0%, $dark-3 100%);
+        background: rgba(10, 10, 10, 0.4);
+        backdrop-filter: blur(8px);
         transition-duration: 0.5s;
         .header-process{
+            height: 100%;
+            width: 100%;
             background-image: url('../../assets/img/gifs/loading-green-loading.gif');
             background-position: center;
             background-size: auto 50%;
             opacity: 0.5;
-            filter:saturate(0.6) brightness(2)
+            filter:saturate(0.6) brightness(2);
+            &.uploadCompleted {
+            opacity: 1;
+            filter:saturate(1) brightness(1);
+            background-size: auto 70%;
+
+                background-image: url('https://img.icons8.com/?size=100&id=Ec2YiJY0ZFZ3&format=png&color=54a134');
+            }
         }
         .header-title{
             display: grid;
@@ -48,6 +58,8 @@
               height: 8px;
               width: 8px;
               border-radius: 50%;
+
+            opacity: 0.4;
               &.close{
                 background-color: $red-default-dark;
               }
@@ -66,7 +78,8 @@
             .progress-bar{
                 height: 4px;
                 ;
-                background-color: $green-accessible-dark;
+                min-width: 10%;
+                background:linear-gradient(to right, #428924 80%, #87d413 100%);
                 border-radius: 0 2px 2px 0;
             }
         }
@@ -75,7 +88,8 @@
         height: 8px*40;
         padding: 0 8px*2;
         overflow: scroll;
-        background: linear-gradient(120deg, $dark-2 0%, $dark-3 100%);
+        background: rgba(23, 23, 23, 0.6);
+        backdrop-filter: blur(2px);
         transition-duration: 0.2s;
         .upload-queue{
             display: grid;
@@ -85,6 +99,7 @@
                 display: grid;
                 grid-template-columns: 8px*4 auto 8px*4;
                 gap: 8px*2;
+                row-gap: 8px;
                 .task-cover{
                     background-image: url('../../assets/img/icons/image.svg');
                     background-position: center;
@@ -97,6 +112,11 @@
                     font-size: 0.8rem;
                     color: $gray4-accessible-dark;
                     margin-top: 2px;
+                    span{
+                        margin-left: 8px*1;
+                    color: $gray3-accessible-dark;
+
+                    }
                 }
                 .task-status{
                     background-image: url('https://media.tenor.com/t5DMW5PI8mgAAAAi/loading-green-loading.gif');
@@ -117,13 +137,15 @@
                     grid-column-end:4;
                     .file-progress-bar{
                         height: 2px;
-                        width : 10%;
+                        min-width : 2%;
                         transition-duration: 0.5s;
+                        border-radius: 3px;
                         transition-timing-function: ease-in-out;
                         background-color: $green-accessible-dark;
                         &.done{
-                        transition-delay: 0.5s;
+                            transition-delay: 0.5s;
                             margin-left: 100%;
+                            width: 1px;
                         }
                     }
                 }
@@ -132,14 +154,71 @@
                         opacity: 1;
                         filter:saturate(0) brightness(2)
                     }
+                    .file-progress-bar{
+                        background-color: $gray4-default-dark;
+                        animation-name: progress-initializer;
+                        animation-duration: 4s;
+                        animation-timing-function: ease-in-out;
+                        animation-fill-mode: forwards;
+                        @keyframes progress-initializer {
+                                0%{
+                                    width: 0%;
+                                }
+                                30%{
+                                    width: 50%;
+                                }
+                                60%{
+                                    width: 75%;
+                                }
+                                100%{
+                                    width: 100%;
+                                }
+                        }
+                    }
+                }
+                &.pending{
+                    .task-status{
+                        opacity: 1;
+                        filter:saturate(0) brightness(2);
+                        opacity:(0.6);
+                    }
+                    .file-progress-bar{
+                        background-color: $gray5-default-dark;
+                    }
                 }
                 &.uploading{
                     .task-status{
                         opacity: 1;
                         filter:saturate(0.6) brightness(2)
                     }
+                    .file-progress-bar{
+                        width : 2%;
+                        
+                        background:linear-gradient(to right, #428924 80%, #70ab17);
+                        animation-name: progress-initializer-upload;
+                        animation-duration: 4s;
+                        animation-timing-function: ease-in-out;
+                        animation-fill-mode: forwards;
+                        @keyframes progress-initializer-upload {
+                                0%{
+                                    width: 0%;
+                                }
+                                30%{
+                                    width: 50%;
+                                }
+                                60%{
+                                    width: 75%;
+                                }
+                                90%{
+                                    width: 100%;
+                                }
+                        }
+                    }
                 }
                 &.uploaded{
+                    .file-progress-bar{
+                        left: 100%;
+                    }
                     .task-status{
                         opacity: 1;
                         background-image: url('../../assets/img/icons/check-circle.svg');
@@ -157,14 +236,42 @@
         transition-duration: 0.2s;
     }
     &.minimize{
+        border-radius: 8px;
+        transition-duration: 2s;
         .body{
             height: 0px;
+        }
+        .header .modal-controls .control{
+            opacity: 0.2;
+            &.maximize {
+                opacity: 1;
+                animation-name: status-blink;
+                animation-duration: 1.5s;
+                animation-fill-mode: forwards;
+                animation-iteration-count: infinite;
+                animation-timing-function: ease-in-out;
+                @keyframes status-blink {
+                        0% {
+                            opacity: 0.3;
+                        }
+                        61% {
+                            opacity: 1;
+                        }
+                        100% {
+                            opacity: 0.3;
+                        }
+
+                }
+            }
         }
     }
     &.completed{
         transition-duration: 0.2s;
+        border-radius: 8px;
         .header{
-            background: linear-gradient(120deg, $green-accessible-dark -30%, $green-accessible-light 50%);.header-title{
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+            .header-title{
                 p{
                     color:$gray6-accessible-light;
                 }
