@@ -59,7 +59,7 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
   );
   const handlePinClick = () => {
     // Copy pin to clipboard
-    navigator.clipboard.writeText(project.pin).then(() => {
+    navigator.clipboard.writeText(project?.pin).then(() => {
       setPinIconClass('copying'); // Temporarily add copying class
       setPinText('Coping'); // Temporarily change text to "Copied"
 
@@ -77,7 +77,7 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
   };
 
   const [pinText, setPinText] = useState(project?.pin );
-  const [pinIconClass, setPinIconClass] = useState('');
+  const [pinIconClass, setPinIconClass] = useState(project?.pin?'':'hide');
   // Local state for the project
   useEffect(() => {
     if (projectsStatus === 'succeeded' && !selectedProject) {
@@ -168,7 +168,12 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
           <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
         )}
           <div className="type">{project?.type}</div>
-          <div className={`project-status ${projectStatusLocal}`}>
+          
+        </div>
+        <div className="project-options options">
+        {/* Project starus with select with different project state */}
+       
+        <div className={`project-status ${projectStatusLocal}`}>
           <div className="project-status-select">
             <div className="project-status-select-value">
               <select
@@ -192,11 +197,6 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
             </div>
             </div>
           </div>
-        </div>
-        <div className="project-options options">
-        {/* Project starus with select with different project state */}
-       
-
         <div className={`button tertiary icon pin ${pinIconClass}`} onClick={handlePinClick}>{pinText}</div>
             <div className={`button primary share icon ${project?.uploadedFilesCount>0 ? '':'disabled'}`} 
             onClick={()=>{

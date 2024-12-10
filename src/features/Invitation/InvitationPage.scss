@@ -452,7 +452,6 @@
 .content-editor{
   display: grid;
   gap: 8px*2;
-  margin-top: 8px*2;
   .form-section{
       margin:0  ;
       display: grid;
@@ -604,7 +603,7 @@
     }
 }
 .event-editor{
-  margin-top: 8px*5;
+  margin-top: 8px*0;
   opacity: 0;
   animation: fadeInLeft 0.15s ease-out 0.4s;
   animation-fill-mode: forwards;
@@ -614,7 +613,6 @@
   }
   .add-event{
     display: flex;
-    justify-content: end;
     margin-top: 8px;
     opacity: 0;
     animation: fadeInLeft 0.15s ease-out 0.45s;

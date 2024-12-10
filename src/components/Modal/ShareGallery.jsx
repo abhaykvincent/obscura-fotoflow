@@ -44,17 +44,26 @@ const modalRef = useModalFocus(visible.shareGallery);
             
               <div className="select-galleries">
                 
-              <p className='client-label'>Select galleries</p>
               <div className="galleries-share-list-selection">
+              <p className='client-label'>Select galleries</p>
+              <p className='client-label'>Selection</p>
                 {project.collections.map((collection, index) => (
-                  <div className="form-item" key={index}>
-                    <div className="input">
-                      <input type="checkbox" checked={true} />
+                  <>
+                    <div className="form-item" key={index}>
+                      <div className="input">
+                        <input type="checkbox" checked={true} />
+                      </div>
+                      <div className="label">
+                        <label>{collection.name}</label>
+                      </div>
                     </div>
-                    <div className="label">
-                      <label>{collection.name}</label>
+                    <div className="form-item selection" key={index}>
+                      <div className="input">
+                        <input type="radio" checked={true} />
+                      </div>
+                      
                     </div>
-                  </div>
+                  </>
                 ))}
               </div>
 
@@ -67,15 +76,18 @@ const modalRef = useModalFocus(visible.shareGallery);
                   <a className="" href={getGalleryURL('share',domain,project.id)} target='_blank'><div className="link-container">
                 <a className='linkToGallery' href={getGalleryURL('share',domain,project.id)} target='_blank' >.../{domain}{getGalleryURL('share',domain,project.id).split(domain)[1]}</a>
                 <div className="button icon icon-only open-in-new"></div>
-              </div></a>
+              </div>
+              </a>
                   
                 </div>
                 <p className="copy-link button icon copy pin" onClick={() => {
                     copyToClipboard(getGalleryURL('share',domain,project.id))
-                    
                   }
                   }>Copy</p>
-                <p className='pin'>🔐 {project.pin}</p>
+                  <p className="copy-link button icon  pin" onClick={() => {
+                    copyToClipboard(getGalleryURL('share',domain,project.id))
+                  }
+                  }>{project.pin}</p>
               </div>
               
               {/* <div className="client-notification">

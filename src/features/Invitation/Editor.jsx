@@ -15,10 +15,8 @@ const Editor = ({ data, onChange }) => {
       <div className="editor-row">
         <BackgroundPicker background={data.background} onChange={(bg) => onChange({ background: bg })} />
       </div>
-      <div className="editor-row">
 
       <InvitationContentEditor data={data} onChange={onChange} />
-      </div>
     </div>
   );
 };

@@ -14,13 +14,13 @@
     font-weight: 600;
     opacity: 0.9;
     text-align: center;
-        transition-timing-function: ease-out;
+        transition-timing-function: ease-in;
         cursor: pointer;
-    transition-duration: 0.2s;
+    transition-duration: 0.1s;
     &:hover{
         opacity: 0.9;
         transition-duration: 0.1s;
-        transition-timing-function: ease-in;
+        transition-timing-function: ease-out;
         transform: translateY(-1px);
         box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2), 1px 1px 1px  rgba(0, 0, 0, 0.5);
     }
@@ -109,7 +109,7 @@
         cursor: not-allowed;
     }
     &.large{
-        height: 8px*5;
+        height: 8px*4.5;
         padding: 8px*1 8px*2.5;
         font-size: 1rem;
     }
@@ -145,7 +145,6 @@
 
         &.add::before{
             background-image: url('https://img.icons8.com/ios-filled/500/ffffff/plus-math.png');
-
         }
         &.search::before{
             background-size: 100%;
@@ -272,9 +271,20 @@
             padding:  4px;
             &::before{
                 margin: 0;
-                background-size: 80%;
+                background-size: 90%;
                 background-position: center center;
                 background-image: url('https://img.icons8.com/?size=100&id=8yBXUwihe10f&format=png&color=FFFFFF');
+                
+            }
+        }
+        &.referal{
+            &::before{
+                margin: 0;
+                margin-left: -8px;
+                margin-right: 4px;
+                background-size: 90%;
+                background-position: center center;
+                background-image: url('https://img.icons8.com/?size=100&id=ZsYJzYlThVLD&format=png&color=FFFFFF');
                 
             }
         }
@@ -291,12 +301,58 @@
         }
     }
 }
+.tab-button{
+    &.icon{
+        &::before{
+        content: '.';
+        margin-right: 4px;
+        margin-left: -4px;
+        width: 8px*3;
+        height: 100%;
+        padding: 8px;
+        color: transparent;
+        background-size: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: drop-shadow(1px 1px 1px #222);
+         background-size: 100%;
+         
+           
+    }
+        &.ai::before{
+            background-size: 80%;
+            background-image: url('https://img.icons8.com/?size=100&id=Imv4VIewVo4o&format=png&color=FFFFFF');
+        }
+        &.user::before{
+            background-size: 100%;
+            background-image: url("https://img.icons8.com/?size=100&id=23265&format=png&color=ffffff");
+        }
+        &.referal::before{
+            background-size: 90%;
+            background-image: url("https://img.icons8.com/?size=100&id=ZsYJzYlThVLD&format=png&color=FFFFFF");
+        }
+        &.ticket::before{
+            background-size: 80%;
+            background-image: url("https://img.icons8.com/?size=100&id=8851&format=png&color=FFFFFF");
+        }
+        &.history::before{
+            background-size: 90%;
+            background-image: url("https://img.icons8.com/?size=100&id=PeLgq1OtWrKX&format=png&color=FFFFFF");
+        }
+        &.studio::before{
+            background-size: 90%;
+            background-image: url("https://img.icons8.com/?size=100&id=78230&format=png&color=FFFFFF");
+        }
+    }
+}
 .icon-show{
     height: 8px*2;
     width: 8px*2;
-    opacity: 0.5;
+    opacity: 0.8;
     background-size: auto 100%;
     background-position: center;
+    // background drop shadow
+    -webkit-filter: drop-shadow(0px 0px 2px #0000008f);
     &.add{
         background-image: url('https://img.icons8.com/ios-filled/500/ffffff/plus-math.png');
 
@@ -304,6 +360,36 @@
     &.edit{
         background-size: auto 80%;
         background-image: url('https://img.icons8.com/?size=100&id=8192&format=png&color=FFFFFF');
+    }
+    &.view{
+        height: 8px*2.5;
+        width: 8px*2.5;
+        background-size: auto 80%;
+        background-image: url('https://img.icons8.com/?size=100&id=qakgRGJ6YfEY&format=png&color=FFFFFF');
+    }
+    &.storage{
+        height: 8px*2.5;
+        width: 8px*3;
+        background-size: auto 80%;
+        background-image: url('https://img.icons8.com/?size=100&id=184&format=png&color=FFFFFF');
+    }
+    &.image{
+        height: 8px*2.5;
+        width: 8px*3;
+        background-size: auto 100%;
+        background-image: url('https://img.icons8.com/?size=200&id=XANIzpZcz8xx&format=png&color=FFFFFF');
+    }
+    &.folder{
+        height: 8px*2.5;
+        width: 8px*3;
+        background-size: auto 90%;
+        background-image: url('https://img.icons8.com/?size=100&id=CXSefwAlx5SL&format=png&color=FFFFFF');
+    }
+    &.expire{
+        height: 8px*2.5;
+        width: 8px*3;
+        background-size: auto 90%;
+        background-image: url('https://img.icons8.com/?size=100&id=i0JZUzTEcNXe&format=png&color=FFFFFF');
     }
     &.delete{
         background-image: url('https://img.icons8.com/?size=100&id=KPhFC2OwpbWV&format=png&color=FFFFFF');
@@ -328,7 +414,7 @@ input,select{
   }
 .disabled{
     color: $gray5-accessible-light;
-    opacity: 0.3;
+    opacity: 0.3 !important;
     *{
 
         cursor: not-allowed !important;
@@ -368,7 +454,7 @@ input,select{
     margin-left: -8px*2;
     margin-top: 8px*3;
     padding: 4px 0;
-    background: $dark-2;
+    background: #1a1a1ae0;
     -webkit-backdrop-filter: blur(16px);
     border-radius: 4px;
     border: 1px solid $dark-1-5;
@@ -396,9 +482,9 @@ input,select{
         animation-timing-function: ease-in;
         &:hover{
             color: $gray6-accessible-light;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-top: 1px solid $dark-1;
-            border-bottom: 1px solid $dark-1;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-top: 1px solid $dark-1-5;
+            border-bottom: 1px solid $dark-1-5;
             transition-duration: 0.05s;
             transition-delay: 0.05s;
             &:first-child{
@@ -471,10 +557,11 @@ border: 0px solid #535353;
     align-items: center;
     justify-content: center;
     position: absolute;
-    top: 8px*8;
-    left: $sidebar-width + 8px*2;
-    width: calc(100% - $sidebar-width - 8px*4);
-    height: calc(100vh - $header-height - 8px*6);
+    top: -4px;
+    left: -8px;
+    width: calc(100vw );
+    height: calc(100vh );
+    font-size: 1rem;
     margin: 8px;
     padding: 8px*4;
     background-color: $dark-3;
@@ -485,13 +572,28 @@ border: 0px solid #535353;
         height: 8px*3;
         width: 8px*3;
         margin-right: 8px;
-        background-image: url('https://media.tenor.com/t5DMW5PI8mgAAAAi/loading-green-loading.gif');
+        background-image: url('../assets/img/gifs/loading-green-loading.gif');
         background-position: center;
         background-size: auto 80%;
         opacity: 0.5;
     }
     .loading-message{
         color: $gray-default-dark;
+    }
+    &.lightMode{
+        top: 8px*0;
+        left: 8px*0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 100;
+        margin: 0;
+        background-color: $light-2;
+        border: 1px solid transparent;
+        .loading-message{
+            color: $gray4-default-dark;
+        }
+        
+
     }
 }
 

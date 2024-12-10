@@ -16,7 +16,7 @@ const initialPlans = [
   {
     name: 'Freelancer',
     pricing: [
-      { storage: 100, monthlyPrice: '₹1,500', yearlyPrice: '₹15,000', specialOffer: 'First 2 months on us',defaultPlan: true   },
+      { storage: 100, monthlyPrice: '₹1,000', yearlyPrice: '₹10,000', specialOffer: 'First 2 months on us',defaultPlan: true   },
       { storage: 1000, monthlyPrice: '₹3,000', yearlyPrice: '₹30,000', specialOffer: 'First 2 months on us'},
     ],
     defaultPlan: 0,
@@ -28,9 +28,8 @@ const initialPlans = [
   {
     name: 'Studio',
     pricing: [
-      { storage: 500, monthlyPrice: '₹3,000', yearlyPrice: '₹30,000', specialOffer: 'First 2 months on us',defaultPlan: true},
-      { storage: 1000, monthlyPrice: '₹4,000', yearlyPrice: '₹40,000', specialOffer: 'First 2 months on us'},
-      { storage: 5000, monthlyPrice: '₹10,000', yearlyPrice: '₹60,000', specialOffer: 'First 2 months on us' },
+      { storage: 1000, monthlyPrice: '₹10,000', yearlyPrice: '₹1,00,000', specialOffer: 'First 2 months on us',defaultPlan: true},
+      { storage: 5000, monthlyPrice: '₹30,000', yearlyPrice: '₹3,00,000', specialOffer: 'First 2 months on us' },
     ],
     defaultStorage: 2000,
     defaultPlan: 0,
