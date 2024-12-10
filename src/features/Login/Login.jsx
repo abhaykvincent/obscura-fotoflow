@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { provider,auth,signInWithPopup } from '../../firebase/app';
 import {GoogleAuthProvider} from 'firebase/auth';
 import { Navigate, useNavigate } from 'react-router';
@@ -10,18 +10,27 @@ import LoginEmailPassword from './LoginEmailPassword';
 import AddStudio from '../../components/Modal/AddStudio';
 import { fetchStudiosOfUser } from '../../firebase/functions/firestore';
 import { trackEvent } from '../../analytics/utils';
+import { updateProjectsStatus } from '../../app/slices/projectsSlice';
 
 const LoginModal = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [loading, setLoading] = React.useState(false);
   const defaultStudio = useSelector(selectUserStudio)
-
+  const [googleSignInResult, setGoogleSignInResult] = useState({});
  
-
+  useEffect(()=>{
+    if(googleSignInResult.user){
+      
+    console.log(googleSignInResult?.user)
+    }
+  },[googleSignInResult])
   const handleGoogleSignIn = async () => {
     try {
+        setLoading(true);
+
         const result = await signInWithPopup(auth, provider);
-        
+        setGoogleSignInResult(result) 
         // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
@@ -30,7 +39,7 @@ const LoginModal = () => {
         const user = result.user;
         console.log("Logged in as " + user.email);
 
-      trackEvent('login',{method:'Google'})
+        trackEvent('login',{method:'Google'})
         
         const studiosResponse = await fetchStudiosOfUser(user.email);
         console.log("Studios response:", studiosResponse);
@@ -41,12 +50,13 @@ const LoginModal = () => {
             photoURL: user.photoURL,
             access: studiosResponse,
         };
-        console.log("Serialized user:", serializedUser);
 
         const response=  await dispatch(login(serializedUser));
         console.log("Login response:", response);
-        if(response.payload==='no-studio-found'){
 
+        if(response.payload==='no-studio-found'){
+          
+          dispatch(updateProjectsStatus('login'))
           navigate('/onboarding');
         }
         else{
@@ -68,19 +78,24 @@ const LoginModal = () => {
   return (
     <>
     <div className="modal island loginModal">
-      <div className="modal-header">
-        <div className="modal-controls">
-          <div className="control close"></div>
-        </div>
-        Login
-      </div>
-      <div className="form-section">
-          <p>Open <b> App</b>  with  <b>Google</b></p>
-        <div className="actions">
+     <div className="actions">
           {/* <div className='button secondary outline disable'  onClick={openEmailPassordLogin}>Password Login<div className="email-logo"></div></div> */}
-          <div className='button'  onClick={handleGoogleSignIn}>Sign In with<div className="google-logo"></div></div>
+          {
+              loading? <div className="">
+                { googleSignInResult?.user?
+                <p>Sign-in as <span>{googleSignInResult?.user?.email}</span></p>:
+                <p>Opening Google Sign-in ...</p>
+                }
+                </div>:
+              <div className='button'  onClick={handleGoogleSignIn}>
+            
+              
+              <>
+                Sign In with<div className="google-logo"></div>
+              </>
+            </div>
+            }
         </div>
-      </div>
       <div className="logo">
         
       </div>
@@ -89,6 +104,7 @@ const LoginModal = () => {
     <LoginEmailPassword/>
     </>
   );
+  
 }
 
 export default LoginModal;

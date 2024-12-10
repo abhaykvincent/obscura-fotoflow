@@ -33,3 +33,11 @@ export const copyToClipboard = (url) => {
     console.error('Failed to copy: ', err);
   });
 };
+
+export function getThumbnailUrl(imageUrl,collectionId) {
+ // replace collectionId in url with "thumb-"+collectionId
+ const newUrl = imageUrl.split(collectionId);  
+ // trim first 30 chars
+ // newUrl[0] = newUrl[0].substring(0, 30);
+ return      newUrl[0]+collectionId+"-thumb"+newUrl[1];
+}

@@ -11,6 +11,7 @@ import DashboardPayments from '../Payments/Payments';
 import DashboardExpances from '../Expances/Expances';
 import DashboardEvents from '../Events/Events';
 import DashboardTabs from './DashboardTabs/DashboardTabs';
+import AddProjectModal from '../../Modal/AddProject';
 
 function DashboardProjects({project}){
   const dispatch =useDispatch()
@@ -25,9 +26,9 @@ function DashboardProjects({project}){
       <div className="tools">
         
       <Link to={`/${studioName}/invitation-creator/${project.id}`}>
-        <div className="button secondary  icon  invitation" > Invitation</div>
+        <div className="button secondary  icon  invitation disabled" > Invitation</div>
       </Link>
-        <div className="button secondary icon user" >Client</div>
+       {/*  <div className="button secondary icon user disabled" >Client</div> */}
       </div>
       <div className="view-cta">
 
@@ -95,7 +96,7 @@ function DashboardProjects({project}){
                 style={
                   {
                     backgroundImage:
-                    `url(${project.projectCover!==""?encodeURI(project.projectCover):'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`
+                    `url(${project.projectCover!==""?encodeURI(project.projectCover).split('&token=')[0]:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`
                   }}
                 ></div>
               </div>
@@ -115,7 +116,18 @@ function DashboardProjects({project}){
 </>
     ))
     :<>
+    <AddProjectModal />
       <DashboardTabs project={project} />
+      <div className="sub-projects">
+        <h4 className='heading-section heading'>Sub Projects</h4>
+        <div className="sub-projects-body">
+          <div className="actions">
+            <div className="button tertiary outline icon add"
+                onClick={()=>dispatch(openModal('createProject'))}
+            >Sub-project</div>
+        </div>
+        </div>
+      </div>
     </>
     }
     </>

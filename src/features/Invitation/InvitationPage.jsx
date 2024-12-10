@@ -81,7 +81,7 @@ const InvitationPage = () => {
   };
   document.title = `${project?.name} | Invitation Editor`
 
-
+  if (!project) return <div>Loading project data...</div>;
   return (
     <>
     <div className="project-info invitation-page-header">

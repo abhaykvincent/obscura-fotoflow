@@ -14,8 +14,6 @@ import WishMessages from './WishMessages';
 
 const Preview = ({ editor, data,project }) => {
   console.log(editor?'Editor':'Preview')
-  console.log(data)
-  console.log(editor)
   const dispatch = useDispatch();
   const { studioName } = useParams();
   const [backgroundOptionImage, setBackgroundOptionImage] = useState('');
@@ -25,7 +23,6 @@ const Preview = ({ editor, data,project }) => {
   const galleryRef = useRef(null);
   useEffect(() => {
 
-  console.log(data)
     let selectedBackground = '';
     if (!data?.background) return;
     if (data?.background.value === 'background-option-1') {
@@ -189,9 +186,9 @@ const initialMessages = [
                   </div>
                   <div className="right">
                     <h3 className={`${event.name ? 'event-type' : 'dummy'}`} style={{ color: data?.backgroundColor + "ba" }}>{event.name}</h3>
-                    <p className="event-location">at {event.location} at {formatTime(event.time)}</p>
+                    <p className="event-location">at {event?.location} at {formatTime(event?.time)}</p>
 
-                    <a href={getGoogleMapsUrl(event.location)} target="_blank" rel="noopener noreferrer"  className="button  secondary icon location"
+                    <a href={getGoogleMapsUrl(event?.location||'')} target="_blank" rel="noopener noreferrer"  className="button  secondary icon location"
                       style={{ 
                         background: data?.backgroundColor + "11", 
                         border: '1px solid ' + data?.backgroundColor + '00'}}
@@ -226,7 +223,7 @@ const initialMessages = [
             </div>
 
           </div>
-          <WishMessages initialMessages={initialMessages} />
+          <WishMessages initialMessages={initialMessages} data={data} />
           <div className="invitation-image-gallery">
             <ImageGallery imageUrls={[
               "http://127.0.0.1:9199/v0/b/fotoflow-dev.appspot.com/o/lorem%2Fcharlotte-walker-uQais%2Fpoiuyy-cTlPq%2FIM_00077.jpg?alt=media&token=a85e9ad5-6d31-4dac-81d7-b5ef3c67366c",

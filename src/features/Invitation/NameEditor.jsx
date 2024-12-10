@@ -1,6 +1,7 @@
 import React from 'react';
 
 const NameEditor = ({ groomName, brideName, font, size, title, message,onChange }) => {
+  console.log(groomName)
   return (
     <div className="form-section name-editor ">
       <div className="row four">

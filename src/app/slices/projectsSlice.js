@@ -3,13 +3,13 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
 import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
-import { doc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/app';
 
 
 const initialState = {
   data: [],
-  status: '',
+  status: 'login',
   loading : false,
   error: null,
 };
@@ -20,6 +20,13 @@ export const fetchProjects = createAsyncThunk(
   return fetchProjectsFromFirestore(currentDomain)
   }
 );
+
+export const checkFirestoreConnection = createAsyncThunk(
+  'projects/checkFirestoreConnection',
+  async () => {
+      return checkFirestoreConnection()
+  }
+)
 
 export const addProject = createAsyncThunk(
   'projects/addProject',
@@ -146,6 +153,24 @@ export const updateProjectCover = createAsyncThunk(
       return { projectId, newCoverUrl, focusPoint };
   }
 );
+// Sub Projects
+export const createSubProject = createAsyncThunk(
+  "projects/createSubProject",
+  async ({ domain, parentProjectId, subProjectData }) => {
+    const subProjectsCollectionRef = collection(
+      db,
+      "studios",
+      domain,
+      "projects",
+      parentProjectId,
+      "subProjects"
+    );
+
+    const subProjectDocRef = await addDoc(subProjectsCollectionRef, subProjectData);
+    return { parentProjectId, subProjectId: subProjectDocRef.id, subProjectData };
+  }
+);
+
 
 
 
@@ -156,8 +181,11 @@ const projectsSlice = createSlice({
   reducers: {
     setProjects_temp: (state, action) => {
       state.data = action.payload;
+    },
+    updateProjectsStatus: (state, action) => {
+      console.log(action.payload)
+      state.status = action.payload;
     }
-    
   
   },
   extraReducers: (builder) => {
@@ -473,10 +501,51 @@ const projectsSlice = createSlice({
           return project;
         });
       });
+
+      // update project cover
+      builder
+        // Handle pending state
+        .addCase(updateProjectCover.pending, (state) => {
+            state.loading = true;
+        })
+        // Handle fulfilled state
+        .addCase(updateProjectCover.fulfilled, (state, action) => {
+            const { projectId, newCoverUrl, focusPoint } = action.payload;
+            if(projectId){
+                state.data = state.data.map((project) => {
+                    if (project.id === projectId) {
+                        return { ...project, projectCover: newCoverUrl, focusPoint };
+                    }
+                    return project;
+                });
+            }
+            state.loading = false;
+            state.error = null;
+        })
+        // Handle rejected state
+        .addCase(updateProjectCover.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
+
+        builder
+      .addCase(createSubProject.fulfilled, (state, action) => {
+        const { parentProjectId, subProjectId, subProjectData } = action.payload;
+        const parentProject = state.projects.find((p) => p.id === parentProjectId);
+        if (parentProject) {
+          if (!parentProject.subProjects) {
+            parentProject.subProjects = [];
+          }
+          parentProject.subProjects.push({
+            id: subProjectId,
+            ...subProjectData,
+          });
+        }
+      });
   },
 });
 
-export const { setProjects_temp } = projectsSlice.actions;
+export const { setProjects_temp,updateProjectsStatus } = projectsSlice.actions;
 export default projectsSlice.reducer;
 
 // Selector to get projects data from the state

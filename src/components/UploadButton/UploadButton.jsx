@@ -20,29 +20,27 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, imageUrls, setIma
       dispatch(showAlert({ type: 'error', message: 'Currently, only .jpg, .jpeg, and .png. More to come!' }));
       return; // Exit if files are not valid
     }
-
     setIsPhotosImported(true);
     
     const importFileSize = addAllFileSizesToMB(selectedFiles);
-    console.log({ importFileSize, available: storageLimit.available, limit: storageLimit.total });
-
     // Check file size against available storage
     if (importFileSize < storageLimit.available || domain === 'monalisa') {
       try {
+
         setUploadStatus('open');
         const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, setUploadLists, setUploadStatus);
         const uploadedImages = resp.uploadedFiles
         const galleryPIN = resp.pin
-        console.log(uploadedImages,galleryPIN)
         setImageUrls(prevUrls => [...prevUrls, ...uploadedImages]);
+
       } catch (error) {
         dispatch(showAlert({ type: 'error', message: 'Upload failed, please try again!' }));
       } finally {
         dispatch(showAlert({ type: 'success', message: 'Upload Complete' }));
-
         setIsPhotosImported(false);
       }
-    } else {
+    } 
+    else {
       dispatch(showAlert({ type: 'error', message: 'Uploaded <b>file size exceeds</b> your limit! Upgrade' }));
       setIsPhotosImported(false);
     }

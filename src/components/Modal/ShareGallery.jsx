@@ -6,6 +6,7 @@ import { selectDomain } from '../../app/slices/authSlice';
 import { useLocation } from 'react-router';
 import { copyToClipboard, extractDomain, getGalleryURL } from '../../utils/urlUtils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
+import { showAlert } from '../../app/slices/alertSlice';
 
 function ShareGallery({project }) {
   // Get the current location object
@@ -26,50 +27,70 @@ const modalRef = useModalFocus(visible.shareGallery);
   }
 
   return (
-    <div className="share-gallery modal-container">
-      <div className="modal create-project">
+    <div className="share-gallery modal-container ">
+      <div className="modal create-project island">
         <div className='modal-header'>
           <div className="modal-controls">
             <div className="control close" onClick={onClose}></div>
             <div className="control minimize"></div>
             <div className="control maximize"></div>
           </div>
-          <div className="modal-title">Share {project.name} Galleries</div>
+          <div className="modal-title">Share  Galleries</div>
         </div>
         <div className='modal-body'>
           <div className="form-section">
             {/* map project collections and render it with a check box to select galleries to share */}
+          <h4>{project.name}</h4>
             
               <div className="select-galleries">
                 
-              <p className='client-label'>Select galleries</p>
               <div className="galleries-share-list-selection">
+              <p className='client-label'>Select galleries</p>
+              <p className='client-label'>Selection</p>
                 {project.collections.map((collection, index) => (
-                  <div className="form-item" key={index}>
-                    <div className="input">
-                      <input type="checkbox" checked={true} />
+                  <>
+                    <div className="form-item" key={index}>
+                      <div className="input">
+                        <input type="checkbox" checked={true} />
+                      </div>
+                      <div className="label">
+                        <label>{collection.name}</label>
+                      </div>
                     </div>
-                    <div className="label">
-                      <label>{collection.name}</label>
+                    <div className="form-item selection" key={index}>
+                      <div className="input">
+                        <input type="radio" checked={true} />
+                      </div>
+                      
                     </div>
-                  </div>
+                  </>
                 ))}
               </div>
 
                 
               </div>
-              <a className='linkToGallery' href={getGalleryURL('share',domain,project.id)} target='_blank' >.../{domain}{getGalleryURL('share',domain,project.id).split(domain)[1]}</a>
+              
 
               <div className="link-pin">
                 <div className='link' >
-                  <a className="" href={getGalleryURL('share',domain,project.id)} target='_blank'>{`Gallery`}</a>
-                  <div className="copy-link button icon copy" onClick={() => copyToClipboard(getGalleryURL('share',domain,project.id))}>Copy</div>
+                  <a className="" href={getGalleryURL('share',domain,project.id)} target='_blank'><div className="link-container">
+                <a className='linkToGallery' href={getGalleryURL('share',domain,project.id)} target='_blank' >.../{domain}{getGalleryURL('share',domain,project.id).split(domain)[1]}</a>
+                <div className="button icon icon-only open-in-new"></div>
+              </div>
+              </a>
+                  
                 </div>
-                
-                <p className='pin'>🔐 {project.pin}</p>
+                <p className="copy-link button icon copy pin" onClick={() => {
+                    copyToClipboard(getGalleryURL('share',domain,project.id))
+                  }
+                  }>Copy</p>
+                  <p className="copy-link button icon  pin" onClick={() => {
+                    copyToClipboard(getGalleryURL('share',domain,project.id))
+                  }
+                  }>{project.pin}</p>
               </div>
               
-              <div className="client-notification">
+              {/* <div className="client-notification">
               <p className='client-label'>Sent link to Whatsapp</p>
                   <div className="form-item">
                   <div className="input">
@@ -80,7 +101,7 @@ const modalRef = useModalFocus(visible.shareGallery);
                       <p>+91 {project.phone}</p>
                     </div>
                   </div>
-              </div>
+              </div> */}
 
           </div>
         </div>

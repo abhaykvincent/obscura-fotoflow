@@ -6,20 +6,32 @@ import { logout, selectUser, selectUserStudio } from '../../app/slices/authSlice
 import { useDispatch, useSelector } from 'react-redux';
 import AdminRoute from '../AdminRoute/AdminRoute';
 import { trackEvent } from '../../analytics/utils';
+import { selectStudio } from '../../app/slices/studioSlice';
 function Sidebar() {
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector(selectUser);
   const [profileOptionActive, setProfileOptionActive] = useState(false)
-  const toggleProfileOption = () => {
-    setProfileOptionActive((prevState) => !prevState);
-  };
   const defaultStudio = useSelector(selectUserStudio)
   const location = useLocation();
   const params = useParams()
   const studioName = defaultStudio?.domain ?? {domain:'guest',name:'guest'}; 
-  
+  const studio= useSelector(selectStudio)
+  console.log(studio)
+  const [storageUsage , setStorageUsage] = useState({
+  })
+  const toggleProfileOption = () => {
+    setProfileOptionActive((prevState) => !prevState);
+  };
+  useEffect(() => {
+    if(!studio?.usage) return
+    setStorageUsage({
+      used: (studio.usage.storage.used/1000).toFixed(2),
+      quota: (studio.usage.storage.quota/1000).toFixed(0),
+      usedPercentage: (studio.usage.storage.used/studio.usage.storage.quota*100).toFixed(2)
+    })
+    },[studio])
   if(user==='no-studio-found')
     return 
   return (
@@ -47,15 +59,9 @@ function Sidebar() {
           </div>
         </Link>
 
-}
-        <Link to={`/${studioName}/store`}>
-          <div className={`menu store ${location.pathname === `/${studioName}/store` ? 'active' : ''} disabled`}>
-            <div className="icon"></div>
-            <div className="label">Store</div>
-          </div>
-        </Link>
+        }
         <Link to={`/${studioName}/bookings`}>
-          <div className={`menu store ${location.pathname === `/${studioName}/bookings` ? 'active' : ''} disabled`}>
+          <div className={`menu booking ${location.pathname === `/${studioName}/bookings` ? 'active' : ''} disabled`}>
             <div className="icon"></div>
             <div className="label">Bookings</div>
           </div>
@@ -66,22 +72,36 @@ function Sidebar() {
             <div className="label">Calendar</div>
           </div>
         </Link>
-        <Link to={`/${studioName}/invoices`}>
+        <Link to={`/${studioName}/store`}>
+          <div className={`menu store ${location.pathname === `/${studioName}/store` ? 'active' : ''} disabled`}>
+            <div className="icon"></div>
+            <div className="label">Store</div>
+          </div>
+        </Link>
+        {/* <Link to={`/${studioName}/invoices`}>
           <div className={`menu invoices ${location.pathname === `/${studioName}/invoices` ? 'active' : ''} disabled`}>
             <div className="icon"></div>
             <div className="label">Financials</div>
           </div>
-        </Link>
+        </Link> */}
+        {/* Admin */}
+        
+        <p className="label">ADMIN</p>
         <Link to={`/${studioName}/team`}>
           <div className={`menu team ${location.pathname === `/${studioName}/team` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Team</div>
           </div>
         </Link>
-        {/* Admin */}
-        <p className="label">ADMIN</p>
+        <Link to={`/${studioName}/settings`}>
+          <div className={`menu settings ${location.pathname === `/${studioName}/settings` ? 'active' : ''}`}>
+            <div className="icon"></div>
+            <div className="label">Setting</div>
+          </div>
+        </Link>
+
         <Link to={`/${studioName}/notifications`}>
-          <div className={`menu notifications disabled ${location.pathname === `/${studioName}/notifications` ? 'active' : ''}`}>
+          <div className={`menu notifications  ${location.pathname === `/${studioName}/notifications` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Notifications</div>
           </div>
@@ -99,6 +119,32 @@ function Sidebar() {
           </div>
         </Link>
 
+        <div className="storage-bars">
+          <div className="storage-bar hot">
+            <div className="storage-labels">
+              <div className="icon hot"></div>
+              <p>Hot Storage</p>
+              <p className='usage-label'><span className='bold'>{storageUsage.used}</span>/{storageUsage.quota}GB</p>
+            </div>
+            <div className="used-bar"
+              style={{
+                width: `${storageUsage.usedPercentage}%`
+              }}
+            ></div>
+            <div className="quota-bar"></div>
+          </div>
+          <div className="storage-bar cold">
+
+            <div className="storage-labels">
+            <div className="icon cold"></div>
+              <p>Cold Storage</p>
+              <p className='usage-label'><span className='bold'>27</span>%</p>
+            </div>
+            <div className="used-bar"></div>
+            <div className="quota-bar"></div>
+          </div>
+        </div>
+
         {/* <AdminRoute> 
           <p className="label">Product ADMIN</p>
           <Link to={`/admin`}>
@@ -108,6 +154,19 @@ function Sidebar() {
             </div>
           </Link>
         </AdminRoute> */}
+        {
+          user.email =='abhaykvincent@gmail.com' &&
+          <>
+          
+          <p className="label">Operations</p>
+          <Link to={`/admin`}>
+            <div className={`menu admin ${location.pathname === `/admin` ? 'selected' : ''}`}>
+              <div className="icon"></div>
+              <div className="label">Admin</div>
+            </div>
+          </Link>
+          </>
+        }
 
       </div>
 
@@ -118,7 +177,14 @@ function Sidebar() {
             <div className="profile-image"></div>
             <div className="account-name">
               <div className="studio-name">{defaultStudio?.name}</div>
-              <div className="profile-name">{user?.displayName} <div className="role">{user.studio?.roles[0] && user.studio?.roles[0]}</div></div>
+              <div className="profile-name">{user?.displayName} 
+                {/* MArquee one after other in quere repeate */}
+                <div className="roles" direction="left" behavior="scroll" scrollamount="2" scrolldelay="2" loop="3" style={{whiteSpace: 'nowrap'}}>
+                  {user.studio?.roles[0] && <div className="role ">{user.studio?.roles[0]}</div>}
+                  <div className="role">Photographer</div>
+                  
+                  </div>
+                </div>
             </div>
           </div>
           <div className="option-icon"></div>

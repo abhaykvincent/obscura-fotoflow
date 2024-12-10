@@ -17,16 +17,7 @@ const CollectionsPanel = ({ project, collectionId}) => {
       {
       project.collections.length > 0 ? 
         <div className="gallery-list">
-          <div className="gallery new" 
-            onClick={() => dispatch(openModal('createCollection'))}>
-            <div className="thumbnails">
-              <div className="thumbnail thumb1">
-                <div className="backthumb bthumb1">
-                </div>
-                <p>Create Gallery</p>
-              </div>
-            </div>
-          </div>
+          
           {project.collections.map((collection) => (
             
             collection.pin=="" ?
@@ -36,7 +27,7 @@ const CollectionsPanel = ({ project, collectionId}) => {
                     <div className={`backthumb bthumb1 ${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29')}`}
                     style={{
                       backgroundImage: collection?.galleryCover 
-                        ? `url("${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29')}")` 
+                        ? `url("${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29').split('&token=')[0]}")` 
                         : 'url(https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333)',
                       backgroundSize: collection?.galleryCover ? 'cover' : '40%',
                     }}
@@ -55,7 +46,7 @@ const CollectionsPanel = ({ project, collectionId}) => {
                   <div className={`backthumb bthumb1 ${decodeURIComponent(collection.galleryCover)}`}
                     style={{
                       backgroundImage: collection?.galleryCover 
-                        ? `url("${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29')}")` 
+                        ? `url("${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29').split('&token=')[0]}")` 
                         : 'url(https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333)',
                       backgroundSize: collection?.galleryCover ? 'cover' : '40%',
                     }}
@@ -83,7 +74,16 @@ const CollectionsPanel = ({ project, collectionId}) => {
 
             
           ))}
-          
+          <div className="gallery new" 
+            onClick={() => dispatch(openModal('createCollection'))}>
+            <div className="thumbnails">
+              <div className="thumbnail thumb1">
+                <div className="backthumb bthumb1">
+                  <div className="button primary outline">Create Gallery</div>
+                </div>
+              </div>
+            </div>
+          </div>
           {/* <div className="active-box box"></div> */}
         </div>:''
       }

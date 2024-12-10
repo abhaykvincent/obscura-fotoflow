@@ -41,7 +41,7 @@ const SearchInput = () => {
       <input
       ref={inputElement}
         type="text"
-        placeholder="Search Projects, Galleries"
+        placeholder="Search"
         value={query}
         onChange={handleChange}
         className={`search-input ${status}`}

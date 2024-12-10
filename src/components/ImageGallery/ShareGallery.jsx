@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Preview from '../../features/Preview/Preview';
+import { getThumbnailUrl } from '../../utils/urlUtils';
 
 const ShareGallery = ({ images,projectId,collectionId }) => {
   const [size, setSize] = useState(12);
-  const[loadedImages, setLoadedImages] = useState(images.slice(0, size));
+  const [loadedImages, setLoadedImages] = useState(images.slice(0, size));
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   //Preview
@@ -22,7 +23,11 @@ const ShareGallery = ({ images,projectId,collectionId }) => {
     setLoadedImages(images.slice(0, size));
     setHasMore(true); // Reset infinite scroll tracking
     setIsPreviewOpen(false);
+    console.log(images)
   }, [images, size]);
+  useEffect(() => {
+    console.log('loading',loading)
+  }, [loading]);
   useEffect(() => {
     console.log(previewIndex)
 
@@ -50,18 +55,20 @@ const ShareGallery = ({ images,projectId,collectionId }) => {
     
     observer.current = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && hasMore) {
+        
         setLoading(true);
-        setLoadedImages((prevLoadedImages) => {
+        setTimeout(() => {
+          setLoadedImages((prevLoadedImages) => {
           const newLoadedImages = [
             ...prevLoadedImages,
             ...images.slice(prevLoadedImages.length, prevLoadedImages.length + size),
           ];
           setHasMore(newLoadedImages.length < images.length);
+
+          setLoading(false);
           return newLoadedImages;
         });
-        setTimeout(() => {
-          setLoading(false);
-      }, 1000);
+      }, 2000);
 
       }
     });
@@ -74,19 +81,33 @@ const ShareGallery = ({ images,projectId,collectionId }) => {
         {
           loadedImages.map((file, index) => (
             index + 1 === loadedImages.length ?
-            <img className="photo" key={file.url} src={file.url} alt={`File ${index}`} 
-            ref={lastPhotoElementRef}
-            onClick={()=>openPreview(index)}>
-            </img>
+            <img className="photo" 
+              key={file.url} 
+              src={file?.thumbAvailable ? getThumbnailUrl(file.url,collectionId).split('&token=')[0]:  file.url}
+              srcSet={`${file?.thumbAvailable  ? getThumbnailUrl(file.url,collectionId).split('&token=')[0] : file.url} 720w, ${file.url} 1080w`} 
+              alt={`File ${index}`} 
+              ref={lastPhotoElementRef}
+              onClick={()=>openPreview(index)}
+            ></img>
             : 
-            <img className="photo" key={file.url} src={file.url} alt={`File ${index}`} 
+            <img className="photo" key={file.url} 
+            src={file?.thumbAvailable ?getThumbnailUrl(file.url,collectionId).split('&token=')[0]:  file.url}
+
+            srcSet={`${file?.thumbAvailable  ? getThumbnailUrl(file.url,collectionId).split('&token=')[0] : file.url} 720w, ${file.url} 1080w`} 
+
+            alt={`File ${index}`} 
             onClick={()=>openPreview(index)}></img>
           ))
         }
+        
       </div>
-        {
-            isPreviewOpen && <Preview image={images[previewIndex] } {...{previewIndex,setPreviewIndex,imagesLength:images.length,closePreview,projectId,collectionId}}/>
-        }
+      {
+        loading && 
+          <div className="loader">LOADING ...</div>
+      }
+      {
+          isPreviewOpen && <Preview image={images[previewIndex] } {...{previewIndex,setPreviewIndex,imagesLength:images.length,closePreview,projectId,collectionId}}/>
+      }
     </div>
   );
 };
