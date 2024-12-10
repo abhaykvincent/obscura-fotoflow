@@ -119,7 +119,6 @@ function Sidebar() {
           </div>
         </Link>
 
-        <p className="label">QUOTA</p>
         <div className="storage-bars">
           <div className="storage-bar hot">
             <div className="storage-labels">
