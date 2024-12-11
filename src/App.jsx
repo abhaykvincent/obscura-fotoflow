@@ -72,9 +72,9 @@ export default function App() {
       setUserType('Photographer');
     }
   }, [isAuthenticated]);
-  useEffect(() => {
+  /* useEffect(() => {
     console.log(isLoading)
-  }, [isLoading]);
+  }, [isLoading]); */
  
   // ON Render
   useEffect(() => {
@@ -82,18 +82,12 @@ export default function App() {
     dispatch(checkStudioStatus())
     if(currentDomain !== 'guest')
       {
-      dispatch(fetchProjects({currentDomain})).then((res)=>{
-        console.log(res)
-      })
+      dispatch(fetchProjects({currentDomain}))
       .catch((err)=>{
         dispatch(showAlert({ type: 'error', message: 'Check internet connection' }));
       })
 
-      console.log(currentDomain)
       dispatch(fetchStudio({currentDomain}))
-      .then((res)=>{
-        console.log(res)
-      })
       .catch((err)=>{
         console.error(err)
       })

@@ -160,12 +160,10 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
    
 
     try {
-        let startTime1 = Date.now();
         const [compressedFiles, compressedThumbnailFiles] = await Promise.all([
             compressImages(slice, 720), // Full-sized images
             compressImages(slice, 300), // Thumbnails
         ]);
-        let endTime1 = Date.now();  
 
         const uploadPromises = compressedFiles.map((file, sliceIndex) => {
             uploadFile( domain, id, collectionId, file, sliceIndex, setUploadLists)
@@ -174,17 +172,8 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
             uploadFile( domain, id, `${collectionId}-thumb`, file, sliceIndex, setUploadLists)
         );
 
-
-        let startTime3 = Date.now(); 
         // Combine all upload promises and resolve them concurrently
-        const results = await Promise.all([...uploadPromises, ...thumbnailUploadPromises]);
-        let endTime3 = Date.now();  
-        
-        let duration1 = (endTime1 - startTime1) / 1000; 
-        let duration3 = (endTime3 - startTime3) / 1000;  
-        console.log(`%c Compress duration : ${duration1} seconds`, 'color:#0099ff');
-        console.log(`%c Upload duration : ${duration3} seconds`, 'color:#0099ff');
-        
+        const results = await Promise.all([...uploadPromises, ...thumbnailUploadPromises]);        
  
         return results;
     } catch (error) {
@@ -195,6 +184,7 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
 
 // Upload ENTRY POINT
 export const handleUpload = async (domain,files, id, collectionId,importFileSize, setUploadLists,setUploadStatus, retries = 2) => {
+
     setUploadLists(files.map(file => ({
         name: file.name,
         size: file.size,
@@ -221,7 +211,7 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
 
             const endTime = Date.now();  // Record the end time
             const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
-            console.log(`%c Slice upload duration : ${duration} seconds`, 'color:#428924');
+            console.log(`%c Slice upload duration : ${duration} seconds`, 'color:#0071a4');
             //console group end
             
             console.groupEnd();
