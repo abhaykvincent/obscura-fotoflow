@@ -851,9 +851,6 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         updateDoc(collectionDocRef, {
             uploadedFiles: arrayUnion(...uploadedFiles),
         })
-        .then(() => {
-            console.log(`%cUploaded files added successfully to collection ${collectionId} in project ${projectId}.`, `color: #54a134;`);
-        })
         .catch(error => {
             console.error(`%cError adding uploaded files to collection ${collectionId} in project ${projectId}: ${error.message}`, `color: red;`);
             throw error;
