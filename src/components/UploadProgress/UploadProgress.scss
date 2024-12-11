@@ -22,8 +22,8 @@
         padding: 8px 0;
         height: 8px*7;
         line-height: 1.4em;
-        background: rgba(10, 10, 10, 0.4);
-        backdrop-filter: blur(8px);
+        background-color: rgba(10, 10, 10, 0.6);
+        backdrop-filter: blur(6px);
         transition-duration: 0.5s;
         .header-process{
             height: 100%;
@@ -216,6 +216,7 @@
                     }
                 }
                 &.uploaded{
+                    display: none;;
                     .file-progress-bar{
                         left: 100%;
                     }
@@ -246,7 +247,7 @@
             &.maximize {
                 opacity: 1;
                 animation-name: status-blink;
-                animation-duration: 1.5s;
+                animation-duration: 1s;
                 animation-fill-mode: forwards;
                 animation-iteration-count: infinite;
                 animation-timing-function: ease-in-out;
@@ -254,9 +255,30 @@
                         0% {
                             opacity: 0.3;
                         }
-                        61% {
+                        10% {
                             opacity: 1;
                         }
+                        15% {
+                            opacity: 1;
+                        }
+                        35% {
+                            opacity: 0.3;
+                        }
+
+                        45% {
+                            opacity: 0.3;
+                        }
+                        60% {
+                            opacity: 1;
+                        }
+                        65% {
+                            opacity: 1;
+                        }
+                        70% {
+                            opacity: 0.3;
+        
+                        }
+
                         100% {
                             opacity: 0.3;
                         }

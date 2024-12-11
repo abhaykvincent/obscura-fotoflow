@@ -851,7 +851,6 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         if (!collectionData.exists()) {
             throw new Error('Collection does not exist.');
         }
-        console.log(uploadedFiles)
         // Update collection with new data, including filesCount
         updateDoc(collectionDocRef, {
             uploadedFiles: arrayUnion(...uploadedFiles),
