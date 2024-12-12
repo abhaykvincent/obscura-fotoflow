@@ -87,7 +87,7 @@ export const fetchStudioByDomain = async (currentDomain) => {
         ...doc.data(),
     }));
     const studio = studiosData.find((studio) => studio.domain === currentDomain);
-    console.log(studio);
+    studio && console.log(studio);
     return studio;
 };
 
@@ -824,9 +824,7 @@ export const setGalleryCoverPhotoInFirestore = async (domain, projectId, collect
 
         // Save the updated collections array back to Firestore
         await updateDoc(projectDocRef, { collections: updatedCollections });
-
-        console.log(`%cGallery cover photo updated successfully for project: ${projectId}, collection: ${collectionId}.`, `color: #54a134;`);
-    } catch (error) {
+} catch (error) {
         console.error(`%cError updating gallery cover photo for project: ${projectId}, collection: ${collectionId} - ${error.message}`, 'color: red;');
         throw error;
     }
@@ -834,8 +832,6 @@ export const setGalleryCoverPhotoInFirestore = async (domain, projectId, collect
 // Uploaded Files
 export const addUploadedFilesToFirestore = async (domain, projectId, collectionId, importFileSize, uploadedFiles) => {
     let color = domain === '' ? 'gray' : 'green';
-    console.log(`%cAdding Uploaded Files to Project ${projectId} in ${domain ? domain : 'undefined'}`, `color: ${color}; `);
-
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
     const projectDocRef = doc(projectsCollectionRef, projectId);
@@ -851,13 +847,9 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         if (!collectionData.exists()) {
             throw new Error('Collection does not exist.');
         }
-        console.log(uploadedFiles)
         // Update collection with new data, including filesCount
         updateDoc(collectionDocRef, {
             uploadedFiles: arrayUnion(...uploadedFiles),
-        })
-        .then(() => {
-            console.log(`%cUploaded files added successfully to collection ${collectionId} in project ${projectId}.`, `color: #54a134;`);
         })
         .catch(error => {
             console.error(`%cError adding uploaded files to collection ${collectionId} in project ${projectId}: ${error.message}`, `color: red;`);
@@ -883,7 +875,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
             pin: projectData.data().pin || generateMemorablePIN(4),
         })
         .then(() => {
-            console.log(`%cProject ${projectId} updated successfully.`, `color: #54a134;`);
+
         })
         .catch(error => {
             console.error(`%cError updating project ${projectId}: ${error.message}`, `color: red;`);

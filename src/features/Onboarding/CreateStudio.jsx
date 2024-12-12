@@ -127,7 +127,10 @@ const CreateStudio = ({active,next,createAccountData,updateAccountData,user}) =>
               autocomplete="off"
               required
             />
-            <div className={`studio-domain-selector ${isDomainAvailable ?'available':'taken'} ${studioDomain.length>3 && 'active'}`}>
+            <div className={
+            `studio-domain-selector ${isDomainAvailable ?'available':'taken'} 
+            ${studioDomain.length>3 && 'active'}`}>
+
               <div className="domain-input-container">
                 <div className="web-icon"></div>
                 <p className={`studio-domain `}>{domain}/
@@ -150,9 +153,8 @@ const CreateStudio = ({active,next,createAccountData,updateAccountData,user}) =>
               {
                 studioDomain.length>3 &&
                 (isDomainAvailable ?
-                  <p className='input-reaction'>{`Sub-domain Available`}</p>:
+                  <p className='input-reaction subdomain-available'>{`Sub-domain Available`}</p>:
                   <p className='input-reaction'>{`Sub-domain already taken. `}</p>)
-                
               }
             </div>
             

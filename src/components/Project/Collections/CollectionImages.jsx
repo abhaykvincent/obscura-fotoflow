@@ -60,10 +60,6 @@ const CollectionImages = ({ id, collectionId, project }) => {
         dispatch(setUploadList(uploadList));
     }, [uploadList]);
 
-    useEffect(() => {
-        imageUrls.length>0 && console.log(imageUrls);
-    }, [imageUrls]);
-
 
     // Initial collection images fetch
     useEffect(() => {

@@ -3,8 +3,7 @@ import Preview from '../../features/Preview/Preview';
 import { shortenFileName } from '../../utils/stringUtils';
 
 const ImageGalleryGrid = React.memo(({ projectId,collectionId, imageUrls }) => {
-  // Preview
-  console.log(collectionId)
+
   // Preview
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
@@ -34,7 +33,6 @@ const ImageGalleryGrid = React.memo(({ projectId,collectionId, imageUrls }) => {
   }, [isPreviewOpen]);
   
   useEffect(() => {
-    console.log(previewIndex)
 
     const scrollToImage = () => {
       // Find the target image

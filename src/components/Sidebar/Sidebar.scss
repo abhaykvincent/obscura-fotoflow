@@ -423,7 +423,7 @@
             transition-duration: 0.15s;
 
         &:hover{
-            border: 1px solid $gray3-default-dark;
+            border: 2px solid $gray3-default-dark;
             transition-duration: 0.1s;
             box-shadow: 1px 4px 1px 2px black;     
             transform: translateY(calc(-100% - 2px)) translateX(2px) scale(1.05);;
@@ -558,7 +558,7 @@
         }
         .menu-list {
             padding: 8px*1.5;
-            max-height: calc(100vh - 8px*34);
+            max-height: calc(100vh - 8px*8);
             overflow-y: visible;
             a{
                 transition-duration: 0.1s;x
@@ -601,14 +601,79 @@
                 margin-bottom: 8px*2;
                 margin-top: 8px*2;
             }
+            .storage-bars{
+                height: 8px*12.5;
+                box-shadow: none;
+                border: none;
+                background: none;
+            }
+            .storage-bar{
+                display: grid;
+                height: 8px*5.5;
+                // reverce order
+                margin-bottom: 4px;
+                .storage-labels{
+                    display: grid;
+                    grid-template-columns: 1fr;
+                    align-items: center;
+                    margin-bottom: 8px;
+                }
+                p{
+                    display: none;
+                }
+                .icon{
+                    display: grid;
+                    justify-items: center;
+                    width: 8px*5;
+                    height: 8px*5;
+                    background-size: 50%;
+                    background-position: center;
+                    border: 3px solid $gray3-accessible-dark;
+                    border-radius: 8px*5;
+                    box-shadow:1px 1px 2px black , inset 1px 1px 2px black;
+                }
+                .used-bar {
+                    display: none;
+                    width: calc(100% );
+                }
+                .quota-bar {
+                    display: none;
+                    width: calc(100% );
+                }
+                &.cold{
+                    .icon{
+                        display: grid;
+                        justify-items: center;
+                        width: 8px*5;
+                        height: 8px*5;
+                        background-size: 50%;
+                        background-position: center;
+                        border: 3px solid $dark-0;
+                        border-radius: 8px*5;
+                        opacity: 0.5;
+                    }
+                }
+            }
         }
         .status{
             display: none;
         }
         .profile-options{
             margin-bottom: 8px;
-            width: calc(100% + 4px);
+            width: calc(100% - 8px);
             border: 1px $gray4-default-light;
+            width: 8px*7;
+            overflow-x: hidden;
+            margin-left: 1px;
+            background-color: transparent;
+            &:hover{
+                .profile{
+                    .profile-image{
+                        transform: scale(1.1) translateX(-1px);
+                    }
+                }
+                      
+            }
             .profile{
                 .profile-image{
                     padding: 8px*3;

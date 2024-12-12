@@ -79,26 +79,46 @@ const LoginModal = () => {
     <>
     <div className="modal island loginModal">
      <div className="actions">
+      <p>Open with ...</p>
           {/* <div className='button secondary outline disable'  onClick={openEmailPassordLogin}>Password Login<div className="email-logo"></div></div> */}
-          {
+          
+                <div className="sign-in-buttons">
+                {
               loading? <div className="">
                 { googleSignInResult?.user?
                 <p>Sign-in as <span>{googleSignInResult?.user?.email}</span></p>:
                 <p>Opening Google Sign-in ...</p>
                 }
                 </div>:
-              <div className='button'  onClick={handleGoogleSignIn}>
+                <>
+                  <div className='button google'  onClick={handleGoogleSignIn}>
+                      <div className="google-logo"></div>
+                      Google
+                  </div>
+                  <div className='button apple'  onClick={handleGoogleSignIn}>
+                      <div className="apple-logo"></div>
+                      Apple
+                  </div>
+                </>
+                } 
+                  <div className="login-helper-options">
+                    <p>Can't Open Studio? </p>
+                  </div>
+                  <div className="login-branding">
+                  <p>From the house of  
+                    <span>
+                      <span> Flow</span>
+                      OS
+                    </span>
+                  </p>
+                  </div>
+                </div>
             
-              
-              <>
-                Sign In with<div className="google-logo"></div>
-              </>
-            </div>
-            }
         </div>
-      <div className="logo">
+
+      <div className={`logo ${loading ? 'loading' : ''}`}></div>
         
-      </div>
+      
     </div>
     <AddStudio/>
     <LoginEmailPassword/>

@@ -19,7 +19,6 @@ const uploadSlice = createSlice({
       }
     },
     setUploadStatuss:(state, action) => {
-      console.log(action.payload)
         state.uploadStatus = action.payload
     }
   },
