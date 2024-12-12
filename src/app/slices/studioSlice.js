@@ -15,7 +15,6 @@ export const fetchStudio = createAsyncThunk(
   async ({ currentDomain}) => {
     try {
         const studio = await fetchStudioByDomain(currentDomain);
-        console.log(studio)
         return studio;
     } catch (error) {
       throw error;
