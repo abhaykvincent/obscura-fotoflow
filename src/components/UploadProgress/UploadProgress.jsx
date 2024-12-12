@@ -32,6 +32,9 @@ function UploadProgress({}) {
         }
         if(uploadStatus == 'open'){
             setModalState('')
+            setTimeout(()=>{
+                setModalState('minimize')
+            }, 1000)
         }
     }, [uploadStatus])
 

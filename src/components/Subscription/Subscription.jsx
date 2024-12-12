@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Subscription.scss';
+import { formatStorage } from '../../utils/stringUtils';
 
 const initialPlans = [
   {
@@ -8,35 +9,49 @@ const initialPlans = [
     pricing: [
       { storage: 8, monthlyPrice: 'Free', yearlyPrice: '₹0', specialOffer: 'First 2 years are on us' },
     ],
-    features: ['Selection', 'Gallery', 'Events', 'Teams', 'Financials'],
-    coreFeatures: ['Unlimited Projects', '5 GB Storage'],
+    features: [ 'Projects', 'Teams', 'Financials'],
+    coreFeatures: ['5 GB Storage','Gallery','Selection'],
     expiry: '31 July 2026',
     defaultPlan: 0,
   },
   {
-    name: 'Freelancer',
+    name: 'Hobbiest',
     pricing: [
-      { storage: 100, monthlyPrice: '₹1,000', yearlyPrice: '₹10,000', specialOffer: 'First 2 months on us',defaultPlan: true   },
-      { storage: 1000, monthlyPrice: '₹3,000', yearlyPrice: '₹30,000', specialOffer: 'First 2 months on us'},
+      { storage: 10, monthlyPrice: '₹120',monthlyPriceWas: '₹400', yearlyPrice: '₹10,000', specialOffer: 'for 2 months',defaultPlan: true   },
+     
     ],
     defaultPlan: 0,
-    defaultStorage: 1000,
-    features: ['256 GB Cold Storage', 'Everything in Core plan', 'Full Resolution', 'Timeline'],
-    coreFeatures: ['Gallery','Financials', 'Cold Storage','128 GB storage'],
+    defaultStorage: 50,
+    features: ['Everything in Core plan'],
+    coreFeatures: ['10 GB storage','10 GB Cold Storage'],
     extraFeatures: { Gallery: 'Unlimited',Financials: 'Unlimited','Cold Storage': 'Limited'},
+    isAddStorage: true,
+  },
+  {
+    name: 'Freelancer',
+    pricing: [
+      { storage: 100, monthlyPrice: '₹400',monthlyPriceWas: '₹990', yearlyPrice: '₹10,000', specialOffer: 'for 2 months',defaultPlan: true   },
+     
+    ],
+    defaultPlan: 0,
+    defaultStorage: 100,
+    coreFeatures: [ 'Invoicing','e-Invitation'],
+    features: ['+ 50 GB Cold Storage', 'Everything in Core plan', 'Full Resolution', 'Timeline'],
+    extraFeatures: { Gallery: 'Unlimited',Financials: 'Unlimited'},
   },
   {
     name: 'Studio',
     pricing: [
-      { storage: 1000, monthlyPrice: '₹10,000', yearlyPrice: '₹1,00,000', specialOffer: 'First 2 months on us',defaultPlan: true},
-      { storage: 5000, monthlyPrice: '₹30,000', yearlyPrice: '₹3,00,000', specialOffer: 'First 2 months on us' },
+      { storage: 1024, monthlyPrice: '₹750',monthlyPriceWas: '₹2,900', yearlyPrice: '₹1,00,000', specialOffer: 'for 2 months',defaultPlan: true},
+      { storage: 5000, monthlyPrice: '₹3,500',monthlyPriceWas: '₹9,000', yearlyPrice: '₹3,00,000', specialOffer: 'for 1 year' },
     ],
-    defaultStorage: 2000,
+    defaultStorage: 1000,
     defaultPlan: 0,
-    features: ['512 GB Cold Storage', 'Everything in Freelancer plan', 'Online Payments', 'Cold Storage Access'],
-    coreFeatures: ['AI', 'Teams', 'Bookings', '1024 GB storage'],
-    extraFeatures: { AI: 'Beta',Teams: 'Beta', Bookings: 'Unlimited' },
-    isWaitlist: true,
+    coreFeatures: [ 'Website', 'Bookings','1 TB Cold Storage'],
+    features: ['+ 1TB GB Cold Storage', 'Everything in Freelancer plan', 'Online Payments', 'Cold Storage Access'],
+    extraFeatures: { AI: 'Beta',},
+  
+
   },
 ];
 
@@ -53,16 +68,7 @@ const CoreFeature = ({ plan, feature,defaultPlan,defaultStorage, tag, storage , 
       
       return (
         <h4 className={`customizable  ${tag ? 'beta' : ''}`}>
-          <p className={plan.pricing[0].storage>=storage?'hide':''} onClick={onDecrement} disabled={!onDecrement}>-</p>
-          <p className={`
-          storage-counter
-            ${defaultStorage === storage
-              ? 'green'
-              : 'white'}`
-          }>
-            {storage} GB
-          </p>
-          <p className={plan.pricing[plan.pricing.length - 1].storage<=storage?'hide':''} onClick={onIncrement} disabled={!onIncrement}>+</p>
+          
           {tag && <span className='tag'>{tag}</span>}
         </h4>
       );
@@ -95,14 +101,36 @@ const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
   return (
     <div className={`plan ${plan.name.toLowerCase()} ${plan.expiry ? 'active' : ''}`}>
       <h3 className="plan-name">{plan.name}</h3>
+      <p className={`
+          storage-counter
+            ${defaultStorage === plan.pricing[defaultPlan].storage
+              ? 'green'
+              : 'white'}`
+          }>
+            {formatStorage(plan.pricing[defaultPlan].storage,"GB")} 
+          </p>
       <div className="cover"></div>
       <div className="plan-pricing amount monthly">
-        <h1>{currentPricing?.monthlyPrice}</h1>
-        {currentPricing?.monthlyPrice == 'Free'?<div className="unit"> * </div>:<div className="unit">/ month</div>}
+        <h1>
+          <span className="priceWas">{currentPricing?.monthlyPriceWas}</span> 
+          <span className="priceNow">{currentPricing?.monthlyPrice}</span> 
+        </h1>
+        {currentPricing?.monthlyPrice == 'Free'?<div className="unit"> * </div>:<div className="unit">/mo</div>}
       </div>
       <div className="plan-pricing yearly">
         <div className="first-month">{currentPricing?.specialOffer}</div>
       </div>
+      
+      {!plan.isCurrentPlan && (
+        <>
+          <p className='waitlist-label'>{plan.isWaitlist ? 'Apply for next available batch.' : ' No CC Requ. Pay Later in 14 days.'}</p>
+          <div className={`button primary ${plan.isWaitlist || plan.isAddStorage ? 'outline' : ''}`}>
+            {plan.isWaitlist ? 'Join Waitlist' : plan.isAddStorage ? 'Add Storage': 'Get Started'}
+            
+          </div>
+        </>
+      )}
+
       <div className="core-features">
         {plan.coreFeatures.map((feature, index) => (
           <CoreFeature
@@ -120,7 +148,7 @@ const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
       </div>
       <div className="plan-features">
         {plan.features.map((feature, index) => (
-          <PlanFeature key={index} feature={feature} highlight={feature.includes('Everything in') || feature.includes('₹')} />
+          <PlanFeature key={index} feature={feature} highlight={feature.includes('Everything in') || feature.includes('Cold Storage')} />
         ))}
       </div>
       {plan.expiry && (
@@ -131,14 +159,7 @@ const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
       )}
       {plan.isCurrentPlan && <div className="current-plan button primary outline">Current Plan</div>}
 
-      {!plan.isCurrentPlan && (
-        <>
-          <p className='waitlist-label'>{plan.isWaitlist ? 'Apply for next available batch.' : 'Pay Later in 7 days'}</p>
-          <div className={`button primary ${plan.isWaitlist ? 'outline' : ''}`}>
-            {plan.isWaitlist ? 'Join Waitlist' : 'Upgrade'}
-          </div>
-        </>
-      )}
+      
     </div>
   )
 }

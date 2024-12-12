@@ -176,5 +176,4 @@ export const selectDomain = (state) => state.auth.currentStudio.domain;
 export const selectAuthLoading = (state) => state.auth.loading;
 export const selectAuthError = (state) => state.auth.error;
 export const selectCreateStudioModal = (state) => state.auth.createStudio
-export const selectStorageLimit = (state) => state.auth.limits.storage;
 export const selectCollectionsLimit = (state) => state.auth.limits.collections;

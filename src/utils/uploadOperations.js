@@ -35,7 +35,7 @@ const compressImages = async (files, maxWidthOrHeight) => {
 // Firebase Cloud Storage
 
 // File Single upload function
-export const uploadFile = (domain,id, collectionId, file,sliceIndex,setUploadLists) => {
+export const uploadFile = async (domain,id, collectionId, file,sliceIndex,setUploadLists) => {
     const MAX_RETRIES = 5;
     const INITIAL_RETRY_DELAY = 500;
     let retries = 0;
@@ -192,7 +192,7 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
     })))
     setUploadStatus('open');
     // Slice the files array into smaller arrays of size sliceSize
-    const sliceSize = 6;
+    const sliceSize = 4;
     console.log('%c ' + files.length + ' files to upload', 'color:yellow');
     let uploadedFiles = [];
 
