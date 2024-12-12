@@ -171,9 +171,8 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
         const thumbnailUploadPromises = compressedThumbnailFiles.map((file, sliceIndex) => 
             uploadFile( domain, id, `${collectionId}-thumb`, file, sliceIndex, setUploadLists)
         );
-
         // Combine all upload promises and resolve them concurrently
-        const results = await Promise.all([...uploadPromises, ...thumbnailUploadPromises]);        
+        const results = Promise.all([...uploadPromises, ...thumbnailUploadPromises]);        
  
         return results;
     } catch (error) {
@@ -193,7 +192,7 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
     })))
     setUploadStatus('open');
     // Slice the files array into smaller arrays of size sliceSize
-    const sliceSize = 5;
+    const sliceSize = 6;
     console.log('%c ' + files.length + ' files to upload', 'color:yellow');
     let uploadedFiles = [];
 

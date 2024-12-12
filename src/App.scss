@@ -1474,7 +1474,6 @@ body{
       }
     }
     &.loginModal{
-      max-width: 8px*50;
       min-width: 8px*20;
       left: 50vw;
       top: 50vh;
@@ -1486,6 +1485,7 @@ body{
       animation-duration: 0.2s;
       animation-fill-mode: forwards;
       border: none;
+      box-shadow: 1px 1px 4px black;
       background: none;
 
       @keyframes login-popup {
@@ -1503,7 +1503,7 @@ body{
       }
       .logo{
         position: absolute;
-        left: 30%;
+        left: calc(50% - 8px*5);
         top: -8px*16;
         width: 8px*10;
         height: 8px*10;
@@ -1513,6 +1513,10 @@ body{
         animation: logo-spin infinite;
         animation-duration:18s;
         transform: rotate(0deg) scale(1.2);
+        &.loading{
+        animation-duration:4s;
+
+        }
         // smooth natural spinning with apuse in itervals
         @keyframes logo-spin {
             0%{              
@@ -1541,35 +1545,79 @@ body{
         }
       }
       .actions{
+        display: grid;
       position: relative;
       justify-content: center;
       background-color: $dark-3;
       border: 1px solid $gray6-default-dark;
+      border-left: 1px solid $gray5-default-dark;
+      border-top: 1px solid $gray5-default-dark;
+      padding: 8px*6 8px*6*1.618;
+      padding-bottom: 0;
+      border-radius: 8px;
       p{
+        margin-bottom: 8px*2;
+        margin-left: 8px*1;
+        text-align: center;
+        color: $gray2-accessible-dark;
         span{
           color: $green-accessible-dark;
         }
       }
         .button{
-          height: 8px*5;
+          height: 8px*6;
+          width: 8px*6*1.618*1.618*1.618*1.618;
           display: flex;
           align-items: center;
+          justify-content: center;
+          padding: 8px*3 8px*3;
+          padding-right: 8px*2;
+          margin-bottom: 8px*1.618;
           gap: 8px*2;
           background-color: $dark-1;
           border: 1px solid $dark-0;
+          color: $gray4-default-light;
+          font-size: 1.1rem;
+          font-weight: 200;
+          transition-duration: 0.1s;
+          box-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+          &:hover{
+            transition-delay: 0.2s;
+            border: 1px solid $gray5-accessible-light;
+          } &.google{
+            background-color: $dark-3;
+            border: 1px solid $gray2-default-light;
+            &:hover{
+            border: 1px solid $gray6-accessible-light;
+          } 
+
+          }
+          &.apple{
+            background-color: $dark-3;
+          }
+         
           .google-logo{
-            width: 8px*4;
-            height: 8px*4;
+            width: 8px*3;
+            height: 8px*3;
             border: none;
             background-image: url('./assets/img/google-logo.png');
-            background-size: 100%;
+            background-position: center center;
+            background-size: 110%;
+          }
+          .apple-logo{
+            width: 8px*3;
+            height: 8px*3;
+            border: none;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/1/1b/Apple_logo_grey.svg');
+            background-position: center center;
+            background-size: 80%;
           }
           .lock{
             width: 8px*4;
             height: 8px*4;
             border: none;
             background-image: url('https://img.icons8.com/?size=100&id=2862&format=png&color=FFFFFF');
-            background-size: 60%;
+            background-size: 50%;
             background-position: center 30%;
             
           }
@@ -1584,7 +1632,32 @@ body{
             border: 1px solid $dark-1;
           }
         }
-      }
+        .login-helper-options{
+          display: flex;
+          justify-content: center;
+          gap: 8px*0.5;
+          margin-top: 8px*2;
+          p{
+            opacity: 0.5;
+            font-size: 0.9rem;
+            color: $green-default-dark;
+          }
+        }
+        .login-branding{
+          opacity: 0.2;
+          margin-top: 8px*1;
+          border-top: 1px solid $dark-0;
+          padding-top: 8px*2;
+          p{
+            span{
+              color: $gray4-accessible-light;
+              span{
+                color: $gray6-accessible-light;
+              }
+            }
+          }
+        }
+    }
       .loader{
         height: 8px*3;
         width: 100%;
@@ -1824,6 +1897,7 @@ body{
       top: $header-height ;
       left: 60px;
       width: calc(100vw - 8px*7.5);
+      margin-left: 0px;
     }
     .gallary{
       width: calc(100vw - 8PX*7 - 8px*6);
@@ -2410,6 +2484,26 @@ body{
         animation-fill-mode: forwards;
       transform: translateX(-50%);
       
+        &.loginModal{
+          margin-left: 8px;
+          .actions{
+            padding: 8px;
+            max-width: 95vw;
+            .sign-in-buttons{
+              width: 100%;
+            }
+            .button{
+              width: calc(100vw - 8px*8);
+            }
+            .login-helper-options{
+              display: grid;
+              gap: 2px;
+              p{
+                margin: 0;
+              }
+            }
+          }
+        }
         .form-section{
           width: calc(100% - 8px);
           margin-left: 8px*1;
