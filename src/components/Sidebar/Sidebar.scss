@@ -186,31 +186,38 @@
     }
     .storage-bars{
         position: absolute;
-        height: 8px*9.5;
+        display: flex;
+        flex-direction: column;
+        // reverse
+        flex-direction: column-reverse;
+        
+        height: 8px*10;
         width: calc(100% - 8px*1);
         bottom: 8px*7;
         left: 5px;
-        padding: 6px 4px;
+        padding: 8px 8px;
         border: 1px solid $gray6-default-dark;
         border-left: 1px solid $gray4-default-dark;
         border-top: 1px solid $gray4-default-dark;
         border-bottom: 1px solid $gray5-default-dark;
         border-radius: 5px;
         margin-left: 0;
-        margin-bottom: 4px;
+        margin-bottom: 8px;
         background: linear-gradient(to right, $gray6-default-dark, $dark-4);
         box-shadow: 1px 1px 0px 2px rgba(0, 0, 0, 1);
         
         .storage-bar{
             height: 8px*4.5;
-            position: relative;.storage-labels{
+            position: relative;
+            .storage-labels{
+                margin-bottom: -2px;
                 width: 100%;
                 display: grid;
                 grid-template-columns: 8px*2 auto 1fr;
-                gap: 2px;
+                gap: 4px;
                 .icon{
                     width: 8px*2;
-                    height: 8px*2;
+                    height: 100%;
                     background-repeat: no-repeat;
                     background-position: 20% 20%;
                     background-size: 90%;
@@ -226,7 +233,7 @@
                 p{
                     width: 100%;
                     font-size: 0.7rem;
-                    color: $gray-default-dark;;
+                    color: $gray2-default-dark;;
                     margin-bottom: 6px;
                     .bold{
                     color: $gray-default-dark;
@@ -252,19 +259,20 @@
             .quota-bar{
                 position: absolute;
                 height: 6px;
-                width: calc(100% - 8px);
+                width: calc(100% );
                 border-radius: 4px;
-                background-color: $gray6-default-dark;
+                background-color: black;
                 opacity: 0.6;
                 border: 1px solid $dark-1;
                 box-shadow:  inset 0px 0px 1px 1px rgba(0, 0, 0, 0.3),inset -1px 1px 1px 0px rgba(63, 63, 63, 0.1), 0px 0px 2px 0px black  ;
 
-                border: 1px solid $gray6-default-dark;
-                border-left: 1px solid $gray5-default-dark;
-                border-top: 1px solid $gray5-default-dark;
+                border: 1px solid $gray4-default-dark;
+                border-left: 1px solid $gray6-default-dark;
+                border-top: 1px solid $gray6-default-dark;
             }
             &.cold{
-                height: 8px*4.7;
+                height: 8px*4.5;
+                opacity: 0.4;
                 .used-bar{
                     height: 5px;
                     width: 20%;
@@ -273,19 +281,23 @@
 
                 }
                 .quota-bar{
-                    height: 5px;
+                    height: 6px;
 
-                    border-radius: 5px;
-                    background-color: $gray6-default-dark;
+                    border-radius: 5px;                
+                    background-color: black;
+
                 }
                 .storage-labels{
                     p{
                         color: $gray2-default-dark;
                         .bold{
-                            color: $gray2-default-dark;
+                            color: $gray4-default-light;
                         }
                     }
                 }
+            }
+            &.hot{
+                margin-top: 8px;
             }
         }
     }

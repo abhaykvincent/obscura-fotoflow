@@ -72,6 +72,33 @@ export function convertMegabytes(megabytes, decimalPlaces = 0) {
 
   return `${megabytes.toFixed(decimalPlaces)} ${sizes[sizeIndex]}`;
 }
+export function formatStorage(size, unit) {
+  const units = ["B", "KB", "MB", "GB", "TB", "PB"];
+  const unitIndex = units.indexOf(unit.toUpperCase());
+  if (unitIndex === -1) {
+      throw new Error("Invalid unit provided");
+  }
+
+  let sizeInBytes = size * Math.pow(1024, unitIndex);
+
+  let formattedSize = sizeInBytes;
+  let formattedUnit = "B";
+
+  for (let i = 0; i < units.length; i++) {
+      if (sizeInBytes < 1024 || i === units.length - 1) {
+          formattedSize = sizeInBytes.toFixed(2);
+          formattedUnit = units[i];
+          break;
+      }
+      sizeInBytes /= 1024;
+  }
+
+  // Remove unnecessary decimal places for whole numbers
+  formattedSize = parseFloat(formattedSize);
+  console.log(`${formattedSize} ${formattedUnit}`)
+  return `${formattedSize} ${formattedUnit}`;
+}
+
 // display amount 999999 in indian standerds ₹9,99,999 with ₹ at begining
 export function formatDecimal(amount) {
   return '₹'+amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
