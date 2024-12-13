@@ -231,6 +231,7 @@
                     }
                 }
                 p{
+                    white-space: nowrap;
                     width: 100%;
                     font-size: 0.7rem;
                     color: $gray2-default-dark;;
@@ -245,6 +246,7 @@
                 .usage-label{
                     font-size: 0.7rem;
                     text-align: right;
+                    white-space: nowrap;
                 }
             }
             .used-bar{

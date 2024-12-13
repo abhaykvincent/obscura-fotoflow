@@ -11,6 +11,7 @@ import { selectStudioStorageUsage } from '../../app/slices/studioSlice';
 function UploadButton({ isPhotosImported, setIsPhotosImported, imageUrls, setImageUrls, id, collectionId, setUploadLists, setUploadStatus }) {
   const dispatch = useDispatch();
 
+  setIsPhotosImported(true);
   const storageLimit = useSelector(selectStudioStorageUsage);
   const domain = useSelector(selectDomain);
 
@@ -28,7 +29,7 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, imageUrls, setIma
     // Check file size against available storage
     console.log(storageLimit.quota ,storageLimit.used, storageLimit.quota -  storageLimit.used)
     console.log(importFileSize < (storageLimit.quota -  storageLimit.used ))
-    if (importFileSize < (storageLimit.quota -  storageLimit.used ) ) {
+    if (importFileSize < (storageLimit.quota -  storageLimit.used) ) {
       try {
         const startTime = Date.now();  // Record the start time
 

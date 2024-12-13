@@ -7,17 +7,17 @@ const initialPlans = [
     name: 'Core',
     isCurrentPlan: true,
     pricing: [
-      { storage: 8, monthlyPrice: 'Free', yearlyPrice: '₹0', specialOffer: 'First 2 years are on us' },
+      { storage: 5, monthlyPrice: 'Free', yearlyPrice: '₹0', specialOffer: ['for 16 months.','No Credit Card Required']},
     ],
-    features: [ 'Projects', 'Teams', 'Financials'],
+    features: [''],
     coreFeatures: ['5 GB Storage','Gallery','Selection'],
     expiry: '31 July 2026',
-    defaultPlan: 0,
+    defaultPlan:0 ,
   },
   {
     name: 'Hobbiest',
     pricing: [
-      { storage: 10, monthlyPrice: '₹120',monthlyPriceWas: '₹400', yearlyPrice: '₹10,000', specialOffer: 'for 2 months',defaultPlan: true   },
+      { storage: 10, monthlyPrice: '₹120',monthlyPriceWas: '₹400', yearlyPrice: '₹10,000', specialOffer: ['for 2 months.','Save up to ₹560 with offer',' ₹990/month after'],defaultPlan: true   },
      
     ],
     defaultPlan: 0,
@@ -30,25 +30,25 @@ const initialPlans = [
   {
     name: 'Freelancer',
     pricing: [
-      { storage: 100, monthlyPrice: '₹400',monthlyPriceWas: '₹990', yearlyPrice: '₹10,000', specialOffer: 'for 2 months',defaultPlan: true   },
+      { storage: 100, monthlyPrice: '₹400',monthlyPriceWas: '₹990', yearlyPrice: '₹10,000', specialOffer: ['for 2 months.','Save up to ₹1180 with offer',' ₹990/month after'],defaultPlan: true   },
      
     ],
     defaultPlan: 0,
     defaultStorage: 100,
     coreFeatures: [ 'Invoicing','e-Invitation'],
-    features: ['+ 50 GB Cold Storage', 'Everything in Core plan', 'Full Resolution', 'Timeline'],
+    features: ['+ 50 GB Cold Storage', 'Everything in Core plan'],
     extraFeatures: { Gallery: 'Unlimited',Financials: 'Unlimited'},
   },
   {
     name: 'Studio',
     pricing: [
-      { storage: 1024, monthlyPrice: '₹750',monthlyPriceWas: '₹2,900', yearlyPrice: '₹1,00,000', specialOffer: 'for 2 months',defaultPlan: true},
-      { storage: 5000, monthlyPrice: '₹3,500',monthlyPriceWas: '₹9,000', yearlyPrice: '₹3,00,000', specialOffer: 'for 1 year' },
+      { storage: 1024, monthlyPrice: '₹750',monthlyPriceWas: '₹2,900', yearlyPrice: '₹1,00,000', specialOffer: ['for 2 months.','Save up to ₹4300 with offer',' ₹2,900/month after'],defaultPlan: true},
+      { storage: 5000, monthlyPrice: '₹3,500',monthlyPriceWas: '₹9,000', yearlyPrice: '₹3,00,000', specialOffer: ['for 2 months.','Save up to ₹4300 with offer',' ₹9,000/month after'] },
     ],
     defaultStorage: 1000,
     defaultPlan: 0,
-    coreFeatures: [ 'Website', 'Bookings','1 TB Cold Storage'],
-    features: ['+ 1TB GB Cold Storage', 'Everything in Freelancer plan', 'Online Payments', 'Cold Storage Access'],
+    coreFeatures: [ 'Website', 'Bookings'],
+    features: ['+ 1TB GB Cold Storage', 'Everything in Freelancer plan'],
     extraFeatures: { AI: 'Beta',},
   
 
@@ -118,7 +118,9 @@ const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
         {currentPricing?.monthlyPrice == 'Free'?<div className="unit"> * </div>:<div className="unit">/mo</div>}
       </div>
       <div className="plan-pricing yearly">
-        <div className="first-month">{currentPricing?.specialOffer}</div>
+        <div className="first-month">{currentPricing?.specialOffer[0]}</div>
+        <div className="first-month iconic">{currentPricing?.specialOffer[1]}</div>
+        <div className="first-month">{currentPricing?.specialOffer[2]}</div>
       </div>
       
       {!plan.isCurrentPlan && (
@@ -196,8 +198,8 @@ function Subscription() {
       <div className="welcome-section">
         <div className="welcome-content">
           <div className='welcome-message-top user-name'>
-            <h1 className='welcome-message'>Upgrade to <span className='iconic-gradient'>Studio Plan</span>!</h1>
-            <h2 className='welcome-message'>Manage you <span className='bold'>Payments</span> & <span className='bold'>Crew.</span> </h2>
+            <h1 className='welcome-message'>Plans for <span className='iconic-gradient'>Everyone</span>!</h1>
+            <h2 className='welcome-message'>Choose the Fotoflow <span className='bold'>plan</span> that's  <span className='bold'>right </span> for you. </h2>
           </div>
         </div>
       </div>

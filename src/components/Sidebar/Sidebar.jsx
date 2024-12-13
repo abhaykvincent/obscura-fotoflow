@@ -27,7 +27,7 @@ function Sidebar() {
   };
   useEffect(() => {
     console.log(storageLimit)
-    if(!storageLimit?.used) return
+    console.log(storageLimit?.quota-storageLimit?.used)
     setStorageUsage({
       used: (storageLimit.used/1000).toFixed(2),
       quota: (storageLimit.quota/1000).toFixed(0),
@@ -126,7 +126,7 @@ function Sidebar() {
             <div className="storage-labels">
               <div className="icon hot"></div>
               <p>Hot Storage</p>
-              <p className='usage-label'><span className='bold'>{storageUsage.quota-storageUsage.used}GB</span> left</p>
+              <p className='usage-label'><span className='bold'>{storageUsage?.quota-storageUsage?.used}GB</span> left</p>
             </div>
             <div className="used-bar"
               style={{

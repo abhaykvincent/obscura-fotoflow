@@ -52,24 +52,26 @@ const CollectionsPanel = ({ project, collectionId}) => {
                     }}
                     
                     >
-{
+                    
+
+                <div className="gallery-name">
+                  
+                  <p>
+                  {collection.name}
+                  </p>
+                  {
                           collection?.filesCount ?
                   <div className="filesCount">
                          {collection?.filesCount+' Photos'
                         } 
                       </div>:''
                       }
+                  
+                  </div>
                     </div>
 
                   </div>
                 </div>
-                <div className="gallery-name">
-                  
-                  <p>
-                  {collection.name}
-                  </p>
-                  
-                  </div>
               </Link>
 
             

@@ -43,7 +43,6 @@ const studioSlice = createSlice({
       .addCase(fetchStudio.fulfilled, (state, action) => {
         state.loading = false;
         state.data= action.payload;
-        console.log(action.payload)
         state.error = null;
       })
       .addCase(fetchStudio.rejected, (state, action) => {

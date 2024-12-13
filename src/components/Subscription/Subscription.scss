@@ -34,6 +34,7 @@
             line-height: 2.4rem;
             color: $gray4-default-dark;
             opacity: 0;
+            min-height: 8px*4;
             animation: fadeInLeft 0.5s ease-out 0.15s;
             animation-fill-mode: forwards;
             animation-timing-function: ease-out;
@@ -231,11 +232,11 @@
         .subscriptions-header{
             display: grid;
             justify-content: center;
-            margin-bottom: 8px;
+            margin-bottom: 8px*2;
             .subscriptions-heading{
                 font-size: 1.8rem;
                 margin-top: 8px*0;
-                margin-bottom: 8px*1;
+                margin-bottom: 8px*3;
                 font-weight: normal;
                 color: $gray6-accessible-light;
                 .tag{
@@ -263,7 +264,7 @@
         .plans{
             display: grid;
             justify-content: center;
-            align-items: start;
+            align-items: stretch;
             grid-template-columns: minmax(100px, 240px) minmax(100px, 240px)   minmax(100px, 240px)  minmax(100px, 240px);
             column-gap: 8px*4;
             row-gap: 8px*4;
@@ -305,6 +306,7 @@
                     border-radius: 4px;
                     color: $green-default-light;
                     z-index: 2;
+                    margin-top: 4px;
                     border: 1px solid $gray3-accessible-dark;
 
                 }
@@ -355,14 +357,14 @@
                                 margin-right: 8px*1;
                                 text-decoration: line-through;
 
-                                text-decoration-color: #333333;
-                                background: linear-gradient(90deg, #1d1d1d 0%,#444444 50%,  #3b3b3b 100%);
+                                text-decoration-color: #6c6c6c;
+                                background: linear-gradient(90deg, #898989 0%,#626262 50%,  #545454 100%);
                             -webkit-background-clip: text;
                             -webkit-text-fill-color: transparent;
                             }
                             .priceNow{
-                             
-                            background: linear-gradient(90deg, #54a134 0%, #54a134 20%, #31611c 90%);
+                                font-weight: 400;
+                            background: linear-gradient(90deg, #54a134 0%, #54a134 20%, #39771e 90%);
                             -webkit-background-clip: text;
                             -webkit-text-fill-color: transparent;
                             white-space: nowrap;
@@ -370,8 +372,10 @@
                         }
                     }
                     &.yearly{
+                        display: grid;
                         margin-top: -8px*2;
                         margin-left: 8px;
+                        padding-bottom: 8px*4;
                         h1{
                             color: $gray-accessible-light;
                             font-size: 1rem;
@@ -394,10 +398,18 @@
                     }
                     
                     .first-month{
-                        font-size: 0.7rem;
+                        font-size: 0.8rem;
                         margin-top: 0px;
                         color: $green-accessible-light;
-                        background: linear-gradient(90deg, #ffffff37 0%,  #ffffff37 90%);
+                        background: linear-gradient(90deg, #ffffff6e 0%,  #ffffff21 90%);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                    }
+                    .iconic{
+                        margin-top: 0px;
+                        margin-bottom: 8px;
+                        color: $green-accessible-light;
+                        background: linear-gradient(90deg, #1f470ec4 10%,#427f28 47%, #427f28 55%, #142f09 90%);
                         -webkit-background-clip: text;
                         -webkit-text-fill-color: transparent;
                     }
@@ -420,7 +432,7 @@
                 }
                 .core-features{
                     margin-bottom: 8px*0;
-                    margin-top: 8px*1;
+                    margin-top: 8px*3;
                     h4{
                         display: flex;
                         align-items: center;
@@ -443,7 +455,7 @@
                         }
                         &.customizable{
                         font-weight: 600;
-                        margin-bottom: 8px*2;
+                        margin-bottom: 8px*3;
                         padding-bottom: 8px*2;
                         border-bottom: 1px solid $gray6-default-dark;
                         margin-top: 8px*2;
@@ -523,8 +535,8 @@
                 }
                 .waitlist-label{
                     font-size: 0.7rem;
-                    color: $gray3-accessible-dark;
-                    margin-bottom: 8px;
+                    color: $gray-accessible-dark;
+                    margin-bottom: 4px;
                 }
                 .button{
                     width: 100%;
@@ -548,8 +560,11 @@
                         position: relative;
                         text-align: center;
                         color: $green-default-light;
+                        border: 1px solid $green-default-dark;
                         z-index: 2;
-                        border: 1px solid $green-accessible-dark;
+                        font-size: 0.8rem;
+                        
+                        box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);
 
                     }
                     .cover{
@@ -584,8 +599,11 @@
                     .storage-counter{
                         position: relative;
                         text-align: center;
-                        color: $gray-accessible-dark;
+                        color: $gray5-accessible-light;
+                        border: 1px solid $gray5-accessible-dark;
                         z-index: 2;
+                        font-size: 0.8rem;
+                        box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);
 
                     }
                     .cover{
@@ -609,6 +627,10 @@
                     }
                 }
                 &.freelancer{
+                    border: 1px solid #2f5409;
+                    border-top: 1px solid #65a222;
+                    border-left: 1px solid #2f510b;
+                    box-shadow: 2px 2px 8px black;
                     .plan-name{
                         position: relative;
                         text-align: center;
@@ -623,6 +645,15 @@
                         background-position: 50% 50%,40% 50%;
                         animation-duration:  120s;
                         background-image: url('../../assets/img/subscription/green-spheret-3d.avif'),  url('../../assets/img/subscription/gray-sphere-3d.avif');
+                    }
+                    .storage-counter{
+                        position: relative;
+                        text-align: center;
+                        color: $green-default-light;
+                        border: 1px solid $green-default-dark;
+                        z-index: 2;
+                        box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);
+
                     }
                 }
                 &.core{
@@ -652,7 +683,7 @@
                 }
                 &.active{
 
-                    border: 2px solid $gray-accessible-light;
+                    border: 2px solid $gray4-accessible-dark;
                 }
             }
         }
@@ -686,12 +717,19 @@
         grid-template-columns: 1fr 1fr 1fr;
     }
 }
-@media only screen and (max-width: 1200px) {
+@media only screen and (max-width: 1230px) {
     .home .section .projects{
         grid-template-columns: 1fr 1fr 1fr ;
     }
+    .subscription .plans-container .plans{
+        column-gap: 8px*1.5;
+    }
 }
 @media only screen and (max-width: 1080px) {
+    .subscription .plans-container .plans{
+        grid-template-columns: minmax(100px, 240px) minmax(100px, 240px) ;
+        column-gap: 8px*4;
+    }
     .home .section .projects{
         grid-template-columns: 1fr 1fr 1fr ;
         .project{
