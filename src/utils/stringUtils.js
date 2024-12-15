@@ -124,3 +124,48 @@ export const hexToRgb = (hex) => {
   
   return `${r}, ${g}, ${b}`; // Return as a string
 };
+
+export const  greetUser=(userName) => {
+  if (!userName) {
+    console.error("User name is required!");
+    return "Hello! What's your name?";
+  }
+
+  const now = new Date();
+  const hours = now.getHours();
+  let timeOfDay;
+  let personalizedMessage;
+  if (hours < 5) { // night Owls
+    timeOfDay = "Happy late night!";
+    personalizedMessage = "Even the stars are ready for their close-up—are you ";
+  } else if (hours < 6) { // Early Birds
+    timeOfDay = "Hei Early Bird!";
+    personalizedMessage = "Fresh mornings, fresh perspectives. Ready to capture today?";
+  } else if (hours < 8.5) { // Golden Hour
+    timeOfDay = "Happy Golden Hour!";
+    personalizedMessage = " Let the golden hour inspire your creativity today.";
+  } else if (hours < 12) {
+    timeOfDay = "Fresh morning!";
+    personalizedMessage = "Sunrise calls for creativity. Let's get started!";
+  } else if (hours < 16.5) {
+    timeOfDay = "Good afternoon!";
+    personalizedMessage = "Afternoon vibes are perfect for creating something extraordinary!";
+  } else if (hours < 18.5) {// Golden Hour
+    timeOfDay = "Happy Golden Hour!";
+    personalizedMessage = " Let the golden hour inspire your creativity today.";
+  } else if (hours < 23) { // 
+    timeOfDay = "Happy late night!";
+    personalizedMessage = "Even the stars are ready for their close-up—are you ";
+  } else {// Final hour of the day
+    timeOfDay = "Happy late night!";
+    personalizedMessage = "When the world sleeps, creativity awakens. Let's make magic! ";
+  }
+  return      {
+    timeOfDay,
+    personalizedMessage,
+    userName,
+  }
+}
+
+// Example usage:
+console.log(greetUser("John"));

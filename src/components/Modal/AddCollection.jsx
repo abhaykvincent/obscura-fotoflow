@@ -72,7 +72,7 @@ const modalRef = useModalFocus(visible.createCollection);
 
   return (
     <div className="modal-container" ref={modalRef} >
-      <div className="modal create-project">
+      <div className="modal create-project island">
         <div className='modal-header'>
           <div className="modal-controls">
             <div className="control close" onClick={()=>onClose()}></div>

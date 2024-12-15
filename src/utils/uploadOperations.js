@@ -67,6 +67,7 @@ export const uploadFile = async (domain,id, collectionId, file,sliceIndex,setUpl
                 async () => {
                     // Handle successful uploads on complete 
                     let url = await getDownloadURL(uploadTask.snapshot.ref);
+                    console.log(url)
                     fileUploaded = true;
                     setUploadLists((prevState) => {
                         return prevState.map((fileProgress) => {
@@ -84,11 +85,13 @@ export const uploadFile = async (domain,id, collectionId, file,sliceIndex,setUpl
                             };
                         })
                     })
-                        resolve({
-                            name: file.name,
-                            lastModified:file.lastModified,
-                            url
-                        }); // Resolve the promise when the file is successfully uploaded
+                    // collection doesnot cintain -thumb
+                    
+                    resolve({
+                        name: file.name,
+                        lastModified:file.lastModified,
+                        url
+                    }); // Resolve the promise when the file is successfully uploaded
                     
                 }
             );
@@ -165,15 +168,15 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
             compressImages(slice, 300), // Thumbnails
         ]);
 
-        const uploadPromises = compressedFiles.map((file, sliceIndex) => {
+        const uploadPromises = await  compressedFiles.map((file, sliceIndex) => {
             uploadFile( domain, id, collectionId, file, sliceIndex, setUploadLists)
         });
-        const thumbnailUploadPromises = compressedThumbnailFiles.map((file, sliceIndex) => 
+        const thumbnailUploadPromises =  await compressedThumbnailFiles.map((file, sliceIndex) => 
             uploadFile( domain, id, `${collectionId}-thumb`, file, sliceIndex, setUploadLists)
         );
         // Combine all upload promises and resolve them concurrently
         const results = Promise.all([...uploadPromises, ...thumbnailUploadPromises]);        
- 
+        console.log(results)
         return results;
     } catch (error) {
         console.error("Error during slice upload:", error);
@@ -207,7 +210,7 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
 
             const results = await sliceUpload(domain,slice, id, collectionId,setUploadLists);
             uploadedFiles.push(...results);
-
+            console.log(results)
             const endTime = Date.now();  // Record the end time
             const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
             console.log(`%c Slice upload duration : ${duration} seconds`, 'color:#0071a4');
@@ -227,6 +230,7 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
         .then((uploadResults) => {
             let failedFiles = [];
             let uploadedFiles = [];
+            console.log(uploadResults)
             uploadResults = [].concat(...uploadResults);
             uploadResults = uploadResults.filter(result => result !== undefined);
             uploadResults.forEach((result, index) => {
@@ -235,9 +239,10 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
                 }
                 else{
                     // if name does not contails thumb- then 
-                    if(result.name.includes('thumb-')){
+                    if(result.url.includes('-thumb')){
                     }
                     else{
+                        console.log(result.url)
                         uploadedFiles.push({...result, thumbAvailable:true});
                     }
                 }
@@ -247,6 +252,7 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
                 console.log("%c All files uploaded successfully!", 'color:green');
                 setUploadLists([])
                 let getPIN ;
+                console.log(uploadedFiles)
                 // UPDATE Project in Firestore
                 addUploadedFilesToFirestore(domain,id, collectionId,importFileSize, uploadedFiles)
                 .then((response) => {

@@ -80,7 +80,7 @@
         }
         &.transparent-button{
             border: 1px solid rgba(255, 255, 255, 0.2);
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.25);
             //filter blur backkground
             backdrop-filter: blur(10px);
             box-shadow: 1px 1px 1px rgba(57, 57, 57, 0.2);
@@ -282,7 +282,7 @@
                 margin: 0;
                 margin-left: -8px;
                 margin-right: 4px;
-                background-size: 90%;
+                background-size: 85%;
                 background-position: center center;
                 background-image: url('https://img.icons8.com/?size=100&id=ZsYJzYlThVLD&format=png&color=FFFFFF');
                 
@@ -409,6 +409,10 @@ input,select{
     //   color: $gray-default-dark;
     &::placeholder{
       color: $gray4-default-dark;
+    }
+
+    &:-webkit-autofill {
+        background-color: rgba(0, 0, 0, 0.5) !important;
     }
 
   }

@@ -169,7 +169,7 @@ body{
     top: $header-height ;
     left: $sidebar-width - 6px;
     width: calc(100vw - #{$sidebar-width} - 6px);
-    min-height: calc(100vh - #{$header-height});
+    min-height: calc(100vh - #{$header-height} - 4px);
     padding: 0 8px*2;
     padding-top: 8px*1;
     margin-left: 8px*1;
@@ -212,7 +212,7 @@ body{
         .cover-tools{
           position: absolute;
           z-index: 10;
-          bottom: 8px*1.5;
+          bottom: 8px*0.5;
           right: 8px*3;
               transition-duration: 0.1s;
           .button{
@@ -241,8 +241,8 @@ body{
           display: flex;
           gap: 0px;
           right: auto;
-          left: 8px*2;
-          bottom: 8px*1.5;
+          left: 8px*3;
+          bottom: 8px*0.5;
           opacity: 1;
           .cover-info{
             display: flex;
@@ -289,12 +289,15 @@ body{
           position: absolute;
           bottom: 0px;
           left: 0px;
-          height: 8px*8;
+          height: 8px*6;
           width: 100%;
           -webkit-backdrop-filter: blur(4px);
-          backdrop-filter: blur(3px);
-          background-color: rgba(24, 24, 24, 0.5);
+          backdrop-filter: blur(16px);
+          background-color: rgba(0, 0, 0, 0.2);
+          box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5), inset 0px -1px 2px rgba(0, 0, 0, 0.8);
           border-top: 1px solid rgba(255, 255, 255, 0.05);
+          border-left: none;
+          border-right: none;
         }
         .focus-indicator{
           position: absolute;
@@ -714,7 +717,7 @@ body{
           text-align: center;
           opacity: 1;
           background-size: 80%;;
-          background-color: $dark-3;
+          background-color: $dark-2;
           //background: url('https://img.icons8.com/ios/100/FFFFFF/drag-and-drop.png') ;
           background-repeat: no-repeat;
           background-position: center;
@@ -1272,6 +1275,7 @@ body{
     z-index: 20;
     &.closingModal{
       .modal{
+        transform: translate(-50%, calc(-50% - 60px))  scale(1);
         animation-name: modal-out;
         animation-duration: 0.3s;
         animation-fill-mode: forwards;
@@ -1280,6 +1284,7 @@ body{
         background: rgba(0, 0, 0, 0);
         transition-delay: 0.1s;
         transition-duration: 0.3s;
+        backdrop-filter: blur(0px);
       }
       }
   }
@@ -1308,9 +1313,11 @@ body{
       left: calc(50vw );
       height: auto;
       max-height: 90vh;
-      transform: translate(-50%,calc(-50% - $header-height)) scale(0.9);
+      transform: translate(-50%,calc(-50% - $header-height)) scale(1);
       animation: none;
       opacity: 1;
+      background-color: rgba(22, 22, 22, 0.8);
+      backdrop-filter: blur(8px);
       .modal-body{
         margin-top: 8px;
         height: auto;
@@ -1332,9 +1339,11 @@ body{
       font-weight: 600;
       line-height: 8px*3.5;
       text-align: center;
-      background-color: $dark-3;
+      background-color: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
       border-radius: $border-radius-1 $border-radius-1 0 0;
       border-bottom: 1px solid $dark-1;
+      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.4);
       .modal-controls{
         display: flex;
         width: 100%;
@@ -1387,6 +1396,7 @@ body{
     .form-section{
       margin:0  8px*4 ;
       display: grid;
+      padding-bottom: 8px*4;
       gap: 8px;
       &.contact{
 
@@ -1397,7 +1407,7 @@ body{
       }
       .field{
         display: grid;
-        grid-template-columns: 8px*12 8px*33;
+        grid-template-columns: 8px*16 8px*33;
         align-items: center;
         gap: 8px*2;
         margin: 0px;
@@ -1406,6 +1416,11 @@ body{
         opacity: 0;
         animation: fadeInLeft 0.15s ease-out 0.1s;
         animation-fill-mode: forwards;
+        &.optional{
+          label{opacity: 0.4;}
+          input{opacity: 0.4;}
+          
+        }
         label{
           text-align: right ;
           color: $gray-default-dark;
@@ -1473,13 +1488,16 @@ body{
       position: absolute;
       bottom: 0px;
       border: 1px solid $dark-0;
+      border-top: 1px solid $dark-1;
       border-radius: 4px;
       padding: 8px*2 8px*2*1.618 ;
-      background-color: $gray6-default-dark;
-      box-shadow: 0px 1px 2px black;
+      background-color: rgba(0, 0, 0, 0.01);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.4);
     }
     .modal-body{
       margin-top: 8px*3;
+
     }
     &.delete-item{
       .modal-body{
@@ -1774,9 +1792,9 @@ body{
     left:0;
     width: 100%;
     height: 100vh;
-    background-color: $dark-3;
+    background-color: rgba(25, 25, 25, 0.5);
     z-index: 19;
-    opacity: 0.8;
+    backdrop-filter: blur(16px);
   }
   .no-items{
     padding: 8px*4;
@@ -1847,21 +1865,21 @@ body{
 }
 @keyframes modal-out {
   0% {
+    transform: translate(-50%, calc(-50% - 60px))  scale(1);
+    opacity: 1;
+  } 5% {
     margin-left: 8px*0;
-    transform: translate(-8px*3,0%)  scale(1);
+    transform: translate(-50%, calc(-50% - 60px))  scale(1.04);
     opacity: 1;
   } 
-  55% {
-    transform: translate(-8px*5,0%)  scale(1);
-    opacity: 1;
-  }
-  60% {
-    transform: translate(-8px*5,0%)  scale(1);
-    opacity: 1;
+  80% {
+    margin-left: 8px*5;
+    transform: translate(-55%, calc(-50% - 40px))  scale(0.8);
+    opacity: 0;
   }
   100% {
     margin-left: 8px*5;
-    transform: translate(200%,0%)  scale(1);
+    transform: translate(-55%, calc(-50% - 40px))  scale(0);
     opacity: 0;
   }
 }
@@ -2103,15 +2121,14 @@ body{
             background-image: url('./assets/img/icons/options-dots.png');
             background-size: auto 60%;
             background-position: center center;
-            background-color: rgba(0, 0, 0, 0.4);
-            box-shadow:  1px 1px 1px 1px rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(2px) ;
+            background-color: rgba(0, 0, 0, 0.3);
+            box-shadow:  1px 1px 1px 1px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px) ;
 
             text-align: center;
             border: 1px solid $gray6-default-dark;
-            border-top: 1px solid $gray3-default-dark;
-            border-left: 1px solid $gray3-default-dark;
-            opacity: 0.8;
+            border-top: 1px solid $gray2-default-dark;
+            border-left: 1px solid $gray2-default-dark;
             &:hover{
               background-color: $dark-2;
               border: 1px solid $dark-0;
@@ -2171,7 +2188,6 @@ body{
             justify-content: center;
             height: 100%;
             font-size: 0.8rem;
-            font-weight: 400;
             text-align: center;
             color: $gray6-accessible-light;
             padding-bottom: 4px;

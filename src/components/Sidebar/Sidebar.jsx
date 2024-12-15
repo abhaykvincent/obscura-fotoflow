@@ -29,9 +29,9 @@ function Sidebar() {
     console.log(storageLimit)
     console.log(storageLimit?.quota-storageLimit?.used)
     setStorageUsage({
-      used: (storageLimit.used/1000).toFixed(2),
-      quota: (storageLimit.quota/1000).toFixed(0),
-      usedPercentage: (storageLimit.used/storageLimit.quota*100).toFixed(2)
+      used: (storageLimit?.used/1000).toFixed(2),
+      quota: (storageLimit?.quota/1000).toFixed(0),
+      usedPercentage: (storageLimit?.used/storageLimit?.quota*100).toFixed(2)
     })
     },[storageLimit])
   if(user==='no-studio-found')
@@ -130,7 +130,7 @@ function Sidebar() {
             </div>
             <div className="used-bar"
               style={{
-                width: `${storageUsage.usedPercentage}%`
+                width: `${storageUsage?.usedPercentage}%`
               }}
             ></div>
             <div className="quota-bar"></div>

@@ -10,49 +10,97 @@ const initialPlans = [
       { storage: 5, monthlyPrice: 'Free', yearlyPrice: '₹0', specialOffer: ['for 16 months.','No Credit Card Required']},
     ],
     features: [''],
-    coreFeatures: ['5 GB Storage','Gallery','Selection'],
+    coreFeatures: ['5 GB Storage','','Gallery','Selection'],
     expiry: '31 July 2026',
     defaultPlan:0 ,
   },
   {
     name: 'Hobbiest',
     pricing: [
-      { storage: 10, monthlyPrice: '₹120',monthlyPriceWas: '₹400', yearlyPrice: '₹10,000', specialOffer: ['for 2 months.','Save up to ₹560 with offer',' ₹990/month after'],defaultPlan: true   },
+      { storage: 10, monthlyPrice: '₹320',monthlyPriceWas: '₹400', yearlyPrice: '₹10,000', specialOffer: ['for 2 months.','Save up to ₹160 with offer',' ₹400/month after'],defaultPlan: true   },
      
     ],
     defaultPlan: 0,
     defaultStorage: 50,
-    features: ['Everything in Core plan'],
-    coreFeatures: ['10 GB storage','10 GB Cold Storage'],
+    features: ['Everything in Core plan','1 MB File Size', '10K Photos'],
+    coreFeatures: [,'10 GB Cold Storage','','','','',''],
     extraFeatures: { Gallery: 'Unlimited',Financials: 'Unlimited','Cold Storage': 'Limited'},
     isAddStorage: true,
   },
   {
     name: 'Freelancer',
     pricing: [
-      { storage: 100, monthlyPrice: '₹400',monthlyPriceWas: '₹990', yearlyPrice: '₹10,000', specialOffer: ['for 2 months.','Save up to ₹1180 with offer',' ₹990/month after'],defaultPlan: true   },
+      { storage: 100, monthlyPrice: '₹480',monthlyPriceWas: '₹980', yearlyPrice: '₹10,000', specialOffer: ['for 2 months.','Save up to ₹1,000 with offer',' ₹980/month after'],defaultPlan: true   },
      
     ],
     defaultPlan: 0,
     defaultStorage: 100,
-    coreFeatures: [ 'Invoicing','e-Invitation'],
-    features: ['+ 50 GB Cold Storage', 'Everything in Core plan'],
+    coreFeatures: [ 'Invoicing','e-Invitation','',''],
+    features: ['+ 50 GB Cold Storage', 'Everything in Core plan','5 MB File Size','100K Photos'],
     extraFeatures: { Gallery: 'Unlimited',Financials: 'Unlimited'},
   },
   {
     name: 'Studio',
     pricing: [
-      { storage: 1024, monthlyPrice: '₹750',monthlyPriceWas: '₹2,900', yearlyPrice: '₹1,00,000', specialOffer: ['for 2 months.','Save up to ₹4300 with offer',' ₹2,900/month after'],defaultPlan: true},
+      { storage: 1024, monthlyPrice: '₹1,480',monthlyPriceWas: '₹2,800', yearlyPrice: '₹1,00,000', specialOffer: ['for 2 months.','Save up to ₹4300 with offer',' ₹2,800/month after'],defaultPlan: true},
       { storage: 5000, monthlyPrice: '₹3,500',monthlyPriceWas: '₹9,000', yearlyPrice: '₹3,00,000', specialOffer: ['for 2 months.','Save up to ₹4300 with offer',' ₹9,000/month after'] },
     ],
     defaultStorage: 1000,
     defaultPlan: 0,
-    coreFeatures: [ 'Website', 'Bookings'],
-    features: ['+ 1TB GB Cold Storage', 'Everything in Freelancer plan'],
+    coreFeatures: [ 'Custom','Website', 'Bookings'],
+    features: ['+ 1TB GB Cold Storage', 'Everything in Freelancer plan','Original File Size','1 Million Photos'],
     extraFeatures: { AI: 'Beta',},
   
 
   },
+  /* {
+    name: 'Agency',
+    pricing: [
+      { storage: 5120, monthlyPrice: '₹4,000',monthlyPriceWas: '₹9,000', yearlyPrice: '₹3,00,000', specialOffer: ['for 2 months. 1 Year Contract','Save up to ₹4300 with offer',' ₹2,800/month after'],defaultPlan: true},
+    ],
+    defaultStorage: 1000,
+    defaultPlan: 0,
+    coreFeatures: [ 'Teams','Print Shop','Agency Portfolio', 'Google Calendar'],
+    features: ['+ 1TB GB Cold Storage', 'Everything in Freelancer plan'],
+    isContactSales: true,
+    extraFeatures: { AI: 'Beta',},
+  },
+  {
+    name: 'Print-Shop',
+    pricing: [
+      { storage: 5120, monthlyPrice: '₹4,000',monthlyPriceWas: '₹9,000', yearlyPrice: '₹3,00,000', specialOffer: ['for 2 months. 1 Year Contract','Save up to ₹4300 with offer',' ₹2,800/month after'],defaultPlan: true},
+    ],
+    defaultStorage: 1000,
+    defaultPlan: 0,
+    coreFeatures: [ 'Teams','Print Shop','Agency Portfolio', 'Google Calendar'],
+    features: ['+ 1TB GB Cold Storage', 'Everything in Freelancer plan'],
+    isContactSales: true,
+    extraFeatures: { AI: 'Beta',},
+  },
+  {
+    name: 'Premium',
+    pricing: [
+      { storage: 5120, monthlyPrice: '₹0',monthlyPriceWas: '₹19,000', yearlyPrice: '₹5,00,000', specialOffer: ['for 2 months. 1 Year Contract','Save up to ₹4300 with offer',' ₹2,800/month after'],defaultPlan: true},
+    ],
+    defaultStorage: 10000,
+    defaultPlan: 0,
+    coreFeatures: [ 'Flow AI','Print Shop','Agency Portfolio', 'Google Calendar'],
+    features: ['+ 1TB GB Cold Storage', 'Everything in Freelancer plan'],
+    isContactSales: true,
+    extraFeatures: { AI: 'Beta',},
+  },
+  {
+    name: 'Enterprise',
+    pricing: [
+      { storage: 10200, monthlyPrice: '',monthlyPriceWas: '', yearlyPrice: '', specialOffer: ['5 Year Contract'],defaultPlan: true},
+    ],
+    defaultStorage: 10000,
+    defaultPlan: 0,
+    coreFeatures: [ 'Flow AI','','', ''],
+    features: [],
+    extraFeatures: { AI: 'Beta',},
+    isContactSales: true,
+  }, */
 ];
 
 
@@ -101,6 +149,8 @@ const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
   return (
     <div className={`plan ${plan.name.toLowerCase()} ${plan.expiry ? 'active' : ''}`}>
       <h3 className="plan-name">{plan.name}</h3>
+      
+      <div className="cover"></div>
       <p className={`
           storage-counter
             ${defaultStorage === plan.pricing[defaultPlan].storage
@@ -109,7 +159,6 @@ const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
           }>
             {formatStorage(plan.pricing[defaultPlan].storage,"GB")} 
           </p>
-      <div className="cover"></div>
       <div className="plan-pricing amount monthly">
         <h1>
           <span className="priceWas">{currentPricing?.monthlyPriceWas}</span> 
@@ -125,9 +174,9 @@ const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
       
       {!plan.isCurrentPlan && (
         <>
-          <p className='waitlist-label'>{plan.isWaitlist ? 'Apply for next available batch.' : ' No CC Requ. Pay Later in 14 days.'}</p>
-          <div className={`button primary ${plan.isWaitlist || plan.isAddStorage ? 'outline' : ''}`}>
-            {plan.isWaitlist ? 'Join Waitlist' : plan.isAddStorage ? 'Add Storage': 'Get Started'}
+          <p className='waitlist-label'>{plan.isAddStorage ? 'Pay with UPI' : plan.isContactSales?'':' No CC Requ. Pay Later in 14 days.'}</p>
+          <div className={`button  ${plan.isWaitlist || plan.isAddStorage ? ' secondary' : plan.isContactSales?'primary outline':'primary'}`}>
+            {plan.isWaitlist ? 'Join Waitlist' : plan.isAddStorage ? 'Buy Cold Storage': plan.isContactSales?'Contact Sales':'Get Started'}
             
           </div>
         </>

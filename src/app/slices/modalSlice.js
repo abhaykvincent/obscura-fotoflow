@@ -11,6 +11,7 @@ const initialState = {
     addPayment:false,
     addExpense:false,
     addBudget: false,
+    addReferral: false,
     loginEmailPassword: false,
 };
 export const closeModalWithAnimation = createAsyncThunk(

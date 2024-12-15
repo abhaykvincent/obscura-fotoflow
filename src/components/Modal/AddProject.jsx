@@ -81,7 +81,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
 
   return (
     <div className="modal-container" ref={modalRef}>
-      <div className="modal create-project">
+      <div className="modal create-project island">
         <div className="modal-header">
           <div className="modal-controls">
             <div className="control close" onClick={onClose}></div>
@@ -97,6 +97,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
               <input
                 name="name"
                 value={projectData.name}
+                placeholder="Sarah & Matan"
                 type="text"
                 onChange={handleInputChange}
               />
@@ -107,6 +108,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
                 name="type"
                 value={projectData.type}
                 type="text"
+                placeholder="Wedding, Birthday, ..."
                 onChange={handleInputChange}
               />
             </div>

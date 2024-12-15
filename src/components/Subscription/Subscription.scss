@@ -266,8 +266,8 @@
             justify-content: center;
             align-items: stretch;
             grid-template-columns: minmax(100px, 240px) minmax(100px, 240px)   minmax(100px, 240px)  minmax(100px, 240px);
-            column-gap: 8px*4;
-            row-gap: 8px*4;
+            column-gap: 8px*3;
+            row-gap: 8px*3;
             
             .plan{
                 padding: 8px*2;
@@ -307,6 +307,7 @@
                     color: $green-default-light;
                     z-index: 2;
                     margin-top: 4px;
+                    margin-bottom: 4px;
                     border: 1px solid $gray3-accessible-dark;
 
                 }
@@ -343,7 +344,7 @@
                     }
 
                     &.monthly{
-                        margin-top: -8px*2;
+                        margin-top: -8px*0;
                         margin-left: 4px;
                         h1{
                             font-size: 1.5rem;
@@ -358,13 +359,13 @@
                                 text-decoration: line-through;
 
                                 text-decoration-color: #6c6c6c;
-                                background: linear-gradient(90deg, #898989 0%,#626262 50%,  #545454 100%);
+                                background: linear-gradient(90deg, #4f4f4f 0%,#757575 50%,  #777777 100%);
                             -webkit-background-clip: text;
                             -webkit-text-fill-color: transparent;
                             }
                             .priceNow{
                                 font-weight: 400;
-                            background: linear-gradient(90deg, #54a134 0%, #54a134 20%, #39771e 90%);
+                            background: linear-gradient(90deg, #a9a9a9 0%, #d9d9d9 20%, #ababab 90%);
                             -webkit-background-clip: text;
                             -webkit-text-fill-color: transparent;
                             white-space: nowrap;
@@ -373,7 +374,7 @@
                     }
                     &.yearly{
                         display: grid;
-                        margin-top: -8px*2;
+                        margin-top: -8px*2.5;
                         margin-left: 8px;
                         padding-bottom: 8px*4;
                         h1{
@@ -398,10 +399,10 @@
                     }
                     
                     .first-month{
-                        font-size: 0.8rem;
+                        font-size: 0.9rem;
                         margin-top: 0px;
                         color: $green-accessible-light;
-                        background: linear-gradient(90deg, #ffffff6e 0%,  #ffffff21 90%);
+                        background: linear-gradient(90deg, #ffffff3a 0%,  #ffffff21 90%);
                         -webkit-background-clip: text;
                         -webkit-text-fill-color: transparent;
                     }
@@ -535,7 +536,7 @@
                 }
                 .waitlist-label{
                     font-size: 0.7rem;
-                    color: $gray-accessible-dark;
+                    color: $gray2-accessible-dark;
                     margin-bottom: 4px;
                 }
                 .button{
@@ -546,10 +547,8 @@
                 &.studio{
                     background-color: $dark-3;
                     overflow: hidden;
-                    opacity: 0.8;
-                *{
-
-                }
+                    opacity: 1;
+                
                     .plan-name{
                         position: relative;
                         text-align: center;
@@ -587,7 +586,7 @@
                 &.freelancer,&.hobbiest{
                     background-color: $dark-3;
                     overflow: hidden;
-                    box-shadow: 1px 2px 4px  black;
+                    box-shadow: 2px 0px 4px  rgba(0, 0, 0, 0.459);
 
                     .plan-name{
                         position: relative;
@@ -625,12 +624,22 @@
                     .cover{
                         background-image:  url('../../assets/img/subscription/gray-sphere-3d.avif');
                     }
+                    .storage-counter{
+                        box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);
+
+                            &::after{
+                                content: " COLD";
+                                color: $gray4-default-dark;
+                                padding-left: 4px;
+                            }
+                    }
                 }
                 &.freelancer{
-                    border: 1px solid #2f5409;
+                    border: 1px solid #1b3204;
                     border-top: 1px solid #65a222;
                     border-left: 1px solid #2f510b;
-                    box-shadow: 2px 2px 8px black;
+                    border-bottom: 1px solid #152505;
+                    box-shadow: 0px 2px 8px black;
                     .plan-name{
                         position: relative;
                         text-align: center;
@@ -654,6 +663,9 @@
                         z-index: 2;
                         box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);
 
+                            &::after{
+                                content: "";
+                            }
                     }
                 }
                 &.core{
@@ -668,6 +680,7 @@
                         h4{
 
                             color:$gray6-default-light; ;
+
                         }
                     }
                     .cover{
@@ -679,6 +692,11 @@
                         background-position: center;
                         background-blend-mode:lighten;
                         opacity: 0.8;
+                    }
+                }
+                &.agency,&.enterprise,&.premium,&.print-shop{
+                    .cover{
+                        padding: 8px*3;
                     }
                 }
                 &.active{
@@ -806,21 +824,6 @@
             font-size: 1.4rem;
         }
         
-        .core-features {
-            margin-top: 8px;
-            h4{
-                font-size: 2rem;
-                line-height: 2rem;
-                &.customizable{
-                    margin-top: 8px*4;
-                    margin-bottom: 8px*5;
-                }
-                p{
-
-                    padding: 8px*0.5 8px*2.5 ;
-                }
-            }
-        }
         
     } 
 }
@@ -844,10 +847,48 @@
         }
     }
     
-    .subscription .plans-container .plans{
-        padding: 8px*2;
-        grid-template-columns: 1fr;
-    }
+    
+    .subscription .plans-container{
+        margin-left: 0;
+        .plans{
+            padding: 8px*0;
+            grid-template-columns: 1fr;
+    
+            .plan {
+                .plan-pricing.monthly h1{
+                    font-size: 2rem;
+                }
+                .core-features {
+                    margin-top: 8px;
+                    h4{
+                        font-size: 1.5rem;
+                        line-height: 2rem;
+                        &.customizable{
+                            margin-top: 8px*4;
+                            margin-bottom: 8px*5;
+                        }
+                        p{
+        
+                            padding: 8px*0.5 8px*2.5 ;
+                        }
+                        &.customizable{
+                                margin-top: 8px*1;
+                        }
+                    }
+                }
+                &.core{
+                    .cover{
+                        padding-top:50% ;
+                    }
+                }
+                &.hobbiest{
+                    .cover{
+                        padding-top:60% ;
+                    }
+                }
+            }
+        }
+    } 
 }
   @media only screen and (max-width: 430px) {
 

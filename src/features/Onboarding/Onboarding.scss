@@ -18,6 +18,45 @@
     animation-iteration-count: infinite;
 
     animation-duration: 30s;
+    .error-container{
+        color: $yellow-accessible-light;
+        margin-top: 8px;
+    }
+    .logo{
+        position: relative;
+        left: 0;
+        top: -8px*8;
+        width: 8px*10;
+        height: 8px*10;
+        background-image: url('../../assets/img/fotoflow-pro-logo.png');
+        background-size: 100%;
+        background-position: center;
+        animation: logo-spin infinite;
+        animation-duration:18s;
+        transform: rotate(0deg) scale(1.2);
+        &.loading{
+        animation-duration:4s;
+
+        }
+        // smooth natural spinning with apuse in itervals
+        @keyframes logo-spin {
+            0%{              
+              opacity: 1;
+              transform: rotate(0deg) ;
+            }
+            99.999%{
+              opacity: 1;
+              transform: rotate(360deg * 4) ;
+            
+            }
+            100%{
+              opacity: 1;
+              transform: rotate(360deg *0) ;
+            }
+          }
+
+        
+      }
 }
 
 @keyframes background-parallax {
@@ -33,17 +72,152 @@
         }
     }
 .user-authentication{
-    display: flex;
+    display: grid;
     margin-bottom: 8px*4;
-
+    justify-content: start;
+    
     .button.google-login-button{
         margin: 0;
         margin-right: 8px*2;
+        height: 8px*6;
+        width: 8px*6*1.618*1.618*1.618;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px*3 8px*3;
+        padding-right: 8px*2;
+        gap: 8px*2;
+        background: $dark-2;
+        border: 1px solid $gray-accessible-dark;
+        color: $gray4-default-light;
+        font-size: 1.1rem;
+        font-weight: 200;
+        transition-duration: 0.1s;
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+        &:hover{
+            transition-delay: 0.2s;
+            border: 1px solid $gray5-accessible-light;
+          } 
+        &.error-shake{
+            animation: shake 0.5s;
+            animation-iteration-count: 2;
+            animation-timing-function: ease-in-out;
+            animation-fill-mode: forwards;
+        }
+          
+          &.google{
+            background-color: $dark-3;
+            border: 1px solid $gray2-default-light;
+            &:hover{
+            border: 1px solid $gray6-accessible-light;
+          } 
+
+          }
+
+          .google-logo{
+            width: 8px*3;
+            height: 8px*3;
+            border: none;
+            background-image: url('../../assets/img/google-logo.png');
+            background-position: center center;
+            background-size: 110%;
+          }
+    }
+    .onboarding-greeting{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.2rem;
+        color: $gray-default-light;
+        margin-bottom: 8px*0.5;
+        span{
+            &.timeGreeting{
+                color: $gray-default-dark;
+                &.icon{
+                        margin-right: 8px;
+                        content: '';
+                        &::before{
+                            margin-right: 8px;
+                        }
+                        &.late-night{
+                            &::before{
+                            content: '🌜'
+                            }
+                           }
+                        &.night{
+                            &::before{
+                            content: '🌜'
+                            }
+                           }
+                        &.morning{
+                            &::before{
+                            content: '🌅'
+                            }
+                           }
+                        &.early-bird{
+                            &::before{
+                            content: '🌅'
+                            }
+                           }
+                        &.noon{
+                            &::before{
+                            content: '🌞'
+                            }
+                           }
+                        &.evening{
+                            &::before{
+                            content: '🌃'
+                            }
+                           }
+                        &.golden-hour{
+                            &::before{
+                            content: '🌇'
+                            }
+                           }
+                }
+            }
+        }
+        p{
+        color: $gray-default-dark;
+
+        }
+        .iconic-gradient-white{
+            
+                
+    background: linear-gradient(90deg,#ffffff 0%,#ffffff 10%, #5c5c5c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+        }
+    }
+    .continue-with{
+        margin-bottom: 8px;
+        margin-left: 2px;
+    }
+    .onboarding-message{
+        
+        color: $gray4-default-dark;
+        margin-bottom: 8px*2;
     }
 }
 .logged-user{
     display: flex;
+    justify-content: start;
+    align-items: center;
     margin-top: 2px;
+    gap: 8px*2;
+    &.minimize-gmail-user{
+        .logout-button{
+            margin-left: -8px*2;
+            opacity: 0;
+            transition-delay: 0s;
+        }
+        .logged-user-info{
+
+            margin-left: -8px*2;
+            opacity: 0;
+            transition-delay: 0.2s;
+        }
+    }
    /*  .icon{
 
         width: 8px*4;
@@ -59,19 +233,127 @@
             background-image: url('../../assets/img/icons/back.png')
         }
     } */
+    .user-image{
+        position: relative;
+        width: 8px*6;
+        height: 8px*6;
+        background-size: 100%;
+        border-radius: 50%;
+        border: 1px solid $dark-1;
+        box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.4), 2px 2px 2px rgba(0, 0, 0, 1);
+        
+        
+        transform: scale(0);
+        animation: popin-badge;
+        animation-delay: 0.5s;
+        animation-fill-mode: forwards;
+        animation-duration: 0.2s;
+        animation-timing-function: ease-in-out;
+        &::after{
+            position: absolute;
+            color: transparent;
+            top: -4px;
+            right: -4px;
+            content: '.';
+            display: block;
+            width: 8px*2.5;
+            height: 8px*2.5;
+            background-image: url('../../assets/img/google-logo.png');
+            background-size: contain;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 8px*2;
+            box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.6);
+            transform: scale(0);
+            animation: popin-badge;
+            animation-delay: 0.6s;
+            animation-fill-mode: forwards;
+            animation-duration: 0.2s;
+            animation-timing-function: ease-in-out;
+            
+        }
+    }
+    @keyframes popin-badge {
+        0% {
+            transform: scale(0.4);
+        }
+        90% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
     .logged-user-info{
         display: flex;
         border-radius: 4px;
         padding: 4px 8px*1;
-        margin-bottom: 8px*5;
         color: $dark-0;
         font-size: 0.8rem;
         border: 1px solid $dark-1;
         span{
+            font-weight: 200;
         color: $gray2-default-dark;
-        margin-left: 4px;
+        margin-right: 4px;
 
         }
+        background: linear-gradient(90deg, #59704ecf  50%,#67872d8b 75%,#68872d 80%,  #67872d8b 100%);
+        background-size: 200%;
+        border: 1px solid $green-accessible-light;
+        background-position: 50%;
+        opacity: 0;
+        margin-left: -8px*0;
+        opacity: 1;
+        transition-duration: 0.2s;
+        -webkit-background-clip: text;
+        font-weight: 200;
+        -webkit-text-fill-color: transparent;
+        transition-duration: 0.3s;
+        font-weight: 600;
+        animation: iconic-gradient-white-progress 1s linear both;
+        animation-delay: 0.2s;
+        animation-iteration-count: 1;
+
+        @keyframes iconic-gradient-white-progress {
+            0% {
+                opacity: 0;
+                background-position: 0%;
+                border: 1px solid $gray6-accessible-dark;
+
+              }
+              
+              35% {
+                opacity: 0.6;
+
+                background-position: 150%;
+                border: 1px solid $gray5-accessible-dark;
+
+              }
+              60% {
+                opacity: 1;
+
+                background-position: 150%;
+                border: 1px solid $green-accessible-dark;
+
+              }
+              100% {
+
+                background-position: 50%;
+                border: 1px solid $green-dark-accessible-light;
+
+              }
+        }
+    }
+    .logout-button{
+        font-size: 0.9rem;
+        color: $gray4-default-dark;
+        padding: 8px;
+        cursor: pointer;
+        margin-left: -8px*0;
+        opacity: 1;
+        transition-duration: 0.2s;
+        transition-delay: 0.2s;
+
     }
 }
 .screen{
@@ -80,9 +362,18 @@
     transition-duration: 0.1s;
     
     .screen-title{
-        
+        display: flex;
         margin-bottom: 8px*5;
         color: $gray4-default-light;
+        .back-form{
+            width: 8px*4;
+            height: 8px*4;
+            margin-right: 8px;
+            background-image: url('https://img.icons8.com/?size=100&id=40217&format=png&color=FFFFFF');
+            background-size: 70%;
+            background-position: center center;
+            cursor: pointer;
+        }
     }
     .section-intro{
         width: 40vw;
@@ -91,6 +382,13 @@
         font-weight: 500;
         color: $gray3-default-dark;
         margin-bottom: 8px*0;
+        transition-duration: 0.2s;
+        &.small{
+            font-size: 1.8rem;
+            transition-duration: 0.5s;
+            color: $gray5-default-dark;
+            margin-bottom: 8px*-2;
+        }
     }
     .form-group{
         display: grid;
@@ -108,14 +406,17 @@
             border-bottom: 1px solid $gray4-default-light;
             transition-duration: 0.2s;
             text-shadow: 2px 4px 8px*4 rgba(0, 0, 0, 0.1);
+            //autofill
+
+            margin-top: 8px*1;
             //placeholder
             &::placeholder{
-                color: $gray2-default-dark;
+                color: $gray6-default-dark;
                 transition-duration: 0.5s;
             }
             &:focus{
             padding: 8px 8px*2;
-            padding: 8px*5 8px*2;
+            padding: 8px*5 8px*2.3;
             //hont highlight input border
             outline: none;
             margin-left: -8px*3;
@@ -203,6 +504,18 @@
             opacity: 0.2;
             &.active{
                 opacity: 1;
+                transition-duration: 0.1s;
+                .web-icon{
+                    width: 8px*4;
+                    height: 8px*4;
+                    background-image: url('https://img.icons8.com/?size=100&id=K6FkUVH0GtOD&format=png&color=777777');
+                    background-size: 100%;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                }
+                .studio-domain{
+                    margin-left: 8px;
+                }
             }
             &.taken{
                 .studio-domain{
@@ -222,6 +535,9 @@
                     }
                 }
             }
+            &.false{
+
+            }
             .input-reaction{
                 margin-left: 8px;
                 opacity: 0.6;
@@ -233,6 +549,7 @@
                 background-size: 80%;
                 background-repeat: no-repeat;
                 background-position: center;
+                transition-duration: 0.2s;
             }
         }
         .domain-input-container{
@@ -246,6 +563,10 @@
             border-radius: 8px*2;
             padding: 8px*0.5 8px*1.5;
             border: 1px solid $dark-0;
+
+            margin-left: 0px;
+            transition-delay: 0.05s;
+            transition-duration: 1s;
             span{
                 color: $gray2-default-light;
                 &.available{
@@ -287,6 +608,9 @@
                         }
                     }
                 }
+            }
+            div{
+                position: relative;
             }
             
         }
@@ -419,11 +743,12 @@
         width: 100vw;
         height: 100vh;
         .logo{
-            top: 8px*4;
-            left: 8px*4;
+            position: relative;
+            top: -8px*4;
+            left: 8px*0;
         }
         .screen{
-            width: 90%;
+            width: 100%;
             .studio-domain-selector{
 
                 display: grid;

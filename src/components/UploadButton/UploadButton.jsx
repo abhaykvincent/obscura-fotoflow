@@ -11,7 +11,6 @@ import { selectStudioStorageUsage } from '../../app/slices/studioSlice';
 function UploadButton({ isPhotosImported, setIsPhotosImported, imageUrls, setImageUrls, id, collectionId, setUploadLists, setUploadStatus }) {
   const dispatch = useDispatch();
 
-  setIsPhotosImported(true);
   const storageLimit = useSelector(selectStudioStorageUsage);
   const domain = useSelector(selectDomain);
 
