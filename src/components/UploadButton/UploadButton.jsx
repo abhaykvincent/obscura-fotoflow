@@ -6,17 +6,19 @@ import { selectDomain, selectStorageLimit } from '../../app/slices/authSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 import { fetchProject } from '../../firebase/functions/firestore';
 import { fetchProjects } from '../../app/slices/projectsSlice';
+import { selectStudioStorageUsage } from '../../app/slices/studioSlice';
 
 function UploadButton({ isPhotosImported, setIsPhotosImported, imageUrls, setImageUrls, id, collectionId, setUploadLists, setUploadStatus }) {
   const dispatch = useDispatch();
-  const storageLimit = useSelector(selectStorageLimit);
+
+  const storageLimit = useSelector(selectStudioStorageUsage);
   const domain = useSelector(selectDomain);
 
   const handleFileInputChange = useCallback(async (event) => {
     const selectedFiles = Array.from(event.target.files);
-
     // Validate file types
-    if (!validateFileTypes(selectedFiles)) {
+    if (!validateFileTypes(selectedFiles)) 
+    {
       dispatch(showAlert({ type: 'error', message: 'Currently, only .jpg, .jpeg, and .png. More to come!' }));
       return; // Exit if files are not valid
     }
@@ -24,7 +26,9 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, imageUrls, setIma
     
     const importFileSize = addAllFileSizesToMB(selectedFiles);
     // Check file size against available storage
-    if (importFileSize < storageLimit.available || domain === 'monalisa') {
+    console.log(storageLimit.quota ,storageLimit.used, storageLimit.quota -  storageLimit.used)
+    console.log(importFileSize < (storageLimit.quota -  storageLimit.used ))
+    if (importFileSize < (storageLimit.quota -  storageLimit.used) ) {
       try {
         const startTime = Date.now();  // Record the start time
 

@@ -2,13 +2,20 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getUsedSpace } from '../../utils/fileUtils';
 import { fullAccess, getStudiosOfUser, isAlreadyInStudio, users } from '../../data/teams';
 import firebase from 'firebase/app';
-import { auth } from '../../firebase/app';
+import { auth, storage } from '../../firebase/app';
 import { fetchStudioByDomain, fetchUsers } from '../../firebase/functions/firestore';
 import { useRevalidator } from 'react-router';
 import { setUserType } from '../../analytics/utils';
 
 const initialState = {
-  data:{}
+  data:{
+    usage:{
+      storage:{
+        quota: 0,
+        used: 0,
+      }
+    }
+  }
 };
 export const fetchStudio = createAsyncThunk(
   'studio/fetchStudio',
@@ -49,3 +56,4 @@ export const { } = studioSlice.actions;
 export default studioSlice.reducer;
 
 export const selectStudio = (state) => state.studio.data;
+export const selectStudioStorageUsage = (state) => state.studio.data?.usage.storage;

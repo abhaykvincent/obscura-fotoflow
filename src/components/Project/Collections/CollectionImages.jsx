@@ -192,7 +192,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id,collectionId }} />:
                 <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId }} />
             ) : (
-                <label htmlFor="fileInput" className="drop-upload">
+                <label htmlFor="fileInput" className={`drop-upload ${isPhotosImported ? 'active' : ''}`}>
                     <div className="drop-area">
                         <Lottie options={defaultOptions} height={150} width={150} />
                         <h2>Drop files here</h2>

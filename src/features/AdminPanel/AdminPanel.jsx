@@ -1,12 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { fetchStudios, fetchUsers } from '../../firebase/functions/firestore';
+import {  fetchAllReferalsFromFirestore, fetchStudios, fetchUsers } from '../../firebase/functions/firestore';
 import './AdminPanel.scss';
+import { useDispatch, useSelector } from 'react-redux';
+import { openModal } from '../../app/slices/modalSlice';
+import AddReferralModal from '../../admin/Modal/AddReferral';
+import { fetchReferrals, selectReferrals } from '../../app/slices/referralsSlice';
+import { set } from 'date-fns';
+import { useNavigate, useParams } from 'react-router';
 
 function AdminPanel() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    // react url page name                 <Route path="/admin/:page" element={<AdminPanel />} />
+      
+    const page = useParams().page;
     const [studios, setStudios] = useState([]);
     const [users, setUsers] = useState([]);
-    const [selectedTab, setSelectedTab] = useState('studios'); // State to manage the selected tab
-
+    const [selectedTab, setSelectedTab] = useState(page); // State to manage the selected tab
+    const [referallsList, setReferallsList] = useState([])
+    useEffect(()=>{
+    },[referallsList])
     useEffect(() => {
         const getStudios = async () => {
             try {
@@ -26,16 +39,33 @@ function AdminPanel() {
                 console.error('Error fetching users:', error);
             }
         };
+        const getReferrals = async () => {
+            try {
+                let serverreferals = await fetchAllReferalsFromFirestore()
+                console.log("Server referrals:", serverreferals);
+                setReferallsList(serverreferals);
+            } catch (error) {
+                console.error('Error fetching referrals:', error);
+            }
+        };
 
         getUsers();
+        getReferrals();
         getStudios();
     }, []);
 
     const handleTabChange = (tab) => {
-        setSelectedTab(tab);
+        // update react router url
+        if(tab.length>0){
+
+            navigate(`/admin/${tab}`);
+           setSelectedTab(tab);
+        }
     };
 
     return (
+        <>
+        <AddReferralModal/>
         <main className="admin-panel">
             <h1 className="admin-title">Admin Panel</h1>
             <div className="admin-dashboard">
@@ -185,7 +215,7 @@ function AdminPanel() {
                         <p>ROLES</p>
                     </div>
                     {studios.map(studio => (
-                        <div key={studio.id} className="studio-card">
+                        <div key={studio.id} className="studio-card" >
                             <p>{studio.name}</p>
                             <p>fotoflow.in/{studio.domain}</p>
                             <p>{studio.domain}</p>
@@ -198,33 +228,34 @@ function AdminPanel() {
                 selectedTab === 'referal-codes' && (
                     <section className="referal-codes-list">
                         <div className="actions">
-                            <div className="button primary  icon referal">New</div>
+                            <div className="button primary  icon referal"
+                                onClick={()=>{dispatch(openModal('addReferral'))}}
+                            >New</div>
                         </div>
                     <div className="referal-codes-card table-header">
                         <p>ID</p>
-                        <p>CAMPAIN</p>
-                        <p>MEDIUM</p>
-                        <p>USAGE</p>
-                        <p>LINK</p>
+                        <p>User name</p>
+                        <p>Medium</p>
+                        <p>Type</p>
+                        <p>Email</p>
+                        <p>Link</p>
                         <p>CODE</p>
                     </div>
-                        <div className="referal-codes-card">
-                            <p>#0001</p>
-                            <p>Shutter to Success - A</p>
-                            <p>Whatsapp Group</p>
-                            <p>1/10</p>                            
-                            <p className='button icon open-in-new'>../onboarding&ref=H72HG59</p>
-
-                            <button className="button secondary outline">H72HG59</button>
-                        </div>
-                        <div className="referal-codes-card">
-                            <p>#0002</p>
-                            <p>Shutter to Success- B</p>
-                            <p>Whatsapp Group</p>
-                            <p>1/10</p>
-                            <p className='button icon open-in-new'>../onboarding&ref=GT23RE6</p>
-                            <button className="button secondary outline">GT23RE6</button>
-                        </div>
+                    {
+                        referallsList.map((referral,index)=>{
+                            return(
+                                <div className={`referal-codes-card ${referral?.status}`} key={index}>
+                                    <p className='id'>{referral?.id}</p>
+                                    <p>{referral?.name}</p>
+                                    <p>{referral?.campainPlatform}</p>
+                                    <p>{referral?.type}</p>
+                                    <p>{referral?.email}</p>
+                                    <a className='button icon open-in-new'>/ref={referral?.code[0]}</a>
+                                    <button className="button secondary outline icon copy">{referral?.code[0]}</button>
+                                </div>
+                            )
+                        })
+                    }
                         {/* Add more support tickets here */}
                     </section>
                 )
@@ -278,6 +309,7 @@ function AdminPanel() {
             <div className="info-bar"></div>
 
         </main>
+        </>
     );
 }
 

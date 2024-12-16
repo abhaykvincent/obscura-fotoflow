@@ -155,8 +155,9 @@ export default function App() {
                 <Route path="/:studioName/invoices" element={<CommingSoon title={'Financials'}/>} />
                 <Route path="/:studioName/accounts" element={<CommingSoon title={'Accounts'}/>} />
                 <Route path="/:studioName/team" element={<Teams />} />
-                <Route path="/admin" element={<AdminPanel />} />
 
+                <Route exact path="/admin" element={<AdminPanel />} />
+                <Route exact path="/admin/:page" element={<AdminPanel />} />
               </>
               
               )}

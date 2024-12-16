@@ -91,6 +91,78 @@ export const fetchStudioByDomain = async (currentDomain) => {
     return studio;
 };
 
+export const fetchAllReferalsFromFirestore  = async () => {
+    const referralsCollection = collection(db, 'referrals');
+    const querySnapshot = await getDocs(referralsCollection);
+    const referalData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    
+    return referalData;
+};
+export const generateReferralInFirebase = async (referralData) => {
+    const {campainName, campainPlatform, type, name, email,message, status, quota, used, validity, createdAt} = referralData;
+    const referralsCollection = collection(db, 'referrals');
+    const generateRefCode = generateMemorablePIN(8);
+    const referralDoc = {
+        campainName,
+        campainPlatform,
+        type,
+        email,
+        code: [generateRefCode],
+        status,
+        quota,
+        name,
+        message,
+        used,
+        validity
+    }
+    await setDoc(doc(referralsCollection, email), referralDoc)
+    return referralDoc
+}
+export const validateInvitationCodeFromFirestore = async (invitationCode) =>{
+    const referralsCollection = collection(db, 'referrals');
+    const querySnapshot = await getDocs(referralsCollection);
+    const referalData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    // IF REFERAL STATUS IS active
+    const referal = referalData.find((referal) => {
+        return referal.code.includes(invitationCode) && referal.status === 'active'
+    });
+    console.log(referal)
+    return referal;
+}
+export const acceptInvitationCode = async (invitationCode) => {
+    
+    
+    const referralsCollection = collection(db, 'referrals');
+    const querySnapshot = await getDocs(referralsCollection);
+    const referalData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    const referal = referalData.find((referal) => {
+ 
+        return referal.code.includes(invitationCode) && referal.status === 'active'
+
+    });
+    // update referal used increment and  status to passive if used is equal to quota
+    if(referal?.used < referal?.quota-1){
+        referal.used = referal.used + 1;
+    }
+    else{
+        referal.used = referal.used + 1;
+        referal.status = 'passive';
+
+    }
+    await updateDoc(doc(referralsCollection, referal.id), referal);
+    console.log(referal)
+    return referal;
+}
+
 // Users
 export const createUser = async (userData) => {
     const {email,studio} = userData;
