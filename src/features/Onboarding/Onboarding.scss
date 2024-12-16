@@ -567,6 +567,19 @@
             margin-left: 0px;
             transition-delay: 0.05s;
             transition-duration: 1s;
+            .sub-domain-input{
+
+                &::after{
+                    content:'';
+                    color: transparent;
+                    padding: 8px;
+                    margin-left: 8px;
+                    background-image: url('https://img.icons8.com/?size=100&id=8192&format=png&color=ffffff');
+                    background-size: 90%;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                }
+            }
             span{
                 color: $gray2-default-light;
                 &.available{

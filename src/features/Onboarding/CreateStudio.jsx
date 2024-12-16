@@ -78,7 +78,7 @@ const CreateStudio = ({active,next,setCreateAccountData,createAccountData,update
   const handleStudioNameChange = (e) => {
     const name = e.target.value;
     setStudioName(name);
-    setStudioDomain(name.toLowerCase().replace(/\s+/g, ''));
+    setStudioDomain(name.toLowerCase().replace(/\s+/g, '-'));
   };
   // Post request to the AI API
   // https://us-central1-fotoflow-cloud.cloudfunctions.net/flowai-test/generate-content
@@ -157,7 +157,7 @@ const CreateStudio = ({active,next,setCreateAccountData,createAccountData,update
                 <div className="web-icon"></div>
                 <div className={`studio-domain `}>{domain}/
                     <div>
-                      <span className={isDomainAvailable?`available`:`taken`} contentEditable suppressContentEditableWarning={true}>
+                      <span className={`sub-domain-input  ${isDomainAvailable?`available`:`taken`}`} contentEditable suppressContentEditableWarning={true}>
                         {studioDomain}
                       </span>
                       {!isSuggestionsAvailable &&  studioDomain.length>3 &&

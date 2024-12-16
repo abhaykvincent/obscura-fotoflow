@@ -7,6 +7,7 @@ import AddReferralModal from '../../admin/Modal/AddReferral';
 import { fetchReferrals, selectReferrals } from '../../app/slices/referralsSlice';
 import { set } from 'date-fns';
 import { useNavigate, useParams } from 'react-router';
+import { copyToClipboard, getGalleryURL, getOnboardingReferralURL } from '../../utils/urlUtils';
 
 function AdminPanel() {
     const dispatch = useDispatch();
@@ -251,7 +252,13 @@ function AdminPanel() {
                                     <p>{referral?.type}</p>
                                     <p>{referral?.email}</p>
                                     <a className='button icon open-in-new'>/ref={referral?.code[0]}</a>
-                                    <button className="button secondary outline icon copy">{referral?.code[0]}</button>
+                                    <button className="button secondary outline icon copy"
+                                        onClick={
+                                            () => {
+                                                copyToClipboard(getOnboardingReferralURL(referral?.code[0]))
+                                            }
+                                        }
+                                    >{referral?.code[0]}</button>
                                 </div>
                             )
                         })

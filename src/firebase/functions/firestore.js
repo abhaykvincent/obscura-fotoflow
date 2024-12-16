@@ -151,10 +151,10 @@ export const acceptInvitationCode = async (invitationCode) => {
     });
     // update referal used increment and  status to passive if used is equal to quota
     if(referal?.used < referal?.quota-1){
-        referal.used = referal.used + 1;
+        referal.used = referal?.used + 1;
     }
     else{
-        referal.used = referal.used + 1;
+        referal.used = referal?.used + 1;
         referal.status = 'passive';
 
     }

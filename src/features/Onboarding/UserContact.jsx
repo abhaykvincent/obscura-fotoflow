@@ -79,6 +79,7 @@ const UserContact = ({ active, next,previous,createAccountData, updateAccountDat
     <>
     
     <PrivacyPolicy agreePolicy={agreePolicy}/>
+    
     <div className={`screen user-contact`}>
       <div className="screen-title">
         <div className="back-form"

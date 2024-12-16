@@ -256,7 +256,7 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
             if (failedFiles.length == 0) {
                 setUploadStatus('completed')
                 console.log("%c All files uploaded successfully!", 'color:green');
-                setUploadLists([])
+      
                 let getPIN ;
                 // UPDATE Project in Firestore
                 addUploadedFilesToFirestore(domain,id, collectionId,importFileSize, filteredUploadedFiles)
