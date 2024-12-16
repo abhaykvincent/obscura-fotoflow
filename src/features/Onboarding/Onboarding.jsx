@@ -122,7 +122,6 @@ function Onboarding() {
       const token = credential.accessToken; */
       // The signed-in user info.
       let loginUser = result.user;
-      console.log(loginUser)
       // IdP data available using getAdditionalUserInfo(result)
       // ...
       console.log("Logged in as " + loginUser.email )
@@ -149,7 +148,6 @@ function Onboarding() {
     });
   };
   const createAccountAndNavigate  = () => {
-    console.log(user)
     createUser({
       email:user.email, 
       studio:{
@@ -162,7 +160,6 @@ function Onboarding() {
       console.log(response)
       createStudio(response.studio)
           .then((response) => {
-            console.log(response)
             acceptInvitationCode(ref)
               dispatch(showAlert({type:'success', message:`New Studio created!`}));
               dispatch(login(user))

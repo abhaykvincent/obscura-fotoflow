@@ -1,23 +1,18 @@
-// src/components/SearchInput.jsx
-
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { debounce } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { debounce } from 'lodash';
 import { selectQuery, selectSearchStatus, updateSearchQuery } from '../../app/slices/searchSlice';
 import './Search.scss'
 
 const SearchInput = () => {
-  const [query, setQuery] = useState(useSelector(selectQuery));
-  const [status,setStatus] = useState(useSelector(selectSearchStatus))
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [query, setQuery] = useState(useSelector(selectQuery));
+  const [status,setStatus] = useState(useSelector(selectSearchStatus))
   const inputElement =  useRef(null);
-// focus input by default if no query or in search page route
-  useEffect(() => {
-    if(query.length === 0 ||  window.location.pathname === '/search')
-      inputElement.current.focus();
-  }, []);
+
   // Debounced function to avoid triggering search on every keystroke
   const handleSearch = useCallback(
     debounce((query) => {

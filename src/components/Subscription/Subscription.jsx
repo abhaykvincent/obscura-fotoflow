@@ -110,9 +110,7 @@ const PlanFeature = ({ feature, highlight }) => (<p className={`features ${highl
 // CoreFeature component
 const CoreFeature = ({ plan, feature,defaultPlan,defaultStorage, tag, storage , onIncrement, onDecrement }) => {
     if (feature.includes('storage')) {
-      console.log(plan.name)
-      console.log('Default Plan $:'+ plan.pricing[defaultPlan].storage)
-      console.log('Current plan $:'+ storage)
+
       
       return (
         <h4 className={`customizable  ${tag ? 'beta' : ''}`}>
@@ -231,8 +229,6 @@ function Subscription() {
     const updatedPlans = plans.map(plan => 
       plan.name === planName ? { ...plan, defaultPlan: newDefaultPlan } : plan
     );
-    console.log(newDefaultPlan)
-    console.log(updatedPlans)
     
     // Update state with the new array
     setPlans(updatedPlans);
@@ -240,7 +236,6 @@ function Subscription() {
 
 
     useEffect(() => {
-      console.log(plans)
     }, [plans]);
   return (
     <main className="subscription">

@@ -11,10 +11,13 @@ export const trackEvent = (eventName, eventParams = {}) => {
 
     // Development Mode Debugging - logs to console
     if (!isProduction) {
-        console.log(`Debug Event: ${eventName}`, {
+
+            // yellow
+            let color = '#ffd426';
+        console.log(`%c GA Event: ${eventName}`, {
             ...eventParams,
             timestamp: new Date().toISOString()
-        });
+        }, `color: ${color}; `);
     }
 };
 
@@ -29,9 +32,7 @@ export const setUserType = (userType) => {
 
     // Development Mode Debugging - logs to console
     if (!isProduction) {
-        console.log(`Debug User Type: ${userType}`, {
-            user_type: userType,
-            timestamp: new Date().toISOString()
-        });
+        let color = '#ffd426';
+        console.log(`%c GA User Type: ${userType}`, `color: ${color}; `);
     }
 };

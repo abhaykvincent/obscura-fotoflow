@@ -1,30 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 // Selectors and actions
-import { selectProjects } from '../../app/slices/projectsSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
+import { selectProjects } from '../../app/slices/projectsSlice';
 import { openModal } from '../../app/slices/modalSlice';
 // Utility functions
 import { getProjectsByStatus, getRecentProjects } from '../../utils/projectFilters';
 // Components
 import AddProjectModal from '../../components/Modal/AddProject';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
+import SearchInput from '../../components/Search/SearchInput';
 import Refresh from '../../components/Refresh/Refresh';
 // Styles
 import './Projects.scss';
-import SearchInput from '../../components/Search/SearchInput';
-import { set } from 'date-fns';
 
 function Projects() {
-    const defaultStudio = useSelector(selectUserStudio);
     const dispatch = useDispatch();
-    document.title = `${defaultStudio.name} | Projects`;
-
+    const defaultStudio = useSelector(selectUserStudio);
     const projects = useSelector(selectProjects);
+    
     const [recentProjects, setRecentProjects] = useState([]);
-    const [selectedProjects, setSelectedProjects] = useState([]);
     const [selectedTab, setSelectedTab] = useState('all');
-
+    
+    document.title = `${defaultStudio.name} | Projects`;
 
     useEffect(() => {
         setRecentProjects(getRecentProjects(projects));
@@ -38,6 +36,8 @@ function Projects() {
     const handleNewProjectClick = () => dispatch(openModal('createProject'));
 
     const renderProjectList = () => {
+
+        // If there are no projects, show a First Project Initiator
         if (recentProjects.length === 0) {
             return (
                 <>
@@ -75,11 +75,12 @@ function Projects() {
             groups[projectMonth].push(project);
             return groups;
         }, {});
+        console.log(groupedProjects)
+        console.log(Object.keys(groupedProjects))
     
-        // Render projects grouped by month
+        // Render projects - Grouped by month
         return Object.keys(groupedProjects).map((month,index) => (
-            <>
-            <div key={month} className="month-group" style={{ '--group-index': index + 1 }} >
+            <div key={index} className="month-group" style={{ '--group-index': index + 1 }} >
                 <h3 className="month-name">{month}</h3>
                 <div className="projects-list">
                 {groupedProjects[month].map((project) => (
@@ -87,22 +88,24 @@ function Projects() {
                 ))}
                 </div>
             </div>
-            
-            </>
         ));
     };
     
 
     return (
         <>
+            {/* Modals */}
             <AddProjectModal />
 
+            {/* App Header */}
             <div className="projects-page-header">
             <div className="search-bar">
                 <SearchInput />
             </div>
             </div>
+            {/* Main - Projects */}
             <main className="projects">
+                {/* Page Header */}
                 <div className="projects-header">
                     <h1>Projects</h1>
                     <div className="actions">
@@ -111,7 +114,7 @@ function Projects() {
                         </div>
                     </div>
                 </div>
-
+                {/* Controls */}
                 {projects.length>0 && <div className="view-control">
                     <div className="control-wrap">
                         <div className="controls">
@@ -137,8 +140,8 @@ function Projects() {
                         <div className="active"></div>
                     </div>
                 </div>}
-
-                    {renderProjectList()}
+                {/* Render Projects */}
+                {renderProjectList()}
 
                 <Refresh />
             </main>
