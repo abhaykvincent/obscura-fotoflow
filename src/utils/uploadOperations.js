@@ -168,7 +168,6 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
             compressImages([...slice], 300) // Pass a copy for thumbnails
         ]);
 
-        console.log(compressedFiles, compressedThumbnailFiles)
         
         const thumbnailUploadPromises = await Promise.all(
             compressedThumbnailFiles.map((file, sliceIndex) =>
@@ -181,8 +180,6 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
             )
         );
         
-        console.log(thumbnailUploadPromises)
-        console.log(uploadPromises)
         
         // Combine all upload promises and resolve them concurrently
         const results = Promise.all([ ...thumbnailUploadPromises,...uploadPromises]); 
@@ -219,7 +216,6 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
 
             const results = await sliceUpload(domain,slice, id, collectionId,setUploadLists);
             uploadedFiles.push(...results);
-            console.log(results)
             const endTime = Date.now();  // Record the end time
             const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
             console.log(`%c Slice upload duration : ${duration} seconds`, 'color:#0071a4');
@@ -247,10 +243,10 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
                 if (result?.status === 'rejected'){
                     failedFiles.push(files[index]);
                 }
-                    if(result.name.includes('thumb-')){
+                    if(!result.url.includes('-thumb')){
+                        filteredUploadedFiles.push({...result, thumbAvailable:true});
                     }
                     else{
-                        filteredUploadedFiles.push({...result, thumbAvailable:true});
                     }
             });
             if (failedFiles.length == 0) {
