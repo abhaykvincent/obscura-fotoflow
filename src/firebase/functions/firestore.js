@@ -11,7 +11,6 @@ import { removeUndefinedFields } from "../../utils/generalUtils";
 
 // Studio
 export const createStudio = async (studioData) => {
-    console.log(studioData)
     const {name} =studioData;
     const id= `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
     
@@ -54,7 +53,7 @@ export const checkStudioDomainAvailability = async (domain) => {
         ...doc.data(),
     }));
     const studio = studiosData.find((studio) => studio.domain === domain);
-    console.log(!studio)
+
     return !studio;
 };
 export const fetchStudiosOfUser = async (email) => {
@@ -66,7 +65,6 @@ export const fetchStudiosOfUser = async (email) => {
     }));
     const user = usersData.find((user) => user.email === email);
     const studio = user?.studio
-    console.log(user)
     return studio;
 };
 //fetch all studios
@@ -87,7 +85,7 @@ export const fetchStudioByDomain = async (currentDomain) => {
         ...doc.data(),
     }));
     const studio = studiosData.find((studio) => studio.domain === currentDomain);
-    studio && console.log(studio);
+
     return studio;
 };
 
@@ -132,7 +130,6 @@ export const validateInvitationCodeFromFirestore = async (invitationCode) =>{
     const referal = referalData.find((referal) => {
         return referal.code.includes(invitationCode) && referal.status === 'active'
     });
-    console.log(referal)
     return referal;
 }
 export const acceptInvitationCode = async (invitationCode) => {
@@ -159,14 +156,12 @@ export const acceptInvitationCode = async (invitationCode) => {
 
     }
     await updateDoc(doc(referralsCollection, referal.id), referal);
-    console.log(referal)
     return referal;
 }
 
 // Users
 export const createUser = async (userData) => {
     const {email,studio} = userData;
-    console.log(userData)
     const usersCollection = collection(db, 'users');
     const userDoc = {
         displayName:'',
@@ -209,7 +204,6 @@ const checkFirestoreConnection = async () => {
 export const fetchProjectsFromFirestore = async (domain) => {
     try{
         let color = domain === '' ? 'gray' : '#0099ff';
-        console.log(`%cFetching Projects from ${domain ? domain : 'undefined'}`, `color: ${color}; `);
         const studioDocRef = doc(db, 'studios', domain);
         const projectsCollectionRef = collection(studioDocRef, 'projects');
         let  querySnapshot 
@@ -240,7 +234,6 @@ export const fetchProjectsFromFirestore = async (domain) => {
 };
 // Function to fetch a specific project from a specific studio
 export const fetchProject = async (domain, projectId) => {
-    console.log(domain, projectId)
 
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
@@ -252,7 +245,6 @@ export const fetchProject = async (domain, projectId) => {
         const subCollectionId = collection.id;
         const collectionDoc = doc(projectDoc, 'collections', subCollectionId);
         const collectionSnapshot = await getDoc(collectionDoc);
-        console.log(collectionSnapshot.data())
     
         if (collectionSnapshot.exists()) {
             const collectionData = collectionSnapshot.data();
@@ -285,15 +277,8 @@ export const fetchImages = async (domain, projectId, collectionId) => {
         const collectionsData = collectionSnapshot.data();
         if(collectionsData.uploadedFiles?.length > 0){
             collectionsData.uploadedFiles.sort((a, b) => a.name.localeCompare(b.name));
-            // green
-            color = '#54a134';
-            console.log(`%cFetched Images from ${collectionId}`, `color: ${color}; `);
         }
         else{
-            // yellow
-            color = '#ffa500';
-            color = 
-            console.log(`%cNo Images found on  ${collectionId}`, `color: ${color}; `);
         }
         return collectionsData.uploadedFiles;
     } else {
@@ -304,8 +289,6 @@ export const fetchImages = async (domain, projectId, collectionId) => {
   
 // Project Operations
 export const addProjectToStudio = async (domain, project) => {
-    
-    console.log(domain, project)
     const id = project.type !== 'Portfolio'?`${project.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`:'portfolio';
     const projectData = {
       id,
@@ -371,7 +354,6 @@ export const updateProjectNameInFirestore = async (domain, projectId, newName) =
 // Collection Operations
 export const addCollectionToStudioProject = async (domain, projectId, collectionData) => {
     const { name, status } = collectionData;
-    console.log(domain)
     const id = `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
 
     const collectionDoc = {
@@ -408,7 +390,6 @@ export const addCollectionToStudioProject = async (domain, projectId, collection
 
 export const deleteCollectionFromFirestore = async (domain, projectId, collectionId) => {
     console.log('deleteCollectionFromFirestore')
-    console.log(domain, projectId, collectionId)
     if (!domain || !projectId || !collectionId) {
         throw new Error('Domain, Project ID, and Collection ID are required for deletion.');
     }
@@ -643,7 +624,7 @@ export const addExpenseToFirestore = async (domain, projectId, expenseData) => {
 
     let color = domain === '' ? 'gray' : '#0099ff';
     console.log(`%cAdding expense to Project ${projectId} under ${domain}`, `color: ${color};`);
-    console.log(expenseData);
+
 
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
@@ -1060,7 +1041,6 @@ export const fetchInvitationFromFirebase = async (domain, projectId) => {
     if (!domain || !projectId) {
         throw new Error('Domain and Project ID are required.');
     }
-    console.log(domain, projectId)
 
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
@@ -1073,7 +1053,6 @@ export const fetchInvitationFromFirebase = async (domain, projectId) => {
     }
 
     const projectData = projectSnapshot.data();
-    console.log(projectData.invitation)
     return {invitation:projectData.invitation,projectId} || null; // Return invitation data or null if not exists
 };
 

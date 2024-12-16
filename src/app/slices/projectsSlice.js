@@ -31,7 +31,6 @@ export const checkFirestoreConnection = createAsyncThunk(
 export const addProject = createAsyncThunk(
   'projects/addProject',
   ({domain,projectData}) => {
-    console.log(domain,projectData)
     return addProjectToStudio(domain,projectData)}
 );
 export const updateProjectName = createAsyncThunk(
@@ -54,7 +53,6 @@ export const updateCollectionName = createAsyncThunk(
 export const deleteProject = createAsyncThunk(
   'projects/deleteProject',
   ({domain,projectId}) => { 
-    console.log()
     deleteProjectFromFirestore(domain, projectId);
     return projectId;
   }
@@ -64,7 +62,6 @@ export const deleteProject = createAsyncThunk(
 export const addCollection = createAsyncThunk(
   'projects/addCollection',
   async ({ domain, projectId, newCollection }, { dispatch }) => {
-    console.log(domain)
     const id = await addCollectionToStudioProject(domain,projectId, newCollection);
     return {projectId, collection: {id,...newCollection}}
   }
@@ -73,7 +70,6 @@ export const addCollection = createAsyncThunk(
 export const deleteCollection = createAsyncThunk(
   'projects/deleteCollection',
   async ({ domain,projectId, collectionId }, { dispatch }) => {
-    console.log(domain, projectId, collectionId)
     await deleteCollectionFromFirestore(domain,projectId, collectionId);
     return { projectId, collectionId };
   }
@@ -90,7 +86,6 @@ export const addEvent = createAsyncThunk(
 export const addCrew = createAsyncThunk(
   'projects/addCrew',
   async ({ domain, projectId, eventId, crewData }, { dispatch }) => {
-    console.log(domain)
     await addCrewToFirestore(domain, projectId, eventId, crewData);
     return { projectId, eventId, crewData };
   }
@@ -100,7 +95,6 @@ export const addCrew = createAsyncThunk(
 export const addPayment =  createAsyncThunk(
   'projects/addPayment',
   async ({ domain,projectId, paymentData }, { dispatch }) => {
-    console.log({ domain, projectId, paymentData })
     await addPaymentToFirestore(domain, projectId, paymentData);
     return { projectId, paymentData };
   }
@@ -109,7 +103,6 @@ export const addPayment =  createAsyncThunk(
 export const addExpense =  createAsyncThunk(
   'projects/addExpense',
   async ({ domain,projectId, paymentData }, { dispatch }) => {
-    console.log({ domain,projectId, paymentData })
     await addExpenseToFirestore(domain,projectId, paymentData);
     return { projectId, expenseData:paymentData };
   }
@@ -118,7 +111,6 @@ export const addBudget =  createAsyncThunk(
   'projects/addBudget',
   async ({ domain,projectId, budgetData }, { dispatch }) => {
     budgetData = await addBudgetToFirestore(domain, projectId, budgetData);
-    console.log(budgetData)
     return {projectId,budgetData};
   }
 );export const deleteFile = createAsyncThunk(
@@ -183,7 +175,6 @@ const projectsSlice = createSlice({
       state.data = action.payload;
     },
     updateProjectsStatus: (state, action) => {
-      console.log(action.payload)
       state.status = action.payload;
     }
   
@@ -409,7 +400,6 @@ const projectsSlice = createSlice({
           }
           return project;
         });
-        console.log(paymentData);
       })
      .addCase(addPayment.rejected, (state, action) => {
         state.status = 'failed';
@@ -426,7 +416,6 @@ const projectsSlice = createSlice({
         state.status = 'succeeded';
         state.loading = false;
         const { projectId, expenseData } = action.payload;
-        console.log(expenseData);
         state.data = state.data.map((project) => {
           if (project.id === projectId) {
             const updatedExpenses = [...project.expenses, expenseData];
@@ -452,12 +441,10 @@ const projectsSlice = createSlice({
         state.status = 'succeeded';
         state.loading = false;
         const { projectId, budgetData } = action.payload;
-        console.log({ projectId, budgetData })
         state.data = state.data.map((project) => {
           if (project.id === projectId) {
             return { ...project, budgets: budgetData };
           }
-          console.log(project)
           return project;
         });
       })

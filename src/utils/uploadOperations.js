@@ -243,11 +243,10 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
                 if (result?.status === 'rejected'){
                     failedFiles.push(files[index]);
                 }
-                    if(!result.url.includes('-thumb')){
-                        filteredUploadedFiles.push({...result, thumbAvailable:true});
-                    }
-                    else{
-                    }
+                else if(!result.url.includes('-thumb')){
+                    debugger
+                    filteredUploadedFiles.push({...result, thumbAvailable:true});
+                }
             });
             if (failedFiles.length == 0) {
                 setUploadStatus('completed')
@@ -275,7 +274,7 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
                     showAlert('error', error.message)
                     throw error;
                 });
-                return {uploadedFiles,pin:getPIN}
+                return {uploadedFiles:filteredUploadedFiles ,pin:getPIN}
             }
             else {
                 console.log("Some files failed to upload. Reuploading missed files...");

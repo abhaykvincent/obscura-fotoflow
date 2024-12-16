@@ -95,7 +95,6 @@ export function formatStorage(size, unit) {
 
   // Remove unnecessary decimal places for whole numbers
   formattedSize = parseFloat(formattedSize);
-  console.log(`${formattedSize} ${formattedUnit}`)
   return `${formattedSize} ${formattedUnit}`;
 }
 
@@ -167,5 +166,3 @@ export const  greetUser=(userName) => {
   }
 }
 
-// Example usage:
-console.log(greetUser("John"));

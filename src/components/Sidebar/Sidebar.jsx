@@ -26,8 +26,6 @@ function Sidebar() {
     setProfileOptionActive((prevState) => !prevState);
   };
   useEffect(() => {
-    console.log(storageLimit)
-    console.log(storageLimit?.quota-storageLimit?.used)
     setStorageUsage({
       used: (storageLimit?.used/1000).toFixed(2),
       quota: (storageLimit?.quota/1000).toFixed(0),
@@ -89,12 +87,12 @@ function Sidebar() {
         {/* Admin */}
         
         <p className="label">ADMIN</p>
-        <Link to={`/${studioName}/team`}>
+        {/* <Link to={`/${studioName}/team`}>
           <div className={`menu team ${location.pathname === `/${studioName}/team` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Team</div>
           </div>
-        </Link>
+        </Link> */}
         <Link to={`/${studioName}/settings`}>
           <div className={`menu settings ${location.pathname === `/${studioName}/settings` ? 'active' : ''}`}>
             <div className="icon"></div>
