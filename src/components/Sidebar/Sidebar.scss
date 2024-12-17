@@ -60,7 +60,7 @@
             grid-template-columns: 8px*3 auto ;
             align-items: center;
             font-size: 0.95rem;
-            gap:8px*2;
+            gap:8px*1;
             padding: 6px 8px;
             margin-bottom: 2px;
             border-radius: 8px*0.75;
@@ -194,7 +194,7 @@
         flex-direction: column-reverse;
         
         height: 8px*10;
-        width: calc(100% - 8px*1);
+        width: calc(100% - 8px*1.5);
         bottom: 8px*7;
         left: 5px;
         padding: 8px 8px;
@@ -202,9 +202,9 @@
         border-left: 1px solid $gray4-default-dark;
         border-top: 1px solid $gray4-default-dark;
         border-bottom: 1px solid $gray5-default-dark;
-        border-radius: 5px;
+        border-radius: 6px;
         margin-left: 0;
-        margin-bottom: 8px;
+        margin-bottom: 8px*2;
         background: linear-gradient(to right, $gray6-default-dark, $dark-4);
         box-shadow: 1px 1px 0px 2px rgba(0, 0, 0, 1);
         
@@ -216,12 +216,13 @@
                 width: 100%;
                 display: grid;
                 grid-template-columns: 8px*2 auto 1fr;
-                gap: 4px;
+                gap: 0px;
                 .icon{
                     width: 8px*2;
                     height: 100%;
                     background-repeat: no-repeat;
-                    background-position: 20% 20%;
+                    background-position: 0% 0%;
+                    margin-left: -2px;
                     background-size: 90%;
                     &.hot{
                         background-image: url('https://img.icons8.com/?size=100&id=60985&format=png&color=70ab17');
@@ -237,7 +238,7 @@
                     width: 100%;
                     font-size: 0.7rem;
                     color: $gray2-default-dark;;
-                    margin-bottom: 6px;
+                    margin-bottom: 8px;
                     .bold{
                     color: $gray-default-dark;
                     margin-right: 1px;
@@ -246,7 +247,8 @@
 
                 }
                 .usage-label{
-                    font-size: 0.7rem;
+                    font-size: 0.6rem;
+                    margin-top: 2px;
                     text-align: right;
                     white-space: nowrap;
                 }
@@ -365,6 +367,7 @@
             transition-duration: 0.1s;
             transition-timing-function: ease-out;
             transition-delay: 0.15s;
+            overflow: hidden;
                 .option{
                     display: block;
                     width: 100%;
@@ -425,8 +428,8 @@
         padding: 8px*0.5;
         padding-right: 0;
         margin-left: 4px;
-        margin-top: -8px*0.3;
-        width: $sidebar-width - 8px;
+        margin-top: -8px*1.5;
+        width: $sidebar-width - 8px*1.5;
         transform: translateY(-100%)scale(1.0);;
         cursor: pointer;
         z-index: 21;
@@ -434,7 +437,7 @@
         border: 1px solid $gray3-default-dark;
         border-right:  1px solid $gray5-default-dark;
         border-bottom:  1px solid $gray5-default-dark;
-        border-radius: 6px;
+        border-radius: 8px;
             box-shadow: 1px 2px 1px 2px black;
             transition-duration: 0.15s;
 

@@ -75,8 +75,6 @@ function Projects() {
             groups[projectMonth].push(project);
             return groups;
         }, {});
-        console.log(groupedProjects)
-        console.log(Object.keys(groupedProjects))
     
         // Render projects - Grouped by month
         return Object.keys(groupedProjects).map((month,index) => (

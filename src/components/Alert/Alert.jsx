@@ -26,15 +26,15 @@ const Alert = () => {
                 id: id,
                 className: type + ' alert',
                 description: 'My description',
-                duration: 8000,
-                position: 'bottom-center',
+                duration: 2000,
+                position: 'top-right',
                 closeButton:true,
                 icon: <MonitorPlayIcon />,
             }
         );
         setTimeout(() => {
             dispatch(hideAlert());
-        }, 8000);
+        }, 2000);
     }
 }, [id]);
 ;
@@ -42,8 +42,7 @@ const Alert = () => {
   /* onst alertClass = `alert ${type} ${visible ? 'show' : ''}`; */
 
   return (
-    <div >
-
+    <div className='alert-container'>
         
         <Toaster theme="dark" offset={'52px'}  position='bottom-center'  limit={5} 
         toastOptions={{
@@ -53,7 +52,9 @@ const Alert = () => {
             },
             style: {
               // Adding padding to account for close button position
-              paddingRight: '35px'
+              paddingRight: '32px',
+              marginTop: '32px',
+              marginRight: '-8px'
             }
           }}
         />

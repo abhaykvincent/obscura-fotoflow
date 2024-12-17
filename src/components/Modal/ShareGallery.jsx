@@ -71,24 +71,24 @@ const modalRef = useModalFocus(visible.shareGallery);
               </div>
               
 
+              <p className="client-label">Gallery link</p>
               <div className="link-pin">
                 <div className='link' >
                   <a className="" href={getGalleryURL('share',domain,project.id)} target='_blank'><div className="link-container">
                 <a className='linkToGallery' href={getGalleryURL('share',domain,project.id)} target='_blank' >.../{domain}{getGalleryURL('share',domain,project.id).split(domain)[1]}</a>
-                <div className="button icon icon-only open-in-new"></div>
+                  <div className="button icon icon-only open-in-new"></div>
+                  </div>
+                </a>  
               </div>
-              </a>
-                  
-                </div>
-                <p className="copy-link button icon copy pin" onClick={() => {
-                    copyToClipboard(getGalleryURL('share',domain,project.id))
-                  }
-                  }>Copy</p>
-                  <p className="copy-link button icon  pin" onClick={() => {
-                    copyToClipboard(getGalleryURL('share',domain,project.id))
-                  }
-                  }>{project.pin}</p>
-              </div>
+              <p className="copy-link button icon copy pin" onClick={() => {
+                  copyToClipboard(getGalleryURL('share',domain,project.id))
+                }
+                }>Copy</p>
+                <p className="copy-link button icon  pin" onClick={() => {
+                  copyToClipboard(getGalleryURL('share',domain,project.id))
+                }
+                }>{project.pin}</p>
+            </div>
               
               {/* <div className="client-notification">
               <p className='client-label'>Sent link to Whatsapp</p>

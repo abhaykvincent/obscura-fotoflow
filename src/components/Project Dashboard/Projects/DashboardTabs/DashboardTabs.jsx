@@ -54,15 +54,11 @@ function DashboardTabs({ project }) {
           <DashboardEvents project={project}/>
         );
 
-      case 'invoices':
+      case 'financials':
         return (
           <DashboardPayments project={project} />
         );
 
-      case 'payments':
-        return (
-          <DashboardExpances project={project} />             
-        );
 
       default:
         return null;
