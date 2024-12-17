@@ -244,7 +244,7 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
                     failedFiles.push(files[index]);
                 }
                 else if(!result.url.includes('-thumb')){
-                    debugger
+                    
                     filteredUploadedFiles.push({...result, thumbAvailable:true});
                 }
             });

@@ -10,7 +10,7 @@
     .galleries-share-list-selection{
         display: grid;
         grid-template-columns: 8px*16 8px*8;
-        gap: 8px*0;
+        column-gap : 8px*3;
         input{
             height: 8px*3;
             transform: scale(1.5);
@@ -74,12 +74,12 @@
             box-shadow: none;
             border: none;
             opacity: 0.4;
-            transform: scale(0.9) translateX(0px) translateY(0px);
+            transform: scale(1) translateX(0px) translateY(0px);
         }
         &:hover{
             transform: scale(1);
             .open-in-new{
-            transform: scale(1.025) translateX(6px) translateY(-1px);
+            transform: scale(1.025) translateX(2px) translateY(-1px);
             opacity: 1;
             }
             .linkToGallery{

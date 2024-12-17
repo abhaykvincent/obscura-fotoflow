@@ -72,9 +72,6 @@ export default function App() {
       setUserType('Photographer');
     }
   }, [isAuthenticated]);
-  /* useEffect(() => {
-    console.log(isLoading)
-  }, [isLoading]); */
  
   // ON Render
   useEffect(() => {

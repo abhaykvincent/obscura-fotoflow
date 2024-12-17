@@ -7,7 +7,8 @@ import { selectUserStudio } from '../../../app/slices/authSlice';
 function ProjectCard({project}) {   
   const defaultStudio = useSelector(selectUserStudio)
   return (
-    <Link className={`project ${project.id} ${project.type?project.type:''} ${project.status?project.status:''}`} to={`/${defaultStudio.domain}/project/${project.id}`} key={project.id}>
+    <Link className={`project ${project.id} ${project.type?project.type:''} ${project.status?project.status:''}`} to={`/${defaultStudio.domain}/project/${project.id}`} key={project.id}
+    >
         <div className="cover-wrap">
             <div className="project-cover"
             style={{

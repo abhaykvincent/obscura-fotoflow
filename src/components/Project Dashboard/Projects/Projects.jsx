@@ -118,7 +118,7 @@ function DashboardProjects({project}){
     :<>
     <AddProjectModal />
       <DashboardTabs project={project} />
-      <div className="sub-projects">
+      {/* <div className="sub-projects">
         <h4 className='heading-section heading'>Sub Projects</h4>
         <div className="sub-projects-body">
           <div className="actions">
@@ -127,7 +127,7 @@ function DashboardProjects({project}){
             >Sub-project</div>
         </div>
         </div>
-      </div>
+      </div> */}
     </>
     }
     </>

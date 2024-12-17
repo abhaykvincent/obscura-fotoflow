@@ -44,7 +44,6 @@ export default function AddReferralModal({ }) {
         // Create Normal Project
         dispatch(generateReferral(referralData ))
           .then((response) => {
-            console.log(response)
             dispatch(showAlert({ type: "success", message: "Referral created successfully!" }));
             /* navigate(`/${domain}/project/${id}`); */
           })

@@ -18,15 +18,12 @@ export const searchProjects = createAsyncThunk(
       // Helper function to match dates
       const isDateMatch = (createdAt, query) => {
         const date = new Date(createdAt);
-        console.log(new Date(createdAt).getDate())
         const month = monthMap[date.getMonth()] // Months are 0-indexed
         const day = date.getDate().toString()
-        console.log(month, day)
         // Check if query matches day or part of the month name
         const monthMatch = Object.keys(monthMap).some(
             month => monthMap[month].includes(query)
         );
-        console.log(monthMatch)
         return monthMatch || query.includes(day);
       };
   

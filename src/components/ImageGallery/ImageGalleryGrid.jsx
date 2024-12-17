@@ -71,7 +71,7 @@ const ImageGalleryGrid = React.memo(({ projectId,collectionId, imageUrls }) => {
         <div className="photos" ref={containerRef}>
           {imageUrls.map((fileUrl, index) => (
             <div className="photo-wrap"
-            key={index}
+            key={fileUrl.url}
               onClick={()=>openPreview(index)}>
               <div className="hover-options-wrap">
                 <div className="hover-options">

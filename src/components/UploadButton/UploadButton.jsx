@@ -7,6 +7,7 @@ import { showAlert } from '../../app/slices/alertSlice';
 import { fetchProject } from '../../firebase/functions/firestore';
 import { fetchProjects } from '../../app/slices/projectsSlice';
 import { selectStudioStorageUsage } from '../../app/slices/studioSlice';
+import { openModal } from '../../app/slices/modalSlice';
 
 function UploadButton({ isPhotosImported, setIsPhotosImported, imageUrls, setImageUrls, id, collectionId, setUploadLists, setUploadStatus }) {
   const dispatch = useDispatch();
@@ -42,6 +43,8 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, imageUrls, setIma
         const uploadedImages = resp.uploadedFiles
         const galleryPIN = resp.pin
         setImageUrls(prevUrls => [...prevUrls, ...uploadedImages]);
+        dispatch(openModal('shareGallery'))
+        
 
       } catch (error) {
         dispatch(showAlert({ type: 'error', message: 'Upload failed, please try again!' }));

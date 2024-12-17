@@ -136,9 +136,8 @@
         padding: 8px 16px; // Simplified calculation of 8px * 2
         font-weight: 400;
         color: $gray-default-dark;
-        
+            margin-bottom: 8px*1;
         opacity: 0; // Start as invisible
-        transform: translateY(10px); // Start slightly below
   
         animation: fadeInUp 0.5s ease-out forwards;
         animation-delay: calc(0.4s + 0.5s * (var(--group-index) - 1)); // Dynamic delay based on parent index
@@ -184,11 +183,11 @@
 @keyframes fadeInUp {
     0% {
       opacity: 0;
-      transform: translateY(-8px);
+      /* transform: translateY(-8px); */
     }
     100% {
       opacity: 1;
-      transform: translateY(0);
+      /* transform: translateY(0); */
     }
   }
 
