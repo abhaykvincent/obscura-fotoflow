@@ -100,23 +100,13 @@ export const fetchAllReferalsFromFirestore  = async () => {
     return referalData;
 };
 export const generateReferralInFirebase = async (referralData) => {
-    const {campainName, campainPlatform, type, name, email,message, status, quota, used, validity, createdAt} = referralData;
     const referralsCollection = collection(db, 'referrals');
     const generateRefCode = generateMemorablePIN(8);
     const referralDoc = {
-        campainName,
-        campainPlatform,
-        type,
-        email,
+        ...referralData,
         code: [generateRefCode],
-        status,
-        quota,
-        name,
-        message,
-        used,
-        validity
     }
-    await setDoc(doc(referralsCollection, email), referralDoc)
+    await setDoc(doc(referralsCollection), referralDoc)
     return referralDoc
 }
 export const validateInvitationCodeFromFirestore = async (invitationCode) =>{

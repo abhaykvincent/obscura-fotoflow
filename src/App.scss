@@ -1096,7 +1096,7 @@ body{
         margin: 0;
         // Arrow customization (optional) 
         appearance: none;
-        background: url('https://img.icons8.com/?size=100&id=85327&format=png&color=FFFFFF') no-repeat right 2px center;
+        background: $dark-2 url('https://img.icons8.com/?size=100&id=85327&format=png&color=FFFFFF') no-repeat right 2px center;
         background-size: 20% auto;
         
       }
@@ -1202,7 +1202,8 @@ body{
       margin-top: -4px;
       transform: scale(1.1) translateY(-8px*0);
       box-shadow: 0 1px 1px 1px #022002a3,0 0 10px 5px #00ff0024,0 0 4px 1px #00ff0021,0 0 20px 10px #00ff000e;
-      transition-delay: 0.1s;
+      transition-delay: 0.2s;
+      transition-duration: 0.2s;
       
     }
     .client-contact{
@@ -1330,7 +1331,7 @@ body{
       opacity: 1;
       background-color: rgba(22, 22, 22, 0.8);
       .modal-body{
-        margin-top: 8px;
+        margin-top: 8px*2;
         height: auto;
         overflow: scroll;
       }
@@ -1418,14 +1419,14 @@ body{
       }
       .field{
         display: grid;
-        grid-template-columns: 8px*16 8px*33;
+        grid-template-columns: 8px*16 8px*36;
         align-items: center;
         gap: 8px*2;
         margin: 0px;
         font-size: 0.9rem;
         margin-top: 8px*1;
-        opacity: 0;
-        animation: fadeInLeft 0.15s ease-out 0.1s;
+        /* opacity: 0;
+        animation: fadeInLeft 0.15s ease-out 0.1s; */
         animation-fill-mode: forwards;
         &.optional{
           label{opacity: 0.4;}
@@ -1484,6 +1485,58 @@ body{
         grid-template-columns: 8px*12 8px*33 8px*8;
         }
       }
+      .project-validity-options{
+        display: flex;
+        justify-content: space-around;
+        gap: 8px*1;
+        .radio-button-group{
+          display: flex;
+          align-items: center;
+          gap: 8px*0;
+          padding: 8px*0.5 8px*1;
+          border: 1px solid $dark-1;
+          border-radius: 4px;
+          cursor: pointer;
+          transition-delay: 0s;
+          transition-duration: 0.1s;
+          &.upgrade-needed{
+            opacity: 0.5;
+            label{
+              color: $dark-0;
+
+            }
+          }
+          // hide radio buttons
+          input[type="radio"] {
+            display: none; 
+          }
+          &:has(input:checked){
+            border: 1px solid $green-dark-accessible-light;
+            box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);;
+            transition-delay: 0.05s;
+            transition-duration: 0.1s;
+            label{
+              color: $gray-accessible-dark;
+            }
+          }
+          label{
+            display: flex;
+            cursor: pointer;
+          }
+          label.free-validity{
+            &::after{
+              content: "Free";
+              font-size: 0.8rem;
+              color: $green-dark-accessible-light;;
+              padding: 0px 4px;
+              margin-left: 4px;
+              border: 1px solid $dark-2;
+              border-radius: 2px;
+            }
+          }
+        }
+        
+      }
       .error{
         margin-top: -8px;
         margin-bottom: 8px;
@@ -1501,10 +1554,11 @@ body{
       border: 1px solid $dark-0;
       border-top: 1px solid $dark-1;
       border-radius: 4px;
-      padding: 8px*2 8px*2*1.618 ;
+      padding: 8px*2 8px*4*1.618 ;
       background-color: rgba(0, 0, 0, 0.01);
       backdrop-filter: blur(8px);
       box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.4);
+      gap: 8px
     }
     .modal-body{
       margin-top: 8px*3;

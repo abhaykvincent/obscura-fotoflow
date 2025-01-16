@@ -236,29 +236,39 @@ function AdminPanel() {
                     <div className="referal-codes-card table-header">
                         <p>ID</p>
                         <p>User name</p>
+                        <p>Email</p>
                         <p>Medium</p>
                         <p>Type</p>
-                        <p>Email</p>
-                        <p>Link</p>
-                        <p>CODE</p>
+                        <p>Phone</p>
+                        <p>Used</p>
+                        <p>Code</p>
+                        <p>Send Code</p>
                     </div>
                     {
                         referallsList.map((referral,index)=>{
                             return(
                                 <div className={`referal-codes-card ${referral?.status}`} key={index}>
-                                    <p className='id'>{referral?.id}</p>
+                                    <p className='id'>{referral?.id.slice(0,4)}</p>
                                     <p>{referral?.name}</p>
-                                    <p>{referral?.campainPlatform}</p>
-                                    <p>{referral?.type}</p>
                                     <p>{referral?.email}</p>
-                                    <a className='button icon open-in-new'>/ref={referral?.code[0]}</a>
-                                    <button className="button secondary outline icon copy"
+                                    <p className={ `campainPlatform ${referral?.campainPlatform}`}> </p>
+                                    <p>{referral?.type}</p>
+                                    <p>{referral?.phoneNumber}</p>
+                                    <p>{referral?.used}/{referral?.quota}</p>
+                                    <p className='button icon copy'
+                                        onClick={() => {
+                                            copyToClipboard(referral?.code[0])
+                                        }}
+                                    > {referral?.code[0]}</p>
+                                    <a className="button secondary outline icon open-in-new"
+                                    href={`https://wa.me/${referral?.phoneNumber}?text=${encodeURIComponent(getOnboardingReferralURL(referral?.code[0])).trim()}`}
+                                    target="_blank"
                                         onClick={
                                             () => {
                                                 copyToClipboard(getOnboardingReferralURL(referral?.code[0]))
                                             }
                                         }
-                                    >{referral?.code[0]}</button>
+                                    >Send</a>
                                 </div>
                             )
                         })

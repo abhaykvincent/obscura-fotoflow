@@ -68,6 +68,7 @@ const UserContact = ({ active, next,previous,createAccountData, updateAccountDat
     }
 
     updateAccountData({ contactNumber });
+
     if (user.email) next();
   };
 

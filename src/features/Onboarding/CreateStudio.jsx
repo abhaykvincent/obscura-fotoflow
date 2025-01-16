@@ -7,6 +7,7 @@ import { update } from 'firebase/database';
 import { checkStudioDomainAvailability } from '../../firebase/functions/firestore';
 import { openModal } from '../../app/slices/modalSlice';
 import PrivacyPolicy from '../PrivacyPolicy/PrivacyPolicy';
+import { trackEvent } from '../../analytics/utils';
 
 const CreateStudio = ({active,next,setCreateAccountData,createAccountData,updateAccountData,user,validateForm, setErrors, errors}) => {
   const dispatch = useDispatch();
@@ -115,6 +116,13 @@ const CreateStudio = ({active,next,setCreateAccountData,createAccountData,update
       return;
     }
     updateAccountData({studioName,studioDomain})
+
+    trackEvent('account_details_submitted',
+      {
+        studioName,
+        studioDomain
+      })
+    
     next()
   };
 

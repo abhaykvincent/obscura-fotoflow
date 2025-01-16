@@ -66,7 +66,7 @@ export const uploadFile = async (domain,id, collectionId, file,sliceIndex,setUpl
                     // Handle successful uploads on complete 
                     let url = await getDownloadURL(uploadTask.snapshot.ref);
                     fileUploaded = true;
-                    /* setUploadLists((prevState) => {
+                    setUploadLists((prevState) => {
                         return prevState.map((fileProgress) => {
 
                             // remove the file from the list
@@ -81,7 +81,7 @@ export const uploadFile = async (domain,id, collectionId, file,sliceIndex,setUpl
                                     ...fileProgress,
                             };
                         })
-                    }) */
+                    })
                     
                         resolve({
                         name: file.name,

@@ -227,7 +227,7 @@
         margin-top: -8px*2;
         .actions{
             position: absolute;
-            top: 4px;
+            top: -8px*5;
             right: 8px*2;
             display: flex;
             width: 8px*8;
@@ -238,7 +238,7 @@
         .referal-codes-card {
             display: grid;
             align-items: center;
-            grid-template-columns: 8px*6 8px*18 8px*12 auto 8px*24 8px*18  8px*10 ;// Updated grid template columns
+            grid-template-columns: 8px*5 8px*18 8px*28  8px*8  auto 8px*20 8px*5  8px*10  8px*11 ;// Updated grid template columns
             padding: 8px;
             border: 1px solid $dark-1;
             gap: 8px;
@@ -249,15 +249,37 @@
             &.active{
                 border-left: 6px solid $green-accessible-dark;
             }
-            
+            .campainPlatform{
+                width: auto;
+                height: 8px*3;
+                background-size: contain;
+                background-position: center;
+                opacity: 0.6;
+                &.whatsapp{
+                    opacity: 0.5;
+                    background-image: url('https://img.icons8.com/?size=100&id=MW3L3LMSpawR&format=png&color=000000');
+                }
+                &.direct{
+                    background-image: url('https://img.icons8.com/?size=100&id=3685&format=png&color=FFFFFF');
+                }
+                &.instagram{
+                    opacity: 0.8;
+                    background-image: url('https://img.icons8.com/?size=100&id=RhYNENh5cxlS&format=png&color=FFFFFF');
+                }
+            }
             &.table-header{
                 border: 1px solid transparent;
-                border-radius: 4px;
+                    padding: 0 8px;
+                    border-radius: 4px;
+                    margin-top: 8px;
                 p {
+                    padding: 0 ;
                     margin: 0;
+                    margin-left: 8px*0.5;
                     font-size: 0.8rem;
                     color: $gray4-accessible-dark;
                 }
+                
             }
             p {
                 margin: 0;
