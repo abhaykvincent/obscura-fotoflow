@@ -44,9 +44,7 @@ export default function ShareProject() {
     try {
       const projectData = await fetchProject(studioName,projectId);
       setProject(projectData);
-      trackEvent('gallery_viewed', {
-        project_id: projectId
-      });
+      
       if(!isAuthenticated || user=='no-studio-found'){
         setUserType('Guest');
       }
