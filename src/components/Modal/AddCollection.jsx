@@ -3,11 +3,13 @@ import { addCollection } from '../../app/slices/projectsSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
+import { closeModal, closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
 import { selectCollectionsLimit, selectStudio } from '../../app/slices/studioSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import { trackEvent } from '../../analytics/utils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
+import { set } from 'date-fns';
+import { storeLimitContext } from '../../utils/localStorageUtills';
 
 
 function AddCollectionModal({ project }) {
@@ -61,7 +63,11 @@ const handleSubmit =  () => {
   } else {
     setIsSubmitting(false);  // Re-enable the button after submission
 
-    dispatch(showAlert({ id:project.id,type: 'error', message: `Project <b>${CollectionData.name}</b>'s Collection limit reached! Upgrade` }));
+    dispatch(showAlert({ id:project.id,type: 'error', message: `Project <b>${CollectionData.name}</b>'s 3 Gallery limit reached! Upgrade` }));
+    storeLimitContext('Galleries', '3 gallery per project limit reached')
+    setTimeout(() => {
+      dispatch(openModal('upgrade'))
+    }, 2000);
   }
 };
 

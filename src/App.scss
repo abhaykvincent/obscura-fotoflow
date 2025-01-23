@@ -870,6 +870,12 @@ body{
     }
 
 }
+.razorpay-payment-form{
+  background-color: red;
+  .ScreenController{
+      border-radius: 0px 8px 8px 0;
+  }
+}
 @keyframes reveal-up {
     0%{
     opacity: 0;

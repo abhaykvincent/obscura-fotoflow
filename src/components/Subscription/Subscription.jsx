@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import './Subscription.scss';
 import { formatStorage } from '../../utils/stringUtils';
+import { useSelector } from 'react-redux';
+import { selectUserStudio } from '../../app/slices/authSlice';
 
-const initialPlans = [
+export const initialPlans = [
   {
     name: 'Core',
     isCurrentPlan: true,
     pricing: [
-      { storage: 5, monthlyPrice: 'Free', yearlyPrice: '₹0', specialOffer: ['for 16 months.','No Credit Card Required']},
+      { storage: 5, monthlyPrice: 'Free', yearlyPrice: '₹0', specialOffer: ['for 12 months.','No Credit Card Required']},
     ],
     features: [''],
     coreFeatures: ['5 GB Storage','','Gallery','Selection'],
@@ -17,41 +19,38 @@ const initialPlans = [
   {
     name: 'Hobbiest',
     pricing: [
-      { storage: 10, monthlyPrice: '₹320',monthlyPriceWas: '₹400', yearlyPrice: '₹10,000', specialOffer: ['for 2 months.','Save up to ₹160 with offer',' ₹400/month after'],defaultPlan: true   },
-     
-    ],
-    defaultPlan: 0,
-    defaultStorage: 50,
-    features: ['Everything in Core plan','1 MB File Size', '10K Photos'],
-    coreFeatures: [,'10 GB Cold Storage','','','','',''],
-    extraFeatures: { Gallery: 'Unlimited',Financials: 'Unlimited','Cold Storage': 'Limited'},
-    isAddStorage: true,
-  },
-  {
-    name: 'Freelancer',
-    pricing: [
-      { storage: 100, monthlyPrice: '₹480',monthlyPriceWas: '₹980', yearlyPrice: '₹10,000', specialOffer: ['for 2 months.','Save up to ₹1,000 with offer',' ₹980/month after'],defaultPlan: true   },
+      { storage: 100, monthlyPrice: '₹780',monthlyPriceWas: '₹980', yearlyPrice: '₹10,000', specialOffer: ['for 2 months.','Save up to ₹400 with offer',' ₹980/month after'],defaultPlan: true   },
      
     ],
     defaultPlan: 0,
     defaultStorage: 100,
     coreFeatures: [ 'Invoicing','e-Invitation','',''],
-    features: ['+ 50 GB Cold Storage', 'Everything in Core plan','5 MB File Size','100K Photos'],
+    features: [ 'Everything in Core plan','5 MB File Size','100K Photos'],
     extraFeatures: { Gallery: 'Unlimited',Financials: 'Unlimited'},
   },
   {
-    name: 'Studio',
+    name: 'Freelancer',
     pricing: [
-      { storage: 1024, monthlyPrice: '₹1,480',monthlyPriceWas: '₹2,800', yearlyPrice: '₹1,00,000', specialOffer: ['for 2 months.','Save up to ₹4300 with offer',' ₹2,800/month after'],defaultPlan: true},
+      { storage: 1024, monthlyPrice: '₹1,480',monthlyPriceWas: '₹2,800', yearlyPrice: '₹1,00,000', specialOffer: ['for 2 months.','Save up to ₹2,640 with offer',' ₹2,800/month after'],defaultPlan: true},
       { storage: 5000, monthlyPrice: '₹3,500',monthlyPriceWas: '₹9,000', yearlyPrice: '₹3,00,000', specialOffer: ['for 2 months.','Save up to ₹4300 with offer',' ₹9,000/month after'] },
     ],
     defaultStorage: 1000,
     defaultPlan: 0,
-    coreFeatures: [ 'Custom','Website', 'Bookings'],
-    features: ['+ 1TB GB Cold Storage', 'Everything in Freelancer plan','Original File Size','1 Million Photos'],
+    coreFeatures: ['Website', 'Portfolio','Bookings'],
+    features: [ 'Everything in Hobbiest plan','Original File Size','1 Million Photos'],
     extraFeatures: { AI: 'Beta',},
-  
-
+  },,
+  {
+    name: 'Studio',
+    pricing: [
+      { storage: 5120, monthlyPrice: '₹5,480',monthlyPriceWas: '₹9,800', yearlyPrice: '₹1,00,000', specialOffer: ['for 2 months.','Save up to ₹8,640 with offer',' ₹9,800/month after'],defaultPlan: true},
+      { storage: 10240, monthlyPrice: '₹3,500',monthlyPriceWas: '₹9,000', yearlyPrice: '₹3,00,000', specialOffer: ['for 2 months.','Save up to ₹4300 with offer',' ₹9,000/month after'] },
+    ],
+    defaultStorage: 5000,
+    defaultPlan: 0,
+    coreFeatures: [ 'Multi-studio','Custom Domain','Addon Storage'],
+    features: [ 'Everything in Freelancer plan','Original File Size','5 Million Photos'],
+    extraFeatures: { AI: 'Beta',},
   },
   /* {
     name: 'Agency',
@@ -103,6 +102,25 @@ const initialPlans = [
   }, */
 ];
 
+// Add this component
+const RazorpayButton = ({payment_button_id}) => {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/payment-button.js';
+    script.async = true;
+    script.dataset.payment_button_id = payment_button_id;
+    
+    const form = document.getElementById(payment_button_id);
+    form.appendChild(script);
+    return () => {
+      form.removeChild(script);
+    };
+  }, []);
+
+  return <form id={payment_button_id}></form>;
+};
+
+
 
 // PlanFeature component
 const PlanFeature = ({ feature, highlight }) => (<p className={`features ${highlight ? 'highlight' : ''}`}>{feature}</p>);
@@ -128,7 +146,9 @@ const CoreFeature = ({ plan, feature,defaultPlan,defaultStorage, tag, storage , 
   };
 
 // PlanCard component
-const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
+export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
+
+  const defaultStudio = useSelector(selectUserStudio);
   let selectedStorage = plan.pricing[plan.defaultPlan].storage;
   const handleIncrement = () => {
     if (plan.pricing[plan.defaultPlan].storage < plan.pricing[plan.pricing.length - 1].storage) {
@@ -170,15 +190,7 @@ const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
         <div className="first-month">{currentPricing?.specialOffer[2]}</div>
       </div>
       
-      {!plan.isCurrentPlan && (
-        <>
-          <p className='waitlist-label'>{plan.isAddStorage ? 'Pay with UPI' : plan.isContactSales?'':' No CC Requ. Pay Later in 14 days.'}</p>
-          <div className={`button  ${plan.isWaitlist || plan.isAddStorage ? ' secondary' : plan.isContactSales?'primary outline':'primary'}`}>
-            {plan.isWaitlist ? 'Join Waitlist' : plan.isAddStorage ? 'Buy Cold Storage': plan.isContactSales?'Contact Sales':'Get Started'}
-            
-          </div>
-        </>
-      )}
+      
 
       <div className="core-features">
         {plan.coreFeatures.map((feature, index) => (
@@ -200,6 +212,28 @@ const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
           <PlanFeature key={index} feature={feature} highlight={feature.includes('Everything in') || feature.includes('Cold Storage')} />
         ))}
       </div>
+      
+      {!plan.isCurrentPlan && (
+        <>
+          <p className='waitlist-label'>{plan.isAddStorage ? 'Pay with UPI' : plan.isContactSales ? '' : ' Pay Later in 14 days.'}</p>
+          {/* <div 
+            className={`button ${plan.isWaitlist || plan.isAddStorage ? ' secondary' : plan.isContactSales ? 'primary outline' : 'primary'}`}
+            onClick={() => !plan.isWaitlist && !plan.isAddStorage && !plan.isContactSales && 
+              openWhatsAppMessage(defaultStudio.name, plan, plan.pricing[defaultPlan])}
+          >
+            {plan.isWaitlist ? 'Join Waitlist' : plan.isAddStorage ? 'Buy Cold Storage': plan.isContactSales ? 'Contact Sales' : 'Get Started'}
+          </div> */}
+          {
+            plan.name === "Freelancer" ?
+            <RazorpayButton payment_button_id='pl_PmVGqJ2gzI0OLI' />
+            : plan.name === "Hobbiest" ?
+            <RazorpayButton payment_button_id='pl_Pmcdje8Dbj3cYR' />
+            :
+            <RazorpayButton payment_button_id='pl_PmcfmE5GTfrnNY' />
+            
+          }
+        </>
+      )}
       {plan.expiry && (
         <div className="validity">
           <p className='label'>Plan expries on</p>
@@ -212,9 +246,15 @@ const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
     </div>
   )
 }
-
+const openWhatsAppMessage = (studio,plan, pricing) => {
+  console.log(studio,plan, pricing)
+  const message = `Upgrade to ${plan.name} Plan (${formatStorage(pricing.storage, "GB")}).%0AStudio name: ${studio}%0A${pricing.monthlyPrice}/mo for 2 months%0AThereafter ${pricing.monthlyPriceWas}/mo %0ASend UPI code for Paying ${pricing.monthlyPrice} for the first month.`;
+  
+  window.open(`https://wa.me/+916235099329?text=${message}`, '_blank');
+};
 // Main Subscription component
 function Subscription() {
+
   const [plans, setPlans] = useState(initialPlans);
   //reset plans to initialPlans in appropriate interval
   useEffect(() => {
@@ -261,8 +301,8 @@ function Subscription() {
           <div className="view-control">
             <div className="control-wrap">
               <div className="controls">
-                  <div className={`control ctrl-draft`} >Monthly</div>
-                  <div className={`control ctrl-all active`} >Annual</div>
+                  <div className={`control ctrl-draft active`} >Monthly</div>
+                  <div className={`control ctrl-all `} >Annual</div>
               </div>
               <div className={`active`}></div>
             </div>

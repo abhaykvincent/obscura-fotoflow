@@ -1,0 +1,231 @@
+@import '../../style/variables';
+
+main.settings{
+    padding: 8px*3;
+    padding-left: 8px*4;
+    .dashboard-tabs{
+        margin-top: 8px*4;
+    }
+}
+.settings-header{
+    display: flex;
+    gap: 8px*2;
+    align-items: center;
+    button{
+        opacity: 0.1;
+        &.active{
+            opacity: 1;
+        }
+    }
+}
+.settings-form{
+    display: grid;
+    gap: 8px*3;
+    margin-top: 8px*4;
+    margin-bottom: 8px*2;
+
+    h2{
+        display: flex;
+        gap: 4px;
+            color: $gray-default-dark;
+            margin-bottom: -8px*1;
+            padding-bottom: 8px;
+            border-bottom: 1px solid $dark-1-5;
+            span{
+                
+                right: 0px;
+                top: 0px;
+                width: 8px*4;
+                height: 8px*4;
+                
+                background-size: auto 80%;
+                background-position: center;
+                opacity: 0.5;
+                &.privacy{
+                    background-image: url('https://img.icons8.com/?size=100&id=59825&format=png&color=FFFFFF');
+                }
+                &.photos{
+                    background-image: url('https://img.icons8.com/?size=100&id=78741&format=png&color=FFFFFF');
+                }
+            }
+    }
+    .form-group{
+        display: grid;
+        gap: 8px*0;
+        align-items: center;
+        justify-items: start;
+        label{
+            color: $gray-default-light;
+            &.note-bene{
+                font-size: 0.9rem;
+                color: $gray4-default-dark;
+                margin-top: -8px;
+            }
+            &.secondery{
+                font-size: 0.9rem;
+                color: $gray4-default-dark;
+                margin-top: 4px;
+                margin-bottom: -4px;
+            }
+        }
+        .group-title{
+            margin-bottom: 8px*1.5;
+            margin-left: 4px;
+            color: $gray2-default-light;
+            font-weight: 400;
+            font-size: 1.1rem;
+        }
+        input{
+            width: 8px*24*1.6;
+            margin-bottom: 8px;
+            &#studioEmail{
+            }
+        }
+        .input-with-icon{
+            position: relative;
+        }
+        .google-logo{
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            width: 8px*5;
+            height: 8px*5;
+            background-image: url('../../assets/img/google-logo.png');
+            background-size: auto 60%;
+            background-position: center;
+        }
+        .radio-tabs{
+            display:flex;
+            align-items: center;
+            gap: 8px*1.6;
+            margin-bottom: 8px*2;
+            .tab{
+                display: flex;
+                align-items: center;
+                align-content: center;
+                width: 8px*24*1.6;
+                height: 8px*8;
+                border: 1px solid $dark-1;
+                border-radius: 6px;
+                box-shadow: 1px 1px 1px 0px $dark-3;
+                overflow: hidden;
+                    cursor: pointer;
+                &:hover{
+                    background-color: $dark-2-5;
+                    transition-duration: 0.1s;
+                    .tab-image{
+                    transition-duration: 0.3s;
+                    opacity: 0.8;
+                    }
+                    label{
+                        color: $gray3-default-light;
+                        transition-delay: 0.1s;
+                        transition-duration: 0.3s;
+                        &.secondery{
+                            color: $gray3-default-dark;
+                            transition-delay: 0.1s;
+                            transition-duration: 0.5s;
+                        }
+                    }
+                }
+                &.active{
+                    color: $gray4-default-light;
+                    border: 1px solid $dark-1;
+                    border-top: 1px solid $dark-0;
+                    border-left: 1px solid $dark-0;
+                    box-shadow: 2px 2px 4px 0px $dark-3;
+                    background-color: $dark-2-5;
+                    label{
+                        
+                        color: $gray4-default-light;
+                        text-shadow: 0px 1px 2px  black;
+                        &.secondery{
+                            text-shadow: 0px 0px 0px $dark-0;
+                            color: $gray2-default-dark;
+                        }
+                    }
+                    .tab-image{
+                        opacity: 1;
+                    }
+                }
+                .tab-image{
+                    width: 8px*10;
+                    height: 100%;
+                    background-size: auto 60%;
+                    background-position: center;
+                    background-color: $dark-3;
+                    border-right: 1px solid $dark-1;
+                    transition-duration: 0.2s;
+                    opacity: 0.2;
+                    &.public{
+                        background-image: url('https://img.icons8.com/?size=100&id=11168&format=png&color=FFFFFF');
+                    }
+                    &.passcode{
+                        background-image: url('https://img.icons8.com/?size=100&id=2985&format=png&color=FFFFFF');
+                    }
+                    &.invite-only{
+                        background-image: url('https://img.icons8.com/?size=100&id=124133&format=png&color=FFFFFF');
+                    }
+                    &.original-resolution{
+                        background-image: url('https://img.icons8.com/?size=100&id=16644&format=png&color=FFFFFF');
+                    }
+                    &.optimized-resolution{
+                        background-image: url('https://img.icons8.com/?size=100&id=40415&format=png&color=FFFFFF');
+                    }
+                }
+                .tab-content{
+                    display: grid;
+                    justify-items: start;
+                    padding-left: 8px;
+                }
+                label{
+                    line-height: 0.8rem;
+                    cursor: pointer;
+                }
+            }
+        }
+        .logo-input{
+            .logo-image{
+                width: 100%;
+                height: 8px*12;
+                margin-top: 8px;
+                border: 1px solid $dark-2;
+                background-image: url('../../assets/img/fotoflow-pro-logo.png');
+                background-size:auto 80% ;
+                background-position: center;
+                
+            }
+        }
+        &.rows-2{
+            display: grid;
+            justify-content: start;
+            gap:8px;
+            grid-auto-flow: column;
+            grid-template-columns: auto auto;
+            grid-template-rows: auto auto;
+        }
+    }
+
+}
+
+//write a media quer for divces less than 1200px
+@media only screen and (max-width: 1800px) {
+}
+@media only screen and (max-width: 1600px) {
+}
+@media only screen and (max-width: 1300px) {
+}
+@media only screen and (max-width: 1200px) {
+}
+@media only screen and (max-width: 1080px) {
+}
+@media only screen and (max-width: 960px) {
+}
+@media only screen and (max-width: 860px) {
+}
+@media only screen and (max-width: 640px) {
+}
+@media only screen and (max-width: 580px) {
+}
+@media only screen and (max-width: 480px) {
+}

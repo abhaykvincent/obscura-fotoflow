@@ -44,7 +44,10 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, setImageUrls, id,
         const galleryPIN = resp.pin
 
         setImageUrls(prevUrls => [...prevUrls, ...uploadedImages]);
-        dispatch(openModal('shareGallery'))
+
+        setTimeout(() => {
+          dispatch(openModal('shareGallery'))
+        }, 1000);
         
 
       } catch (error) {
