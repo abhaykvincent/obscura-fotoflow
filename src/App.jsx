@@ -43,6 +43,8 @@ import { fetchProjects, selectProjectsStatus} from './app/slices/projectsSlice';
 // Hooks
 import { useShortcutsConfig } from './hooks/shortcutsConfig';
 import useAdminAuth from './hooks/useAdminAuth';
+import Settings from './features/Settings/Settings';
+import UpgradeModal from './components/Subscription/UpgradeModal';
 
 
 if(isDeveloper) console.log(`%c This device is not being tracked by Analytics in production.`, `color: #ff9500; `);
@@ -106,6 +108,8 @@ export default function App() {
           <Sidebar />
           <Alert />
           <UploadProgress/>
+          <UpgradeModal/>
+
         </>
       ) : 
       (<>{ !isPublicPage() && <LoginModal/> }</>)}
@@ -124,7 +128,6 @@ export default function App() {
                       <AdminPanel /> 
                     </AdminRoute> 
                   }/> */}
-                  
                   <Route path="/masanory-grid" element={<ImageGallery  />} />
                     
                   <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
@@ -135,10 +138,10 @@ export default function App() {
                   <Route exact path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
                   <Route exact path="/:studioName/portfolio-editor" element={<PortfolioWebsite />} />
                   <Route exact path="/:studioName/invitation-creator/:projectId" element={<InvitationPage/>} />
-                  
                   <Route path="/:studioName/projects" element={<Projects />} />
-                  <Route path="/:studioName/storage" element={<Storage />} />
+                  <Route path="/:studioName/settings" element={<Settings/>} />
                   <Route path="/:studioName/notifications" element={<Notifications />} />
+                  <Route path="/:studioName/storage" element={<Storage />} />
                   <Route path="/:studioName/subscription" element={<Subscription />} />
                   <Route path="/:studioName/store" element={<CommingSoon title={'Store'}/>} />
                   <Route path="/:studioName/calendar" element={<CommingSoon title={'Calendar'}/>} />

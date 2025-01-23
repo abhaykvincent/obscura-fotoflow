@@ -12,7 +12,7 @@ function ImageDisplay({ image }) {
         <div
           className="image"
           style={{
-            backgroundImage: `url("${image.url.split('&token=')[0]}")`,
+            backgroundImage: `url("${image.url}")`,
             backgroundSize: 'contain'
           }}
         ></div>
