@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { selectDomain } from '../../app/slices/authSlice';
-import { selectStudioStorageUsage } from '../../app/slices/studioSlice';
+import { selectStudio, selectStudioStorageUsage } from '../../app/slices/studioSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 import { openModal } from '../../app/slices/modalSlice';
 
@@ -13,7 +13,8 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, setImageUrls, id,
   const dispatch = useDispatch();
   const domain = useSelector(selectDomain);
   const storageLimit = useSelector(selectStudioStorageUsage);
-
+  const studiodata = useSelector(selectStudio);
+  console.log(studiodata)
   const handleFileInputChange = useCallback(async (event) => {
     const selectedFiles = Array.from(event.target.files);
     const importFileSize = addAllFileSizesToMB(selectedFiles);

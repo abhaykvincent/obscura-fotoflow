@@ -34,24 +34,24 @@ function SettingsDashboard({ formData,handleChange }) {
                     <h2>Contact</h2>
                     <div className="form-group rows-2">
 
-                    <label htmlFor="studioName">Phone</label>
+                    <label htmlFor="studioEmail">Email</label>
+                        <div className="input-with-icon disabled">
+                          <input 
+                              type="text" 
+                              id="studioEmail" 
+                              name="studioEmail"
+                              value={formData.studioEmail} 
+                              onChange={handleChange}
+                          />
+                          <div 
+                              className="google-logo"
+                              alt="Google" 
+                          ></div>
+                        </div>
+                      <label htmlFor="studioName">Phone</label>
                         <input type="text" id="studioPhone" name="studioPhone"
                         value={formData.studioPhone} onChange={handleChange}
                         ></input>
-                        <label htmlFor="studioEmail">Email</label>
-                        <div className="input-with-icon disabled">
-                        <input 
-                            type="text" 
-                            id="studioEmail" 
-                            name="studioEmail"
-                            value={formData.studioEmail} 
-                            onChange={handleChange}
-                        />
-                        <div 
-                            className="google-logo"
-                            alt="Google" 
-                        ></div>
-                    </div>
                         
 
                     </div>

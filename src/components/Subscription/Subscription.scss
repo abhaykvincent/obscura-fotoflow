@@ -1,4 +1,8 @@
 @import '../../style/variables';
+main.subscription{
+    margin-top: -8px*4;
+    z-index: 99;
+}
 .welcome-section{
     padding: 8px*2;    
     display: grid;
@@ -29,7 +33,6 @@
         }
         h2{
             margin-top: -0.5rem;
-            margin-bottom: 0.5rem;
             font-size:1.2rem;
             line-height: 2.4rem;
             color: $gray4-default-dark;
@@ -233,12 +236,21 @@
             display: grid;
             justify-content: center;
             margin-bottom: 8px*2;
+            margin-top: -8px*1;
             .subscriptions-heading{
                 font-size: 1.8rem;
                 margin-top: 8px*0;
                 margin-bottom: 8px*3;
                 font-weight: normal;
                 color: $gray6-accessible-light;
+                
+            }
+            .subscriptions-options{
+                display: flex;
+                align-items: center;
+                .tags{
+                    display:flex;
+                }
                 .tag{
                     font-size: 0.5rem;
                     line-height: 0.8rem;
@@ -251,8 +263,8 @@
                     transform: translateX(-8px);
     
                     &.green{
-                        border: 1px solid $green-accessible-light;
-                        color: $green-accessible-dark;
+                        border: 1px solid $green-dark-accessible-light;
+                        color: $green-accessible-light;
                     }
                     &.white{
                         border: 1px solid $gray-accessible-light;
@@ -261,6 +273,7 @@
                 }
             }
         }
+
         
     }
 }
@@ -268,7 +281,7 @@
     display: grid;
     justify-content: center;
     align-items: stretch;
-    grid-template-columns: minmax(100px, 240px) minmax(100px, 240px)   minmax(100px, 240px)  minmax(100px, 240px);
+    grid-template-columns: minmax(100px, 200px) minmax(100px, 240px)   minmax(100px, 240px)  minmax(100px, 240px);
     column-gap: 8px*3;
     row-gap: 8px*3;
     
@@ -363,8 +376,8 @@
                         margin-right: 8px*1;
                         text-decoration: line-through;
 
-                        text-decoration-color: #6c6c6c;
-                        background: linear-gradient(90deg, #4f4f4f 0%,#757575 50%,  #777777 100%);
+                        text-decoration-color: #4f4f4f;
+                        background: linear-gradient(90deg, #242424 0%,#595959 80%,  #777777 100%);
                     -webkit-background-clip: text;
                     -webkit-text-fill-color: transparent;
                     }
@@ -413,7 +426,6 @@
             }
             .iconic{
                 margin-top: 0px;
-                margin-bottom: 8px;
                 color: $green-accessible-light;
                 background: linear-gradient(90deg, #1f470ec4 10%,#427f28 47%, #427f28 55%, #142f09 90%);
                 -webkit-background-clip: text;
@@ -549,7 +561,7 @@
             margin-bottom: 0px;
         }
 
-        &.studio{
+        &.company{
             background-color: $dark-3;
             overflow: hidden;
             opacity: 1;
@@ -557,38 +569,40 @@
             .plan-name{
                 position: relative;
                 text-align: center;
-                color: $green-accessible-dark;
+                color: $gray-accessible-dark;
                 z-index: 2;
             }
             .storage-counter{
                 position: relative;
                 text-align: center;
                 color: $green-default-light;
-                border: 1px solid $green-default-dark;
+                border: 1px solid $green-dark-accessible-light;
                 z-index: 2;
                 font-size: 0.8rem;
-                
+                padding: 4px 8px;
+                width: 8px*12;
                 box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);
 
             }
             .cover{
                 width: 100%;
                 padding-top: 80%;
-                background-image: url('../../assets/img/subscription/green-spheret-3d.avif');
+                background-image: url('../../assets/img/subscription/green-spheret-3d.avif'),  url('../../assets/img/subscription/green-spheret-3d.avif');
+
                 background-color: $dark-3;
-                background-size: 90%;
-                background-position: center center;
-                background-blend-mode:lighten;
+                background-size: 40%, 80%;
+                background-position: 49% 54%,51% 51%;
+                background-blend-mode:color-dodge,lighten;
                 opacity: 0.8;
                 z-index: 0;
                 animation-name: rotate-globe  ;
-                animation-duration:  30s;
+                animation-duration:  40s;
                 animation-timing-function: linear;
                 animation-iteration-count: infinite;
 
             }
         }
-        &.freelancer,&.hobbiest{
+        &.studio,&.freelancer{
             background-color: $dark-3;
             overflow: hidden;
 
@@ -602,9 +616,11 @@
             .storage-counter{
                 position: relative;
                 text-align: center;
-                color: $gray5-accessible-light;
+                color: $green-accessible-light;
                 border: 1px solid $gray5-accessible-dark;
                 z-index: 2;
+                border-radius: 6px;
+                opacity: 0.8;
                 font-size: 0.8rem;
                 box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);
 
@@ -613,7 +629,7 @@
                 width: 100%;
                 padding-top: 80%;
                 background-color: $dark-3;
-                background-size: 50%, 80%;
+                background-size: 40%, 80%;
                 background-position: 55% 50%;
                 background-blend-mode:lighten;
                 opacity: 0.8;
@@ -624,24 +640,23 @@
                 z-index: 0;
             }
         }
-        &.hobbiest{
+        &.freelancer{
             .cover{
-                background-image:  url('../../assets/img/subscription/gray-sphere-3d.avif');
+                background-image:  url('../../assets/img/subscription/green-spheret-3d.avif');
             }
             .storage-counter{
                 position: relative;
                 text-align: center;
-                color: $green-dark-accessible-light;
-                border: 1px solid $green-dark-accessible-light;
                 z-index: 2;
                 box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);
 
+                font-size: 0.7rem;
                     &::after{
                         content: "";
                     }
             }
         }
-        &.freelancer{
+        &.studio{
             border: 1px solid #1b3204;
             border-top: 1px solid #65a222;
             border-left: 1px solid #2f510b;
@@ -652,16 +667,16 @@
                 position: relative;
                 text-align: center;
                 z-index: 2;
-                color: $gray5-accessible-light;
+                color: $green-accessible-dark;
 
             }
             .cover{
                 
                 animation-name: rotate-globe  ;
-                background-size: 50%, 80%;
-                background-position: 50% 50%,40% 50%;
-                animation-duration:  120s;
-                background-image: url('../../assets/img/subscription/green-spheret-3d.avif'),  url('../../assets/img/subscription/gray-sphere-3d.avif');
+                background-size:  80%,50%;
+                background-position: 45% 52%,50% 50%;
+                animation-duration:  40s;
+                background-image:   url('../../assets/img/subscription/gray-sphere-3d.avif') ,url('../../assets/img/subscription/green-spheret-3d.avif')
             }
             .storage-counter{
                 width: 8px*8;
@@ -669,10 +684,11 @@
                 position: relative;
                 text-align: center;
                 color: $green-default-light;
-                border: 1px solid $green-default-dark;
+                border: 1px solid $green-dark-accessible-light;
                 z-index: 2;
+                border-radius: 4px;
                 box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);
-
+                opacity: 1;
                     &::after{
                         content: "";
                     }
@@ -681,10 +697,13 @@
         &.core{
             opacity: 0.8;
             .plan-name{
-                
+
+            color: $gray-default-dark;
             }
             .features{
             color: $gray-default-light;
+            }
+            .storage-counter{
             }
             .core-features{
                 h4{
@@ -695,8 +714,8 @@
             }
             .cover{
                 width: 100%;
-                padding-top: 80%;
-                background-image: url('../../assets/img/subscription/green-spheret-3d.avif');
+                padding-top: 100%;
+                background-image: url('../../assets/img/subscription/gray-sphere-3d.avif');
                 background-color: $dark-2;
                 background-size: 40%, 80%;
                 background-position: center;
@@ -715,21 +734,48 @@
         }
     }
 }
+.modal-container{
+    z-index: 45 !important;
+}
 .modal.upgrade{
     width: 90vw;
     text-align: center;
+    padding-bottom: 0;
+    z-index: 91;
+    .modal-body{
+        height: calc(100vh - 8px*16) !important;
+        
+    overflow: scroll;
+    }
     .upgrade-content{
         margin-bottom: 8px*2;
         font-size: 2rem;
         font-weight: 600;
     }
-}
-.razorpay-payment-form{
-    background-color: red;
-    .ScreenController{
-        border-radius: 0px 8px 8px 0;
+    .plans{
+        margin-bottom: 8px*1;
+    }
+    .form-section{
+        padding-bottom: 8px*2;
+    }
+    .core-features{
+        display: none;
+    }
+    .plan-pricing{
+        &.yearly{
+            display:none
+        }
+        &.monthly{
+            padding-bottom: 8px;
+        }
+    }
+    .actions{
+        position: static;
+        bottom: 0px;
+        margin-top: -8px*8;
     }
 }
+
 @keyframes fadeInLeft {
     0% {
       opacity: 0;
@@ -906,7 +952,7 @@
                     padding-top:50% ;
                 }
             }
-            &.hobbiest{
+            &.freelancer{
                 .cover{
                     padding-top:60% ;
                 }
