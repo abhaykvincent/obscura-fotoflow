@@ -4,7 +4,6 @@ import { showAlert } from '../../app/slices/alertSlice';
 import { addProject } from '../../app/slices/projectsSlice';
 import { useNavigate } from 'react-router';
 import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
-import { selectStudio } from '../../app/slices/studioSlice';
 import { selectCreateStudioModal, selectUserStudio } from '../../app/slices/authSlice';
 import { createStudio } from '../../firebase/functions/firestore';
 

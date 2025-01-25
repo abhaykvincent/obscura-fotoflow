@@ -1,6 +1,5 @@
 import {Link} from 'react-router-dom';
 import './ProjectCard.scss'
-import { selectStudio } from '../../../app/slices/studioSlice';
 import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../../app/slices/authSlice';
 

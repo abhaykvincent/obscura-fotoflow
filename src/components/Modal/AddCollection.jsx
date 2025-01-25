@@ -4,7 +4,6 @@ import { showAlert } from '../../app/slices/alertSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { closeModal, closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
-import { selectCollectionsLimit, selectStudio } from '../../app/slices/studioSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import { trackEvent } from '../../analytics/utils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
