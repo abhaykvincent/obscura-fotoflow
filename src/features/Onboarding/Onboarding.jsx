@@ -232,7 +232,7 @@ function Onboarding() {
   useEffect(() => {
 
     dispatch(generateReferral({
-      campainName: "",
+      campainName: "Abhay",
       campainPlatform: "whatsapp",
       type: "referral",
       email: "",

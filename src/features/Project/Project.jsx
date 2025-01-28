@@ -93,6 +93,13 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
       updateProjectLastOpenedInFirestore(domain, project.id);
       setPinText(project?.pin);
       setProjectStatusLocal(project.status);
+
+      if(project.collections.length===0){
+        setTimeout(() => {
+            dispatch(openModal('createCollection'))
+        }, 3000)
+
+    }
     }
   }, [project]);
   
@@ -134,7 +141,7 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
       <DeleteConfirmationModal itemType="project" itemName={project.name}  onDeleteConfirm={onDeleteConfirm} />
     
         {/* Modals */}
-      <AddCollectionModal project={project} />
+        <AddCollectionModal project={project} />
         <AddPaymentModal project={project} />
         <AddExpenseModal project={project} />
         <AddBudgetModal project={project} />
