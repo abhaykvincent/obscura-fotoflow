@@ -24,11 +24,12 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
     events: [],
     payments: [],
     expenses: [],
-    status: "draft",
     projectCover: "",
-    uploadedFilesCount: 0,
     selectedFilesCount: 0,
+    uploadedFilesCount: 0,
     totalFileSize: 0,
+    status: "draft",
+    projectValidityMonths: '3',
     createdAt: new Date().getTime(),
     lastOpened: new Date().getTime(),
   });
@@ -112,7 +113,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
                 onChange={handleInputChange}
               />
             </div>
-            <div className="field">
+            {/* <div className="field">
               <label>Email</label>
               <input
                 name="email"
@@ -129,6 +130,43 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
                 type="text"
                 onChange={handleInputChange}
               />
+            </div> */}
+            <div className="field">
+              <label>Validity</label>
+              <div className="project-validity-options">
+                {/* radio buttons 3,6,12 */}
+                <div className="radio-button-group">
+                  <input
+                  type="radio"
+                  id="validity-3" name="projectValidityMonths"
+                  value="3"
+                  checked={projectData.projectValidityMonths === '3'}
+                  onChange={handleInputChange}
+                  />
+                  <label htmlFor="validity-3">3 Months</label>
+                </div>
+                <div className="radio-button-group">
+                  <input
+                  type="radio"
+                  id="validity-6" name="projectValidityMonths"
+                  value="6"
+                  checked={projectData.projectValidityMonths === '6'}
+                  onChange={handleInputChange}
+                  />
+                  <label htmlFor="validity-6" className="free-validity">6 Months</label>
+                </div>
+                <div className="radio-button-group upgrade-needed">
+                  <input
+                  type="radio"
+                  id="validity-12" name="projectValidityMonths"
+                  value="12"
+                  checked={projectData.projectValidityMonths === '12'}
+                  onChange={handleInputChange}
+                  disabled
+                  />
+                  <label htmlFor="validity-12">1 Year</label>
+                </div>
+              </div>
             </div>
           </div>
         </div>

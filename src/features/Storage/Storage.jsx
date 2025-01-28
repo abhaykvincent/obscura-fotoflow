@@ -3,12 +3,14 @@ import './Storage.scss'
 import StoragePie from '../../components/StoragePie/StoragePie';
 import { convertMegabytes } from '../../utils/stringUtils';
 import { selectProjects } from '../../app/slices/projectsSlice';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getUsedSpace } from '../../utils/fileUtils';
 import { selectStorageLimit } from '../../app/slices/studioSlice';
 import { Link } from 'react-router-dom';
+import { openModal } from '../../app/slices/modalSlice';
 
 function Storage() {
+    const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
     const storageLimit ={
           // In MB 
@@ -53,7 +55,13 @@ function Storage() {
                         <p>Current Plan</p>
                     </div>
                     <div className="action">
-                        <Link to="/${defaultStudio.domain}/subscriptions" className="button primary large">Upgrade</Link>
+                        <div className="button primary large"
+                            onClick={()=>{
+                                dispatch(
+                                    openModal('upgrade')
+                                )
+                            }}
+                        >Upgrade</div>
 
                     </div>
                 </div>

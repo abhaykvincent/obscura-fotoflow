@@ -18,17 +18,18 @@ export default function AddReferralModal({ }) {
 
   const [referralData, setReferralData] = useState({
     campainName: "",
-    campainPlatform: "",
-    type: "",
+    campainPlatform: "whatsapp",
+    type: "referral",
     email: "",
-    code: [],
+    phoneNumber: "",
+    code: ['2744'],
     status: "active",
     quota: 3,
     used: 0,
     validity: 30,
     createdAt: new Date().toISOString(),
   });
-
+  dispatch(generateReferral(referralData ))
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setReferralData((prevData) => ({
@@ -105,9 +106,8 @@ export default function AddReferralModal({ }) {
               >
                   <option value="">Select a platform</option>
                   <option value="direct">Direct</option>
-                  <option value="whatsapp">Whatsapp</option>
+                  <option value="whatsapp">WhatsApp</option>
                   <option value="instagram">Instagram</option>
-                  <option value="linkedin">LinkedIn</option>
               </select>
           </div>
 
@@ -123,18 +123,18 @@ export default function AddReferralModal({ }) {
                   <option value="referral">Referral</option>
                   <option value="promo">Promo</option>
                   <option value="discount">Discount</option>
-                  <option value="gift">Gift</option>
-                  <option value="other">Other</option>
+                  <option value="tester">Tester</option>
+                  <option value="tester">Internal</option>
               </select>
           </div>
                     
           {/* Campain Name */}          
           <div className="field">
-            <label>Message</label>
+            <label>Quota</label>
             <input
-            name="message"
-            value={referralData.message}
-            type="text"
+            name="quota"
+            value={referralData.quota}
+            type="number"
             onChange={handleInputChange}
             />
           </div>
@@ -145,6 +145,16 @@ export default function AddReferralModal({ }) {
                 name="email"
                 value={referralData.email}
                 type="text"
+                onChange={handleInputChange}
+                />
+            </div>
+            <div className="field ">
+                <label>Phone Number +91</label>
+                <input
+                name="phoneNumber"
+                value={referralData.phoneNumber}
+                type="text"
+                placeholder="8888 888 888"
                 onChange={handleInputChange}
                 />
             </div>

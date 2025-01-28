@@ -32,7 +32,9 @@ const compressImages = async (files, maxWidthOrHeight) => {
 
 
 // Firebase Cloud Storage
-
+const metadata = {
+    cacheControl: 'public, max-age=31536000', // Cache for 1 year
+  };
 // File Single upload function
 export const uploadFile = async (domain,id, collectionId, file,sliceIndex,setUploadLists) => {
     const MAX_RETRIES = 5;
@@ -44,7 +46,7 @@ export const uploadFile = async (domain,id, collectionId, file,sliceIndex,setUpl
         let lastUpdateTime = 0
         try {
             let fileUploaded = false;
-            uploadTask = uploadBytesResumable(storageRef, file);
+            uploadTask = uploadBytesResumable(storageRef, file,metadata);
 
             uploadTask.on('state_changed',
                 () => {
@@ -66,7 +68,7 @@ export const uploadFile = async (domain,id, collectionId, file,sliceIndex,setUpl
                     // Handle successful uploads on complete 
                     let url = await getDownloadURL(uploadTask.snapshot.ref);
                     fileUploaded = true;
-                    /* setUploadLists((prevState) => {
+                    setUploadLists((prevState) => {
                         return prevState.map((fileProgress) => {
 
                             // remove the file from the list
@@ -81,7 +83,7 @@ export const uploadFile = async (domain,id, collectionId, file,sliceIndex,setUpl
                                     ...fileProgress,
                             };
                         })
-                    }) */
+                    })
                     
                         resolve({
                         name: file.name,
@@ -110,7 +112,7 @@ export const uploadFile = async (domain,id, collectionId, file,sliceIndex,setUpl
                 console.log(`Retrying upload of ${file.name} in ${retryDelay / 1000} seconds`);
                 await new Promise(resolve => setTimeout(resolve, retryDelay));
     
-                uploadTask = uploadBytesResumable(storageRef, file);
+                uploadTask = uploadBytesResumable(storageRef, file,metadata);
     
                 uploadTask.on('state_changed',
                     () => {},
@@ -164,8 +166,8 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
 
     try {
         const [compressedFiles, compressedThumbnailFiles] = await Promise.all([
-            compressImages([...slice], 720), // Pass a copy for full-sized images
-            compressImages([...slice], 300) // Pass a copy for thumbnails
+            compressImages([...slice], 980), // Pass a copy for full-sized images
+            compressImages([...slice], 480) // Pass a copy for thumbnails
         ]);
 
         

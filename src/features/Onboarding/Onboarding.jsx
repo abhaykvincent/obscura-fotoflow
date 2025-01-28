@@ -16,8 +16,11 @@ import { GoogleAuthProvider } from 'firebase/auth/cordova'
 import { useSearchParams } from 'react-router-dom'
 import { greetUser } from '../../utils/stringUtils.js'
 import { current } from '@reduxjs/toolkit'
+import { trackEvent } from '../../analytics/utils.js'
+import { generateReferral } from '../../app/slices/referralsSlice.js'
 
 function Onboarding() {
+
   const navigate = useNavigate()
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
@@ -125,6 +128,10 @@ function Onboarding() {
       // IdP data available using getAdditionalUserInfo(result)
       // ...
       console.log("Logged in as " + loginUser.email )
+      trackEvent('google_auth_completed',
+        {
+          email: loginUser.email,
+        })
       // EROR: Login.jsx:27 A non-serializable value was detected in an action, in the path: `payload`. Value: 
       const serializedUser = {
         userId: loginUser.uid,
@@ -141,6 +148,7 @@ function Onboarding() {
     }).catch((error) => {
       // Handle Errors here.
       console.log(error)
+      trackEvent('google_auth_failed')
       // The AuthCredential type that was used.
       const credential = GoogleAuthProvider.credentialFromError(error);
       // ...
@@ -161,9 +169,14 @@ function Onboarding() {
       createStudio(response.studio)
           .then((response) => {
             acceptInvitationCode(ref)
-              dispatch(showAlert({type:'success', message:`New Studio created!`}));
-              dispatch(login(user))
-              navigate(`/${response.domain}`);
+            trackEvent('studio_created',{
+              studio_name: response.name,
+              studio_domain: response.domain
+            })
+            dispatch(showAlert({type:'success', message:`New Studio created!`}));
+            dispatch(login(user))
+            navigate(`/${response.domain}`);
+            trackEvent('redirected_to_studio_home')
           })
           .catch((error) => {
               console.error('Error creating Studio:', error);
@@ -181,20 +194,61 @@ function Onboarding() {
     validateInvitationCodeFromFirestore(ref)
     .then((response) => {
       setInvitationReferral(response)
+      // Uncomment for initial ccount creation
+      /* setInvitationReferral({
+        name: 'test',
+        email: 'test@test.com',
+        studio: 'test',
+        role: 'test',
+      }) */
+     if(response){
+        trackEvent('referral_code_validated',
+        {
+          referral_code: ref,
+          isReferralValid:  true,
+        })
+     }  
+     else{
+      trackEvent('onboarding_referral',
+        {
+          referral_code: ref,
+          isReferralValid:  false,
+        })
+     }
     })
   }
 
 
   useEffect(() =>{
-    ref && validateRefCode()
+    if(ref){
+      validateRefCode()
+    }
+
   },[ref])
 
   useEffect(() => {
       validateForm()
   },[user, createAccountData])
   useEffect(() => {
+
+    dispatch(generateReferral({
+      campainName: "",
+      campainPlatform: "whatsapp",
+      type: "referral",
+      email: "",
+      phoneNumber: "",
+      code: ['2744'],
+      status: "active",
+      quota: 3,
+      used: 0,
+      validity: 30,
+      createdAt: new Date().toISOString(),
+    }))
     dispatch(checkAuthStatus)
     createTimeOFDayObject()
+    trackEvent('onboarding_viewed', {
+      referral_code: ref
+    });
   },[])
   return (
     <>
@@ -225,11 +279,22 @@ function Onboarding() {
         </>
       }
       {
-          !invitationReferral && 'Referal Code not Active. Join Waitlist'
+          !invitationReferral && 
+          <div className='activate-fotoflow-whatsapp'>
+            <p>Referal code is not active. You need to</p>
+            <a href="https://wa.me/+916235099329?text=Activate%20Fotoflow use below link: https://fotoflow-cloud.web.app/onboarding?ref=4752" 
+            target="_blank">Activate Fotoflow</a>
+
+            
+          </div> 
         }
       {
         user?.email &&
-        <div className={`logged-user ${currentScreen!=='create-studio' ? 'minimize-gmail-user' : ''}`}>
+        <div className={`logged-user 
+        ${currentScreen!=='create-studio' ? 'minimize-gmail-user' : ''}
+        ${!invitationReferral && 'unavaillable-referral-code'}
+        
+        `}>
           <div className='user-image'
               style={
                 user?.photoURL ? {backgroundImage: `url(${user.photoURL})`} : {}
@@ -256,31 +321,35 @@ function Onboarding() {
       }
         
       </div>
+      <div className={`form-wrapper
+        ${!invitationReferral && 'unavaillable-referral-code'}
+        `}>
 
-        <CreateStudio   
-          active={currentScreen==='create-studio'} 
-          next={()=>setCurrentScreen('user-contact')}
-          updateAccountData={updateAccountData}
-          createAccountData={createAccountData}
-          setCreateAccountData={setCreateAccountData}
-          user={user}
-          validateForm={validateForm}
-          setErrors={setErrors}
-          errors={errors}
+          <CreateStudio   
+            active={currentScreen==='create-studio'} 
+            next={()=>setCurrentScreen('user-contact')}
+            updateAccountData={updateAccountData}
+            createAccountData={createAccountData}
+            setCreateAccountData={setCreateAccountData}
+            user={user}
+            validateForm={validateForm}
+            setErrors={setErrors}
+            errors={errors}
+            
+            />
 
-        />
-
-        <UserContact    
-          active={currentScreen==='user-contact'} 
-          next={()=>createAccountAndNavigate()}
-          previous={()=>{setCurrentScreen('create-studio')}}
-          updateAccountData={updateAccountData}
-          createAccountData={createAccountData}
-          setCreateAccountData={setCreateAccountData}
-          user={user}
-          validateForm={validateForm}
-          setErrors={setErrors}
-      />
+          <UserContact    
+            active={currentScreen==='user-contact'} 
+            next={()=>createAccountAndNavigate()}
+            previous={()=>{setCurrentScreen('create-studio')}}
+            updateAccountData={updateAccountData}
+            createAccountData={createAccountData}
+            setCreateAccountData={setCreateAccountData}
+            user={user}
+            validateForm={validateForm}
+            setErrors={setErrors}
+            />
+          </div>
     </main>
     </>
   )

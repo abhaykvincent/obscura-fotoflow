@@ -12,6 +12,7 @@ import StoragePie from '../../components/StoragePie/StoragePie';
 import AddProjectModal from '../../components/Modal/AddProject';
 import {  toast } from 'sonner'
 import SearchInput from '../../components/Search/SearchInput';
+import { trackEvent } from '../../analytics/utils';
 function Home() {
     const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
@@ -23,9 +24,11 @@ function Home() {
     const [selectedProjects, setSelectedProjects] = useState([])
     const [recentProjects, setRecentProjects] = useState([])
     useEffect(() => {
+        trackEvent('studio_home_view')
         setSelectedProjects(selectionCompletedProjects)
         setRecentProjects(getProjectsByLastUpdated(projects, 8))
     }, [])
+
     useEffect(() => {
     
         // Exclude selectedProjects from recentProjects

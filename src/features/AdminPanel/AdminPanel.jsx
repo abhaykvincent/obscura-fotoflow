@@ -4,7 +4,7 @@ import './AdminPanel.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../app/slices/modalSlice';
 import AddReferralModal from '../../admin/Modal/AddReferral';
-import { fetchReferrals, selectReferrals } from '../../app/slices/referralsSlice';
+import { fetchReferrals, generateReferral, selectReferrals } from '../../app/slices/referralsSlice';
 import { set } from 'date-fns';
 import { useNavigate, useParams } from 'react-router';
 import { copyToClipboard, getGalleryURL, getOnboardingReferralURL } from '../../utils/urlUtils';
@@ -13,7 +13,21 @@ function AdminPanel() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     // react url page name                 <Route path="/admin/:page" element={<AdminPanel />} />
-      
+      const [referralData, setReferralData] = useState({
+          campainName: "",
+          campainPlatform: "whatsapp",
+          type: "referral",
+          email: "",
+          phoneNumber: "",
+          code: ['2744'],
+          status: "active",
+          quota: 3,
+          used: 0,
+          validity: 30,
+          createdAt: new Date().toISOString(),
+        });
+      dispatch(generateReferral(referralData ))
+        debugger
     const page = useParams().page;
     const [studios, setStudios] = useState([]);
     const [users, setUsers] = useState([]);
@@ -236,29 +250,39 @@ function AdminPanel() {
                     <div className="referal-codes-card table-header">
                         <p>ID</p>
                         <p>User name</p>
+                        <p>Email</p>
                         <p>Medium</p>
                         <p>Type</p>
-                        <p>Email</p>
-                        <p>Link</p>
-                        <p>CODE</p>
+                        <p>Phone</p>
+                        <p>Used</p>
+                        <p>Code</p>
+                        <p>Send Code</p>
                     </div>
                     {
                         referallsList.map((referral,index)=>{
                             return(
                                 <div className={`referal-codes-card ${referral?.status}`} key={index}>
-                                    <p className='id'>{referral?.id}</p>
+                                    <p className='id'>{referral?.id.slice(0,4)}</p>
                                     <p>{referral?.name}</p>
-                                    <p>{referral?.campainPlatform}</p>
-                                    <p>{referral?.type}</p>
                                     <p>{referral?.email}</p>
-                                    <a className='button icon open-in-new'>/ref={referral?.code[0]}</a>
-                                    <button className="button secondary outline icon copy"
+                                    <p className={ `campainPlatform ${referral?.campainPlatform}`}> </p>
+                                    <p>{referral?.type}</p>
+                                    <p>{referral?.phoneNumber}</p>
+                                    <p>{referral?.used}/{referral?.quota}</p>
+                                    <p className='button icon copy'
+                                        onClick={() => {
+                                            copyToClipboard(referral?.code[0])
+                                        }}
+                                    > {referral?.code[0]}</p>
+                                    <a className="button secondary outline icon open-in-new"
+                                    href={`https://wa.me/${referral?.phoneNumber}?text=${encodeURIComponent(getOnboardingReferralURL(referral?.code[0])).trim()}`}
+                                    target="_blank"
                                         onClick={
                                             () => {
                                                 copyToClipboard(getOnboardingReferralURL(referral?.code[0]))
                                             }
                                         }
-                                    >{referral?.code[0]}</button>
+                                    >Send</a>
                                 </div>
                             )
                         })

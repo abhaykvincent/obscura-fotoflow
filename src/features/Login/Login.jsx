@@ -11,6 +11,8 @@ import AddStudio from '../../components/Modal/AddStudio';
 import { fetchStudiosOfUser } from '../../firebase/functions/firestore';
 import { trackEvent } from '../../analytics/utils';
 import { updateProjectsStatus } from '../../app/slices/projectsSlice';
+import { Link } from 'react-router-dom';
+import { isAppleDevice } from '../../utils/generalUtils';
 
 const LoginModal = () => {
   const dispatch = useDispatch();
@@ -25,6 +27,10 @@ const LoginModal = () => {
     console.log(googleSignInResult?.user)
     }
   },[googleSignInResult])
+  useEffect(()=>{
+    
+  console.log(isAppleDevice())
+  },[])
   const handleGoogleSignIn = async () => {
     try {
         setLoading(true);
@@ -64,61 +70,83 @@ const LoginModal = () => {
         }
     } catch (error) {
         console.log("Error during sign-in:", error);
-        // Handle Errors here.
+        
         const credential = GoogleAuthProvider.credentialFromError(error);
     }
 };
+const openEmailPassordLogin = () => {
+  dispatch(openModal('loginEmailPassword'))
+}
 
-
-
-    const openEmailPassordLogin = () => {
-      dispatch(openModal('loginEmailPassword'))
-    }
 
   return (
     <>
-    <div className="modal island loginModal">
-     <div className="actions">
-      <p>Open with ...</p>
-          {/* <div className='button secondary outline disable'  onClick={openEmailPassordLogin}>Password Login<div className="email-logo"></div></div> */}
-          
-                <div className="sign-in-buttons">
-                {
-              loading? <div className="">
-                { googleSignInResult?.user?
-                <p>Sign-in as <span>{googleSignInResult?.user?.email}</span></p>:
-                <p>Opening Google Sign-in ...</p>
-                }
-                </div>:
-                <>
-                  <div className='button google'  onClick={handleGoogleSignIn}>
-                      <div className="google-logo"></div>
-                      Google
-                  </div>
-                  <div className='button apple'  onClick={handleGoogleSignIn}>
-                      <div className="apple-logo"></div>
-                      Apple
-                  </div>
-                </>
-                } 
-                  <div className="login-helper-options">
-                    <p>Can't Open Studio? </p>
-                  </div>
-                  <div className="login-branding">
-                  <p>From the house of  
-                    <span>
-                      <span> Flow</span>
-                      OS
-                    </span>
-                  </p>
-                  </div>
-                </div>
-            
-        </div>
-
+    <div className="login-container">
       <div className={`logo ${loading ? 'loading' : ''}`}></div>
-        
+      <div className="modal island loginModal">
+      <div className="actions">
       
+        <p className="open-with-login-label">{ loading?'':'Open with ...'}</p>
+            {/* <div className='button secondary outline disable'  onClick={openEmailPassordLogin}>Password Login<div className="email-logo"></div></div> */}
+            
+            <div className="sign-in-buttons">
+            {
+            loading? 
+            <div className="">
+              { googleSignInResult?.user?
+                <p>Sign-in as <span>{googleSignInResult?.user?.email}</span></p> :
+                <div className="">
+                  <p>
+                      <span className='opening-loader'>... </span>Opening Google Sign-in 
+                      <span className='auth-cancel'
+                        onClick={()=>setLoading(false)}
+                      >Cancel </span>
+                  </p>
+                </div> 
+              }
+            </div>:
+            <>
+              <div className='button google'  onClick={handleGoogleSignIn}>
+                <div className="google-logo"></div>
+                Google
+              </div>
+              <div className={`button apple ${isAppleDevice() ? '':'disabled'}`}  onClick={handleGoogleSignIn}>
+                <div className="apple-logo"></div>
+                Apple
+              </div>
+            </>
+            } 
+              <div className="login-helper-options">
+                <Link to="/onboarding" className={`create-studio-link ${loading? 'fade':''}`}>Create your Studio</Link>
+              </div>
+              <div className="login-branding">
+              <p>From the  
+                <span>
+                <> house </>  
+                 </span>
+                  <> of </>  
+                <span>
+                  <span> Flow</span>
+                  OS
+                </span>
+              </p>
+              </div>
+            </div>
+              
+          </div>
+
+          
+        
+      </div>
+      <div className="login-footer">
+        <a href="">Demo</a>
+        <a href="">Support</a>
+        <a href="">Recovery</a>
+        <a href="">Region</a>
+        <a href="">Terms of Service </a>
+        <p className="ampersand">&</p>
+        <a href="">Privacy Policy</a>
+      </div>
     </div>
     <AddStudio/>
     <LoginEmailPassword/>

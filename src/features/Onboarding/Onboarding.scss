@@ -12,7 +12,7 @@
     align-content: center;
     background-image: url('../../assets/img/backgrounds/earth-background-dark-flipped.jpg');
     background-size: auto 100%;
-    animation-name:background-parallax;
+    animation-name: background-parallax;
     // mae animation in a loop with backwords when eyframes and go for wards when keyframes start
     animation-direction: alternate;
     animation-iteration-count: infinite;
@@ -61,7 +61,7 @@
 
 @keyframes background-parallax {
     0% {
-        background-position: 0% 0%;
+        background-position: 10% 10%;
     background-size: auto 100%;
 
     }
@@ -193,11 +193,30 @@
         margin-bottom: 8px;
         margin-left: 2px;
     }
+    .activate-fotoflow-whatsapp{
+        display: flex;
+        gap: 8px*0.5;
+        margin-bottom: 8px;
+        p{
+            
+            color: $dark-0;
+        }
+        a{
+            color: $green-accessible-dark;
+            text-decoration: underline;
+            text-decoration-color: #68872d;
+        }
+
+    }
     .onboarding-message{
         
         color: $gray4-default-dark;
         margin-bottom: 8px*2;
     }
+}
+
+.unavaillable-referral-code{
+    opacity: 0.2;
 }
 .logged-user{
     display: flex;

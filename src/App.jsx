@@ -1,16 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Navigate, Route, Routes} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { HotKeys } from 'react-hotkeys';
-import { Client } from 'appwrite';
-// Components
-import Alert from './components/Alert/Alert';
-import Header from './components/Header/Header';
-import Sidebar from './components/Sidebar/Sidebar';
-import UploadProgress from './components/UploadProgress/UploadProgress';
-import Subscription from './components/Subscription/Subscription';
-import AddProjectModal from './components/Modal/AddProject';
-import Loading, { LoadingLight } from './components/Loading/Loading';
+// Stylesheets
+import './App.scss';
 // Features
 import Home from './features/Home/Home';
 import Project from './features/Project/Project';
@@ -19,54 +12,53 @@ import LoginModal from './features/Login/Login';
 import ShareProject from './features/Share/Share';
 import Storage from './features/Storage/Storage';
 import Galleries from './features/Galleries/Galleries';
-import ImageGallery from './x-draft/masanory-grid';
 import Selection from './features/Selection/Selection';
-import Notifications from './features/Notifications/Notifications';
-import CommingSoon from './components/CommingSoon/CommingSoon';
-// Utils
-import { isPublicPage } from './utils/publicPages';
-// Redux 
-import { checkAuthStatus, checkStudioStatus, selectIsAuthenticated, selectUser, selectUserStudio } from './app/slices/authSlice';
-import { selectLoading ,fetchProjects, selectProjects, selectProjectsStatus, checkFirestoreConnection} from './app/slices/projectsSlice';
-// Stylesheets
-import './App.scss';
 import Teams from './features/Teams/Teams';
-import SupportIcon from './components/Modal/SupportIcon/SupportIcon';
-import { useShortcutsConfig } from './hooks/shortcutsConfig';
-import { fetchStudio, selectStudio, setStudio } from './app/slices/studioSlice';
+import ImageGallery from './x-draft/masanory-grid';
 import Onboarding from './features/Onboarding/Onboarding';
 import AdminPanel from './features/AdminPanel/AdminPanel';
-import useAdminAuth from './hooks/useAdminAuth';
-import { selectModal } from './app/slices/modalSlice';
+import Notifications from './features/Notifications/Notifications';
+import CommingSoon from './components/CommingSoon/CommingSoon';
 import InvitationPage from './features/Invitation/InvitationPage';
-import Preview from './features/Preview/Preview';
 import InvitationPreview from './features/Invitation/InvitationPreview';
-import { Toaster } from 'sonner';
-import { setUserType } from './analytics/utils';
-import SearchResults from './components/Search/SearchResults';
 import PortfolioWebsite from './features/Website/Website';
+// Components
+import Alert from './components/Alert/Alert';
+import Header from './components/Header/Header';
+import Sidebar from './components/Sidebar/Sidebar';
+import SearchResults from './components/Search/SearchResults';
+import Subscription from './components/Subscription/Subscription';
+import UploadProgress from './components/UploadProgress/UploadProgress';
+import Loading, { LoadingLight } from './components/Loading/Loading';
+import SupportIcon from './components/Modal/SupportIcon/SupportIcon';
+// Utils
+import { isDeveloper, setUserType } from './analytics/utils';
+import { isPublicPage } from './utils/publicPages';
+// Redux 
 import { showAlert } from './app/slices/alertSlice';
-const client = new Client();
-client.setProject('fotoflow-notifications');
+import { selectModal } from './app/slices/modalSlice';
+import { fetchStudio} from './app/slices/studioSlice';
+import { checkAuthStatus, checkStudioStatus, selectIsAuthenticated, selectUser, selectUserStudio } from './app/slices/authSlice';
+import { fetchProjects, selectProjectsStatus} from './app/slices/projectsSlice';
+// Hooks
+import { useShortcutsConfig } from './hooks/shortcutsConfig';
+import useAdminAuth from './hooks/useAdminAuth';
+import Settings from './features/Settings/Settings';
+import UpgradeModal from './components/Subscription/UpgradeModal';
+import { generateReferral } from './app/slices/referralsSlice';
 
-//import AdminRoute from './components/AdminRoute/AdminRoute';
-// Wrapper component to pass studio name to pages
-const StudioWrapper = ({ Component }) => {
-  const { studioName } = useParams();
-  return <Component studioName={studioName} />;
-};
+
+if(isDeveloper) console.log(`%c This device is not being tracked by Analytics in production.`, `color: #ff9500; `);
 // APP
 export default function App() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
-  const { keyMap, handlers } = useShortcutsConfig();
-  const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
   const isLoading = useSelector(selectProjectsStatus);
-  const projects = useSelector(selectProjects);
   const defaultStudio = useSelector(selectUserStudio)
   const currentDomain = defaultStudio?.domain ?? 'guest'; 
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const { keyMap, handlers } = useShortcutsConfig();
   useEffect(() => {
     if(isAuthenticated && user!=='no-studio-found'){
       setUserType('Photographer');
@@ -75,15 +67,17 @@ export default function App() {
  
   // ON Render
   useEffect(() => {
+    // Check studio status
     dispatch(checkAuthStatus())
     dispatch(checkStudioStatus())
+
     if(currentDomain !== 'guest')
-      {
+    {
+      // Fetch studio data
       dispatch(fetchProjects({currentDomain}))
       .catch((err)=>{
         dispatch(showAlert({ type: 'error', message: 'Check internet connection' }));
       })
-
       dispatch(fetchStudio({currentDomain}))
       .catch((err)=>{
         console.error(err)
@@ -97,11 +91,17 @@ export default function App() {
     if (modalStates.some(state => state)) {
       window.scrollTo(0, 0);
       document.body.style.overflow = 'hidden';
-      
-    } else {
+    } 
+    else {
       document.body.style.overflow = 'auto';
     }
   }, [selectModal]);
+  useEffect(() => {
+    
+          
+  }, []);
+
+
 
 
   // RENDER
@@ -115,6 +115,8 @@ export default function App() {
           <Sidebar />
           <Alert />
           <UploadProgress/>
+          <UpgradeModal/>
+
         </>
       ) : 
       (<>{ !isPublicPage() && <LoginModal/> }</>)}
@@ -127,35 +129,36 @@ export default function App() {
             <Routes>
               {isAuthenticated && (
                 
-              <>
-                {/* <Route path="/admin/" element={
-                  <AdminRoute> 
-                    <AdminPanel /> 
-                  </AdminRoute> 
-                }/> */}
-              <Route path="/masanory-grid" element={<ImageGallery  />} />
-                  
-                <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
-                <Route exact path="/:studioName" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
-                <Route path="/search" element={<SearchResults />} />
-                <Route exact path="/:studioName/portfolio-editor" element={<PortfolioWebsite />} />
-                <Route exact path="/:studioName/home" element={<Home />} />
-                <Route exact path="/:studioName/project/:id" element={<Project />} />
-                <Route exact path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
-                <Route exact path="/:studioName/invitation-creator/:projectId" element={<InvitationPage/>} />
-                <Route path="/:studioName/projects" element={<Projects />} />
-                <Route path="/:studioName/storage" element={<Storage />} />
-                <Route path="/:studioName/notifications" element={<Notifications />} />
-                <Route path="/:studioName/subscription" element={<Subscription />} />
-                <Route path="/:studioName/store" element={<CommingSoon title={'Store'}/>} />
-                <Route path="/:studioName/calendar" element={<CommingSoon title={'Calendar'}/>} />
-                <Route path="/:studioName/invoices" element={<CommingSoon title={'Financials'}/>} />
-                <Route path="/:studioName/accounts" element={<CommingSoon title={'Accounts'}/>} />
-                <Route path="/:studioName/team" element={<Teams />} />
+                <>
+                  {/* <Route path="/admin/" element={
+                    <AdminRoute> 
+                      <AdminPanel /> 
+                    </AdminRoute> 
+                  }/> */}
+                  <Route path="/masanory-grid" element={<ImageGallery  />} />
+                    
+                  <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
+                  <Route path="/search" element={<SearchResults />} />
+                  <Route exact path="/:studioName" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
+                  <Route exact path="/:studioName/home" element={<Home />} />
+                  <Route exact path="/:studioName/project/:id" element={<Project />} />
+                  <Route exact path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
+                  <Route exact path="/:studioName/portfolio-editor" element={<PortfolioWebsite />} />
+                  <Route exact path="/:studioName/invitation-creator/:projectId" element={<InvitationPage/>} />
+                  <Route path="/:studioName/projects" element={<Projects />} />
+                  <Route path="/:studioName/settings" element={<Settings/>} />
+                  <Route path="/:studioName/notifications" element={<Notifications />} />
+                  <Route path="/:studioName/storage" element={<Storage />} />
+                  <Route path="/:studioName/subscription" element={<Subscription />} />
+                  <Route path="/:studioName/store" element={<CommingSoon title={'Store'}/>} />
+                  <Route path="/:studioName/calendar" element={<CommingSoon title={'Calendar'}/>} />
+                  <Route path="/:studioName/invoices" element={<CommingSoon title={'Financials'}/>} />
+                  <Route path="/:studioName/accounts" element={<CommingSoon title={'Accounts'}/>} />
+                  <Route path="/:studioName/team" element={<Teams />} />
 
-                <Route exact path="/admin" element={<AdminPanel />} />
-                <Route exact path="/admin/:page" element={<AdminPanel />} />
-              </>
+                  <Route exact path="/admin" element={<AdminPanel />} />
+                  <Route exact path="/admin/:page" element={<AdminPanel />} />
+                </>
               
               )}
               <Route path="/onboarding" element={<Onboarding />} />
@@ -171,4 +174,4 @@ export default function App() {
     
   );
 }
-// Line Complexity  1.5 -> 2.5 -> 2.0 -> 1.0 ->0.9   -> 1.1 -> 1.2
+// Line Complexity   1.5 -> 2.5   -> 2.0 -> 1.0 -> 0.9    -> 1.1 -> 1.2    -> 1.7

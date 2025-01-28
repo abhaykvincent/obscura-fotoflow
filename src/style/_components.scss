@@ -469,15 +469,18 @@ input,select{
         z-index: 42;
     [data-radix-collection-item]{
         display: grid;
+    width:8px*20;
+
         grid-template-columns: 8px*3 auto;
         align-items: center;
         padding: 8px*0.7 8px*1.5;
         padding-left: 8px;
         padding-right: 8px*1.5;
         cursor: pointer;
-        font-size: 1rem;
-        border: 1px solid transparent;
         color: $gray4-accessible-light;
+        font-size: 1rem;
+        white-space: nowrap;
+        border: 1px solid transparent;
         transition-delay: 0.02s;
         transition-duration: 0.05s;   
         opacity: 0; 
