@@ -22,14 +22,13 @@ export default function AddReferralModal({ }) {
     type: "referral",
     email: "",
     phoneNumber: "",
-    code: ['2744'],
+    code: [],
     status: "active",
     quota: 3,
     used: 0,
     validity: 30,
     createdAt: new Date().toISOString(),
   });
-  dispatch(generateReferral(referralData ))
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setReferralData((prevData) => ({
