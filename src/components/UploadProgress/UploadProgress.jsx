@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './UploadProgress.scss'
 import { capitalizeFirstLetter, convertMegabytes, shortenFileName } from '../../utils/stringUtils';
 import { useSelector } from 'react-redux';
-import { selectUploadList, selectUploadStatus, setUploadList } from '../../app/slices/uploadSlice';
-import { set } from 'date-fns';
+import { selectUploadList, selectUploadStatus } from '../../app/slices/uploadSlice';
 
 function UploadProgress({}) {
     const uploadList = useSelector(selectUploadList)
@@ -11,52 +10,31 @@ function UploadProgress({}) {
     const [uploadPercent,setUploadPercent] = useState(0)
     const [totalProgress,setTotalProgress]  = useState(0)
     const [modalState, setModalState] = useState('close')
-    const [uploadingCompleted,setUploadingCompleted] = useState(false)
-
-
     useEffect(() => {
-        console.log(uploadingCompleted)
-    }, [uploadingCompleted])
-    useEffect(() => {
+        let totalProgressCount=0
+
         let totalFilesCount= uploadList.length;
-        console.log(uploadList)
-        let totalProgressBatch = 0;
         uploadList.forEach((item,i) => {
-            if(item.status === 'uploaded' || i === 0)
+            if(item.status === 'uploaded' )
             {
-                totalProgressBatch += 1;
+                totalProgressCount=totalProgressCount+1
             }
         })
-        console.log(totalProgressBatch)
-        console.log(totalFilesCount)
-        console.log(totalProgressBatch/totalFilesCount*100)
-
-        setUploadPercent(totalProgressBatch/totalFilesCount*100);
-        setTotalProgress(totalProgressBatch)
+        setTotalProgress(totalProgressCount)
     }, [uploadList])
 
     useEffect(() => {
         if(uploadStatus == 'completed'){
-                setModalState('completed')
-                setUploadingCompleted(true)
-        
+            setModalState('completed')
         }
         if(uploadStatus == 'close'){
-            setTimeout(() => {
-                setModalState('close')
-                setUploadingCompleted(false)
-                setUploadPercent(0)
-                setTotalProgress(0)
-                setUploadList([])
-                setModalState('close')
-            },5000)
+            setModalState('close')
         }
         if(uploadStatus == 'open'){
             setModalState('')
-            setTimeout(() => {
-                if(uploadStatus !=='completed')
+            setTimeout(()=>{
                 setModalState('minimize')
-            },8000)
+            }, 1000)
         }
     }, [uploadStatus])
 
@@ -73,14 +51,14 @@ function UploadProgress({}) {
   return (
     <div className={`upload-progress ${modalState}`}>
         <div className="header">
-        <div className={`header-process ${uploadingCompleted ? 'uploadCompleted' : ''}`}>
+        <div className="header-process active">
 
         </div>
         {
-            uploadingCompleted ?
+            uploadStatus === 'completed' ?
             <div className="header-title">
                 <h4>Uploading Completed</h4>
-                <p>{uploadList.length} Photos Uploaded</p>
+                <p> Uploaded all {uploadList.length} photos</p>
             </div>:
             <div className="header-title">
                 <h4>Uploading {totalProgress} of {uploadList.length}</h4>
@@ -100,7 +78,7 @@ function UploadProgress({}) {
           </div>
         <div className="total-progress">
             <div className="progress-bar"
-                style={{width:uploadPercent+'%'}}
+                style={{width:totalProgress/uploadList.length*100+'%'}}
             ></div>
         </div>
         </div>
@@ -112,16 +90,16 @@ function UploadProgress({}) {
                         <div className="task-cover"></div>
                         <div className="task-name">
                             <p className="file-name">{ shortenFileName(file.name)}</p>
-                            <p className="file-progress-percentage"> {convertMegabytes(file.size/1000000,2)} 
-                                <span>{
-                                    capitalizeFirstLetter(file.status)
-                                }</span>
+                            <p className="file-progress-percentage"> 
+                                {convertMegabytes(file.size/1000000,2)}
+                                <span className="file-progress-state">
+                                    {capitalizeFirstLetter(file.status)}
+                                </span>
                             </p>
                         </div>
-                        <div className={`task-status ${file.progress===100 && 'done' }`}></div>
+                        <div className={`task-status ${file.progress==100 && 'done' }`}></div>
                         <div className="file-progress">
-                            <div className={`file-progress-bar ${file.status==='uploaded' ? 'done': '' }`}
-                                style={{width: file.progress+'%' }}
+                            <div className={`file-progress-bar `}
                             ></div>
 
                         </div>

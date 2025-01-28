@@ -3,13 +3,16 @@
     display: grid;
     grid-template-rows:8px*7 auto;
     position: fixed;
-    right: 8px*3;
+    right: 8px*1.5;
     top: 100vh;
     width: 8px*40;
-    transform: translateY(calc(-100% - 8px*3));
+    transform: translateY(calc(-100% - 8px*1.5));
     background-color: rgba(0, 0, 0, 0.6);
-    border: 1px solid $dark-0;
     border-radius: 8px*2;
+    border: 1px solid $dark-1;
+    border-left: 1px solid $dark-0;
+    border-top: 1px solid $dark-0;
+    box-shadow: 2px 2px 6px 4px rgba(0, 0, 0, 0.5);
     overflow: hidden;
     z-index: 12;
     transition-duration: 0.2s;
@@ -22,8 +25,8 @@
         padding: 8px 0;
         height: 8px*7;
         line-height: 1.4em;
-        background: rgba(10, 10, 10, 0.4);
-        backdrop-filter: blur(8px);
+        background-color: rgba(10, 10, 10, 0.6);
+        backdrop-filter: blur(6px);
         transition-duration: 0.5s;
         .header-process{
             height: 100%;
@@ -216,6 +219,7 @@
                     }
                 }
                 &.uploaded{
+                    display: none;;
                     .file-progress-bar{
                         left: 100%;
                     }
@@ -246,7 +250,7 @@
             &.maximize {
                 opacity: 1;
                 animation-name: status-blink;
-                animation-duration: 1.5s;
+                animation-duration: 1s;
                 animation-fill-mode: forwards;
                 animation-iteration-count: infinite;
                 animation-timing-function: ease-in-out;
@@ -254,9 +258,30 @@
                         0% {
                             opacity: 0.3;
                         }
-                        61% {
+                        10% {
                             opacity: 1;
                         }
+                        15% {
+                            opacity: 1;
+                        }
+                        35% {
+                            opacity: 0.3;
+                        }
+
+                        45% {
+                            opacity: 0.3;
+                        }
+                        60% {
+                            opacity: 1;
+                        }
+                        65% {
+                            opacity: 1;
+                        }
+                        70% {
+                            opacity: 0.3;
+        
+                        }
+
                         100% {
                             opacity: 0.3;
                         }

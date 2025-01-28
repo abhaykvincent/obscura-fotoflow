@@ -3,8 +3,7 @@ import Preview from '../../features/Preview/Preview';
 import { shortenFileName } from '../../utils/stringUtils';
 
 const ImageGalleryGrid = React.memo(({ projectId,collectionId, imageUrls }) => {
-  // Preview
-  console.log(collectionId)
+
   // Preview
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
@@ -34,7 +33,6 @@ const ImageGalleryGrid = React.memo(({ projectId,collectionId, imageUrls }) => {
   }, [isPreviewOpen]);
   
   useEffect(() => {
-    console.log(previewIndex)
 
     const scrollToImage = () => {
       // Find the target image
@@ -73,7 +71,7 @@ const ImageGalleryGrid = React.memo(({ projectId,collectionId, imageUrls }) => {
         <div className="photos" ref={containerRef}>
           {imageUrls.map((fileUrl, index) => (
             <div className="photo-wrap"
-            key={index}
+            key={fileUrl.url}
               onClick={()=>openPreview(index)}>
               <div className="hover-options-wrap">
                 <div className="hover-options">
@@ -105,7 +103,7 @@ const ImageGalleryGrid = React.memo(({ projectId,collectionId, imageUrls }) => {
                 </div>
               </div>
               <div className='photo' key={index} 
-                style={{ backgroundImage: `url("${fileUrl.url.split('&token=')[0]}")` }} alt={`File ${index}`}>
+                style={{ backgroundImage: `url("${fileUrl.url}")` }} alt={`File ${index}`}>
               </div>
             </div>
           ))}

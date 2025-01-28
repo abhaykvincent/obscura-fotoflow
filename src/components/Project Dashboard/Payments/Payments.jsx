@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux'
 import { openModal } from '../../../app/slices/modalSlice'
 import { formatDecimalK } from '../../../utils/stringUtils'
 import AmountCard from '../../Cards/AmountCard/AmountCard'
+import DashboardExpances from '../Expances/Expances'
 
 function DashboardPayments({ project }) {
   const dispatch = useDispatch()
@@ -11,6 +12,7 @@ function DashboardPayments({ project }) {
   const percentage = project.budgets ? (totalPayments / project.budgets.amount) * 100 : 0
   
   return (
+    <>
     <div className="payments">
       <div className="heading-shoots heading-section hjkk">
         <h3 className='heading hjkk'>Invoices <span>{project.payments ? project.payments.length : ''}</span></h3>
@@ -112,6 +114,8 @@ function DashboardPayments({ project }) {
         </div>}
       </div>
     </div>
+    <DashboardExpances project={project} />
+    </>
   )
 }
 

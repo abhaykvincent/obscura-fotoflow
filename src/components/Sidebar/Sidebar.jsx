@@ -6,7 +6,7 @@ import { logout, selectUser, selectUserStudio } from '../../app/slices/authSlice
 import { useDispatch, useSelector } from 'react-redux';
 import AdminRoute from '../AdminRoute/AdminRoute';
 import { trackEvent } from '../../analytics/utils';
-import { selectStudio } from '../../app/slices/studioSlice';
+import { selectStudio, selectStudioStorageUsage } from '../../app/slices/studioSlice';
 function Sidebar() {
   
   const dispatch = useDispatch();
@@ -18,20 +18,20 @@ function Sidebar() {
   const params = useParams()
   const studioName = defaultStudio?.domain ?? {domain:'guest',name:'guest'}; 
   const studio= useSelector(selectStudio)
-  console.log(studio)
+    const storageLimit = useSelector(selectStudioStorageUsage);
+  
   const [storageUsage , setStorageUsage] = useState({
   })
   const toggleProfileOption = () => {
     setProfileOptionActive((prevState) => !prevState);
   };
   useEffect(() => {
-    if(!studio?.usage) return
     setStorageUsage({
-      used: (studio.usage.storage.used/1000).toFixed(2),
-      quota: (studio.usage.storage.quota/1000).toFixed(0),
-      usedPercentage: (studio.usage.storage.used/studio.usage.storage.quota*100).toFixed(2)
+      used: (storageLimit?.used/1000).toFixed(2),
+      quota: (storageLimit?.quota/1000).toFixed(0),
+      usedPercentage: (storageLimit?.used/storageLimit?.quota*100).toFixed(2)
     })
-    },[studio])
+    },[storageLimit])
   if(user==='no-studio-found')
     return 
   return (
@@ -87,12 +87,12 @@ function Sidebar() {
         {/* Admin */}
         
         <p className="label">ADMIN</p>
-        <Link to={`/${studioName}/team`}>
+        {/* <Link to={`/${studioName}/team`}>
           <div className={`menu team ${location.pathname === `/${studioName}/team` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Team</div>
           </div>
-        </Link>
+        </Link> */}
         <Link to={`/${studioName}/settings`}>
           <div className={`menu settings ${location.pathname === `/${studioName}/settings` ? 'active' : ''}`}>
             <div className="icon"></div>
@@ -122,27 +122,31 @@ function Sidebar() {
         <div className="storage-bars">
           <div className="storage-bar hot">
             <div className="storage-labels">
-              <div className="icon hot"></div>
-              <p>Hot Storage</p>
-              <p className='usage-label'><span className='bold'>{storageUsage.used}</span>/{storageUsage.quota}GB</p>
+              <div className="icon "></div>
+              <p>Storage</p>
+              <p className='usage-label'><span className='bold'>{/* {Math.round(storageUsage?.quota - storageUsage?.used)}GB */} {Math.round(storageUsage?.usedPercentage)}%</span>{/* used */}</p>
             </div>
             <div className="used-bar"
               style={{
-                width: `${storageUsage.usedPercentage}%`
+                width: `${storageUsage?.usedPercentage}%`
               }}
             ></div>
             <div className="quota-bar"></div>
           </div>
-          <div className="storage-bar cold">
+          {/* <div className="storage-bar cold">
 
             <div className="storage-labels">
             <div className="icon cold"></div>
-              <p>Cold Storage</p>
-              <p className='usage-label'><span className='bold'>27</span>%</p>
+              <p>Free 100 GB </p>
+              <p className='usage-label'>
+                <Link to={`/${studioName}/subscription`} className='unlock-link'>
+                <span className='bold'>Unlock</span>
+                </Link>
+                </p>
             </div>
             <div className="used-bar"></div>
             <div className="quota-bar"></div>
-          </div>
+          </div> */}
         </div>
 
         {/* <AdminRoute> 

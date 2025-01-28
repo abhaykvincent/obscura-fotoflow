@@ -96,7 +96,7 @@ function DashboardProjects({project}){
                 style={
                   {
                     backgroundImage:
-                    `url(${project.projectCover!==""?encodeURI(project.projectCover).split('&token=')[0]:'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`
+                    `url(${project.projectCover!==""?encodeURI(project.projectCover):'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`
                   }}
                 ></div>
               </div>
@@ -118,7 +118,7 @@ function DashboardProjects({project}){
     :<>
     <AddProjectModal />
       <DashboardTabs project={project} />
-      <div className="sub-projects">
+      {/* <div className="sub-projects">
         <h4 className='heading-section heading'>Sub Projects</h4>
         <div className="sub-projects-body">
           <div className="actions">
@@ -127,7 +127,7 @@ function DashboardProjects({project}){
             >Sub-project</div>
         </div>
         </div>
-      </div>
+      </div> */}
     </>
     }
     </>

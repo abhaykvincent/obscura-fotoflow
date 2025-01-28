@@ -8,6 +8,7 @@ import studioReducer from './slices/studioSlice'
 import teamsReducer from './slices/teamsSlice'
 import shortcutsReducer from './slices/shortcutSlice'
 import searchReducer from './slices/searchSlice'
+import referralsReducer from './slices/referralsSlice'
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     modal: modalReducer,
     upload: uploadReducer,
     studio: studioReducer,
+    referrals: referralsReducer,
     teams: teamsReducer,
     shortcuts: shortcutsReducer,
   },

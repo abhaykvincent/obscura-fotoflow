@@ -17,46 +17,43 @@ import { doc, updateDoc } from "firebase/firestore";
 import { set } from "date-fns";
 
 // Image Compression
-const compressImages = async (files,maxWidthOrHeight) => {
-    const compressedFiles = await Promise.all(files.map(async (file) => {
-        // Compression Options
-        const options = {
-            maxWidthOrHeight: maxWidthOrHeight, //
-            useWebWorker: true,
-        };
-        try {
-            const compressedFile = await imageCompression(file, options);
-            return compressedFile;
-        } catch (error) {
+const compressImages = async (files, maxWidthOrHeight) => {
+    const options = {
+        maxWidthOrHeight,
+        useWebWorker: true,
+    };
+    return Promise.all(
+        [...files].map((file) => imageCompression(file, options).catch((error) => {
             console.error('Image compression failed:', error);
-            return file; 
-        }
-    }));
-    return compressedFiles;
+            return file; // Return the original file on error
+        }))
+    );
 };
 
-// Firebase Cloud Storage
 
+// Firebase Cloud Storage
+const metadata = {
+    cacheControl: 'public, max-age=31536000', // Cache for 1 year
+  };
 // File Single upload function
-export const uploadFile = (domain,id, collectionId, file,sliceIndex,setUploadLists) => {
+export const uploadFile = async (domain,id, collectionId, file,sliceIndex,setUploadLists) => {
     const MAX_RETRIES = 5;
     const INITIAL_RETRY_DELAY = 500;
     let retries = 0;
-
     return new Promise((resolve, reject) => {
         const storageRef = ref(storage, `${domain}/${id}/${collectionId}/${file.name}`);
         let uploadTask;
         let lastUpdateTime = 0
         try {
             let fileUploaded = false;
-            uploadTask = uploadBytesResumable(storageRef, file);
+            uploadTask = uploadBytesResumable(storageRef, file,metadata);
 
             uploadTask.on('state_changed',
                 () => {
                     
                 },
                 (error) => {
-                    // Handle unsuccessful Uploads
+                    // Handle retry for unsuccessful Uploads
                     console.error(`Error during initial upload for ${file.name}:`, error);
                     retries++;
                     try{
@@ -76,8 +73,6 @@ export const uploadFile = (domain,id, collectionId, file,sliceIndex,setUploadLis
 
                             // remove the file from the list
                             if(fileProgress.name === file.name ){
-                                console.log(url)
-
                                 return {
                                     ...fileProgress,
                                     status:"uploaded",
@@ -89,12 +84,17 @@ export const uploadFile = (domain,id, collectionId, file,sliceIndex,setUploadLis
                             };
                         })
                     })
-                        resolve({
-                            name: file.name,
-                            lastModified:file.lastModified,
-                            url
-                        }); // Resolve the promise when the file is successfully uploaded
                     
+                        resolve({
+                        name: file.name,
+                        lastModified:file.lastModified,
+                        url
+                    }); // Resolve the promise when the file is successfully uploaded
+                    
+                },
+                () => {
+                    // Handle upload cancellation
+                    console.log(`Upload of ${file.name} cancelled.`);
                 }
             );
         } 
@@ -105,14 +105,14 @@ export const uploadFile = (domain,id, collectionId, file,sliceIndex,setUploadLis
 
         async function retryUpload() {
             uploadTask.cancel(); // Cancel the current upload task
-    
+            uploadTask.on('state_changed', null, null, null);
             if (retries < MAX_RETRIES) {
                 let retryDelay = INITIAL_RETRY_DELAY * Math.pow(2, retries); // Exponential backoff
     
                 console.log(`Retrying upload of ${file.name} in ${retryDelay / 1000} seconds`);
                 await new Promise(resolve => setTimeout(resolve, retryDelay));
     
-                uploadTask = uploadBytesResumable(storageRef, file);
+                uploadTask = uploadBytesResumable(storageRef, file,metadata);
     
                 uploadTask.on('state_changed',
                     () => {},
@@ -142,8 +142,7 @@ export const uploadFile = (domain,id, collectionId, file,sliceIndex,setUploadLis
 };
 // Upload a slice of files with sliceSize : 5
 const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
-
-        setUploadLists(prevState => {
+        /* setUploadLists(prevState => {
             return prevState.map((file, index) => {
                 if (slice[index] && file.name === slice[index].name) {
                     return {
@@ -153,55 +152,39 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
                         status: 'initializing'
                     }
                 }
-                return {
-                    name: file.name,
-                    size: file.size,
-                    type: file.type,
-                    status: file.status};
+                else{
+
+                    return {
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                        status: file.status};
+                }
             })
-        }) 
+        })  */
    
 
     try {
-        let startTime1 = Date.now();
         const [compressedFiles, compressedThumbnailFiles] = await Promise.all([
-            compressImages(slice, 720), // Full-sized images
-            compressImages(slice, 300), // Thumbnails
+            compressImages([...slice], 980), // Pass a copy for full-sized images
+            compressImages([...slice], 480) // Pass a copy for thumbnails
         ]);
-        let endTime1 = Date.now();  
 
-        const uploadPromises = compressedFiles.map((file, sliceIndex) => {
-            uploadFile( domain, id, collectionId, file, sliceIndex, setUploadLists)
-        });
-        const thumbnailUploadPromises = compressedThumbnailFiles.map((file, sliceIndex) => 
-            uploadFile( domain, id, `${collectionId}-thumb`, file, sliceIndex, setUploadLists)
+        
+        const thumbnailUploadPromises = await Promise.all(
+            compressedThumbnailFiles.map((file, sliceIndex) =>
+                uploadFile(domain, id, `${collectionId}-thumb`, file, sliceIndex, setUploadLists)
+            )
         );
-
-
-        let startTime3 = Date.now(); 
-        setUploadLists(prevState => {
-            return prevState.map((file, index) => {
-                if (slice[index] && file.name === slice[index].name) {
-                    return {
-                        ...file,
-                        status: 'uploading'
-                    }
-                }
-                return {
-                    ...file,
-                    status: file.status};
-            })
-        })
+        const uploadPromises = await Promise.all(
+            compressedFiles.map((file, sliceIndex) =>
+                uploadFile(domain, id, collectionId, file, sliceIndex, setUploadLists)
+            )
+        );
+        
+        
         // Combine all upload promises and resolve them concurrently
-        const results = await Promise.all([...uploadPromises, ...thumbnailUploadPromises]);
-        let endTime3 = Date.now();  
-        
-        let duration1 = (endTime1 - startTime1) / 1000; 
-        let duration3 = (endTime3 - startTime3) / 1000;  
-        console.log(`%c Compress duration : ${duration1} seconds`, 'color:#0099ff');
-        console.log(`%c Upload duration : ${duration3} seconds`, 'color:#0099ff');
-        
- 
+        const results = Promise.all([ ...thumbnailUploadPromises,...uploadPromises]); 
         return results;
     } catch (error) {
         console.error("Error during slice upload:", error);
@@ -218,8 +201,9 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
         type: file.type,
         status: 'pending'
     })))
+    setUploadStatus('open');
     // Slice the files array into smaller arrays of size sliceSize
-    const sliceSize = 5;
+    const sliceSize = 4;
     console.log('%c ' + files.length + ' files to upload', 'color:yellow');
     let uploadedFiles = [];
 
@@ -230,13 +214,13 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
             // Upload Single Slice
 
             const startTime = Date.now()
-
             console.groupCollapsed('Uploading Slice ' + (i / sliceSize + 1) + ' of ' + Math.ceil(files.length / sliceSize));
+
             const results = await sliceUpload(domain,slice, id, collectionId,setUploadLists);
             uploadedFiles.push(...results);
             const endTime = Date.now();  // Record the end time
             const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
-            console.log(`%c Slice upload duration : ${duration} seconds`, 'color:#428924');
+            console.log(`%c Slice upload duration : ${duration} seconds`, 'color:#0071a4');
             //console group end
             
             console.groupEnd();
@@ -250,34 +234,29 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
         }
     }
     return Promise.all(uploadedFiles)
-        .then((results) => {
+        .then((uploadResults) => {
+            console.log('Upload results:', uploadResults);
             let failedFiles = [];
-            let uploadedFiles = [];
-            results = [].concat(...results);
-            // remove all undefined from array results
-            console.log(results)
-            results = results.filter(result => result !== undefined);
-            results.forEach((result, index) => {
+            let filteredUploadedFiles = [];
+            uploadResults = [].concat(...uploadResults);
+            uploadResults = uploadResults.filter(result => result !== undefined);
+
+            uploadResults.forEach((result, index) => {
                 if (result?.status === 'rejected'){
                     failedFiles.push(files[index]);
                 }
-                else{
-                    // if name does not contails thumb- then 
-                    if(result.name.includes('thumb-')){
-                    }
-                    else{
-                        uploadedFiles.push({...result, thumbAvailable:true});
-                    }
+                else if(!result.url.includes('-thumb')){
+                    
+                    filteredUploadedFiles.push({...result, thumbAvailable:true});
                 }
             });
-
             if (failedFiles.length == 0) {
                 setUploadStatus('completed')
                 console.log("%c All files uploaded successfully!", 'color:green');
-                setUploadLists([])
+      
                 let getPIN ;
                 // UPDATE Project in Firestore
-                addUploadedFilesToFirestore(domain,id, collectionId,importFileSize, uploadedFiles)
+                addUploadedFilesToFirestore(domain,id, collectionId,importFileSize, filteredUploadedFiles)
                 .then((response) => {
                     getPIN = response.pin
                     showAlert('success', 'All files uploaded successfully!')
@@ -285,17 +264,19 @@ export const handleUpload = async (domain,files, id, collectionId,importFileSize
                     trackEvent('gallery_uploaded', {
                         domain: domain,
                         size: importFileSize,
-                        files: uploadedFiles.length,
+                        files: filteredUploadedFiles.length,
                     });
+                    setUploadLists([])
+                    setUploadStatus('completed')
 
-                    return {uploadedFiles,pin:response.pin}
+                    return {filteredUploadedFiles,pin:response.pin}
                 })
                 .catch((error) => {
                     console.error('Error adding uploaded files to project:', error.message);
                     showAlert('error', error.message)
                     throw error;
                 });
-                return {uploadedFiles,pin:getPIN}
+                return {uploadedFiles:filteredUploadedFiles ,pin:getPIN}
             }
             else {
                 console.log("Some files failed to upload. Reuploading missed files...");

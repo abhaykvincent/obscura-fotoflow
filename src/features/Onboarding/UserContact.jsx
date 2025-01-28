@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router';
 import PrivacyPolicy from '../PrivacyPolicy/PrivacyPolicy';
 import { openModal } from '../../app/slices/modalSlice';
 
-const UserContact = ({ active, next, createAccountData, updateAccountData, user }) => {
+const UserContact = ({ active, next,previous,createAccountData, updateAccountData, user }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [contactNumber, setContactNumber] = useState('');
@@ -68,6 +68,7 @@ const UserContact = ({ active, next, createAccountData, updateAccountData, user 
     }
 
     updateAccountData({ contactNumber });
+
     if (user.email) next();
   };
 
@@ -79,8 +80,14 @@ const UserContact = ({ active, next, createAccountData, updateAccountData, user 
     <>
     
     <PrivacyPolicy agreePolicy={agreePolicy}/>
+    
     <div className={`screen user-contact`}>
-      <h2 className='screen-title'>Contact Number</h2>
+      <div className="screen-title">
+        <div className="back-form"
+          onClick={previous}
+        ></div>
+        <h2 className=''>Contact Number</h2>
+      </div>
       <p className='section-intro'>
         What's your WhatsApp Number?
       </p>

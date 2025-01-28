@@ -54,15 +54,11 @@ function DashboardTabs({ project }) {
           <DashboardEvents project={project}/>
         );
 
-      case 'invoices':
+      case 'financials':
         return (
           <DashboardPayments project={project} />
         );
 
-      case 'payments':
-        return (
-          <DashboardExpances project={project} />             
-        );
 
       default:
         return null;
@@ -85,16 +81,10 @@ function DashboardTabs({ project }) {
           Shoots
         </button>
         <button
-          className={`button secondary tab-button ${activeTab === 'invoices' ? 'active' : ''}`}
+          className={`button secondary tab-button ${activeTab === 'financials' ? 'active' : ''}`}
           onClick={() => setActiveTab('invoices')}
         >
-          Invoices
-        </button>
-        <button
-          className={`button secondary tab-button ${activeTab === 'payments' ? 'active' : ''}`}
-          onClick={() => setActiveTab('payments')}
-        >
-          Payments
+          Financials
         </button>
       </div>
       <div className="tab-content">{renderTabContent()}</div>

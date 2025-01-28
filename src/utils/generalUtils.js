@@ -5,3 +5,10 @@ export const removeUndefinedFields = (data) => {
         Object.entries(data).filter(([_, value]) => value !== undefined)
     );
 };
+
+export const isAppleDevice = () => {
+    // iphone, ipad,iMac, Macbook,....
+    const userAgent = navigator.userAgent;
+    return /iPhone|iPad|iPod|Macintosh|Mac Intel|Mac Apple Silicon/i.test(userAgent);
+
+};

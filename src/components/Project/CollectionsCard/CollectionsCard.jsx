@@ -15,7 +15,7 @@ function CollectionCard({ collection }) {
         <div 
           className={"collection-cover "+collection.galleryCover}
           style={{
-            backgroundImage: collection.galleryCover ? `url(${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29').split('&token=')[0]})` : '',
+            backgroundImage: collection.galleryCover ? `url(${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29')})` : '',
             backgroundSize: collection.galleryCover ? 'cover' : '',
             backgroundBlendMode: collection.coverImage ? '' : 'soft-light',
           }}

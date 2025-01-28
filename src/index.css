@@ -11,3 +11,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.razorpay-payment-form{
+  background-color: red;
+  
+}
+.ScreenController{
+  border-radius: 0px 8px 8px 0;
+}

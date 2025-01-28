@@ -60,10 +60,6 @@ const CollectionImages = ({ id, collectionId, project }) => {
         dispatch(setUploadList(uploadList));
     }, [uploadList]);
 
-    useEffect(() => {
-        imageUrls.length>0 && console.log(imageUrls);
-    }, [imageUrls]);
-
 
     // Initial collection images fetch
     useEffect(() => {
@@ -196,7 +192,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id,collectionId }} />:
                 <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId }} />
             ) : (
-                <label htmlFor="fileInput" className="drop-upload">
+                <label htmlFor="fileInput" className={`drop-upload ${isPhotosImported ? 'active' : ''}`}>
                     <div className="drop-area">
                         <Lottie options={defaultOptions} height={150} width={150} />
                         <h2>Drop files here</h2>

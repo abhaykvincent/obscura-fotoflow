@@ -7,8 +7,9 @@ import { update } from 'firebase/database';
 import { checkStudioDomainAvailability } from '../../firebase/functions/firestore';
 import { openModal } from '../../app/slices/modalSlice';
 import PrivacyPolicy from '../PrivacyPolicy/PrivacyPolicy';
+import { trackEvent } from '../../analytics/utils';
 
-const CreateStudio = ({active,next,createAccountData,updateAccountData,user}) => {
+const CreateStudio = ({active,next,setCreateAccountData,createAccountData,updateAccountData,user,validateForm, setErrors, errors}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [studioName, setStudioName] = useState(createAccountData.studioName);
@@ -16,14 +17,23 @@ const CreateStudio = ({active,next,createAccountData,updateAccountData,user}) =>
   const [isDomainAvailable, setIsDomainAvailable] = useState(false);
   const [suggestSubDomains, setSuggestSubDomains] = useState(['-studio','-photography','-weddings','-media']);
   const [isSuggestionsAvailable, setIsSuggestionsAvailable] = useState(false);
+
+
+
+  
   // Debounce effect: Update debouncedStudioName after 3 seconds of inactivity
   useEffect(() => {
     const handler = setTimeout(() => {
       console.log(studioName)
       if (studioName.length > 3) {
         setIsSuggestionsAvailable(false);
+        
       }
     }, 2000);
+    setCreateAccountData({
+      ...createAccountData,
+      studioName: studioName
+    });
 
     return () => {
       clearTimeout(handler);
@@ -69,7 +79,7 @@ const CreateStudio = ({active,next,createAccountData,updateAccountData,user}) =>
   const handleStudioNameChange = (e) => {
     const name = e.target.value;
     setStudioName(name);
-    setStudioDomain(name.toLowerCase().replace(/\s+/g, ''));
+    setStudioDomain(name.toLowerCase().replace(/\s+/g, '-'));
   };
   // Post request to the AI API
   // https://us-central1-fotoflow-cloud.cloudfunctions.net/flowai-test/generate-content
@@ -97,11 +107,23 @@ const CreateStudio = ({active,next,createAccountData,updateAccountData,user}) =>
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Validate form
+    const validationErrors = validateForm();
+
+    // If there are errors, set them and prevent submission
+    if (Object.keys(validationErrors).some(key => validationErrors[key])) {
+      setErrors(validationErrors);
+      return;
+    }
     updateAccountData({studioName,studioDomain})
+
+    trackEvent('account_details_submitted',
+      {
+        studioName,
+        studioDomain
+      })
+    
     next()
-    // Handle studio creation logic here
-    console.log('Studio Name:', studioName);
-    console.log('Studio Domain:', studioDomain);
   };
 
   if (!active) {
@@ -114,45 +136,60 @@ const CreateStudio = ({active,next,createAccountData,updateAccountData,user}) =>
   return (
     <>
       <div className={`screen create-studio ${user?.email && 'active'}`}>
-      
-        <p className='section-intro'>Let's start with the <span className="name-label">name</span> for your studio </p>
-        <form onSubmit={handleSubmit}>
+      {studioName.length > 3 ? <p className='section-intro small'>Studio name<span className="name-label"></span></p>:<p className='section-intro'>Let's start with Studio's name.</p>}
+      <form onSubmit={handleSubmit}>
           <div className="form-group">
             <input
               type="text"
               id="studioName"
               value={studioName}
-              placeholder='Studio name'
+              placeholder='Lorem Tales'
               onChange={handleStudioNameChange}
-              autocomplete="off"
+              autoComplete="off"
               required
             />
-            <div className={`studio-domain-selector ${isDomainAvailable ?'available':'taken'} ${studioDomain.length>3 && 'active'}`}>
+            {
+            errors.studioName&&
+            <div className="error-container">
+              {
+                errors.studioName
+              }
+            </div>
+          }
+       
+            <div className={
+            `studio-domain-selector ${isDomainAvailable ?'available':'taken'} 
+            ${studioDomain.length>3 && 'active'}`}>
+
               <div className="domain-input-container">
                 <div className="web-icon"></div>
-                <p className={`studio-domain `}>{domain}/
-                    <span className={isDomainAvailable?`available`:`taken`} contentEditable>{studioDomain}
-
-                    {!isSuggestionsAvailable &&  studioDomain.length>3 &&
-                      <span className={`suggestions ${isDomainAvailable && 'focus-out'}` }>
-                        {suggestSubDomains.map((subdomain, index) => (
-                          <span key={index} className='suggestion' onClick={()=>{
-                            setStudioDomain(studioDomain+subdomain)}
-                          }>{studioDomain}{subdomain}</span>
-                        ))}
+                <div className={`studio-domain `}>{domain}/
+                    <div>
+                      <span className={`sub-domain-input  ${isDomainAvailable?`available`:`taken`}`} contentEditable suppressContentEditableWarning={true}>
+                        {studioDomain}
                       </span>
+                      {!isSuggestionsAvailable &&  studioDomain.length>3 &&
+                        <span className={`suggestions ${isDomainAvailable && 'focus-out'}` }>
+                          {suggestSubDomains.map((subdomain, index) => (
+                            <span key={index} className='suggestion' onClick={()=>{
+                              setStudioDomain(studioDomain+subdomain)
+                              setIsSuggestionsAvailable(true)
+                            }
+                              
+                            }>{studioDomain}{subdomain}</span>
+                          ))}
+                        </span>
                   }
-                    </span>
+                    </div>
                       
-                </p>
+                </div>
               </div>
               
               {
                 studioDomain.length>3 &&
                 (isDomainAvailable ?
-                  <p className='input-reaction'>{`Sub-domain Available`}</p>:
+                  <p className='input-reaction subdomain-available'>{`Sub-domain Available`}</p>:
                   <p className='input-reaction'>{`Sub-domain already taken. `}</p>)
-                
               }
             </div>
             

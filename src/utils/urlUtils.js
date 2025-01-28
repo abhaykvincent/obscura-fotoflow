@@ -4,6 +4,9 @@
         
         return `${window.location.protocol}//${window.location.host}/${domain}/${page}/${projectId}`;
       }
+      export function getOnboardingReferralURL(ref){
+        return `${window.location.protocol}//${window.location.host}/onboarding?ref=${ref}`;
+      }
 // get website url at https://www.website.com/domain
 export function getWebsiteURL(domain) {
     return `${window.location.protocol}//${window.location.host}/${domain}/share/portfolio`;

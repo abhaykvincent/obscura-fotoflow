@@ -60,7 +60,6 @@
           cursor: pointer;
           transition-duration: 0.15s;
           &:hover{
-              border-radius: 2px;
               background-color: $dark-2;
               color: $gray2-accessible-dark;
               transition-duration: 0.1s;
@@ -79,7 +78,6 @@
             box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);;
             transform: scale(1.1);
             &:hover{
-              background-color: $dark-1;
               border: 1px solid $gray3-accessible-dark;
               transition-duration: 0.1s;
             }
@@ -92,11 +90,19 @@
           &.disabled{
               opacity: 0.2;
             }
+            &:hover{
+                .icon{
+
+                    background-size: 110%;
+                }
+
+              }
           .icon{
-              width: 8px*1.8;
-              height: 8px*1.8;
+              width: 8px*2;
+              height: 8px*2;
               background-position: center;
-              background-size: 110%;
+              background-size: 100%;
+              
               &.card-view{
                   background-image: url('https://img.icons8.com/sf-black-filled/64/FFFFFF/four-squares.png');
               }
@@ -136,9 +142,8 @@
         padding: 8px 16px; // Simplified calculation of 8px * 2
         font-weight: 400;
         color: $gray-default-dark;
-        
+            margin-bottom: 8px*1;
         opacity: 0; // Start as invisible
-        transform: translateY(10px); // Start slightly below
   
         animation: fadeInUp 0.5s ease-out forwards;
         animation-delay: calc(0.4s + 0.5s * (var(--group-index) - 1)); // Dynamic delay based on parent index
@@ -157,6 +162,17 @@
 
                     }
                 }
+        }
+        &.list{
+            max-width: 8px*60;
+            grid-template-columns: 1fr;
+            gap: 8px*2;
+            .project{
+                .project-cover{
+                    min-height: 8px*10;
+                    width: 8px*12;
+                }
+            }
         }
       }
     }
@@ -184,11 +200,11 @@
 @keyframes fadeInUp {
     0% {
       opacity: 0;
-      transform: translateY(-8px);
+      /* transform: translateY(-8px); */
     }
     100% {
       opacity: 1;
-      transform: translateY(0);
+      /* transform: translateY(0); */
     }
   }
 
@@ -332,6 +348,11 @@
     .projects-list{
         gap: 8PX*4;
         grid-template-columns: 1fr ;
+    }
+    .projects{
+        .view-type-controls{
+            display: none;
+        }
     }
 }
 @media only screen and (max-width: 580px) {

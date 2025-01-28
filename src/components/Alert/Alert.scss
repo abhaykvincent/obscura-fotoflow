@@ -6,7 +6,9 @@
     --offset: 62px
   }
 }
-
+.alert-container ol{
+  margin-right: -8px*3;
+}
 .alert {
   display: flex;
   justify-content: center;
@@ -17,8 +19,8 @@
     transition-duration: 0.1s;
 		box-shadow: 1px 1px 4px  rgba(0, 0, 0, 0);
     color: white;
-    background-color: $dark-2;
-    opacity: 0.8;
+    background-color:rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(16px);
     button{
       &[data-close-button]{
         background-color: rgba(0, 0, 0, 0.5);
@@ -60,7 +62,7 @@
   }
   
   .alert.error {
-    border: 1px solid $red-accessible-dark;
+    border: 1px solid $red-default-dark;
     color: white;
 
     animation: shake 0.5s ease-in-out;
