@@ -19,7 +19,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
     const domain = useSelector(selectDomain);
     // dark light mode
     const [displayMode, setDisplayMode] = useState('darkMode');
-
+    const [uploadTrigger, setUploadTrigger] = useState(false);
 
     // Files
     const [collectionImages, setCollectionImages] = useState([]);
@@ -71,8 +71,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
             .catch((error) => {
                 console.log(error);
             });
-    document.title = `${project.name}'s ${collectionId } Gallery`
-
+        document.title = `${project.name}'s ${collectionId } Gallery`
     }, [collectionId]);
 
     // Fetch Images
@@ -80,6 +79,12 @@ const CollectionImages = ({ id, collectionId, project }) => {
         if (!collectionImages) {
             setImageUrls([]);
             return;
+        }
+
+        if(collectionImages.length === 0) {
+            
+            
+            setUploadTrigger(true);
         }
         let start = 0;
         let end = page * size;
@@ -147,7 +152,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
             
             <div className="header">
                 <div className="options">
-                    <UploadButton {...{ isPhotosImported, setIsPhotosImported, imageUrls, setImageUrls, setUploadStatus, id, collectionId, setUploadLists }} />
+                    <UploadButton {...{ isPhotosImported, setIsPhotosImported, imageUrls, setImageUrls, setUploadStatus, id, collectionId, setUploadLists,  }} />
                 </div>
                 {collectionImages?.length > 0 || imageUrls.length > 0  ? (
                     <div className="view-control">

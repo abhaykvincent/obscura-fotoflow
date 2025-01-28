@@ -64,6 +64,7 @@ const LoginModal = () => {
           
           dispatch(updateProjectsStatus('login'))
           navigate('/onboarding');
+          window.location.reload();
         }
         else{
           navigate(`/${response.payload.studio.domain}`);
