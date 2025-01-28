@@ -100,17 +100,17 @@ const ShareGallery = ({ images,projectId,collectionId }) => {
             index + 1 === loadedImages.length ?
             <img className="photo" 
               key={file.url} 
-              src={file?.thumbAvailable ? getThumbnailUrl(file.url,collectionId).split('&token=')[0]:  file.url}
-              srcSet={`${file?.thumbAvailable  ? getThumbnailUrl(file.url,collectionId).split('&token=')[0] : file.url} 720w, ${file.url} 1080w`} 
+              src={file?.thumbAvailable ? getThumbnailUrl(file.url,collectionId):  file.url}
+              srcSet={`${file?.thumbAvailable  ? getThumbnailUrl(file.url,collectionId) : file.url} 720w, ${file.url} 1080w`} 
               alt={`File ${index}`} 
               ref={lastPhotoElementRef}
               onClick={()=>openPreview(index)}
             ></img>
             : 
             <img className="photo" key={file.url} 
-            src={file?.thumbAvailable ?getThumbnailUrl(file.url,collectionId).split('&token=')[0]:  file.url}
+            src={file?.thumbAvailable ?getThumbnailUrl(file.url,collectionId):  file.url}
 
-            srcSet={`${file?.thumbAvailable  ? getThumbnailUrl(file.url,collectionId).split('&token=')[0] : file.url} 720w, ${file.url} 1080w`} 
+            srcSet={`${file?.thumbAvailable  ? getThumbnailUrl(file.url,collectionId): file.url} 720w, ${file.url} 1080w`} 
 
             alt={`File ${index}`} 
             onClick={()=>openPreview(index)}></img>

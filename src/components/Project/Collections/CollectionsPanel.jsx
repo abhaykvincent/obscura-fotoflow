@@ -26,7 +26,7 @@ const CollectionsPanel = ({ project, collectionId}) => {
                     <div className={`backthumb bthumb1 ${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29')}`}
                     style={{
                       backgroundImage: collection?.galleryCover 
-                        ? `url("${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29').split('&token=')[0]}")` 
+                        ? `url("${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29')}")` 
                         : 'url(https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333)',
                       backgroundSize: collection?.galleryCover ? 'cover' : '40%',
                     }}

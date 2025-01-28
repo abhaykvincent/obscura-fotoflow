@@ -26,6 +26,9 @@ a{
   text-decoration: none;
   color: inherit;
 }
+p{
+  cursor : default;
+}
 body{
   background: $dark-3;
 
@@ -696,6 +699,7 @@ body{
         top:8px*10;
         z-index: 41;
         right:8px*3;
+      display: none;
         .lightMode{
           &:hover{
             background-color: $gray6-accessible-light;
@@ -1591,60 +1595,41 @@ body{
       transform: translate(-50%, -40%);
       opacity: 0;
       animation-name: login-popup;
-      animation-delay: 2s;
+      animation-delay: 0.5s;
       animation-duration: 0.2s;
       animation-fill-mode: forwards;
       border: none;
-      box-shadow: 1px 1px 4px black;
+      box-shadow: 2px 2px 3px black;
       background: none;
 
       @keyframes login-popup {
         0%{
-        transform: translate(-50%, -40%);
+        transform: translate(-50%, -40%) scale(0);
         opacity: 0;
         }
         100%{
-          transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%)scale(1);
           opacity: 1;
         }
       }
+      p span.opening-loader{
+        color: transparent !important;
+        width: 8px*4;
+        height: 8px*4;
+        padding: 8px;
+        margin-right: 8px*1;
+        background-image: url('./assets/img/gifs/loading-green-loading.gif');
+        background-position: center;
+        background-size: auto 60%;
+        opacity: 0.5;
+      }
+      .auth-cancel{
+        margin-left: 8px*2;
+        cursor: pointer;
+        text-decoration: underline;
+      }
       &.emailPassword{
         width: 8px*42;
-      }
-      .logo{
-        position: absolute;
-        left: calc(50% - 8px*5);
-        top: -8px*16;
-        width: 8px*10;
-        height: 8px*10;
-        background-image: url('./assets/img/fotoflow-pro-logo.png');
-        background-size: 100%;
-        background-position: center;
-        animation: logo-spin infinite;
-        animation-duration:18s;
-        transform: rotate(0deg) scale(1.2);
-        &.loading{
-        animation-duration:4s;
-
-        }
-        // smooth natural spinning with apuse in itervals
-        @keyframes logo-spin {
-            0%{              
-              opacity: 1;
-              transform: rotate(0deg) ;
-            }
-            99.999%{
-              opacity: 1;
-              transform: rotate(360deg * 4) ;
-            
-            }
-            100%{
-              opacity: 1;
-              transform: rotate(360deg *0) ;
-            }
-          }
-
-        
       }
       .form-section{
         min-width: 8px*30;
@@ -1696,6 +1681,7 @@ body{
             border: 1px solid $gray5-accessible-light;
           } &.google{
             background-color: $dark-3;
+          box-shadow: 2px 2px 2px 1px black;
             border: 1px solid $gray2-default-light;
             &:hover{
             border: 1px solid $gray6-accessible-light;
@@ -1703,12 +1689,18 @@ body{
 
           }
           &.apple{
+          color: $gray-default-light;
+
             background-color: $dark-3;
+          }
+          &.disabled{
+            opacity: 0.2;
+
           }
          
           .google-logo{
-            width: 8px*3;
-            height: 8px*3;
+            width: 8px*4;
+            height: 8px*4;
             border: none;
             background-image: url('./assets/img/google-logo.png');
             background-position: center center;
@@ -1747,20 +1739,36 @@ body{
           justify-content: center;
           gap: 8px*0.5;
           margin-top: 8px*2;
+          margin-bottom: 8px*2;
           p{
-            opacity: 0.5;
-            font-size: 0.9rem;
-            color: $green-default-dark;
           }
+          .create-studio-link{
+
+            opacity: 0.8;
+            font-size: 1rem;
+            color: $green-default-dark;
+            transition-duration: 0.2s;
+            &.fade{
+              opacity: 0.4;
+            }
+            &:hover{
+              opacity: 1;
+
+            }
+          }
+            
+          
         }
         .login-branding{
-          opacity: 0.2;
+          opacity: 0.3;
           margin-top: 8px*1;
           border-top: 1px solid $dark-0;
           padding-top: 8px*2;
           p{
             span{
-              color: $gray4-accessible-light;
+            text-shadow: 1px 1px 0px  black;;
+
+              color: $gray3-accessible-light;
               span{
                 color: $gray6-accessible-light;
               }
@@ -1777,7 +1785,12 @@ body{
         background-size: auto 80%;
         opacity: 0.5;
     }
+    p.open-with-login-label{
+      margin-bottom: 0px;
     }
+    }
+    
+   
     &#loginEmailPasswordModal{
     }
     &.add-crew{
@@ -1850,6 +1863,93 @@ body{
           border: 1px solid $gray-default-dark;
         }
       }
+    }
+  }
+
+  .login-container{
+   
+    .logo{
+      position: absolute;
+      left: calc(50% - 8px*5);
+      top: 8px*16;
+      width: 8px*10;
+      height: 8px*10;
+      background-image: url('./assets/img/fotoflow-pro-logo.png');
+      background-size: 100%;
+      background-position: center;
+      animation: logo-spin-login infinite;
+      animation-duration:12s;
+      transform: rotate(0deg) scale(1.2);
+      &.loading{
+        animation-duration:12s;
+  
+      }
+      // smooth natural spinning with apuse in itervals
+      @keyframes logo-spin-login {
+          0%{              
+            opacity: 0.8;
+            transform: rotate(0deg) scale(0.5);
+            transition-timing-function: ease-in;
+          }
+          10%{
+            opacity: 1;
+            transform: rotate(360deg * 0.75) scale(0.75);
+            transition-timing-function: ease-in;
+          }
+          25%{
+            opacity: 0.6;
+            transition-timing-function: ease-in;
+            transform: rotate(360deg * 2) scale(0.8);
+
+          }
+          60%{ 
+            opacity: 0.5;
+            transform: rotate(360deg * 4) scale(0.8);
+          }
+
+          99.9%{
+            opacity: 0.6;
+            transform: rotate(360deg * 5) scale(1);
+          }
+          100%{
+            opacity: 0;
+            transform: rotate(360deg *0) scale(1);
+          }
+        }
+  
+      
+    }
+  }
+  .login-footer{
+    width: 100%;
+    display: flex;
+    gap: 8px*0;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    position: fixed;
+    bottom: 0px;
+    left: 0;
+    a{
+      font-size: 0.9rem;
+      color: $dark-0;
+      text-decoration: underline;
+      text-decoration-color: $dark-2;
+      padding: 8px*2 8px*1;
+      transition-duration: 0.2;
+      transition-timing-function: ease-out;
+      &:hover{
+        color: $green-default-dark;
+        transition-duration: 0.1s;
+        transition-timing-function: ease-in;
+        text-decoration-color: $gray-default-dark;
+        text-shadow: 1px 1px 0px 0px rgb(10, 10, 10);
+      }
+    }
+    .ampersand{
+      color: $gray5-default-dark;
+      font-weight: 200;
+      transform: scale(1.3);
     }
   }
   .modal-backdrop{

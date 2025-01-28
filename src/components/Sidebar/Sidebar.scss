@@ -193,29 +193,24 @@
         // reverse
         flex-direction: column-reverse;
         
-        height: 8px*10;
         width: calc(100% - 8px*1.5);
         bottom: 8px*7;
         left: 5px;
         padding: 8px 8px;
-        border: 1px solid $gray6-default-dark;
-        border-left: 1px solid $gray4-default-dark;
-        border-top: 1px solid $gray4-default-dark;
-        border-bottom: 1px solid $gray5-default-dark;
         border-radius: 6px;
         margin-left: 0;
         margin-bottom: 8px*2;
-        background: linear-gradient(to right, $gray6-default-dark, $dark-4);
-        box-shadow: 1px 1px 0px 2px rgba(0, 0, 0, 1);
+        background: rgba(0, 0, 0, 0.8);
+        box-shadow: 0px 0px 4px 0px rgba(255, 255, 255, 0.05);
         
         .storage-bar{
-            height: 8px*4.5;
             position: relative;
+            margin-bottom: 8px*0.5;
             .storage-labels{
                 margin-bottom: -2px;
                 width: 100%;
                 display: grid;
-                grid-template-columns: 8px*2 auto 1fr;
+                grid-template-columns: 8px*0 auto 1fr;
                 gap: 0px;
                 .icon{
                     width: 8px*2;
@@ -225,6 +220,7 @@
                     margin-left: -2px;
                     background-size: 90%;
                     &.hot{
+                        
                         background-image: url('https://img.icons8.com/?size=100&id=60985&format=png&color=70ab17');
                         backdrop-filter: drop-shadow(8px 2px 2px $gray6-default-dark);
                        
@@ -236,7 +232,7 @@
                 p{
                     white-space: nowrap;
                     width: 100%;
-                    font-size: 0.7rem;
+                    font-size: 0.9rem;
                     color: $gray2-default-dark;;
                     margin-bottom: 8px;
                     .bold{
@@ -247,7 +243,7 @@
 
                 }
                 .usage-label{
-                    font-size: 0.6rem;
+                    font-size: 0.7rem;
                     margin-top: 2px;
                     text-align: right;
                     white-space: nowrap;
@@ -267,14 +263,8 @@
                 height: 6px;
                 width: calc(100% );
                 border-radius: 4px;
-                background-color: black;
+                background-color: #70ab1739;
                 opacity: 0.6;
-                border: 1px solid $dark-1;
-                box-shadow:  inset 0px 0px 1px 1px rgba(0, 0, 0, 0.3),inset -1px 1px 1px 0px rgba(63, 63, 63, 0.1), 0px 0px 2px 0px black  ;
-
-                border: 1px solid $gray4-default-dark;
-                border-left: 1px solid $gray6-default-dark;
-                border-top: 1px solid $gray6-default-dark;
             }
             &.cold{
                 height: 8px*4.5;
@@ -303,7 +293,7 @@
                 }
             }
             &.hot{
-                margin-top: 8px;
+                margin-top: 0px;
             }
         }
     }

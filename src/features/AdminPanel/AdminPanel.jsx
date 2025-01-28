@@ -4,7 +4,7 @@ import './AdminPanel.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../app/slices/modalSlice';
 import AddReferralModal from '../../admin/Modal/AddReferral';
-import { fetchReferrals, selectReferrals } from '../../app/slices/referralsSlice';
+import { fetchReferrals, generateReferral, selectReferrals } from '../../app/slices/referralsSlice';
 import { set } from 'date-fns';
 import { useNavigate, useParams } from 'react-router';
 import { copyToClipboard, getGalleryURL, getOnboardingReferralURL } from '../../utils/urlUtils';
@@ -13,7 +13,21 @@ function AdminPanel() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     // react url page name                 <Route path="/admin/:page" element={<AdminPanel />} />
-      
+      const [referralData, setReferralData] = useState({
+          campainName: "",
+          campainPlatform: "whatsapp",
+          type: "referral",
+          email: "",
+          phoneNumber: "",
+          code: ['2744'],
+          status: "active",
+          quota: 3,
+          used: 0,
+          validity: 30,
+          createdAt: new Date().toISOString(),
+        });
+      dispatch(generateReferral(referralData ))
+        debugger
     const page = useParams().page;
     const [studios, setStudios] = useState([]);
     const [users, setUsers] = useState([]);

@@ -21,7 +21,7 @@ export const storeLimitContext = (feature, context) => {
     const { feature, context, timestamp } = limitData;
     const date = new Date(timestamp).toLocaleString(); // Format the timestamp
   
-    return `Unlimited ${feature} -- Upgrade to Freelancer.`;
+    return `Unlimited ${feature} -- Upgrade to Studio.`;
   };
 
   export const storeProjectsViewType = (viewType) => {
