@@ -165,14 +165,57 @@ export const fetchAllReferalsFromFirestore  = async () => {
 };
 export const generateReferralInFirebase = async (referralData) => {
     const referralsCollection = collection(db, 'referrals');
-    const generateRefCode = generateMemorablePIN(8);
+    
+    // Get all existing referrals
+    const querySnapshot = await getDocs(referralsCollection);
+    const existingReferrals = querySnapshot.docs.map(doc => doc.data());
+    
+    // Get the forced code or generate a new one
+    const forceCode = referralData.code[0];
+    let finalCode = forceCode;
+    
+    // If no force code, generate unique code
+    if (!forceCode) {
+        let isUnique = false;
+        let attempts = 0;
+        const maxAttempts = 5;
+        
+        while (!isUnique && attempts < maxAttempts) {
+            const generatedCode = generateMemorablePIN(8);
+            const codeExists = existingReferrals.some(referral => 
+                referral.code.includes(generatedCode)
+            );
+            
+            if (!codeExists) {
+                finalCode = generatedCode;
+                isUnique = true;
+            }
+            attempts++;
+        }
+        
+        if (!isUnique) {
+            throw new Error('Unable to generate unique referral code after multiple attempts');
+        }
+    } else {
+        // Check if forced code already exists
+        const codeExists = existingReferrals.some(referral => 
+            referral.code.includes(forceCode)
+        );
+        
+        if (codeExists) {
+            throw new Error('Provided referral code already exists');
+        }
+    }
+    
     const referralDoc = {
         ...referralData,
-        code: [generateRefCode],
-    }
-    await setDoc(doc(referralsCollection), referralDoc)
-    return referralDoc
-}
+        code: [finalCode],
+    };
+    
+    await setDoc(doc(referralsCollection), referralDoc);
+    return referralDoc;
+};
+
 export const validateInvitationCodeFromFirestore = async (invitationCode) =>{
     const referralsCollection = collection(db, 'referrals');
     const querySnapshot = await getDocs(referralsCollection);

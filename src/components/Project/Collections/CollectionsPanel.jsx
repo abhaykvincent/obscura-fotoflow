@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../../app/slices/modalSlice';
 import { positionCollectionsActiveBox } from '../../../utils/UI/collectionActiveBox';
-import { selectStudio } from '../../../app/slices/studioSlice';
 import { selectUserStudio } from '../../../app/slices/authSlice';
 
 const CollectionsPanel = ({ project, collectionId}) => {
@@ -27,7 +26,7 @@ const CollectionsPanel = ({ project, collectionId}) => {
                     <div className={`backthumb bthumb1 ${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29')}`}
                     style={{
                       backgroundImage: collection?.galleryCover 
-                        ? `url("${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29').split('&token=')[0]}")` 
+                        ? `url("${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29')}")` 
                         : 'url(https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333)',
                       backgroundSize: collection?.galleryCover ? 'cover' : '40%',
                     }}

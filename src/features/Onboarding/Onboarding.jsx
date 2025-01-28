@@ -17,8 +17,10 @@ import { useSearchParams } from 'react-router-dom'
 import { greetUser } from '../../utils/stringUtils.js'
 import { current } from '@reduxjs/toolkit'
 import { trackEvent } from '../../analytics/utils.js'
+import { generateReferral } from '../../app/slices/referralsSlice.js'
 
 function Onboarding() {
+
   const navigate = useNavigate()
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
@@ -228,6 +230,20 @@ function Onboarding() {
       validateForm()
   },[user, createAccountData])
   useEffect(() => {
+
+    dispatch(generateReferral({
+      campainName: "",
+      campainPlatform: "whatsapp",
+      type: "referral",
+      email: "",
+      phoneNumber: "",
+      code: ['2744'],
+      status: "active",
+      quota: 3,
+      used: 0,
+      validity: 30,
+      createdAt: new Date().toISOString(),
+    }))
     dispatch(checkAuthStatus)
     createTimeOFDayObject()
     trackEvent('onboarding_viewed', {

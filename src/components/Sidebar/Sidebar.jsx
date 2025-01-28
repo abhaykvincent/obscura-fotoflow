@@ -122,9 +122,9 @@ function Sidebar() {
         <div className="storage-bars">
           <div className="storage-bar hot">
             <div className="storage-labels">
-              <div className="icon hot"></div>
-              <p>Hot Storage</p>
-              <p className='usage-label'><span className='bold'>{storageUsage?.quota-storageUsage?.used}GB</span> left</p>
+              <div className="icon "></div>
+              <p>Storage</p>
+              <p className='usage-label'><span className='bold'>{/* {Math.round(storageUsage?.quota - storageUsage?.used)}GB */} {Math.round(storageUsage?.usedPercentage)}%</span>{/* used */}</p>
             </div>
             <div className="used-bar"
               style={{
@@ -133,7 +133,7 @@ function Sidebar() {
             ></div>
             <div className="quota-bar"></div>
           </div>
-          <div className="storage-bar cold">
+          {/* <div className="storage-bar cold">
 
             <div className="storage-labels">
             <div className="icon cold"></div>
@@ -146,7 +146,7 @@ function Sidebar() {
             </div>
             <div className="used-bar"></div>
             <div className="quota-bar"></div>
-          </div>
+          </div> */}
         </div>
 
         {/* <AdminRoute> 

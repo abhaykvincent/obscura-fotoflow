@@ -45,6 +45,7 @@ import { useShortcutsConfig } from './hooks/shortcutsConfig';
 import useAdminAuth from './hooks/useAdminAuth';
 import Settings from './features/Settings/Settings';
 import UpgradeModal from './components/Subscription/UpgradeModal';
+import { generateReferral } from './app/slices/referralsSlice';
 
 
 if(isDeveloper) console.log(`%c This device is not being tracked by Analytics in production.`, `color: #ff9500; `);
@@ -95,6 +96,12 @@ export default function App() {
       document.body.style.overflow = 'auto';
     }
   }, [selectModal]);
+  useEffect(() => {
+    
+          
+  }, []);
+
+
 
 
   // RENDER

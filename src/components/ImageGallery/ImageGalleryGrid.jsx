@@ -103,7 +103,7 @@ const ImageGalleryGrid = React.memo(({ projectId,collectionId, imageUrls }) => {
                 </div>
               </div>
               <div className='photo' key={index} 
-                style={{ backgroundImage: `url("${fileUrl.url.split('&token=')[0]}")` }} alt={`File ${index}`}>
+                style={{ backgroundImage: `url("${fileUrl.url}")` }} alt={`File ${index}`}>
               </div>
             </div>
           ))}
