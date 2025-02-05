@@ -177,34 +177,21 @@ function Home() {
                         </div>
                     </>)
                 }
-                <div className="section shoots">
+                
+                {
+                upcommingShoots.length !== 0 && <div className="section shoots">
                     <h3 className='section-heading'>Upcomming shoots</h3>
                     <div className="projects">
-                    {
-                        upcommingShoots.length !== 0? (
-                            upcommingShoots.map((event, index) => (
+                            {upcommingShoots.map((event, index) => (
                             <EventCard
                             event={event}
                             key={event.id}
                         /> 
-                        ))
-                        ) : (
-                            <p className="message">No recent projects</p>)
-                    }
-                    <Link className="project all" to={`/${defaultStudio.domain}/projects`} >
-                        <div className="cover-wrap">
-                            <div className="project-cover"></div>
-                        </div>
-                        <div className="project-details">
-                            <div className="details-top">
-
-                                <h4 className="project-title">See all Projects</h4>
-                                <p className="project-type"></p>
-                            </div>
-                        </div>
-                    </Link>
+                            ))}
                     </div>
                 </div>
+
+                }
                 
                 <Refresh/>
             </main>
