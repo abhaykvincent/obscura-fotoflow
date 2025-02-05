@@ -5,13 +5,15 @@ import { convertMegabytes } from '../../utils/stringUtils';
 import { selectProjects } from '../../app/slices/projectsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUsedSpace } from '../../utils/fileUtils';
-import { selectStorageLimit } from '../../app/slices/studioSlice';
+import { selectStorageLimit, selectStudio } from '../../app/slices/studioSlice';
 import { Link } from 'react-router-dom';
 import { openModal } from '../../app/slices/modalSlice';
 
 function Storage() {
     const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
+    const studio = useSelector(selectStudio)
+    console.log(studio)
     const storageLimit ={
           // In MB 
           // 1 GB - 1000
@@ -34,15 +36,15 @@ function Storage() {
         </div>
       <div className="storage-info">
         <div className="storage-pie-wrap">
-            <StoragePie height={200} totalSpace={storageLimit.total} usedSpace={usedSpace} active={true}/>
-            <StoragePie height={200} totalSpace={storageLimit.total*2} usedSpace={usedSpace} />
+            <StoragePie height={200} totalSpace={studio.usage.storage.quota} usedSpace={usedSpace} active={true}/>
+            <StoragePie height={200} totalSpace={studio.usage.storage.quota*2} usedSpace={usedSpace} />
         </div>
         {/* <p className="storage-insight">Storing 24034 photos in 17 collections</p> */}
         <div className="storage-subscription">
             <div className="subscription-info row-group">
                 <div className="row subscription-group">
                     <div className="box-content">
-                        <h3>5GB/month</h3>
+                        <h3>{convertMegabytes(studio.usage.storage.quota)}</h3>
                         <p>Free Storage</p>
                     </div>
                     <div className="action">
@@ -71,7 +73,7 @@ function Storage() {
       <section className="breakdown storage">
         <div className="storage-class cold">
 
-            <p className='storage-class-label'>Primary Storage <b>5GB</b></p> 
+            <p className='storage-class-label'>Primary Storage <b>{convertMegabytes(studio.usage.storage.quota)}</b></p> 
             <div className="bar">
                 <div className="photos"></div>
                 <div className="videos"></div>
@@ -97,7 +99,7 @@ function Storage() {
             </div>
         </div>
         <div className="storage-class cold">
-            <p className='storage-class-label'>+ Cold Storage <b>10GB</b></p>
+            <p className='storage-class-label'>+ Cold Storage <b>{convertMegabytes(studio.usage.storage.quota*2)}</b></p>
             <div className="bar">
                 <div className="used"></div>
                 <div className="limited access"></div>

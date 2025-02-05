@@ -3,6 +3,7 @@ import AddEventModal from '../../Modal/AddEvent'
 import AddCrewModal from '../../Modal/AddCrew';
 import CrewCard from '../../Cards/CrewCard/CrewCard';
 import { getUserByID, teams } from '../../../data/teams';
+import { getEventTimeAgo } from '../../../utils/dateUtils';
 
 function DashboardEvents({project})
 {
@@ -23,51 +24,61 @@ function DashboardEvents({project})
         <div className="heading-shoots heading-section">
           
             <h3 className='heading '>Shoots</h3>
-          {project.payments?.length>0&&<div className="new-shoot button tertiary l2 outline icon new"
+          {project.payments?.length>=0&&<div className="new-shoot button tertiary l2 outline icon new"
           onClick={ ()=>{
               openModal('createEvent')
             }
             }>New</div>}
           </div>
-        {
-          project.events && project.events.length >0 &&
-            <div className="heading-crew heading-section">
-                <h3 className='heading '>Crew</h3>
-                <div className="new-shoot button tertiary l2 outline icon new"
-                onClick={ ()=>{}}>New</div>
-            </div>
-        }
+        {/* s */}
       </div>
       
       <div className="shoot-list">
-        {/* loop events from project */}
-        {(project.events?.length >0 && project.events?.length !== undefined)
-         && project.events.map((event) => (
-          <div key={event.id} className="event-container">
+          <div  className="event-container">
             <div className="shoot">
-              <div className="time">
-                <div className="status large">
-                  <div className="signal"></div>
+        {/* loop events from project */}
+        {
+          (project.events?.length > 0 && project.events?.length !== undefined)
+            && [...project.events]
+            .sort((a, b) => new Date(a.date) - new Date(b.date))
+            .map((event) => (
+                <div key={event.id} className="time">
+                  <div className="status large">
+                    <div className="signal"></div>
+                  </div>
+                  <div className="date">
+                    <h1>{ event.date.split('-')[2] }</h1>
+                    <h5>{ new Date(event.date).toLocaleString('default', { month: 'short' })}
+                    </h5>
+                  </div>
+                  <p className="in-ago-event-days">{getEventTimeAgo(event.date)}</p>
+                  <p className='event-type-label'>{event.type}</p>   
+                  <p>{ new Date(event.date).toLocaleTimeString('default', {
+                    hour: 'numeric', // Use numeric hour (e.g., 5)
+                    minute: '2-digit', // Use two-digit minutes (e.g., 30)
+                    hour12: true, // Use 12-hour format (e.g., AM/PM)
+                  })}</p>
+                  <p className='location'>{event.location}</p>
                 </div>
-                <div className="date">
-                  <h1>{ event.date.split('-')[2] }</h1>
-                  <h5>{ new Date(event.date).toLocaleString('default', { month: 'short' })}
-                  </h5>
-                </div>
-                <p className='event-type-label'>{event.type}</p>   
-                <p>8:00AM</p>
-                <p className='location'>{event.location}</p>
-              </div>
-              <div className="details">
-                <div className="team-badges">
-                  <div className="badge"></div>
-                  <div className="badge second"></div>
-                  <div className="badge third"></div>
-                </div>
-              </div>
-              <div className="cta button secondary outline icon confirmed">Confirmed</div>
+          ))
+        }
+
+{
+          project.events.length==0 &&
+          <div className="shoot new"
+            onClick={()=>openModal('createEvent')}
+          >
+            <div className="time  ">
+                <div className="signal status"></div>
+                <div className="icon"></div>
+                <div className="button primary outline">Add Shoot</div>
+          </div>
+        </div>}
             </div>
-            <div className="crew">
+            
+          </div>
+
+          {/* <div className="crew">
               {
                 event.crews&&event.crews.map((crew) => (
                   crew.role !== 'assistant' &&
@@ -90,25 +101,9 @@ function DashboardEvents({project})
                   <p>Crew</p>
                 </div>
               </div>
-            </div>
-          </div>
-      ))
-    }
-        {
-          project.events.length==0 &&
-          <div className="event-container">
-          <div className="shoot new"
-            onClick={()=>openModal('createEvent')}
-          >
-            <div className="time">
-              <div className="status large draft">
-                <div className="signal "></div>
-                <div className="icon"></div>
-                <div className="button primary outline">New Shoot</div>
-              </div>
-            </div>
-          </div>
-        </div>}
+            </div> */}
+
+        
         
       </div>
       

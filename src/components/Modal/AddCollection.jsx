@@ -84,13 +84,15 @@ const modalRef = useModalFocus(visible.createCollection);
             <div className="control minimize"></div>
             <div className="control maximize"></div>
           </div>
-          <div className="modal-title">Create Gallery</div>
+          <div className="modal-title">Create Gallery
+            <p className='modal-subtitle'>- {project.name}'s {project.type}</p>
+          </div>
         </div>
         <div className='modal-body'>
           <div className="form-section">
             <div className="field">
               <label className="" htmlFor="">Gallery name</label>
-              <input className="" name="name" value={CollectionData.name} type="text" onChange={handleInputChange}/>
+              <input className="" name="name" value={CollectionData.name} type="text" onChange={handleInputChange} placeholder={`${project.type}, Portraits`}/>
             </div>
           </div>
         </div>

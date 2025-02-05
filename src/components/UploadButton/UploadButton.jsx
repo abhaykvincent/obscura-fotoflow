@@ -1,20 +1,21 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { selectDomain } from '../../app/slices/authSlice';
+import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 import { selectStudio, selectStudioStorageUsage } from '../../app/slices/studioSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 import { openModal } from '../../app/slices/modalSlice';
 
 import { handleUpload } from '../../utils/uploadOperations';
 import { addAllFileSizesToMB, validateFileTypes } from '../../utils/fileUtils';
+import { createNotification } from '../../app/slices/notificationSlice';
 
 function UploadButton({ isPhotosImported, setIsPhotosImported, setImageUrls, id, collectionId, setUploadLists, setUploadStatus }) {
   const dispatch = useDispatch();
   const domain = useSelector(selectDomain);
   const storageLimit = useSelector(selectStudioStorageUsage);
   const studiodata = useSelector(selectStudio);
-  console.log(studiodata)
+  const currentStudio = useSelector(selectUserStudio);
   const handleFileInputChange = useCallback(async (event) => {
     const selectedFiles = Array.from(event.target.files);
     const importFileSize = addAllFileSizesToMB(selectedFiles);
@@ -45,7 +46,30 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, setImageUrls, id,
         const galleryPIN = resp.pin
 
         setImageUrls(prevUrls => [...prevUrls, ...uploadedImages]);
-
+        
+        const dispatchNotification = () => {
+          dispatch(
+            createNotification({
+              studioId: currentStudio.domain, // Replace with the appropriate project or studio ID
+              notificationData: {
+                title: '', // Updated title
+                message: `${uploadedImages.length }new photos uploaded`, // Updated message
+                type: 'project', // Changed type to 'project'
+                actionLink: '/projects', // Updated action link to navigate to projects
+                priority: 'normal',
+                isRead: false,
+                metadata: {
+                  createdAt: new Date().toISOString(),
+                  eventType: 'project_created', // Updated event type
+                  createdBy: 'system', // Added creator's email
+                  projectName: 'Project Name', // Add the project name if available
+                  authMethod: 'google', // Optional: Include if relevant
+                },
+              },
+            })
+          );
+          };
+          dispatchNotification()
         setTimeout(() => {
           dispatch(openModal('shareGallery'))
         }, 1000);
@@ -54,6 +78,8 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, setImageUrls, id,
       } catch (error) {
         dispatch(showAlert({ type: 'error', message: 'Upload failed, please try again!' }));
       } finally {
+        
+          
         dispatch(showAlert({ type: 'success', message: 'Upload Complete' }));
         setIsPhotosImported(false);
       }

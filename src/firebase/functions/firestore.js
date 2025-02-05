@@ -175,6 +175,7 @@ export const generateReferralInFirebase = async (referralData) => {
     let finalCode = forceCode;
     
     console.log(referralData)
+
     // If no force code, generate unique code
     if (!forceCode) {
         let isUnique = false;
@@ -214,6 +215,7 @@ export const generateReferralInFirebase = async (referralData) => {
     const documentId = `${toKebabCase(referralData.name)}-${generateRandomString(4)}`;
 
     await setDoc(doc(referralsCollection, documentId), referralDoc);
+
     return referralDoc;
 };
 

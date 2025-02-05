@@ -1,0 +1,116 @@
+@import '../../style/variables';
+@import '../../style/components';
+.notification-card {
+    
+			display: grid;
+      width: auto;
+			grid-template-columns: 8px*4 auto auto;
+      align-items: center;
+			gap: 8px;
+			padding: 8px;
+      margin-left: 32px;
+			border-radius: 4px;
+      background-color: $dark-2;
+      transition-duration: 0.2s;
+      background-color: $dark-2;
+      border: 1px solid $dark-1-5;
+      transition-delay:0s;
+      opacity: 0;
+      &.unread {
+        background-color: $dark-2-5;
+        border: 1px solid $dark-1-5;
+        &.recent{
+          background-color: $dark-3;
+          border: 1px solid $dark-1;
+          border-left: 2px solid $green-accessible-dark;
+        }
+      }
+      &.recent {
+      border-left: 2px solid $green-accessible-dark;
+    }
+    
+  
+    .notification-icon {
+      font-size: 1.2rem;
+      width: 100%;
+      height: 8px*3;
+      border-radius: 50%;
+      opacity: 0;
+    animation: fadeInUp 0.4s ease-out ;
+    animation-fill-mode: forwards;
+    animation-delay: 0.1s;
+    animation-timing-function: ease-out;
+    }
+  
+    .notification-content {
+      display:flex;
+      align-items: center;
+      gap: 8px*2;
+  
+      .notification-title {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 800;
+        color: $gray4-default-light;
+				margin-bottom: 4px;
+				font-weight: 500;
+        white-space: nowrap;
+				opacity: 0;
+				animation: fadeInLeft 0.2s ease-out ;
+				animation-fill-mode: forwards;
+				animation-timing-function: ease-out;
+				animation-delay: 0.2s;
+				span{
+					color: $gray-default-dark;
+					font-weight: 400;
+					font-size: 0.8rem;
+					margin-left: 8px;
+				}
+      }
+  
+      .notification-message {
+        font-size: 0.9rem;
+        color: #666;
+        white-space: nowrap;
+      }
+  
+      
+    }
+    .notification-footer {
+      display: flex;
+      
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 0.8rem;
+      color: #999;
+      .notification-date{
+        color: $gray3-default-light;
+        white-space: nowrap;
+      }
+      .notification-action {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+    &:hover {
+      transform: translateX(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    opacity: 0;
+		animation: fadeInLeft 0.4s ease-out ;
+		animation-fill-mode: forwards;
+		animation-timing-function: ease-out;
+
+		z-index: 2;
+		@for $i from 1 through 10 {
+			&:nth-of-type(#{$i}){
+				animation-delay: 0.2s + 0.05s * $i;
+			}
+		}
+  }

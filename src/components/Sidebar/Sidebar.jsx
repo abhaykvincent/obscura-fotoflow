@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import AdminRoute from '../AdminRoute/AdminRoute';
 import { trackEvent } from '../../analytics/utils';
 import { selectStudio, selectStudioStorageUsage } from '../../app/slices/studioSlice';
+import { convertMegabytes } from '../../utils/stringUtils';
 function Sidebar() {
   
   const dispatch = useDispatch();
@@ -19,7 +20,7 @@ function Sidebar() {
   const studioName = defaultStudio?.domain ?? {domain:'guest',name:'guest'}; 
   const studio= useSelector(selectStudio)
     const storageLimit = useSelector(selectStudioStorageUsage);
-  
+    console.log(studio)
   const [storageUsage , setStorageUsage] = useState({
   })
   const toggleProfileOption = () => {
@@ -93,12 +94,6 @@ function Sidebar() {
             <div className="label">Team</div>
           </div>
         </Link> */}
-        <Link to={`/${studioName}/settings`}>
-          <div className={`menu settings ${location.pathname === `/${studioName}/settings` ? 'active' : ''}`}>
-            <div className="icon"></div>
-            <div className="label">Setting</div>
-          </div>
-        </Link>
 
         <Link to={`/${studioName}/notifications`}>
           <div className={`menu notifications  ${location.pathname === `/${studioName}/notifications` ? 'active' : ''}`}>
@@ -118,8 +113,18 @@ function Sidebar() {
             <div className="label">Subscription</div>
           </div>
         </Link>
+        <Link to={`/${studioName}/settings`}>
+          <div className={`menu settings ${location.pathname === `/${studioName}/settings` ? 'active' : ''}`}>
+            <div className="icon"></div>
+            <div className="label">Setting</div>
+          </div>
+        </Link>
 
         <div className="storage-bars">
+          <div className="plan-labels">
+            <p>Plan</p>
+            <p>Core <span className='tag free'>Free</span></p>
+          </div>
           <div className="storage-bar hot">
             <div className="storage-labels">
               <div className="icon "></div>
@@ -132,6 +137,10 @@ function Sidebar() {
               }}
             ></div>
             <div className="quota-bar"></div>
+            <div className="storage-labels used-quota-gb">
+              <p className="used-gb">{convertMegabytes(studio.usage.storage.used)} </p>
+              <p className="quota-gb">{convertMegabytes(studio.usage.storage.quota)}</p>
+            </div>
           </div>
           {/* <div className="storage-bar cold">
 
@@ -184,7 +193,6 @@ function Sidebar() {
               <div className="profile-name">{user?.displayName} 
                 {/* MArquee one after other in quere repeate */}
                 <div className="roles" direction="left" behavior="scroll" scrollamount="2" scrolldelay="2" loop="3" style={{whiteSpace: 'nowrap'}}>
-                  {user.studio?.roles[0] && <div className="role ">{user.studio?.roles[0]}</div>}
                   <div className="role">Photographer</div>
                   
                   </div>
