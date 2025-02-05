@@ -4,14 +4,16 @@ import { showAlert } from "../../app/slices/alertSlice";
 import { addProject, createSubProject } from "../../app/slices/projectsSlice";
 import { useNavigate } from "react-router";
 import { closeModalWithAnimation, selectModal } from "../../app/slices/modalSlice";
-import { selectUserStudio } from "../../app/slices/authSlice";
+import { selectUser, selectUserStudio } from "../../app/slices/authSlice";
 import { useModalFocus } from "../../hooks/modalInputFocus";
+import { createNotification } from "../../app/slices/notificationSlice";
 
 function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const visible = useSelector(selectModal);
   const currentStudio = useSelector(selectUserStudio);
+  const user = useSelector(selectUser);
 
   const onClose = () => dispatch(closeModalWithAnimation("createProject"));
 
@@ -41,7 +43,29 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
       [name]: value,
     }));
   };
-
+const dispatchNotification = (response,user) => {
+  console.log(response)
+  dispatch(
+    createNotification({
+      studioId: currentStudio.domain, // Replace with the appropriate project or studio ID
+      notificationData: {
+        title: response.payload.name, // Updated title
+        message: `A new project was successfully created `, // Updated message
+        type: 'project', // Changed type to 'project'
+        actionLink: '/projects', // Updated action link to navigate to projects
+        priority: 'normal',
+        isRead: false,
+        metadata: {
+          createdAt: new Date().toISOString(),
+          eventType: 'project_created', // Updated event type
+          createdBy: user.email, // Added creator's email
+          projectName: 'Project Name', // Add the project name if available
+          authMethod: 'google', // Optional: Include if relevant
+        },
+      },
+    })
+  );
+  };
   const handleSubmit = () => {
     const domain = currentStudio.domain;
     onClose();
@@ -64,6 +88,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
           .then((response) => {
             const { id } = response.payload;
             dispatch(showAlert({ type: "success", message: "Project created successfully!" }));
+            dispatchNotification(response,user);
             navigate(`/${domain}/project/${id}`);
           })
           .catch((error) => {

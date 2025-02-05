@@ -43,7 +43,7 @@ function AddEventModal({ project, visible, onClose}) {
 
   return (
     <div className="modal-container" ref={modalRef} >
-      <div className="modal create-event">
+      <div className="modal island create-event">
         <div className='modal-header'>
           <div className="modal-controls">
             <div className="control close" onClick={()=>onClose('createEvent')}></div>

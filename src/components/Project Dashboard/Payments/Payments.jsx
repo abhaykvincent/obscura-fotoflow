@@ -12,12 +12,13 @@ function DashboardPayments({ project }) {
   const percentage = project.budgets ? (totalPayments / project.budgets.amount) * 100 : 0
   
   return (
-    <>
-    <div className="payments">
+  <>
+    <div className="payments invoices">
       <div className="heading-shoots heading-section hjkk">
+
         <h3 className='heading hjkk'>Invoices <span>{project.payments ? project.payments.length : ''}</span></h3>
-        {project.payments?.length > 0 &&
-          
+        {
+          project.payments?.length > 0 &&
           <div className="new-shoot button tertiary l2 outline icon new"
             onClick={() => project.budgets && dispatch(openModal('addPayment'))}
           >New</div>
@@ -29,11 +30,11 @@ function DashboardPayments({ project }) {
             <div className="signal"></div>
           </div>
           <div className={`ring-chart ${!project.budgets ? 'gray' : 'green'}`}>
-            <svg width="88" height="88" viewBox="0 0 36 36" className="circular-chart">
+            <svg width="104" height="104" viewBox="0 0 36 36" className="circular-chart">
               <path className="circle-bg"
                 d="M18 2.0845
-                   a 15.9155 15.9155 0 0 1 0 31.831
-                   a 15.9155 15.9155 0 0 1 0 -31.831"
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
                 fill="none"
                 stroke="#333"
                 strokeWidth="2"
@@ -42,8 +43,8 @@ function DashboardPayments({ project }) {
                 <path className="circle"
                   strokeDasharray={`${percentage}, 100`}
                   d="M18 2.0845
-                     a 15.9155 15.9155 0 0 1 0 31.831
-                     a 15.9155 15.9155 0 0 1 0 -31.831"
+                    a 15.9155 15.9155 0 0 1 0 31.831
+                    a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="none"
                 strokeLinecap='round'
                   stroke="#4caf50"
@@ -76,15 +77,19 @@ function DashboardPayments({ project }) {
             }
           </div>
         </div>
-        {project.budgets && <div className="payments-list">
-          {
-            project.payments?.length === 0 ? (
-              <div className="no-payments">
-                <div className="button secondary outline"
-                  onClick={() => project.budgets && dispatch(openModal('addPayment'))}>Add Invoice</div>
-              </div>
-            ) : (
+        {
+          project.budgets && 
+          <div className="payments-list">
+            {
+              project.payments?.length === 0 ? (
+                /* No Payments */
+                <div className="no-payments">
+                  <div className="button secondary outline"
+                    onClick={() => project.budgets && dispatch(openModal('addPayment'))}>Add Invoice</div>
+                </div>
+              ) : (
               <>
+                {/* Payment Cards */}
                 {project.payments?.map((payment, index) => (
                   <AmountCard
                     key={index}
@@ -95,7 +100,7 @@ function DashboardPayments({ project }) {
                     status={'confirmed'}
                   />
                 ))}
-                {/* Balance */}
+                {/* Balance Card */}
                 <AmountCard
                   amount={`₹ ${(project.budgets.amount - totalPayments) / 1000} K`}
                   direction="- "
@@ -104,18 +109,20 @@ function DashboardPayments({ project }) {
                 />
                 {/* Filler Cards */}
                 {project.payments?.length < 5 && (
-                  Array(4 - project.payments.length).fill(0).map((_, index) => (
+                  Array(3 - project.payments.length).fill(0).map((_, index) => (
                     <AmountCard key={index} amount={''} direction={''} percentage={''} status={'draft'} />
                   ))
                 )}
               </>
-            )
-          }
-        </div>}
+              )
+            }
+          </div>
+        }
       </div>
+      
     </div>
     <DashboardExpances project={project} />
-    </>
+  </>
   )
 }
 

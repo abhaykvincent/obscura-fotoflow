@@ -8,7 +8,7 @@ import UserContact from './UserContact.jsx'
 import { useNavigate } from 'react-router'
 import { acceptInvitationCode, createStudio, createUser, useInvitationCode, validateInvitationCodeFromFirestore } from '../../firebase/functions/firestore.js'
 import { useDispatch, useSelector } from 'react-redux'
-import { checkAuthStatus, login, logout, selectUser, setCurrentStudio, setUser } from '../../app/slices/authSlice.js'
+import { checkAuthStatus, login, logout, selectUser, selectUserStudio, setCurrentStudio, setUser } from '../../app/slices/authSlice.js'
 import { showAlert } from '../../app/slices/alertSlice.js'
 import { signInWithPopup } from 'firebase/auth'
 import { analytics, auth, provider } from '../../firebase/app.js'
@@ -18,6 +18,7 @@ import { greetUser } from '../../utils/stringUtils.js'
 import { current } from '@reduxjs/toolkit'
 import { trackEvent } from '../../analytics/utils.js'
 import { generateReferral } from '../../app/slices/referralsSlice.js'
+import { createNotification } from '../../app/slices/notificationSlice.js'
 
 function Onboarding() {
 
@@ -26,6 +27,7 @@ function Onboarding() {
   const [searchParams] = useSearchParams();
   const ref = searchParams.get('ref') || '0000'; // Get the 'ref' parameter
   const user = useSelector(selectUser)
+    const currentStudio = useSelector(selectUserStudio);
   const [timeOfDay, setTimeOfDay] = useState({
     timeOfDay: '',
     timeGreeting: '',
@@ -173,6 +175,31 @@ function Onboarding() {
               studio_name: response.name,
               studio_domain: response.domain
             })
+            const dispatchNotification = (response) => {
+            dispatch(
+              createNotification({
+                studioId: response.studio.domain, // Replace with the appropriate project or studio ID
+                notificationData: {
+                  title: response.studio.name, // Updated title
+                  message: `Studio Created`, // Updated message
+                  type: 'project', // Changed type to 'project'
+                  actionLink: '/projects', // Updated action link to navigate to projects
+                  priority: 'normal',
+                  isRead: false,
+                  metadata: {
+                    createdAt: new Date().toISOString(),
+                    eventType: 'studio_created', // Updated event type
+                    createdBy: 'system', // Added creator's email
+                    projectName: 'Project Name', // Add the project name if available
+                    authMethod: 'google', // Optional: Include if relevant
+                  },
+                },
+              })
+            );
+            };
+
+            dispatchNotification(response)
+
             dispatch(showAlert({type:'success', message:`New Studio created!`}));
             dispatch(login(user))
             navigate(`/${response.domain}`);
@@ -230,9 +257,9 @@ function Onboarding() {
       validateForm()
   },[user, createAccountData])
   useEffect(() => {
-
     dispatch(generateReferral({
-      campainName: "Abhay",
+      name: "Abhay",
+      campainName: "Admin",
       campainPlatform: "whatsapp",
       type: "referral",
       email: "",

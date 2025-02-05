@@ -81,7 +81,7 @@ function AddExpenseModal({ project }) {
 
   return (
     <div className="modal-container"  ref={modalRef}>
-      <div className="modal add-payment">
+      <div className="modal island add-payment">
         <div className='modal-header'>
           <div className="modal-controls">
             <div className="control close" onClick={onClose}></div>

@@ -1294,7 +1294,7 @@ body{
     z-index: 20;
     &.closingModal{
       .modal{
-        transform: translate(-50%, calc(-50% - 60px))  scale(1);
+        transform: translate(-50%, calc(-40% - 60px))  scale(1);
         animation-name: modal-out;
         animation-duration: 0.3s;
         animation-fill-mode: forwards;
@@ -1332,8 +1332,9 @@ body{
       height: auto;
       max-height: 90vh;
       transform: translate(-50%,calc(-50% - $header-height)) scale(1);
-      animation: none;
       opacity: 1;
+      animation-name: modal-in-island;
+      animation-duration: 0.1s;
       background-color: rgba(22, 22, 22, 0.8);
       .modal-body{
         margin-top: 8px*2;
@@ -1405,13 +1406,21 @@ body{
         }
       }
       .modal-title{
+        display: flex;
+        gap: 8px*1;
+        justify-content: center;
         line-height: 1.9rem;
         font-size: 1.1rem;
+        .modal-subtitle{
+          color: $gray2-default-dark;
+          font-weight: 400;
+          line-height: 2.1rem;
+          font-size: 0.8rem;
+        }
       }
     }
     .form-section{
       margin:0  8px*4 ;
-      display: grid;
       padding-bottom: 8px*4;
       gap: 8px;
       &.contact{
@@ -1445,6 +1454,7 @@ body{
             color: $green-default-light;
             opacity: 0;
             font-size: 0.8rem;
+            margin-top:2px;
         $delay: 0.5s;
         animation: fadeInLeft 0.1s ease-out 0.4s;
         animation-fill-mode: forwards;
@@ -1467,7 +1477,6 @@ body{
           font-size: 1.2rem;
         }
         &.ai-suggestion{
-          margin-bottom: 8px*3;
           label{
             opacity:0
           }
@@ -1542,7 +1551,7 @@ body{
         
       }
       .error{
-        margin-top: -8px;
+        margin-top: 8px;
         margin-bottom: 8px;
         margin-left: 8px*15;
         font-size: 0.8rem;
@@ -1808,11 +1817,21 @@ body{
       display: grid;
     }
     .ai-suggestions{
+      width: 100%;
+      overflow-x:scroll;
       display: flex;
-      flex-wrap: wrap;
       gap: 6px;
       justify-items: flex-start;
-      margin-top: -4px;
+      padding-bottom: 8px*2;
+      cursor: ew-resize;
+      // hode scroll bar
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1; /* Color of the track */
+        border-radius: 10px; /* Rounded corners for the track */
+      }
       label{
         color: $green-default-light;
           float: right;
@@ -1960,7 +1979,8 @@ body{
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.3);
     z-index: 19;
-    backdrop-filter: blur(16px);
+    backdrop-filter: blur(4px);
+    transition-duration: 0.4s;
   }
   .no-items{
     padding: 8px*4;
@@ -2045,6 +2065,25 @@ body{
     margin-left: 8px*5;
     transform: translate(-55%, calc(-50% - 60px))  scale(0);
     opacity: 0;
+  }
+}
+@keyframes modal-in-island {
+  0% {
+    transform: translate(-50%,calc(-40% - $header-height)) scale(0.8);
+    opacity: 0;
+  }
+  55% {
+    transform: translate(-50%,calc(-50% - $header-height)) scale(1);
+    opacity: 1;
+  }
+  60% {
+    transform:translate(-50%,calc(-50% - $header-height)) scale(1.01);
+    opacity: 1;
+  }
+  100% {
+    margin-left: 8px*0;
+    transform: translate(-50%,calc(-50% - $header-height)) scale(1);
+    opacity: 1;
   }
 }
 @keyframes modal-in-mobile {
@@ -2719,7 +2758,7 @@ body{
           .modal-backdrop{
             background: rgba(0, 0, 0, 0);
             transition-delay: 0.05s;
-            transition-duration: 0.2s;
+            transition-duration: 0.9s;
             transition-timing-function: ease-in;
             backdrop-filter: blur(0px);
           }

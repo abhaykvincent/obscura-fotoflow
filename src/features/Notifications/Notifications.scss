@@ -6,7 +6,16 @@
 	}
 	.notifications-list{
 		display: grid;
-		gap: 8px*2;
+		gap: 8px*1.5;
+		padding: 8px*2 8px*3;
+		.label{
+
+			font-size: 1rem;
+			color: #666;
+			white-space: nowrap;
+		}
+
+
 		.notification{
 			display: grid;
 			grid-template-columns: auto auto auto;

@@ -333,8 +333,27 @@
     grid-template-columns: 8px*15 auto;
         width: 90%;
         .project-cover{
+        background-size: 30%;
+        background-image: url('https://img.icons8.com/?size=100&id=843&format=png&color=FFFFFF');
+
+        }
+        .project-details{
+            align-content: center;
+            text-align: center;
+            margin: 8px*2;
+            .project-title{
+                font-size: 1.2REM;
+                font-weight: 500;
+            }
+        }
+        
+    }
+    &.upload{
+    grid-template-columns: 8px*15 auto;
+        width: 90%;
+        .project-cover{
         background-size: 40%;
-        background-image: url('https://img.icons8.com/?size=100&id=11153&format=png&color=FFFFFF');
+        background-image: url('https://img.icons8.com/?size=100&id=RXegk50IKV5u&format=png&color=FFFFFF');
 
         }
         .project-details{

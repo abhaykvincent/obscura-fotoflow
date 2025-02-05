@@ -41,6 +41,7 @@
                 animation-timing-function: ease-out;
             }
             &.sub-message{
+                animation-delay: 0.08s;
             }
             span{
                 
@@ -155,7 +156,11 @@
     }
     .project{
         &.new{
-            animation-delay: 0.65s;
+            animation-delay: 0.15s;
+        }
+        &.upload{
+            animation-delay: 0.25s;
+            margin-left: -8px*4;
         }
 
     }

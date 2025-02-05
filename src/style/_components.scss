@@ -17,11 +17,12 @@
         transition-timing-function: ease-in;
         cursor: pointer;
     transition-duration: 0.1s;
+    transform:  scale(0.98);
     &:hover{
         opacity: 0.9;
         transition-duration: 0.1s;
         transition-timing-function: ease-out;
-        transform: translateY(-1px);
+        transform:  scale(1);
         box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2), 1px 1px 1px  rgba(0, 0, 0, 0.5);
     }
     &:active{
@@ -92,8 +93,13 @@
         &.l2{
             
         background-color: $dark-2;
-        border: 1px solid $dark-1;
-        color: $green-default-dark;
+        border: 1px solid $dark-1-5;
+        color: $gray2-default-light;
+        margin-bottom: 8px;
+        box-shadow: 1px 1px 1px rgba(15, 15, 15, 0.2);
+        &:before{
+            opacity: 0.4;
+        }
         }
     }
     &.warnning{
