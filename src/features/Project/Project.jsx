@@ -2,38 +2,30 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
+// Redux
+import { deleteProject, selectProjects, selectProjectsStatus, updateProjectName } from '../../app/slices/projectsSlice';
+import { closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
+import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
+import { showAlert } from '../../app/slices/alertSlice';
+
+//  Firebase
+import { updateProjectLastOpenedInFirestore, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
+
 // Components
-import DashboardEvents from '../../components/Project Dashboard/Events/Events';
-import SidePanel from '../../components/Project/SidePanel/SidePanel';
+import DashboardProjects from '../../components/Project Dashboard/Projects/Projects';
 import Refresh from '../../components/Refresh/Refresh';
+import { ProjectCover } from '../../components/ProjectPageCover/ProjectPageCover';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 
 // Modals
-import DashboardPayments from '../../components/Project Dashboard/Payments/Payments';
-import DashboardExpances from '../../components/Project Dashboard/Expances/Expances';
-import DashboardProjects from '../../components/Project Dashboard/Projects/Projects';
+import ShareGallery from '../../components/Modal/ShareGallery';
+import AddCollectionModal from '../../components/Modal/AddCollection';
+import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 import AddExpenseModal from '../../components/Modal/AddExpense';
 import AddPaymentModal from '../../components/Modal/AddPayment';
 import AddBudgetModal from '../../components/Modal/AddBudget';
-import AddCollectionModal from '../../components/Modal/AddCollection';
-import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
-
-// Redux
-import { deleteProject, selectProjects, selectProjectsStatus, updateProjectName } from '../../app/slices/projectsSlice';
-import { closeModal, closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
-import { showAlert } from '../../app/slices/alertSlice';
-import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 
 import './Project.scss';
-import { DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger, } from '@radix-ui/react-dropdown-menu';
-import ShareGallery from '../../components/Modal/ShareGallery';
-import { updateProjectLastOpenedInFirestore, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
-import { ProjectCover } from '../../components/ProjectPageCover/ProjectPageCover';
-import { use } from 'react';
 
 export default function Project() {
   const { id } = useParams();
@@ -254,3 +246,5 @@ export default function Project() {
     </>
   );
 }
+
+// --> 258 -->
