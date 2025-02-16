@@ -29,6 +29,7 @@ const CollectionsPanel = ({ project, collectionId}) => {
                         ? `url("${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29')}")` 
                         : 'url(https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333)',
                       backgroundSize: collection?.galleryCover ? 'cover' : '40%',
+                      backgroundPosition: collection?.galleryCover ? 'center' : '40%',
                     }}
                     
                     >
@@ -61,8 +62,8 @@ const CollectionsPanel = ({ project, collectionId}) => {
                   {
                           collection?.filesCount ?
                   <div className="filesCount">
-                         {collection?.filesCount+' Photos'
-                        } 
+                         {collection?.filesCount} 
+                        <div className="icon-show image"></div>
                       </div>:''
                       }
                   

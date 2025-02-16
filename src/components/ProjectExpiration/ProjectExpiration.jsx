@@ -28,10 +28,17 @@ export default function ProjectExpiration({ createdAt }) {
   }, [createdAt]);
 
   return (
+    <>
     <div className='project-expiration'>
       {daysRemaining > 0 
         ? `Project expires in ${daysRemaining} days` 
         : 'Project has expired'}
     </div>
+    <div className='project-expiration'>
+      {daysRemaining > 0 
+        ? `Project Archives in ${daysRemaining} days` 
+        : 'Project has expired'}
+    </div>
+    </>
   );
 }

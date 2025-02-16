@@ -23,7 +23,27 @@ function ProjectCard({project}) {
                     <h4 className="project-title">{project.name}</h4>
                     <p className="project-type">{project.type}</p>
                     <div className="info-bar">
-                        <div className="">{project?.budgets?.amount &&<p className=" project-budget tag"> ₹ {project?.budgets?.amount}</p>}
+                        <div className="tags">
+                        {project?.events?.length > 0 && (
+                        <div className="event-dates">
+                            {project.events.slice(0, 2).map((event, index) => (
+                            event?.date && (
+                                <p key={index} className="project-dates tag">
+                                {new Date(event.date).toLocaleString('default', {
+                                    day: 'numeric',
+                                    month: 'short',
+                                })}
+                                </p>
+                            )
+                            ))}
+                            {project.events.length > 2 && (
+                            <p className="project-dates tag extra"> 
+                                 +{project.events.length - 2}
+                            </p>
+                            )}
+                        </div>
+                        )}
+                        {project?.budgets?.amount &&<p className=" project-budget tag"> ₹ {project?.budgets?.amount}</p>}
                         </div>
                        {/*  open in Lightroom  */}
                        <div className={`button lr mini ${project.status==="selected"?'':'disabled'}`}>Lr</div>

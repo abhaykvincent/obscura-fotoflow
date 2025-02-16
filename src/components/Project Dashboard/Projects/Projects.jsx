@@ -86,7 +86,7 @@ function DashboardProjects({project}){
         <CollectionsPanel {...{project,collectionId:project.collections[0]?.id}}/>
         <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
           <DashboardEvents project={project} />
-          <div className={`financials-overview ${project.payments.length > 0 ? 'has-payments' : ''}`}>
+          <div className={`section financials-overview ${project.payments.length > 0 ? 'has-payments' : ''}`}>
             <DashboardPayments project={project} />
           </div>
         </div>

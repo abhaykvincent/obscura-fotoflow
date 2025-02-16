@@ -21,7 +21,23 @@
     }, []);
     const today = new Date();
     const bufferDate = new Date(today.getTime() + buffer * 24 * 60 * 60 * 1000);
-    console.log(shoots)
-    return shoots.filter(shoot => new Date(shoot.date) >= bufferDate);
 
+    let  bufferedShoots = shoots.filter(shoot => {
+      console.log(new Date(shoot.date).toLocaleDateString(), bufferDate.toLocaleDateString())
+      console.log(new Date(shoot.date) <= bufferDate)
+      return new Date(shoot.date) <= bufferDate && new Date(shoot.date) >= today
+  })
+    console.log(bufferedShoots)
+    return bufferedShoots
+
+  };
+
+  // find project from event Id 
+  // event id is in a project's event array
+  export const getProjectsByEventId = (projects, eventId) => {
+    return projects.filter(project =>
+      project.events && project.events.some(event => {
+        return event.id === eventId
+      })
+    );
   };

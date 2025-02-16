@@ -12,7 +12,7 @@ const UserContact = ({ active, next,previous,createAccountData, updateAccountDat
   const [contactNumber, setContactNumber] = useState('');
   const [inputMessage, setInputMessage] = useState({}); // State to track validation error messages
 
-  const [privacyPolicyAgreed, setPrivacyPolicyAgreed] = useState(false);
+  const [privacyPolicyAgreed, setPrivacyPolicyAgreed] = useState(true);
   const agreePolicy = () => {
     setPrivacyPolicyAgreed(true);
   };
@@ -98,7 +98,7 @@ const UserContact = ({ active, next,previous,createAccountData, updateAccountDat
             id="contactNumber"
             value={contactNumber}
             onChange={handleContactNumberChange}
-            placeholder='+91 0000 000000'
+            placeholder='0000 000000'
             required
           />
           {inputMessage.message && <p className={`message ${inputMessage.type} ${inputMessage.value}`}>{inputMessage.message}</p>} {/* Render error message */}

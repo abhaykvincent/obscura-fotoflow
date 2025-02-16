@@ -2,15 +2,40 @@
 
     
     .create-studio{
-        opacity: 0.4;    
+        opacity: 0.4; 
+        transform: scale(0.95);
+        transition-duration: 0.1s;   
         .name-label{
             color: $dark-0;
         }        
         &.active{
                 opacity: 1; 
+                transform: scale(1);
+                transition-duration: 0.2s;
+                transition-delay: 1s;
+                transition-timing-function: ease-out;
                 .name-label{
                     color: $gray3-accessible-light;
                 }  
+                .form-group{
+                    display: grid;
+                    justify-items: start;
+                    margin-bottom: 8px*18;
+                    margin-top: 8px*0;
+                    input{
+                        border-bottom: 1px solid $gray-default-dark;
+                        transition-delay: 0.5s;
+                        width: 37rem;
+                        transition-duration: 0.3s;
+                        transition-timing-function: ease-out;
+                        &::placeholder{
+                            color: $gray4-default-dark;
+                        transition-delay: 0.4s;
+                        transition-duration: 0.4s;
+                        transition-timing-function: ease-out;
+                        }
+                }
+            }
             }
         
         

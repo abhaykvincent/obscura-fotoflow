@@ -281,7 +281,7 @@ function Onboarding() {
     <>
     <main className="onboarding-container">
       <div className="logo"></div>
-      <div className="user-authentication">
+      <div className={`user-authentication ${currentScreen==='user-contact' || user?.email ? 'user-contact-screen' : ''}`}>
         
         {
           invitationReferral?.name ?
@@ -295,17 +295,16 @@ function Onboarding() {
             </>
             : <p></p>
         }
-      
 
-      {
+        {
+          !user?.email && invitationReferral  &&
+          <>
+          <h3 className='continue-with'>Continue with</h3>
+          <div className={`button primary google-login-button ${errors.email && 'error-shake'}`}  onClick={handleGoogleSignIn}>Google <div className="google-logo"></div></div>
+          </>
+        }
 
-        !user?.email && invitationReferral  &&
-        <>
-        <h3 className='continue-with'>Continue with</h3>
-        <div className={`button primary google-login-button ${errors.email && 'error-shake'}`}  onClick={handleGoogleSignIn}>Google <div className="google-logo"></div></div>
-        </>
-      }
-      {
+        {
           !invitationReferral && 
           <div className='activate-fotoflow-whatsapp'>
             <p>Referal code is not active. You need to</p>
@@ -315,37 +314,39 @@ function Onboarding() {
             
           </div> 
         }
-      {
-        user?.email &&
-        <div className={`logged-user 
-        ${currentScreen!=='create-studio' ? 'minimize-gmail-user' : ''}
-        ${!invitationReferral && 'unavaillable-referral-code'}
+
+        {
+          user?.email &&
+          <div className={`logged-user 
+          ${currentScreen!=='create-studio' ? 'minimize-gmail-user' : ''}
+          ${!invitationReferral && 'unavaillable-referral-code'}
+          
+          `}>
+            <div className='user-image'
+                style={
+                  user?.photoURL ? {backgroundImage: `url(${user.photoURL})`} : {}
+                }
+              >
+              </div>
+            <div className="logged-user-info">
+              
+            <span> {user.email}</span></div>
+            <div className="logout-button"
+              onClick={()=>{
+                dispatch(logout())
+              }}
+            >Logout</div>
+          </div>
+        }
         
-        `}>
-          <div className='user-image'
-              style={
-                user?.photoURL ? {backgroundImage: `url(${user.photoURL})`} : {}
-              }
-            >
-            </div>
-          <div className="logged-user-info">
-            
-          <span> {user.email}</span></div>
-          <div className="logout-button"
-            onClick={()=>{
-              dispatch(logout())
-            }}
-          >Logout</div>
-        </div>
-      }
-      {
-        errors.email && !user?.email &&
-        <div className="error-container">
-          {
-            errors.email
-          }
-        </div>
-      }
+        {
+          errors.email && !user?.email &&
+          <div className="error-container">
+            {
+              errors.email
+            }
+          </div>
+        }
         
       </div>
       <div className={`form-wrapper

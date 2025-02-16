@@ -112,7 +112,7 @@
         min-height: 8px*12;
         width: 8px*15;
         border-radius: 8px;
-        border: 1px solid $gray3-accessible-dark;
+        border: 1px solid $gray5-accessible-dark;
         border-top: 1px solid $gray3-accessible-dark;
         border-left: 1px solid $gray3-accessible-dark;
         background-color: $dark-3;
@@ -153,10 +153,13 @@
                 grid-template-columns: auto auto;
                 justify-content: space-between;
                 align-items: center;
+                margin-top: 4px;
+                margin-left: -4px;
+                opacity: 0.7;
                 .lr.button.mini{
                     height: 8px*3;
                     line-height: 8px*2.5;
-                    padding: 0px 8px;
+                    padding: 1px 4px;
                     margin-right: -8px;
                         background-color: #001b30;
                         color: #2fa3f7;
@@ -171,17 +174,47 @@
                       }
                 }
             }
-            .project-budget{
-                padding: 2px 4px;
-                margin: 0px;
-                margin-bottom: 4px;
+            .tags{
+                display: flex;
+                gap: 6px;
+                .tag{
+                    padding: 2px 4px;
+                    margin: 0px;
+                    margin-bottom: 4px;
+    
+                    font-size: 0.7rem;
+                    white-space: nowrap;
+                    display: inline-block;
+                    border-radius: 4px;
+                    
+                    color: $gray2-default-light;
+                    background-color: $dark-1;
+                    border: 1px solid $gray4-default-dark;
+                    &.project-dates{
+                        color: $gray-default-light;
+                        border: 1px solid $gray5-default-dark;
+                        background-color: $dark-1-5;
+                        &:first-child{
+                            
+                            color: $gray2-default-light;
+                            background-color: $dark-1;
+                            border: 1px solid $gray4-default-dark;
+                        }
+                    }
+                    &.extra{
+                        background-color: $dark-2;
+                        color: $gray3-default-dark;
+                        border: 1px solid $gray6-default-dark;
+                        margin-left: -6px;
+                        z-index: -1;
+                    }
+                    
+                }
+                .event-dates{
 
-                background-color: $dark-1;
-                color: $gray-default-dark;
-                font-size: 0.7rem;
-                display: inline-block;
-                border-radius: 4px;
-                border: 1px solid $dark-0;
+                    display: flex;
+                    gap: 2px;
+                }
             }
             .right{
                 .status-signal{
@@ -217,7 +250,7 @@
             .summary-left{
                 display: flex;
                 align-items: end;
-                gap: 8px;
+                gap: 8px*1.5;
                 font-weight: 500;
             }
             .summary-right{
@@ -235,26 +268,35 @@
                 opacity: 0.2;
                 .icon{
                     background-size: 90% ;
-                    opacity: 0.9 !important;
+                    opacity: 0.8 !important;
                     transition-duration: 0.1s;
                     padding: 8px*1.1;
+                    margin-right: 2px;
                 }
                 &.active{
 
-            opacity: 0.8;p{
-                font-size: 0.7rem;
-                color: $gray-accessible-dark;
-                line-height: 1rem;
-            }
+                    opacity: 0.5;p{
+                        font-size: 0.7rem;
+                        color: $gray-accessible-dark;
+                        line-height: 1rem;
+                    }
                 }
             }
             .summary-item{
                 display: flex;
                 gap: 2px;
+                cursor: default;
                 &:hover{
+                    opacity: 1;
                     .icon{
-                        transform: scale(1.4);
+                        transform: scale(1.15);
+                        opacity: 0.8 !important;
                         transition-duration: 0.2s;
+                    }
+                    p{
+                        transform: scale(1.15);
+                        transition-delay: 0.1s;
+                        transition-duration: 0.1s;
                     }
                 }
                 p{
@@ -550,6 +592,10 @@
 
                 animation: blinking 1.5s infinite ease-in-out;
             }
+        }
+    
+        &.shoots{
+
         }
 
     

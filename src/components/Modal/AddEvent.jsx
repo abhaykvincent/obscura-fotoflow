@@ -6,8 +6,9 @@ import './AddEvent.scss'
 import { selectDomain } from '../../app/slices/authSlice';
 import { trackEvent } from '../../analytics/utils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
+import { closeModal, selectModal } from '../../app/slices/modalSlice';
 
-function AddEventModal({ project, visible, onClose}) {
+function AddEventModal({ project}) {
   const dispatch = useDispatch();
   const [EventData, setEventData] = useState({
     type: process.env.NODE_ENV === 'development'?'Wedding day':'',
@@ -20,6 +21,7 @@ function AddEventModal({ project, visible, onClose}) {
   });
   const domain = useSelector(selectDomain)
 
+  const visible = useSelector(selectModal);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setEventData((prevData) => ({
@@ -33,11 +35,11 @@ function AddEventModal({ project, visible, onClose}) {
       trackEvent('event_added')
       dispatch(showAlert({type:'success', message:`Event <b>${data.payload.newEvent.type}</b> added successfully!`}));
     })
-    onClose('createEvent');
+    dispatch(closeModal('createEvent'))
   };
 
   const modalRef = useModalFocus(visible);
-  if (!visible) {
+  if (!visible.createEvent) {
     return null;
   }
 
@@ -46,7 +48,7 @@ function AddEventModal({ project, visible, onClose}) {
       <div className="modal island create-event">
         <div className='modal-header'>
           <div className="modal-controls">
-            <div className="control close" onClick={()=>onClose('createEvent')}></div>
+            <div className="control close" onClick={()=>dispatch(closeModal('createEvent'))}></div>
             <div className="control minimize disabled"></div>
             <div className="control maximize disabled"></div>
           </div>
@@ -79,11 +81,11 @@ function AddEventModal({ project, visible, onClose}) {
           </div>
         </div>
         <div className="actions">
-          <div className="button secondary" onClick={()=>{onClose('createEvent')}}>Cancel</div>
+          <div className="button secondary" onClick={()=>{dispatch(closeModal('createEvent'))}}>Cancel</div>
           <div className="button primary" onClick={handleSubmit}>Create</div>
         </div>
       </div>
-      <div className="modal-backdrop" onClick={onClose}></div>
+      <div className="modal-backdrop" onClick={()=>{dispatch(closeModal('createEvent'))}}></div>
     </div>
   );
 }

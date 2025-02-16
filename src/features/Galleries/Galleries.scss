@@ -371,6 +371,20 @@
 				padding: 6px 8px;
 			}
 		}
+		.section{
+			opacity: 0;
+
+				@for $i from 1 through 20 {
+					&:nth-child(#{$i}) {
+						$delay: 0.4s + 0.05s * ($i - 1);
+						animation: fadeInUp 0.4s ease-out $delay;
+						animation-fill-mode: forwards;
+						animation-timing-function: ease-out;
+			
+					}
+				}
+		}
+		
 	}
 	.financials-overview{
 		display: grid;
@@ -606,7 +620,7 @@
 			overflow-y: auto;
 			.gallery{
 				opacity: 0;
-
+				cursor: pointer;
 				@for $i from 1 through 20 {
 					&:nth-child(#{$i}) {
 						$delay: 0.4s + 0.05s * ($i - 1);
@@ -642,6 +656,21 @@
 			}
 
 		}
+	}
+}
+.shoots{
+	.time{
+		opacity: 0;
+
+				@for $i from 1 through 20 {
+					&:nth-child(#{$i}) {
+						$delay: 0.6s + 0.05s * ($i - 1);
+						animation: fadeInUp 0.4s ease-out $delay;
+						animation-fill-mode: forwards;
+						animation-timing-function: ease-out;
+			
+					}
+				}
 	}
 }
 .App .gallery{
@@ -712,15 +741,20 @@
 				border: 1px solid $gray4-accessible-dark;
 				background-color: $gray6-accessible-dark;
 			}
-			.filesCount{
+			.filesCount{				
+				display: flex;
+				align-items: center;
+				gap: 1px;
 				left: 4px;
 				bottom: 4px;
-				padding: 2px 2px;
 				border-radius: 3px;
 				color: $gray3-default-light;
 				font-size: 0.7rem;
-				opacity: 1;
+				opacity: 0.8;
 				text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+				.icon-show{
+					height: 8px*2.5;
+				}
 			}
 		}
 	}
@@ -735,7 +769,7 @@
 		font-weight: 600;
 		text-align: left;
 		color: $gray-default-dark;
-		background-color: rgba(0, 0, 0, 0.1);
+		background-color: rgba(0, 0, 0, 0.7);
 		backdrop-filter: blur(8px);
 		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 		box-shadow: -1px 0 2px black;
@@ -775,7 +809,6 @@
 				transition-duration: 0.1s;
 				transition-delay: 0s;
 				transition-timing-function: ease-in;
-				transform:  scale(1.05);
 				.backthumb{
 					box-shadow: 6px 4px 6px rgba(0, 0, 0, 0.4);
 					
@@ -1382,9 +1415,9 @@
 		padding-bottom: 0;
 		span{
 			font-weight: 400;
-			font-size: 1rem;
-			margin-left: 4px;
-			color: $dark-0
+			font-size: 0.9rem;
+			margin-left: 8px;
+			color: $dark-1
 		}
 	}
 	.button{
@@ -1454,7 +1487,7 @@
 }
 @media only screen and (max-width: 520px) {
 	.App .project-dashboard{
-		padding-left: 8px*2;
+		padding:0;
 		.heading{
 			&.heading-crew{
 				display: none;
@@ -1471,12 +1504,14 @@
 			grid-row: 2 / 3;
 			.headings{
 				grid-template-columns: 1fr;
+				padding-right: 8px*2;
 			}
 			.event-container{
 				display: grid;
 				.shoot{
 					width: 100%;
 					grid-template-columns: 1fr 1fr;
+					overflow-x: scroll;
 					
 				}
 				.crew{

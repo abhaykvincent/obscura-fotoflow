@@ -4,21 +4,24 @@ import AddCrewModal from '../../Modal/AddCrew';
 import CrewCard from '../../Cards/CrewCard/CrewCard';
 import { getUserByID, teams } from '../../../data/teams';
 import { getEventTimeAgo } from '../../../utils/dateUtils';
+import { useDispatch } from 'react-redux';
+import { openModal } from '../../../app/slices/modalSlice';
 
 function DashboardEvents({project})
-{
-  // Modal
-  const [modal, setModal] = useState({createEvent: false,addCrew:false})
-  // maKE ONLY modalType TRUE OTHERS false
-  const openModal = (modalType) => setModal({...modal, [modalType]: true });
-  const closeModal = (modalType) => {
-    setModal({...modal, [modalType]: false });}
+{ const dispatch = useDispatch()
   
     // Events
     const [selectedEventID, setSelectedEventID] = useState('')
 
   return (
-    <div className="shoots">
+    <><AddEventModal 
+        project={project} 
+      />
+      <AddCrewModal
+        project={project} 
+        eventId={selectedEventID}
+      />
+    <div className="section shoots">
 
       <div className="headings">
         <div className="heading-shoots heading-section">
@@ -26,7 +29,7 @@ function DashboardEvents({project})
             <h3 className='heading '>Shoots</h3>
           {project.payments?.length>=0&&<div className="new-shoot button tertiary l2 outline icon new"
           onClick={ ()=>{
-              openModal('createEvent')
+              dispatch(openModal('createEvent'))
             }
             }>New</div>}
           </div>
@@ -66,7 +69,7 @@ function DashboardEvents({project})
 {
           project.events.length==0 &&
           <div className="shoot new"
-            onClick={()=>openModal('createEvent')}
+            onClick={()=>dispatch(openModal('createEvent'))}
           >
             <div className="time  ">
                 <div className="signal status"></div>
@@ -108,19 +111,11 @@ function DashboardEvents({project})
       </div>
       
       
-      <AddEventModal 
-        project={project} 
-        visible={modal.createEvent} 
-        onClose={closeModal} 
-      />
-      <AddCrewModal
-        project={project} 
-        eventId={selectedEventID}
-        visible={modal.addCrew} 
-        onClose={closeModal}  
-      />
       
     </div>
+
+      
+      </>
   )
 }
 

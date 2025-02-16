@@ -95,12 +95,12 @@ export function getEventTimeAgo(dateString) {
   const absoluteSeconds = Math.abs(seconds);
 
   const intervals = [
-    { label: 'year', seconds: 31536000, futureLabel: 'In' },
-    { label: 'month', seconds: 2592000, futureLabel: 'In' },
-    { label: 'week', seconds: 604800, futureLabel: 'In' },
-    { label: 'day', seconds: 86400, futureLabel: 'In' },
-    { label: 'hour', seconds: 3600, futureLabel: 'In' },
-    { label: 'minute', seconds: 60, futureLabel: 'In' },
+    { label: 'year', seconds: 31536000, futureLabel: 'in' },
+    { label: 'month', seconds: 2592000, futureLabel: 'in' },
+    { label: 'week', seconds: 604800, futureLabel: 'in' },
+    { label: 'day', seconds: 86400, futureLabel: 'in' },
+    { label: 'hour', seconds: 3600, futureLabel: 'in' },
+    { label: 'minute', seconds: 60, futureLabel: 'in' },
   ];
 
   // For times less than a minute
