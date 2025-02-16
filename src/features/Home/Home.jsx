@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Home.scss';
-import { getProjectsByLastUpdated, getProjectsByStatus, getRecentProjects } from '../../utils/projectFilters';
+import { getProjectsByEventId, getProjectsByLastUpdated, getProjectsByStatus, getRecentProjects, getUpcommingShoots } from '../../utils/projectFilters';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
 import Refresh from '../../components/Refresh/Refresh';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectProjects } from '../../app/slices/projectsSlice';
-import { openModal } from '../../app/slices/modalSlice';
+import { openModal, selectModal } from '../../app/slices/modalSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import StoragePie from '../../components/StoragePie/StoragePie';
 import AddProjectModal from '../../components/Modal/AddProject';
 import {  toast } from 'sonner'
 import SearchInput from '../../components/Search/SearchInput';
 import { trackEvent } from '../../analytics/utils';
+import EventCard from '../../components/Project/ProjectCard/EventCard';
+import { getEventTimeAgo } from '../../utils/dateUtils';
 function Home() {
     const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
@@ -20,9 +22,37 @@ function Home() {
     document.title = `FotoFlow | ${defaultStudio.name}`;
     const selectionCompletedProjects = getProjectsByStatus(projects, 'selected');
     const requestPendingProjects = getProjectsByStatus(projects, 'request-pending');
-    console.log(selectionCompletedProjects)
     const [selectedProjects, setSelectedProjects] = useState([])
     const [recentProjects, setRecentProjects] = useState([])
+    const [upcommingShoots, setUpcommingShoots] = useState([])
+
+      const modals = useSelector(selectModal);
+    useEffect(() => {
+        trackEvent('studio_home_view')
+        setSelectedProjects(selectionCompletedProjects)
+        setRecentProjects(getProjectsByLastUpdated(projects, 8))
+        const unsortedUpcommingShoots = getUpcommingShoots(projects, 31)
+        const sortedUpcommingShoots = unsortedUpcommingShoots.sort((a, b) => {
+            const aDate = new Date(a.date);
+            const bDate = new Date(b.date);
+            return aDate - bDate;
+        });
+        setUpcommingShoots(sortedUpcommingShoots)
+    }, [])
+    useEffect(() => {
+        console.log(upcommingShoots)
+    }, [upcommingShoots])
+    useEffect(() => {
+        if(projects.length===0){
+            setTimeout(() => {
+                const isAnyModalOpen = Object.values(modals).some(modal => modal === true);
+
+              if (!isAnyModalOpen) {
+                dispatch(openModal('createProject'));
+              }
+              }, 3000);
+        }
+    }, [projects])
     useEffect(() => {
         trackEvent('studio_home_view')
         setSelectedProjects(selectionCompletedProjects)
@@ -55,7 +85,11 @@ function Home() {
                             <h1 className='welcome-message '>Hello, <span className='iconic-gradient'>{defaultStudio?.name} </span></h1>
                             
                         </div>
-                        <h1 className='welcome-message sub-message'>Let's manage your Snaps </h1>
+                        <h1 className='welcome-message sub-message'>{
+                        projects.length === 0 ?
+                        "Create your first project" :
+                        "Let's manage your Snaps"
+                        } </h1>
                     </div>
 
                     <div className="storage-pie-wrap" >
@@ -121,9 +155,6 @@ function Home() {
                         </>
                     ):
                     (<>
-                        <div className="section recent">
-                            <h3 className='section-heading'>Create Your First Project</h3>
-                        </div>
                         <div className="projects-list">
 
                         <div className="project new" 
@@ -134,8 +165,23 @@ function Home() {
                             ></div>
                             <div className="project-details">
                                 <div className="details-top">
-
                                     <h4 className="project-title">New Project</h4>
+                                    <p className="project-type"></p>
+                                </div>
+                            </div>
+                            <div className="project-options">
+                                
+                            </div>
+                        </div >
+                        <div className="project upload" 
+                            
+                        onClick={()=>dispatch(openModal('createProject'))}
+                        >
+                            <div className="project-cover"
+                            ></div>
+                            <div className="project-details">
+                                <div className="details-top">
+                                    <h4 className="project-title">Upload Photos</h4>
                                     <p className="project-type"></p>
                                 </div>
                             </div>
@@ -147,6 +193,41 @@ function Home() {
                     </>)
                 }
                 
+                {
+                upcommingShoots.length !== 0 && <div className="section shoots">
+                    <h3 className='section-heading'>Upcoming shoots</h3>
+                    <div className="shoots">
+                            {(upcommingShoots?.length > 0 && upcommingShoots?.length !== undefined)
+                                &&upcommingShoots
+                                .map((event) => (
+                                    <div key={event.id} className="time">
+                                        <div className="status large">
+                                            <div className="signal"></div>
+                                            </div>
+                                        <p className="in-ago-event-days">{getEventTimeAgo(event?.date)}</p>
+                                        <div className="date">
+                                            <h5>{ new Date(event?.date).toLocaleString('default', { month: 'short' })}</h5>
+                                            <h1>{ event?.date.split('-')[2] }</h1>
+                                        </div>
+
+                                        <p  className='time-number'>{ new Date(event?.date).toLocaleTimeString('default', {
+                                            hour: 'numeric', // Use numeric hour (e.g., 5)
+                                            minute: '2-digit', // Use two-digit minutes (e.g., 30)
+                                            hour12: true, // Use 12-hour format (e.g., AM/PM)
+                                        })}</p>
+                                        <p className='location'>{event?.location}</p>
+                                        
+                                        <p className='event-name-label'>{getProjectsByEventId(projects,event?.id)[0].name}</p>   
+                                        <p className='event-type-label'>{event?.type}</p>   
+                                        
+                                        
+                                    </div>
+                                ))
+                            }
+                    </div>
+                </div>
+
+                }
                 
                 <Refresh/>
             </main>

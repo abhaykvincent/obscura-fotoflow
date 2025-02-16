@@ -26,6 +26,7 @@
             width: 8px*8;
             color: $gray-accessible-dark;
             text-align: center;
+            cursor: pointer;
         }
         @for $i from 1 through 20 {
             &:nth-child(#{$i}) {
@@ -67,8 +68,9 @@
             border: 1px solid transparent;
             opacity: 0.8;
             transition-duration: 0.1s;
+            cursor: pointer;
             &:hover{
-            border: 1px solid $dark-1;
+            border: 1px solid $dark-1-5;
             background-color: $dark-2;
             opacity: 1;
             transition-duration: 0.1s;
@@ -78,16 +80,28 @@
             // when mouse is clicked
             &:active{
             background-color: $dark-2;
-            border: 1px solid $dark-0;
+            border: 1px solid $dark-1-5;
             box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
             opacity: 1;
             }
             &.active{
-            background-color: $dark-2;
-            border: 1px solid $dark-0;
             box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            animation-name: background-reveal;
+            animation-delay: 0.5s;
+            animation-duration: 0.2s;
+            animation-fill-mode: forwards;
+            @keyframes background-reveal {
+                0%{
+                    background-color: $dark-3;
+                    border: 1px solid $dark-2;
+                }
+                100%{
+                    background-color: $dark-2;
+                    border: 1px solid $dark-1;
+                }
+            }
             opacity: 1;
                 .icon{
                     opacity: 0.9;
@@ -114,16 +128,16 @@
             background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/business.png');
             }
             &.projects .icon{
-                background-size: 85%;
-            background-image: url('https://img.icons8.com/ios-filled/150/FFFFFF/business.png');
+                background-size: 100%;
+            background-image: url('https://img.icons8.com/?size=192&id=83172&format=png&color=FFFFFF');
             }
             &.portfolio .icon{
                 background-size: 100%;
             background-image: url('https://img.icons8.com/?size=100&id=123437&format=png&color=FFFFFF');
             }
             &.storage .icon{
-            background-size: 70%;
-            background-image: url('https://img.icons8.com/ios-filled/150/FFFFFF/stack.png');
+            background-size: 80%;
+            background-image: url('https://img.icons8.com/?size=192&id=E0gBz54u2nf2&format=png&color=FFFFFF');
             }
             &.notifications .icon{
             background-size: 85%;
@@ -197,11 +211,15 @@
         bottom: 8px*7;
         left: 5px;
         padding: 8px 8px;
+        padding-bottom: 8px*0;
         border-radius: 6px;
+        border: 1px solid $gray6-default-dark;
+        border-left: 1px solid $gray5-default-dark;
+        border-top: 1px solid $gray5-default-dark;
         margin-left: 0;
         margin-bottom: 8px*2;
         background: rgba(0, 0, 0, 0.8);
-        box-shadow: 0px 0px 4px 0px rgba(255, 255, 255, 0.05);
+        box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.8);
         
         .storage-bar{
             position: relative;
@@ -233,7 +251,7 @@
                     white-space: nowrap;
                     width: 100%;
                     font-size: 0.9rem;
-                    color: $gray2-default-dark;;
+                    color: $gray-default-dark;;
                     margin-bottom: 8px;
                     .bold{
                     color: $gray-default-dark;
@@ -248,19 +266,32 @@
                     text-align: right;
                     white-space: nowrap;
                 }
+                &.used-quota-gb{
+                    width :100%;
+                    height: 8px*2;
+                    margin-top: 8px;
+                    display: grid;
+                    grid-template-columns: auto auto;
+                    justify-content: space-between;
+                    p{
+                    color: $gray3-default-dark;;
+                    font-size: 0.7rem;
+                        margin: 0;
+                    }
+                }
             }
             .used-bar{
                 position: absolute;
-                height: 6px;
+                height: 4px;
                 min-width: 4px;
                 border-radius: 4px;
                 background: linear-gradient(to right, $green-accessible-dark 80%,  #70ab17);
-                box-shadow:  1px 0px 1px 0px #70ab1781,inset 0px 1px 1px 0px rgba(0, 0, 0, 0.5);
+                box-shadow:  0px 0px 3px 0px #80ca11c5, 2px 0px 0px 0px rgb(0, 0, 0);
                 z-index: 2;
             }
             .quota-bar{
                 position: absolute;
-                height: 6px;
+                height: 4px;
                 width: calc(100% );
                 border-radius: 4px;
                 background-color: #70ab1739;
@@ -294,6 +325,31 @@
             }
             &.hot{
                 margin-top: 0px;
+            }
+        }
+        .plan-labels{
+            display: grid;
+            grid-template-columns: auto auto;
+            justify-content: space-between;
+            position: absolute;
+            top: -8px*3;
+            width: calc(100% - 8px*1);
+            font-size: 0.8rem;
+            p{
+                color: $gray3-default-dark;
+                font-size: 0.9rem;
+            }
+            .tag{
+                margin-left: 2px;
+                padding: 0px 4px;
+                border-radius: 4px;
+                font-size: 0.8rem;
+                opacity: 0.6;
+                &.free{
+                    color: $green-accessible-dark;
+                    border: 1px solid $green-dark-accessible-light;
+
+                }
             }
         }
     }

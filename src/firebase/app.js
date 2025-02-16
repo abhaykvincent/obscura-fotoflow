@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getAnalytics, isSupported, logEvent } from "firebase/analytics";
+import { getVertexAI, getGenerativeModel } from "firebase/vertexai-preview";
 import { getAuth, connectAuthEmulator, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 // Enable Firebase debug mode
@@ -45,7 +46,7 @@ if (process.env.NODE_ENV === 'development') {
   }; */
 
 // Obscura
-const firebaseConfig = {
+/* const firebaseConfig = {
     apiKey: "AIzaSyATMISVaGPMkJANWrzgmOGqgMGHprnrT04",
     authDomain: "obscura-fotoflow.firebaseapp.com",
     projectId: "obscura-fotoflow",
@@ -53,9 +54,9 @@ const firebaseConfig = {
     messagingSenderId: "541778693405",
     appId: "1:541778693405:web:030ac1bcc8e072ea94e5f4",
     measurementId: "G-3P0M36DPY2"
-};
+}; */
 
-/* const firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyCZ1dnvYYzVH-bViQGBFP1WgV5MVsTqakk",
     authDomain: "fotoflow-studio.firebaseapp.com",
     projectId: "fotoflow-studio",
@@ -63,7 +64,7 @@ const firebaseConfig = {
     messagingSenderId: "570189860599",
     appId: "1:570189860599:web:878ed45bd396cdebf24df2",
     measurementId: "G-FHQSX1KPWQ"
-  }; */
+  };
   
 
 const app = initializeApp(firebaseConfig);
@@ -72,7 +73,9 @@ const storage = getStorage(app);
 const db = getFirestore(app);
 const auth = getAuth(app);
 let analytics
+const vertexAI = getVertexAI(app);
 
+const model = getGenerativeModel(vertexAI, { model: "gemini-2.0-flash" });
 
 if (process.env.NODE_ENV === 'development') {
     const EMULATOR_HOST = process.env.REACT_APP_EMULATOR_HOST;
@@ -95,4 +98,4 @@ else {
 const provider = new GoogleAuthProvider();
 
 // Export Firebase services
-export { storage, db, auth, provider, analytics, signInWithPopup };
+export { storage, db, auth, provider, analytics,model, signInWithPopup };

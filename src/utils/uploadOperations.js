@@ -19,6 +19,7 @@ import { set } from "date-fns";
 // Image Compression
 const compressImages = async (files, maxWidthOrHeight) => {
     const options = {
+        maxSizeMB: 1,
         maxWidthOrHeight,
         useWebWorker: true,
     };
@@ -166,7 +167,7 @@ const sliceUpload = async (domain,slice, id, collectionId,setUploadLists) => {
 
     try {
         const [compressedFiles, compressedThumbnailFiles] = await Promise.all([
-            compressImages([...slice], 980), // Pass a copy for full-sized images
+            compressImages([...slice], 1920), // Pass a copy for compressed images
             compressImages([...slice], 480) // Pass a copy for thumbnails
         ]);
 

@@ -13,21 +13,6 @@ function AdminPanel() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     // react url page name                 <Route path="/admin/:page" element={<AdminPanel />} />
-      const [referralData, setReferralData] = useState({
-          campainName: "",
-          campainPlatform: "whatsapp",
-          type: "referral",
-          email: "",
-          phoneNumber: "",
-          code: ['2744'],
-          status: "active",
-          quota: 3,
-          used: 0,
-          validity: 30,
-          createdAt: new Date().toISOString(),
-        });
-      dispatch(generateReferral(referralData ))
-        debugger
     const page = useParams().page;
     const [studios, setStudios] = useState([]);
     const [users, setUsers] = useState([]);
@@ -169,6 +154,7 @@ function AdminPanel() {
                 </div>
             </div>
 
+            {/* Tabs */}
             <div className="tabs">
                 <button
                     className={`tab-button icon user ${selectedTab === 'users' ? 'active' : ''}`}
@@ -202,7 +188,8 @@ function AdminPanel() {
                 >Subscriptions</button> */}
             </div>
 
-            {selectedTab === 'users' && (
+            {/* Tab content */}
+            { selectedTab === 'users' && (
                 <section className="users-list">
                     <div className="user-card table-header">
                             <p>NAME</p>
@@ -221,7 +208,7 @@ function AdminPanel() {
                     ))}
                 </section>
             )}
-            {selectedTab === 'studios' && (
+            { selectedTab === 'studios' && (
                 <section className="studios-list">
                     <div className="studio-card table-header">
                         <p>NAME</p>
@@ -239,8 +226,7 @@ function AdminPanel() {
                     ))}
                 </section>
             )}
-            {
-                selectedTab === 'referal-codes' && (
+            { selectedTab === 'referal-codes' && (
                     <section className="referal-codes-list">
                         <div className="actions">
                             <div className="button primary  icon referal"
@@ -289,10 +275,8 @@ function AdminPanel() {
                     }
                         {/* Add more support tickets here */}
                     </section>
-                )
-            }
-            {
-                selectedTab === 'ai-ticket' && (
+            )}
+            { selectedTab === 'ai-ticket' && (
                     <section className="support-list">
                         <div className="support-card">
                             <p>#FAI1001</p>
@@ -312,10 +296,8 @@ function AdminPanel() {
                         </div>
                         {/* Add more support tickets here */}
                     </section>
-                )
-            }
-            {
-                selectedTab === 'support' && (
+            )}
+            { selectedTab === 'support' && (
                     <section className="support-list">
                         <div className="support-card">
                             <p>#1</p>
@@ -335,8 +317,8 @@ function AdminPanel() {
                         </div>
                         {/* Add more support tickets here */}
                     </section>
-                )
-            }
+            )}
+            
             <div className="info-bar"></div>
 
         </main>

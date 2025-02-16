@@ -13,6 +13,8 @@ import { trackEvent } from '../../analytics/utils';
 import { updateProjectsStatus } from '../../app/slices/projectsSlice';
 import { Link } from 'react-router-dom';
 import { isAppleDevice } from '../../utils/generalUtils';
+import { createNotification } from '../../app/slices/notificationSlice';
+import { fetchLoginLocation } from '../../utils/locationUtils';
 
 const LoginModal = () => {
   const dispatch = useDispatch();
@@ -27,56 +29,79 @@ const LoginModal = () => {
     console.log(googleSignInResult?.user)
     }
   },[googleSignInResult])
-  useEffect(()=>{
-    
-  console.log(isAppleDevice())
-  },[])
+  const dispatchNotification = (response, deviceInfo, loginLocation) => {
+    dispatch(
+      createNotification({
+        studioId: response.payload.studio.domain,
+        notificationData: {
+          title: 'New Login Detected',
+          message: `Your account was accessed via Google  from ${deviceInfo} in ${loginLocation ? `\n ${loginLocation}` : ''}`,
+          type: 'security',
+          actionLink: '/activity-log',
+          priority: 'normal',
+          isRead: false,
+          metadata: {
+            createdAt: new Date().toISOString(),
+            eventType: 'user_login',
+            authMethod: 'google',
+          },
+        },
+      })
+    );
+  };
+
   const handleGoogleSignIn = async () => {
     try {
-        setLoading(true);
+      setLoading(true);
 
-        const result = await signInWithPopup(auth, provider);
-        setGoogleSignInResult(result) 
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        
-        // The signed-in user info.
-        const user = result.user;
-        console.log("Logged in as " + user.email);
+      const result = await signInWithPopup(auth, provider);
+      setGoogleSignInResult(result);
 
-        trackEvent('login',{method:'Google'})
-        
-        const studiosResponse = await fetchStudiosOfUser(user.email);
-        console.log("Studios response:", studiosResponse);
-        
-        const serializedUser = {
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            access: studiosResponse,
-        };
+      // The signed-in user info.
+      const user = result.user;
+      console.log('Logged in as ' + user.email);
 
-        const response=  await dispatch(login(serializedUser));
-        console.log("Login response:", response);
+      trackEvent('login', { method: 'Google' });
 
-        if(response.payload==='no-studio-found'){
-          
-          dispatch(updateProjectsStatus('login'))
-          navigate('/onboarding');
-        }
-        else{
-          navigate(`/${response.payload.studio.domain}`);
-        }
+      const studiosResponse = await fetchStudiosOfUser(user.email);
+      console.log('Studios response:', studiosResponse);
+
+      const serializedUser = {
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        access: studiosResponse,
+      };
+
+      const response = await dispatch(login(serializedUser));
+      const deviceInfo = navigator.userAgentData.platform;
+
+      // Fetch login location
+      const loginLocation = await fetchLoginLocation();
+
+      console.log('Login response:', response);
+
+      if (response.payload === 'no-studio-found') {
+        dispatch(updateProjectsStatus('login'));
+        navigate('/onboarding');
+
+        window.location.reload();
+      } else {
+        // Dispatch notification
+        dispatchNotification(response, deviceInfo, loginLocation);
+  
+        navigate(`/${response.payload.studio.domain}`);
+      }
     } catch (error) {
-        console.log("Error during sign-in:", error);
-        
-        const credential = GoogleAuthProvider.credentialFromError(error);
+      console.log('Error during sign-in:', error);
+      const credential = GoogleAuthProvider.credentialFromError(error);
+    } finally {
+      setLoading(false);
     }
-};
-const openEmailPassordLogin = () => {
-  dispatch(openModal('loginEmailPassword'))
-}
+  };
+  const openEmailPassordLogin = () => {
+    dispatch(openModal('loginEmailPassword'))
+  }
 
 
   return (

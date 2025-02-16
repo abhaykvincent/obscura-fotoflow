@@ -1,9 +1,41 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import './Notifications.scss'
-import NotificationCard from '../../components/Notofications/NotificationCard'
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchNotifications, selectAllNotifications } from '../../app/slices/notificationSlice';
+import { selectDomain, setCurrentStudio } from '../../app/slices/authSlice';
+import NotificationCard from './NotificationCard';
 
-function Notifications(notifications) {
+function Notifications() {
+	const dispatch = useDispatch();
+	const studio = useSelector(selectDomain)
+	const notifications = useSelector(selectAllNotifications);
+	const [notificationsRecent, setNotificationsRecent] = React.useState([]);
+	const [notificationsOlder, setNotificationsOlder] = React.useState([]);
+
+	useEffect(() => {
+	  dispatch(fetchNotifications(studio));
+	}, [dispatch]);
+
+	useEffect(() => {
+		// Group notifications by recent (last 7 days)
+		const recentNotifications = notifications.filter(n => 
+		  new Date(n.metadata.createdAt) > Date.now() - 7 * 24 * 60 * 60 * 1000
+		);
+	  
+		const olderNotifications = notifications.filter(n => 
+		  new Date(n.metadata.createdAt) <= Date.now() - 7 * 24 * 60 * 60 * 1000
+		);
+	  
+		console.log('Recent Notifications:', recentNotifications);
+		console.log('Older Notifications:', olderNotifications);
+
+		setNotificationsRecent(recentNotifications);
+		setNotificationsOlder(olderNotifications);
+	  }, [notifications]);
+	
+  
+	
   return (
 	<div className="notifications-page">
 		<div className="project-info notifications-page-info">
@@ -18,27 +50,23 @@ function Notifications(notifications) {
       	</div>
 		<main>
 			<div className="notifications-list">
-				{/* loop 10 times */}
-				{
-					Array.from({length: 4}).map((_,i)=>{
-					return (
-						<NotificationCard key={i} title="Lorem ipsum dolor sit amet consectetur." 
-						context="Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur iure quis omnis." 
-						i={i}
-						recent={true}
-						/>
-					)})
-				}
-				{
-					Array.from({length: 6}).map((_,i)=>{
-					return (
-						<NotificationCard key={i} title="Lorem ipsum dolor sit amet consectetur." 
-						context="Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur iure quis omnis." 
-						i={i+9}
-						recent={false}
-						/>
-					)})
-				}
+				<label  className="label" htmlFor="">{`${notificationsRecent.length } new notifications`}</label>
+				{notificationsRecent.map(notification => (
+				<NotificationCard
+					key={notification.id}
+					recent={true}
+					{...notification}
+				/>
+				))}
+				<label  className="label" htmlFor="">{`Last week`}</label>
+
+				{notificationsOlder.map(notification => (
+				<NotificationCard
+					key={notification.id}
+					recent={false}
+					{...notification}
+				/>
+				))}
 			</div>
 		</main>
 		

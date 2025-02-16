@@ -37,7 +37,7 @@ export const initialPlans = [
     defaultStorage: 1000,
     defaultPlan: 0,
     coreFeatures: ['Website', 'Portfolio','Bookings'],
-    features: [ 'Unlimited Galleries','1 Million Photos','+Everything in Hobbiest plan'],
+    features: [ 'Unlimited Galleries','1 Million Photos','+Everything in Freelancer plan'],
     extraFeatures: { AI: 'Beta',},
   },,
   {
@@ -49,7 +49,7 @@ export const initialPlans = [
     defaultStorage: 5000,
     defaultPlan: 0,
     coreFeatures: [ 'Multi-studio','Custom Domain','Addon Storage'],
-    features: [ 'Unlimited Bandwidth','Original File Size','+Everything in Freelancer plan'],
+    features: [ 'Unlimited Bandwidth','Original File Size','+Everything in Studio plan'],
     extraFeatures: { AI: 'Beta',},
   },
   /* {

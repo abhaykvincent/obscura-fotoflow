@@ -68,22 +68,23 @@ export default function Galleries({}) {
     }  
     
 
-  // Determine the collectionId to use
-  const defaultCollectionId = projectTemp?.collections && (projectTemp.collections.length > 0 ? projectTemp.collections[0].id : '');
+    // Determine the collectionId to use
+    const defaultCollectionId = projectTemp?.collections && (projectTemp.collections.length > 0 ? projectTemp.collections[0].id : '');
 
-  setTargetCollectionId(collectionId || defaultCollectionId)
-  setCollection(findCollectionById(projectTemp, collectionId || defaultCollectionId))
- // If the collection is not found, redirect to the project page and return
- if (defaultCollectionId==='Collection not found' && defaultCollectionId!=='') {
-  setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}`);},100)
-  return;
-}
-if(!collectionId&&defaultCollectionId!==''){
-  setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}/${targetCollectionId}`);},100)
-  return
-}
-  document.title = `${projectTemp.name}'s ${projectTemp.type } Gallery`
-}, [projects, id, collectionId, navigate]);
+    setTargetCollectionId(collectionId || defaultCollectionId)
+    setCollection(findCollectionById(projectTemp, collectionId || defaultCollectionId))
+    // If the collection is not found, redirect to the project page and return
+    if (defaultCollectionId==='Collection not found' && defaultCollectionId!=='') {
+      setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}`);},100)
+      return;
+    }
+    if(!collectionId&&defaultCollectionId!==''){
+      setTimeout(()=>{navigate(`/${defaultStudio.domain}/gallery/${id}/${targetCollectionId}`);},100)
+      return
+    }
+      document.title = `${projectTemp.name}'s ${projectTemp.type } Gallery`
+    }, [projects, id, collectionId, navigate]);
+
 
   return (
   <>

@@ -59,7 +59,7 @@ function AddCrewModal({ project,eventId }) {
 
   return (
     <div className="modal-container">
-      <div className="modal add-crew">
+      <div className="modal island add-crew">
         <div className='modal-header'>
           <div className="modal-controls">
             <div className="control close" onClick={()=>onClose('addCrew')}></div>

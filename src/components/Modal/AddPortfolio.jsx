@@ -99,7 +99,7 @@ function AddPortfolioModal() {
         ref={modalRef} 
     
     >
-        <div className="modal create-project">
+        <div className="modal island create-project">
             <div className='modal-header'>
                 <div className="modal-controls">
                     <div className="control close" onClick={onClose}></div>

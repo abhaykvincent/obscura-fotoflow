@@ -9,6 +9,7 @@ import teamsReducer from './slices/teamsSlice'
 import shortcutsReducer from './slices/shortcutSlice'
 import searchReducer from './slices/searchSlice'
 import referralsReducer from './slices/referralsSlice'
+import notificationReducer from './slices/notificationSlice'
 
 export const store = configureStore({
   reducer: {
@@ -22,5 +23,6 @@ export const store = configureStore({
     referrals: referralsReducer,
     teams: teamsReducer,
     shortcuts: shortcutsReducer,
+    notifications: notificationReducer,
   },
 });

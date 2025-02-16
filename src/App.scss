@@ -17,6 +17,7 @@
   background-repeat: no-repeat;
   box-sizing: border-box;
   font-family: 'Product Sans';
+  cursor: inherit;
 }
 h1,h2{
   font-family: 'Product Sans';
@@ -99,7 +100,6 @@ body{
     border-radius: 4px;
     cursor: pointer;
     &:hover{
-      background-color: $dark-3;
     }
     .back-button{
       padding: 8px*1;
@@ -197,21 +197,36 @@ body{
         width: calc(100% + 8px*3);
         margin-left: -8px*2;
         margin-top: -8px*1;
-        padding-top: 8px*50;
+        padding-top: 8px*40;
         background-size: cover;
         border-bottom: 1px solid $dark-1;
         background-position: center;
         overflow: hidden;
-        transition-duration: 0.2s;
-        transition-delay: 0.1s;
+        transition-delay: 0.8s;
         transition-timing-function: ease-in;
         background-color: $dark-3;
         background-image: url('https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=FFFFFF');
+        background-blend-mode: normal, luminosity, luminosity;
+        animation-name: cover-subtle-pop;
+        animation-duration: 0.4s;
+        animation-fill-mode: forwards;
+        // animation delay b/w iterations
+        animation-timing-function: ease-out;
+
+        @keyframes cover-subtle-pop {
+            0%{
+              background-position: left;
+            } 
+            100%{
+              background-position: left, center, right;
+            }
+        }
+
         &.focus-button-active{
           cursor: crosshair;
         }
         &.cover-hide{
-          
+          animation: none;
           padding-top: 8px*30;
         }
         .cover-tools{
@@ -219,21 +234,13 @@ body{
           gap: 8px;
           position: absolute;
           z-index: 10;
-          bottom: 8px*0.5;
-          right: 8px*3;
+          transform: scale(0.9);
               transition-duration: 0.1s;
           .button{
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.4);
             &:hover{
-              opacity: 1;
-            }
-            @for $i from 1 through 3 {
-              &:nth-child(#{$i}) {
-              // slight transition delay increment
-              transform: translateY(8px*8);
-              opacity: 1;
-              }
+                transform: scale(1);
             }
           }
           
@@ -244,19 +251,25 @@ body{
           }
         }
         .static-tools{
+          width: calc(100% - 8px*5);
           position: absolute;
           display: flex;
           gap: 0px;
           right: auto;
           left: 8px*3;
-          bottom: 8px*0.5;
+          bottom: 8px*1.5;
           opacity: 1;
+          justify-content: space-between;
+          .bottom-right{
+            display: flex;
+          }
           .cover-info{
             display: flex;
             gap: 4px;
             padding: 8px;
             margin: 0px;
             margin-right: 0;
+            opacity: 0.6;
             p{
               color: $gray5-accessible-light;
               opacity: 0.6;
@@ -265,26 +278,31 @@ body{
               text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
               transition-duration: 0.2s;
               letter-spacing: 0.03rem;
+              margin-top: 1px;
               span{              
                 color: $gray5-accessible-light;
-                opacity: 0.75;
+                opacity: 0.5;
 
               }
             }
             &.project-expiry{
-              border: 1px solid rgba(173, 173, 173, 0.4);
-              background-color: rgba(51, 51, 51, 0.1);
-              backdrop-filter: blur(4px);
-              -webkit-backdrop-filter: blur(4px);
+                background-color: rgba(0, 0, 0, 0.8);
               border-radius: 5px;
               padding: 4px 8px;
-              padding-left: 8px*1.5;
-              box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+              padding-left: 8px*0.5;
+              &.project-archive{
+                border-radius: 5px;
+                padding: 4px 8px;
+                padding-left: 8px*0.5;
+              }
             }
           }
 
           &.top{
-
+            display: grid;
+            justify-content: end;
+            gap:2px;
+            justify-items: end;
           right: 8px*2;
           top: 8px*2;
           left: auto;
@@ -296,15 +314,16 @@ body{
           position: absolute;
           bottom: 0px;
           left: 0px;
-          height: 8px*6;
+          height: 8px*8;
           width: 100%;
           -webkit-backdrop-filter: blur(4px);
           backdrop-filter: blur(16px);
-          background-color: rgba(0, 0, 0, 0.2);
+          background-color: rgba(0, 0, 0, 0.75);
           box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5), inset 0px -1px 2px rgba(0, 0, 0, 0.8);
           border-top: 1px solid rgba(255, 255, 255, 0.05);
           border-left: none;
           border-right: none;
+          z-index: 11;
         }
         .focus-indicator{
           position: absolute;
@@ -317,21 +336,17 @@ body{
         // project-page-cover hover
         &:hover{
           .cover-tools{
+            top: 8px*1;
+            left: 8px*1;
             .button{
               opacity: 0.9;
               transition-timing-function: ease-out;
+              transform: scale(1);
+              box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.9);
               &:hover{
                 opacity: 1;
-              }
-              @for $i from 1 through 3 {
-                &:nth-child(#{$i}) {
-                // slight transition delay increment
-                transition-delay: 0s + 0.12s * $i;
-                
-                transition-duration: 0.1s;
-
-                transform: translateY(8px*0);
-                }
+                transform: scale(1.05);
+                box-shadow: 2px 3px 6px rgba(0, 0, 0, 1);
               }
             }
           }
@@ -343,14 +358,18 @@ body{
                 transition-duration: 0.3s;
                 
               }
+              .icon-show{
+                transition-duration: 0.1s;
+              }
               @for  $i from 1 through 3 {
                 &:nth-child(#{$i}) {
                   p{
 
                     transition-delay: 0.1s * $i;
                   }
-                  .icon{
+                  .icon-show{
                     opacity: 1;
+                    transition-delay: 0.08s * $i;
                   }
                 }
 
@@ -901,69 +920,7 @@ body{
     gap: 8px*1;
     animation: gallery-page-reveal 0.1s ease-out forwards;
     
-    .client{
-      display: grid;
-      grid-template-columns: auto auto auto;
-      justify-items: start;
-
-      justify-content: start;
-      justify-content: center;
-      align-items: center;
-      gap: 8px*2;
-      position: relative;
-      margin-top: 0;
-      grid-row: auto;
-      grid-column: auto;
-      &:hover{
-          h1{
-            &::after{
-              transition-duration: 0.1s;
-              transition-delay: 0s;
-              transition-timing-function: ease-in;
-              opacity: 1;
-              top: 8px;
-            }
-          }
-      }
-      
-      h1{
-        position: relative;
-        display: flex;
-        font-size: 1.5rem;
-        white-space: nowrap;
-        &::after{
-          transition-duration: 0.2s;
-          transition-delay: 0.5s;
-          content: 'Click to edit';
-          font-size: 0.8rem;
-            top: 0px;
-            color: $dark-0;
-          font-weight: 200;
-          position: absolute;
-          right: -8px*14;
-          margin-left: 8px*2;
-          padding-left: 8px*3;
-          opacity: 0;
-          background-color: $dark-3;
-          width: 8px*10;
-          height: 8px*2;
-          cursor: pointer;
-          background-image: url('https://img.icons8.com/?size=100&id=8192&format=png&color=FFFFFF');
-          background-size: auto 100%;
-          background-position: 0 50%;
-          background-repeat: no-repeat;
-        }
-      }
-      .type{
-
-        display: block;
-        color: $gray2-default-dark;
-        margin-top: 2px;
-        margin-left: 4px;
-        margin-right: 8px*2;
-        font-size: 0.9rem;
-      }
-    }
+    
     button{
 
       .icon{
@@ -1016,7 +973,6 @@ body{
         height: 100%;
         width: 8px*5;
         content: '';
-        background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%,rgba(22, 22, 22, 0.4) 50%,rgb(21, 21, 21) 100%)
       }
       &.active{
 
@@ -1037,7 +993,7 @@ body{
       }
       
       &:hover{
-        transition-duration: 0.5s;
+        transition-duration: 0.2s;
         transform: translateX(-2px);
         opacity: 1;
         color: $gray5-accessible-light;
@@ -1242,6 +1198,112 @@ body{
       }
     }
   }
+  .client{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    justify-items: start;
+
+    justify-content: start;
+    justify-content: center;
+    align-items: center;
+    gap: 8px*1;
+    position: relative;
+    margin-top: -4px;
+    grid-row: auto;
+    grid-column: auto;
+    opacity: 0;
+    transform: translateX(8px*6);
+    animation-name: reveal-client;
+    animation-duration: 0.2s;
+    animation-delay: 0.01s;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-in;
+    cursor: pointer;
+    h1{
+      //text editor cursor 
+      cursor: text;
+
+    }
+    .edit-pen{
+      opacity: 0.5;
+      width: 8px*3;
+      height: 8px*2.5;
+      background-image: url('https://img.icons8.com/?size=100&id=8192&format=png&color=FFFFFF');
+      background-size: auto 90%;
+      background-position: center;
+      background-repeat: no-repeat;
+      margin-bottom: 0px;
+    cursor: pointer;
+    transition-duration: 0.05s;
+    }
+    @keyframes reveal-client{
+      0%{
+        opacity: 0;
+        transform: translateX(8px*6);
+      }
+      100%{
+        opacity: 0.8;
+        transform: translateX(8px*0);
+        }
+    }
+    &:hover{
+      opacity: 1 !important;
+      transition-duration: 0.05s;
+      .edit-pen{
+        opacity: 0.8;
+        background-size: auto 100%;
+        transition-duration: 0.1s;
+        
+      }
+        h1{
+        }
+    }
+    &:active{
+      .edit-pen{
+
+        opacity: 1;
+        background-size: auto 95%
+        }
+    }
+    
+    h1{
+      position: relative;
+      display: flex;
+      font-size: 1.5rem;
+      white-space: nowrap;
+      &::after{
+        transition-duration: 0.2s;
+        transition-delay: 0.5s;
+        content: 'Edit';
+        font-size: 0.8rem;
+          top: 0px;
+          color: $dark-0;
+        font-weight: 200;
+        position: absolute;
+        right: -8px*14;
+        margin-left: 8px*2;
+        padding-left: 8px*3;
+        opacity: 0;
+        width: 8px*10;
+        height: 8px*2;
+        cursor: pointer;
+        background-color: black;
+        background-image: url('https://img.icons8.com/?size=100&id=8192&format=png&color=FFFFFF');
+        background-size: auto 100%;
+        background-position: 0 50%;
+        background-repeat: no-repeat;
+      }
+    }
+    .type{
+
+      display: block;
+      color: $gray2-default-dark;
+      margin-top: 6px;
+      margin-left: 4px;
+      margin-right: 8px*2;
+      font-size: 0.9rem;
+    }
+  }
   .editable-data{
     display: flex;
     gap: 8px;
@@ -1250,6 +1312,11 @@ body{
       height: 8px*4.5;
       font-size: 1.2rem;
       font-weight: 600;
+    }
+    .input-edit-actions{
+      .button{
+        margin-right: 4px;
+      }
     }
   }
   .project-info{
@@ -1294,7 +1361,7 @@ body{
     z-index: 20;
     &.closingModal{
       .modal{
-        transform: translate(-50%, calc(-50% - 60px))  scale(1);
+        transform: translate(-50%, calc(-40% - 60px))  scale(1);
         animation-name: modal-out;
         animation-duration: 0.3s;
         animation-fill-mode: forwards;
@@ -1315,7 +1382,7 @@ body{
     background-color: $dark-2;
     border-radius: $border-radius-1;
     border: 1px solid $dark-0;
-    padding-bottom: 8px*8;
+    padding-bottom: 8px*9;
     transform: translate(100%,0%) scale(0.9);
     opacity: 0;
     animation-name: modal-in;
@@ -1332,12 +1399,14 @@ body{
       height: auto;
       max-height: 90vh;
       transform: translate(-50%,calc(-50% - $header-height)) scale(1);
-      animation: none;
       opacity: 1;
-      background-color: rgba(22, 22, 22, 0.8);
+      animation-name: modal-in-island;
+      animation-duration: 0.1s;
+      background-color: rgba(12, 12, 12, 0.9);
       .modal-body{
-        margin-top: 8px*2;
         height: auto;
+        margin-bottom: 8px*4;
+        margin-top: 8px*4;
       }
     }
     &:hover{
@@ -1405,14 +1474,21 @@ body{
         }
       }
       .modal-title{
+        display: flex;
+        gap: 8px*1;
+        justify-content: center;
         line-height: 1.9rem;
         font-size: 1.1rem;
+        .modal-subtitle{
+          color: $gray2-default-dark;
+          font-weight: 400;
+          line-height: 2.1rem;
+          font-size: 0.8rem;
+        }
       }
     }
     .form-section{
       margin:0  8px*4 ;
-      display: grid;
-      padding-bottom: 8px*4;
       gap: 8px;
       &.contact{
 
@@ -1426,9 +1502,10 @@ body{
         grid-template-columns: 8px*16 8px*36;
         align-items: center;
         gap: 8px*2;
+        row-gap: 8px;
         margin: 0px;
         font-size: 0.9rem;
-        margin-top: 8px*1;
+        margin-top: 8px*2;
         /* opacity: 0;
         animation: fadeInLeft 0.15s ease-out 0.1s; */
         animation-fill-mode: forwards;
@@ -1445,6 +1522,7 @@ body{
             color: $green-default-light;
             opacity: 0;
             font-size: 0.8rem;
+            margin-top:2px;
         $delay: 0.5s;
         animation: fadeInLeft 0.1s ease-out 0.4s;
         animation-fill-mode: forwards;
@@ -1467,7 +1545,6 @@ body{
           font-size: 1.2rem;
         }
         &.ai-suggestion{
-          margin-bottom: 8px*3;
           label{
             opacity:0
           }
@@ -1491,8 +1568,9 @@ body{
       }
       .project-validity-options{
         display: flex;
-        justify-content: space-around;
+        flex-wrap: wrap;
         gap: 8px*1;
+        transition-duration: 0.4s;
         .radio-button-group{
           display: flex;
           align-items: center;
@@ -1510,6 +1588,16 @@ body{
 
             }
           }
+          &:hover{
+            color: white;
+            border: 1px solid $dark-0;
+            label{
+              display: flex;
+              cursor: pointer;
+              color: $gray4-default-light;
+              transition-duration: 0.1s;
+            }
+          }
           // hide radio buttons
           input[type="radio"] {
             display: none; 
@@ -1520,12 +1608,14 @@ body{
             transition-delay: 0.05s;
             transition-duration: 0.1s;
             label{
-              color: $gray-accessible-dark;
+              color: $gray5-accessible-light;
             }
           }
           label{
             display: flex;
             cursor: pointer;
+              transition-duration: 0.2s;
+              color: $gray-default-light;
           }
           label.free-validity{
             &::after{
@@ -1539,14 +1629,29 @@ body{
             }
           }
         }
-        
+        &.template-options{
+          width: 8px*58;
+          margin-bottom: 8px*2;
+          justify-content: center;
+          .radio-button-group{
+            padding: 8px*1.5 8px*2*1.6;
+            font-size: 1.2rem;
+          }
+        }
       }
       .error{
-        margin-top: -8px;
-        margin-bottom: 8px;
-        margin-left: 8px*15;
+        display: grid;
+        width: 100%;
+        text-align: center;
         font-size: 0.8rem;
-        color: $red-accessible-dark
+        color: $red-accessible-dark;
+        opacity: 0.5;
+        grid-column-start: 1;
+        grid-column-end: 3;
+        
+      }
+      :first-of-type .error{
+        opacity: 1;
       }
     }
     .actions{
@@ -1558,7 +1663,7 @@ body{
       border: 1px solid $dark-0;
       border-top: 1px solid $dark-1;
       border-radius: 4px;
-      padding: 8px*2 8px*4*1.618 ;
+      padding: 8px*2 8px*4 ;
       background-color: rgba(0, 0, 0, 0.01);
       backdrop-filter: blur(8px);
       box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.4);
@@ -1808,11 +1913,21 @@ body{
       display: grid;
     }
     .ai-suggestions{
+      width: 100%;
+      overflow-x:scroll;
       display: flex;
-      flex-wrap: wrap;
       gap: 6px;
       justify-items: flex-start;
-      margin-top: -4px;
+      padding-bottom: 8px*2;
+      cursor: ew-resize;
+      // hode scroll bar
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1; /* Color of the track */
+        border-radius: 10px; /* Rounded corners for the track */
+      }
       label{
         color: $green-default-light;
           float: right;
@@ -1960,7 +2075,8 @@ body{
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.3);
     z-index: 19;
-    backdrop-filter: blur(16px);
+    backdrop-filter: blur(4px);
+    transition-duration: 0.4s;
   }
   .no-items{
     padding: 8px*4;
@@ -2045,6 +2161,25 @@ body{
     margin-left: 8px*5;
     transform: translate(-55%, calc(-50% - 60px))  scale(0);
     opacity: 0;
+  }
+}
+@keyframes modal-in-island {
+  0% {
+    transform: translate(-50%,calc(-40% - $header-height)) scale(0.8);
+    opacity: 0;
+  }
+  55% {
+    transform: translate(-50%,calc(-50% - $header-height)) scale(1);
+    opacity: 1;
+  }
+  60% {
+    transform:translate(-50%,calc(-50% - $header-height)) scale(1.01);
+    opacity: 1;
+  }
+  100% {
+    margin-left: 8px*0;
+    transform: translate(-50%,calc(-50% - $header-height)) scale(1);
+    opacity: 1;
   }
 }
 @keyframes modal-in-mobile {
@@ -2173,7 +2308,6 @@ body{
     gap:8px*0;
       border-radius: 4px;
       padding: 1px;
-      margin-top: 8px;
     &:hover{
 
     }
@@ -2199,7 +2333,7 @@ body{
       background-color: $dark-2;
       transition-duration: 0.1s;
       transition-timing-function: ease-out;
-      border: 1px solid transparent;
+      border: 1px solid $dark-1;
       cursor: pointer;
       
       overflow: hidden;
@@ -2467,10 +2601,18 @@ body{
         width: calc(100vw - 8px*10);
         overflow-x: scroll;
         grid-template-columns: auto 1fr auto;
+        // hide scrollbar
+        &::-webkit-scrollbar {
+          display: none;
+        }
         .back.highlight{
           max-width: 8px*12;
           overflow: hidden;
           white-space: nowrap;
+          &::after{
+              background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%,rgba(22, 22, 22, 0.4) 50%,rgb(21, 21, 21) 100%)
+
+          }
         }
         .breadcrumbs{
           position: relative;
@@ -2687,6 +2829,10 @@ body{
         }
         .project-collection{
           margin: 0;
+          .drop-upload .drop-area{
+            min-height: 8px*30;
+            max-height: 80vh;
+          }
         .header{
           padding-bottom: 8px;
           .open-buttons{
@@ -2711,29 +2857,52 @@ body{
         z-index:41;
         &.closingModal{
           .modal{
-            transform: translate(-50%, calc(-50% - 60px))  scale(1);
-            animation-name: modal-out;
+            transform: translate(0%, calc(10%))  scale(1);
+            opacity: 0;
+            animation-name: none;
             animation-duration: 0.3s;
             animation-fill-mode: forwards;
           }
           .modal-backdrop{
             background: rgba(0, 0, 0, 0);
             transition-delay: 0.05s;
-            transition-duration: 0.2s;
+            transition-duration: 0.9s;
             transition-timing-function: ease-in;
             backdrop-filter: blur(0px);
           }
         }
+        &.share-gallery{
+          .link-pin{
+            display: grid;
+            grid-template-columns: 1fr;
+          }
+          .galleries-share-list-selection{
+            grid-template-columns: 1fr;
+          }
+          .gallery-field{
+            display: flex;
+          } 
+          .modal .form-section{
+            margin: 0 8px*2;
+            width: calc(100vw - 8px*5) !important;
+          }
+        }
       }
       .modal{
-        width: calc(100vw - 8px*1);
+        width: calc(100vw - 8px*2);
         height: calc(100vh - $header-height);
         left: 4px;
         top: $header-height;
         animation: modal-in-mobile 0.2s;
         animation-fill-mode: forwards;
       transform: translateX(-50%);
-      
+      &.island{
+        top: auto;
+        bottom: 8px*10;
+        left: 8px;
+        transform: none;
+        animation: none;
+      }
         &.loginModal{
           margin-left: 8px;
           .actions{
@@ -2755,7 +2924,7 @@ body{
           }
         }
         .form-section{
-          width: calc(100% - 8px);
+          width: calc(100% - 8px) !important;
           margin-left: 8px*1;
           margin-right: 0;
           display: grid;
@@ -2772,11 +2941,27 @@ body{
               margin-left: 8px;
               margin-bottom: 8px;
             }
+            .radio-button-group{
+              label{
+                text-align: left;
+                margin-left: 0px;
+                margin-bottom: 0px;
+              }
+
+            }
           }
           &.contact{
             .field{
               grid-template-columns:  8px*12 auto;
             }
+          }
+        }
+        .modal-header{
+          display: flex;
+          padding: 8px*1;
+          padding-left: 8px*2;
+          .modal-controls{
+            display: none;
           }
         }
         .modal-body{
@@ -2789,33 +2974,72 @@ body{
       .welcome-section .storage-pie-wrap{
         display: none;
       }
-      .list{
-        margin-top: 8px*0;
-        .gallery-list{    
-          display: flex;
-          gap: 8px*2;
-          margin-bottom: 0px;
-          padding: 8px;
-          overflow-x: scroll;
-          overflow-y: auto;
-          .gallery-name{
-          }          
-          &:after{
-            position: absolute;
-            right: 0px;
-            height: 8px*14;
-            width: 8px*3;
-            content: '';
-            background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%,rgba(15, 15, 15, 0.4) 50%,rgb(14, 14, 14) 100%)
+      .galleries{
+
+        .list{
+          margin-top: 8px*0;
+          .gallery-list{    
+            position: relative;
+            display: flex;
+            gap: 8px*2;
+            margin-bottom: 0px;
+            padding: 8px;
+            overflow-x: scroll;
+            overflow-y: auto;
+            width: calc(100vw - 8px*0);
+            overflow-x: scroll;
+            // hide scroll bar
+            &::-webkit-scrollbar {
+              display: none;
+            }
+            .gallery
+            {
+              .thumbnails .thumbnail
+              {
+                .backthumb{
+                  width: 100%;
+                }
+                &:hover {
+                  transition-timing-function: ease-out;
+                  transform: translateY(0px);
+                }
+              }
+              &.new{
+                width: 8px*20;
+                height: 8px*16;
+                position: sticky;
+                top: 8px;
+                right: -8px;
+                margin-top: 8px;
+                padding: 0;
+                box-shadow: -4px 0px 8px 2px rgba(0, 0, 0, 0.286);;
+                .thumbnails{
+
+                width: 8px*17;
+                margin-right: 2px;
+                }
+              }
+            }
+            .gallery-name{
+            }          
+            &:after{
+              position: sticky;
+              top: 8px*2;
+              right: 8px*16;
+              height: 8px*16;
+              width: 8px*3;
+              content: '';
+              background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%,rgba(15, 15, 15, 0.4) 50%,rgb(14, 14, 14) 100%)
+            }
           }
-        }
-      } 
+        } 
+      }
 
       .gallery-page{
         padding: 8px;
         .list{
         .gallery-list{
-          height: 8px*13;
+          height: 8px*18;
           margin:0;
           padding: 0 8px;
           gap: 8px*2;
@@ -2824,6 +3048,7 @@ body{
       }
       .gallery{
         width: 100%;
+        padding: 0px 8px;
         .thumbnails {
           height: 8px*12;
           width: 8px*1.62*12;
@@ -2841,7 +3066,7 @@ body{
             .thumbnail{
               .bthumb1 {
                 height: 8px*12;
-                width: 8px*1.42*12;
+                width: 100% !important;
                 .button{
                   font-size: 0.8rem;
                 }
@@ -2850,26 +3075,12 @@ body{
             }
           }
           &:hover{
-            .thumbnails {
-              height: 8px*12;
-              width: 8px*1.62*12;
-              .thumbnail{
-                .bthumb1 {
-                  height: 8px*12;
-                  width: 8px*1.42*12;
-                  .button{
-                    font-size: 0.8rem;
-                  }
-                }
-  
-              }
-            }
           }
         }
         
       }
       .project-info{
-        left: 8px*6;
+        left: 8px*5;
         padding: 8px*1.5 0px;
         padding-right: 8px;
         width: calc(100vw - 8px*6);
@@ -2886,6 +3097,10 @@ body{
           padding-left: 8px*3;
           padding-right: 8px*0;
           overflow: hidden;
+        }
+        button {
+          display: sticky;
+          right: 0px;
         }
       }
       main {
@@ -2907,6 +3122,9 @@ body{
             padding-top: 8px*40;
           }
         }
+        &.home{
+          padding: 0;
+        }
         .project-collection .photos .photo-wrap {
         width: calc(100vw - 8px*3);
         .photo{
@@ -2922,6 +3140,20 @@ body{
           justify-content: space-between;
           gap:8px*0.5;
           left: 8px*1.5;
+        }
+        .project-dashboard{
+          .tools-overview{
+            display: grid;
+            padding: 8px;
+            padding-left: 8px*2;
+            gap: 8px*3;
+            .financials-overview{
+              gap: 8px*3;
+            }
+            &.empty{
+              display: grid;
+            }
+          }
         }
         .tabs{
 

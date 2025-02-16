@@ -136,7 +136,10 @@ const CreateStudio = ({active,next,setCreateAccountData,createAccountData,update
   return (
     <>
       <div className={`screen create-studio ${user?.email && 'active'}`}>
-      {studioName.length > 3 ? <p className='section-intro small'>Studio name<span className="name-label"></span></p>:<p className='section-intro'>Let's start with Studio's name.</p>}
+      {
+      studioName.length > 3 ? 
+        <p className={`section-intro small ${user?.email && ' '}`}>Studio name<span className="name-label"></span></p>
+        :<p className={`section-intro small ${user?.email && 'highlight'}`}>Let's start with Studio's name.</p>}
       <form onSubmit={handleSubmit}>
           <div className="form-group">
             <input

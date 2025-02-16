@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -33,6 +33,7 @@ import { DropdownMenu,
 import ShareGallery from '../../components/Modal/ShareGallery';
 import { updateProjectLastOpenedInFirestore, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
 import { ProjectCover } from '../../components/ProjectPageCover/ProjectPageCover';
+import { use } from 'react';
 
 export default function Project() {
   const { id } = useParams();
@@ -43,11 +44,18 @@ export default function Project() {
   const projects = useSelector(selectProjects);
   const projectsStatus = useSelector(selectProjectsStatus);
   const domain = useSelector(selectDomain);
-const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
+  const modals = useSelector(selectModal);
+  const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
   // Delete Project Modal
   const onDeleteConfirm = () => dispatch(deleteProject({domain,projectId:id}))
 
- 
+
+  const modalsRef = useRef(modals); // Create a ref to store the latest modals state
+
+  // Update the ref whenever modals changes
+  useEffect(() => {
+    modalsRef.current = modals;
+  }, [modals]);
   const [project, setProject] = useState(null);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -88,13 +96,23 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
 
   useEffect(() => {
     if (project) {
-      console.log(project)
+      console.log(project);
       document.title = `${project.name}'s ${project.type} | ${defaultStudio.name}`;
       updateProjectLastOpenedInFirestore(domain, project.id);
       setPinText(project?.pin);
-      setProjectStatusLocal(project.status);
+
+      if (project.collections.length === 0) {
+        setTimeout(() => {
+          // Use the ref to get the latest modals state
+          const isAnyModalOpen = Object.values(modalsRef.current).some(modal => modal === true);
+          console.log(modalsRef.current);
+          if (!isAnyModalOpen) {
+            dispatch(openModal('createCollection'));
+          }
+        }, 3000);
+      }
     }
-  }, [project]);
+  }, [project, dispatch, domain, defaultStudio.name]);
   
   useEffect(() => {
       console.log(projects)
@@ -134,7 +152,7 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
       <DeleteConfirmationModal itemType="project" itemName={project.name}  onDeleteConfirm={onDeleteConfirm} />
     
         {/* Modals */}
-      <AddCollectionModal project={project} />
+        <AddCollectionModal project={project} />
         <AddPaymentModal project={project} />
         <AddExpenseModal project={project} />
         <AddBudgetModal project={project} />
@@ -152,7 +170,7 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
           <Link className="back" to={`/${defaultStudio.domain}/projects`}>Projects</Link>
         </div>
         <div className="client">
-        {isEditing ? (
+        {/* {isEditing ? (
           <div className="editable-data ">
             <input
               type="text"
@@ -168,7 +186,7 @@ const [projectStatusLocal, setProjectStatusLocal] = useState(projectsStatus);
           <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
         )}
           <div className="type">{project?.type}</div>
-          
+           */}
         </div>
         <div className="project-options options">
         {/* Project starus with select with different project state */}

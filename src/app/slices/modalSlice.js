@@ -5,6 +5,7 @@ const initialState = {
     createProject: false,
     createPortfolio: false,
     createCollection: false,
+    createEvent: false,
     shareGallery: false,
     confirmDeleteproject:false,
     confirmDeletecollection:false,

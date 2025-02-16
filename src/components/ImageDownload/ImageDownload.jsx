@@ -1,10 +1,19 @@
 // DownloadImage.jsx
 import React from 'react';
+import { trackEvent } from '../../analytics/utils';
 
 async function downloadImage(url, fileName) {
   try {
+
+    trackEvent('image_download', {
+      project_id: url
+    });
+    console.log("Fetching URL:", url); // Log the URL being fetched
     const response = await fetch(url);
-    if (!response.ok) throw new Error('Download failed!');
+    if (!response.ok) {
+      console.error("Response not OK. Status:", response.status, response.statusText);
+      throw new Error('Download failed!');
+    }
     const blob = await response.blob();
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);

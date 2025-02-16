@@ -12,24 +12,25 @@ import DashboardExpances from '../Expances/Expances';
 import DashboardEvents from '../Events/Events';
 import DashboardTabs from './DashboardTabs/DashboardTabs';
 import AddProjectModal from '../../Modal/AddProject';
+import CollectionsPanel from '../../Project/Collections/CollectionsPanel';
 
 function DashboardProjects({project}){
   const dispatch =useDispatch()
   const navigate = useNavigate();
 
   const { studioName } = useParams();
-  const [projectDashboardView, setProjectDashboardView] = useState('dashboard')
+  const [projectDashboardView, setProjectDashboardView] = useState('abstract')
   // Inside your component
   return (
     <>
      <div className="project-dashboard-header">
-      <div className="tools">
+      {/* <div className="tools">
         
       <Link to={`/${studioName}/invitation-creator/${project.id}`}>
         <div className="button secondary  icon  invitation disabled" > Invitation</div>
       </Link>
-       {/*  <div className="button secondary icon user disabled" >Client</div> */}
-      </div>
+        <div className="button secondary icon user disabled" >Client</div>
+      </div> */}
       <div className="view-cta">
 
         <div className="control-wrap">
@@ -51,7 +52,7 @@ function DashboardProjects({project}){
       projectDashboardView === 'abstract'?
       (project.collections.length === 0 ? (
       <>  
-          <div className="gallery new" 
+          <div className="gallery new empty-gallery" 
           onClick={()=>dispatch(openModal('createCollection'))}>
             <div className="heading-section">
 
@@ -69,51 +70,27 @@ function DashboardProjects({project}){
           </div>
           
         </div>
+        
+        <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
+          <DashboardEvents project={project} />
+          <div className="financials-overview">
+            <DashboardPayments project={project} />
+          </div>
+        </div>
 
 
-        <div className="financials-overview">
-      <DashboardPayments project={project} />
-      <DashboardExpances project={project} />
-      </div>
-      <DashboardEvents project={project} />
       </>
       
     ) : (
       <>
-      <div className="gallery-overview">
-        <div className="galleries">
-          <div className="heading-shoots heading-section">
-            <h3 className='heading '>Galleries <span>{project.collections.length}</span></h3>
-            <div className="new-shoot button tertiary l2 outline icon new"
-              onClick={ ()=>{}}>New
-            </div>
+        <CollectionsPanel {...{project,collectionId:project.collections[0]?.id}}/>
+        <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
+          <DashboardEvents project={project} />
+          <div className={`section financials-overview ${project.payments.length > 0 ? 'has-payments' : ''}`}>
+            <DashboardPayments project={project} />
           </div>
-          
-          <Link className={`gallery ${project.projectCover==="" && 'no-images'}`} to={`/${project.id}/gallery/${project.id}`}>
-            <div className="thumbnails">
-              <div className="thumbnail thumb1">
-                <div className="backthumb bthumb1"
-                style={
-                  {
-                    backgroundImage:
-                    `url(${project.projectCover!==""?encodeURI(project.projectCover):'https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333'})`
-                  }}
-                ></div>
-              </div>
-            </div>
-          </Link>
-          
-          
         </div>
-      </div>
-
-
-      <div className="financials-overview">
-      <DashboardPayments project={project} />
-      <DashboardExpances project={project} />
-      </div>
-      <DashboardEvents project={project} />
-</>
+      </>
     ))
     :<>
     <AddProjectModal />
@@ -130,6 +107,8 @@ function DashboardProjects({project}){
       </div> */}
     </>
     }
+
+      
     </>
   )
 }

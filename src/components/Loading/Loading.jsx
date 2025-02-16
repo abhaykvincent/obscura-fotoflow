@@ -2,7 +2,7 @@ import React from 'react'
 
 function Loading() {
   return (
-    <div className="loader-wrap">
+    <div className="loader-wrap initial">
         <div className="loader"></div>
         <p className='loading-message'>Loading App</p>
     </div>
