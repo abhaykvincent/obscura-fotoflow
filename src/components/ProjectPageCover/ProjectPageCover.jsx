@@ -2,46 +2,41 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { db, storage } from "../../firebase/app";
 import { doc, updateDoc } from "firebase/firestore";
-import { selectUserStudio } from "../../app/slices/authSlice";
+import { selectDomain, selectUserStudio } from "../../app/slices/authSlice";
 import { showAlert } from "../../app/slices/alertSlice";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { setCoverPhotoInFirestore } from "../../firebase/functions/firestore";
-import { updateProjectCover } from "../../app/slices/projectsSlice";
+import { updateProjectCover, updateProjectName } from "../../app/slices/projectsSlice";
 import { convertMegabytes } from "../../utils/stringUtils";
 
 export const ProjectCover = ({ project }) => {
     const dispatch = useDispatch();
     const currentStudio = useSelector(selectUserStudio);
+    const domain = useSelector(selectDomain);
 
     const [focusPoint, setFocusPoint] = useState( project?.focusPoint);
     const [focusPointLocal, setFocusPointLocal] = useState(project?.focusPoint);
     const [isSetFocusButton, setIsSetFocusButton] = useState(false);
 
-    const setFocusButtonClick = (e) => {
-        e.stopPropagation();
-        // show indicator when click
-        setIsSetFocusButton(true);
-
-    };
-    const saveFocusPoint = async (newFocusPoint) => {
-        console.log(newFocusPoint)
-        const projectDocRef = doc(db, "studios", currentStudio.domain, "projects", project.id);
-        await updateDoc(projectDocRef, { focusPoint: newFocusPoint })
-        .then(() => {
-
-        setFocusPoint(newFocusPoint);
-        setIsSetFocusButton(false);
-            console.log("Focus point updated successfully!");
-            dispatch(showAlert({
-                type: "success",
-                message: "Focus point updated successfully!"
-                }))
-        })
-        .catch((error) => {
-            console.error("Error updating focus point:", error);
+    const [isEditing, setIsEditing] = useState(false);
+    const [newName, setNewName] = useState("");
+    const handleSave = () => {
+    if (newName && newName !== project.name) {
+        dispatch(updateProjectName({ domain, projectId: project.id, newName })).then(() => {
+        setIsEditing(false);
+        // Update local project state in Redux
+        /* setProject({ ...project, name: newName }); */
         });
-        
+    }
     };
+    const handleCancel = () => setIsEditing(false);
+    const handleNameDoubleClick = () => {
+
+    setIsEditing(true);
+    setNewName(project.name);
+    };
+    
+    // Cover Focus point
     const handleFocusClick = (e) => {
 
         if (isSetFocusButton) {
@@ -80,7 +75,31 @@ export const ProjectCover = ({ project }) => {
             dispatch(showAlert({ type: "error", message: "Failed to update cover photo. Please try again." }));
         }
     };
+    const saveFocusPoint = async (newFocusPoint) => {
+        console.log(newFocusPoint)
+        const projectDocRef = doc(db, "studios", currentStudio.domain, "projects", project.id);
+        await updateDoc(projectDocRef, { focusPoint: newFocusPoint })
+        .then(() => {
 
+        setFocusPoint(newFocusPoint);
+        setIsSetFocusButton(false);
+            console.log("Focus point updated successfully!");
+            dispatch(showAlert({
+                type: "success",
+                message: "Focus point updated successfully!"
+                }))
+        })
+        .catch((error) => {
+            console.error("Error updating focus point:", error);
+        });
+        
+    };
+    const setFocusButtonClick = (e) => {
+        e.stopPropagation();
+        // show indicator when click
+        setIsSetFocusButton(true);
+
+    };
     useEffect(() => {
         setFocusPointLocal(focusPoint);
     }, [focusPoint]);
@@ -97,42 +116,89 @@ export const ProjectCover = ({ project }) => {
             className={`project-page-cover ${isSetFocusButton ? "focus-button-active" : ""} ${project?.projectCover ? "cover-show" : "cover-hide"}`}
             style={{ // Ensure the container height
                 
-                backgroundImage: project?.projectCover ?`url(${project.projectCover.replace(/\(/g, '%28').replace(/\)/g, '%29').replace('-thumb', '')})` : `url('https://img.icons8.com/?size=256&id=UVEiJZnIRQiE&format=png&color=1f1f1f')`,
-                backgroundPosition: `${focusPointLocal?.x * 100}% ${focusPointLocal?.y * 100}%`,
-                backgroundSize: `${project?.projectCover ? "cover":"auto 50% "}`, // Ensure image scaling
+                backgroundImage: project?.projectCover ?
+                    `url(${project.projectCover.replace(/\(/g, '%28').replace(/\)/g, '%29').replace('-thumb', '')}),
+                    url(${
+                        project.collections[0]?.favoriteImages   ? 
+                            project.collections[0].favoriteImages[0].replace(/\(/g, '%28').replace(/\)/g, '%29').replace('-thumb', '')
+                            :""}),
+                    url(${project.collections[0]?.favoriteImages? project.collections[0].favoriteImages[1].replace(/\(/g, '%28').replace(/\)/g, '%29').replace('-thumb', ''):''})
+                    ` 
+                    :`url('https://img.icons8.com/?size=256&id=UVEiJZnIRQiE&format=png&color=1f1f1f' , `,
+                backgroundPosition: `${project?.projectCover ? 'center, left , right':'center'}`,
+                backgroundSize: `${project?.projectCover ? "auto 100%":"auto 50% "}`, // Ensure image scaling
             }}
             onClick={handleFocusClick}
         >
 
-            {project.pin&&
+            {
             <div className="cover-footer">
                 <div className="static-tools bottom">
                     {/* <div className="cover-info project-views-count">
                         <div className="icon-show view"></div>
                         <p>1.6K <span>Views</span></p>
                     </div> */}
-                    <div className="cover-info project-size">
-                        <div className="icon-show storage"></div>
-                        <p>{ convertMegabytes(project?.totalFileSize)} <span></span> </p>
+                    <div className="client">
+                        <div className="edit-pen" onClick={handleNameDoubleClick} ></div>
+                        {isEditing ? (
+                        <div className="editable-data ">
+                            <input
+                            type="text"
+                            value={newName}
+                            onChange={(e) => setNewName(e.target.value)}
+                            />
+                            <div className="input-edit-actions">
+                            <button className={`${newName === project.name ? 'disabled' : ''} button primary icon icon-only check`} onClick={handleSave}></button>
+                            <button className="button secondary  icon icon-only close" onClick={handleCancel}></button>
+                            </div>
+                        </div>
+                        ) : (
+                        <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
+                        )}
+                        <div className="type">{project?.type}</div>
+                        
+                        </div>
+                        {
+                            project.pin&&
+                    <div className="bottom-right">
+
+                        <div className="cover-info project-size">
+                            <div className="icon-show storage"></div>
+                            <p>{ convertMegabytes(project?.totalFileSize)} <span></span> </p>
+                        </div>
+                        <div className="cover-info project-size">
+                            <div className="icon-show image"></div>
+                            <p>
+                                {project?.uploadedFilesCount} <span>Photos  </span>
+                            </p>
+                        </div>
+                        <div className="cover-info project-size">
+                            <div className="icon-show folder"></div>
+                            <p>
+                                {project?.collections.length} <span>Galleries</span>
+                            </p>
+                        </div>
                     </div>
-                    <div className="cover-info project-size">
-                        <div className="icon-show image"></div>
-                        <p>
-                            {project?.uploadedFilesCount} <span>Photos  </span>
-                        </p>
-                    </div>
-                    <div className="cover-info project-size">
-                        <div className="icon-show folder"></div>
-                        <p>
-                            {project?.collections.length} <span>Galleries</span>
-                        </p>
-                    </div>
+                        }
                 </div>
                 
             </div>}
             {project.pin&&
             <div className="static-tools top">
+                <div className="cover-info project-expiry project-archive">
+                    <div className="icon-show expire"></div>
+
+                        <p>Archives 
+                            <span> in </span> 
+                            {
+                                project?.createdAt ? 
+                                Math.ceil(((new Date(project?.createdAt).getTime() + 90 * 24 * 60 * 60 * 1000) - Date.now()) / (1000 * 60 * 60 * 24))
+                                : 0
+                            } Days</p>
+
+                </div>
                     <div className="cover-info project-expiry">
+                    <div className="icon-show archive"></div>
                         <p>Expires 
                             <span> in </span> 
                             {
@@ -140,7 +206,6 @@ export const ProjectCover = ({ project }) => {
                                 Math.ceil(((new Date(project?.createdAt).getTime() + 360 * 24 * 60 * 60 * 1000) - Date.now()) / (1000 * 60 * 60 * 24))
                                 : 0
                             } Days</p>
-                        <div className="icon-show expire"></div>
 
                     </div>
                 </div>
@@ -148,10 +213,10 @@ export const ProjectCover = ({ project }) => {
             {
             !isSetFocusButton && project.pin? 
                 <div className="cover-tools">
-                    <div
+                    {/* <div
                         className="button transparent-button secondary icon set-focus"
                         onClick={setFocusButtonClick}
-                    >Set focus</div>
+                    >Set focus</div> */}
                     <div className="button transparent-button secondary icon image">
                         <label htmlFor={`change-cover-${project.id}`} style={{ cursor: "pointer" }}>
                             Change Cover

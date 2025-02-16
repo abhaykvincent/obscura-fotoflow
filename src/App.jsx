@@ -108,7 +108,7 @@ export default function App() {
   return (
     <div className="App">
       <HotKeys keyMap={keyMap} handlers={handlers}>
-      {/* <SupportIcon/> */}
+      <SupportIcon/>
       {isAuthenticated && (!isPublicPage())? (
         <>
           <Header />

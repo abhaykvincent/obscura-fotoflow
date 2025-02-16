@@ -48,7 +48,7 @@ const modalRef = useModalFocus(visible.shareGallery);
               <p className='client-label'>Select galleries</p>
               <p className='client-label'>Selection</p>
                 {project.collections.map((collection, index) => (
-                  <div key={index}>
+                  <div key={index} className='gallery-field'>
                     <div className="form-item">
                       <div className="input">
                         <input type="checkbox" checked={true} onChange={() => {}} />
@@ -107,7 +107,7 @@ const modalRef = useModalFocus(visible.shareGallery);
           </div>
         </div>
         <div className="actions">
-          <div className="button secondary" onClick={onClose}>Cancel</div>
+          <div className="button secondary" onClick={onClose}>Close</div>
           
           {/* <div className="button primary outline"
             onClick={()=>{

@@ -4,7 +4,7 @@ import { ref, deleteObject } from "firebase/storage";
 import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, increment} from "firebase/firestore";
 
 import { deleteCollectionFromStorage, deleteProjectFromStorage } from "../../utils/storageOperations";
-import { generateMemorablePIN, generateRandomString} from "../../utils/stringUtils";
+import { generateMemorablePIN, generateRandomString, toKebabCase, toTitleCase} from "../../utils/stringUtils";
 import { removeUndefinedFields } from "../../utils/generalUtils";
 
 
@@ -174,6 +174,8 @@ export const generateReferralInFirebase = async (referralData) => {
     const forceCode = referralData.code[0];
     let finalCode = forceCode;
     
+    console.log(referralData)
+
     // If no force code, generate unique code
     if (!forceCode) {
         let isUnique = false;
@@ -181,7 +183,7 @@ export const generateReferralInFirebase = async (referralData) => {
         const maxAttempts = 5;
         
         while (!isUnique && attempts < maxAttempts) {
-            const generatedCode = generateMemorablePIN(8);
+            const generatedCode = `${toKebabCase(referralData.name)}-${generateMemorablePIN(8)}`
             const codeExists = existingReferrals.some(referral => 
                 referral.code.includes(generatedCode)
             );
@@ -206,13 +208,14 @@ export const generateReferralInFirebase = async (referralData) => {
             throw new Error('Provided referral code already exists');
         }
     }
-    
     const referralDoc = {
         ...referralData,
         code: [finalCode],
     };
-    
-    await setDoc(doc(referralsCollection), referralDoc);
+    const documentId = `${toKebabCase(referralData.name)}-${generateRandomString(4)}`;
+
+    await setDoc(doc(referralsCollection, documentId), referralDoc);
+
     return referralDoc;
 };
 
@@ -570,6 +573,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
                     return {
                         ...collection,
                         galleryCover : collection?.galleryCover? collection.galleryCover : uploadedFiles[0]?.url,
+                        favoriteImages: collection?.favoriteImages  ? collection.favoriteImages :[uploadedFiles.length>=2 ? uploadedFiles[1]?.url:'',uploadedFiles.length>=3 ? uploadedFiles[2]?.url:''],
                         filesCount: (collection.filesCount || 0) + uploadedFiles.length,
                     };
                 }

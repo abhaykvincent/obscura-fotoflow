@@ -5,7 +5,8 @@
     top: 0px;
     left :0;
     padding-left: 8px*20;
-    width: 100vw;
+    margin-left: -8px*0;
+    width: 100vw ;
     height: 100vh;
     align-items: center;
     justify-content: start;
@@ -21,6 +22,7 @@
     .error-container{
         color: $yellow-accessible-light;
         margin-top: 8px;
+        font-size: 0.9rem;
     }
     .logo{
         position: relative;
@@ -75,7 +77,16 @@
     display: grid;
     margin-bottom: 8px*4;
     justify-content: start;
+    opacity: 1;
+    transform: scale(1) translateX(-8px*0);
+    transition-duration: 0.3s;
     
+    &.user-contact-screen{
+        opacity: 0.5;
+        transform: scale(0.9) translateX(-8px*2);
+        transition-duration: 0.8s;
+        transition-delay: 1s;
+    }
     .button.google-login-button{
         margin: 0;
         margin-right: 8px*2;
@@ -99,10 +110,24 @@
             border: 1px solid $gray5-accessible-light;
           } 
         &.error-shake{
-            animation: shake 0.5s;
+            animation: shake-button 0.4s;
             animation-iteration-count: 2;
             animation-timing-function: ease-in-out;
-            animation-fill-mode: forwards;
+            @keyframes shake-button {
+                0% {
+                    transform: translateX(0);
+                }
+                25% {
+                    transform: translateX(10px);
+                }
+                75% {
+                    transform: translateX(-12px);
+                }
+                100%{
+                    transform: translateX(0);
+                }
+
+            }
         }
           
           &.google{
@@ -399,7 +424,7 @@
         font-size: 2rem;
         line-height: 2.2rem;
         font-weight: 500;
-        color: $gray3-default-dark;
+        color: $gray6-default-dark;
         margin-bottom: 8px*0;
         transition-duration: 0.2s;
         &.small{
@@ -408,6 +433,12 @@
             color: $gray5-default-dark;
             margin-bottom: 8px*-2;
         }
+        &.highlight{
+            color: $gray-default-dark;
+            transition-duration: 0.5s;
+            transition-delay: 1.2s;
+        }
+
     }
     .form-group{
         display: grid;
@@ -416,13 +447,13 @@
         margin-top: 8px*0;
         input{
             height: 4rem;
-            width: 35rem;
+            width: 25rem;
             font-size: 3rem;
             margin-left: -8px*1;
             padding: 8px*5 8px;
             background-color: rgba(255, 0, 0, 0);
             border: 1px solid transparent;
-            border-bottom: 1px solid $gray4-default-light;
+            border-bottom: 1px solid $gray4-default-dark;
             transition-duration: 0.2s;
             text-shadow: 2px 4px 8px*4 rgba(0, 0, 0, 0.1);
             //autofill

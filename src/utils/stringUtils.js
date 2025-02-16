@@ -53,6 +53,9 @@ export const toTitleCase = (input) =>{
     .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize first letter of each word
     .join(' '); // Join the words back into a single string
 }
+export const toKebabCase = (str)=> {
+  return str.toLowerCase().replace(/\s+/g, '-');
+}
 
 // Test 
 export function convertMegabytes(megabytes, decimalPlaces = 0) {

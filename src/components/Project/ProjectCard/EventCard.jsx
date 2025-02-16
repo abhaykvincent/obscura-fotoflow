@@ -3,57 +3,36 @@ import './ProjectCard.scss'
 import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../../app/slices/authSlice';
 
-function ProjectCard({project}) {   
+function EventCard({event}) {   
   const defaultStudio = useSelector(selectUserStudio)
   return (
-    <Link className={`project ${project.id} ${project.type?project.type:''} ${project.status?project.status:''}`} to={`/${defaultStudio.domain}/project/${project.id}`} key={project.id}
+    <Link className={`project ${event.id} ${event.type?event.type:''} `} to={`/${defaultStudio.domain}/project/${event.id}`} key={event.id}
     >
         <div className="cover-wrap">
             <div className="project-cover"
             style={{
-                backgroundImage: project.projectCover ?`url(${project.projectCover.replace(/\(/g, '%28').replace(/\)/g, '%29')})` : '',
+                /* backgroundImage: project.projectCover ?`url(${project.projectCover.replace(/\(/g, '%28').replace(/\)/g, '%29')})` : '',
                 backgroundSize: project.projectCover ? 'cover' : '',
-                backgroundBlendMode: project.projectCover ? '' : 'soft-light',
+                backgroundBlendMode: project.projectCover ? '' : 'soft-light', */
             }}
             />
         </div>
         <div className="project-details">
             <div className="details-top">
                 <div className="left">
-                    <h4 className="project-title">{project.name}</h4>
-                    <p className="project-type">{project.type}</p>
-                    <div className="info-bar">
-                        <div className="tags">
-                        {project?.events?.length > 0 && (
-                        <div className="event-dates">
-                            {project.events.slice(0, 2).map((event, index) => (
-                            event?.date && (
-                                <p key={index} className="project-dates tag">
-                                {new Date(event.date).toLocaleString('default', {
-                                    day: 'numeric',
-                                    month: 'short',
-                                })}
-                                </p>
-                            )
-                            ))}
-                            {project.events.length > 2 && (
-                            <p className="project-dates tag extra"> 
-                                 +{project.events.length - 2}
-                            </p>
-                            )}
+                    <h4 className="project-title">{event.name}</h4>
+                    <p className="project-type">{event.type}</p>
+                    {/* <div className="info-bar">
+                        <div className="">{project?.budgets?.amount &&<p className=" project-budget tag"> ₹ {project?.budgets?.amount}</p>}
                         </div>
-                        )}
-                        {project?.budgets?.amount &&<p className=" project-budget tag"> ₹ {project?.budgets?.amount}</p>}
-                        </div>
-                       {/*  open in Lightroom  */}
                        <div className={`button lr mini ${project.status==="selected"?'':'disabled'}`}>Lr</div>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="right">
                     <div className="status-signal"></div>
                 </div>
             </div>
-            { project.collections.length === 0 ?
+            {/* { project.collections.length === 0 ?
                 <div className="empty-message">Upload your snaps</div> :
                 <div className="project-summary">
                     <div className="summary-left">
@@ -78,11 +57,11 @@ function ProjectCard({project}) {
                     }
                     </div>
                 </div>
-            }
+            } */}
         </div>
         
     </Link>
     );
 }
 
-    export default ProjectCard;
+    export default EventCard;

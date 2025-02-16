@@ -6,6 +6,7 @@ import { selectProjects } from '../../app/slices/projectsSlice';
 import { openModal } from '../../app/slices/modalSlice';
 // Utility functions
 import { getProjectsByStatus, getRecentProjects } from '../../utils/projectFilters';
+import { retrieveProjectsViewType, storeProjectsViewType } from '../../utils/localStorageUtills';
 // Components
 import AddProjectModal from '../../components/Modal/AddProject';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
@@ -13,7 +14,6 @@ import SearchInput from '../../components/Search/SearchInput';
 import Refresh from '../../components/Refresh/Refresh';
 // Styles
 import './Projects.scss';
-import { retrieveProjectsViewType, storeProjectsViewType } from '../../utils/localStorageUtills';
 
 function Projects() {
     const dispatch = useDispatch();
@@ -23,8 +23,8 @@ function Projects() {
     const [recentProjects, setRecentProjects] = useState([]);
     const [selectedTab, setSelectedTab] = useState('all');
     const localViewType = retrieveProjectsViewType()
-    console.log(localViewType)
     const [viewType, setViewType] = useState( localViewType|| 'cards');
+    
     document.title = `${defaultStudio.name} | Projects`;
 
     useEffect(()=>{
@@ -72,27 +72,36 @@ function Projects() {
             );
         }
     
-        // Group projects by month
-        const groupedProjects = recentProjects.reduce((groups, project) => {
-            const projectMonth = new Date(project.createdAt).toLocaleString('default', { month: 'long', year: 'numeric' });
-            if (!groups[projectMonth]) {
-                groups[projectMonth] = [];
-            }
-            groups[projectMonth].push(project);
-            return groups;
-        }, {});
-    
-        // Render projects - Grouped by month
-        return Object.keys(groupedProjects).map((month,index) => (
-            <div key={index} className="month-group" style={{ '--group-index': index + 1 }} >
-                <h3 className="month-name">{month}</h3>
-                <div className={`projects-list ${viewType}`}>
-                {groupedProjects[month].map((project) => (
-                    <ProjectCard project={project} key={project.id} />
-                ))}
-                </div>
-            </div>
-        ));
+       // Group projects by month
+const groupedProjects = recentProjects.reduce((groups, project) => {
+    const projectMonth = new Date(project.createdAt).toLocaleString('default', { month: 'long', year: 'numeric' });
+    if (!groups[projectMonth]) {
+        groups[projectMonth] = [];
+    }
+    groups[projectMonth].push(project);
+    return groups;
+}, {});
+
+// Sort the months from future to past
+const sortedMonths = Object.keys(groupedProjects).sort((a, b) => {
+    // Convert month-year strings to Date objects for comparison
+    const dateA = new Date(a);
+    const dateB = new Date(b);
+    // Sort in descending order (future to past)
+    return dateB - dateA;
+});
+
+// Render projects - Grouped by month
+return sortedMonths.map((month, index) => (
+    <div key={index} className="month-group" style={{ '--group-index': index + 1 }}>
+        <h3 className="month-name">{month}</h3>
+        <div className={`projects-list ${viewType}`}>
+            {groupedProjects[month].map((project) => (
+                <ProjectCard project={project} key={project.id} />
+            ))}
+        </div>
+    </div>
+));
     };
     
 
@@ -103,12 +112,13 @@ function Projects() {
 
             {/* App Header */}
             <div className="projects-page-header">
-            <div className="search-bar">
-                <SearchInput />
-            </div>
+                <div className="search-bar">
+                    <SearchInput />
+                </div>
             </div>
             {/* Main - Projects */}
             <main className="projects">
+
                 {/* Page Header */}
                 <div className="projects-header">
                     <h1>Projects</h1>
@@ -120,7 +130,8 @@ function Projects() {
                 </div>
 
                 {/* Controls */}
-                {projects.length>0 && <div className="view-control">
+                {projects.length>0 && 
+                <div className="view-control">
                     {/* Filter Controls */}
                     <div className="control-wrap">
                         <div className="controls">

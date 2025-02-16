@@ -27,7 +27,7 @@ function DashboardExpances({project}){
                 <div className="button primary outline"
                 onClick={()=>dispatch(openModal('addExpense'))}
                 >
-                  Add
+                  Add Expense
                 </div>
               ) :
               (
@@ -57,7 +57,7 @@ function DashboardExpances({project}){
               {/* Filler Cards */}
               {
                 project.expenses?.length<5 && (
-                  Array(5-project.expenses.length).fill(0).map((item, index) => (
+                  Array(4-project.expenses.length).fill(0).map((item, index) => (
                     <AmountCard amount={''} direction={''} percentage={''} status={'draft'}/>
                   ))
                 )
