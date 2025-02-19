@@ -1,12 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { showAlert } from "../../app/slices/alertSlice";
-import { addProject, createSubProject } from "../../app/slices/projectsSlice";
-import { useNavigate } from "react-router";
-import { closeModalWithAnimation, selectModal } from "../../app/slices/modalSlice";
-import { selectUser, selectUserStudio } from "../../app/slices/authSlice";
-import { useModalFocus } from "../../hooks/modalInputFocus";
-import { createNotification } from "../../app/slices/notificationSlice";
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+
+// Redux
+import { showAlert } from '../../app/slices/alertSlice';
+import { addProject, createSubProject } from '../../app/slices/projectsSlice';
+import { closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
+import { selectUser, selectUserStudio } from '../../app/slices/authSlice';
+import { createNotification } from '../../app/slices/notificationSlice';
+
+// Hooks
+import { useModalFocus } from '../../hooks/modalInputFocus';
 
 const PROJECT_TYPES = [
   { id: "template-wedding", value: "Wedding", label: "Wedding" },
