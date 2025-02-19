@@ -350,7 +350,6 @@ export const deleteProjectFromFirestore = async (domain, projectId) => {
     if (!domain || !projectId) {
         throw new Error('Domain and Project ID are required for deletion.');
     }
-
     let color = domain === '' ? 'gray' : '#0099ff';
     console.log(`%cDeleting Project ${projectId} from ${domain ? domain : 'undefined'}`, `color: ${color};`);
 

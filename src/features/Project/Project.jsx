@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 
 // Redux
-import { deleteProject, selectProjects, updateProjectName } from '../../app/slices/projectsSlice';
+import { deleteProject, selectProjects, selectProjectsStatus, updateProjectName } from '../../app/slices/projectsSlice';
 import { closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 import { showAlert } from '../../app/slices/alertSlice';
@@ -37,6 +37,7 @@ export default function Project() {
   const defaultStudio = useSelector(selectUserStudio);
   const modals = useSelector(selectModal);
   const modalsRef = useRef(modals);
+  const projectsStatus = useSelector(selectProjectsStatus);
 
   const [project, setProject] = useState(null);
   const [pinText, setPinText] = useState('');
@@ -53,11 +54,11 @@ export default function Project() {
   }, [modals]);
 
   useEffect(() => {
-    if (projects === 'succeeded' && !selectedProject) {
+    if (projectsStatus === 'succeeded' && !selectedProject) {
       navigate(`/${defaultStudio.domain}/projects`);
     }
     setProject(selectedProject);
-  }, [selectedProject, defaultStudio.domain, navigate, projects]);
+  }, [selectedProject, defaultStudio.domain, navigate, projectsStatus]);
 
   useEffect(() => {
     if (project) {
@@ -162,7 +163,7 @@ export default function Project() {
                 <div className="icon-show add" /> New Gallery
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={() => dispatch(openModal('confirmDeleteProject'))}>
+              <DropdownMenuItem onSelect={() => dispatch(openModal('confirmDeleteproject'))}>
                 <div className="icon-show delete" /> Delete Project
               </DropdownMenuItem>
             </DropdownMenuContent>

@@ -8,7 +8,6 @@ function DeleteConfirmationModal({ itemType, itemName, onDeleteConfirm }) {
   
   const visible = useSelector(selectModal);
   const handleDelete = () => {
-    // Call the delete function upon confirmation
     onDeleteConfirm();
     dispatch(closeModalWithAnimation(`confirmDelete${itemType}`));
   };
