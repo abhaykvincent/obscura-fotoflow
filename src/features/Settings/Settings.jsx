@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 // Selectors and actions
 import { selectUser, selectUserStudio } from '../../app/slices/authSlice';
 // Components
-import AddProjectModal from '../../components/Modal/AddProject';
+import AddProjectModal from '../../components/Modal/AddProject/AddProject';
 // Styles
 import './Settings.scss';
 import SettingsDashboard from './SettingsDashboard';
