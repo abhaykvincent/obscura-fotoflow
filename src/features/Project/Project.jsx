@@ -125,7 +125,7 @@ export default function Project() {
             Projects
           </Link>
         </div>
-
+        <div className="client"></div>
         <div className="project-options options">
           <div className={`project-status ${projectStatus}`}>
             <select
