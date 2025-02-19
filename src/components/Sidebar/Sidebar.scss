@@ -610,17 +610,9 @@
 }
 }
 
-@media only screen and (max-width: 1230px) {
-    
-}
   @media only screen and (max-width: 1230px) {
     .App{
       .sidebar{
-        width: 8px*7.5;
-        &.hide{
-            left: 0%;
-            transition-duration: 0.1s;
-        }
         .menu-list {
             padding: 8px*1.5;
             max-height: calc(100vh - 8px*8);
@@ -631,15 +623,12 @@
                     width: 8px*3;
                     height: 8px*3;
                 }.menu{
-                    grid-template-columns: auto;
                     padding: 4px;
                     margin: 0;
                     margin-bottom: 8px;
                     transition-duration: 0.1s;
                 }
                 .label,.coming-soon{
-                    display:none;
-                    opacity: 0;
                 }
                 &:hover{
                     .label{
@@ -671,6 +660,9 @@
                 box-shadow: none;
                 border: none;
                 background: none;
+                .plan-labels{
+                display: none;
+                }
             }
             .storage-bar{
                 display: grid;
@@ -756,6 +748,34 @@
         .option-icon{
             display:block
         }
+        &.hide{
+            left: 0%;
+            transition-duration: 0.1s;
+
+        width: 8px*7.5;
+            .menu-list {
+                padding: 8px*1.5;
+                max-height: calc(100vh - 8px*8);
+                overflow-y: visible;
+                a{
+                    transition-duration: 0.1s;x
+                    .icon {
+                        width: 8px*3;
+                        height: 8px*3;
+                    }.menu{
+                        grid-template-columns: auto;
+                        padding: 4px;
+                        margin: 0;
+                        margin-bottom: 8px;
+                        transition-duration: 0.1s;
+                    }
+                    .label,.coming-soon{
+                        display:none;
+                        opacity: 0;
+                    }
+                }
+                }
+        }
       }
     }
       
@@ -773,7 +793,7 @@
   @media only screen and (max-width: 520px) {
     .App{
       .sidebar{
-        width: $sidebar-width + 8px*2;
+        width: $sidebar-width + 8px*10;
         &.hide{
             left: -100%;
             transition-duration: 0.1s;
@@ -781,12 +801,13 @@
         .menu-list 
         {
             padding: 4px;
-            max-height: calc(100vh - 8px*34);
+            max-height: calc(100vh - 8px*10);
             overflow-y: scroll;
             a {
                 .menu{
                 display: grid;
                 grid-template-columns: 24px auto auto;
+                padding-left: 8px*3;
                 .label{
                     display: grid;;
                     opacity: 1;
