@@ -11,7 +11,7 @@ import DashboardPayments from '../Payments/Payments';
 import DashboardExpances from '../Expances/Expances';
 import DashboardEvents from '../Events/Events';
 import DashboardTabs from './DashboardTabs/DashboardTabs';
-import AddProjectModal from '../../Modal/AddProject';
+import AddProjectModal from '../../Modal/AddProject/AddProject';
 import CollectionsPanel from '../../Project/Collections/CollectionsPanel';
 
 function DashboardProjects({project}){

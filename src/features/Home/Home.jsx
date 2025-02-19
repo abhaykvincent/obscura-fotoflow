@@ -9,12 +9,12 @@ import { selectProjects } from '../../app/slices/projectsSlice';
 import { openModal, selectModal } from '../../app/slices/modalSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import StoragePie from '../../components/StoragePie/StoragePie';
-import AddProjectModal from '../../components/Modal/AddProject';
 import {  toast } from 'sonner'
 import SearchInput from '../../components/Search/SearchInput';
 import { trackEvent } from '../../analytics/utils';
 import EventCard from '../../components/Project/ProjectCard/EventCard';
 import { getEventTimeAgo } from '../../utils/dateUtils';
+import AddProjectModal from '../../components/Modal/AddProject/AddProject';
 function Home() {
     const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
@@ -70,7 +70,7 @@ function Home() {
     }, [selectedProjects]);
     return (
         <>
-          <AddProjectModal />
+          <AddProjectModal/>
         
             <div className="home-header">
             <div className="search-bar">
