@@ -1,55 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
 // Redux
-import { showAlert } from '../../app/slices/alertSlice';
-import { addProject, createSubProject } from '../../app/slices/projectsSlice';
-import { closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
-import { selectUser, selectUserStudio } from '../../app/slices/authSlice';
-import { createNotification } from '../../app/slices/notificationSlice';
-
+import { showAlert } from '../../../app/slices/alertSlice';
+import { addProject, createSubProject } from '../../../app/slices/projectsSlice';
+import { closeModalWithAnimation, selectModal } from '../../../app/slices/modalSlice';
+import { selectUser, selectUserStudio } from '../../../app/slices/authSlice';
+import { createNotification } from '../../../app/slices/notificationSlice';
 // Hooks
-import { useModalFocus } from '../../hooks/modalInputFocus';
+import { useModalFocus } from '../../../hooks/modalInputFocus';
+// Components
+import TemplateSelection from './TemplateSelection';
+// Utils
+import { validateForm } from './validation';
+import { initialProjectData, VALIDITY_OPTIONS } from './constants';
 
-const PROJECT_TYPES = [
-  { id: "template-wedding", value: "Wedding", label: "Wedding" },
-  { id: "template-baptism", value: "Baptism", label: "Baptism" },
-  { id: "template-birthday", value: "Birthday", label: "Birthday" },
-  { id: "template-maternity", value: "Maternity", label: "Maternity" },
-  { id: "template-newborn", value: "Newborn", label: "Newborn" },
-  { id: "template-anniversary", value: "Anniversary", label: "Anniversary" },
-  { id: "template-family", value: "Family", label: "Family" },
-  { id: "template-group", value: "Group", label: "Group" },
-  { id: "template-travel", value: "Travel", label: "Travel" },
-  { id: "template-event", value: "Event", label: "Event" },
-  { id: "template-other", value: "Other", label: "Other" },
-];
 
-const VALIDITY_OPTIONS = [
-  { id: "validity-3", value: "3", label: "3 Months" },
-  { id: "validity-6", value: "6", label: "6 Months", className: "free-validity" },
-  { id: "validity-12", value: "12", label: "1 Year", disabled: true, className: "upgrade-needed" },
-];
-
-const initialProjectData = {
-  name: "",
-  type: "Wedding",
-  email: "",
-  phone: "",
-  collections: [],
-  events: [],
-  payments: [],
-  expenses: [],
-  projectCover: "",
-  selectedFilesCount: 0,
-  uploadedFilesCount: 0,
-  totalFileSize: 0,
-  status: "draft",
-  projectValidityMonths: '6',
-  createdAt: new Date().getTime(),
-  lastOpened: new Date().getTime(),
-};
 
 function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   const dispatch = useDispatch();
@@ -63,22 +29,11 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   const [currentStep, setCurrentStep] = useState(1);
 
   const nameInputRef = useRef(null);
+  const name2InputRef = useRef(null);
   const typeInputRef = useRef(null);
   const modalRef = useModalFocus(visible.createProject);
 
   const onClose = () => dispatch(closeModalWithAnimation("createProject"));
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!projectData.name.trim()) newErrors.name = "Project name is required";
-    if (!projectData.type.trim()) newErrors.type = "Project type is required";
-    setErrors(newErrors);
-
-    if (newErrors.name && nameInputRef.current) nameInputRef.current.focus();
-    else if (newErrors.type && typeInputRef.current) typeInputRef.current.focus();
-
-    return Object.keys(newErrors).length === 0;
-  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -109,7 +64,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   };
 
   const handleSubmit = () => {
-    if (!validateForm()) return;
+    if (!validateForm(projectData, setErrors, nameInputRef,name2InputRef, typeInputRef)) return;
 
     const domain = currentStudio.domain;
     onClose();
@@ -174,6 +129,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
               errors={errors}
               handleInputChange={handleInputChange}
               nameInputRef={nameInputRef}
+              name2InputRef={name2InputRef}
             />
           )}
         </div>
@@ -198,28 +154,8 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   );
 }
 
-const TemplateSelection = ({ projectData, errors, handleInputChange }) => (
-  <div className="form-section">
-    <div className="project-validity-options template-options">
-      {PROJECT_TYPES.map(({ id, value, label }) => (
-        <div className="radio-button-group" key={id}>
-          <input
-            type="radio"
-            id={id}
-            name="type"
-            value={value}
-            checked={projectData.type === value}
-            onChange={handleInputChange}
-          />
-          <label htmlFor={id}>{label}</label>
-        </div>
-      ))}
-    </div>
-    {errors.type && <div className="error">{errors.type}</div>}
-  </div>
-);
 
-const ProjectDetails = ({ projectData, errors, handleInputChange, nameInputRef }) => (
+const ProjectDetails = ({ projectData, errors, handleInputChange, nameInputRef, name2InputRef }) => (
   <div className="form-section">
     {projectData.type === 'Wedding' ? (
       <>
@@ -238,14 +174,14 @@ const ProjectDetails = ({ projectData, errors, handleInputChange, nameInputRef }
         <div className="field">
           <label>Bride</label>
           <input
-            name="name"
+            name="name2"
             ref={nameInputRef}
-            value={projectData.name}
+            value={projectData.name2}
             placeholder="Matan"
             type="text"
             onChange={handleInputChange}
           />
-          {errors.name && <div className="error">{errors.name}</div>}
+          {errors.name2 && <div className="error">{errors.name2}</div>}
         </div>
       </>
     ) : (

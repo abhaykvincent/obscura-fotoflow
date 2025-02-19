@@ -8,7 +8,6 @@ import Refresh from '../../components/Refresh/Refresh';
 // Styles
 import SearchInput from '../../components/Search/SearchInput';
 import { getWebsiteURL } from '../../utils/urlUtils';
-import AddProjectModal from '../../components/Modal/AddProject';
 import AddCollectionModal from '../../components/Modal/AddCollection';
 import AddPortfolioModal from '../../components/Modal/AddPortfolio';
 import CollectionsPanel from '../../components/Project/Collections/CollectionsPanel';
