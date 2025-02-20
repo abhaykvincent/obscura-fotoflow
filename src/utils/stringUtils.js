@@ -73,7 +73,7 @@ export function convertMegabytes(megabytes, decimalPlaces = 0) {
     sizeIndex++;
   }
 
-  return `${megabytes.toFixed(decimalPlaces)} ${sizes[sizeIndex]}`;
+  return `${megabytes?.toFixed(decimalPlaces)} ${sizes[sizeIndex]}`;
 }
 export function formatStorage(size, unit) {
   const units = ["B", "KB", "MB", "GB", "TB", "PB"];
