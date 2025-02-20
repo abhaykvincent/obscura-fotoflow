@@ -9,93 +9,168 @@ import {
 import './FlowPilot.scss';
 
 const FlowPilot = ({ userId }) => {
-  console.log(userId);
+  console.log(userId)
   const defaultStudio = useSelector(selectUserStudio);
   const [activeConversation, setActiveConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [aiSuggestions, setAiSuggestions] = useState([]);
 
-  // ... (keeping the existing useEffect and loadMessages functions unchanged)
+  // Fetch or create conversation
+  useEffect(() => {
+    const initializeConversation = async () => {
+      const conversationsRef = collection(db, 'studios', defaultStudio.domain, 'conversations');
+      
+      // Check for existing conversation with user
+      const q = query(
+        conversationsRef,
+        where('participants.userIds', 'array-contains', userId),
+        where('meta.status', '==', 'open'),
+        orderBy('meta.lastUpdated', 'desc')
+      );
 
-  const handleSendMessage = async () => {
-    if (!input.trim() || !activeConversation) return;
-
-    // ... (keeping the existing handleSendMessage function unchanged)
-  };
-
-  // Function to group messages
-  const groupMessages = (messages) => {
-    if (!messages.length) return [];
-
-    const grouped = [];
-    let currentGroup = {
-      senderType: messages[0].sender.type,
-      messages: [messages[0]],
-      timestamp: new Date(messages[0].timestamps.createdAt)
+      const snapshot = await getDocs(q);
+      
+      if (!snapshot.empty) {
+        const conv = snapshot.docs[0];
+        setActiveConversation(conv.id);
+        await loadMessages(conv.id);
+      } else {
+        // Create new conversation
+        const newConv = {
+          studioId: defaultStudio.domain,
+          participants: {
+            userIds: [userId],
+            agentIds: [],
+            unreadCounts: { [userId]: 0 }
+          },
+          meta: {
+            status: 'open',
+            type: 'support',
+            priority: 'normal',
+            tags: ['general'],
+            lastMessage: '',
+            lastUpdated: new Date().toISOString(),
+            createdAt: new Date().toISOString()
+          }
+        };
+        
+        const convRef = await addDoc(conversationsRef, newConv);
+        setActiveConversation(convRef.id);
+      }
     };
 
-    for (let i = 1; i < messages.length; i++) {
-      const currentMsg = messages[i];
-      const prevTimestamp = new Date(currentGroup.timestamp);
-      const currentTimestamp = new Date(currentMsg.timestamps.createdAt);
-      const timeDiff = (currentTimestamp - prevTimestamp) / 1000; // seconds
-
-      // Check if message is within 30s and same sender type
-      if (timeDiff <= 30 && currentMsg.sender.type === currentGroup.senderType) {
-        currentGroup.messages.push(currentMsg);
-      } else {
-        grouped.push(currentGroup);
-        currentGroup = {
-          senderType: currentMsg.sender.type,
-          messages: [currentMsg],
-          timestamp: currentTimestamp
-        };
-      }
+    if (defaultStudio?.domain && userId) {
+      initializeConversation();
     }
+  }, [defaultStudio, userId]);
+
+  // Load messages for conversation
+  const loadMessages = async (convId) => {
+    const messagesRef = collection(
+      db, 
+      'studios', 
+      defaultStudio.domain, 
+      'conversations', 
+      convId, 
+      'messages'
+    );
     
-    grouped.push(currentGroup);
-    return grouped;
+    const q = query(messagesRef, orderBy('timestamps.createdAt', 'asc'));
+    const snapshot = await getDocs(q);
+    setMessages(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+  };
+
+  const handleSendMessage = async () => {
+
+    if (!input.trim() || !activeConversation) return;
+
+    // Create message object
+    const newMessage = {
+      conversationId: activeConversation,
+      studioId: defaultStudio.domain,
+      content: {
+        text: input.trim(),
+        aiMetadata: {
+          isAIGenerated: false,
+          detectedIntent: '',
+          suggestedResponses: []
+        }
+      },
+      sender: {
+        id: userId,
+        type: 'customer',
+        name: 'Customer Name', // Replace with actual user data
+        avatar: ''
+      },
+      status: {
+        delivered: true,
+        read: false,
+        edited: false
+      },
+      timestamps: {
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    };
+
+    // Add to messages subcollection
+    const messagesRef = collection(
+      db,
+      'studios',
+      defaultStudio.domain,
+      'conversations',
+      activeConversation,
+      'messages'
+    );
+    
+    await addDoc(messagesRef, newMessage);
+    // Update conversation last message
+    const convRef = doc(
+      db,
+      'studios',
+      defaultStudio.domain,
+      'conversations',
+      activeConversation
+    );
+    
+    await updateDoc(convRef, {
+      'meta.lastMessage': newMessage.content.text,
+      'meta.lastUpdated': new Date().toISOString(),
+    });
+
+    setInput('');
   };
 
   return (
     <div className="flow-pilot">
       <div className="chat-header">
         <h3>FlowPilot</h3>
-        <div className="conversation-meta"></div>
+        <div className="conversation-meta">
+        </div>
       </div>
-      
       <div className="chat-window-container">
+
         <div className="chat-window">
-          {groupMessages(messages).map((group, groupIndex) => (
-            <div 
-              key={groupIndex} 
-              className={`message-group ${group.senderType}`}
-            >
-              {group.messages.map((msg, msgIndex) => (
-                <div key={msg.id} className="message">
-                  <div className="message-content">
-                    <p>{msg.content.text}</p>
-                    {msg.content.aiMetadata?.suggestedResponses?.length > 0 && (
-                      <div className="ai-suggestions">
-                        {msg.content.aiMetadata.suggestedResponses.map((suggestion, i) => (
-                          <button key={i} className="suggestion">
-                            {suggestion}
-                          </button>
-                        ))}
-                      </div>
-                    )}
+          {messages.map((msg) => (
+            <div key={msg.id} className={`message ${msg.sender.type}`}>
+              <div className="message-meta">
+                <span className="time">
+                  {new Date(msg.timestamps.createdAt).toLocaleTimeString()}
+                </span>
+              </div>
+              <div className="message-content">
+                <p>{msg.content.text}</p>
+                {msg.content.aiMetadata?.suggestedResponses?.length > 0 && (
+                  <div className="ai-suggestions">
+                    {msg.content.aiMetadata.suggestedResponses.map((suggestion, i) => (
+                      <button key={i} className="suggestion">
+                        {suggestion}
+                      </button>
+                    ))}
                   </div>
-                  {/* Only show timestamp on the last message of the group */}
-                  {msgIndex === group.messages.length - 1 && (
-                    <div className="message-meta">
-                      <span className="time">
-                        {new Date(msg.timestamps.createdAt).toLocaleTimeString()}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))}
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -111,11 +186,13 @@ const FlowPilot = ({ userId }) => {
         />
         <button onClick={handleSendMessage}></button>
       </div>
+
+      {/* <SupportIcon /> */}
     </div>
   );
 };
 
-// SupportIcon component remains unchanged
+// SupportIcon component remains the same
 function SupportIcon() {
   const [isExpanded, isExpandedSet] = useState(false);
 
