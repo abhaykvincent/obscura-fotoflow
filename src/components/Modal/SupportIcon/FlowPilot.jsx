@@ -9,6 +9,7 @@ import {
 import './FlowPilot.scss';
 import sendSound from '../../../assets/sounds/message-send.mp3';
 import { getTimeAgo } from '../../../utils/dateUtils';
+import { calculateDelay } from '../../../utils/stringUtils';
 
 const generationConfig = {
   temperature: 1,
@@ -16,22 +17,6 @@ const generationConfig = {
   topK: 40,
   maxOutputTokens: 8192,
   responseMimeType: "text/plain",
-};
-const splitIntoSentences = (text) => {
-  const parts = text.split(/([.!?])\s*/);
-  const sentences = [];
-  for (let i = 0; i < parts.length; i += 2) {
-    if (i + 1 < parts.length) {
-      sentences.push(parts[i] + parts[i + 1]);
-    } else {
-      sentences.push(parts[i]);
-    }
-  }
-  return sentences;
-};
-const initialContext = {
-  role: 'model',
-  parts: [{ text: "You are FlowPilot, a helpful assistant for FotoFlow users. FotoFlow is a SaaS web app designed to streamline the workflow of event photographers. Your role is to assist users with their queries about FotoFlow's features, provide guidance on using the platform, and help troubleshoot any issues they might encounter. Be friendly, professional, and concise in your responses." }]
 };
 const AppDocumentation=`
 Getting Started
@@ -196,11 +181,7 @@ Command: “Hey Copilot, draft an email to Client C about their gallery.”
 Response: “Draft: ‘Hi Client C, your gallery is ready! View it here: [link]. Passcode: 5678.’ Send?”
 Command: “Hey Copilot, remind me about my next shoot.”
 Response: “Your next shoot is March 1st at 2 PM—‘Davis Portrait’ at Studio A.”`
-const calculateDelay = (text) => {
-  const baseDelay = 500; // Minimum delay in milliseconds
-  const delayPerChar = 10; // Additional delay per character
-  return Math.min(baseDelay + text.length * delayPerChar, 2000); // Cap at 2 seconds
-};
+
 const FlowPilot = ({ userId }) => {
   const defaultStudio = useSelector(selectUserStudio);
   const [activeConversation, setActiveConversation] = useState(null);

@@ -169,3 +169,8 @@ export const  greetUser=(userName) => {
   }
 }
 
+export const calculateDelay = (text) => {
+  const baseDelay = 500; // Minimum delay in milliseconds
+  const delayPerChar = 10; // Additional delay per character
+  return Math.min(baseDelay + text.length * delayPerChar, 2000); // Cap at 2 seconds
+};
