@@ -34,77 +34,168 @@ const initialContext = {
   parts: [{ text: "You are FlowPilot, a helpful assistant for FotoFlow users. FotoFlow is a SaaS web app designed to streamline the workflow of event photographers. Your role is to assist users with their queries about FotoFlow's features, provide guidance on using the platform, and help troubleshoot any issues they might encounter. Be friendly, professional, and concise in your responses." }]
 };
 const AppDocumentation=`
-1. App Overview
-Name: [Studio-Specific Name, e.g., "Lorem Tales Weddings"] – Generic name could be "PhotoShare Studio" or similar.
-Purpose: A platform for creating, managing, and sharing photo galleries, particularly for events such as weddings, parties, or celebrations.
-Target Users: Event organizers, photographers, couples, or individuals wanting to share and collaborate on photo collections.
-2. User Interface Overview
-Theme: Dark-mode interface with green accents (e.g., buttons, logos).
-Layout:
-Header: Displays the app logo/icon (green, top-left) and a title or feature label (e.g., "Save the Date," top-right).
-Sidebar/Left Navigation: Contains options or thumbnails for galleries, including:
-Existing gallery thumbnails (blurred in the screenshot, indicating multiple galleries).
-A "Create Gallery" button or icon (e.g., "+").
-Main Content Area: Displays a grid of thumbnail images from the selected gallery (e.g., event photos like people at tables, wearing party hats).
-Popup/Modal Windows: Features like "Share Galleries" for sharing options.
-3. Key Features
-Gallery Creation:
-Users can create new galleries using a dedicated button (e.g., "+" in the sidebar).
-Galleries can be themed for specific events (e.g., "Save the Date" for weddings).
-Gallery Viewing:
-Displays a grid or list of photos within a selected gallery.
-Thumbnails provide a preview of the content (e.g., event photos).
-Gallery Sharing:
-Share Galleries Popup:
-Title: "Share Galleries" or similar.
-Options:
-Recipient/Name: Field or label for the recipient or event (e.g., "Sara & Matan").
-Gallery Selection: Users can choose specific galleries (e.g., checkbox for "Save the Date") or a custom "Selection" (radio button).
-Gallery Link: A unique URL is generated for sharing (e.g., lorem-tales-weddings/share/sara-&-matan-dXisc).
-Actions:
-"Copy" button: Copies the gallery link to the clipboard.
-Lock/Key icon: Likely for managing privacy settings, password protection, or access control.
-"Close" button: Dismisses the popup.
-"Share" button: Initiates the sharing process (e.g., via email, social media, or direct link).
-Privacy and Access:
-The lock/key icon suggests options for securing galleries with passwords or restricting access.
-4. User Interactions
-Navigating Galleries:
-Click gallery thumbnails or titles in the sidebar to view specific collections.
-Use the "Create Gallery" button to start a new photo collection.
-Sharing Process:
-Open the "Share Galleries" popup (likely triggered by a button or menu option).
-Select the gallery or galleries to share (e.g., check "Save the Date" or choose "Selection").
-Copy the gallery link using the "Copy" button or adjust privacy settings via the lock icon.
-Click "Share" to distribute the gallery (method of sharing may depend on integration with email, messaging apps, etc.).
-Use "Close" to exit without sharing.
-Troubleshooting Common Issues:
-If sharing fails: Ensure internet connectivity, correct gallery selection, and sufficient permissions.
-If the link doesn’t work: Verify the URL and check privacy settings or restrictions.
-5. Visual Elements
-Icons and Buttons:
-Green "+" for creating galleries.
-Green "Share" and "Close" buttons in popups.
-Lock/key icon for privacy or security options.
-"Copy" button for gallery links.
-Thumbnails: Blurred or clear images representing gallery content (e.g., event photos).
-6. Technical Notes
-URL Structure: Galleries are accessed via unique links (e.g., domain/share/recipient-code), suggesting cloud-based or web-hosted functionality.
-Accessibility: Ensure the dark theme and small text are accessible for all users (consider contrast and font size options).
-7. Example Use Cases
-Wedding Photographers: Create a "Save the Date" gallery for a couple (e.g., "Sara & Matan"), share photos with guests, and manage access.
-Event Organizers: Share event photos with attendees using a secure link.
-Individuals: Collaborate on photo collections for personal events like birthdays or anniversaries.
-8. Getting Started
-Sign-Up/Login: Users may need to create an account or log in to access full features.
-First Steps:
-Click "+" to create a new gallery.
-Upload photos or import from a device.
-Use the "Share Galleries" feature to distribute the gallery link.
-Manage privacy settings via the lock icon if needed.
-9. Support and Resources
-Help Center: Access tutorials or FAQs for creating, sharing, and managing galleries.
-Contact Support: Reach out for technical issues or feature requests.`
+Getting Started
+Fotoflow is a cloud-based platform tailored for event photographers to simplify their workflow. To begin:
+
+Sign up at fotoflow.com (URL placeholder).
+Log in to access your dashboard.
+Explore the core features below to start managing your photography business efficiently.
+Core Features
+Storing & Organizing Photos
+How It Works: Upload your photos to Fotoflow’s cloud-based storage, where they are automatically organized into galleries within a project.
+Key Benefits: Access your photos from anywhere, keep projects tidy, and save time searching for files.
+Tips: Create a new project for each event to keep galleries organized.
+Sharing Galleries
+How It Works: Once photos are uploaded, generate a shareable link for each gallery. Anyone with the link can view the gallery.
+Client Gallery: A passcode-protected gallery (default setting) allows clients to securely view and interact with their photos.
+Coming Soon: Custom permissions and passcode protection for all galleries.
+Tips: Share links via email or messaging apps directly from Fotoflow.
+Selecting Photos for Final Album
+How It Works: Clients can pick their favorite photos from the passcode-protected client gallery. Photographers can then copy the selected file names with one click and import them into Lightroom for editing.
+Key Benefits: Streamlines collaboration and speeds up the editing process.
+Tips: Ensure clients have their passcode before sharing the gallery link.
+Managing Clients
+How It Works: Create client profiles to store key information.
+Coming Soon: Communication tools (e.g., in-app messaging) and status tracking (e.g., “Awaiting Approval,” “Delivered”).
+Tips: Keep client details updated for quick reference during shoots.
+Managing Shoots
+How It Works: Schedule shoots, track locations, and log details like date and time within Fotoflow.
+Key Benefits: Stay on top of your calendar and never miss a booking.
+Tips: Add location notes to prepare for each event’s logistics.
+Managing Financials
+How It Works: Create invoices, track payments, and monitor expenses directly in Fotoflow.
+Key Benefits: Simplify bookkeeping and maintain financial clarity for your business.
+Tips: Use the payment tracking feature to follow up on outstanding invoices.
+Managing Projects
+How It Works: Project management tools are coming soon to help you oversee tasks, timelines, and progress for each event.
+Tips: Stay tuned for updates to enhance your project oversight!
+Core
+5 GB
+Free
+*
+for 12 months.
+No Credit Card Required
+5 GB Storage
+Gallery
+Selection
+3 galleries/project
+
+3 new projects/month
+
+Plan expries on
+
+31 July 2026
+
+Current Plan
+Freelancer
+100 GB
+₹980
+/mo
+Welcome Offer
+Core +
+Gallery
+Selection
+Financials
+e-Invitation
+Unlimited Projects
+
+12 Galleries/month
+
++Everything in Core plan
+
+Pay Later in 14 days.
+
+Try for Free
+Pay Now
+Secured by Razorpay
+Pay with UPI . Secure offer.
+
+Studio
+1 TB
+₹2,800₹1,020
+/mo
+for 2 months.
+Offer expires soon!
+₹2,800/month after
+Website
+Portfolio
+Bookings
+Unlimited Galleries
+
+1 Million Photos
+
++Everything in Freelancer plan
+
+Pay Later in 14 days.
+
+Try for Free
+Pay Now
+Secured by Razorpay
+Pay with UPI . Secure offer.
+
+Company
+5 TB
+₹4,800₹2,800
+/mo
+for 2 months.
+Save up to ₹8,640 with offer
+₹9,800/month after
+Multi-studio
+Custom Domain
+Addon Storage
+Unlimited Bandwidth
+
+Original File Size
+
++Everything in Studio plan
+
+Pay Later in 14 days.
+
+Try for Free
+Pay Now
+Secured by Razorpay
+Pay with UPI . Secure offer.
+
+you are a great salles person. Make sure use of the pricing incentive to upsell like if user is intrested in freelaanmcxer plan you could uplsell to studio plan and mention the small upcharge 
+Navigate the Platform:
+Command: “Hey Copilot, how do I upload photos?”
+Response: “Go to Projects, select a project, click Add Gallery, and upload your photos.”
+Command: “Hey Copilot, where can I see my scheduled shoots?”
+Response: “Navigate to Shoots from the dashboard to view your schedule.”
+Command: “Hey Copilot, take me to the Financials section.”
+Response: Directs you to the Financials tab or highlights it on-screen.
+Ask About Projects:
+Command: “Hey Copilot, what’s in the Smith Wedding project?”
+Response: “The Smith Wedding project has 3 galleries: Ceremony, Reception, and Portraits, with a shoot scheduled for April 10th.”
+Command: “Hey Copilot, how many photos are in the Jones Engagement gallery?”
+Response: “The Jones Engagement gallery contains 45 photos.”
+Command: “Hey Copilot, has the client submitted selections for Project X?”
+Response: “Yes, selections were submitted on February 18th—check the client gallery.”
+Pricing Insights:
+Command: “Hey Copilot, how much have I invoiced this month?”
+Response: “You’ve invoiced $3,200 in February so far.”
+Command: “Hey Copilot, what’s the payment status for Client B’s invoice?”
+Response: “Client B’s invoice for $1,000 is still unpaid, due February 25th.”
+Command: “Hey Copilot, how much did I spend on expenses last week?”
+Response: “You recorded $120 in expenses last week, including $80 for travel.”
+Take Actions:
+Command: “Hey Copilot, create an invoice for Client A for $500.”
+Response: “Invoice created for Client A—$500 for ‘Event Package.’ Send it now?”
+Command: “Hey Copilot, share the Ceremony gallery from Project Y with a passcode.”
+Response: “Ceremony gallery link generated with passcode ‘1234.’ Copy it now?”
+Command: “Hey Copilot, schedule a shoot for March 5th at 3 PM at Central Park.”
+Response: “Shoot scheduled for March 5th, 3 PM, Central Park. Add more details?”
+Command: “Hey Copilot, add a new client named Sarah Jones with email sarah@email.com.”
+Response: “Client Sarah Jones added with email sarah@email.com. View profile?”
+Command: “Hey Copilot, mark Invoice #123 as paid.”
+Response: “Invoice #123 marked as paid. Update your records?”
+Additional Use Cases:
+Command: “Hey Copilot, suggest tags for my Reception gallery.”
+Response: “Suggested tags: wedding, reception, dancing, candid, night.”
+Command: “Hey Copilot, draft an email to Client C about their gallery.”
+Response: “Draft: ‘Hi Client C, your gallery is ready! View it here: [link]. Passcode: 5678.’ Send?”
+Command: “Hey Copilot, remind me about my next shoot.”
+Response: “Your next shoot is March 1st at 2 PM—‘Davis Portrait’ at Studio A.”`
 const calculateDelay = (text) => {
   const baseDelay = 500; // Minimum delay in milliseconds
   const delayPerChar = 10; // Additional delay per character
@@ -457,7 +548,7 @@ const FlowPilot = ({ userId }) => {
     <div className="flow-pilot">
       <div className="chat-header">
         <h3>FlowPilot</h3>
-        <div className="conversation-meta"></div>
+        <div className="conversation-meta">Powered by FlowAI & Google Gemini</div>
       </div>
       
       <div className="chat-window-container" ref={chatWindowRef}>
@@ -503,6 +594,12 @@ const FlowPilot = ({ userId }) => {
             disabled={!activeConversation}
           >
             End chat
+          </p>
+          <p
+
+            className="ai-chat-decleration"
+          >
+          AI assists; you decide.
           </p>
         </div>
       </div>
