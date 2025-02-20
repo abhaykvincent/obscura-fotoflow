@@ -13,7 +13,9 @@ $border-color: #bdc3c7;
   margin: 0 auto;
   background: white;
   border-radius: 12px;
-  border: 1px solid $dark-1;
+  border: 2px solid $dark-2;
+  border-top: 2px solid $dark-1;
+  border-left: 2px solid $dark-1-5;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
@@ -30,6 +32,7 @@ $border-color: #bdc3c7;
   z-index: 12;
   border-radius: 8px*2;
   opacity: 0.8;
+  box-shadow: 0px 0px 8px 4px rgba(0, 0, 0, 0.5);
   cursor: default;
   background-color: none;
   transition-duration: 0.1s;
@@ -43,10 +46,9 @@ $border-color: #bdc3c7;
     padding: 8px*2/1.6 8px*2;
     background: $dark-3;
     color: white;
-    border: 1px solid $dark-2;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0px -4px 8px*2 8px*2 white;
+    box-shadow: 0px -8px 8px 8px #000000;
 
     h3 {
       margin: 0;
@@ -193,26 +195,22 @@ $border-color: #bdc3c7;
                   0%{
                     opacity: 0.8;
                     background:#dcf2d31d ;
-                    border: 1px solid #a3d68f;
-                    padding-right: 8px*1;
+                    border: 1px solid #a3d68fc3;
                   }
                   50%{
                     opacity: 1;
                     background:#dcf2d3 ;
-                    padding-right: 8px*2;
                     border: 1px solid #a3d68f54;
                   }
                   70%{
                     opacity: 1;
                     background:#dcf2d3 ;
-                    padding-right: 8px*2;
                     border: 1px solid #a3d68f54;
                   }
                   100%{
                     opacity: 0.8;
                     background:#dcf2d31d ;
-                    padding-right: 8px*1;
-                    border: 1px solid #a3d68f;
+                    border: 1px solid #a3d68fc3;
                   }
               }
             }
@@ -325,24 +323,31 @@ $border-color: #bdc3c7;
         }
       }
     }
-    .end-chat-btn{
-      text-align: center;
-      font-size: 0.8rem;
-      cursor: pointer;
-      background-color: $gray6-default-light;
-      color: $dark-0;
-      padding: 4px;
-      border-radius: 4px;
-      &:hover{
-        color: $dark-1;
-        background-color: $gray5-default-light;
+    .chat-actions{
+      display: flex;
+      justify-content: space-around;
+      gap: 8px;
+      padding: 8px;
+      padding-top: 0;
+      .end-chat-btn{
+        text-align: center;
+        font-size: 0.8rem;
+        cursor: pointer;
+        background-color: $gray6-default-light;
+        color: $dark-0;
+        padding: 4px 8px;
+        border-radius: 4px;
+        &:hover{
+          color: $dark-1;
+          background-color: $gray5-default-light;
+        }
       }
     }
     .ai-chat-decleration{
       
       text-align: center;
       font-size: 0.8rem;
-      color: $gray-accessible-light;
+      color: $gray4-accessible-light;
       padding: 4px;
     }
   }
@@ -353,6 +358,7 @@ $border-color: #bdc3c7;
     display: flex;
     gap: 4px;
 
+    box-shadow: 0px 8px 8px 8px #00000064;
     width: 100%;
     input {
       flex: 1;
