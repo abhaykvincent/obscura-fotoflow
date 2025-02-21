@@ -12,8 +12,6 @@ import { getTimeAgo } from '../../../utils/dateUtils';
 import { calculateDelay } from '../../../utils/stringUtils';
 import { AppDocumentation } from '../../../data/flowpilot/AppDocumentation';
 
-
-
 const FlowPilot = ({ userId }) => {
   const defaultStudio = useSelector(selectUserStudio);
 
@@ -22,6 +20,7 @@ const FlowPilot = ({ userId }) => {
   const [isTyping, setIsTyping] = useState(false);
   const [activeConversation, setActiveConversation] = useState(null);
   const chatWindowRef = useRef(null);
+  
   // OPTIONS
   const generationConfig = {
     temperature: 1,
@@ -71,9 +70,8 @@ const FlowPilot = ({ userId }) => {
       setActiveConversation(convRef.id);
     }
   };
+  
   useEffect(() => {
-    
-
     if (defaultStudio?.domain && userId) {
       initializeConversation();
     }
@@ -94,15 +92,16 @@ const FlowPilot = ({ userId }) => {
     const snapshot = await getDocs(q);
     setMessages(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
   };
-  // 
-  const handleSendMessage = async () => {
-    if (!input.trim() || !activeConversation) return;
+
+  // Handle sending messages (both from input and suggestions)
+  const handleSendMessage = async (messageText = input) => {
+    if (!messageText.trim() || !activeConversation) return;
   
     const newMessage = {
       conversationId: activeConversation,
       studioId: defaultStudio.domain,
       content: {
-        text: input.trim(),
+        text: messageText.trim(),
         aiMetadata: {
           isAIGenerated: false,
           detectedIntent: '',
@@ -161,7 +160,7 @@ const FlowPilot = ({ userId }) => {
       'meta.lastUpdated': new Date().toISOString(),
     });
   
-    setInput('');
+    setInput(''); // Clear input only if sending from input field
     await generateAIResponse();
   };
 
@@ -209,24 +208,29 @@ const FlowPilot = ({ userId }) => {
         generationConfig,
         history,
       });
-      console.log(lastMessage.content.text)
+      
       const prompt = `You are FlowPilot, a helpful assistant for FotoFlow users. FotoFlow is a SaaS web app designed to streamline the workflow of event photographers. Your role is to assist users with their queries about FotoFlow's features, provide guidance on using the platform, and help troubleshoot any issues they might encounter. Be friendly, professional, and concise in your responses.
-      ${AppDocumentation}
-  Respond to the following user message by providing your answer as a numbered list of short, standalone messages(max 3 standalone messages). Each item in the list should be a separate, concise message suitable for a chat interface. Avoid long paragraphs; break your response into distinct, bite-sized parts. Start each line with a number followed by a period (e.g., "1. Hi there!").
-  
-  User message: ${lastMessage.content.text}`;
+${AppDocumentation}
+Respond to the following user message by providing your answer as a numbered list of short, standalone messages (max 3 standalone messages). Each item in the list should be a separate, concise message suitable for a chat interface. Avoid long paragraphs; break your response into distinct, bite-sized parts. Start each line with a number followed by a period (e.g., "1. Hi there!").
+
+Additionally, provide a list of 2-3 suggested follow-up questions or commands that the user might want to ask next, based on the context of the conversation. Format these suggestions as a separate list after the main response, each prefixed with 'Suggestion:' and questions or commands should be shorter (5-6 words).
+
+User message: ${lastMessage.content.text}`;
   
       const result = await chatSession.sendMessage(prompt);
       const responseText = result.response.text();
   
-      // Parse the numbered list into separate messages
-      const botMessages = responseText
-        .split('\n')
-        .map(line => line.trim())
-        .filter(line => line.match(/^\d+\./)) // Only keep lines starting with "number."
-        .map(line => line.replace(/^\d+\.\s*/, '')) // Remove "number." prefix
-        .filter(line => line) // Remove empty lines
-        .map((text) => ({
+      // Parse the response to separate main messages and suggestions
+      const lines = responseText.split('\n').map(line => line.trim()).filter(line => line);
+      
+      const mainResponseLines = lines.filter(line => line.match(/^\d+\./));
+      const suggestionLines = lines.filter(line => line.startsWith('Suggestion:'));
+      
+      const suggestions = suggestionLines.map(line => line.replace(/^Suggestion:\s*/, ''));
+      
+      const botMessages = mainResponseLines.map((line, index) => {
+        const text = line.replace(/^\d+\.\s*/, '');
+        return {
           conversationId: activeConversation,
           studioId: defaultStudio.domain,
           content: {
@@ -234,7 +238,7 @@ const FlowPilot = ({ userId }) => {
             aiMetadata: {
               isAIGenerated: true,
               detectedIntent: '',
-              suggestedResponses: []
+              suggestedResponses: index === mainResponseLines.length - 1 ? suggestions : []
             }
           },
           sender: {
@@ -252,7 +256,8 @@ const FlowPilot = ({ userId }) => {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           }
-        }));
+        };
+      });
   
       // Add each bot message to Firestore with delay
       const messagesRef = collection(
@@ -267,17 +272,16 @@ const FlowPilot = ({ userId }) => {
       const newMessages = [];
       for (const botMessage of botMessages) {
         await new Promise(resolve => setTimeout(resolve, 1000)); // Introduce delay
-        setIsTyping(true)
+        setIsTyping(true);
         const delay = calculateDelay(botMessage.content.text);
-        await new Promise(resolve => setTimeout(resolve, delay*2)); // Introduce delay
+        await new Promise(resolve => setTimeout(resolve, delay * 2)); // Introduce delay
         
         const messageRef = await addDoc(messagesRef, botMessage);
         newMessages.push({
           id: messageRef.id,
           ...botMessage
         });
-        setIsTyping(false)
-
+        setIsTyping(false);
         setMessages(prevMessages => [...prevMessages, newMessages[newMessages.length - 1]]); // Update state incrementally
       }
   
@@ -323,7 +327,7 @@ const FlowPilot = ({ userId }) => {
       setMessages([]);
       setActiveConversation(null);
       setInput('');
-      initializeConversation()
+      initializeConversation();
     } catch (error) {
       console.error('Error ending chat:', error);
     }
@@ -363,8 +367,6 @@ const FlowPilot = ({ userId }) => {
 
   useEffect(() => {
     if (chatWindowRef.current) {
-      // last message is customer
-
       chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
     }
   }, [messages]);
@@ -378,32 +380,39 @@ const FlowPilot = ({ userId }) => {
       
       <div className="chat-window-container" ref={chatWindowRef}>
         <div className="chat-window">
+          {/* Messages in groups */}
           {groupMessages(messages).map((group, groupIndex) => (
-            <div 
-              key={groupIndex} 
-              className={`message-group ${group.senderType}`}
-            >
+            <div key={groupIndex} className={`message-group ${group.senderType}`}>
+              {/* Messages Individual*/}
               {group.messages.map((msg, msgIndex) => (
                 <div key={msg.id} className="message">
                   <div className="message-content">
                     <p>{msg.content.text}</p>
                   </div>
+                  {/* Time gao */}
                   {msgIndex === group.messages.length - 1 && (
                     <div className="message-meta">
                       <span className="time">
-                        {groupIndex === groupMessages(messages).length - 1 && group.senderType ==='user'&& <span className="sent-label">Sent</span>}
-                        {/* {new Intl.DateTimeFormat('en-US', { 
-                          hour: 'numeric', 
-                          minute: '2-digit' 
-                        }).format(new Date(msg.timestamps.createdAt))} */}
+                        {groupIndex === groupMessages(messages).length - 1 && group.senderType === 'user' && <span className="sent-label">Sent</span>}
                         {getTimeAgo(new Date(msg.timestamps.createdAt))}
                       </span>
+                    </div>
+                  )}
+                  {/* AI Suggestions */}
+                  {msg.content.aiMetadata.suggestedResponses && msg.content.aiMetadata.suggestedResponses.length > 0 && (
+                    <div className="suggestions">
+                      {msg.content.aiMetadata.suggestedResponses.map((suggestion, index) => (
+                        <div className='ai-suggestion' key={index} onClick={() => handleSendMessage(suggestion)}>
+                          {suggestion}
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
               ))}
             </div>
           ))}
+          {/* Typing Bubble */}
           {isTyping && (
             <div className="message-group bot">
               <div className="message">
@@ -413,26 +422,19 @@ const FlowPilot = ({ userId }) => {
               </div>
             </div>
           )}
-          <p className="ai-chat-decleration">AI assists; you decide.</p>
+          {/* Actions and Declerations */}
+          <p className="ai-chat-decleration">AI assists -- you decide.</p>
           <div className="chat-actions">
-            
-            <p className="end-chat-btn"
-              onClick={handleEndChat}
-              disabled={!activeConversation} >
-               Close
+            <p className="end-chat-btn" onClick={handleEndChat} disabled={!activeConversation}>
+              Close
             </p>
-            <p className="end-chat-btn"
-              onClick={handleEndChat}
-              disabled={!activeConversation} >
+            <p className="end-chat-btn" onClick={handleEndChat} disabled={!activeConversation}>
               Contact Support
             </p>
-            <p className="end-chat-btn"
-              onClick={handleEndChat}
-              disabled={!activeConversation} >
+            <p className="end-chat-btn" onClick={handleEndChat} disabled={!activeConversation}>
               Start Over
             </p>
           </div>
-          
         </div>
       </div>
       
