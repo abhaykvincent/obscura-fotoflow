@@ -11,11 +11,11 @@ $border-color: #bdc3c7;
   position: relative;
   width: 8px*45;
   margin: 0 auto;
-  background: white;
+  background: $dark-2;
   border-radius: 12px;
-  border: 2px solid $dark-2;
-  border-top: 2px solid $dark-1;
-  border-left: 2px solid $dark-1-5;
+  border: 2px solid $dark-1-5;
+  border-top: 2px solid $dark-0;
+  border-left: 2px solid $dark-1;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
@@ -26,13 +26,13 @@ $border-color: #bdc3c7;
   justify-items: end;
   bottom: 8px*0;
   right: 8px*0;
-  margin-right: 8px*1;
-  margin-bottom:  8px*1;;
+  margin-right: 8px*2;
+  margin-bottom:  8px*2;;
   padding: 0;
   z-index: 12;
   border-radius: 8px*2;
   opacity: 0.8;
-  box-shadow: 0px 0px 8px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.5);
   cursor: default;
   background-color: none;
   transition-duration: 0.1s;
@@ -49,7 +49,7 @@ $border-color: #bdc3c7;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0px -8px 8px 8px #000000;
-
+    border-bottom: 1px solid $dark-1;
     h3 {
       margin: 0;
       color: white;
@@ -97,13 +97,14 @@ $border-color: #bdc3c7;
     flex: 1;
     width: 100%;
     overflow-y: auto;
-    padding: 1rem;
+    padding: 8px*2;
     padding-top: 8px*3;
     padding-bottom: 8px*1;
     display: flex;
     flex-direction: column;
-    gap:4px;
+    gap:8px;
 
+    box-shadow: inset 0px 0px 4px 0px rgba(0, 0, 0, 0.2);
     .message-group {
 
       width: 100%;
@@ -119,14 +120,15 @@ $border-color: #bdc3c7;
           .message-content{
 
             justify-content: flex-end;
-            background: $green-default-light;
+            background: $green-dark-accessible-light;
             margin-left: auto;
             border-top-right-radius: 4px;
             border-bottom-right-radius: 4px;
-            padding-left: 8px*1;
-            padding-right: 8px*1;
+            padding: 4px;
+            padding-left: 6px*1.6;
+            padding-right: 6px*1.6;
             p{
-
+              font-size: 0.95rem;
             color: white;
             }
           }
@@ -155,8 +157,7 @@ $border-color: #bdc3c7;
           .message-content{
             padding-top: 6px;
             max-width: 8px*38;
-            background: #dcf2d3;
-            color: $dark-3;
+            background: #46593e50;
             margin-right: auto;
             border-top-left-radius: 4px;
             border-bottom-left-radius: 4px;
@@ -168,7 +169,7 @@ $border-color: #bdc3c7;
               white-space: normal;
               text-align: left;
               width: 100%;
-              color: $gray4-default-dark;
+              color: $gray6-default-light;
             }
 
             @keyframes popup-bot-chat-message {
@@ -178,39 +179,43 @@ $border-color: #bdc3c7;
               }
               100%{
                 transform: scale(1) translateX(0%) translateY(0%);
-                opacity: 1;
+                opacity: 0.8;
               }
             }
             &.typing{
               font-size: 0.8rem;
               background: #dcf2d3;
-              border: 1px solid #a3d68f;
               animation-name: typing-bubble;
               animation-duration: 2s;
               animation-iteration-count: infinite;
               transform: scale(1) translateX(0%) translateY(0%);
-              color: $dark-2;
               padding: 2px 8px;
+              margin-top: -8px;
+              color: $gray-accessible-dark;
+              text-shadow: 1px 1px 1px black;
+              p{
+                color: inherit;
+              }
               @keyframes typing-bubble {
                   0%{
                     opacity: 0.8;
                     background:#dcf2d31d ;
-                    border: 1px solid #a3d68fc3;
+                    color: $dark-0 !important;
                   }
                   50%{
                     opacity: 1;
-                    background:#dcf2d3 ;
-                    border: 1px solid #a3d68f54;
+                    background:#67766172 ;
+                    color: #5b9e40dc!important;
                   }
                   70%{
                     opacity: 1;
-                    background:#dcf2d3 ;
-                    border: 1px solid #a3d68f54;
+                    background:#67766172 ;
+                    color: #5b9e40dc !important;
                   }
                   100%{
                     opacity: 0.8;
                     background:#dcf2d31d ;
-                    border: 1px solid #a3d68fc3;
+                    color: $dark-0 !important;
                   }
               }
             }
@@ -231,7 +236,7 @@ $border-color: #bdc3c7;
         opacity: 0;
         animation: popup-chat-message 0.2s;
         animation-fill-mode: forwards;
-        animation-delay: 5s;
+        animation-delay: 1.8s;
         }
       }
 
@@ -240,6 +245,7 @@ $border-color: #bdc3c7;
 
       width: 100%;
       display: grid;
+      gap: 2px;
       .message-meta {
         display: flex;
         justify-content: flex-end;
@@ -254,7 +260,7 @@ $border-color: #bdc3c7;
           display: flex;
           gap: 4px;
           font-weight: 300;
-          color: $dark-1;
+          color: $gray3-accessible-dark;
           .sent-label{
 
           color: $dark-0;
@@ -274,6 +280,7 @@ $border-color: #bdc3c7;
         opacity: 0;
         animation: popup-chat-message 0.2s;
         animation-fill-mode: forwards;
+        box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.4);
         
         p {
           margin: 0;
@@ -282,6 +289,47 @@ $border-color: #bdc3c7;
           white-space: pre-wrap;
         }
       }
+      }
+      .suggestions{
+        width: 100%;
+        display:flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 0px;
+        margin-bottom: 8px;
+        margin-left: 2px;
+        .ai-suggestion{
+          display: flex;
+          max-width: 8px*35;
+          padding: 4px 8px*1;
+          border-radius: 8px;
+          border-radius: 10px 16px   16px 6px  ;
+          text-align: left;
+          border: 1px solid $green-dark-accessible-light;
+          color: $green-default-dark;
+          font-size: 0.8rem;
+          transform: scale(0.4) translateX(-35%)  translateY(20%);;
+          opacity: 0;
+          animation: popup-bot-chat-message 0.2s;
+          animation-fill-mode: forwards;
+          box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.2);
+          transition-duration: 0.1s;
+          cursor: pointer;
+          &:hover{
+            opacity: 1 !important;
+          border: 1px solid #568e40;
+          background: $green-accessible-dark;
+          transition-duration: 0.05s;
+          color: rgba(255, 255, 255, 1);
+          box-shadow: 2px 1px 3px 1px rgba(0, 0, 0, 0.2);
+          }
+          @for $i from 1 through 5 {  // Adjust the number 5 based on how many elements you want to loop
+            &:nth-child(#{$i}) {
+              animation-delay: 2s + ($i * 0.2s);
+            }
+          }
+
+        }
       }
       .time{
         transform: scale(0.4) translateX(35%)  translateY(-20%);;
@@ -325,7 +373,7 @@ $border-color: #bdc3c7;
     }
     .chat-actions{
       display: flex;
-      justify-content: space-around;
+      justify-content: center;
       gap: 8px;
       padding: 8px;
       padding-top: 0;
@@ -333,13 +381,13 @@ $border-color: #bdc3c7;
         text-align: center;
         font-size: 0.8rem;
         cursor: pointer;
-        background-color: $gray6-default-light;
+        background-color: $dark-1-5;
         color: $dark-0;
         padding: 4px 8px;
         border-radius: 4px;
         &:hover{
-          color: $dark-1;
-          background-color: $gray5-default-light;
+          color: $gray-accessible-dark;
+          background-color: $dark-1;
         }
       }
     }
@@ -347,14 +395,14 @@ $border-color: #bdc3c7;
       
       text-align: center;
       font-size: 0.8rem;
-      color: $gray4-accessible-light;
-      padding: 4px;
+      color: $gray4-accessible-dark;
     }
   }
-
+ 
   .input-area {
     padding: 8px;
-    border-top: 1px solid $border-color;
+    border-top: 1px solid $dark-1;
+    background-color:$dark-3;
     display: flex;
     gap: 4px;
 
@@ -364,17 +412,20 @@ $border-color: #bdc3c7;
       flex: 1;
       padding: 1rem 1rem;
       height: 8px*3 ;
-      border: 1px solid $border-color;
+      border: 1px solid $dark-1;
       border-radius: 8px;
       font-size: 1rem;
-      color: $dark-1;
+      color: $gray6-accessible-light;
       transition: all 0.2s ease;
-      background-color: $gray4-default-light;
+      background-color:rgba(70, 89, 62, 0.3137254902);
       border-top-right-radius: 3px;
       &:focus {
         outline: none;
-        border-color: $secondary-color;
+        border-color: $green-dark-accessible-light;
         box-shadow: 0 0 0 2px rgba($secondary-color, 0.2);
+      }
+      &::placeholder{
+        color:$gray2-accessible-light;
       }
     }
 
