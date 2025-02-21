@@ -8,6 +8,7 @@ import {
 } from 'firebase/firestore';
 import './FlowPilot.scss';
 import sendSound from '../../../assets/sounds/message-send.mp3';
+import typingSound from '../../../assets/sounds/message-typing.mp3';
 import { getTimeAgo } from '../../../utils/dateUtils';
 import { calculateDelay } from '../../../utils/stringUtils';
 import { AppDocumentation } from '../../../data/flowpilot/AppDocumentation';
@@ -77,6 +78,23 @@ const FlowPilot = ({ userId }) => {
     }
   }, [defaultStudio, userId]);
 
+  const audioTyping = new Audio(typingSound); // Adjust path
+  audioTyping.volume = 0.2; // Set volume to 20% (subtle)
+  useEffect(() => {
+    if (isTyping) {
+      audioTyping.loop = true; // Loop the typing sound
+      audioTyping.play().catch(error => console.log('Error playing sound:', error));
+    } else {
+      audioTyping.pause();
+      audioTyping.currentTime = 0;
+    }
+
+    // Cleanup to stop sound on unmount
+    return () => {
+      audioTyping.pause();
+      audioTyping.currentTime = 0;
+    };
+  }, [isTyping]);
   // Load messages for conversation
   const loadMessages = async (convId) => {
     const messagesRef = collection(
@@ -136,16 +154,19 @@ const FlowPilot = ({ userId }) => {
     
     const messageRef = await addDoc(messagesRef, newMessage);
     
-    const audio = new Audio(sendSound);
-    audio.play().catch(error => console.log('Error playing sound:', error));
+    const audioSent = new Audio(sendSound);
+    audioSent.play().catch(error => console.log('Error playing sound:', error));
     
-    setMessages(prevMessages => [
-      ...prevMessages,
+    const updatedMessages = [
+      ...messages,
       {
         id: messageRef.id,
         ...newMessage
       }
-    ]);
+    ];
+  
+    // Update state
+    setMessages(updatedMessages);
   
     const convRef = doc(
       db,
@@ -161,25 +182,29 @@ const FlowPilot = ({ userId }) => {
     });
   
     setInput(''); // Clear input only if sending from input field
-    await generateAIResponse();
+    await generateAIResponse(updatedMessages);
   };
 
-  const generateAIResponse = async () => {
-    if (!activeConversation || messages.length === 0) return;
+  const generateAIResponse = async (updatedMessages) => {
+    console.log(updatedMessages)
+    if (!activeConversation || updatedMessages.length === 0) return;
     if (isTyping) return; // Prevent re-run while typing
-    const lastMessage = messages[messages.length - 1];
+    const lastMessage = updatedMessages[updatedMessages.length - 1];
 
     if (lastMessage.sender.type !== 'customer') return;
   
     try {
-      setIsTyping(true); // Show typing indicator
+      setTimeout(()=>{
+
+        setIsTyping(true); // Show typing indicator
+      },1000)
   
       // Build history with merged consecutive user and bot messages
       const history = [];
       let lastRole = null;
       let mergedText = '';
   
-      messages.slice(0, -1).forEach((msg) => {
+      updatedMessages.slice(0, -1).forEach((msg) => {
         const currentRole = msg.sender.type === 'customer' ? 'user' : 'model';
   
         if (currentRole === lastRole) {
