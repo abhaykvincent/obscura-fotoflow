@@ -73,7 +73,7 @@ export function convertMegabytes(megabytes, decimalPlaces = 0) {
     sizeIndex++;
   }
 
-  return `${megabytes.toFixed(decimalPlaces)} ${sizes[sizeIndex]}`;
+  return `${megabytes?.toFixed(decimalPlaces)} ${sizes[sizeIndex]}`;
 }
 export function formatStorage(size, unit) {
   const units = ["B", "KB", "MB", "GB", "TB", "PB"];
@@ -169,3 +169,8 @@ export const  greetUser=(userName) => {
   }
 }
 
+export const calculateDelay = (text) => {
+  const baseDelay = 500; // Minimum delay in milliseconds
+  const delayPerChar = 10; // Additional delay per character
+  return Math.min(baseDelay + text.length * delayPerChar, 2000); // Cap at 2 seconds
+};

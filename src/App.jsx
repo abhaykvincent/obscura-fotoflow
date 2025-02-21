@@ -30,7 +30,7 @@ import SearchResults from './components/Search/SearchResults';
 import Subscription from './components/Subscription/Subscription';
 import UploadProgress from './components/UploadProgress/UploadProgress';
 import Loading, { LoadingLight } from './components/Loading/Loading';
-import SupportIcon from './components/Modal/SupportIcon/SupportIcon';
+import SupportIcon from './components/Modal/SupportIcon/FlowPilot';
 // Utils
 import { isDeveloper, setUserType } from './analytics/utils';
 import { isPublicPage } from './utils/publicPages';
@@ -46,6 +46,7 @@ import useAdminAuth from './hooks/useAdminAuth';
 import Settings from './features/Settings/Settings';
 import UpgradeModal from './components/Subscription/UpgradeModal';
 import { generateReferral } from './app/slices/referralsSlice';
+import FlowPilot from './components/Modal/SupportIcon/FlowPilot';
 
 
 if(isDeveloper) console.log(`%c This device is not being tracked by Analytics in production.`, `color: #ff9500; `);
@@ -108,7 +109,7 @@ export default function App() {
   return (
     <div className="App">
       <HotKeys keyMap={keyMap} handlers={handlers}>
-      <SupportIcon/>
+      <FlowPilot userId={defaultStudio?.domain}/>
       {isAuthenticated && (!isPublicPage())? (
         <>
           <Header />
