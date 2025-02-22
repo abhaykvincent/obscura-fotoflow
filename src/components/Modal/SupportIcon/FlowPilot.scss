@@ -190,7 +190,7 @@ $border-color: #bdc3c7;
               animation-iteration-count: infinite;
               transform: scale(1) translateX(0%) translateY(0%);
               padding: 2px 8px;
-              margin-top: -8px;
+              margin-top: -4px;
               color: $gray-accessible-dark;
               text-shadow: 1px 1px 1px black;
               p{
@@ -291,13 +291,30 @@ $border-color: #bdc3c7;
       }
       }
       .suggestions{
+        position: relative;
         width: 100%;
         display:flex;
         flex-wrap: wrap;
         gap: 4px;
-        margin-top: 0px;
+        margin-top: 4px;
         margin-bottom: 8px;
-        margin-left: 2px;
+        margin-left: 6px;
+        &::after{
+          content:'.';
+          position: absolute;
+          color: transparent;
+          top:8px*0.5;
+          left:-8px*2.2;
+          width: 8px*2;
+          height: 8px*2;
+          background-image: url('https://img.icons8.com/?size=100&id=Imv4VIewVo4o&format=png&color=649917');
+          background-size: 100%;
+          animation: popup-bot-chat-message 0.2s;
+          transform: scale(0.4) translateX(-35%)  translateY(20%);;
+          opacity: 0;
+          animation-delay: 2s;
+          animation-fill-mode: forwards;
+        }
         .ai-suggestion{
           display: flex;
           max-width: 8px*35;
@@ -330,6 +347,7 @@ $border-color: #bdc3c7;
           }
 
         }
+        
       }
       .time{
         transform: scale(0.4) translateX(35%)  translateY(-20%);;
