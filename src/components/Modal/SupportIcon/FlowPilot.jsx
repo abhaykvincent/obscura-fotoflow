@@ -411,11 +411,8 @@ User message: ${lastMessage.content.text}`;
               {/* Messages Individual*/}
               {group.messages.map((msg, msgIndex) => (
                 <div key={msg.id} className="message">
-                  <div className="message-content">
-                    <p>{msg.content.text}</p>
-                  </div>
                   {/* Time gao */}
-                  {msgIndex === group.messages.length - 1 && (
+                  {msgIndex === 0 && (
                     <div className="message-meta">
                       <span className="time">
                         {groupIndex === groupMessages(messages).length - 1 && group.senderType === 'user' && <span className="sent-label">Sent</span>}
@@ -423,6 +420,9 @@ User message: ${lastMessage.content.text}`;
                       </span>
                     </div>
                   )}
+                  <div className="message-content">
+                    <p>{msg.content.text}</p>
+                  </div>
                   {/* AI Suggestions */}
                   {msg.content.aiMetadata.suggestedResponses && msg.content.aiMetadata.suggestedResponses.length > 0 && (
                     <div className="suggestions">
