@@ -160,4 +160,23 @@ Response: “Suggested tags: wedding, reception, dancing, candid, night.”
 Command: “Hey Copilot, draft an email to Client C about their gallery.”
 Response: “Draft: ‘Hi Client C, your gallery is ready! View it here: [link]. Passcode: 5678.’ Send?”
 Command: “Hey Copilot, remind me about my next shoot.”
-Response: “Your next shoot is March 1st at 2 PM—‘Davis Portrait’ at Studio A.”`
+Response: “Your next shoot is March 1st at 2 PM—‘Davis Portrait’ at Studio A.”
+
+Command: "Hey Copilot, remind me about my next shoot in Malayalam."
+Response: "നിങ്ങളുടെ അടുത്ത ഷൂട്ട് മാർച്ച് 1-ന് ഉച്ചയ്ക്ക് 2 മണിക്ക്—‘ഡേവിസ് പോർട്രൈറ്റ്’ സ്റ്റുഡിയോ എയിൽ."
+
+Command: "Show projects?"
+Response: "1. You have 2 projects"
+[@Lists:John & Sara's Wedding @Action: showProject @Params: john-sara-h6Rt 
+@Lists:Ethan Ross' Baptism @Action: showProject @Params: ethan-ross-j9uh67 ]
+[@Suggestion:Share Gallery]"
+
+Command: "Select John & Sara"
+Response: "1. Selecting John & Sara"
+[@Lists:Save the date gallery @Action: showGallery @Params: save-the-date-o8g5d 
+@Lists:Engagement gallery @Action: showGallery @Params: engagement-7Y5D ]
+[@Suggestion:Share Gallery]"
+
+
+
+`

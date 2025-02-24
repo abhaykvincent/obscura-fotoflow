@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom'; // Added for navigation
 import { db, model } from '../../../firebase/app';
 import { selectUserStudio } from '../../../app/slices/authSlice';
 import { useSelector } from 'react-redux';
@@ -12,23 +13,33 @@ import typingSound from '../../../assets/sounds/message-typing.mp3';
 import { getTimeAgo } from '../../../utils/dateUtils';
 import { calculateDelay } from '../../../utils/stringUtils';
 import { AppDocumentation } from '../../../data/flowpilot/AppDocumentation';
+import { selectProjects } from '../../../app/slices/projectsSlice';
 
 const FlowPilot = ({ userId }) => {
   const defaultStudio = useSelector(selectUserStudio);
+  const projects = useSelector(selectProjects);
+  const navigate = useNavigate(); // Added for navigation
 
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [activeConversation, setActiveConversation] = useState(null);
   const chatWindowRef = useRef(null);
-  
+  const [showWelcome, setShowWelcome] = useState(true);
+
   // OPTIONS
   const generationConfig = {
-    temperature: 1,
+    temperature: 0.4,
     topP: 0.95,
     topK: 40,
     maxOutputTokens: 8192,
     responseMimeType: "text/plain",
+  };
+
+  // Start chat
+  const handleNewChat = () => {
+    setShowWelcome(false);
+    initializeConversation();
   };
 
   // Fetch or create conversation
@@ -78,23 +89,23 @@ const FlowPilot = ({ userId }) => {
     }
   }, [defaultStudio, userId]);
 
-  const audioTyping = new Audio(typingSound); // Adjust path
-  audioTyping.volume = 0.2; // Set volume to 20% (subtle)
+  const audioTyping = new Audio(typingSound);
+  audioTyping.volume = 0.2;
   useEffect(() => {
     if (isTyping) {
-      audioTyping.loop = true; // Loop the typing sound
+      audioTyping.loop = true;
       audioTyping.play().catch(error => console.log('Error playing sound:', error));
     } else {
       audioTyping.pause();
       audioTyping.currentTime = 0;
     }
 
-    // Cleanup to stop sound on unmount
     return () => {
       audioTyping.pause();
       audioTyping.currentTime = 0;
     };
   }, [isTyping]);
+
   // Load messages for conversation
   const loadMessages = async (convId) => {
     const messagesRef = collection(
@@ -112,9 +123,9 @@ const FlowPilot = ({ userId }) => {
   };
 
   // Handle sending messages (both from input and suggestions)
-  const handleSendMessage = async (messageText = input) => {
+  const handleSendMessage = async (messageText = input, metadata = {}) => {
     if (!messageText.trim() || !activeConversation) return;
-  
+    setShowWelcome(false);
     const newMessage = {
       conversationId: activeConversation,
       studioId: defaultStudio.domain,
@@ -123,7 +134,8 @@ const FlowPilot = ({ userId }) => {
         aiMetadata: {
           isAIGenerated: false,
           detectedIntent: '',
-          suggestedResponses: []
+          suggestedResponses: [],
+          ...metadata // Merge provided metadata (e.g., parameters)
         }
       },
       sender: {
@@ -142,7 +154,7 @@ const FlowPilot = ({ userId }) => {
         updatedAt: new Date().toISOString()
       }
     };
-  
+    
     const messagesRef = collection(
       db,
       'studios',
@@ -164,10 +176,9 @@ const FlowPilot = ({ userId }) => {
         ...newMessage
       }
     ];
-  
-    // Update state
+    
     setMessages(updatedMessages);
-  
+    
     const convRef = doc(
       db,
       'studios',
@@ -180,26 +191,55 @@ const FlowPilot = ({ userId }) => {
       'meta.lastMessage': newMessage.content.text,
       'meta.lastUpdated': new Date().toISOString(),
     });
-  
-    setInput(''); // Clear input only if sending from input field
+    
+    setInput('');
     await generateAIResponse(updatedMessages);
   };
 
+  // Added handleSelectItem for navigation
+  const handleSelectItem = (selectItem) => {
+    const { item, action, params } = selectItem;
+  
+    // Prepare message with hidden parameters in aiMetadata
+    const messageData = {
+      text: `Select ${item}`,
+      aiMetadata: {
+        isAIGenerated: false,
+        detectedIntent: 'select-item',
+        parameters: {}
+      }
+    };
+  
+    // Add parameters and navigate based on action type
+    if (action === 'showProject') {
+      messageData.aiMetadata.parameters = { projectId: params };
+      const studioName = defaultStudio.domain;
+      const url = `/${studioName}/project/${params}`;
+      navigate(url);
+    } else if (action === 'showGallery') { // Updated action name to 'showGallery'
+      const [projectId, collectionId] = params.split('/'); // Split params into projectId and collectionId
+      messageData.aiMetadata.parameters = { projectId, collectionId };
+      const studioName = defaultStudio.domain;
+      const url = `/${studioName}/gallery/${projectId}/${collectionId}`;
+      navigate(url); // Smooth navigation to gallery URL
+    }
+  
+    // Send message with parameters hidden in metadata
+    handleSendMessage(messageData.text, messageData.aiMetadata);
+  };
+
   const generateAIResponse = async (updatedMessages) => {
-    console.log(updatedMessages)
     if (!activeConversation || updatedMessages.length === 0) return;
-    if (isTyping) return; // Prevent re-run while typing
+    if (isTyping) return;
     const lastMessage = updatedMessages[updatedMessages.length - 1];
 
     if (lastMessage.sender.type !== 'customer') return;
   
     try {
-      setTimeout(()=>{
-
-        setIsTyping(true); // Show typing indicator
-      },1000)
+      setTimeout(() => {
+        setIsTyping(true);
+      }, 1000);
   
-      // Build history with merged consecutive user and bot messages
       const history = [];
       let lastRole = null;
       let mergedText = '';
@@ -208,7 +248,6 @@ const FlowPilot = ({ userId }) => {
         const currentRole = msg.sender.type === 'customer' ? 'user' : 'model';
   
         if (currentRole === lastRole) {
-          // Merge consecutive messages of the same role
           mergedText += '\n' + msg.content.text;
         } else {
           if (mergedText) {
@@ -236,23 +275,38 @@ const FlowPilot = ({ userId }) => {
       
       const prompt = `You are FlowPilot, a helpful assistant for FotoFlow users. FotoFlow is a SaaS web app designed to streamline the workflow of event photographers. Your role is to assist users with their queries about FotoFlow's features, provide guidance on using the platform, and help troubleshoot any issues they might encounter. Be friendly, professional, and concise in your responses.
 ${AppDocumentation}
-Respond to the following user message by providing your answer as a numbered list of short, standalone messages (max 3 standalone messages). Each item in the list should be a separate, concise message suitable for a chat interface. Avoid long paragraphs; break your response into distinct, bite-sized parts. Start each line with a number followed by a period (e.g., "1. Hi there!").
+Retrieval Data: ${JSON.stringify(projects)}
 
-Additionally, provide a list of 2-3 suggested follow-up questions or commands that the user might want to ask next, based on the context of the conversation. Format these suggestions as a separate list after the main response, each prefixed with 'Suggestion:' and questions or commands should be shorter (5-6 words).
+Respond to the following user message by providing your answer as a numbered list of short, standalone messages (1-3 standalone messages). 
+Each item in the list should be a separate, concise message suitable for a chat interface.
+Then provide a list of select items that the user might want to select or act next, based on the retrieval data. Format these suggestions after suggests, each prefixed with @Lists: and items should be shorter (1-4 words).
+Avoid long paragraphs; break your response into distinct, bite-sized parts.
+Start each line with a number followed by a period (e.g., "1. Hi there!").
+Start each line that describe about the list (e.g., "1. You have 5 projects. 2*. Joehans & Jolsna, Renjitha & Smith, Sara & Matan, Sara & ssss, and Sara.").
+Additionally, provide a list of 2-3 suggested follow-up questions or commands that the user might want to ask next, based on the context of the conversation. Format these suggestions as a separate list after the main response, each prefixed with @Suggestion: and questions or commands should be shorter (5-6 words).
 
 User message: ${lastMessage.content.text}`;
-  
+
       const result = await chatSession.sendMessage(prompt);
       const responseText = result.response.text();
   
-      // Parse the response to separate main messages and suggestions
       const lines = responseText.split('\n').map(line => line.trim()).filter(line => line);
       
       const mainResponseLines = lines.filter(line => line.match(/^\d+\./));
-      const suggestionLines = lines.filter(line => line.startsWith('Suggestion:'));
-      
-      const suggestions = suggestionLines.map(line => line.replace(/^Suggestion:\s*/, ''));
-      
+      const suggestionLines = lines.filter(line => line.startsWith('@Suggestion:'));
+
+      // Updated parsing to create selectItems array of objects
+      const selectItems = lines
+        .filter(line => line.startsWith('@Lists:'))
+        .map(line => {
+          const listPart = line.split('@Action:')[0].replace('@Lists:', '').trim();
+          const actionPart = line.split('@Action:')[1]?.split('@Params:')[0].trim() || '';
+          const paramsPart = line.split('@Params:')[1]?.trim() || '';
+          return { item: listPart, action: actionPart, params: paramsPart };
+        });
+
+      const suggestions = suggestionLines.map(line => line.replace(/^@Suggestion:\s*/, ''));
+
       const botMessages = mainResponseLines.map((line, index) => {
         const text = line.replace(/^\d+\.\s*/, '');
         return {
@@ -263,7 +317,8 @@ User message: ${lastMessage.content.text}`;
             aiMetadata: {
               isAIGenerated: true,
               detectedIntent: '',
-              suggestedResponses: index === mainResponseLines.length - 1 ? suggestions : []
+              suggestedResponses: index === mainResponseLines.length - 1 ? suggestions : [],
+              selectItems: index === mainResponseLines.length - 1 ? selectItems : [], // Updated to use selectItems
             }
           },
           sender: {
@@ -284,7 +339,6 @@ User message: ${lastMessage.content.text}`;
         };
       });
   
-      // Add each bot message to Firestore with delay
       const messagesRef = collection(
         db,
         'studios',
@@ -296,10 +350,10 @@ User message: ${lastMessage.content.text}`;
   
       const newMessages = [];
       for (const botMessage of botMessages) {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Introduce delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
         setIsTyping(true);
         const delay = calculateDelay(botMessage.content.text);
-        await new Promise(resolve => setTimeout(resolve, delay * 2)); // Introduce delay
+        await new Promise(resolve => setTimeout(resolve, delay * 2));
         
         const messageRef = await addDoc(messagesRef, botMessage);
         newMessages.push({
@@ -307,12 +361,11 @@ User message: ${lastMessage.content.text}`;
           ...botMessage
         });
         setIsTyping(false);
-        setMessages(prevMessages => [...prevMessages, newMessages[newMessages.length - 1]]); // Update state incrementally
+        setMessages(prevMessages => [...prevMessages, newMessages[newMessages.length - 1]]);
       }
   
-      setIsTyping(false); // Hide typing indicator
+      setIsTyping(false);
   
-      // Update conversation with the last bot message
       const lastBotMessage = botMessages[botMessages.length - 1];
       const convRef = doc(
         db,
@@ -327,7 +380,7 @@ User message: ${lastMessage.content.text}`;
       });
     } catch (error) {
       console.error('Error generating AI response:', error);
-      setIsTyping(false); // Hide typing indicator on error
+      setIsTyping(false);
     }
   };
 
@@ -341,7 +394,7 @@ User message: ${lastMessage.content.text}`;
       'conversations',
       activeConversation
     );
-
+    setShowWelcome(true);
     try {
       await updateDoc(convRef, {
         'meta.status': 'closed',
@@ -399,80 +452,176 @@ User message: ${lastMessage.content.text}`;
   return (
     <div className="flow-pilot">
       <div className="chat-header">
-        <h3>FlowPilot</h3>
-        <div className="conversation-meta">Powered by FlowAI & Google Gemini</div>
-      </div>
-      
-      <div className="chat-window-container" ref={chatWindowRef}>
-        <div className="chat-window">
-          {/* Messages in groups */}
-          {groupMessages(messages).map((group, groupIndex) => (
-            <div key={groupIndex} className={`message-group ${group.senderType}`}>
-              {/* Messages Individual*/}
-              {group.messages.map((msg, msgIndex) => (
-                <div key={msg.id} className="message">
-                  {/* Time gao */}
-                  {msgIndex === 0 && (
-                    <div className="message-meta">
-                      <span className="time">
-                        {groupIndex === groupMessages(messages).length - 1 && group.senderType === 'user' && <span className="sent-label">Sent</span>}
-                        {getTimeAgo(new Date(msg.timestamps.createdAt))}
-                      </span>
-                    </div>
-                  )}
-                  <div className="message-content">
-                    <p>{msg.content.text}</p>
-                  </div>
-                  {/* AI Suggestions */}
-                  {msg.content.aiMetadata.suggestedResponses && msg.content.aiMetadata.suggestedResponses.length > 0 && (
-                    <div className="suggestions">
-                      {msg.content.aiMetadata.suggestedResponses.map((suggestion, index) => (
-                        <div className='ai-suggestion' key={index} onClick={() => handleSendMessage(suggestion)}>
-                          {suggestion}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ))}
-          {/* Typing Bubble */}
-          {isTyping && (
-            <div className="message-group bot">
-              <div className="message">
-                <div className="message-content typing">
-                  <p>Typing...</p>
-                </div>
-              </div>
-            </div>
-          )}
-          {/* Actions and Declerations */}
-          <p className="ai-chat-decleration">AI assists -- you decide.</p>
-          <div className="chat-actions">
-            <p className="end-chat-btn" onClick={handleEndChat} disabled={!activeConversation}>
-              Close
-            </p>
-            <p className="end-chat-btn" onClick={handleEndChat} disabled={!activeConversation}>
-              Contact Support
-            </p>
-            <p className="end-chat-btn" onClick={handleEndChat} disabled={!activeConversation}>
-              Start Over
-            </p>
-          </div>
+        {!showWelcome && (
+          <div 
+            className="back-btn" 
+            onClick={() => {
+              setShowWelcome(true);
+              setMessages([]);
+              setActiveConversation(null);
+            }}
+          ></div>
+        )}
+        {!showWelcome && <div className="status-signal"></div>}
+        <div className="flowpilot-titles">
+          <h3>
+            {showWelcome ? 'FlowPilot' : (
+              <>
+                {!showWelcome && <div className="chat-agent"></div>}
+                Flowya
+              </>
+            )}
+            {!showWelcome ? (
+              <div className="conversation-meta">FlowPilot</div>
+            ) : (
+              <div className="conversation-meta">Powered by FlowAI</div>
+            )}
+          </h3>
         </div>
       </div>
-      
-      <div className="input-area">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type your message..."
-          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-        />
-        <button onClick={handleSendMessage}></button>
-      </div>
+      {showWelcome ? (
+        <>
+          <div className="welcome-section">
+            <div className="welcome-content">
+              <p className='welcome-message'>👋 Hi, <span className='iconic-gradient'>{defaultStudio?.name}</span></p>
+              <p className='welcome-message'>How can I help you?</p>
+              <div className="welcome-suggestions">
+                <p></p>
+                <div className="suggestions">
+                  <div 
+                    className="ai-suggestion" 
+                    onClick={() => {
+                      setShowWelcome(false);
+                      handleSendMessage("Show projects?");
+                    }}
+                  >
+                    Show projects?
+                  </div>
+                  <div 
+                    className="ai-suggestion" 
+                    onClick={() => {
+                      setShowWelcome(false);
+                      handleSendMessage("What are the pricing plans?");
+                    }}
+                  >
+                    What are the pricing plans?
+                  </div>
+                  <div 
+                    className="ai-suggestion" 
+                    onClick={() => {
+                      setShowWelcome(false);
+                      handleSendMessage("How to organize my events?");
+                    }}
+                  >
+                    How to organize my events?
+                  </div>
+                </div>
+              </div>
+              <div className="chat-actions">
+                <div className="new-chat-btn" onClick={handleNewChat}>History</div>
+                <div className="new-chat-btn" onClick={handleNewChat}>Contact Support</div>
+                <div className="new-chat-btn" onClick={handleNewChat}>Start New Chat</div>
+              </div>
+            </div>
+          </div>
+          <div className="input-area">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+            />
+            <button onClick={() => handleSendMessage()}></button>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="chat-window-container" ref={chatWindowRef}>
+            <div className="chat-window">
+              {groupMessages(messages).map((group, groupIndex) => (
+                <div key={groupIndex} className={`message-group ${group.senderType}`}>
+                  {group.messages.map((msg, msgIndex) => (
+                    <div key={msg.id} className="message">
+                      {msgIndex === 0 && (
+                        <div className="message-meta">
+                          <span className="time">
+                            {groupIndex === groupMessages(messages).length - 1 && group.senderType === 'user' && (
+                              <span className="sent-label">Sent</span>
+                            )}
+                            {getTimeAgo(new Date(msg.timestamps.createdAt))}
+                          </span>
+                        </div>
+                      )}
+                      <div className="message-content">
+                        <p>{msg.content.text}</p>
+                      </div>
+                      {/* Updated Selectable Lists */}
+                      {msg.content.aiMetadata.selectItems && msg.content.aiMetadata.selectItems.length > 0 && (
+                        <div className="suggestions selectable-list">
+                          {msg.content.aiMetadata.selectItems.map((selectItem, index) => (
+                            <div 
+                              className='ai-suggestion' 
+                              key={index} 
+                              onClick={() => handleSelectItem(selectItem)}
+                            >
+                              {selectItem.item}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {msg.content.aiMetadata.suggestedResponses && msg.content.aiMetadata.suggestedResponses.length > 0 && (
+                        <div className="suggestions">
+                          {msg.content.aiMetadata.suggestedResponses.map((suggestion, index) => (
+                            <div 
+                              className='ai-suggestion' 
+                              key={index} 
+                              onClick={() => handleSendMessage(suggestion)}
+                            >
+                              {suggestion}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ))}
+              {isTyping && (
+                <div className="message-group bot">
+                  <div className="message">
+                    <div className="message-content typing">
+                      <p>Typing...</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className="chat-actions">
+                <p className="end-chat-btn" onClick={handleEndChat} disabled={!activeConversation}>
+                  End chat
+                </p>
+                <p className="end-chat-btn" onClick={handleEndChat} disabled={!activeConversation}>
+                  Contact Support
+                </p>
+                <p className="end-chat-btn" onClick={handleEndChat} disabled={!activeConversation}>
+                  Start Over
+                </p>
+              </div>
+              <p className="ai-chat-decleration">AI assists -- you decide.</p>
+            </div>
+          </div>
+          <div className="input-area">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+            />
+            <button onClick={() => handleSendMessage()}></button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
