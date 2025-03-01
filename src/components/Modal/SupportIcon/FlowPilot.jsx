@@ -1,19 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom'; // Added for navigation
+import React, { useState, useEffect, useRef } from 'react'; // React core
+import { useNavigate } from 'react-router-dom'; // Routing
+// Firebase
 import { db, model } from '../../../firebase/app';
-import { selectUserStudio } from '../../../app/slices/authSlice';
+import { addDoc, collection, doc, getDocs, query, where, orderBy, updateDoc } from 'firebase/firestore';
+// Redux
 import { useSelector } from 'react-redux';
-import { 
-  addDoc, collection, doc, getDocs, 
-  query, where, orderBy, updateDoc 
-} from 'firebase/firestore';
-import './FlowPilot.scss';
-import sendSound from '../../../assets/sounds/message-send.mp3';
-import typingSound from '../../../assets/sounds/message-typing.mp3';
-import { getTimeAgo } from '../../../utils/dateUtils';
-import { calculateDelay } from '../../../utils/stringUtils';
-import { AppDocumentation } from '../../../data/flowpilot/AppDocumentation';
+import { selectUserStudio } from '../../../app/slices/authSlice';
 import { selectProjects } from '../../../app/slices/projectsSlice';
+// Assets
+import typingSound from '../../../assets/sounds/message-typing.mp3';
+import sendSound from '../../../assets/sounds/message-send.mp3';
+// Data - Prompt 
+import { systemInstruction } from '../../../data/flowpilot/AppDocumentation';
+// Utilities 
+import { getTimeAgo } from '../../../utils/dateUtils';
+import { calculateDelay, convertUsdToInr, formatDecimalKnos } from '../../../utils/stringUtils';
+// Styles
+import './FlowPilot.scss';
 
 const FlowPilot = ({ userId }) => {
   const defaultStudio = useSelector(selectUserStudio);
@@ -26,22 +29,53 @@ const FlowPilot = ({ userId }) => {
   const [activeConversation, setActiveConversation] = useState(null);
   const chatWindowRef = useRef(null);
   const [showWelcome, setShowWelcome] = useState(true);
-
+  
+  const [promptInputs, setPromptInputs] = useState({}); // Store all input values
+  const [inputTokens, setInputTokens] = useState(0);
+  const [outputTokens, setOutputTokens] = useState(0);
+  const [tokenCost, setTokenCost] = useState(0);
+  const TOKEN_LIMIT = 10000; // Set token limit
   // OPTIONS
   const generationConfig = {
-    temperature: 0.4,
+    temperature: 0.8,
     topP: 0.95,
     topK: 40,
     maxOutputTokens: 8192,
     responseMimeType: "text/plain",
   };
-
+  const geminiPricing = [
+    {
+      model: "gemini-2.0-flash-001",
+      inputCostPerMillion: 0.10,
+      outputCostPerMillion: 0.40,
+    },
+    {
+      model: "gemini-2.0-flash-lite",
+      inputCostPerMillion: 0.075,
+      outputCostPerMillion: 0.30,
+    },
+    {
+      model: "gemini-1.5-flash-001",
+      inputCostPerMillion: 0.075,
+      outputCostPerMillion: 0.30,
+    },
+  ];
   // Start chat
   const handleNewChat = () => {
     setShowWelcome(false);
     initializeConversation();
   };
-
+// Function to calculate total cost
+const calculateTotalCost = (inputTokens, outputTokens, modelName) => {
+  const pricing = geminiPricing.find((p) => p.model === modelName);
+  if (!pricing) {
+    console.error(`Pricing not found for model: ${modelName}`);
+    return 0;
+  }
+  const inputCost = (inputTokens / 1_000_000) * pricing.inputCostPerMillion;
+  const outputCost = (outputTokens / 1_000_000) * pricing.outputCostPerMillion;
+  return inputCost + outputCost;
+};
   // Fetch or create conversation
   const initializeConversation = async () => {
     const conversationsRef = collection(db, 'studios', defaultStudio.domain, 'conversations');
@@ -125,129 +159,201 @@ const FlowPilot = ({ userId }) => {
   // Handle sending messages (both from input and suggestions)
   const handleSendMessage = async (messageText = input, metadata = {}) => {
     if (!messageText.trim() || !activeConversation) return;
+    
+    // Check token limit
+    if (inputTokens + outputTokens >= TOKEN_LIMIT) {
+      setInput('');
+      return;
+    }
+  
+    if (!messageText.trim() || !activeConversation) return;
     setShowWelcome(false);
+  
     const newMessage = {
-      conversationId: activeConversation,
-      studioId: defaultStudio.domain,
+      conversationId: activeConversation || '', // Fallback to empty string
+      studioId: defaultStudio?.domain || '',   // Ensure studioId is defined
       content: {
         text: messageText.trim(),
         aiMetadata: {
           isAIGenerated: false,
-          detectedIntent: '',
-          suggestedResponses: [],
-          ...metadata // Merge provided metadata (e.g., parameters)
-        }
+          detectedIntent: metadata.action || '',
+          ...metadata,
+        },
       },
       sender: {
-        id: userId,
+        id: userId || '',                       // Ensure userId is defined
         type: 'customer',
-        name: 'Customer Name',
-        avatar: ''
+        name: 'Customer Name',                 // Static fallback, replace with dynamic if available
+        avatar: '',                            // Fallback to empty string
       },
       status: {
         delivered: true,
         read: false,
-        edited: false
+        edited: false,
       },
       timestamps: {
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
+        updatedAt: new Date().toISOString(),
+      },
     };
-    
-    const messagesRef = collection(
-      db,
-      'studios',
-      defaultStudio.domain,
-      'conversations',
-      activeConversation,
-      'messages'
-    );
-    
+  
+    const messagesRef = collection(db, 'studios', defaultStudio.domain, 'conversations', activeConversation, 'messages');
     const messageRef = await addDoc(messagesRef, newMessage);
-    
+  
     const audioSent = new Audio(sendSound);
-    audioSent.play().catch(error => console.log('Error playing sound:', error));
-    
-    const updatedMessages = [
-      ...messages,
-      {
-        id: messageRef.id,
-        ...newMessage
-      }
-    ];
-    
-    setMessages(updatedMessages);
-    
-    const convRef = doc(
-      db,
-      'studios',
-      defaultStudio.domain,
-      'conversations',
-      activeConversation
-    );
-    
-    await updateDoc(convRef, {
+    audioSent.play().catch((error) => console.log('Error playing sound:', error));
+  
+    setMessages((prev) => [...prev, { id: messageRef.id, ...newMessage }]);
+    await updateDoc(doc(db, 'studios', defaultStudio.domain, 'conversations', activeConversation), {
       'meta.lastMessage': newMessage.content.text,
       'meta.lastUpdated': new Date().toISOString(),
     });
     
+    console.log("");
+    console.log("Input Text : "+messageText);
+  
     setInput('');
-    await generateAIResponse(updatedMessages);
+  
+    // Generate AI response only if not a prompt
+    if (metadata.action !== 'prompt') {
+      await generateAIResponse([...messages, { id: messageRef.id, ...newMessage }]);
+    }
+  };
+  
+  // New helper function for handling prompt responses
+  const handlePromptResponse = async (promptResponse) => {
+    if (promptResponse.name && promptResponse.description) {
+      const projectData = {
+        name: promptResponse.name,
+        description: promptResponse.description,
+        createdAt: new Date().toISOString(),
+        userId,
+      };
+      const projectsRef = collection(db, 'studios', defaultStudio.domain, 'projects');
+      const newProjectRef = await addDoc(projectsRef, projectData);
+      
+      // Send a confirmation message
+      await handleSendMessage(`Created project: ${promptResponse.name}`, {
+        action: 'create',
+        projectId: newProjectRef.id,
+      });
+      
+      // Optionally navigate to the new project
+      navigate(`/${defaultStudio.domain}/project/${newProjectRef.id}`);
+    } else {
+      // Handle other prompt types or errors
+      await handleSendMessage(`Received your input: ${JSON.stringify(promptResponse)}`, {
+        action: 'prompt_response',
+      });
+    }
   };
 
   // Added handleSelectItem for navigation
-  const handleSelectItem = (selectItem) => {
+  const handleSelectItem = async (selectItem) => {
     const { item, action, params } = selectItem;
+    const studioName = defaultStudio.domain;
+    console.log({params})
+    switch (action) {
+      case 'navigate':
+         if (params.projectId && params.collectionId) {
+          console.log(params.projectId, params.collectionId)
+          navigate(`/${studioName}/gallery/${params.projectId}/${params.collectionId}`);
+        }
+        else if (params.projectId) {
+          navigate(`/${studioName}/project/${params.projectId}`);
+        } 
+        break;
   
-    // Prepare message with hidden parameters in aiMetadata
-    const messageData = {
-      text: `Select ${item}`,
-      aiMetadata: {
-        isAIGenerated: false,
-        detectedIntent: 'select-item',
-        parameters: {}
-      }
-    };
+      case 'create':
+        if (params.entity === 'project') {
+          const projectData = params.data || { name: item };
+          const projectsRef = collection(db, 'studios', studioName, 'projects');
+          const newProjectRef = await addDoc(projectsRef, {
+            ...projectData,
+            createdAt: new Date().toISOString(),
+            userId,
+          });
+          navigate(`/${studioName}/project/${newProjectRef.id}`);
+        }
+        break;
   
-    // Add parameters and navigate based on action type
-    if (action === 'showProject') {
-      messageData.aiMetadata.parameters = { projectId: params };
-      const studioName = defaultStudio.domain;
-      const url = `/${studioName}/project/${params}`;
-      navigate(url);
-    } else if (action === 'showGallery') { // Updated action name to 'showGallery'
-      const [projectId, collectionId] = params.split('/'); // Split params into projectId and collectionId
-      messageData.aiMetadata.parameters = { projectId, collectionId };
-      const studioName = defaultStudio.domain;
-      const url = `/${studioName}/gallery/${projectId}/${collectionId}`;
-      navigate(url); // Smooth navigation to gallery URL
+      case 'update':
+        if (params.projectId && params.field) {
+          const projectRef = doc(db, 'studios', studioName, 'projects', params.projectId);
+          await updateDoc(projectRef, { [params.field]: params.value });
+        }
+        break;
+  
+      case 'prompt':
+        const requiredFields = params.fields || [{ field: params.field, inputType: params.inputType || 'text' }];
+        handleSendMessage(`${item}`, {
+          action: 'prompt',
+          inputPrompt: { fields: requiredFields },
+        });
+        console.log(requiredFields)
+        return; // Wait for input submission
+  
+      default:
+        console.warn('Unhandled action:', action);
     }
   
-    // Send message with parameters hidden in metadata
-    handleSendMessage(messageData.text, messageData.aiMetadata);
+    handleSendMessage(`${item}`, { action, params });
   };
-
+  const handlePromptSubmission = async (messageId, fields) => {
+    const inputs = promptInputs[messageId];
+    if (!inputs || fields.some((field) => !inputs[field.field]?.trim())) return;
+  
+    const promptResponse = fields.reduce((acc, field) => {
+      acc[field.field] = inputs[field.field];
+      return acc;
+    }, {});
+  
+    // Call handlePromptResponse with the collected inputs
+    await handlePromptResponse(promptResponse);
+  
+    // Clear inputs for this message
+    setPromptInputs((prev) => {
+      const newInputs = { ...prev };
+      delete newInputs[messageId];
+      return newInputs;
+    });
+  };
   const generateAIResponse = async (updatedMessages) => {
-    if (!activeConversation || updatedMessages.length === 0) return;
-    if (isTyping) return;
-    const lastMessage = updatedMessages[updatedMessages.length - 1];
+    if (!activeConversation || updatedMessages.length === 0 || isTyping) return;
+  const lastMessage = updatedMessages[updatedMessages.length - 1];
+  if (lastMessage.sender.type !== 'customer') return;
 
-    if (lastMessage.sender.type !== 'customer') return;
-  
+  // Check token limit before proceeding
+  if (inputTokens + outputTokens >= TOKEN_LIMIT) {
+    const limitMessage = {
+      conversationId: activeConversation,
+      studioId: defaultStudio.domain,
+      content: { 
+        text: "Token limit reached (10,000). Please start a new chat.",
+        lists: [],
+        aiMetadata: { isAIGenerated: true }
+      },
+      sender: { id: 'flowpilot-bot', type: 'bot', name: 'FlowPilot', avatar: '' },
+      status: { delivered: true, read: false, edited: false },
+      timestamps: { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+    };
+    const messageRef = await addDoc(collection(db, 'studios', defaultStudio.domain, 'conversations', activeConversation, 'messages'), limitMessage);
+    setMessages(prev => [...prev, { id: messageRef.id, ...limitMessage }]);
+    return;
+  }
+  setTimeout(() => setIsTyping(true), 1000);
     try {
-      setTimeout(() => {
-        setIsTyping(true);
-      }, 1000);
   
+      // Construct history with merged consecutive 'model' messages
       const history = [];
       let lastRole = null;
       let mergedText = '';
   
-      updatedMessages.slice(0, -1).forEach((msg) => {
+      updatedMessages.slice(0, -1).forEach(msg => {
         const currentRole = msg.sender.type === 'customer' ? 'user' : 'model';
   
-        if (currentRole === lastRole) {
+        if (currentRole === lastRole && currentRole === 'model') {
+          // Merge consecutive 'model' messages
           mergedText += '\n' + msg.content.text;
         } else {
           if (mergedText) {
@@ -261,6 +367,7 @@ const FlowPilot = ({ userId }) => {
         }
       });
   
+      // Push the last merged message
       if (mergedText && lastRole) {
         history.push({
           role: lastRole,
@@ -268,125 +375,108 @@ const FlowPilot = ({ userId }) => {
         });
       }
   
-      const chatSession = model.startChat({
-        generationConfig,
-        history,
-      });
-      
-      const prompt = `You are FlowPilot, a helpful assistant for FotoFlow users. FotoFlow is a SaaS web app designed to streamline the workflow of event photographers. Your role is to assist users with their queries about FotoFlow's features, provide guidance on using the platform, and help troubleshoot any issues they might encounter. Be friendly, professional, and concise in your responses.
-${AppDocumentation}
-Retrieval Data: ${JSON.stringify(projects)}
-
-Respond to the following user message by providing your answer as a numbered list of short, standalone messages (1-3 standalone messages). 
-Each item in the list should be a separate, concise message suitable for a chat interface.
-Then provide a list of select items that the user might want to select or act next, based on the retrieval data. Format these suggestions after suggests, each prefixed with @Lists: and items should be shorter (1-4 words).
-Avoid long paragraphs; break your response into distinct, bite-sized parts.
-Start each line with a number followed by a period (e.g., "1. Hi there!").
-Start each line that describe about the list (e.g., "1. You have 5 projects. 2*. Joehans & Jolsna, Renjitha & Smith, Sara & Matan, Sara & ssss, and Sara.").
-Additionally, provide a list of 2-3 suggested follow-up questions or commands that the user might want to ask next, based on the context of the conversation. Format these suggestions as a separate list after the main response, each prefixed with @Suggestion: and questions or commands should be shorter (5-6 words).
-
-User message: ${lastMessage.content.text}`;
-
-      const result = await chatSession.sendMessage(prompt);
-      const responseText = result.response.text();
+      const chatSession = model.startChat({ generationConfig, history });
   
-      const lines = responseText.split('\n').map(line => line.trim()).filter(line => line);
-      
-      const mainResponseLines = lines.filter(line => line.match(/^\d+\./));
-      const suggestionLines = lines.filter(line => line.startsWith('@Suggestion:'));
+      const prompt = `
+        System Instructions: ${systemInstruction}
+        Retrieval Data: ${JSON.stringify(projects)}
+        User message: ${lastMessage.content.text}`;
+      // For the last message include 2-3 suggested follow-up action "prompt" ,only if nessesery and applicable contextualy.
 
-      // Updated parsing to create selectItems array of objects
-      const selectItems = lines
-        .filter(line => line.startsWith('@Lists:'))
-        .map(line => {
-          const listPart = line.split('@Action:')[0].replace('@Lists:', '').trim();
-          const actionPart = line.split('@Action:')[1]?.split('@Params:')[0].trim() || '';
-          const paramsPart = line.split('@Params:')[1]?.trim() || '';
-          return { item: listPart, action: actionPart, params: paramsPart };
-        });
 
-      const suggestions = suggestionLines.map(line => line.replace(/^@Suggestion:\s*/, ''));
+      // Calculate input tokens
+    const inputText = JSON.stringify(history) + prompt;
+    
+    // Send prompt to model
+    const result = await chatSession.sendMessage(prompt);
+    let responseText = result.response.text().trim();
 
-      const botMessages = mainResponseLines.map((line, index) => {
-        const text = line.replace(/^\d+\.\s*/, '');
-        return {
-          conversationId: activeConversation,
-          studioId: defaultStudio.domain,
-          content: {
-            text,
-            aiMetadata: {
-              isAIGenerated: true,
-              detectedIntent: '',
-              suggestedResponses: index === mainResponseLines.length - 1 ? suggestions : [],
-              selectItems: index === mainResponseLines.length - 1 ? selectItems : [], // Updated to use selectItems
-            }
-          },
-          sender: {
-            id: 'flowpilot-bot',
-            type: 'bot',
-            name: 'FlowPilot',
-            avatar: ''
-          },
-          status: {
-            delivered: true,
-            read: false,
-            edited: false
-          },
-          timestamps: {
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+    const newInputTokens = result.response.usageMetadata.promptTokenCount;
+    // Calculate output tokens
+    const newOutputTokens = result.response.usageMetadata.candidatesTokenCount;
+    console.log(
+      '%c' + newInputTokens + newOutputTokens + " tokens = I " + newInputTokens+ " + O " + newOutputTokens,'color: gray;' );
+    // Update token counts
+    setInputTokens(prev => prev + newInputTokens);
+    setOutputTokens(prev => prev + newOutputTokens);
+    const totalCost = calculateTotalCost(inputTokens + newInputTokens, outputTokens + newOutputTokens, "gemini-2.0-flash-lite");
+    setTokenCost(totalCost)
+    // Strip markdown code block markers if present
+      responseText = responseText
+        .replace(/^```json\s*/, '')
+        .replace(/\s*```\s*$/, '');
+  
+      let responseJson;
+      try {
+        responseJson = JSON.parse(responseText);
+        console.log("Output")
+        if (Array.isArray(responseJson)) {
+          for (let i = 0; i < responseJson.length; i++) {
+              console.log(responseJson[i]);
           }
-        };
-      });
-  
-      const messagesRef = collection(
-        db,
-        'studios',
-        defaultStudio.domain,
-        'conversations',
-        activeConversation,
-        'messages'
-      );
-  
-      const newMessages = [];
-      for (const botMessage of botMessages) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setIsTyping(true);
-        const delay = calculateDelay(botMessage.content.text);
-        await new Promise(resolve => setTimeout(resolve, delay * 2));
-        
-        const messageRef = await addDoc(messagesRef, botMessage);
-        newMessages.push({
-          id: messageRef.id,
-          ...botMessage
-        });
-        setIsTyping(false);
-        setMessages(prevMessages => [...prevMessages, newMessages[newMessages.length - 1]]);
+      }
+      } catch (parseError) {
+        console.error('Failed to parse AI response:', parseError, 'Raw response:', responseText);
+        responseJson = [{
+          text: "Sorry, I encountered an issue. How can I assist you?",
+          lists: [],
+          inputPrompt: "",
+        }];
       }
   
-      setIsTyping(false);
+      const botMessages = responseJson.map((msg, index) => ({
+        conversationId: activeConversation,
+        studioId: defaultStudio.domain,
+        content: {
+          text: msg.text|| '',
+          lists: msg.lists || [],
+          aiMetadata: {
+            isAIGenerated: true,
+            detectedIntent: lastMessage.content.aiMetadata?.detectedIntent || 'general',
+            inputPrompt: msg.inputPrompt || '',
+          },
+        },
+        sender: { id: 'flowpilot-bot', type: 'bot', name: 'FlowPilot', avatar: '' },
+        status: { delivered: true, read: false, edited: false },
+        timestamps: { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+      }));
   
-      const lastBotMessage = botMessages[botMessages.length - 1];
-      const convRef = doc(
-        db,
-        'studios',
-        defaultStudio.domain,
-        'conversations',
-        activeConversation
-      );
+      const messagesRef = collection(db, 'studios', defaultStudio.domain, 'conversations', activeConversation, 'messages');
+      const newMessages = [];
+      for (const botMessage of botMessages) {
+        setIsTyping(true);
+        const delay = calculateDelay(botMessage.content.text || '');
+        await new Promise(resolve => setTimeout(resolve, delay * 2));
+  
+        const messageRef = await addDoc(messagesRef, botMessage);
+        newMessages.push({ id: messageRef.id, ...botMessage });
+        setMessages(prev => [...prev, newMessages[newMessages.length - 1]]);
+        setIsTyping(false);
+      }
+  
+      const convRef = doc(db, 'studios', defaultStudio.domain, 'conversations', activeConversation);
       await updateDoc(convRef, {
-        'meta.lastMessage': lastBotMessage.content.text,
+        'meta.lastMessage': botMessages[botMessages.length - 1].content.text,
         'meta.lastUpdated': new Date().toISOString(),
       });
     } catch (error) {
       console.error('Error generating AI response:', error);
       setIsTyping(false);
+      const fallbackMessage = {
+        conversationId: activeConversation,
+        studioId: defaultStudio.domain,
+        content: { text: "Oops, something went wrong. Try again?", lists: [], aiMetadata: { isAIGenerated: true } },
+        sender: { id: 'flowpilot-bot', type: 'bot', name: 'FlowPilot', avatar: '' },
+        status: { delivered: true, read: false, edited: false },
+        timestamps: { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+      };
+      const messageRef = await addDoc(collection(db, 'studios', defaultStudio.domain, 'conversations', activeConversation, 'messages'), fallbackMessage);
+      setMessages(prev => [...prev, { id: messageRef.id, ...fallbackMessage }]);
     }
   };
-
   const handleEndChat = async () => {
     if (!activeConversation) return;
-
+    setIsTyping(false);
     const convRef = doc(
       db,
       'studios',
@@ -410,7 +500,6 @@ User message: ${lastMessage.content.text}`;
       console.error('Error ending chat:', error);
     }
   };
-
   const groupMessages = (messages) => {
     if (!messages.length) return [];
 
@@ -472,7 +561,15 @@ User message: ${lastMessage.content.text}`;
               </>
             )}
             {!showWelcome ? (
-              <div className="conversation-meta">FlowPilot</div>
+              <div className="conversation-meta">
+                FlowPilot 
+                <span className="token-usage">
+                  {formatDecimalKnos(inputTokens + outputTokens)}/{formatDecimalKnos(TOKEN_LIMIT)} 
+                  {/* (In: {inputTokens}, Out: {outputTokens}) */}
+                </span>
+                <span className="token-usage">₹{convertUsdToInr(tokenCost)}
+                </span>
+              </div>
             ) : (
               <div className="conversation-meta">Powered by FlowAI</div>
             )}
@@ -492,6 +589,7 @@ User message: ${lastMessage.content.text}`;
                     className="ai-suggestion" 
                     onClick={() => {
                       setShowWelcome(false);
+                      handleEndChat()
                       handleSendMessage("Show projects?");
                     }}
                   >
@@ -538,60 +636,85 @@ User message: ${lastMessage.content.text}`;
       ) : (
         <>
           <div className="chat-window-container" ref={chatWindowRef}>
-            <div className="chat-window">
-              {groupMessages(messages).map((group, groupIndex) => (
-                <div key={groupIndex} className={`message-group ${group.senderType}`}>
-                  {group.messages.map((msg, msgIndex) => (
-                    <div key={msg.id} className="message">
-                      {msgIndex === 0 && (
-                        <div className="message-meta">
-                          <span className="time">
-                            {groupIndex === groupMessages(messages).length - 1 && group.senderType === 'user' && (
-                              <span className="sent-label">Sent</span>
-                            )}
-                            {getTimeAgo(new Date(msg.timestamps.createdAt))}
-                          </span>
-                        </div>
-                      )}
-                      <div className="message-content">
-                        <p>{msg.content.text}</p>
+          <div className="chat-window">
+            {groupMessages(messages).map((group, groupIndex) => (
+              <div key={groupIndex} className={`message-group ${group.senderType}`}>
+                {group.messages.map((msg, msgIndex) => (
+                  <div key={msg.id} className="message">
+                    {msgIndex === 0 && (
+                      <div className="message-meta">
+                        <span className="time">
+                          {groupIndex === groupMessages(messages).length - 1 && group.senderType === 'user' && (
+                            <span className="sent-label">Sent</span>
+                          )}
+                          {getTimeAgo(new Date(msg.timestamps.createdAt))}
+                        </span>
                       </div>
-                      {/* Updated Selectable Lists */}
-                      {msg.content.aiMetadata.selectItems && msg.content.aiMetadata.selectItems.length > 0 && (
-                        <div className="suggestions selectable-list">
-                          {msg.content.aiMetadata.selectItems.map((selectItem, index) => (
-                            <div 
-                              className='ai-suggestion' 
-                              key={index} 
-                              onClick={() => handleSelectItem(selectItem)}
-                            >
-                              {selectItem.item}
-                            </div>
-                          ))}
+                    )}
+                    {
+                      msg.content.text.length > 0 && (
+                        <div className="message-content">
+                          <p>{msg.content.text}</p>
                         </div>
-                      )}
-                      {msg.content.aiMetadata.suggestedResponses && msg.content.aiMetadata.suggestedResponses.length > 0 && (
-                        <div className="suggestions">
-                          {msg.content.aiMetadata.suggestedResponses.map((suggestion, index) => (
-                            <div 
-                              className='ai-suggestion' 
-                              key={index} 
-                              onClick={() => handleSendMessage(suggestion)}
-                            >
-                              {suggestion}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ))}
+                      )
+                    }
+                    {msg.content.lists?.length > 0 && (
+                      <div className="suggestions selectable-list">
+                        {msg.content.lists.map((listItem, index) => (
+                          <div
+                            className="ai-suggestion"
+                            key={index}
+                            onClick={() => handleSelectItem(listItem)}
+                          >
+                            {listItem.item}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {msg.content.aiMetadata.inputPrompt?.fields && (
+                      <div className="input-prompt">
+                        <p>Please provide the following:</p>
+                        {msg.content.aiMetadata.inputPrompt.fields.map((field, index) => (
+                          <div key={index} className="prompt-field">
+                            <label>{field.field}</label>
+                            <input
+                              type={field.inputType}
+                              value={promptInputs[msg.id]?.[field.field] || ''}
+                              onChange={(e) =>
+                                setPromptInputs((prev) => ({
+                                  ...prev,
+                                  [msg.id]: {
+                                    ...(prev[msg.id] || {}),
+                                    [field.field]: e.target.value,
+                                  },
+                                }))
+                              }
+                              placeholder={`Enter ${field.field}`}
+                            />
+                          </div>
+                        ))}
+                        <button
+                          onClick={() => handlePromptSubmission(msg.id, msg.content.aiMetadata.inputPrompt.fields)}
+                          disabled={msg.content.aiMetadata.inputPrompt.fields.some(
+                            (field) => !promptInputs[msg.id]?.[field.field]?.trim()
+                          )}
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
               {isTyping && (
                 <div className="message-group bot">
-                  <div className="message">
+                  <div className="message tools">
                     <div className="message-content typing">
                       <p>Typing...</p>
+                    </div>
+                    <div className="message-content typing stop">
+                      <p>Stop</p>
                     </div>
                   </div>
                 </div>
@@ -616,9 +739,9 @@ User message: ${lastMessage.content.text}`;
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(input)}
             />
-            <button onClick={() => handleSendMessage()}></button>
+            <button onClick={() => handleSendMessage(input)}></button>
           </div>
         </>
       )}
