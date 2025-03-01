@@ -1,36 +1,81 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react'; // React core
+import { useNavigate } from 'react-router-dom'; // Routing
+// Firebase
 import { db, model } from '../../../firebase/app';
-import { selectUserStudio } from '../../../app/slices/authSlice';
+import { addDoc, collection, doc, getDocs, query, where, orderBy, updateDoc } from 'firebase/firestore';
+// Redux
 import { useSelector } from 'react-redux';
-import { 
-  addDoc, collection, doc, getDocs, 
-  query, where, orderBy, updateDoc 
-} from 'firebase/firestore';
-import './FlowPilot.scss';
-import sendSound from '../../../assets/sounds/message-send.mp3';
+import { selectUserStudio } from '../../../app/slices/authSlice';
+import { selectProjects } from '../../../app/slices/projectsSlice';
+// Assets
 import typingSound from '../../../assets/sounds/message-typing.mp3';
+import sendSound from '../../../assets/sounds/message-send.mp3';
+// Data - Prompt 
+import { systemInstruction } from '../../../data/flowpilot/AppDocumentation';
+// Utilities 
 import { getTimeAgo } from '../../../utils/dateUtils';
-import { calculateDelay } from '../../../utils/stringUtils';
-import { AppDocumentation } from '../../../data/flowpilot/AppDocumentation';
+import { calculateDelay, convertUsdToInr, formatDecimalKnos } from '../../../utils/stringUtils';
+// Styles
+import './FlowPilot.scss';
 
 const FlowPilot = ({ userId }) => {
   const defaultStudio = useSelector(selectUserStudio);
+  const projects = useSelector(selectProjects);
+  const navigate = useNavigate(); // Added for navigation
 
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [activeConversation, setActiveConversation] = useState(null);
   const chatWindowRef = useRef(null);
+  const [showWelcome, setShowWelcome] = useState(true);
   
+  const [promptInputs, setPromptInputs] = useState({}); // Store all input values
+  const [inputTokens, setInputTokens] = useState(0);
+  const [outputTokens, setOutputTokens] = useState(0);
+  const [tokenCost, setTokenCost] = useState(0);
+  const TOKEN_LIMIT = 10000; // Set token limit
   // OPTIONS
   const generationConfig = {
-    temperature: 1,
+    temperature: 0.8,
     topP: 0.95,
     topK: 40,
     maxOutputTokens: 8192,
     responseMimeType: "text/plain",
   };
-
+  const geminiPricing = [
+    {
+      model: "gemini-2.0-flash-001",
+      inputCostPerMillion: 0.10,
+      outputCostPerMillion: 0.40,
+    },
+    {
+      model: "gemini-2.0-flash-lite",
+      inputCostPerMillion: 0.075,
+      outputCostPerMillion: 0.30,
+    },
+    {
+      model: "gemini-1.5-flash-001",
+      inputCostPerMillion: 0.075,
+      outputCostPerMillion: 0.30,
+    },
+  ];
+  // Start chat
+  const handleNewChat = () => {
+    setShowWelcome(false);
+    initializeConversation();
+  };
+// Function to calculate total cost
+const calculateTotalCost = (inputTokens, outputTokens, modelName) => {
+  const pricing = geminiPricing.find((p) => p.model === modelName);
+  if (!pricing) {
+    console.error(`Pricing not found for model: ${modelName}`);
+    return 0;
+  }
+  const inputCost = (inputTokens / 1_000_000) * pricing.inputCostPerMillion;
+  const outputCost = (outputTokens / 1_000_000) * pricing.outputCostPerMillion;
+  return inputCost + outputCost;
+};
   // Fetch or create conversation
   const initializeConversation = async () => {
     const conversationsRef = collection(db, 'studios', defaultStudio.domain, 'conversations');
@@ -78,23 +123,23 @@ const FlowPilot = ({ userId }) => {
     }
   }, [defaultStudio, userId]);
 
-  const audioTyping = new Audio(typingSound); // Adjust path
-  audioTyping.volume = 0.2; // Set volume to 20% (subtle)
+  const audioTyping = new Audio(typingSound);
+  audioTyping.volume = 0.2;
   useEffect(() => {
     if (isTyping) {
-      audioTyping.loop = true; // Loop the typing sound
+      audioTyping.loop = true;
       audioTyping.play().catch(error => console.log('Error playing sound:', error));
     } else {
       audioTyping.pause();
       audioTyping.currentTime = 0;
     }
 
-    // Cleanup to stop sound on unmount
     return () => {
       audioTyping.pause();
       audioTyping.currentTime = 0;
     };
   }, [isTyping]);
+
   // Load messages for conversation
   const loadMessages = async (convId) => {
     const messagesRef = collection(
@@ -112,103 +157,203 @@ const FlowPilot = ({ userId }) => {
   };
 
   // Handle sending messages (both from input and suggestions)
-  const handleSendMessage = async (messageText = input) => {
+  const handleSendMessage = async (messageText = input, metadata = {}) => {
     if (!messageText.trim() || !activeConversation) return;
+    
+    // Check token limit
+    if (inputTokens + outputTokens >= TOKEN_LIMIT) {
+      setInput('');
+      return;
+    }
+  
+    if (!messageText.trim() || !activeConversation) return;
+    setShowWelcome(false);
   
     const newMessage = {
-      conversationId: activeConversation,
-      studioId: defaultStudio.domain,
+      conversationId: activeConversation || '', // Fallback to empty string
+      studioId: defaultStudio?.domain || '',   // Ensure studioId is defined
       content: {
         text: messageText.trim(),
         aiMetadata: {
           isAIGenerated: false,
-          detectedIntent: '',
-          suggestedResponses: []
-        }
+          detectedIntent: metadata.action || '',
+          ...metadata,
+        },
       },
       sender: {
-        id: userId,
+        id: userId || '',                       // Ensure userId is defined
         type: 'customer',
-        name: 'Customer Name',
-        avatar: ''
+        name: 'Customer Name',                 // Static fallback, replace with dynamic if available
+        avatar: '',                            // Fallback to empty string
       },
       status: {
         delivered: true,
         read: false,
-        edited: false
+        edited: false,
       },
       timestamps: {
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
+        updatedAt: new Date().toISOString(),
+      },
     };
   
-    const messagesRef = collection(
-      db,
-      'studios',
-      defaultStudio.domain,
-      'conversations',
-      activeConversation,
-      'messages'
-    );
-    
+    const messagesRef = collection(db, 'studios', defaultStudio.domain, 'conversations', activeConversation, 'messages');
     const messageRef = await addDoc(messagesRef, newMessage);
-    
+  
     const audioSent = new Audio(sendSound);
-    audioSent.play().catch(error => console.log('Error playing sound:', error));
-    
-    const updatedMessages = [
-      ...messages,
-      {
-        id: messageRef.id,
-        ...newMessage
-      }
-    ];
+    audioSent.play().catch((error) => console.log('Error playing sound:', error));
   
-    // Update state
-    setMessages(updatedMessages);
-  
-    const convRef = doc(
-      db,
-      'studios',
-      defaultStudio.domain,
-      'conversations',
-      activeConversation
-    );
-    
-    await updateDoc(convRef, {
+    setMessages((prev) => [...prev, { id: messageRef.id, ...newMessage }]);
+    await updateDoc(doc(db, 'studios', defaultStudio.domain, 'conversations', activeConversation), {
       'meta.lastMessage': newMessage.content.text,
       'meta.lastUpdated': new Date().toISOString(),
     });
+    
+    console.log("");
+    console.log("Input Text : "+messageText);
   
-    setInput(''); // Clear input only if sending from input field
-    await generateAIResponse(updatedMessages);
+    setInput('');
+  
+    // Generate AI response only if not a prompt
+    if (metadata.action !== 'prompt') {
+      await generateAIResponse([...messages, { id: messageRef.id, ...newMessage }]);
+    }
+  };
+  
+  // New helper function for handling prompt responses
+  const handlePromptResponse = async (promptResponse) => {
+    if (promptResponse.name && promptResponse.description) {
+      const projectData = {
+        name: promptResponse.name,
+        description: promptResponse.description,
+        createdAt: new Date().toISOString(),
+        userId,
+      };
+      const projectsRef = collection(db, 'studios', defaultStudio.domain, 'projects');
+      const newProjectRef = await addDoc(projectsRef, projectData);
+      
+      // Send a confirmation message
+      await handleSendMessage(`Created project: ${promptResponse.name}`, {
+        action: 'create',
+        projectId: newProjectRef.id,
+      });
+      
+      // Optionally navigate to the new project
+      navigate(`/${defaultStudio.domain}/project/${newProjectRef.id}`);
+    } else {
+      // Handle other prompt types or errors
+      await handleSendMessage(`Received your input: ${JSON.stringify(promptResponse)}`, {
+        action: 'prompt_response',
+      });
+    }
   };
 
+  // Added handleSelectItem for navigation
+  const handleSelectItem = async (selectItem) => {
+    const { item, action, params } = selectItem;
+    const studioName = defaultStudio.domain;
+    console.log({params})
+    switch (action) {
+      case 'navigate':
+         if (params.projectId && params.collectionId) {
+          console.log(params.projectId, params.collectionId)
+          navigate(`/${studioName}/gallery/${params.projectId}/${params.collectionId}`);
+        }
+        else if (params.projectId) {
+          navigate(`/${studioName}/project/${params.projectId}`);
+        } 
+        break;
+  
+      case 'create':
+        if (params.entity === 'project') {
+          const projectData = params.data || { name: item };
+          const projectsRef = collection(db, 'studios', studioName, 'projects');
+          const newProjectRef = await addDoc(projectsRef, {
+            ...projectData,
+            createdAt: new Date().toISOString(),
+            userId,
+          });
+          navigate(`/${studioName}/project/${newProjectRef.id}`);
+        }
+        break;
+  
+      case 'update':
+        if (params.projectId && params.field) {
+          const projectRef = doc(db, 'studios', studioName, 'projects', params.projectId);
+          await updateDoc(projectRef, { [params.field]: params.value });
+        }
+        break;
+  
+      case 'prompt':
+        const requiredFields = params.fields || [{ field: params.field, inputType: params.inputType || 'text' }];
+        handleSendMessage(`${item}`, {
+          action: 'prompt',
+          inputPrompt: { fields: requiredFields },
+        });
+        console.log(requiredFields)
+        return; // Wait for input submission
+  
+      default:
+        console.warn('Unhandled action:', action);
+    }
+  
+    handleSendMessage(`${item}`, { action, params });
+  };
+  const handlePromptSubmission = async (messageId, fields) => {
+    const inputs = promptInputs[messageId];
+    if (!inputs || fields.some((field) => !inputs[field.field]?.trim())) return;
+  
+    const promptResponse = fields.reduce((acc, field) => {
+      acc[field.field] = inputs[field.field];
+      return acc;
+    }, {});
+  
+    // Call handlePromptResponse with the collected inputs
+    await handlePromptResponse(promptResponse);
+  
+    // Clear inputs for this message
+    setPromptInputs((prev) => {
+      const newInputs = { ...prev };
+      delete newInputs[messageId];
+      return newInputs;
+    });
+  };
   const generateAIResponse = async (updatedMessages) => {
-    console.log(updatedMessages)
-    if (!activeConversation || updatedMessages.length === 0) return;
-    if (isTyping) return; // Prevent re-run while typing
-    const lastMessage = updatedMessages[updatedMessages.length - 1];
+    if (!activeConversation || updatedMessages.length === 0 || isTyping) return;
+  const lastMessage = updatedMessages[updatedMessages.length - 1];
+  if (lastMessage.sender.type !== 'customer') return;
 
-    if (lastMessage.sender.type !== 'customer') return;
-  
+  // Check token limit before proceeding
+  if (inputTokens + outputTokens >= TOKEN_LIMIT) {
+    const limitMessage = {
+      conversationId: activeConversation,
+      studioId: defaultStudio.domain,
+      content: { 
+        text: "Token limit reached (10,000). Please start a new chat.",
+        lists: [],
+        aiMetadata: { isAIGenerated: true }
+      },
+      sender: { id: 'flowpilot-bot', type: 'bot', name: 'FlowPilot', avatar: '' },
+      status: { delivered: true, read: false, edited: false },
+      timestamps: { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+    };
+    const messageRef = await addDoc(collection(db, 'studios', defaultStudio.domain, 'conversations', activeConversation, 'messages'), limitMessage);
+    setMessages(prev => [...prev, { id: messageRef.id, ...limitMessage }]);
+    return;
+  }
+  setTimeout(() => setIsTyping(true), 1000);
     try {
-      setTimeout(()=>{
-
-        setIsTyping(true); // Show typing indicator
-      },1000)
   
-      // Build history with merged consecutive user and bot messages
+      // Construct history with merged consecutive 'model' messages
       const history = [];
       let lastRole = null;
       let mergedText = '';
   
-      updatedMessages.slice(0, -1).forEach((msg) => {
+      updatedMessages.slice(0, -1).forEach(msg => {
         const currentRole = msg.sender.type === 'customer' ? 'user' : 'model';
   
-        if (currentRole === lastRole) {
-          // Merge consecutive messages of the same role
+        if (currentRole === lastRole && currentRole === 'model') {
+          // Merge consecutive 'model' messages
           mergedText += '\n' + msg.content.text;
         } else {
           if (mergedText) {
@@ -222,6 +367,7 @@ const FlowPilot = ({ userId }) => {
         }
       });
   
+      // Push the last merged message
       if (mergedText && lastRole) {
         history.push({
           role: lastRole,
@@ -229,111 +375,108 @@ const FlowPilot = ({ userId }) => {
         });
       }
   
-      const chatSession = model.startChat({
-        generationConfig,
-        history,
-      });
-      
-      const prompt = `You are FlowPilot, a helpful assistant for FotoFlow users. FotoFlow is a SaaS web app designed to streamline the workflow of event photographers. Your role is to assist users with their queries about FotoFlow's features, provide guidance on using the platform, and help troubleshoot any issues they might encounter. Be friendly, professional, and concise in your responses.
-${AppDocumentation}
-Respond to the following user message by providing your answer as a numbered list of short, standalone messages (max 3 standalone messages). Each item in the list should be a separate, concise message suitable for a chat interface. Avoid long paragraphs; break your response into distinct, bite-sized parts. Start each line with a number followed by a period (e.g., "1. Hi there!").
-
-Additionally, provide a list of 2-3 suggested follow-up questions or commands that the user might want to ask next, based on the context of the conversation. Format these suggestions as a separate list after the main response, each prefixed with 'Suggestion:' and questions or commands should be shorter (5-6 words).
-
-User message: ${lastMessage.content.text}`;
+      const chatSession = model.startChat({ generationConfig, history });
   
-      const result = await chatSession.sendMessage(prompt);
-      const responseText = result.response.text();
+      const prompt = `
+        System Instructions: ${systemInstruction}
+        Retrieval Data: ${JSON.stringify(projects)}
+        User message: ${lastMessage.content.text}`;
+      // For the last message include 2-3 suggested follow-up action "prompt" ,only if nessesery and applicable contextualy.
+
+
+      // Calculate input tokens
+    const inputText = JSON.stringify(history) + prompt;
+    
+    // Send prompt to model
+    const result = await chatSession.sendMessage(prompt);
+    let responseText = result.response.text().trim();
+
+    const newInputTokens = result.response.usageMetadata.promptTokenCount;
+    // Calculate output tokens
+    const newOutputTokens = result.response.usageMetadata.candidatesTokenCount;
+    console.log(
+      '%c' + newInputTokens + newOutputTokens + " tokens = I " + newInputTokens+ " + O " + newOutputTokens,'color: gray;' );
+    // Update token counts
+    setInputTokens(prev => prev + newInputTokens);
+    setOutputTokens(prev => prev + newOutputTokens);
+    const totalCost = calculateTotalCost(inputTokens + newInputTokens, outputTokens + newOutputTokens, "gemini-2.0-flash-lite");
+    setTokenCost(totalCost)
+    // Strip markdown code block markers if present
+      responseText = responseText
+        .replace(/^```json\s*/, '')
+        .replace(/\s*```\s*$/, '');
   
-      // Parse the response to separate main messages and suggestions
-      const lines = responseText.split('\n').map(line => line.trim()).filter(line => line);
-      
-      const mainResponseLines = lines.filter(line => line.match(/^\d+\./));
-      const suggestionLines = lines.filter(line => line.startsWith('Suggestion:'));
-      
-      const suggestions = suggestionLines.map(line => line.replace(/^Suggestion:\s*/, ''));
-      
-      const botMessages = mainResponseLines.map((line, index) => {
-        const text = line.replace(/^\d+\.\s*/, '');
-        return {
-          conversationId: activeConversation,
-          studioId: defaultStudio.domain,
-          content: {
-            text,
-            aiMetadata: {
-              isAIGenerated: true,
-              detectedIntent: '',
-              suggestedResponses: index === mainResponseLines.length - 1 ? suggestions : []
-            }
-          },
-          sender: {
-            id: 'flowpilot-bot',
-            type: 'bot',
-            name: 'FlowPilot',
-            avatar: ''
-          },
-          status: {
-            delivered: true,
-            read: false,
-            edited: false
-          },
-          timestamps: {
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+      let responseJson;
+      try {
+        responseJson = JSON.parse(responseText);
+        console.log("Output")
+        if (Array.isArray(responseJson)) {
+          for (let i = 0; i < responseJson.length; i++) {
+              console.log(responseJson[i]);
           }
-        };
-      });
-  
-      // Add each bot message to Firestore with delay
-      const messagesRef = collection(
-        db,
-        'studios',
-        defaultStudio.domain,
-        'conversations',
-        activeConversation,
-        'messages'
-      );
-  
-      const newMessages = [];
-      for (const botMessage of botMessages) {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Introduce delay
-        setIsTyping(true);
-        const delay = calculateDelay(botMessage.content.text);
-        await new Promise(resolve => setTimeout(resolve, delay * 2)); // Introduce delay
-        
-        const messageRef = await addDoc(messagesRef, botMessage);
-        newMessages.push({
-          id: messageRef.id,
-          ...botMessage
-        });
-        setIsTyping(false);
-        setMessages(prevMessages => [...prevMessages, newMessages[newMessages.length - 1]]); // Update state incrementally
+      }
+      } catch (parseError) {
+        console.error('Failed to parse AI response:', parseError, 'Raw response:', responseText);
+        responseJson = [{
+          text: "Sorry, I encountered an issue. How can I assist you?",
+          lists: [],
+          inputPrompt: "",
+        }];
       }
   
-      setIsTyping(false); // Hide typing indicator
+      const botMessages = responseJson.map((msg, index) => ({
+        conversationId: activeConversation,
+        studioId: defaultStudio.domain,
+        content: {
+          text: msg.text|| '',
+          lists: msg.lists || [],
+          aiMetadata: {
+            isAIGenerated: true,
+            detectedIntent: lastMessage.content.aiMetadata?.detectedIntent || 'general',
+            inputPrompt: msg.inputPrompt || '',
+          },
+        },
+        sender: { id: 'flowpilot-bot', type: 'bot', name: 'FlowPilot', avatar: '' },
+        status: { delivered: true, read: false, edited: false },
+        timestamps: { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+      }));
   
-      // Update conversation with the last bot message
-      const lastBotMessage = botMessages[botMessages.length - 1];
-      const convRef = doc(
-        db,
-        'studios',
-        defaultStudio.domain,
-        'conversations',
-        activeConversation
-      );
+      const messagesRef = collection(db, 'studios', defaultStudio.domain, 'conversations', activeConversation, 'messages');
+      const newMessages = [];
+      for (const botMessage of botMessages) {
+        setIsTyping(true);
+        const delay = calculateDelay(botMessage.content.text || '');
+        await new Promise(resolve => setTimeout(resolve, delay * 2));
+  
+        const messageRef = await addDoc(messagesRef, botMessage);
+        newMessages.push({ id: messageRef.id, ...botMessage });
+        setMessages(prev => [...prev, newMessages[newMessages.length - 1]]);
+        setIsTyping(false);
+      }
+  
+      const convRef = doc(db, 'studios', defaultStudio.domain, 'conversations', activeConversation);
       await updateDoc(convRef, {
-        'meta.lastMessage': lastBotMessage.content.text,
+        'meta.lastMessage': botMessages[botMessages.length - 1].content.text,
         'meta.lastUpdated': new Date().toISOString(),
       });
     } catch (error) {
       console.error('Error generating AI response:', error);
-      setIsTyping(false); // Hide typing indicator on error
+      setIsTyping(false);
+      const fallbackMessage = {
+        conversationId: activeConversation,
+        studioId: defaultStudio.domain,
+        content: { text: "Oops, something went wrong. Try again?", lists: [], aiMetadata: { isAIGenerated: true } },
+        sender: { id: 'flowpilot-bot', type: 'bot', name: 'FlowPilot', avatar: '' },
+        status: { delivered: true, read: false, edited: false },
+        timestamps: { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+      };
+      const messageRef = await addDoc(collection(db, 'studios', defaultStudio.domain, 'conversations', activeConversation, 'messages'), fallbackMessage);
+      setMessages(prev => [...prev, { id: messageRef.id, ...fallbackMessage }]);
     }
   };
-
   const handleEndChat = async () => {
     if (!activeConversation) return;
-
+    setIsTyping(false);
     const convRef = doc(
       db,
       'studios',
@@ -341,7 +484,7 @@ User message: ${lastMessage.content.text}`;
       'conversations',
       activeConversation
     );
-
+    setShowWelcome(true);
     try {
       await updateDoc(convRef, {
         'meta.status': 'closed',
@@ -357,7 +500,6 @@ User message: ${lastMessage.content.text}`;
       console.error('Error ending chat:', error);
     }
   };
-
   const groupMessages = (messages) => {
     if (!messages.length) return [];
 
@@ -399,80 +541,210 @@ User message: ${lastMessage.content.text}`;
   return (
     <div className="flow-pilot">
       <div className="chat-header">
-        <h3>FlowPilot</h3>
-        <div className="conversation-meta">Powered by FlowAI & Google Gemini</div>
-      </div>
-      
-      <div className="chat-window-container" ref={chatWindowRef}>
-        <div className="chat-window">
-          {/* Messages in groups */}
-          {groupMessages(messages).map((group, groupIndex) => (
-            <div key={groupIndex} className={`message-group ${group.senderType}`}>
-              {/* Messages Individual*/}
-              {group.messages.map((msg, msgIndex) => (
-                <div key={msg.id} className="message">
-                  {/* Time gao */}
-                  {msgIndex === 0 && (
-                    <div className="message-meta">
-                      <span className="time">
-                        {groupIndex === groupMessages(messages).length - 1 && group.senderType === 'user' && <span className="sent-label">Sent</span>}
-                        {getTimeAgo(new Date(msg.timestamps.createdAt))}
-                      </span>
-                    </div>
-                  )}
-                  <div className="message-content">
-                    <p>{msg.content.text}</p>
-                  </div>
-                  {/* AI Suggestions */}
-                  {msg.content.aiMetadata.suggestedResponses && msg.content.aiMetadata.suggestedResponses.length > 0 && (
-                    <div className="suggestions">
-                      {msg.content.aiMetadata.suggestedResponses.map((suggestion, index) => (
-                        <div className='ai-suggestion' key={index} onClick={() => handleSendMessage(suggestion)}>
-                          {suggestion}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ))}
-          {/* Typing Bubble */}
-          {isTyping && (
-            <div className="message-group bot">
-              <div className="message">
-                <div className="message-content typing">
-                  <p>Typing...</p>
-                </div>
+        {!showWelcome && (
+          <div 
+            className="back-btn" 
+            onClick={() => {
+              setShowWelcome(true);
+              setMessages([]);
+              setActiveConversation(null);
+            }}
+          ></div>
+        )}
+        {!showWelcome && <div className="status-signal"></div>}
+        <div className="flowpilot-titles">
+          <h3>
+            {showWelcome ? 'FlowPilot' : (
+              <>
+                {!showWelcome && <div className="chat-agent"></div>}
+                Flowya
+              </>
+            )}
+            {!showWelcome ? (
+              <div className="conversation-meta">
+                FlowPilot 
+                <span className="token-usage">
+                  {formatDecimalKnos(inputTokens + outputTokens)}/{formatDecimalKnos(TOKEN_LIMIT)} 
+                  {/* (In: {inputTokens}, Out: {outputTokens}) */}
+                </span>
+                <span className="token-usage">₹{convertUsdToInr(tokenCost)}
+                </span>
               </div>
-            </div>
-          )}
-          {/* Actions and Declerations */}
-          <p className="ai-chat-decleration">AI assists -- you decide.</p>
-          <div className="chat-actions">
-            <p className="end-chat-btn" onClick={handleEndChat} disabled={!activeConversation}>
-              Close
-            </p>
-            <p className="end-chat-btn" onClick={handleEndChat} disabled={!activeConversation}>
-              Contact Support
-            </p>
-            <p className="end-chat-btn" onClick={handleEndChat} disabled={!activeConversation}>
-              Start Over
-            </p>
-          </div>
+            ) : (
+              <div className="conversation-meta">Powered by FlowAI</div>
+            )}
+          </h3>
         </div>
       </div>
-      
-      <div className="input-area">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type your message..."
-          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-        />
-        <button onClick={handleSendMessage}></button>
-      </div>
+      {showWelcome ? (
+        <>
+          <div className="welcome-section">
+            <div className="welcome-content">
+              <p className='welcome-message'>👋 Hi, <span className='iconic-gradient'>{defaultStudio?.name}</span></p>
+              <p className='welcome-message'>How can I help you?</p>
+              <div className="welcome-suggestions">
+                <p></p>
+                <div className="suggestions">
+                  <div 
+                    className="ai-suggestion" 
+                    onClick={() => {
+                      setShowWelcome(false);
+                      handleEndChat()
+                      handleSendMessage("Show projects?");
+                    }}
+                  >
+                    Show projects?
+                  </div>
+                  <div 
+                    className="ai-suggestion" 
+                    onClick={() => {
+                      setShowWelcome(false);
+                      handleSendMessage("What are the pricing plans?");
+                    }}
+                  >
+                    What are the pricing plans?
+                  </div>
+                  <div 
+                    className="ai-suggestion" 
+                    onClick={() => {
+                      setShowWelcome(false);
+                      handleSendMessage("How to organize my events?");
+                    }}
+                  >
+                    How to organize my events?
+                  </div>
+                </div>
+              </div>
+              <div className="chat-actions">
+                <div className="new-chat-btn" onClick={handleNewChat}>History</div>
+                <div className="new-chat-btn" onClick={handleNewChat}>Contact Support</div>
+                <div className="new-chat-btn" onClick={handleNewChat}>Start New Chat</div>
+              </div>
+            </div>
+          </div>
+          <div className="input-area">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+            />
+            <button onClick={() => handleSendMessage()}></button>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="chat-window-container" ref={chatWindowRef}>
+          <div className="chat-window">
+            {groupMessages(messages).map((group, groupIndex) => (
+              <div key={groupIndex} className={`message-group ${group.senderType}`}>
+                {group.messages.map((msg, msgIndex) => (
+                  <div key={msg.id} className="message">
+                    {msgIndex === 0 && (
+                      <div className="message-meta">
+                        <span className="time">
+                          {groupIndex === groupMessages(messages).length - 1 && group.senderType === 'user' && (
+                            <span className="sent-label">Sent</span>
+                          )}
+                          {getTimeAgo(new Date(msg.timestamps.createdAt))}
+                        </span>
+                      </div>
+                    )}
+                    {
+                      msg.content.text.length > 0 && (
+                        <div className="message-content">
+                          <p>{msg.content.text}</p>
+                        </div>
+                      )
+                    }
+                    {msg.content.lists?.length > 0 && (
+                      <div className="suggestions selectable-list">
+                        {msg.content.lists.map((listItem, index) => (
+                          <div
+                            className="ai-suggestion"
+                            key={index}
+                            onClick={() => handleSelectItem(listItem)}
+                          >
+                            {listItem.item}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {msg.content.aiMetadata.inputPrompt?.fields && (
+                      <div className="input-prompt">
+                        <p>Please provide the following:</p>
+                        {msg.content.aiMetadata.inputPrompt.fields.map((field, index) => (
+                          <div key={index} className="prompt-field">
+                            <label>{field.field}</label>
+                            <input
+                              type={field.inputType}
+                              value={promptInputs[msg.id]?.[field.field] || ''}
+                              onChange={(e) =>
+                                setPromptInputs((prev) => ({
+                                  ...prev,
+                                  [msg.id]: {
+                                    ...(prev[msg.id] || {}),
+                                    [field.field]: e.target.value,
+                                  },
+                                }))
+                              }
+                              placeholder={`Enter ${field.field}`}
+                            />
+                          </div>
+                        ))}
+                        <button
+                          onClick={() => handlePromptSubmission(msg.id, msg.content.aiMetadata.inputPrompt.fields)}
+                          disabled={msg.content.aiMetadata.inputPrompt.fields.some(
+                            (field) => !promptInputs[msg.id]?.[field.field]?.trim()
+                          )}
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
+              {isTyping && (
+                <div className="message-group bot">
+                  <div className="message tools">
+                    <div className="message-content typing">
+                      <p>Typing...</p>
+                    </div>
+                    <div className="message-content typing stop">
+                      <p>Stop</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className="chat-actions">
+                <p className="end-chat-btn" onClick={handleEndChat} disabled={!activeConversation}>
+                  End chat
+                </p>
+                <p className="end-chat-btn" onClick={handleEndChat} disabled={!activeConversation}>
+                  Contact Support
+                </p>
+                <p className="end-chat-btn" onClick={handleEndChat} disabled={!activeConversation}>
+                  Start Over
+                </p>
+              </div>
+              <p className="ai-chat-decleration">AI assists -- you decide.</p>
+            </div>
+          </div>
+          <div className="input-area">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(input)}
+            />
+            <button onClick={() => handleSendMessage(input)}></button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

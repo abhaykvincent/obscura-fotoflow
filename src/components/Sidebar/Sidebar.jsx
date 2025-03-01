@@ -20,7 +20,6 @@ function Sidebar() {
   const studioName = defaultStudio?.domain ?? {domain:'guest',name:'guest'}; 
   const studio= useSelector(selectStudio)
     const storageLimit = useSelector(selectStudioStorageUsage);
-    console.log(studio)
   const [storageUsage , setStorageUsage] = useState({
   })
   const toggleProfileOption = () => {

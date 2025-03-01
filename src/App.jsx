@@ -48,7 +48,7 @@ import UpgradeModal from './components/Subscription/UpgradeModal';
 import { generateReferral } from './app/slices/referralsSlice';
 import FlowPilot from './components/Modal/SupportIcon/FlowPilot';
 
-
+console.log(`%c Welcome to Fotoflow!`, `color:rgb(98, 255, 0); `);
 if(isDeveloper) console.log(`%c This device is not being tracked by Analytics in production.`, `color: #ff9500; `);
 // APP
 export default function App() {
