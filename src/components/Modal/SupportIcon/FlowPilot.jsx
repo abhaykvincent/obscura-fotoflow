@@ -60,22 +60,27 @@ const FlowPilot = ({ userId }) => {
       outputCostPerMillion: 0.30,
     },
   ];
+
+  let audioTyping = new Audio(typingSound);
+  audioTyping.volume = 0.2;
+
+
   // Start chat
   const handleNewChat = () => {
     setShowWelcome(false);
     initializeConversation();
   };
-// Function to calculate total cost
-const calculateTotalCost = (inputTokens, outputTokens, modelName) => {
-  const pricing = geminiPricing.find((p) => p.model === modelName);
-  if (!pricing) {
-    console.error(`Pricing not found for model: ${modelName}`);
-    return 0;
-  }
-  const inputCost = (inputTokens / 1_000_000) * pricing.inputCostPerMillion;
-  const outputCost = (outputTokens / 1_000_000) * pricing.outputCostPerMillion;
-  return inputCost + outputCost;
-};
+  // Function to calculate total cost
+  const calculateTotalCost = (inputTokens, outputTokens, modelName) => {
+    const pricing = geminiPricing.find((p) => p.model === modelName);
+    if (!pricing) {
+      console.error(`Pricing not found for model: ${modelName}`);
+      return 0;
+    }
+    const inputCost = (inputTokens / 1_000_000) * pricing.inputCostPerMillion;
+    const outputCost = (outputTokens / 1_000_000) * pricing.outputCostPerMillion;
+    return inputCost + outputCost;
+  };
   // Fetch or create conversation
   const initializeConversation = async () => {
     const conversationsRef = collection(db, 'studios', defaultStudio.domain, 'conversations');
@@ -117,30 +122,6 @@ const calculateTotalCost = (inputTokens, outputTokens, modelName) => {
     }
   };
   
-  useEffect(() => {
-    if (defaultStudio?.domain && userId) {
-      initializeConversation();
-    }
-  }, [defaultStudio, userId]);
-
-  const audioTyping = new Audio(typingSound);
-  audioTyping.volume = 0.2;
-  useEffect(() => {
-    if (isTyping) {
-      audioTyping.loop = true;
-      audioTyping.play().catch(error => console.log('Error playing sound:', error));
-    } else {
-      audioTyping.pause();
-      audioTyping.currentTime = 0;
-    }
-
-    return () => {
-      audioTyping.pause();
-      audioTyping.currentTime = 0;
-    };
-  }, [isTyping]);
-
-  // Load messages for conversation
   const loadMessages = async (convId) => {
     const messagesRef = collection(
       db, 
@@ -155,8 +136,6 @@ const calculateTotalCost = (inputTokens, outputTokens, modelName) => {
     const snapshot = await getDocs(q);
     setMessages(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
   };
-
-  // Handle sending messages (both from input and suggestions)
   const handleSendMessage = async (messageText = input, metadata = {}) => {
     if (!messageText.trim() || !activeConversation) return;
     
@@ -219,8 +198,6 @@ const calculateTotalCost = (inputTokens, outputTokens, modelName) => {
       await generateAIResponse([...messages, { id: messageRef.id, ...newMessage }]);
     }
   };
-  
-  // New helper function for handling prompt responses
   const handlePromptResponse = async (promptResponse) => {
     if (promptResponse.name && promptResponse.description) {
       const projectData = {
@@ -247,8 +224,6 @@ const calculateTotalCost = (inputTokens, outputTokens, modelName) => {
       });
     }
   };
-
-  // Added handleSelectItem for navigation
   const handleSelectItem = async (selectItem) => {
     const { item, action, params } = selectItem;
     const studioName = defaultStudio.domain;
@@ -319,29 +294,33 @@ const calculateTotalCost = (inputTokens, outputTokens, modelName) => {
     });
   };
   const generateAIResponse = async (updatedMessages) => {
-    if (!activeConversation || updatedMessages.length === 0 || isTyping) return;
-  const lastMessage = updatedMessages[updatedMessages.length - 1];
-  if (lastMessage.sender.type !== 'customer') return;
+    if (!activeConversation || updatedMessages.length === 0 || isTyping) 
+      return;
 
-  // Check token limit before proceeding
-  if (inputTokens + outputTokens >= TOKEN_LIMIT) {
-    const limitMessage = {
-      conversationId: activeConversation,
-      studioId: defaultStudio.domain,
-      content: { 
-        text: "Token limit reached (10,000). Please start a new chat.",
-        lists: [],
-        aiMetadata: { isAIGenerated: true }
-      },
-      sender: { id: 'flowpilot-bot', type: 'bot', name: 'FlowPilot', avatar: '' },
-      status: { delivered: true, read: false, edited: false },
-      timestamps: { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-    };
-    const messageRef = await addDoc(collection(db, 'studios', defaultStudio.domain, 'conversations', activeConversation, 'messages'), limitMessage);
-    setMessages(prev => [...prev, { id: messageRef.id, ...limitMessage }]);
-    return;
-  }
-  setTimeout(() => setIsTyping(true), 1000);
+    const lastMessage = updatedMessages[updatedMessages.length - 1];
+    if (lastMessage.sender.type !== 'customer') 
+      return;
+
+    // Check token limit before proceeding
+    if (inputTokens + outputTokens >= TOKEN_LIMIT) {
+      const limitMessage = {
+        conversationId: activeConversation,
+        studioId: defaultStudio.domain,
+        content: { 
+          text: "Token limit reached (10,000). Please start a new chat.",
+          lists: [],
+          aiMetadata: { isAIGenerated: true }
+        },
+        sender: { id: 'flowpilot-bot', type: 'bot', name: 'FlowPilot', avatar: '' },
+        status: { delivered: true, read: false, edited: false },
+        timestamps: { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+      };
+      const messageRef = await addDoc(collection(db, 'studios', defaultStudio.domain, 'conversations', activeConversation, 'messages'), limitMessage);
+      setMessages(prev => [...prev, { id: messageRef.id, ...limitMessage }]);
+      return;
+    }
+    
+    setTimeout(() => setIsTyping(true), 500);
     try {
   
       // Construct history with merged consecutive 'model' messages
@@ -459,7 +438,8 @@ const calculateTotalCost = (inputTokens, outputTokens, modelName) => {
         'meta.lastMessage': botMessages[botMessages.length - 1].content.text,
         'meta.lastUpdated': new Date().toISOString(),
       });
-    } catch (error) {
+    } 
+    catch (error) {
       console.error('Error generating AI response:', error);
       setIsTyping(false);
       const fallbackMessage = {
@@ -531,7 +511,26 @@ const calculateTotalCost = (inputTokens, outputTokens, modelName) => {
     grouped.push(currentGroup);
     return grouped;
   };
+  useEffect(() => {
+    if (defaultStudio?.domain && userId) {
+      initializeConversation();
+    }
+  }, [defaultStudio, userId]);
 
+  useEffect(() => {
+    if (isTyping) {
+      audioTyping.loop = true;
+      audioTyping.play().catch(error => console.log('Error playing sound:', error));
+    } else {
+      audioTyping.pause();
+      audioTyping.currentTime = 0;
+    }
+
+    return () => {
+      audioTyping.pause();
+      audioTyping.currentTime = 0;
+    };
+  }, [isTyping]);
   useEffect(() => {
     if (chatWindowRef.current) {
       chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
