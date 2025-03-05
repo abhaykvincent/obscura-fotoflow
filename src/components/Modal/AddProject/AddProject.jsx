@@ -112,7 +112,10 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
             <div className="control maximize"></div>
           </div>
           <div className="modal-title">
-            {currentStep === 1 ? "Choose Template" : currentStep === 2 ? "Project Details" : isSubProject ? "New Sub-Project" : "New Project"}
+            {currentStep === 1 ? "Create project" : currentStep === 2 ? "Project Details" : isSubProject ? "New Sub-Project" : "New Project"}
+            <p className="modal-subtitle">
+              {currentStep === 1 ? "Choose Template" : currentStep === 2 ? "Project Details" : isSubProject ? "New Sub-Project" : "New Project"}
+            </p>
           </div>
         </div>
         <div className="modal-body">

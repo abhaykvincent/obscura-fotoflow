@@ -40,9 +40,6 @@ function Home() {
         setUpcommingShoots(sortedUpcommingShoots)
     }, [])
     useEffect(() => {
-        console.log(upcommingShoots)
-    }, [upcommingShoots])
-    useEffect(() => {
         if(projects.length===0){
             setTimeout(() => {
                 const isAnyModalOpen = Object.values(modals).some(modal => modal === true);
