@@ -136,7 +136,7 @@ function Onboarding() {
         })
       // EROR: Login.jsx:27 A non-serializable value was detected in an action, in the path: `payload`. Value: 
       const serializedUser = {
-        userId: loginUser.uid,
+        userId: loginUser.email,
         email: loginUser.email,
         displayName: loginUser.displayName,
         photoURL: loginUser.photoURL,
@@ -145,7 +145,7 @@ function Onboarding() {
       };  
       dispatch(setUser(serializedUser))
 
-      analytics.setUserId(loginUser.uid);
+      analytics.setUserId(loginUser.email);
 
     }).catch((error) => {
       // Handle Errors here.

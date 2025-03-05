@@ -821,10 +821,9 @@
             }
             span.suggestions{
                 width: calc(100vw - 8px*5);
-                display: flex;
                 flex-wrap: wrap;
-                left: -8px*20;
-                top: 8px*7;
+                left: -8px*14;
+                top: 8px*8;
             }
             
         }

@@ -109,7 +109,7 @@ export default function App() {
   return (
     <div className="App">
       <HotKeys keyMap={keyMap} handlers={handlers}>
-      <FlowPilot userId={defaultStudio?.domain}/>
+      {/* <FlowPilot userId={defaultStudio?.domain}/> */}
       {isAuthenticated && (!isPublicPage())? (
         <>
           <Header />
