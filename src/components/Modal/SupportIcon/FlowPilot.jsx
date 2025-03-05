@@ -60,7 +60,6 @@ const FlowPilot = ({ userId }) => {
       outputCostPerMillion: 0.30,
     },
   ];
-
   let audioTyping = new Audio(typingSound);
   audioTyping.volume = 0.2;
 
@@ -511,12 +510,14 @@ const FlowPilot = ({ userId }) => {
     grouped.push(currentGroup);
     return grouped;
   };
+
+  // Chat Initialization
   useEffect(() => {
     if (defaultStudio?.domain && userId) {
       initializeConversation();
     }
   }, [defaultStudio, userId]);
-
+  // Typing sound effect
   useEffect(() => {
     if (isTyping) {
       audioTyping.loop = true;
@@ -531,6 +532,7 @@ const FlowPilot = ({ userId }) => {
       audioTyping.currentTime = 0;
     };
   }, [isTyping]);
+  // Scroll bottom chat
   useEffect(() => {
     if (chatWindowRef.current) {
       chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
@@ -540,6 +542,7 @@ const FlowPilot = ({ userId }) => {
   return (
     <div className="flow-pilot">
       <div className="chat-header">
+        {/* Back button */}
         {!showWelcome && (
           <div 
             className="back-btn" 
@@ -550,6 +553,7 @@ const FlowPilot = ({ userId }) => {
             }}
           ></div>
         )}
+        {/* Signal */}
         {!showWelcome && <div className="status-signal"></div>}
         <div className="flowpilot-titles">
           <h3>
@@ -566,7 +570,7 @@ const FlowPilot = ({ userId }) => {
                   {formatDecimalKnos(inputTokens + outputTokens)}/{formatDecimalKnos(TOKEN_LIMIT)} 
                   {/* (In: {inputTokens}, Out: {outputTokens}) */}
                 </span>
-                <span className="token-usage">₹{convertUsdToInr(tokenCost)}
+                <span className="token-usage inr">₹{convertUsdToInr(tokenCost)}
                 </span>
               </div>
             ) : (
