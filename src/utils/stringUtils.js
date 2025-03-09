@@ -73,8 +73,18 @@ export function convertMegabytes(megabytes, decimalPlaces = 0) {
     sizeIndex++;
   }
 
-  return `${megabytes.toFixed(decimalPlaces)} ${sizes[sizeIndex]}`;
+  return `${megabytes?.toFixed(decimalPlaces)} ${sizes[sizeIndex]}`;
 }
+
+export const convertUsdToInr = (usdCost, exchangeRate = 83.50) => {
+  if (typeof usdCost !== 'number' || usdCost < 0) {
+    throw new Error('USD cost must be a non-negative number');
+  }
+  if (typeof exchangeRate !== 'number' || exchangeRate <= 0) {
+    throw new Error('Exchange rate must be a positive number');
+  }
+  return Number((usdCost * exchangeRate).toFixed(2));
+};
 export function formatStorage(size, unit) {
   const units = ["B", "KB", "MB", "GB", "TB", "PB"];
   const unitIndex = units.indexOf(unit.toUpperCase());
@@ -108,6 +118,9 @@ export function formatDecimal(amount) {
 // now for mat it with K suffix like ₹999.9K for ₹9,99,999 
 export function formatDecimalK(amount) {
   return '₹'+(amount/1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + 'K';
+}
+export function formatDecimalKnos(amount) {
+  return ((amount/1000).toFixed(2)).toString().replace(/\.?0+$/, '').replace(/\B(?=(\d{3})+(?!\d))/g, ",") + 'K';
 }
 
 // desired url http://localhost:3000/share/ethan-ross-Ksi9g/birthday-CLhMa
@@ -169,3 +182,8 @@ export const  greetUser=(userName) => {
   }
 }
 
+export const calculateDelay = (text) => {
+  const baseDelay = 100; // Minimum delay in milliseconds
+  const delayPerChar = 1; // Additional delay per character
+  return Math.min(baseDelay + text.length * delayPerChar, 2000); // Cap at 2 seconds
+};

@@ -25,7 +25,7 @@ function Projects() {
     const localViewType = retrieveProjectsViewType()
     const [viewType, setViewType] = useState( localViewType|| 'cards');
     
-    document.title = `${defaultStudio.name} | Projects`;
+    document.title = `${defaultStudio.domain} | Projects`;
 
     useEffect(()=>{
         storeProjectsViewType(viewType);
