@@ -60,7 +60,7 @@ function Sidebar() {
         </Link>
 
         }
-        <Link to={`/${studioName}/bookings`}>
+        {/* <Link to={`/${studioName}/bookings`}>
           <div className={`menu booking ${location.pathname === `/${studioName}/bookings` ? 'active' : ''} disabled`}>
             <div className="icon"></div>
             <div className="label">Bookings</div>
@@ -77,7 +77,7 @@ function Sidebar() {
             <div className="icon"></div>
             <div className="label">Store</div>
           </div>
-        </Link>
+        </Link> */}
         {/* <Link to={`/${studioName}/invoices`}>
           <div className={`menu invoices ${location.pathname === `/${studioName}/invoices` ? 'active' : ''} disabled`}>
             <div className="icon"></div>

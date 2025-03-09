@@ -2,8 +2,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import CreateStudio from './CreateStudio.jsx'
 import './Onboarding.scss'
-import ProfessionType from './ProfessionType.jsx'
-import ClientsSize from './ClientsSize.jsx'
 import UserContact from './UserContact.jsx'
 import { useNavigate } from 'react-router'
 import { acceptInvitationCode, createStudio, createUser, useInvitationCode, validateInvitationCodeFromFirestore } from '../../firebase/functions/firestore.js'
@@ -27,7 +25,8 @@ function Onboarding() {
   const [searchParams] = useSearchParams();
   const ref = searchParams.get('ref') || '0000'; // Get the 'ref' parameter
   const user = useSelector(selectUser)
-    const currentStudio = useSelector(selectUserStudio);
+  const currentStudio = useSelector(selectUserStudio);
+  console.log(currentStudio)
   const [timeOfDay, setTimeOfDay] = useState({
     timeOfDay: '',
     timeGreeting: '',
@@ -49,6 +48,16 @@ function Onboarding() {
     studioName: '',
     email: ''
   });
+  // Redirect to dashboard if user is already logged in
+  const studioLocal = JSON.parse(localStorage.getItem('studio'))
+  console.log(studioLocal)
+  useEffect(() => {
+    if (studioLocal) {
+      console.log(studioLocal)
+      navigate(`/${studioLocal?.domain}`);
+    }
+  },[studioLocal])
+
   // Validation function
     const validateForm = () => {
       const newErrors = {};

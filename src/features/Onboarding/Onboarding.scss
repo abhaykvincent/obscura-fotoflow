@@ -150,6 +150,7 @@
     }
     .onboarding-greeting{
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         gap: 8px;
         font-size: 1.2rem;
@@ -424,7 +425,7 @@
         font-size: 2rem;
         line-height: 2.2rem;
         font-weight: 500;
-        color: $gray6-default-dark;
+        color: $gray4-default-dark;
         margin-bottom: 8px*0;
         transition-duration: 0.2s;
         &.small{
@@ -803,7 +804,6 @@
 @media only screen and (max-width: 520px) {
     .App .onboarding-container{
         padding-left: 8px*4;
-        width: 100vw;
         height: 100vh;
         .logo{
             position: relative;
@@ -811,7 +811,7 @@
             left: 8px*0;
         }
         .screen{
-            width: 100%;
+            width: 100% !important;
             .studio-domain-selector{
 
                 display: grid;
@@ -820,12 +820,45 @@
                 }
             }
             span.suggestions{
-                width: calc(100vw - 8px*5);
+                width: calc(100vw - 8px*12);
                 flex-wrap: wrap;
                 left: -8px*14;
                 top: 8px*8;
             }
+            .form-group{
+
+                input{
+                    width: calc(100vw - 8px*8);
+                    font-size: 2rem;
+                }
+            } 
+            .section-intro{
+                        font-size: 1rem;
+                
+            }
+            #contactNumber{
+                max-width: calc(100vw - 8px*8);
+            }
+            .screen-title{
+                align-items: center;
+                h2{
+                    font-size: 1.2rem;
+                }
+            }
             
+        }
+        .logged-user .logged-user-info {
+            display: none;
+        }
+        .user-authentication .onboarding-message{
+            max-width: calc(100vw - 8px*3);
+        }
+        .privacy-policy-statment label{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px*1;
+            row-gap: 0px;
+            max-width: calc(100vw - 8px*8);
         }
     }
 }

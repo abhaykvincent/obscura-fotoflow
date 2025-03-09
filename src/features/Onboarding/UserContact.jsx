@@ -105,7 +105,7 @@ const UserContact = ({ active, next,previous,createAccountData, updateAccountDat
         </div>
 
         <div className="privacy-policy-statment">
-            <input type="checkbox" id="privacyPolicy" name="privacyPolicy" required value={privacyPolicyAgreed} onChange={()=>{
+            <input type="checkbox" checked id="privacyPolicy" name="privacyPolicy" required value={privacyPolicyAgreed} onChange={()=>{
               setPrivacyPolicyAgreed(!privacyPolicyAgreed)
             }}/>
             <label >

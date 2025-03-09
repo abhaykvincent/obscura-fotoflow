@@ -169,7 +169,7 @@ const CreateStudio = ({active,next,setCreateAccountData,createAccountData,update
                 <div className="web-icon"></div>
                 <div className={`studio-domain `}>
                   <div className="url-prefix">
-                    {domain}/
+                    ..{domain}/
                   </div>
                     <div>
                       <span className={`sub-domain-input  ${isDomainAvailable?`available`:`taken`}`} contentEditable suppressContentEditableWarning={true}>

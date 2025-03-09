@@ -315,3 +315,9 @@
         }
     }
 }
+
+@media only screen and (max-width: 430px) {
+    .upload-progress{
+        width: calc(100vw - 8px*3);
+    }
+}

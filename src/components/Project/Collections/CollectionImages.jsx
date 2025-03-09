@@ -55,6 +55,10 @@ const CollectionImages = ({ id, collectionId, project }) => {
         }
         dispatch(setUploadStatuss(uploadStatus));
     }, [uploadStatus]);
+    useEffect(() => {
+        //start animation  when trefggured
+
+    }, [uploadTrigger]);
 
     useEffect(() => {
         dispatch(setUploadList(uploadList));
@@ -85,6 +89,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
             
             
             setUploadTrigger(true);
+            
         }
         let start = 0;
         let end = page * size;
@@ -208,7 +213,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
             {<div className="image-gallery-bottom-panel">
                 {/* <div className="button secondary">Load All</div> */}
                 
-                {collectionImages?.length !== imageUrls.length && <div className={`button primary`}
+                {collectionImages?.length !== imageUrls.length && collectionImages?.length >0 && <div className={`button primary`}
                     onClick={() => setPage(page + 1)}
                 >Load More</div>}
 
