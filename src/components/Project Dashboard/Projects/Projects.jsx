@@ -62,7 +62,13 @@ function DashboardProjects({project}){
             <div className="thumbnail thumb1">
               <div className="backthumb bthumb1"
               >
-          <div className="button primary outline">New Gallery</div></div>
+          <div className="button primary outline"
+          
+                        onClick={() => {
+                          // Your action for Delete
+                          dispatch(openModal('createCollection'));
+                        }}
+          >New Gallery</div></div>
               <div className="backthumb bthumb2"></div>
               <div className="backthumb bthumb3"></div>
               <div className="backthumb bthumb4"></div>

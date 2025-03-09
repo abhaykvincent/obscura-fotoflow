@@ -153,39 +153,16 @@ function Home() {
                     ):
                     (<>
                         <div className="projects-list">
-
-                        <div className="project new" 
-                            
-                        onClick={()=>dispatch(openModal('createProject'))}
-                        >
-                            <div className="project-cover"
-                            ></div>
-                            <div className="project-details">
-                                <div className="details-top">
-                                    <h4 className="project-title">New Project</h4>
-                                    <p className="project-type"></p>
+                            <div className="project new" onClick={()=>dispatch(openModal('createProject'))}>
+                                <div className="project-cover"></div>
+                                <div className="project-details">
+                                    <div className="details-top">
+                                        <h4 className="project-title">New Project</h4>
+                                        <p className="project-type"></p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="project-options">
-                                
-                            </div>
-                        </div >
-                        <div className="project upload" 
-                            
-                        onClick={()=>dispatch(openModal('createProject'))}
-                        >
-                            <div className="project-cover"
-                            ></div>
-                            <div className="project-details">
-                                <div className="details-top">
-                                    <h4 className="project-title">Upload Photos</h4>
-                                    <p className="project-type"></p>
-                                </div>
-                            </div>
-                            <div className="project-options">
-                                
-                            </div>
-                        </div >
+                                <div className="project-options"></div>
+                            </div >
                         </div>
                     </>)
                 }

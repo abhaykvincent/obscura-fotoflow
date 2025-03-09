@@ -376,6 +376,11 @@
     }
     .home 
     {
+        .project{
+            &.upload{
+                margin-left: 0;
+            }
+        }
         .welcome-section{
             grid-template-columns: 1fr;
             margin-top:8px;

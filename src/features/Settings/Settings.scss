@@ -69,7 +69,7 @@ main.settings{
                 margin-top: -8px;
             }
             &.secondery{
-                font-size: 0.9rem;
+                font-size: 0.7rem;
                 color: $gray4-default-dark;
                 margin-top: 4px;
                 margin-bottom: -4px;
@@ -183,7 +183,7 @@ main.settings{
                 .tab-content{
                     display: grid;
                     justify-items: start;
-                    padding-left: 8px;
+                    padding: 0 8px;
                 }
                 label{
                     line-height: 0.8rem;

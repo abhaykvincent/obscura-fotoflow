@@ -80,7 +80,7 @@ export default function ShareProject() {
     const collection = findCollectionById(project.collections, collectionId);
     document.title = `${project.name} | ${collection?.name} | Gallery`
     const newImages = project?.collections.find((collection)=>collection.id===collectionId)?.uploadedFiles;
-
+    console.log(project.collections)
     setImageUrls(newImages)
     setPage(1)
   }, [project, collectionId]);
@@ -89,27 +89,25 @@ export default function ShareProject() {
   
   // Collections panel
   const CollectionsPanel = () => {
-    return (
-      <div className="">
-      
+  return (
+    <div className="">
       <div className="collections-panel">
-        
-      {project.collections.map((collection, index) => (
-        <div
-          key={collection.id}
-          className={`
-            collection-tab 
-            ${collection.id === collectionId || (!collectionId && index === 0) ? 'active' : ''}
-            ${collection.uploadedFiles === undefined ? 'disabled' : ''}
-          `}
-        >
-          {
-          <Link to={collection.uploadedFiles !== undefined && `/${studioName}/share/${project.id}/${collection.id}`}>{collection.name}</Link>
-          
-        }
-        </div>
-      ))}
-    </div>
+        {project.collections.map((collection, index) => (
+          collection.uploadedFiles.length !== 0 && 
+          <div
+            key={collection.id}
+            className={`
+              collection-tab 
+              ${collection.id === collectionId || (!collectionId && index === 0) ? 'active' : ''}
+              ${collection.uploadedFiles === undefined ? 'disabled' : ''}
+            `}
+          >
+            {
+            <Link to={collection.uploadedFiles !== undefined && `/${studioName}/share/${project.id}/${collection.id}`}>{collection.name}</Link>
+            }
+          </div>
+        ))}
+      </div>
     </div>
     );
   };
@@ -123,11 +121,12 @@ export default function ShareProject() {
         <img className='banner' src={project.projectCover} alt="" />
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
-          <div className="collections-panel">
-        <div className={`collection-tab client-selection-tab`}  >
-          <Link to={`/${studioName}/selection/${project.id}`}>Photo Selection</Link>
-        </div>
-        </div>
+          <p className='projet-type'>{toTitleCase(project.type)}</p>
+          <div className="collections-panel client-selection">
+            <div className={`collection-tab client-selection-tab`}  >
+              <Link to={`/${studioName}/selection/${project.id}`}>Photo Selection</Link>
+            </div>
+          </div>
           <CollectionsPanel/>
         </div>
       </div>

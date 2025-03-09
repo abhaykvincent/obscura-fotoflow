@@ -355,13 +355,14 @@
         }
     }
 }
-@media only screen and (max-width: 580px) {
+@media only screen and (max-width: 520px) {
     .teams-list{
         grid-template-columns: 1fr   ;
     }
     .projects-list{
         gap: 8PX*4;
         grid-template-columns: 1fr ;
+        padding: 8px*2.5;
         
     }
     .projects-header .actions{

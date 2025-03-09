@@ -144,7 +144,12 @@ export default function Galleries({}) {
             <div className="icon options"></div>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+              onSelect={() => {
+                // Your action for Delete
+                dispatch(openModal('createCollection'));
+              }}
+              >
                 <div className="icon-show add"></div>
                 New Gallery</DropdownMenuItem>
               <DropdownMenuSeparator />

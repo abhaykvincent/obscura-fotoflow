@@ -373,7 +373,7 @@
     }
     &.new{
     grid-template-columns: 8px*15 auto;
-        width: 90%;
+        width: 100%;
         .project-cover{
         background-size: 30%;
         background-image: url('https://img.icons8.com/?size=100&id=843&format=png&color=FFFFFF');
@@ -392,7 +392,7 @@
     }
     &.upload{
     grid-template-columns: 8px*15 auto;
-        width: 90%;
+        width: 95%;
         .project-cover{
         background-size: 40%;
         background-image: url('https://img.icons8.com/?size=100&id=RXegk50IKV5u&format=png&color=FFFFFF');
