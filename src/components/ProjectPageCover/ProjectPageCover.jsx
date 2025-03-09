@@ -155,7 +155,7 @@ export const ProjectCover = ({ project }) => {
                         ) : (
                         <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
                         )}
-                        <div className="type">{project?.type}</div>
+                        {!isEditing &&<div className="type">{project?.type}</div>}
                         
                         </div>
                         {
@@ -232,10 +232,10 @@ export const ProjectCover = ({ project }) => {
                 </div>
                 :
                 <div className="cover-tools">
-                    <div
+                    {/* <div
                         className="button transparent-button primary icon set-focus"
                         onClick={ () => saveFocusPoint(focusPointLocal)}
-                    >Save</div>
+                    >Save</div> */}
                 </div>
             }
             {isSetFocusButton && project?.projectCover && (

@@ -303,10 +303,9 @@ body{
             justify-content: end;
             gap:2px;
             justify-items: end;
-          right: 8px*2;
-          top: 8px*2;
+          right: 8px*1;
           left: auto;
-          bottom: auto;
+          bottom:  8px*9;
           }
           
         }
@@ -756,7 +755,7 @@ body{
           }
           div{
             svg{
-              opacity: 0.1;
+              opacity: 0.01;
             }
           }
           h2{
@@ -1068,6 +1067,10 @@ body{
       
     }
     .project-status{
+      position: relative;
+      select{
+        height: 8px*4;
+      }
         &.draft {
           .status-signal {
               //background-color: $amber-dark;
@@ -1343,6 +1346,7 @@ body{
       position: relative;
       top: 0;
       right: -8px*2;
+      gap: 8px;
       // any with aria-haspopup="menu"
       button[aria-haspopup="menu"]{
         background-color: transparent;
@@ -1429,6 +1433,7 @@ body{
       border-radius: $border-radius-1 $border-radius-1 0 0;
       border-bottom: 1px solid $dark-1;
       box-shadow: 0 2px 2px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
       .modal-controls{
         display: flex;
         width: 100%;
@@ -1479,6 +1484,7 @@ body{
         justify-content: center;
         line-height: 1.9rem;
         font-size: 1.1rem;
+        white-space: nowrap;
         .modal-subtitle{
           color: $gray2-default-dark;
           font-weight: 400;
@@ -1558,7 +1564,7 @@ body{
 
         &:hover{
           label{
-            color: $gray3-default-light;
+            color: $gray2-default-dark;
           }
         }
         &.three{
@@ -1630,7 +1636,6 @@ body{
           }
         }
         &.template-options{
-          width: 8px*58;
           margin-bottom: 8px*2;
           justify-content: center;
           .radio-button-group{
@@ -2238,8 +2243,8 @@ body{
     main{
       position: relative;
       top: $header-height ;
-      left: 60px;
-      width: calc(100vw - 8px*7.5);
+      left: 8px*8;
+      width: calc(100vw - 8px*9);
       margin-left: 0px;
     }
     .gallary{
@@ -2633,7 +2638,7 @@ body{
       } 
       main {
         left: 8px*8;
-        width: calc(100vw - 8px*8);
+        width: calc(100vw - 8px*9);
         .project-collection .photos{
           display: flex;
           flex-wrap: wrap;
@@ -2680,7 +2685,7 @@ body{
       }
       main {
         left: 8px*8;
-        width: calc(100vw - 8px*8);
+        width: calc(100vw - 8px*9);
         &.project-page{
           display: grid;
           grid-template-columns: auto;
@@ -2757,7 +2762,7 @@ body{
     }
     main {
       left: 8px*8;
-      width: calc(100vw - 8px*7.5);
+      width: calc(100vw - 8px*9);
       .header{
         .view-control .control-label.label-selected-photos{
           display: none;
@@ -2805,13 +2810,13 @@ body{
       }
       header{
         .hamburger svg{
-          width: 8px*2.9;
-          height: 8px*2.9;
+          margin-top: -8px*0;
+          margin-left: 8px*1;
         }
       } 
       main {
-        left: 0;
-        width: calc(100vw );
+        left: 8px;
+        width: calc(100vw - 8px*2 );
         .photos{
           grid-template-columns: 1fr 1fr ;
         }
@@ -2898,21 +2903,24 @@ body{
       transform: translateX(-50%);
       &.island{
         top: auto;
-        bottom: 8px*10;
+        bottom: 8px*16;
         left: 8px;
         transform: none;
         animation: none;
+        opacity: 1;
       }
         &.loginModal{
-          margin-left: 8px;
+          width: calc(100vw - 8px*6);
+          margin-left: 0px;
+          left: 8px*3;
           .actions{
-            padding: 8px;
+            padding: 8px*2 8px*4;
             max-width: 95vw;
             .sign-in-buttons{
               width: 100%;
             }
             .button{
-              width: calc(100vw - 8px*8);
+              width: calc(100vw - 8px*10);
             }
             .login-helper-options{
               display: grid;
@@ -2927,7 +2935,6 @@ body{
           width: calc(100% - 8px) !important;
           margin-left: 8px*1;
           margin-right: 0;
-          display: grid;
           gap: 4px;
           .field {
             width: calc(100% - 8px*4);
@@ -2939,7 +2946,7 @@ body{
             label{
               text-align: left;
               margin-left: 8px;
-              margin-bottom: 8px;
+              margin-bottom: 4px;
             }
             .radio-button-group{
               label{
@@ -2955,11 +2962,18 @@ body{
               grid-template-columns:  8px*12 auto;
             }
           }
+          .project-validity-options{
+            margin-top: 8px*2;
+            .template-options .radio-button-group {
+              padding: 8px 8px*2;
+              font-size: 1.2rem;
+            }
+          }
         }
         .modal-header{
           display: flex;
           padding: 8px*1;
-          padding-left: 8px*2;
+          padding-left: 8px*3;
           .modal-controls{
             display: none;
           }
@@ -2971,8 +2985,22 @@ body{
           padding: 8px*2 0;
         }
       }
+      
+    .login-container{
+    
+      .logo{
+        position: absolute;
+        left: calc(50% - 8px*5);
+        top: 8px*8;
+      }
+    }
       .welcome-section .storage-pie-wrap{
         display: none;
+      }
+      .client h1 {
+        position: relative;
+        display: flex;
+        font-size: 1.2rem;
       }
       .galleries{
 
@@ -3005,24 +3033,29 @@ body{
                 }
               }
               &.new{
-                width: 8px*20;
-                height: 8px*16;
+                width: 8px*8;
+                height: 8px*8;
                 position: sticky;
-                top: 8px;
-                right: -8px;
+                top: 8px*4;
+                right: 4px;
                 margin-top: 8px;
                 padding: 0;
                 box-shadow: -4px 0px 8px 2px rgba(0, 0, 0, 0.286);;
                 .thumbnails{
 
-                width: 8px*17;
+                  height: 8px*8;
+                width: 8px*8;
                 margin-right: 2px;
+                .backthumb{
+                  height: 100%;
+                }
                 }
               }
             }
             .gallery-name{
             }          
             &:after{
+              display: none;
               position: sticky;
               top: 8px*2;
               right: 8px*16;
@@ -3053,7 +3086,6 @@ body{
           height: 8px*12;
           width: 8px*1.62*12;
           .gallery-name{
-            padding: 4px 8px;
             .filesCount{
               display: none;
             }
@@ -3064,11 +3096,16 @@ body{
             height: 8px*12;
             width: 8px*1.62*12;
             .thumbnail{
+              .backthumb{
+                height:8px*4;
+              }
               .bthumb1 {
                 height: 8px*12;
                 width: 100% !important;
+                background-position: center, center !important;
                 .button{
                   font-size: 0.8rem;
+                  display: none;
                 }
               }
 
@@ -3080,7 +3117,7 @@ body{
         
       }
       .project-info{
-        left: 8px*5;
+        left: 8px*6;
         padding: 8px*1.5 0px;
         padding-right: 8px;
         width: calc(100vw - 8px*6);
@@ -3093,18 +3130,22 @@ body{
           font-size: 0.6rem;
         }
         .back{
-          width: 8px*3;
           padding-left: 8px*3;
-          padding-right: 8px*0;
+          padding-right: 8px*1;
+          margin-top: -8px*0.5;
           overflow: hidden;
         }
         button {
           display: sticky;
           right: 0px;
         }
+        .project-status{
+          display: none;
+        }
       }
       main {
         margin:0;
+        padding-bottom:8px;
         &.project-page {
           padding:0px;
           .project-collections{
@@ -3120,13 +3161,20 @@ body{
           }
           .project-page-cover{
             padding-top: 8px*40;
+            .cover-footer{
+              height: 8px*7;
+            }
+            .static-tools .bottom-right {
+              display: none;
+            }
           }
         }
         &.home{
           padding: 0;
         }
         .project-collection .photos .photo-wrap {
-        width: calc(100vw - 8px*3);
+        width: calc(100vw - 8px*4.4);
+        margin-top: -4px;
         .photo{
 
           width: 100%
@@ -3194,8 +3242,8 @@ body{
       }
     } 
     main {
-      left: 0;
-      width: calc(100vw );
+      left: 8px;
+      width: calc(100vw - 8px*2 );
       .photos{
         grid-template-columns: 1fr ;
       }
@@ -3208,6 +3256,7 @@ body{
         .project-options{
           justify-content: start;
         }
+
       }
       .project-collection{
         .header{
@@ -3241,10 +3290,15 @@ body{
       gap: 4px;
       .breadcrumbs{
         padding-right: 0;
+        .back.highlight{
+          max-width: 8px*6;
+        }
       }
       .client{
-        margin-right: 8px;
+        margin-right: 0px;
         grid-template-columns: auto auto auto;
+        display: flex
+;
         h1{
           white-space: nowrap;
         }
@@ -3253,7 +3307,7 @@ body{
         }
       }
       .project-options{
-
+        right
         .pin{
         }
       }

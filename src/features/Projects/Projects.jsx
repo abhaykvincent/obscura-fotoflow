@@ -8,7 +8,7 @@ import { openModal } from '../../app/slices/modalSlice';
 import { getProjectsByStatus, getRecentProjects } from '../../utils/projectFilters';
 import { retrieveProjectsViewType, storeProjectsViewType } from '../../utils/localStorageUtills';
 // Components
-import AddProjectModal from '../../components/Modal/AddProject';
+import AddProjectModal from '../../components/Modal/AddProject/AddProject';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
 import SearchInput from '../../components/Search/SearchInput';
 import Refresh from '../../components/Refresh/Refresh';
@@ -25,7 +25,7 @@ function Projects() {
     const localViewType = retrieveProjectsViewType()
     const [viewType, setViewType] = useState( localViewType|| 'cards');
     
-    document.title = `${defaultStudio.name} | Projects`;
+    document.title = `${defaultStudio.domain} | Projects`;
 
     useEffect(()=>{
         storeProjectsViewType(viewType);

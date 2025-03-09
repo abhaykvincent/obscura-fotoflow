@@ -11,7 +11,7 @@ import DashboardPayments from '../Payments/Payments';
 import DashboardExpances from '../Expances/Expances';
 import DashboardEvents from '../Events/Events';
 import DashboardTabs from './DashboardTabs/DashboardTabs';
-import AddProjectModal from '../../Modal/AddProject';
+import AddProjectModal from '../../Modal/AddProject/AddProject';
 import CollectionsPanel from '../../Project/Collections/CollectionsPanel';
 
 function DashboardProjects({project}){
@@ -62,7 +62,13 @@ function DashboardProjects({project}){
             <div className="thumbnail thumb1">
               <div className="backthumb bthumb1"
               >
-          <div className="button primary outline">New Gallery</div></div>
+          <div className="button primary outline"
+          
+                        onClick={() => {
+                          // Your action for Delete
+                          dispatch(openModal('createCollection'));
+                        }}
+          >New Gallery</div></div>
               <div className="backthumb bthumb2"></div>
               <div className="backthumb bthumb3"></div>
               <div className="backthumb bthumb4"></div>

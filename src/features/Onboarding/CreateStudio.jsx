@@ -131,8 +131,9 @@ const CreateStudio = ({active,next,setCreateAccountData,createAccountData,update
   }
   // Get the domain from the current URL the www.fotoflow.com part
   const url = window.location.href;
-  const domain = url.split('/')[2];
-
+  let domain = url.split('/')[2];
+  // get last 20 charecters
+  domain = domain.substring(domain.length - 10);
   return (
     <>
       <div className={`screen create-studio ${user?.email && 'active'}`}>
@@ -166,7 +167,10 @@ const CreateStudio = ({active,next,setCreateAccountData,createAccountData,update
 
               <div className="domain-input-container">
                 <div className="web-icon"></div>
-                <div className={`studio-domain `}>{domain}/
+                <div className={`studio-domain `}>
+                  <div className="url-prefix">
+                    ..{domain}/
+                  </div>
                     <div>
                       <span className={`sub-domain-input  ${isDomainAvailable?`available`:`taken`}`} contentEditable suppressContentEditableWarning={true}>
                         {studioDomain}

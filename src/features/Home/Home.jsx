@@ -9,12 +9,12 @@ import { selectProjects } from '../../app/slices/projectsSlice';
 import { openModal, selectModal } from '../../app/slices/modalSlice';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import StoragePie from '../../components/StoragePie/StoragePie';
-import AddProjectModal from '../../components/Modal/AddProject';
 import {  toast } from 'sonner'
 import SearchInput from '../../components/Search/SearchInput';
 import { trackEvent } from '../../analytics/utils';
 import EventCard from '../../components/Project/ProjectCard/EventCard';
 import { getEventTimeAgo } from '../../utils/dateUtils';
+import AddProjectModal from '../../components/Modal/AddProject/AddProject';
 function Home() {
     const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
@@ -39,9 +39,6 @@ function Home() {
         });
         setUpcommingShoots(sortedUpcommingShoots)
     }, [])
-    useEffect(() => {
-        console.log(upcommingShoots)
-    }, [upcommingShoots])
     useEffect(() => {
         if(projects.length===0){
             setTimeout(() => {
@@ -70,7 +67,7 @@ function Home() {
     }, [selectedProjects]);
     return (
         <>
-          <AddProjectModal />
+          <AddProjectModal/>
         
             <div className="home-header">
             <div className="search-bar">
@@ -156,39 +153,16 @@ function Home() {
                     ):
                     (<>
                         <div className="projects-list">
-
-                        <div className="project new" 
-                            
-                        onClick={()=>dispatch(openModal('createProject'))}
-                        >
-                            <div className="project-cover"
-                            ></div>
-                            <div className="project-details">
-                                <div className="details-top">
-                                    <h4 className="project-title">New Project</h4>
-                                    <p className="project-type"></p>
+                            <div className="project new" onClick={()=>dispatch(openModal('createProject'))}>
+                                <div className="project-cover"></div>
+                                <div className="project-details">
+                                    <div className="details-top">
+                                        <h4 className="project-title">New Project</h4>
+                                        <p className="project-type"></p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="project-options">
-                                
-                            </div>
-                        </div >
-                        <div className="project upload" 
-                            
-                        onClick={()=>dispatch(openModal('createProject'))}
-                        >
-                            <div className="project-cover"
-                            ></div>
-                            <div className="project-details">
-                                <div className="details-top">
-                                    <h4 className="project-title">Upload Photos</h4>
-                                    <p className="project-type"></p>
-                                </div>
-                            </div>
-                            <div className="project-options">
-                                
-                            </div>
-                        </div >
+                                <div className="project-options"></div>
+                            </div >
                         </div>
                     </>)
                 }

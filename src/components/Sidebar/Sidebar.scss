@@ -1,7 +1,7 @@
 @import '../../style/variables';
 .sidebar{
     position: fixed;
-    top:  8px*0;
+    top: $header-height - 4px*0 ;
     left: 0%;
     width: $sidebar-width;
     height: 100vh;
@@ -10,13 +10,14 @@
     @include boxed;
     border: 1px none;
     z-index: 11;
-    padding-top: $header-height ;
     box-shadow:  -1px 1px 4px rgba(0, 0, 0, 0);
     transition-duration: 0.2s;
     .menu-list{
         padding: 0 8px*1;
         position: relative;
         height: 100%;
+        border-radius: 8px;
+        margin-left: -4px;
         a{
         .label{
             transition-duration: 0.1s;
@@ -208,7 +209,7 @@
         flex-direction: column-reverse;
         
         width: calc(100% - 8px*1.5);
-        bottom: 8px*7;
+        bottom: 8px*16;
         left: 5px;
         padding: 8px 8px;
         padding-bottom: 8px*0;
@@ -410,9 +411,9 @@
             border-radius: 4px;
             overflow: hidden;
             opacity: 0;
-            transition-duration: 0.1s;
+            transition-duration: 0.2s;
             transition-timing-function: ease-out;
-            transition-delay: 0.15s;
+            transition-delay: 0.01s;
             overflow: hidden;
                 .option{
                     display: block;
@@ -451,14 +452,14 @@
                 
             }
             &.active{
-                bottom: 8px*7;
+                bottom: 8px*16;
                 opacity: 1;
                 padding: 8px;
                 height: 8PX*24;
                 opacity: 1;
-            transition-timing-function: ease-out;
+                transition-timing-function: ease-out;
 
-                transition-duration: 0.3s;
+                transition-duration: 0.2s;
             }
         }
     }
@@ -470,12 +471,12 @@
         align-items: start;
         gap: 0;
         position: absolute;
-        top: 100vh;
+        top: calc(100vh - 8px*7.5);
         padding: 8px*0.5;
         padding-right: 0;
         margin-left: 4px;
         margin-top: -8px*1.5;
-        width: $sidebar-width - 8px*1.5;
+        width: $sidebar-width - 8px*1;
         transform: translateY(-100%)scale(1.0);;
         cursor: pointer;
         z-index: 21;
@@ -483,24 +484,23 @@
         border: 1px solid $gray3-default-dark;
         border-right:  1px solid $gray5-default-dark;
         border-bottom:  1px solid $gray5-default-dark;
-        border-radius: 8px;
+        
+        border-radius: 4px;
             box-shadow: 1px 2px 1px 2px black;
             transition-duration: 0.15s;
-
+        cursor: grab;
         &:hover{
-            border: 2px solid $gray3-default-dark;
+            border: 1px solid $gray3-default-dark;
             transition-duration: 0.1s;
-            box-shadow: 1px 4px 1px 2px black;     
-            transform: translateY(calc(-100% - 2px)) translateX(2px) scale(1.05);;
 
         }
         &.active{
-            margin-top: -8px*0.5;
             border: 1px solid $gray2-default-dark;
-            transform: translateY(-100%) scale(1.02);;
+            transform: translateY(-100%) scale(1);;
         border-radius: 4px;
         transition-duration: 0.15s;
         transition-timing-function: ease-out;
+            cursor: grabbing;
             .option-icon{
                 transform: rotate(180deg) translateX(8px*2) translateY(8px*0.5);;
                 
@@ -531,15 +531,14 @@
                 display: flex;
                 gap: 2px;
                 width: 8px*12;
-                overflow-x: scroll;
                 /* hide s crollbar */
                 scrollbar-width: 0;
                 z-index: -1;
                 &::after{
                     position: absolute;
-                    right: -2px;
+                    right: -6px;
                     content: '';
-                    padding: 16px 16px;
+                    padding: 8px 8px;
                     z-index: 1;
 
                     background: linear-gradient(to right, rgba(0, 0, 0, 0), $dark-2);
@@ -549,8 +548,8 @@
                     left: 0px;
                     content: '';
                     z-index: 1;
-                    padding: 16px 6px;
-                    background: linear-gradient(to right,  rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
+                    padding: 8px 8px;
+                    background: linear-gradient(to right,  rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
                 }
             }
             .role{
@@ -597,6 +596,11 @@
     &.hide{
         left: 0%;
         transition-duration: 0.1s;
+        .menu-list{
+            border: 1px solid transparent;
+            margin-left: 0px;
+            transition-duration: 0.1s;
+        }
     }
 }
 @keyframes menu-icon-reveal {
@@ -610,36 +614,27 @@
 }
 }
 
-@media only screen and (max-width: 1230px) {
-    
-}
   @media only screen and (max-width: 1230px) {
     .App{
       .sidebar{
-        width: 8px*7.5;
-        &.hide{
-            left: 0%;
-            transition-duration: 0.1s;
-        }
+        box-shadow: 2px 0px 4px 0px black;
         .menu-list {
             padding: 8px*1.5;
             max-height: calc(100vh - 8px*8);
             overflow-y: visible;
+            border: 1px solid $dark-1;
             a{
                 transition-duration: 0.1s;x
                 .icon {
                     width: 8px*3;
                     height: 8px*3;
                 }.menu{
-                    grid-template-columns: auto;
                     padding: 4px;
                     margin: 0;
                     margin-bottom: 8px;
                     transition-duration: 0.1s;
                 }
                 .label,.coming-soon{
-                    display:none;
-                    opacity: 0;
                 }
                 &:hover{
                     .label{
@@ -671,6 +666,10 @@
                 box-shadow: none;
                 border: none;
                 background: none;
+                bottom: 8px*6.5;
+                .plan-labels{
+                display: none;
+                }
             }
             .storage-bar{
                 display: grid;
@@ -750,11 +749,41 @@
         }
         .profile-settings{
             .profile-options-window.active{
-                bottom: 8px*7;
+                bottom: 8px*17;
+
+                box-shadow: 1px 1px 1px 2px rgba(0, 0, 0, 0.4);
             }
         }
         .option-icon{
             display:block
+        }
+        &.hide{
+            left: 0%;
+            transition-duration: 0.1s;
+
+        width: 8px*7.5;
+            .menu-list {
+                padding: 8px*1.5;
+                max-height: calc(100vh - 8px*8);
+                overflow-y: visible;
+                a{
+                    transition-duration: 0.1s;x
+                    .icon {
+                        width: 8px*3;
+                        height: 8px*3;
+                    }.menu{
+                        grid-template-columns: auto;
+                        padding: 4px;
+                        margin: 0;
+                        margin-bottom: 8px;
+                        transition-duration: 0.1s;
+                    }
+                    .label,.coming-soon{
+                        display:none;
+                        opacity: 0;
+                    }
+                }
+                }
         }
       }
     }
@@ -773,20 +802,21 @@
   @media only screen and (max-width: 520px) {
     .App{
       .sidebar{
-        width: $sidebar-width + 8px*2;
+        width: $sidebar-width + 8px*10;
         &.hide{
             left: -100%;
             transition-duration: 0.1s;
         }
         .menu-list 
         {
-            padding: 4px;
-            max-height: calc(100vh - 8px*34);
+            padding: 8px*2;
+            padding-top: 8px*2;
             overflow-y: scroll;
             a {
                 .menu{
                 display: grid;
                 grid-template-columns: 24px auto auto;
+                padding-left: 8px*1;
                 .label{
                     display: grid;;
                     opacity: 1;
@@ -803,7 +833,7 @@
         }
         .profile-settings{
             .profile-options-window.active{
-                bottom: 8px*7;
+                bottom: 8px*18;
             }
         }
         .option-icon{

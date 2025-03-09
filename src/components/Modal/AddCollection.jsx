@@ -18,6 +18,7 @@ const projectTypePlaceholders = {
   Birthday: ['Cake Cutting', 'Candles', 'Group Photos', 'Decorations', 'Party Games'],
   Maternity: ['Bump Photos', 'Family Maternity', 'Outdoor Shoot', 'Studio Shoot', 'Baby Announcement'],
   Newborn: ['First Photos', 'Family with Baby', 'Sleeping Poses', 'Tiny Details', 'Sibling Photos'],
+  Headshot: ['Group', 'Portraits', 'Fashion','Professional'],
   Anniversary: ['Couple Portraits', 'Vow Renewal', 'Celebration', 'Candlelight Dinner', 'Family Gathering'],
   Family: ['Family Portraits', 'Generational Photos', 'Outdoor Shoot', 'Holiday Photos', 'Candid Moments'],
   Group: ['Team Photos', 'Friends Gathering', 'Event Group Photos', 'Formal Portraits', 'Candid Shots'],

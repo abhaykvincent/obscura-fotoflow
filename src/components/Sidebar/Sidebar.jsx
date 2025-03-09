@@ -20,7 +20,6 @@ function Sidebar() {
   const studioName = defaultStudio?.domain ?? {domain:'guest',name:'guest'}; 
   const studio= useSelector(selectStudio)
     const storageLimit = useSelector(selectStudioStorageUsage);
-    console.log(studio)
   const [storageUsage , setStorageUsage] = useState({
   })
   const toggleProfileOption = () => {
@@ -61,7 +60,7 @@ function Sidebar() {
         </Link>
 
         }
-        <Link to={`/${studioName}/bookings`}>
+        {/* <Link to={`/${studioName}/bookings`}>
           <div className={`menu booking ${location.pathname === `/${studioName}/bookings` ? 'active' : ''} disabled`}>
             <div className="icon"></div>
             <div className="label">Bookings</div>
@@ -78,7 +77,7 @@ function Sidebar() {
             <div className="icon"></div>
             <div className="label">Store</div>
           </div>
-        </Link>
+        </Link> */}
         {/* <Link to={`/${studioName}/invoices`}>
           <div className={`menu invoices ${location.pathname === `/${studioName}/invoices` ? 'active' : ''} disabled`}>
             <div className="icon"></div>
@@ -138,8 +137,8 @@ function Sidebar() {
             ></div>
             <div className="quota-bar"></div>
             <div className="storage-labels used-quota-gb">
-              <p className="used-gb">{convertMegabytes(studio.usage.storage.used)} </p>
-              <p className="quota-gb">{convertMegabytes(studio.usage.storage.quota)}</p>
+              <p className="used-gb">{convertMegabytes(studio?.usage?.storage?.used)} </p>
+              <p className="quota-gb">{convertMegabytes(studio?.usage?.storage?.quota)}</p>
             </div>
           </div>
           {/* <div className="storage-bar cold">
