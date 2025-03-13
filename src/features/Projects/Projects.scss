@@ -32,6 +32,9 @@
       &.label-all-photos{
         color: $gray2-default-dark;
       }
+      &.label-selected-photos{
+        color: $gray2-default-dark;
+      }
     }
     .controls{
         border-radius: $border-radius-1+1;

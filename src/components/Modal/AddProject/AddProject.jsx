@@ -203,21 +203,27 @@ const ProjectDetails = ({ projectData, errors, handleInputChange, nameInputRef, 
     )}
     <div className="field">
       <label>Validity</label>
-      <div className="project-validity-options">
-        {VALIDITY_OPTIONS.map(({ id, value, label, disabled, className }) => (
-          <div className={`radio-button-group ${className}`} key={id}>
-            <input
-              type="radio"
-              id={id}
-              name="projectValidityMonths"
-              value={value}
-              checked={projectData.projectValidityMonths === value}
-              onChange={handleInputChange}
-              disabled={disabled}
-            />
-            <label htmlFor={id}>{label}</label>
-          </div>
-        ))}
+      <div className="project-validity-wrap">
+        <div className="project-validity-options">
+          {VALIDITY_OPTIONS.map(({ id, value, label, disabled, className }) => (
+            <div className={`radio-button-group ${className}`} key={id}>
+              <input
+                type="radio"
+                id={id}
+                name="projectValidityMonths"
+                value={value}
+                checked={projectData.projectValidityMonths === value}
+                onChange={handleInputChange}
+                disabled={disabled}
+              />
+              <label htmlFor={id}>{label}</label>
+            </div>
+          ))}
+        </div>
+        <div className='info' htmlFor="">
+          {/* Storage used for this project will be free after ${selected projectData.projectValidityMonths} */}
+          After {projectData.projectValidityMonths} months, storage frees up & moved to cold storage for client only access.
+        </div>
       </div>
     </div>
   </div>

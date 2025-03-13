@@ -17,7 +17,7 @@ import CollectionsPanel from '../../Project/Collections/CollectionsPanel';
 function DashboardProjects({project}){
   const dispatch =useDispatch()
   const navigate = useNavigate();
-
+  console.log(project)
   const { studioName } = useParams();
   const [projectDashboardView, setProjectDashboardView] = useState('abstract')
   // Inside your component
@@ -77,12 +77,12 @@ function DashboardProjects({project}){
           
         </div>
         
-        <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
+        {/* <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
           <DashboardEvents project={project} />
           <div className="financials-overview">
             <DashboardPayments project={project} />
           </div>
-        </div>
+        </div> */}
 
 
       </>
@@ -90,12 +90,12 @@ function DashboardProjects({project}){
     ) : (
       <>
         <CollectionsPanel {...{project,collectionId:project.collections[0]?.id}}/>
-        <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
+       {/*  <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
           <DashboardEvents project={project} />
           <div className={`section financials-overview ${project.payments.length > 0 ? 'has-payments' : ''}`}>
             <DashboardPayments project={project} />
           </div>
-        </div>
+        </div> */}
       </>
     ))
     :<>

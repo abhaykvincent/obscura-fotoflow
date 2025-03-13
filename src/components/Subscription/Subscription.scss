@@ -449,7 +449,7 @@ main.subscription{
             }
         }
         .core-features{
-            margin-bottom: 8px*0;
+            margin-bottom: 8px*2;
             margin-top: 8px*1;
             h4{
                 display: flex;
@@ -460,7 +460,7 @@ main.subscription{
                 font-weight: 300;
                 margin-bottom: 8px;
                 line-height:0.9rem;
-                color: $gray3-accessible-light;
+                color: $gray-accessible-light;
                 p{
                     padding: 5px 8px;
                     cursor: pointer;
@@ -553,7 +553,7 @@ main.subscription{
         }
         .waitlist-label{
             font-size: 0.7rem;
-            color: $gray2-accessible-dark;
+            color: $gray4-accessible-dark;
             margin-bottom: 4px;
         }
         .button{

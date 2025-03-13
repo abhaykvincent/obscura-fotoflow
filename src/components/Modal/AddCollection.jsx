@@ -11,19 +11,20 @@ import { set } from 'date-fns';
 import { storeLimitContext } from '../../utils/localStorageUtills';
 import { model } from '../../firebase/app';
 /* import { model } from '../../firebase/app'; */
+
 // Mapping of placeholders based on project type
 const projectTypePlaceholders = {
-  Wedding: ['Save the Date', 'Engagement', 'Wedding Day', 'Reception', 'Bride', 'Groom', 'Couple'],
-  Baptism: ['Ceremony', 'Family Portraits', 'Godparents', 'Celebration', 'Candle Lighting'],
-  Birthday: ['Cake Cutting', 'Candles', 'Group Photos', 'Decorations', 'Party Games'],
-  Maternity: ['Bump Photos', 'Family Maternity', 'Outdoor Shoot', 'Studio Shoot', 'Baby Announcement'],
-  Newborn: ['First Photos', 'Family with Baby', 'Sleeping Poses', 'Tiny Details', 'Sibling Photos'],
-  Headshot: ['Group', 'Portraits', 'Fashion','Professional'],
-  Anniversary: ['Couple Portraits', 'Vow Renewal', 'Celebration', 'Candlelight Dinner', 'Family Gathering'],
-  Family: ['Family Portraits', 'Generational Photos', 'Outdoor Shoot', 'Holiday Photos', 'Candid Moments'],
-  Group: ['Team Photos', 'Friends Gathering', 'Event Group Photos', 'Formal Portraits', 'Candid Shots'],
-  Travel: ['Landscape Photos', 'Cultural Moments', 'Adventure Shots', 'Local Cuisine', 'Travel Diary'],
-  Event: ['Event Highlights', 'Guest Photos', 'Decorations', 'Speeches', 'Candid Moments'],
+  Wedding: ['Save the Date', 'Engagement', 'Wedding Day', 'Reception', 'Bride', 'Groom', 'Album'],
+  Baptism: ['Baptism','Ceremony', 'Family', 'Godparents', 'Album'],
+  Birthday: ['Birthday', 'Party','Group', 'Decorations'],
+  Maternity: [ 'Maternity','Outdoor ','Bump Photos', 'Family Maternity', 'Studio Shoot'],
+  Newborn: ['Sleeping Poses', 'Family with Baby', 'Sibling'],
+  Headshot: [ 'Portraits','Group', 'Fashion','Professional'],
+  Anniversary: ['Couple', 'Celebration','Family Gathering'],
+  Family: ['Family', 'Generational Photos', 'Outdoor', 'Holiday', 'Candid Moments'],
+  Group: ['Team', 'Friends ', 'Event','Candid Shots'],
+  Travel: ['Travel','Landscape', 'Cultural', 'Adventure', 'Food'],
+  Event: ['Highlights', 'Guest', 'Decorations', 'Speeches', 'Candid'],
 };
 function AddCollectionModal({ project }) {
   const dispatch = useDispatch();

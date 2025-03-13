@@ -31,7 +31,10 @@ export const initialPlans = [
   {
     name: 'Studio',
     pricing: [
-      { storage: 1024, monthlyPrice: '₹1,020',monthlyPriceWas: '₹2,800', yearlyPrice: '₹1,00,000', specialOffer: ['for 2 months.','Offer expires soon!',' ₹2,800/month after'],defaultPlan: true},
+      { storage: 1024, 
+        monthlyPrice: '₹1,020',monthlyPriceWas: '₹2,800', yearlyPrice: '₹25,000', 
+        specialOffer: ['for 2 months.','Offer expires soon!',' ₹2,800/month after'],
+        defaultPlan: true},
       
     ],
     defaultStorage: 1000,
@@ -52,6 +55,7 @@ export const initialPlans = [
     features: [ 'Unlimited Bandwidth','Original File Size','+Everything in Studio plan'],
     extraFeatures: { AI: 'Beta',},
   },
+
   /* {
     name: 'Agency',
     pricing: [
@@ -102,11 +106,7 @@ export const initialPlans = [
   }, */
 ];
 
-// Add this component
 const RazorpayButton = ({payment_button_id}) => {
-  // add style
-
-
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/payment-button.js';
@@ -116,7 +116,7 @@ const RazorpayButton = ({payment_button_id}) => {
     const style = document.createElement('style');
     style.innerHTML = `
     form{
-    margin-top: 10px !important;
+      margin-top: 10px !important;
     }
     .razorpay-payment-button .PaymentButton{
       border-radius: 20px !important;
@@ -125,10 +125,9 @@ const RazorpayButton = ({payment_button_id}) => {
     .PaymentButton-contents{
       margin-top: -0px !important;
       padding: 4px 62px 4px 62px  !important
-    }
-      
+    }  
     `
-  document.head.appendChild(style);
+    document.head.appendChild(style);
     const form = document.getElementById(payment_button_id);
     form.appendChild(script);
     return () => {
@@ -138,12 +137,15 @@ const RazorpayButton = ({payment_button_id}) => {
 
   return <form id={payment_button_id}></form>;
 };
-
-
+const openWhatsAppMessage = (studio,plan, pricing) => {
+  console.log(studio,plan, pricing)
+  const message = `Upgrade to ${plan.name} Plan (${formatStorage(pricing.storage, "GB")}).%0AStudio name: ${studio}%0A${pricing.monthlyPrice}/mo for 2 months%0AThereafter ${pricing.monthlyPriceWas}/mo %0ASend UPI code for Paying ${pricing.monthlyPrice} for the first month.`;
+  
+  window.open(`https://wa.me/+916235099329?text=${message}`, '_blank');
+};
 
 // PlanFeature component
 const PlanFeature = ({ feature, highlight }) => (<p className={`features ${highlight ? 'highlight' : ''}`}>{feature}</p>);
-
 // CoreFeature component
 const CoreFeature = ({ plan, feature,defaultPlan,defaultStorage, tag, storage , onIncrement, onDecrement }) => {
     if (feature.includes('storage')) {
@@ -188,14 +190,14 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
       <h3 className="plan-name">{plan.name}</h3>
       
       <div className="cover"></div>
-      <p className={`
-          storage-counter
-            ${defaultStorage === plan.pricing[defaultPlan].storage
-              ? 'green'
-              : 'white'}`
-          }>
-            {formatStorage(plan.pricing[defaultPlan].storage,"GB")} 
-          </p>
+      <p className={` 
+        storage-counter
+        ${defaultStorage === plan.pricing[defaultPlan].storage
+          ? 'green'
+          : 'white'}`
+      }>
+        {formatStorage(plan.pricing[defaultPlan].storage,"GB")} 
+      </p>
       <div className="plan-pricing amount monthly">
         <h1>
           <span className="priceWas">{currentPricing?.monthlyPriceWas}</span> 
@@ -227,11 +229,11 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
           />
         ))}
       </div>
-      <div className="plan-features">
+      {/* <div className="plan-features">
         {plan.features.map((feature, index) => (
           <PlanFeature key={index} feature={feature} highlight={feature.includes('Unlimited') || feature.includes('Cold Storage')} />
         ))}
-      </div>
+      </div> */}
       
       {!plan.isCurrentPlan && (
         <>
@@ -269,12 +271,8 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
     </div>
   )
 }
-const openWhatsAppMessage = (studio,plan, pricing) => {
-  console.log(studio,plan, pricing)
-  const message = `Upgrade to ${plan.name} Plan (${formatStorage(pricing.storage, "GB")}).%0AStudio name: ${studio}%0A${pricing.monthlyPrice}/mo for 2 months%0AThereafter ${pricing.monthlyPriceWas}/mo %0ASend UPI code for Paying ${pricing.monthlyPrice} for the first month.`;
-  
-  window.open(`https://wa.me/+916235099329?text=${message}`, '_blank');
-};
+
+
 // Main Subscription component
 function Subscription() {
 
@@ -292,7 +290,6 @@ function Subscription() {
     const updatedPlans = plans.map(plan => 
       plan.name === planName ? { ...plan, defaultPlan: newDefaultPlan } : plan
     );
-    
     // Update state with the new array
     setPlans(updatedPlans);
   };

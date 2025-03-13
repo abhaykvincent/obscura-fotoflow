@@ -798,13 +798,21 @@ body{
         display: grid;
         justify-content: center;
         padding: 8px;
+        z-index: 40;
+        border-radius: 6px;
+        border: 1px solid #2B2B2B;
+        box-shadow: 0px -1px 1px black;
+        -webkit-backdrop-filter: blur(4px);
+        backdrop-filter: blur(8px);
+        background-color: rgba(16, 16, 16, 0.9);
+        margin-top: -2px;
       }
       .caughtup-label{
         text-align: center;
-        color: $gray5-accessible-dark;
-        padding: 8px;
+        color: $gray6-default-dark;
+        padding: 0px;
         font-size: 0.9rem;
-        margin-top: 8px*4;
+        margin-top: 8px*0;
       }
 
       &.lightMode{
@@ -1658,6 +1666,21 @@ body{
       :first-of-type .error{
         opacity: 1;
       }
+      .info{
+        display: grid;
+        width: 100%;
+        margin-top: 8px;
+        text-align: left;
+        font-size: 0.8rem;
+        color: $gray4-accessible-dark;
+        opacity: 0.5;
+        grid-column-start: 1;
+        grid-column-end: 3;
+        
+      }
+      :first-of-type .info{
+        opacity: 1;
+      }
     }
     .actions{
       display: flex;
@@ -2329,7 +2352,7 @@ body{
     }
     .photo-wrap{
 
-      width: calc(100vw/4 - $sidebar-width/4 - 8px*2);
+      width: calc(100vw/4 - $sidebar-width/4 - 8px*4);
       position: relative;
       margin-left: -1px;
       margin-top: -1px;

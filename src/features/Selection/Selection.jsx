@@ -158,7 +158,9 @@ export default function Selection() {
           `}
         >
           {
-          <Link to={collection.uploadedFiles !== undefined && `/${studioName}/selection/${project.id}/${collection.id}`}>{collection.name}</Link>
+          <Link to={collection.uploadedFiles !== undefined && `/${studioName}/selection/${project.id}/${collection.id}`}>{collection.name}
+            <span className='photo-count-label'>{` ${project.collections[currentCollectionIndex]?.uploadedFiles?.length}`}</span>
+          </Link>
           
         }
         </div>
@@ -186,7 +188,7 @@ export default function Selection() {
           authenticated?
             <div className="shared-collection">
               <div className="view-control">
-                        <div className="control-label label-all-photos">{project.collections[currentCollectionIndex]?.uploadedFiles?.length} Photos</div>
+                        <div className="control-label label-all-photos">{project.uploadedFilesCount} Photos</div>
                         <div className="control-wrap">
                             <div className="controls">
                                 <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All</div>
