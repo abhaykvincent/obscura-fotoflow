@@ -307,7 +307,9 @@ main.subscription{
         }
         .current-plan {
             border: none;
-            margin-top: 8px*4;
+            margin-top: 8px*0.5;
+            color: white;;
+            border: 1px solid $dark-1;
         }
         .plan-name{
             font-size: 1.4rem;
@@ -393,6 +395,7 @@ main.subscription{
             &.yearly{
                 display: grid;
                 margin-top: -8px*2.5;
+                margin-bottom:8px*2.5;
                 margin-left: 8px;
                 padding-bottom: 8px*1;
                 h1{

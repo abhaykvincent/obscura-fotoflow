@@ -83,6 +83,14 @@ const modalRef = useModalFocus(visible.shareGallery);
               </div>
               <p className="copy-link button icon copy pin" onClick={() => {
                   copyToClipboard(getGalleryURL('share',domain,project.id))
+                  dispatch(showAlert({
+                    message: 'Link copied to clipboard',
+                    type: 'success'
+                  }))
+                  setTimeout(() => {
+                    // open link in new windowcgetGalleryURL('share',domain,project.id)
+                    window.open(getGalleryURL('share',domain,project.id), '_blank')
+                  }, 2000)
                 }
                 }>Copy</p>
                 <p className="copy-link button icon  pin" onClick={() => {

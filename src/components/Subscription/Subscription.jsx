@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './Subscription.scss';
 import { formatStorage } from '../../utils/stringUtils';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectUserStudio } from '../../app/slices/authSlice';
+import { changeSubscriptionPlan } from '../../firebase/functions/subscription';
+import { fetchStudio, selectStudio } from '../../app/slices/studioSlice';
 
 export const initialPlans = [
   {
@@ -19,7 +21,7 @@ export const initialPlans = [
   {
     name: 'Freelancer',
     pricing: [
-      { storage: 100, monthlyPrice: '₹980',monthlyPriceWas: '', yearlyPrice: '₹10,000', specialOffer: ['','Welcome Offer','Core +'],defaultPlan: true   },
+      { storage: 100, monthlyPrice: '₹980',monthlyPriceWas: '', yearlyPrice: '₹10,000', specialOffer: ['.','Welcome Offer','Core +'],defaultPlan: true   },
      
     ],
     defaultPlan: 0,
@@ -46,7 +48,7 @@ export const initialPlans = [
   {
     name: 'Company',
     pricing: [
-      { storage: 5120, monthlyPrice: '₹2,800',monthlyPriceWas: '₹4,800', yearlyPrice: '₹1,00,000', specialOffer: ['for 2 months.','Save up to ₹8,640 with offer',' ₹9,800/month after'],defaultPlan: true},
+      { storage: 5120, monthlyPrice: '₹2,800',monthlyPriceWas: '₹4,800', yearlyPrice: '₹1,00,000', specialOffer: ['for 2 months.','Save up to ₹8,640 with offer',' ₹4,800/month after'],defaultPlan: true},
       
     ],
     defaultStorage: 5000,
@@ -168,8 +170,10 @@ const CoreFeature = ({ plan, feature,defaultPlan,defaultStorage, tag, storage , 
 
 // PlanCard component
 export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) => {
-
+  const dispatch = useDispatch();
   const defaultStudio = useSelector(selectUserStudio);
+  const studio = useSelector(selectStudio);
+  console.log(studio?.subscriptionId)
   let selectedStorage = plan.pricing[plan.defaultPlan].storage;
   const handleIncrement = () => {
     if (plan.pricing[plan.defaultPlan].storage < plan.pricing[plan.pricing.length - 1].storage) {
@@ -204,7 +208,7 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
           <span className="priceNow">{currentPricing?.monthlyPrice}</span> 
         </h1>
         {currentPricing?.monthlyPrice == 'Free'?<div className="unit"> * </div>:<div className="unit">/mo</div>}
-      </div>
+      </div >
       <div className="plan-pricing yearly">
         <div className="first-month">{currentPricing?.specialOffer[0]}</div>
         <div className="first-month iconic">{currentPricing?.specialOffer[1]}</div>
@@ -214,7 +218,7 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
       
       
 
-      <div className="core-features">
+      {/* <div className="core-features">
         {plan.coreFeatures.map((feature, index) => (
           <CoreFeature
             key={index}
@@ -228,24 +232,41 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
             onDecrement={feature.includes('storage') ? handleDecrement : undefined}
           />
         ))}
-      </div>
+      </div> */}
       {/* <div className="plan-features">
         {plan.features.map((feature, index) => (
           <PlanFeature key={index} feature={feature} highlight={feature.includes('Unlimited') || feature.includes('Cold Storage')} />
         ))}
       </div> */}
       
-      {!plan.isCurrentPlan && (
+      {!plan.name.includes('Core') && (
         <>
-          
-          <p className='waitlist-label'>{plan.isAddStorage ? 'Pay Later in 14 days.' : plan.isContactSales ? '' : ' Pay Later in 14 days.'}</p>
-          <div 
+
+          <p className='waitlist-label'>{studio?.subscriptionId?.includes(plan.name.toLowerCase()) ? 'Expires in ' :' Pay Later in 14 days..'}</p>
+          {studio?.subscriptionId?.includes(plan.name.toLowerCase()) && <div className="current-plan button primary outline">Current Plan</div>}
+          { !studio?.subscriptionId?.includes(plan.name.toLowerCase()) && 
+            <div 
             className={`button ${plan.isWaitlist || plan.isAddStorage ? ' primary outline' : plan.isContactSales ? 'primary outline' : 'primary outline'}`}
-            onClick={() => !plan.isWaitlist && !plan.isAddStorage && !plan.isContactSales && 
-              openWhatsAppMessage(defaultStudio.name, plan, plan.pricing[defaultPlan])}
+            
+            // Plan selection logic
+            onClick={async () => {
+              if (!plan.isWaitlist && !plan.isAddStorage && !plan.isContactSales) {
+                try {
+                  console.log(plan)
+                  await changeSubscriptionPlan(defaultStudio.domain,  plan.name.toLowerCase());
+                  console.log('Subscription changed successfully');
+                  // refresh the page or update UI to reflect the new plan
+                  window.location.reload();
+                  // Optionally update UI here (e.g., show a success message)
+                } catch (error) {
+                  console.error('Error changing subscription:', error.message);
+                  // Optionally show an error message to the user
+                }
+              }
+            }}
           >
             {plan.isWaitlist ? 'Join Waitlist' : plan.isAddStorage ? 'Buy Cold Storage': plan.isContactSales ? 'Contact Sales' : 'Try for Free'}
-          </div>
+          </div>}
 
           {
             plan.name === "Studio" ?
@@ -265,7 +286,6 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
           <p>{plan.expiry}</p>
         </div>
       )}
-      {plan.isCurrentPlan && <div className="current-plan button primary outline">Current Plan</div>}
 
       
     </div>
@@ -275,7 +295,6 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
 
 // Main Subscription component
 function Subscription() {
-
   const [plans, setPlans] = useState(initialPlans);
   //reset plans to initialPlans in appropriate interval
   useEffect(() => {

@@ -10,52 +10,59 @@ import { removeUndefinedFields } from "../../utils/generalUtils";
 
 // Studio
 export const createStudio = async (studioData) => {
-    const { name } = studioData;
+    const { name, domain } = studioData; // Assuming domain is provided
     const id = `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
+    const currentDate = new Date().toISOString().split('T')[0];
+    const subscriptionId = `${id}-core-free-${currentDate}`;
 
     const studiosCollection = collection(db, 'studios');
+
+    // Studio document
     const studioDoc = {
         id: id,
-        name: studioData.name,
-        domain: studioData.domain, // Assuming domain is part of studioData
+        name: name,
+        domain: domain,
         status: 'active', // Enum: ['active', 'inactive', 'suspended']
         batch: '002',
         usage: {
             storage: {
                 quota: 5 * 1000, // 5 GB
-                used: 0, // 0 GB
+                used: 0,         // 0 GB
             },
             projects: {
                 weeklyUsed: 0,
                 monthlyUsed: 0,
             },
         },
-        planId: 'core-free', // Reference to a plan in the 'plans' collection
-        subscriptionId: id + '-core-free-' + new Date().toISOString().split('T')[0], // Reference to a subscription in the 'subscriptions' collection
-        
+        subscriptionId: subscriptionId,
         metadata: {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            createdBy: id, // User or admin who created the subscription
-            updatedBy: id, // User or admin who last updated the subscription
+            createdBy: id, // Ideally, should be user ID
+            updatedBy: id, // Ideally, should be user ID
         },
     };
 
-    // Create a separate subscription document
+    // Subscription document
     const subscriptionDoc = {
-        id: studioDoc.subscriptionId,
-        studioId: id, // Reference to the studio
-        planId: 'core-free', // Reference to the plan
-        name: 'Core',   // Core, Freelancer, Studio, Compaany
-        type: 'free', // Enum: ['free', 'paid', 'enterprise']
-        status: 'active', // Enum: ['active', 'trial', 'expired', 'canceled']
-        
-        billingCycle: 'yearly',
-        trialEndDate: null,
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        autoRenew: true,
-
+        id: subscriptionId,
+        studioId: id,
+        plan: {
+            planId: 'core-free',
+            name: 'Core',
+            type: 'free', // Enum: ['free', 'paid', 'enterprise']
+        },
+        billing: {
+            billingCycle: 'yearly',
+            autoRenew: true,
+            paymentPlatform: null, // Enum: ['razorpay']
+            paymentMethod: null,   // Enum: ['upi', 'credit-card', 'debit-card', 'net-banking', 'cash']
+        },
+        dates: {
+            startDate: currentDate,
+            endDate: new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            trialEndDate: null,
+        },
         pricing: {
             basePrice: 0,
             discount: 0,
@@ -63,25 +70,22 @@ export const createStudio = async (studioData) => {
             currency: 'INR', // Enum: ['INR', 'USD', 'CAD', 'EUR', 'GBP', 'AUD', 'JPY', 'HKD', 'SGD']
             totalPrice: 0,
         },
-        paymentPlatform: null, // Enum: ['razorpay']
-        paymentMethod: null,  // Enum: ['upi','credit-card', 'debit-card', 'net-banking', 'cash']
-       
+        status: 'active', // Enum: ['active', 'trial', 'expired', 'canceled']
         metadata: {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            createdBy: id, // User or admin who created the subscription
-            updatedBy: id, // User or admin who last updated the subscription
+            createdBy: id, // Ideally, should be user ID
+            updatedBy: id, // Ideally, should be user ID
         },
     };
 
-    // Save studio and subscription documents
+    // Save documents
     const studioRef = doc(studiosCollection, studioDoc.domain);
     const subscriptionRef = doc(collection(db, 'subscriptions'), subscriptionDoc.id);
 
     try {
         await setDoc(studioRef, studioDoc);
         await setDoc(subscriptionRef, subscriptionDoc);
-
         console.log('Studio and subscription created successfully.');
         return { studio: studioDoc, subscription: subscriptionDoc };
     } catch (error) {
