@@ -3,9 +3,10 @@ import { getUsedSpace } from '../../utils/fileUtils';
 import { fullAccess, getStudiosOfUser, isAlreadyInStudio, users } from '../../data/teams';
 import firebase from 'firebase/app';
 import { auth, storage } from '../../firebase/app';
-import { fetchStudioByDomain, fetchUsers } from '../../firebase/functions/firestore';
+import { fetchUsers } from '../../firebase/functions/firestore';
 import { useRevalidator } from 'react-router';
 import { setUserType } from '../../analytics/utils';
+import { fetchStudioByDomain } from '../../firebase/functions/studios';
 
 const initialState = {
   data:{

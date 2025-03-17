@@ -68,7 +68,7 @@ function SettingsDashboard({ formData,handleChange }) {
                     <div className="form-group">
 
                         <h4 className='group-title'>Share gallery </h4>   
-                        <div className="radio-tabs">
+                        <div className="radio-tabs share-view">
 
                             <div className="tab active">
                               <div className="tab-image public"></div>
@@ -96,7 +96,7 @@ function SettingsDashboard({ formData,handleChange }) {
                         </div>
 
                         <h4 className='group-title'> Selection gallery</h4>   
-                        <div className="radio-tabs">
+                        <div className="radio-tabs selection-view">
                             <div className="tab active">
                               <div className="tab-image passcode "></div>
                               <div className="tab-content">

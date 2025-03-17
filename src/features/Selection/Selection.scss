@@ -114,6 +114,11 @@
           }
         }
       }
+      .selection-completed-label{
+        margin-top: 8px*2;
+        text-align: center;
+        color: $green-accessible-light;
+      }
   }
   .collections-panel{
     overflow-x: scroll;
@@ -196,7 +201,6 @@
     margin: 0 auto;
     margin-top: 8px*1;
     padding: 8px;
-   min-height: calc(100vh - 8px*40);
     max-width: 8px*140;
     .photos{
       width: 100%;

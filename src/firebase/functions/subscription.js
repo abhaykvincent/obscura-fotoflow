@@ -1,23 +1,14 @@
 // Assume Firestore is initialized as 'db'
+import { addMonths, addYears } from "../../utils/dateUtils";
 import { db, storage } from "../app";
 import { doc, getDoc, setDoc, updateDoc, collection} from 'firebase/firestore';
 // Helper function to add months to a date (simplified, use a library like date-fns in production)
-function addMonths(dateStr, months) {
-  const date = new Date(dateStr);
-  date.setMonth(date.getMonth() + months);
-  return date.toISOString().split('T')[0];
-}
 
-// Helper function to add years to a date
-function addYears(dateStr, years) {
-  const date = new Date(dateStr);
-  date.setFullYear(date.getFullYear() + years);
-  return date.toISOString().split('T')[0];
-}
 
 // Placeholder function to get plan details by planId
 // In practice, this could fetch from a database or use a static map
 function getPlanDetails(planId) {
+  
   const plans = {
     'core-free': {
       name: 'Core',
@@ -194,6 +185,7 @@ export async function changeSubscriptionPlan(studioId, newPlanId) {
     console.log(newStorageQuota)
     // **Step 9: Update studio document**
     await updateDoc(studioRef, {
+      planName: newPlan.name,
       subscriptionId: newSubscriptionId,
       'usage.storage.quota': newStorageQuota, // Update storage quota to new plan's limit
       storageGracePeriodEnd: storageGracePeriodEnd,

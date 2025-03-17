@@ -8,7 +8,7 @@ import { googleLogin, login, selectUserStudio, setUser } from '../../app/slices/
 import { openModal } from '../../app/slices/modalSlice';
 import LoginEmailPassword from './LoginEmailPassword';
 import AddStudio from '../../components/Modal/AddStudio';
-import { fetchStudiosOfUser } from '../../firebase/functions/firestore';
+import { fetchStudiosOfUser } from '../../firebase/functions/studios';
 import { trackEvent } from '../../analytics/utils';
 import { updateProjectsStatus } from '../../app/slices/projectsSlice';
 import { Link } from 'react-router-dom';

@@ -4,7 +4,8 @@ import CreateStudio from './CreateStudio.jsx'
 import './Onboarding.scss'
 import UserContact from './UserContact.jsx'
 import { useNavigate } from 'react-router'
-import { acceptInvitationCode, createStudio, createUser, useInvitationCode, validateInvitationCodeFromFirestore } from '../../firebase/functions/firestore.js'
+import { acceptInvitationCode,createUser,useInvitationCode, validateInvitationCodeFromFirestore } from '../../firebase/functions/firestore.js'
+import { createStudio } from '../../firebase/functions/studios.js'
 import { useDispatch, useSelector } from 'react-redux'
 import { checkAuthStatus, login, logout, selectUser, selectUserStudio, setCurrentStudio, setUser } from '../../app/slices/authSlice.js'
 import { showAlert } from '../../app/slices/alertSlice.js'
@@ -167,8 +168,11 @@ function Onboarding() {
     });
   };
   const createAccountAndNavigate  = () => {
+    console.log(user)
     createUser({
       email:user.email, 
+      displayName: user.displayName,
+      photoURL: user.photoURL,
       studio:{
         name: createAccountData.studioName,
         domain: createAccountData.studioDomain,

@@ -8,6 +8,7 @@ import { getUsedSpace } from '../../utils/fileUtils';
 import { selectStorageLimit, selectStudio } from '../../app/slices/studioSlice';
 import { Link } from 'react-router-dom';
 import { openModal } from '../../app/slices/modalSlice';
+import { getTimeAgo } from '../../utils/dateUtils';
 
 function Storage() {
     const dispatch = useDispatch()
@@ -127,22 +128,31 @@ function Storage() {
             <div className="row-group">
                 {
                     projects.map((project,index)=>{
+
+                        if(project.status === 'archived'){
+                            return null;
+                            debugger
+                        }
                         return (
-                            <div className="row" key={project.id}>
+                            <Link to={
+                                `/${studio.domain}/project/${project.id}`
+                            } className="row" key={project.id}>
                                 <div className="box-wrap">
                                     <div className="status-signal"></div>
                                     <div className="box-content">
                                         <h4>{project.name}</h4>
                                         <div className="project-size">
-                                            <p>{project.uploadedFilesCount} Photos</p>
-                                            <p>{convertMegabytes(project.totalFileSize,1)} </p>
+                                            <p className='filesize-label'>{convertMegabytes(project.totalFileSize,1)} </p>
+                                            <p className='count-label'>{project.uploadedFilesCount} files</p>
+                                            <p className='created-label'>{getTimeAgo(project.createdAt)}</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="action">
-                                    <div className="button secondary">Manage</div>
+                                    {project.totalFileSize > 1 && <p className="action-label">Free up {convertMegabytes(project.totalFileSize,0)}</p>}
+                                    <div className="button secondary icon archive">Archive</div>
                                 </div>
-                            </div>
+                            </Link>
                         )
                     })
                 }
@@ -153,6 +163,9 @@ function Storage() {
             <div className="row-group">
                 {
                     projects.slice(0, 3).map((project) => {
+                        if(project.status !== 'archived'){
+                            return null;
+                        }
                         return (
                             
                             <div className="row" key={project.id}>
@@ -166,7 +179,7 @@ function Storage() {
                                     </div>
                                 </div>
                                 <div className="action">
-                                    <div className="button secondary">Manage</div>
+                                    <div className="button secondary icon unarchive">Move to hot</div>
                                 </div>
                             </div>
                         )

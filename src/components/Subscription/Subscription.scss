@@ -1,6 +1,5 @@
 @import '../../style/variables';
 main.subscription{
-    margin-top: -8px*4;
     z-index: 99;
 }
 .welcome-section{
@@ -305,11 +304,19 @@ main.subscription{
                 }
               }
         }
-        .current-plan {
+        .button.current-plan {
             border: none;
             margin-top: 8px*0.5;
-            color: white;;
-            border: 1px solid $dark-1;
+            color: $gray2-accessible-dark;;
+            border: 1px solid $dark-0;
+            background-color: $dark-2;
+            
+            box-shadow: 
+                inset 0px 1px 2px 1px black, 
+                inset 0px 0px 2px 0px #4a9a287e, 
+                inset 0px 0px 8px*1.5 1px #5ebe341e !important;
+                text-shadow: 
+                     0px 2px 1px  black, 
         }
         .plan-name{
             font-size: 1.4rem;
@@ -324,12 +331,14 @@ main.subscription{
             position: relative;
             text-align: center;
             border-radius: 4px;
-            color: $green-default-light;
+            
+            color: $gray-accessible-light;
             z-index: 2;
             margin-top: 4px;
             margin-bottom: 4px;
-            border: 1px solid $gray3-accessible-dark;
+            border: 1px solid $gray4-accessible-dark;
 
+            font-size: 0.7rem;
         }
         .plan-pricing{
             display: flex;
@@ -564,6 +573,11 @@ main.subscription{
             margin-bottom: 0px;
         }
 
+        .button{
+            &.primary{
+                box-shadow: 1px 2px 1px 1px #000000,1px -1px 16px 2px #537f2835;
+            }
+        }
         &.company{
             background-color: $dark-3;
             overflow: hidden;
@@ -619,8 +633,8 @@ main.subscription{
             .storage-counter{
                 position: relative;
                 text-align: center;
-                color: $green-accessible-light;
-                border: 1px solid $gray5-accessible-dark;
+                color: $gray2-accessible-light;
+                border: 1px solid $gray3-accessible-dark;
                 z-index: 2;
                 border-radius: 6px;
                 opacity: 0.8;
@@ -653,7 +667,7 @@ main.subscription{
                 z-index: 2;
                 box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);
 
-                font-size: 0.7rem;
+                font-size: 0.8rem;
                     &::after{
                         content: "";
                     }
@@ -687,7 +701,7 @@ main.subscription{
                 position: relative;
                 text-align: center;
                 color: $green-default-light;
-                border: 1px solid $green-dark-accessible-light;
+                border: 1px solid $gray-accessible-light;
                 z-index: 2;
                 border-radius: 4px;
                 box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);

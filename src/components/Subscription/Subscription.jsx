@@ -242,7 +242,7 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
       {!plan.name.includes('Core') && (
         <>
 
-          <p className='waitlist-label'>{studio?.subscriptionId?.includes(plan.name.toLowerCase()) ? 'Expires in ' :' Pay Later in 14 days..'}</p>
+          <p className='waitlist-label'>{studio?.subscriptionId?.includes(plan.name.toLowerCase()) ? 'Expires in - ' :' Pay Later in 14 days..'}</p>
           {studio?.subscriptionId?.includes(plan.name.toLowerCase()) && <div className="current-plan button primary outline">Current Plan</div>}
           { !studio?.subscriptionId?.includes(plan.name.toLowerCase()) && 
             <div 

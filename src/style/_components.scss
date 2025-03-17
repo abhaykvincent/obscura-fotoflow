@@ -164,8 +164,20 @@
         }
         &.user::before{
             background-size: 100%;
-
             background-image: url('https://img.icons8.com/?size=100&id=12438&format=png&color=FFFFFF');
+        }
+        &.archive::before{
+            background-size: 100%;
+            background-image: url('https://img.icons8.com/?size=100&id=Y4LcZ9Qw1Par&format=png&color=FFFFFF');
+            padding-top: 4px;
+            margin-right: 8px;
+            opacity: 0.6;
+        }
+        &.unarchive::before{
+            background-image: url('https://img.icons8.com/?size=100&id=lZpz4xZ2jAww&format=png&color=FFFFFF');
+            background-size: 100%;
+            transform: rotate(180deg);
+            padding-top: 4px;
         }
         &.delete{
             &:hover{

@@ -140,3 +140,15 @@ export function getEventTimeAgo(dateString) {
 
   return future ? 'soon' : 'Happening now!'; // Fallback
 }
+export function addMonths(dateStr, months) {
+  const date = new Date(dateStr);
+  date.setMonth(date.getMonth() + months);
+  return date.toISOString().split('T')[0];
+}
+
+// Helper function to add years to a date
+export function addYears(dateStr, years) {
+  const date = new Date(dateStr);
+  date.setFullYear(date.getFullYear() + years);
+  return date.toISOString().split('T')[0];
+}

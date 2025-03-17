@@ -206,25 +206,27 @@
         display: flex;
         flex-direction: column;
         // reverse
-        flex-direction: column-reverse;
         
-        width: calc(100% - 8px*1.5);
-        bottom: 8px*16;
+        width: calc(100% - 8px*1.2);
+        bottom: 8px*17;
         left: 5px;
-        padding: 8px 8px;
         padding-bottom: 8px*0;
-        border-radius: 6px;
+        border-radius: 8px;
+        border-radius: 8px 0px 8px 8px;
         border: 1px solid $gray6-default-dark;
         border-left: 1px solid $gray5-default-dark;
         border-top: 1px solid $gray5-default-dark;
         margin-left: 0;
-        margin-bottom: 8px*2;
+        margin-bottom: 8px*1.5;
         background: rgba(0, 0, 0, 0.8);
         box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.8);
         
         .storage-bar{
             position: relative;
-            margin-bottom: 8px*0.5;
+            width: 100%;
+            margin-bottom: 8px*0;
+            padding: 8px 8px*1.2;
+            border-bottom: 1px solid $gray6-accessible-dark;
             .storage-labels{
                 margin-bottom: -2px;
                 width: 100%;
@@ -251,9 +253,10 @@
                 p{
                     white-space: nowrap;
                     width: 100%;
-                    font-size: 0.9rem;
-                    color: $gray-default-dark;;
-                    margin-bottom: 8px;
+                    font-size: 0.8rem;
+                    color: $gray2-default-dark;;
+                    font-weight: 600;
+                    margin-bottom: 6px;
                     .bold{
                     color: $gray-default-dark;
                     margin-right: 1px;
@@ -275,10 +278,20 @@
                     grid-template-columns: auto auto;
                     justify-content: space-between;
                     p{
-                    color: $gray3-default-dark;;
-                    font-size: 0.7rem;
-                        margin: 0;
+                    color: $gray2-default-dark;;
+                    font-size: 0.6rem;
+                    margin: 0;
+                    span{
+                        margin-right: 8px*0.5;
+                        font-size: 0.7rem;
+                        color: $gray-default-dark;;
                     }
+                }
+                .quota-gb{
+                    
+                    color: $green-default-dark;;
+                }
+
                 }
             }
             .used-bar{
@@ -293,63 +306,93 @@
             .quota-bar{
                 position: absolute;
                 height: 4px;
-                width: calc(100% );
+                width: calc(100% - 8px*3);
                 border-radius: 4px;
                 background-color: #70ab1739;
                 opacity: 0.6;
             }
+            &.hot{
+                margin-top: 0px;
+                background-color: black;
+                border-radius: 8px 0px 0px 0px;
+            }
             &.cold{
-                height: 8px*4.5;
-                opacity: 0.4;
+                opacity: 0.8;
+                background-color: rgb(16, 16, 16);
                 .used-bar{
-                    height: 5px;
+                    height: 4px;
                     width: 20%;
-                    background: $gray3-default-dark;
+                    background: $gray-default-dark;
                     box-shadow:  0px 0px 0px 0px $green-accessible-dark,inset 0px 1px 1px 0px rgba(0, 0, 0, 0.5);
 
                 }
                 .quota-bar{
-                    height: 6px;
+                    height: 4px;
 
                     border-radius: 5px;                
-                    background-color: black;
+                    background-color: rgb(54, 67, 66);
 
                 }
                 .storage-labels{
                     p{
-                        color: $gray2-default-dark;
                         .bold{
                             color: $gray4-default-light;
                         }
                     }
+                    &.used-quota-gb .quota-gb {
+                        color: $gray4-default-light;
+
+                    }
                 }
             }
-            &.hot{
-                margin-top: 0px;
-            }
+            &:last-of-type{
+                
+                border-bottom: 1px solid transparent;
+                }
+            
         }
         .plan-labels{
             display: grid;
             grid-template-columns: auto auto;
             justify-content: space-between;
             position: absolute;
-            top: -8px*3;
+            top: -8px*2.5;
+            margin:   0 8px*1.1;
+            margin-right: 0px;
+
             width: calc(100% - 8px*1);
             font-size: 0.8rem;
             p{
                 color: $gray3-default-dark;
-                font-size: 0.9rem;
+                        font-size: 0.8rem;
+                &.plan-name{
+                    color: $gray-default-dark;
+                    border: 1px solid $gray6-accessible-dark;
+                    border-bottom: 1px solid transparent;
+                    border-radius: 8px 8px 0px 0px;
+                    padding: 6px;
+                    margin-top: -8px;
+                    padding-bottom: 4px;
+                    padding-left: 12px;
+                    background: rgba(29, 29, 29, 0.6);
+                    span{
+                        text-decoration-color: transparent;
+                    }
+                }
             }
             .tag{
-                margin-left: 2px;
+                margin-left: 0px;
                 padding: 0px 4px;
                 border-radius: 4px;
                 font-size: 0.8rem;
                 opacity: 0.6;
                 &.free{
-                    color: $green-accessible-dark;
-                    border: 1px solid $green-dark-accessible-light;
-
+                    color: $gray-accessible-dark;
+                    border: 1px solid transparent;
+                }
+                &.pro{
+                    color: $green-accessible-light;
+                    border: 1px solid transparent;
                 }
             }
         }
@@ -361,7 +404,7 @@
         bottom: 8px*7;
         padding: 8px;
         margin: 8px*1;
-        margin-bottom: 8px*4;
+        margin-bottom: 8px*0;
         width: $sidebar-width -  8px*2.5;
         background-color: $dark-2;
         border: 1px solid $dark-1;
@@ -396,19 +439,23 @@
     .profile-settings{
         .profile-options-window{
             display: grid;
-            justify-items: start;
+            justify-items: stretch;
             position: absolute;
-            bottom: 8px;
+            bottom: 8px*17;
             padding: 0px;
             margin: 4px;
-            margin-bottom: 8px*0.5;
-            height: 0px;
-            width: 8px*19;
-            background-color: $dark-2;
+                bottom: 8px*18;
+            margin-left: 8px*1.5;
+            margin-bottom: 8px*-0.75;
+            height: 80px;
+            width: 8px*17;
+            background-color: $dark-3;
             border: 1px solid $gray4-default-dark;
+            border-top: 1px solid $gray3-default-dark;
+            border-left: 1px solid $gray3-default-dark;
             box-shadow: 1px 1px 1px 2px black;
             z-index: 20;
-            border-radius: 4px;
+            border-radius: 8px;
             overflow: hidden;
             opacity: 0;
             transition-duration: 0.2s;
@@ -419,9 +466,10 @@
                     display: block;
                     width: 100%;
                     color: $gray3-accessible-light;
-                    padding: 8px 8px*2;
+                    padding: 4px 8px*1;
                     border-radius: 4px;
                     cursor: pointer;
+                    font-size: 0.9rem;
                     &.logout{
                         display: grid;
                         align-items: center;
@@ -430,7 +478,7 @@
                             content: '.';
                             width: 8px*2;
                             height: 8px*2;
-                            margin-left: 8px*2;
+                            margin-left: 8px*1;
                             background-image: url('../../assets/img/icons/logout.svg');
                             background-size: 100%;
                             background-position: center;
@@ -452,14 +500,21 @@
                 
             }
             &.active{
-                bottom: 8px*16;
+                bottom: 8px*18;
                 opacity: 1;
-                padding: 8px;
-                height: 8PX*24;
+                padding: 4px;
+                padding-top: 8px;
+                height: 8PX*26;
                 opacity: 1;
                 transition-timing-function: ease-out;
 
                 transition-duration: 0.2s;
+            }
+            .seperator{
+                width: 100%;
+                height: 1px;
+                border-bottom: 1px solid $gray5-default-dark;
+                margin: 4px 8px;
             }
         }
     }
@@ -474,18 +529,18 @@
         top: calc(100vh - 8px*7.5);
         padding: 8px*0.5;
         padding-right: 0;
-        margin-left: 4px;
-        margin-top: -8px*1.5;
-        width: $sidebar-width - 8px*1;
-        transform: translateY(-100%)scale(1.0);;
+        margin-left: 6px;
+        margin-top: -8px*3;
+        width: $sidebar-width - 8px*1.5;
+        transform: translateY(-100%)scale(1.02);;
         cursor: pointer;
         z-index: 21;
-        background-color: $dark-3;
-        border: 1px solid $gray3-default-dark;
-        border-right:  1px solid $gray5-default-dark;
-        border-bottom:  1px solid $gray5-default-dark;
+        background-color: black;
+        border: 1px solid $gray-default-dark;
+        border-right:  1px solid $gray4-default-dark;
+        border-bottom:  1px solid $gray4-default-dark;
         
-        border-radius: 4px;
+        border-radius: 8px;
             box-shadow: 1px 2px 1px 2px black;
             transition-duration: 0.15s;
         cursor: grab;
@@ -497,7 +552,6 @@
         &.active{
             border: 1px solid $gray2-default-dark;
             transform: translateY(-100%) scale(1);;
-        border-radius: 4px;
         transition-duration: 0.15s;
         transition-timing-function: ease-out;
             cursor: grabbing;
@@ -536,7 +590,7 @@
                 z-index: -1;
                 &::after{
                     position: absolute;
-                    right: -6px;
+                    right: -0px;
                     content: '';
                     padding: 8px 8px;
                     z-index: 1;

@@ -55,6 +55,7 @@ export default function App() {
   const dispatch = useDispatch();
 
   const user = useSelector(selectUser);
+
   const isLoading = useSelector(selectProjectsStatus);
   const defaultStudio = useSelector(selectUserStudio)
   const currentDomain = defaultStudio?.domain ?? 'guest'; 
@@ -108,7 +109,7 @@ export default function App() {
   // RENDER
   return (
     <div className="App">
-      <HotKeys keyMap={keyMap} handlers={handlers}>
+      <HotKeys keyMap={keyMap} handlers={handlers} className='app-wrap'>
       {/* <FlowPilot userId={defaultStudio?.domain}/> */}
       {isAuthenticated && (!isPublicPage())? (
         <>
@@ -169,8 +170,14 @@ export default function App() {
               <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>
             </Routes>
           )}
-          </HotKeys>
 
+    <div className="footer">
+            {/* Made in Kochi by Photographers |  */}
+            <div className='copyright-symbol'>©</div>  
+            <a href="https://www.masanory.com" target="_blank"><span>Fotoflow</span> 2025</a>
+          </div>
+          </HotKeys>
+          
     </div>
     
   );

@@ -122,14 +122,20 @@ function Sidebar() {
         <div className="storage-bars">
           <div className="plan-labels">
             <p>Plan</p>
-            <p>Core <span className='tag free'>Free</span></p>
+            <p className='plan-name'>{studio.planName}
+            {
+              studio?.subscriptionId?.includes('free-')?
+              <span className='tag free'>Free</span>:
+              <span className='tag pro'>Pro</span>
+            }
+
+            </p>
           </div>
           <div className="storage-bar hot">
             <div className="storage-labels">
               <div className="icon "></div>
-              <p>Storage</p>
-              <p className='usage-label'><span className='bold'>{/* {Math.round(storageUsage?.quota - storageUsage?.used)}GB */} {Math.round(storageUsage?.usedPercentage)}%</span>{/* used */}</p>
-            </div>
+              <p>Hot Storage</p>
+              </div>
             <div className="used-bar"
               style={{
                 width: `${storageUsage?.usedPercentage}%`
@@ -137,24 +143,27 @@ function Sidebar() {
             ></div>
             <div className="quota-bar"></div>
             <div className="storage-labels used-quota-gb">
-              <p className="used-gb">{convertMegabytes(studio?.usage?.storage?.used)} </p>
+              <p className="used-gb"><span>{Math.round(storageUsage?.usedPercentage)}%</span> {convertMegabytes(studio?.usage?.storage?.used)} </p>
               <p className="quota-gb">{convertMegabytes(studio?.usage?.storage?.quota)}</p>
             </div>
           </div>
-          {/* <div className="storage-bar cold">
-
+          <div className="storage-bar hot cold">
             <div className="storage-labels">
-            <div className="icon cold"></div>
-              <p>Free 100 GB </p>
-              <p className='usage-label'>
-                <Link to={`/${studioName}/subscription`} className='unlock-link'>
-                <span className='bold'>Unlock</span>
-                </Link>
-                </p>
-            </div>
-            <div className="used-bar"></div>
+              <div className="icon "></div>
+              <p>Cold Storage</p>
+              </div>
+            <div className="used-bar"
+              style={{
+                width: `${storageUsage?.usedPercentage}%`
+              }}
+            ></div>
             <div className="quota-bar"></div>
-          </div> */}
+            <div className="storage-labels used-quota-gb">
+              <p className="used-gb"><span>{Math.round(storageUsage?.usedPercentage)}%</span> {convertMegabytes(studio?.usage?.storage?.used)} </p>
+              <p className="quota-gb">{convertMegabytes(studio?.usage?.storage?.quota)}</p>
+            </div>
+          </div>
+          
         </div>
 
         {/* <AdminRoute> 
@@ -186,10 +195,14 @@ function Sidebar() {
         <div className={`profile-options  ${profileOptionActive?'active':''}`} onClick={toggleProfileOption}>
           <div className="profile"
           >
-            <div className="profile-image"></div>
+            <div className="profile-image"
+              style={{
+                backgroundImage: `url(${user?.photoURL})`
+              }}
+            ></div>
             <div className="account-name">
-              <div className="studio-name">{defaultStudio?.name}</div>
-              <div className="profile-name">{user?.displayName} 
+              <div className="studio-name">{user?.displayName}</div>
+              <div className="profile-name">
                 {/* MArquee one after other in quere repeate */}
                 <div className="roles" direction="left" behavior="scroll" scrollamount="2" scrolldelay="2" loop="3" style={{whiteSpace: 'nowrap'}}>
                   <div className="role">Photographer</div>
@@ -201,13 +214,24 @@ function Sidebar() {
           <div className="option-icon"></div>
         </div>
         <div className={`profile-options-window ${profileOptionActive?'active':''}`}>
-          <div className="option disabled">Profile</div>
-          <div className="option disabled">Account</div>
-          <div className="option disabled">Settings</div>
           
-          <Link to={`/subscription`}>
+          
+          <Link to={`/${defaultStudio?.domain}/notifications`}>
+            <div className="option">Notifications</div>
+          </Link>
+          <Link to={`/${defaultStudio?.domain}/subscription`}>
             <div className="option">Subscription</div>
           </Link>
+          <Link to={`/${defaultStudio?.domain}/storage`}>
+            <div className="option">Storage</div>
+          </Link>
+          <Link to={`/${defaultStudio?.domain}/subscription`}>
+            <div className="option">Contact</div>
+          </Link>
+          <Link to={`/${defaultStudio?.domain}/settings`}>
+            <div className="option">Settings</div>
+          </Link>
+            <div className="seperator"></div>
           <div className="option logout"
             onClick={
               ()=>{
