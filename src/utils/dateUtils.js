@@ -95,12 +95,12 @@ export function getEventTimeAgo(dateString) {
   const absoluteSeconds = Math.abs(seconds);
 
   const intervals = [
-    { label: 'year', seconds: 31536000, futureLabel: 'in' },
-    { label: 'month', seconds: 2592000, futureLabel: 'in' },
-    { label: 'week', seconds: 604800, futureLabel: 'in' },
-    { label: 'day', seconds: 86400, futureLabel: 'in' },
-    { label: 'hour', seconds: 3600, futureLabel: 'in' },
-    { label: 'minute', seconds: 60, futureLabel: 'in' },
+    { label: 'year', seconds: 31536000, futureLabel: ' in' },
+    { label: 'month', seconds: 2592000, futureLabel: ' in' },
+    { label: 'week', seconds: 604800, futureLabel: ' in' },
+    { label: 'day', seconds: 86400, futureLabel: ' in' },
+    { label: 'hour', seconds: 3600, futureLabel: ' in' },
+    { label: 'minute', seconds: 60, futureLabel: ' in' },
   ];
 
   // For times less than a minute
@@ -114,23 +114,23 @@ export function getEventTimeAgo(dateString) {
     if (count >= 1) {
       if (future) {
         if (count === 1 && interval.label === 'week') {
-          return 'Next week';
+          return ' Next week';
         } else if (count === 1 && interval.label === 'month') {
-          return 'Next month';
+          return ' Next month';
         } else if (count === 1 && interval.label === 'year') {
-          return 'Next year';
+          return ' Next year';
         } else {
           return `${interval.futureLabel} ${count} ${interval.label}${count > 1 ? 's' : ''}`;
         }
       } else {
         if (count === 1 && interval.label === 'day') {
-          return 'yesterday';
+          return ' yesterday';
         } else if (count === 1 && interval.label === 'week') {
-          return 'last week';
+          return ' last week';
         } else if (count === 1 && interval.label === 'month') {
-          return 'last month';
+          return ' last month';
         } else if (count === 1 && interval.label === 'year') {
-          return 'last year';
+          return ' last year';
         } else {
           return `${count} ${interval.label}${count > 1 ? 's' : ''} ago`;
         }
@@ -140,6 +140,8 @@ export function getEventTimeAgo(dateString) {
 
   return future ? 'soon' : 'Happening now!'; // Fallback
 }
+
+// Helper function to add months to a date (simplified, use a library like date-fns in production)
 export function addMonths(dateStr, months) {
   const date = new Date(dateStr);
   date.setMonth(date.getMonth() + months);
@@ -152,3 +154,25 @@ export function addYears(dateStr, years) {
   date.setFullYear(date.getFullYear() + years);
   return date.toISOString().split('T')[0];
 }
+
+export function getDaysFromNow(dateString) {
+  const date = new Date(dateString);
+  const now = new Date();
+  
+  // Set both dates to midnight to compare full days
+  const dateMidnight = new Date(date.setHours(0, 0, 0, 0));
+  const nowMidnight = new Date(now.setHours(0, 0, 0, 0));
+  
+  // Calculate difference in milliseconds
+  const diffMs = dateMidnight - nowMidnight;
+  
+  // Convert to days and round to nearest integer
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+  
+  return diffDays;
+}
+
+// Example usage:
+// getDaysFromNow("2025-03-16") // Returns -1 (yesterday from March 17, 2025)
+// getDaysFromNow("2025-03-17") // Returns 0 (today)
+// getDaysFromNow("2025-04-20") // Returns 34 (34 days from now)

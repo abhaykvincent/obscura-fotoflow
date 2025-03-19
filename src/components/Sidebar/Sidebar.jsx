@@ -6,8 +6,9 @@ import { logout, selectUser, selectUserStudio } from '../../app/slices/authSlice
 import { useDispatch, useSelector } from 'react-redux';
 import AdminRoute from '../AdminRoute/AdminRoute';
 import { trackEvent } from '../../analytics/utils';
-import { selectStudio, selectStudioStorageUsage } from '../../app/slices/studioSlice';
+import { selectCurrentSubscription, selectStudio, selectStudioStorageUsage } from '../../app/slices/studioSlice';
 import { convertMegabytes } from '../../utils/stringUtils';
+import { getDaysFromNow, getEventTimeAgo } from '../../utils/dateUtils';
 function Sidebar() {
   
   const dispatch = useDispatch();
@@ -15,6 +16,7 @@ function Sidebar() {
   const user = useSelector(selectUser);
   const [profileOptionActive, setProfileOptionActive] = useState(false)
   const defaultStudio = useSelector(selectUserStudio)
+  const currentSubscription = useSelector(selectCurrentSubscription)
   const location = useLocation();
   const params = useParams()
   const studioName = defaultStudio?.domain ?? {domain:'guest',name:'guest'}; 
@@ -32,6 +34,9 @@ function Sidebar() {
       usedPercentage: (storageLimit?.used/storageLimit?.quota*100).toFixed(2)
     })
     },[storageLimit])
+    useEffect(()=>{
+      console.log(currentSubscription)
+    },[])
   if(user==='no-studio-found')
     return 
   return (
@@ -118,23 +123,33 @@ function Sidebar() {
             <div className="label">Setting</div>
           </div>
         </Link>
-
-        <div className="storage-bars">
-          <div className="plan-labels">
-            <p>Plan</p>
-            <p className='plan-name'>{studio.planName}
-            {
-              studio?.subscriptionId?.includes('free-')?
-              <span className='tag free'>Free</span>:
-              <span className='tag pro'>Pro</span>
+        <div className="plan-labels">
+          {
+            getDaysFromNow(currentSubscription?.dates?.trialEndDate) < 0 ?
+            <div className="expiry-label">{`Trial expired
+              ${ Math.abs(getDaysFromNow(currentSubscription?.dates?.trialEndDate))} days ago`}
+            </div>:
+            <div className="expiry-label">{`Trial ends in 
+              ${ getDaysFromNow(currentSubscription?.dates?.trialEndDate)} days`}
+            </div>
             }
+            <p className='plan-name'>{`${studio?.planName !== 'Core' ? '':''} ${studio?.planName} `}
+              {
+                getDaysFromNow(currentSubscription?.dates?.trialEndDate) <5?
+                <span className='tag free'>Pay now</span>:
+                studio?.planName === 'Studio' ? 
+                  <span className='tag pro'>Trial</span> : 
+                  <span className='tag free'>Upgrade</span>
+              }
 
             </p>
           </div>
+        <div className="storage-bars">
+          
           <div className="storage-bar hot">
             <div className="storage-labels">
               <div className="icon "></div>
-              <p>Hot Storage</p>
+              <p>Storage</p>
               </div>
             <div className="used-bar"
               style={{
@@ -143,14 +158,14 @@ function Sidebar() {
             ></div>
             <div className="quota-bar"></div>
             <div className="storage-labels used-quota-gb">
-              <p className="used-gb"><span>{Math.round(storageUsage?.usedPercentage)}%</span> {convertMegabytes(studio?.usage?.storage?.used)} </p>
+              <p className="used-gb"><span>{convertMegabytes(studio?.usage?.storage?.used)}</span>  {Math.round(storageUsage?.usedPercentage)}%</p>
               <p className="quota-gb">{convertMegabytes(studio?.usage?.storage?.quota)}</p>
             </div>
           </div>
           <div className="storage-bar hot cold">
             <div className="storage-labels">
               <div className="icon "></div>
-              <p>Cold Storage</p>
+              <p>Archive</p>
               </div>
             <div className="used-bar"
               style={{
@@ -159,8 +174,8 @@ function Sidebar() {
             ></div>
             <div className="quota-bar"></div>
             <div className="storage-labels used-quota-gb">
-              <p className="used-gb"><span>{Math.round(storageUsage?.usedPercentage)}%</span> {convertMegabytes(studio?.usage?.storage?.used)} </p>
-              <p className="quota-gb">{convertMegabytes(studio?.usage?.storage?.quota)}</p>
+              <p className="used-gb"><span>{convertMegabytes(studio?.usage?.storage?.used)} </span> {Math.round(storageUsage?.usedPercentage)}%</p>
+              <p className="quota-gb">{convertMegabytes(studio?.usage?.storage?.quota*2)}</p>
             </div>
           </div>
           

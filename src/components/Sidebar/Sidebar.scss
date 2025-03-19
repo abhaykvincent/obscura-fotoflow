@@ -208,16 +208,16 @@
         // reverse
         
         width: calc(100% - 8px*1.2);
-        bottom: 8px*17;
+        bottom: 8px*16;
         left: 5px;
         padding-bottom: 8px*0;
         border-radius: 8px;
-        border-radius: 8px 0px 8px 8px;
+        border-radius: 8px 8px 8px 8px;
         border: 1px solid $gray6-default-dark;
         border-left: 1px solid $gray5-default-dark;
         border-top: 1px solid $gray5-default-dark;
         margin-left: 0;
-        margin-bottom: 8px*1.5;
+        margin-bottom: 8px*1;
         background: rgba(0, 0, 0, 0.8);
         box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.8);
         
@@ -225,7 +225,7 @@
             position: relative;
             width: 100%;
             margin-bottom: 8px*0;
-            padding: 8px 8px*1.2;
+            padding: 8px*0.6 8px*1.2;
             border-bottom: 1px solid $gray6-accessible-dark;
             .storage-labels{
                 margin-bottom: -2px;
@@ -254,7 +254,7 @@
                     white-space: nowrap;
                     width: 100%;
                     font-size: 0.8rem;
-                    color: $gray2-default-dark;;
+                    color: $gray4-default-dark;;
                     font-weight: 600;
                     margin-bottom: 6px;
                     .bold{
@@ -273,23 +273,26 @@
                 &.used-quota-gb{
                     width :100%;
                     height: 8px*2;
-                    margin-top: 8px;
+                    margin-top: 8px*0.75;
                     display: grid;
                     grid-template-columns: auto auto;
                     justify-content: space-between;
+
+                    padding-right: 4px;
+                    padding-left: 2px;
                     p{
                     color: $gray2-default-dark;;
                     font-size: 0.6rem;
                     margin: 0;
                     span{
                         margin-right: 8px*0.5;
-                        font-size: 0.7rem;
-                        color: $gray-default-dark;;
+                        font-size: 0.6rem;
+                        color: $green-dark-accessible-light;
                     }
                 }
                 .quota-gb{
                     
-                    color: $green-default-dark;;
+                    color: $gray-default-dark;;
                 }
 
                 }
@@ -306,7 +309,7 @@
             .quota-bar{
                 position: absolute;
                 height: 4px;
-                width: calc(100% - 8px*3);
+                width: calc(100% - 8px*2.5);
                 border-radius: 4px;
                 background-color: #70ab1739;
                 opacity: 0.6;
@@ -314,7 +317,7 @@
             &.hot{
                 margin-top: 0px;
                 background-color: black;
-                border-radius: 8px 0px 0px 0px;
+                border-radius: 8px ;
             }
             &.cold{
                 opacity: 0.8;
@@ -339,41 +342,51 @@
                             color: $gray4-default-light;
                         }
                     }
-                    &.used-quota-gb .quota-gb {
-                        color: $gray4-default-light;
+                    &.used-quota-gb {
 
+                        opacity: 0.6;
+                        span{
+
+                            color: rgb(148, 148, 135);
+                        }
+                        .quota-gb {
+                            color: $gray2-default-light;
+    
+                        }
                     }
                 }
             }
             &:last-of-type{
                 
                 border-bottom: 1px solid transparent;
+                padding-bottom: 0px;
                 }
             
         }
         .plan-labels{
             display: grid;
-            grid-template-columns: auto auto;
-            justify-content: space-between;
+            width: 100%;
+            grid-template-columns:  auto;
             position: absolute;
-            top: -8px*2.5;
-            margin:   0 8px*1.1;
+            top: -8px*5.5;
+            margin:   0 ;
             margin-right: 0px;
 
-            width: calc(100% - 8px*1);
+            width: calc(100%);
             font-size: 0.8rem;
             p{
                 color: $gray3-default-dark;
                         font-size: 0.8rem;
                 &.plan-name{
+                    text-align: end;
                     color: $gray-default-dark;
                     border: 1px solid $gray6-accessible-dark;
                     border-bottom: 1px solid transparent;
-                    border-radius: 8px 8px 0px 0px;
+                    border-radius: 8px ;
                     padding: 6px;
-                    margin-top: -8px;
-                    padding-bottom: 4px;
-                    padding-left: 12px;
+                    padding-top: 4px;
+                    margin-top: -8px*3;
+                    padding-left: 0px;
                     background: rgba(29, 29, 29, 0.6);
                     span{
                         text-decoration-color: transparent;
@@ -387,15 +400,70 @@
                 font-size: 0.8rem;
                 opacity: 0.6;
                 &.free{
-                    color: $gray-accessible-dark;
+                    color: $gray2-default-dark;
                     border: 1px solid transparent;
                 }
                 &.pro{
-                    color: $green-accessible-light;
+                    color: $gray2-accessible-light;
                     border: 1px solid transparent;
                 }
             }
         }
+    }.plan-labels{
+        display: grid;
+        width: 100%;
+        grid-template-columns:  auto;
+        position: absolute;
+        bottom: 8px*30.25;
+        left : 4px;
+        margin:   0 ;
+        margin-right: 0px;
+
+        width: calc(100% - 8px*0.75);
+        font-size: 0.8rem;
+        p{
+            color: $gray3-default-dark;
+                    font-size: 0.8rem;
+            &.plan-name{
+                display: grid;
+                grid-template-columns: auto auto;
+                justify-content:space-between;
+                text-align: end;
+                color: $gray-default-dark;
+                border: 1px solid $gray5-accessible-dark;
+                border-bottom: 1px solid $gray6-accessible-dark;
+                border-radius: 8px ;
+                padding: 4px;
+                margin-top: -8px*3;
+                padding-left:9px;
+                background: rgba(3, 3, 3, 0.8);
+                span{
+                    text-decoration-color: transparent;
+                }
+            }
+        }
+        .tag{
+            margin-left: 0px;
+            padding: 0px 4px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            opacity: 0.6;
+            &.free{
+                color: $green-default-dark;
+                border: 1px solid transparent;
+            }
+            &.pro{
+                color: $gray-accessible-light;
+                border: 1px solid transparent;
+            }
+        }
+    }
+    .expiry-label{
+        font-size: 0.7rem;
+        margin-bottom: 8px*3.5;
+        margin-right: 8px*0.5;
+        text-align: right;
+        color: $gray4-accessible-dark;
     }
     .status{
         display: grid;
@@ -441,18 +509,17 @@
             display: grid;
             justify-items: stretch;
             position: absolute;
-            bottom: 8px*17;
+            bottom: 8px*10;
             padding: 0px;
             margin: 4px;
-                bottom: 8px*18;
             margin-left: 8px*1.5;
             margin-bottom: 8px*-0.75;
-            height: 80px;
+            height: 40px;
             width: 8px*17;
             background-color: $dark-3;
-            border: 1px solid $gray4-default-dark;
+            border: 1px solid $gray5-default-dark;
             border-top: 1px solid $gray3-default-dark;
-            border-left: 1px solid $gray3-default-dark;
+            border-left: 1px solid $gray4-default-dark;
             box-shadow: 1px 1px 1px 2px black;
             z-index: 20;
             border-radius: 8px;
@@ -500,7 +567,7 @@
                 
             }
             &.active{
-                bottom: 8px*18;
+                bottom: 8px*17.5;
                 opacity: 1;
                 padding: 4px;
                 padding-top: 8px;
@@ -508,7 +575,7 @@
                 opacity: 1;
                 transition-timing-function: ease-out;
 
-                transition-duration: 0.2s;
+                transition-duration: 0.1s;
             }
             .seperator{
                 width: 100%;
@@ -536,9 +603,9 @@
         cursor: pointer;
         z-index: 21;
         background-color: black;
-        border: 1px solid $gray-default-dark;
-        border-right:  1px solid $gray4-default-dark;
-        border-bottom:  1px solid $gray4-default-dark;
+        border: 1px solid $gray2-default-dark;
+        border-right:  1px solid $gray3-default-dark;
+        border-bottom:  1px solid $gray3-default-dark;
         
         border-radius: 8px;
             box-shadow: 1px 2px 1px 2px black;

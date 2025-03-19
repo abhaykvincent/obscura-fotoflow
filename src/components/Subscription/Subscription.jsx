@@ -4,7 +4,9 @@ import { formatStorage } from '../../utils/stringUtils';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import { changeSubscriptionPlan } from '../../firebase/functions/subscription';
-import { fetchStudio, selectStudio } from '../../app/slices/studioSlice';
+import { fetchStudio, selectCurrentSubscription, selectStudio } from '../../app/slices/studioSlice';
+import { getDaysFromNow } from '../../utils/dateUtils';
+import { Link } from 'react-router-dom';
 
 export const initialPlans = [
   {
@@ -21,7 +23,7 @@ export const initialPlans = [
   {
     name: 'Freelancer',
     pricing: [
-      { storage: 100, monthlyPrice: '₹980',monthlyPriceWas: '', yearlyPrice: '₹10,000', specialOffer: ['.','Welcome Offer','Core +'],defaultPlan: true   },
+      { storage: 100, monthlyPrice: '940',monthlyPriceWas: '₹1,040', yearlyPrice: '₹10,000', specialOffer: ['for 12 months','₹100 OFF','Core +'],defaultPlan: true   },
      
     ],
     defaultPlan: 0,
@@ -34,7 +36,7 @@ export const initialPlans = [
     name: 'Studio',
     pricing: [
       { storage: 1024, 
-        monthlyPrice: '₹1,020',monthlyPriceWas: '₹2,800', yearlyPrice: '₹25,000', 
+        monthlyPrice: '₹1,040',monthlyPriceWas: '₹2,800', yearlyPrice: '₹25,000', 
         specialOffer: ['for 2 months.','Offer expires soon!',' ₹2,800/month after'],
         defaultPlan: true},
       
@@ -48,9 +50,11 @@ export const initialPlans = [
   {
     name: 'Company',
     pricing: [
-      { storage: 5120, monthlyPrice: '₹2,800',monthlyPriceWas: '₹4,800', yearlyPrice: '₹1,00,000', specialOffer: ['for 2 months.','Save up to ₹8,640 with offer',' ₹4,800/month after'],defaultPlan: true},
+      { storage: 5120, monthlyPrice: '₹5,200',monthlyPriceWas: '', yearlyPrice: '₹1,00,000', 
+        specialOffer: ['Paid annually','Save up to ₹10,400 with annualy','2 yr commitment'],defaultPlan: true},
       
     ],
+    isContactSales:true,
     defaultStorage: 5000,
     defaultPlan: 0,
     coreFeatures: [ 'Multi-studio','Custom Domain','Addon Storage'],
@@ -108,8 +112,12 @@ export const initialPlans = [
   }, */
 ];
 
-const RazorpayButton = ({payment_button_id}) => {
+const RazorpayButton = ({payment_button_id,planame}) => {
+
+
+    const currentSubscription = useSelector(selectCurrentSubscription)
   useEffect(() => {
+    if(currentSubscription?.plan.name !== planame) return
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/payment-button.js';
     script.async = true;
@@ -135,7 +143,7 @@ const RazorpayButton = ({payment_button_id}) => {
     return () => {
       form.removeChild(script);
     };
-  }, []);
+  }, [currentSubscription]);
 
   return <form id={payment_button_id}></form>;
 };
@@ -173,6 +181,8 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
   const dispatch = useDispatch();
   const defaultStudio = useSelector(selectUserStudio);
   const studio = useSelector(selectStudio);
+
+    const currentSubscription = useSelector(selectCurrentSubscription)
   console.log(studio?.subscriptionId)
   let selectedStorage = plan.pricing[plan.defaultPlan].storage;
   const handleIncrement = () => {
@@ -190,7 +200,7 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
   const currentPricing = plan.pricing.find(p => p.storage === selectedStorage);
 
   return (
-    <div className={`plan ${plan.name.toLowerCase()} ${plan.expiry ? 'active' : ''}`}>
+    <div className={`plan ${plan.name.toLowerCase()} ${studio?.subscriptionId?.includes(plan.name.toLowerCase())  ? 'active' : ''}`}>
       <h3 className="plan-name">{plan.name}</h3>
       
       <div className="cover"></div>
@@ -239,53 +249,68 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
         ))}
       </div> */}
       
-      {!plan.name.includes('Core') && (
+      {/* !plan.name.includes('Core') */ true&& (
         <>
-
-          <p className='waitlist-label'>{studio?.subscriptionId?.includes(plan.name.toLowerCase()) ? 'Expires in - ' :' Pay Later in 14 days..'}</p>
-          {studio?.subscriptionId?.includes(plan.name.toLowerCase()) && <div className="current-plan button primary outline">Current Plan</div>}
-          { !studio?.subscriptionId?.includes(plan.name.toLowerCase()) && 
-            <div 
-            className={`button ${plan.isWaitlist || plan.isAddStorage ? ' primary outline' : plan.isContactSales ? 'primary outline' : 'primary outline'}`}
-            
-            // Plan selection logic
-            onClick={async () => {
-              if (!plan.isWaitlist && !plan.isAddStorage && !plan.isContactSales) {
-                try {
-                  console.log(plan)
-                  await changeSubscriptionPlan(defaultStudio.domain,  plan.name.toLowerCase());
-                  console.log('Subscription changed successfully');
-                  // refresh the page or update UI to reflect the new plan
-                  window.location.reload();
-                  // Optionally update UI here (e.g., show a success message)
-                } catch (error) {
-                  console.error('Error changing subscription:', error.message);
-                  // Optionally show an error message to the user
-                }
-              }
-            }}
-          >
-            {plan.isWaitlist ? 'Join Waitlist' : plan.isAddStorage ? 'Buy Cold Storage': plan.isContactSales ? 'Contact Sales' : 'Try for Free'}
-          </div>}
-
-          {
-            plan.name === "Studio" ?
-            <RazorpayButton payment_button_id='pl_PmVGqJ2gzI0OLI' />
-            : plan.name === "Freelancer" ?
-            <RazorpayButton payment_button_id='pl_Pmcdje8Dbj3cYR' />
-            :
-            <RazorpayButton payment_button_id='pl_PmcfmE5GTfrnNY' />
-            
-          }
-          <p className='waitlist-label'>{plan.isAddStorage ? ' Secure offer price. Pay with UPI' : plan.isContactSales ? ' Pay with UPI .  Secure offer price.' : ' Pay with UPI . Secure offer.'}</p>
-        </>
-      )}
-      {plan.expiry && (
+{plan.expiry && (
         <div className="validity">
           <p className='label'>Plan expries on</p>
           <p>{plan.expiry}</p>
         </div>
       )}
+          <p className='waitlist-label'>{
+            studio?.subscriptionId?.includes(plan.name.toLowerCase()) ? 
+            <div className="expiry-label">{`Trial ends in ${ getDaysFromNow(currentSubscription?.dates?.trialEndDate)} days`}</div> :
+            <div className="expiry-label">{`Pay later in ${ getDaysFromNow(currentSubscription?.dates?.trialEndDate)} days`}</div>}
+          </p>
+          {studio?.subscriptionId?.includes(plan.name.toLowerCase()) && <div className="current-plan button primary outline">Current Plan</div>}
+          { !studio?.subscriptionId?.includes(plan.name.toLowerCase()) && 
+            <div 
+              className={`button ${plan.isWaitlist || plan.isAddStorage ? ' primary outline' : plan.isContactSales ? 'primary outline' : 'primary outline'}`}
+              onClick={async () => {
+                if (!plan.isWaitlist && !plan.isAddStorage && !plan.isContactSales) {
+                  try {
+                    console.log(plan)
+                    await changeSubscriptionPlan(defaultStudio.domain,  plan.name.toLowerCase());
+                    console.log('Subscription changed successfully');
+                    // refresh the page or update UI to reflect the new plan
+                    window.location.reload();
+                    // Optionally update UI here (e.g., show a success message)
+                  } catch (error) {
+                    console.error('Error changing subscription:', error.message);
+                    // Optionally show an error message to the user
+                  }
+                }
+              }}
+            >
+              {plan.isWaitlist ? 
+              'Join Waitlist' : 
+                plan.isAddStorage ? 
+                  'Buy Cold Storage': 
+                  plan.isContactSales ? 
+                    'Contact Sales' : 
+                    studio?.subscriptionId?.includes('freelancer') && plan.name==="Studio"? 
+                    'Upgrade for Free':
+                    studio?.subscriptionId?.includes('studio') && plan.name==="Freelancer"? 
+                      'Downgrade':
+                      'Use for Free'
+
+              }
+            </div>}
+
+          {
+            plan.name === "Studio" ?
+            <RazorpayButton payment_button_id='pl_PmVGqJ2gzI0OLI' planame={plan.name}/>
+            : plan.name === "Freelancer" ?
+              <RazorpayButton payment_button_id='pl_Pmcdje8Dbj3cYR'  planame={plan.name}/>
+              :
+              plan.name === "Freelancer" ?
+                <RazorpayButton payment_button_id='pl_PmcfmE5GTfrnNY'  planame={plan.name}/>
+                : <></>
+          }
+          <p className='waitlist-label'>{plan.isAddStorage ? ' Secure offer price. Pay with UPI' : plan.isContactSales ? 'Talk to a sales. Book Demo' : ' Pay with UPI . Lock the price.'}</p>
+        </>
+      )}
+      
 
       
     </div>
@@ -296,6 +321,7 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
 // Main Subscription component
 function Subscription() {
   const [plans, setPlans] = useState(initialPlans);
+  const defaultStudio = useSelector(selectUserStudio);
   //reset plans to initialPlans in appropriate interval
   useEffect(() => {
     const interval = setInterval(() => {
@@ -344,6 +370,9 @@ function Subscription() {
             </div>
           </div>
           <span className="tag green">Limited Time</span>
+        </div>
+        <div className="right-section">
+          <Link to={`/${defaultStudio.domain}/subscription/history`}>Billing History</Link>
         </div>
 
       </div>

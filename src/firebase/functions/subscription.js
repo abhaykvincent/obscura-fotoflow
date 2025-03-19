@@ -1,12 +1,10 @@
 // Assume Firestore is initialized as 'db'
 import { addMonths, addYears } from "../../utils/dateUtils";
 import { db, storage } from "../app";
-import { doc, getDoc, setDoc, updateDoc, collection} from 'firebase/firestore';
-// Helper function to add months to a date (simplified, use a library like date-fns in production)
-
+import { doc, getDoc, setDoc, updateDoc, collection, arrayUnion, query, where, getDocs} from 'firebase/firestore';
 
 // Placeholder function to get plan details by planId
-// In practice, this could fetch from a database or use a static map
+// In Productio, this could fetch from a database or use a static map
 function getPlanDetails(planId) {
   
   const plans = {
@@ -28,22 +26,11 @@ function getPlanDetails(planId) {
     'company': {
       name: 'Company',
       type: 'paid',
-      pricing: [{ storage: 5000000, monthlyPrice: 15000, yearlyPrice: 150000 }],
+      pricing: [{ storage: 5000000, monthlyPrice: 5000, yearlyPrice: 50000 }],
     },
   };
   return plans[planId];
 }
-
-// Placeholder for Razorpay payment initiation
-// Replace with actual Razorpay API integration
-async function initiateRazorpayPayment(amount) {
-  // Simulate payment success for now
-  // In reality, create a Razorpay order and handle payment confirmation
-  console.log(`Initiating payment for ₹${amount}`);
-  return true; // Assume payment succeeds
-}
-
-
 
 
 /**
@@ -108,24 +95,33 @@ export async function changeSubscriptionPlan(studioId, newPlanId) {
     let charge = 0;
     let credit = 0;
 
-    // **Step 6: Handle upgrade or downgrade**
+    // **Step 6: Handle upgrade or downgrade (Modified)**
+    const newSubscriptionId = `${studioId}-${newPlanId}-${currentDate.toISOString().split('T')[0]}`;
+
+    let invoiceId = null;
     if (newPrice > currentPrice) {
       // Upgrade: Charge prorated difference
       charge = (newPrice - currentPrice) * proratedFactor;
-      const paymentSuccess = await initiateRazorpayPayment(charge);
+      /* const paymentSuccess = await initiateRazorpayPayment(charge);
       if (!paymentSuccess) {
         throw new Error('Payment failed');
-      }
+      } */
+      // Create invoice for the charge
+      invoiceId = await createInvoice(studioId,newPlan, newSubscriptionId, charge, billingCycle, 'paid');
+    } else if (newPrice === 0) {
+      // Free plan: No charge, just create an invoice with 0 amount
+      invoiceId = await createInvoice(studioId, newPlan,newSubscriptionId, 0, billingCycle, 'paid');
     } else {
-      // Downgrade: Calculate credit
+      // Downgrade: Calculate credit and create invoice with 0 amount (credit handled separately)
       credit = (currentPrice - newPrice) * proratedFactor;
+      invoiceId = await createInvoice(studioId, newPlan,newSubscriptionId, 0, billingCycle, 'paid');
     }
 
-    // **Step 7: Create new subscription document**
-    const newSubscriptionId = `${studioId}-${newPlanId}-${currentDate.toISOString().split('T')[0]}`;
+    // **Step 7: Create new subscription document (Modified)**
     const newStartDate = currentDate.toISOString().split('T')[0];
+    
     let newEndDate;
-
+    let newTrialEndDate = addMonths(newStartDate, 1);
     if (billingCycle === 'monthly') {
       newEndDate = addMonths(newStartDate, 1);
     } else if (billingCycle === 'yearly') {
@@ -143,23 +139,26 @@ export async function changeSubscriptionPlan(studioId, newPlanId) {
       billing: {
         billingCycle: billingCycle,
         autoRenew: false,
+        paymentRecived: newPrice > 0 ? true : false, // Updated based on payment
         paymentPlatform: newPlan.type === 'free' ? null : 'razorpay',
         paymentMethod: null,
       },
       dates: {
         startDate: newStartDate,
         endDate: newEndDate,
-        trialEndDate: null,
+        trialEndDate: newTrialEndDate,
       },
       pricing: {
         basePrice: newPrice,
+
         discount: 0,
-        tax: 0,
+        tax: newPrice * 0.18,
         currency: 'INR',
-        totalPrice: newPrice,
+        totalPrice: newPrice + newPrice * 0.18,
       },
       status: 'active',
       credit: credit,
+      invoiceId: invoiceId, // Add reference to the invoice
       metadata: {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -171,6 +170,13 @@ export async function changeSubscriptionPlan(studioId, newPlanId) {
     const newSubscriptionRef = doc(db, 'subscriptions', newSubscriptionId);
     await setDoc(newSubscriptionRef, newSubscriptionDoc);
 
+    // **Step 7.1-9: No changes beyond adding invoiceId**
+    await updateDoc(subscriptionRef, {
+      status: 'inactive',
+      'dates.endDate': newStartDate,
+      'metadata.updatedAt': new Date().toISOString(),
+      'metadata.updatedBy': studioId,
+    });
     // **Step 8: Manage storage limits for downgrade**
     const isDowngrade = newPlan.pricing[0].storage < currentPlan.pricing[0].storage;
     const usageExceedsLimit = studioData.usage.storage.used > newPlan.pricing[0].storage;
@@ -189,8 +195,8 @@ export async function changeSubscriptionPlan(studioId, newPlanId) {
       subscriptionId: newSubscriptionId,
       'usage.storage.quota': newStorageQuota, // Update storage quota to new plan's limit
       storageGracePeriodEnd: storageGracePeriodEnd,
+      subscriptionHistory: arrayUnion(newSubscriptionId)
     });
-
     return { success: true, message: 'Subscription changed successfully' };
   } catch (error) {
     console.error('Error changing subscription:', error.message);
@@ -198,15 +204,214 @@ export async function changeSubscriptionPlan(studioId, newPlanId) {
   }
 }
 
-// Example usage
-/* async function testChangeSubscriptionPlan() {
-  try {
-    const result = await changeSubscriptionPlan('studio123', 'freelancer');
-    console.log(result);
-  } catch (error) {
-    console.error(error.message);
-  }
-} */
 
-// Uncomment to test
-// testChangeSubscriptionPlan();
+/**
+ * Retrieves the current subscription details for a given studio.
+ * @param {string} studioId - The ID of the studio
+ * @returns {Promise<{ success: boolean, data: object | null, message: string }>}
+ */
+export async function getCurrentSubscription(studioId) {
+  try {
+    const studioRef = doc(db, 'studios', studioId);
+    const studioDoc = await getDoc(studioRef);
+
+    if (!studioDoc.exists()) {
+      return { success: false, data: null, message: 'Studio not found' };
+    }
+
+    const studioData = studioDoc.data();
+    const subscriptionId = studioData.subscriptionId;
+
+    if (!subscriptionId) {
+      return { success: false, data: null, message: 'No active subscription found for this studio' };
+    }
+
+    const subscriptionRef = doc(db, 'subscriptions', subscriptionId);
+    const subscriptionDoc = await getDoc(subscriptionRef);
+
+    if (!subscriptionDoc.exists()) {
+      return { success: false, data: null, message: 'Subscription not found in records' };
+    }
+
+    const subscriptionData = subscriptionDoc.data();
+
+    // Fetch the linked invoice if it exists
+    let invoiceData = null;
+    if (subscriptionData.invoiceId) {
+      const invoiceRef = doc(db, 'invoices', subscriptionData.invoiceId);
+      const invoiceDoc = await getDoc(invoiceRef);
+      if (invoiceDoc.exists()) {
+        invoiceData = invoiceDoc.data();
+      }
+    }
+
+    return {
+      success: true,
+      data: { ...subscriptionData, invoice: invoiceData }, // Include invoice data
+      message: 'Subscription retrieved successfully',
+    };
+  } catch (error) {
+    console.error('Error fetching subscription:', error.message);
+    return { success: false, data: null, message: `Error: ${error.message}` };
+  }
+}
+
+
+/**
+ * Retrieves all subscriptions for a given studio.
+ * @param {string} studioId - The ID of the studio
+ * @returns {Promise<{ success: boolean, data: Array<object> | null, message: string }>}
+ */
+export async function getStudioSubscriptions(studioId) {
+  try {
+    if (!studioId) {
+      return { success: false, data: null, message: 'Studio ID is required' };
+    }
+
+    const subscriptionsRef = collection(db, 'subscriptions');
+    const q = query(subscriptionsRef, where('studioId', '==', studioId));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return { success: false, data: null, message: 'No subscriptions found for this studio' };
+    }
+
+    const subscriptions = [];
+    for (const doc of querySnapshot.docs) {
+      const subscriptionData = doc.data();
+      let invoiceData = null;
+
+      // Fetch the linked invoice if it exists
+      if (subscriptionData.invoiceId) {
+        const invoiceRef = doc(db, 'invoices', subscriptionData.invoiceId);
+        const invoiceDoc = await getDoc(invoiceRef);
+        if (invoiceDoc.exists()) {
+          invoiceData = invoiceDoc.data();
+        }
+      }
+
+      subscriptions.push({
+        id: doc.id,
+        ...subscriptionData,
+        invoice: invoiceData, // Include invoice data
+      });
+    }
+
+    return {
+      success: true,
+      data: subscriptions,
+      message: 'Subscriptions retrieved successfully',
+    };
+  } catch (error) {
+    console.error('Error fetching subscriptions:', error.message);
+    return { success: false, data: null, message: `Error: ${error.message}` };
+  }
+}
+
+
+
+
+/**
+ * Creates an invoice for a subscription and returns its ID.
+ * @param {string} studioId - The ID of the studio
+ * @param {string} subscriptionId - The ID of the subscription
+ * @param {number} amount - The total amount for the invoice
+ * @param {string} billingCycle - The billing cycle (monthly/yearly)
+ * @param {string} status - The status of the invoice (e.g., 'pending', 'paid')
+ * @returns {Promise<string>} - The ID of the created invoice
+ */
+export async function createInvoice(studioId, newPlan,subscriptionId, amount, billingCycle, status = 'pending') {
+  try {
+    const invoiceId =  await generateInvoiceId(studioId,newPlan)
+    const invoiceRef = doc(db, 'invoices', invoiceId);
+
+    const invoiceData = {
+      id: invoiceId,
+      studioId: studioId,
+      subscriptionId: subscriptionId,
+      amount: amount,
+      currency: 'INR',
+      billingCycle: billingCycle,
+      status: status,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      paymentDetails: {
+        paymentPlatform: amount > 0 ? 'razorpay' : null,
+        paymentId: null, // To be updated after payment
+      },
+    };
+
+    await setDoc(invoiceRef, invoiceData);
+    return invoiceId;
+  } catch (error) {
+    console.error('Error creating invoice:', error.message);
+    throw error;
+  }
+}
+
+
+/**
+ * Generates a unique invoice ID in the format HEX-YYMM-STXXX-SEQ.
+ * @param {string} studioId - The ID of the studio
+ * @returns {Promise<string>} - The generated invoice ID
+ */
+async function generateInvoiceId(studioId,newPlan) {
+  try {
+
+    // Get current date components
+    const now = new Date();
+    const year = now.getFullYear().toString().slice(-2); // YY (e.g., "25")
+    const month = (now.getMonth() + 1).toString().padStart(2, '0'); // MM (01-12)
+
+    // Date portion: YYMM
+    const dateStr = `${year}${month}`; // e.g., "2503" for March 2025
+
+    // Studio portion: First 2 letters + random 3-character string
+    const studioPrefix = studioId.slice(0, 3).toUpperCase(); // e.g., "ST" from "studio123"
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let randomStr = '';
+    for (let i = 0; i < 5-studioPrefix.length; i++) {
+      randomStr += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const studioCode = `${studioPrefix}${randomStr}`; // e.g., "STK9P"
+    // planPrefix newPlan.name based Core - CORE , Freelance - FRE , Studio - STU, Companyy - COM
+    function getPlanPrefix(planName) {
+      console.log(planName)
+      const prefixMap = {
+          "Core": "CORE",
+          "Freelancer": "FLN",
+          "Studio": "STD",
+          "Company": "COM"
+      };
+      return prefixMap[planName] || "UNKNOWN"; // Default to UNKNOWN if plan name is not found
+  }
+
+    // Base invoice ID without sequence
+    const baseInvoiceId = `${getPlanPrefix(newPlan.name)}-${dateStr}-${studioCode}`; // e.g., "HEX-2503-STK9P"
+
+    // Query existing invoices for this studio on this month to determine sequence
+    const invoicesRef = collection(db, 'invoices');
+    const startOfMonth = `${now.getFullYear()}-${month}-01T00:00:00.000Z`;
+    const endOfMonth = `${now.getFullYear()}-${month}-${new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()}T23:59:59.999Z`;
+    const q = query(
+      invoicesRef,
+      where('studioId', '==', studioId),
+      where('createdAt', '>=', startOfMonth),
+      where('createdAt', '<=', endOfMonth)
+    );
+    const querySnapshot = await getDocs(q);
+
+    // Calculate sequence number
+    const existingInvoices = querySnapshot.size; // Number of invoices this month with this base
+    console.log(existingInvoices)
+    debugger
+    const seqNum = (existingInvoices + 1).toString().padStart(3, '0'); // e.g., "001"
+
+    // Final invoice ID
+    const invoiceId = `${baseInvoiceId}-${seqNum}`; // e.g., "HEX-2503-STK9P-001"
+    return invoiceId;
+  } catch (error) {
+    console.error('Error generating invoice ID:', error.message);
+    throw error;
+  }
+}

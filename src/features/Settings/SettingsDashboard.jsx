@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUserStudio } from '../../app/slices/authSlice';
+import BillingHistory from '../BillingHistory/BillingHistory';
 
 function SettingsDashboard({ formData,handleChange }) {
   const dispatch = useDispatch();
+  const currentStudio = useSelector(selectUserStudio);
   const [activeTab, setActiveTab] = useState(() => {
     return localStorage.getItem('settingsActiveTab') || 'studio';
   });
@@ -152,6 +154,8 @@ function SettingsDashboard({ formData,handleChange }) {
             </div>
             )
         break
+        case 'billing': return(<BillingHistory />) 
+        break
         default:
             return null;
     }
@@ -173,13 +177,13 @@ function SettingsDashboard({ formData,handleChange }) {
           Gallery
         </button>
         <button
+          className={` button secondary tab-button ${activeTab === 'billing' ? 'active' : ''}`}
+          onClick={() => setActiveTab('billing')}
+        >Billing</button>
+        <button
           className={`disabled button secondary tab-button ${activeTab === 'team' ? 'active' : ''}`}
           onClick={() => setActiveTab('team')}
         >Team</button>
-        <button
-          className={`disabled button secondary tab-button ${activeTab === 'billing' ? 'active' : ''}`}
-          onClick={() => setActiveTab('billing')}
-        >Billing</button>
         <button
           className={`disabled button secondary tab-button ${activeTab === 'security' ? 'active' : ''}`}
           onClick={() => setActiveTab('security')}

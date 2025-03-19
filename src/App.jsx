@@ -36,8 +36,8 @@ import { isDeveloper, setUserType } from './analytics/utils';
 import { isPublicPage } from './utils/publicPages';
 // Redux 
 import { showAlert } from './app/slices/alertSlice';
-import { selectModal } from './app/slices/modalSlice';
-import { fetchStudio} from './app/slices/studioSlice';
+import { openModal, selectModal } from './app/slices/modalSlice';
+import { fetchCurrentSubscription, fetchStudio, selectCurrentSubscription} from './app/slices/studioSlice';
 import { checkAuthStatus, checkStudioStatus, selectIsAuthenticated, selectUser, selectUserStudio } from './app/slices/authSlice';
 import { fetchProjects, selectProjectsStatus} from './app/slices/projectsSlice';
 // Hooks
@@ -47,6 +47,9 @@ import Settings from './features/Settings/Settings';
 import UpgradeModal from './components/Subscription/UpgradeModal';
 import { generateReferral } from './app/slices/referralsSlice';
 import FlowPilot from './components/Modal/SupportIcon/FlowPilot';
+import { getCurrentSubscription } from './firebase/functions/subscription';
+import TrialStatusModal from './components/Modal/TrialEnds/TrialEnds';
+import BillingHistory from './features/BillingHistory/BillingHistory';
 
 console.log(`%c Welcome to Fotoflow!`, `color:rgb(98, 255, 0); `);
 if(isDeveloper) console.log(`%c This device is not being tracked by Analytics in production.`, `color: #ff9500; `);
@@ -84,6 +87,19 @@ export default function App() {
       .catch((err)=>{
         console.error(err)
       })
+      dispatch(fetchCurrentSubscription({currentDomain})).then((a) => {
+        console.log(a)
+        const subscription = a.payload.data
+        // Check if trial status warrants showing the modal
+        const trialEndDate = subscription?.dates?.trialEndDate;
+        console.log(subscription)
+        if (trialEndDate) {
+          dispatch(openModal('trialStatus'));
+        }
+      })
+      .catch((err)=>{
+        console.error(err)
+      })
     }
 
   }, [currentDomain]);
@@ -100,6 +116,7 @@ export default function App() {
   }, [selectModal]);
   useEffect(() => {
     
+    getCurrentSubscription(defaultStudio.domain)
           
   }, []);
 
@@ -118,6 +135,7 @@ export default function App() {
           <Alert />
           <UploadProgress/>
           <UpgradeModal/>
+          <TrialStatusModal/>
 
         </>
       ) : 
@@ -151,6 +169,7 @@ export default function App() {
                   <Route path="/:studioName/settings" element={<Settings/>} />
                   <Route path="/:studioName/notifications" element={<Notifications />} />
                   <Route path="/:studioName/storage" element={<Storage />} />
+                  <Route path="/:studioName/subscription/history" element={<BillingHistory />} />
                   <Route path="/:studioName/subscription" element={<Subscription />} />
                   <Route path="/:studioName/store" element={<CommingSoon title={'Store'}/>} />
                   <Route path="/:studioName/calendar" element={<CommingSoon title={'Calendar'}/>} />

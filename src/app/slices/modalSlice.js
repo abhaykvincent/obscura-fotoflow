@@ -14,7 +14,8 @@ const initialState = {
     addBudget: false,
     addReferral: false,
     loginEmailPassword: false,
-    upgrade:false
+    upgrade:false,
+    trialStatus:false
 };
 export const closeModalWithAnimation = createAsyncThunk(
   'projects/closeModalWithAnimation',

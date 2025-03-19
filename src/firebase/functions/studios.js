@@ -1,3 +1,14 @@
+import { db, storage } from "../app";
+import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, increment} from "firebase/firestore";
+
+import { generateMemorablePIN, generateRandomString, toKebabCase, toTitleCase} from "../../utils/stringUtils";
+import { isProduction } from "../../analytics/utils";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchCurrentSubscription } from "../../app/slices/studioSlice";
+import { changeSubscriptionPlan } from "./subscription";
+
+
+
 // Studio
 export const createStudio = async (studioData) => {
     const { name, domain } = studioData; // Assuming domain is provided
@@ -5,6 +16,9 @@ export const createStudio = async (studioData) => {
     const currentDate = new Date().toISOString().split('T')[0];
     const subscriptionId = `${id}-core-free-${currentDate}`;
 
+    const freshIvoice= changeSubscriptionPlan(domain, 'core-free');
+    console.log(freshIvoice)
+    debugger
     const studiosCollection = collection(db, 'studios');
 
     // Studio document
@@ -27,6 +41,7 @@ export const createStudio = async (studioData) => {
             },
         },
         subscriptionId: subscriptionId,
+        subscriptionHistory: [subscriptionId],
         metadata: {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
@@ -47,13 +62,14 @@ export const createStudio = async (studioData) => {
         billing: {
             billingCycle: 'yearly',
             autoRenew: true,
+            paymentRecived:false,
             paymentPlatform: null, // Enum: ['razorpay']
             paymentMethod: null,   // Enum: ['upi', 'credit-card', 'debit-card', 'net-banking', 'cash']
         },
         dates: {
             startDate: currentDate,
             endDate: new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            trialEndDate: null,
+            trialEndDate: new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         },
         pricing: {
             basePrice: 0,
@@ -116,6 +132,20 @@ export const fetchStudios = async () => {
     }));
     return studiosData;
 }
+export const fetchStudioSubscriptions = createAsyncThunk(
+    'studio/fetchStudioSubscriptions',
+    async ({ studioId }, { rejectWithValue }) => {
+      try {
+        const result = await fetchCurrentSubscription(studioId);
+        if (!result.success) {
+          throw new Error(result.message);
+        }
+        return result.data;
+      } catch (error) {
+        return rejectWithValue(error.message);
+      }
+    }
+  );
 export const fetchStudioByDomain = async (currentDomain) => {
     const studiosCollection = collection(db, 'studios');
     const querySnapshot = await getDocs(studiosCollection);
@@ -124,6 +154,6 @@ export const fetchStudioByDomain = async (currentDomain) => {
         ...doc.data(),
     }));
     const studio = studiosData.find((studio) => studio.domain === currentDomain);
-
+    !isProduction ? console.log(studio):console.log('**** Protected data')
     return studio;
 };
