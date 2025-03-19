@@ -5,7 +5,7 @@ import { generateMemorablePIN, generateRandomString, toKebabCase, toTitleCase} f
 import { isProduction } from "../../analytics/utils";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchCurrentSubscription } from "../../app/slices/studioSlice";
-import { changeSubscriptionPlan } from "./subscription";
+import { changeSubscriptionPlan, createInvoice } from "./subscription";
 
 
 
@@ -16,9 +16,6 @@ export const createStudio = async (studioData) => {
     const currentDate = new Date().toISOString().split('T')[0];
     const subscriptionId = `${id}-core-free-${currentDate}`;
 
-    const freshIvoice= changeSubscriptionPlan(domain, 'core-free');
-    console.log(freshIvoice)
-    debugger
     const studiosCollection = collection(db, 'studios');
 
     // Studio document
@@ -26,9 +23,8 @@ export const createStudio = async (studioData) => {
         id: id,
         name: name,
         domain: domain,
-
         planName: 'Core',
-        status: 'active', // Enum: ['active', 'inactive', 'suspended']
+        status: 'active',
         batch: '002',
         usage: {
             storage: {
@@ -45,8 +41,8 @@ export const createStudio = async (studioData) => {
         metadata: {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            createdBy: id, // Ideally, should be user ID
-            updatedBy: id, // Ideally, should be user ID
+            createdBy: id,
+            updatedBy: id,
         },
     };
 
@@ -57,14 +53,14 @@ export const createStudio = async (studioData) => {
         plan: {
             planId: 'core-free',
             name: 'Core',
-            type: 'free', // Enum: ['free', 'paid', 'enterprise']
+            type: 'free',
         },
         billing: {
             billingCycle: 'yearly',
             autoRenew: true,
-            paymentRecived:false,
-            paymentPlatform: null, // Enum: ['razorpay']
-            paymentMethod: null,   // Enum: ['upi', 'credit-card', 'debit-card', 'net-banking', 'cash']
+            paymentRecived: false,
+            paymentPlatform: null,
+            paymentMethod: null,
         },
         dates: {
             startDate: currentDate,
@@ -75,29 +71,47 @@ export const createStudio = async (studioData) => {
             basePrice: 0,
             discount: 0,
             tax: 0,
-            currency: 'INR', // Enum: ['INR', 'USD', 'CAD', 'EUR', 'GBP', 'AUD', 'JPY', 'HKD', 'SGD']
+            currency: 'INR',
             totalPrice: 0,
         },
-        status: 'active', // Enum: ['active', 'trial', 'expired', 'canceled']
+        status: 'active',
         metadata: {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            createdBy: id, // Ideally, should be user ID
-            updatedBy: id, // Ideally, should be user ID
+            createdBy: id,
+            updatedBy: id,
         },
     };
+
+    // Create invoice for the free plan
+    const invoiceId = await createInvoice(
+        id,
+        { name: 'Core', type: 'free' }, // Simplified plan object for invoice
+        subscriptionId,
+        0, // Amount is 0 for free plan
+        'yearly',
+        'paid' // Marked as paid since it's free
+    );
+
+    // Add invoiceId to subscription document
+    subscriptionDoc.invoiceId = invoiceId;
 
     // Save documents
     const studioRef = doc(studiosCollection, studioDoc.domain);
     const subscriptionRef = doc(collection(db, 'subscriptions'), subscriptionDoc.id);
+    const invoiceRef = doc(collection(db, 'invoices'), invoiceId);
 
     try {
         await setDoc(studioRef, studioDoc);
         await setDoc(subscriptionRef, subscriptionDoc);
-        console.log('Studio and subscription created successfully.');
-        return { studio: studioDoc, subscription: subscriptionDoc };
+        console.log('Studio, subscription, and invoice created successfully.');
+        return { 
+            studio: studioDoc, 
+            subscription: subscriptionDoc,
+            invoiceId: invoiceId 
+        };
     } catch (error) {
-        console.error('Error creating studio or subscription:', error.message);
+        console.error('Error creating studio, subscription, or invoice:', error.message);
         throw error;
     }
 };

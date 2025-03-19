@@ -255,8 +255,6 @@ export async function getCurrentSubscription(studioId) {
     return { success: false, data: null, message: `Error: ${error.message}` };
   }
 }
-
-
 /**
  * Retrieves all subscriptions for a given studio.
  * @param {string} studioId - The ID of the studio
@@ -348,13 +346,12 @@ export async function createInvoice(studioId, newPlan,subscriptionId, amount, bi
     throw error;
   }
 }
-
-
 /**
  * Generates a unique invoice ID in the format HEX-YYMM-STXXX-SEQ.
  * @param {string} studioId - The ID of the studio
  * @returns {Promise<string>} - The generated invoice ID
  */
+
 async function generateInvoiceId(studioId,newPlan) {
   try {
 

@@ -43,6 +43,7 @@
     "emulator": "firebase emulators:start",
     "build": "dotenv -e .env.production react-scripts build",
     "deploy": "firebase deploy --only hosting",
+    "eject": "react-scripts eject",
     "firebase-login": "firebase firebase login",
     "firebase-logout": "firebase firebase logout"
   },
