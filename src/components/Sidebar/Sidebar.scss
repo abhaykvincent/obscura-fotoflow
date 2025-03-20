@@ -451,6 +451,10 @@
             &.free{
                 color: $green-default-dark;
                 border: 1px solid transparent;
+                &.pay-now{
+
+                    opacity: 0.9;
+                }
             }
             &.pro{
                 color: $gray-accessible-light;

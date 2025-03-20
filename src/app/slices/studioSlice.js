@@ -35,7 +35,6 @@ const initialState = {
     dates: {
       startDate: null,
       endDate: null,
-      trialEndDate: null,
     },
     pricing: {
       basePrice: 0,

@@ -121,7 +121,6 @@ export async function changeSubscriptionPlan(studioId, newPlanId) {
     const newStartDate = currentDate.toISOString().split('T')[0];
     
     let newEndDate;
-    let newTrialEndDate = addMonths(newStartDate, 1);
     if (billingCycle === 'monthly') {
       newEndDate = addMonths(newStartDate, 1);
     } else if (billingCycle === 'yearly') {
@@ -146,7 +145,6 @@ export async function changeSubscriptionPlan(studioId, newPlanId) {
       dates: {
         startDate: newStartDate,
         endDate: newEndDate,
-        trialEndDate: newTrialEndDate,
       },
       pricing: {
         basePrice: newPrice,
@@ -318,25 +316,63 @@ export async function getStudioSubscriptions(studioId) {
  * @param {string} status - The status of the invoice (e.g., 'pending', 'paid')
  * @returns {Promise<string>} - The ID of the created invoice
  */
-export async function createInvoice(studioId, newPlan,subscriptionId, amount, billingCycle, status = 'pending') {
+export const createInvoice = async (studioId, plan, subscriptionId, amount, billingCycle, status = 'pending') => {
   try {
-    const invoiceId =  await generateInvoiceId(studioId,newPlan)
+    const invoiceId = await generateInvoiceId(studioId, plan);
     const invoiceRef = doc(db, 'invoices', invoiceId);
 
     const invoiceData = {
+      // Core Identification
       id: invoiceId,
       studioId: studioId,
       subscriptionId: subscriptionId,
-      amount: amount,
-      currency: 'INR',
-      billingCycle: billingCycle,
-      status: status,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      paymentDetails: {
-        paymentPlatform: amount > 0 ? 'razorpay' : null,
-        paymentId: null, // To be updated after payment
+
+      // Financial Details
+      pricing: {
+        amount: amount,           // Base amount for the invoice
+        currency: 'INR',          // ISO 4217 currency code
+        discount: 0,              // Discount applied (future-proofing)
+        tax: 0,                   // Tax amount (future-proofing)
+        totalAmount: amount,      // Final amount after discount and tax
       },
+
+      // Billing Information
+      billing: {
+        cycle: billingCycle,      // 'monthly' | 'yearly' | future custom cycles
+        period: {
+          startDate: new Date().toISOString(), // Start of billing period
+          endDate: null,            // End of billing period (null until completed)
+        },
+      },
+
+      // Payment Details
+      payment: {
+        status: status,           // 'pending' | 'paid' | 'failed' | 'refunded'
+        platform: amount > 0 ? 'razorpay' : null, // Payment gateway or null
+        transactionId: null,      // Unique ID from payment platform
+        method: null,             // 'upi' | 'credit-card' | 'debit-card' | etc.
+        paidAt: null,             // Timestamp of payment completion
+      },
+
+      // Plan Reference (Simplified)
+      planSnapshot: {
+        id: plan.planId || null,  // Reference to plan ID (if available)
+        name: plan.name,          // Human-readable plan name
+        type: plan.type,          // 'free' | 'paid' | 'enterprise'
+      },
+
+      // Metadata
+      metadata: {
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        createdBy: studioId,      // Entity responsible for creation
+        updatedBy: null,          // Entity responsible for last update
+        version: 1,               // For future schema migrations
+      },
+
+      // Additional Context (Future-Proofing)
+      notes: [],                  // Array of strings for internal notes
+      externalReference: null,    // For linking to external systems
     };
 
     await setDoc(invoiceRef, invoiceData);
@@ -345,7 +381,7 @@ export async function createInvoice(studioId, newPlan,subscriptionId, amount, bi
     console.error('Error creating invoice:', error.message);
     throw error;
   }
-}
+};
 /**
  * Generates a unique invoice ID in the format HEX-YYMM-STXXX-SEQ.
  * @param {string} studioId - The ID of the studio
