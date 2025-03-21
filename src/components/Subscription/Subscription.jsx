@@ -112,13 +112,17 @@ export const initialPlans = [
   }, */
 ];
 
-const RazorpayButton = ({payment_button_id,planame}) => {
-
-  const currentSubscription = useSelector(selectCurrentSubscription)
-  console.log(currentSubscription)
-    
+const RazorpayButton = ({ payment_button_id }) => {
   useEffect(() => {
-    if(currentSubscription?.plan.name !== planame) return
+    // Check if button already exists in the document
+    const existingButton = document.querySelector(
+      `[data-payment_button_id="${payment_button_id}"]`
+    );
+    
+    if (existingButton) {
+      return; // Exit if button already exists
+    }
+
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/payment-button.js';
     script.async = true;
@@ -126,30 +130,35 @@ const RazorpayButton = ({payment_button_id,planame}) => {
     
     const style = document.createElement('style');
     style.innerHTML = `
-    form{
-      margin-top: 10px !important;
-    }
-    .razorpay-payment-button .PaymentButton{
-      border-radius: 20px !important;
-        
-    }
-    .PaymentButton-contents{
-      margin-top: -0px !important;
-      padding: 4px 62px 4px 62px  !important
-    }  
-    `
+      form {
+        margin-top: 10px !important;
+      }
+      .razorpay-payment-button .PaymentButton {
+        border-radius: 20px !important;
+      }
+      .PaymentButton-contents {
+        margin-top: 0px !important;
+        padding: 4px 62px !important;
+      }
+    `;
+    
     document.head.appendChild(style);
     const form = document.getElementById(payment_button_id);
-    form.appendChild(script);
+    
+    if (form) {
+      form.appendChild(script);
+    }
+
     return () => {
-      form.removeChild(script);
+      if (form && script.parentNode) {
+        form.removeChild(script);
+      }
     };
-  }, [currentSubscription]);
+  }, [payment_button_id]);
 
   return <form id={payment_button_id}></form>;
 };
 const openWhatsAppMessage = (studio,plan, pricing) => {
-  console.log(studio,plan, pricing)
   const message = `Upgrade to ${plan.name} Plan (${formatStorage(pricing.storage, "GB")}).%0AStudio name: ${studio}%0A${pricing.monthlyPrice}/mo for 2 months%0AThereafter ${pricing.monthlyPriceWas}/mo %0ASend UPI code for Paying ${pricing.monthlyPrice} for the first month.`;
   
   window.open(`https://wa.me/+916235099329?text=${message}`, '_blank');
@@ -182,8 +191,8 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
   const dispatch = useDispatch();
   const defaultStudio = useSelector(selectUserStudio);
   const studio = useSelector(selectStudio);
+
   const currentSubscription = useSelector(selectCurrentSubscription)
-  console.log(studio?.subscriptionId)
   let selectedStorage = plan.pricing[plan.defaultPlan].storage;
   const currentPricing = plan.pricing.find(p => p.storage === selectedStorage);
 
@@ -237,18 +246,18 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
         ))}
       </div> */}
       
-      {/* !plan.name.includes('Core') */ true&& (
+      {/* !plan.name.includes('Core') */ true && (
         <>
       {plan.expiry && (
         <div className="validity">
-          <p className='label'>Plan expries on</p>
+          <p className='label'>Free plan will expries on</p>
           <p>{plan.expiry}</p>
         </div>
-      )}
+      )}fv
           <p className='waitlist-label'>{
             studio?.subscriptionId?.includes(plan.name.toLowerCase()) ? 
-            <div className="expiry-label">{`Trial ends in ${ getDaysFromNow(studio?.trialEndDate)} days`}</div> :
-            <div className="expiry-label">{`Pay later in ${ getDaysFromNow(studio?.trialEndDate)} days`}</div>}
+            <span className="expiry-label">{`Trial ends in ${ getDaysFromNow(studio?.trialEndDate)} days`}</span> :
+            plan.name.toLowerCase() !== 'core'&&<span className="expiry-label">{`Pay later in ${ getDaysFromNow(studio?.trialEndDate)} days`}</span>}
           </p>
           {studio?.subscriptionId?.includes(plan.name.toLowerCase()) && <div className="current-plan button primary outline">Current Plan</div>}
           { !studio?.subscriptionId?.includes(plan.name.toLowerCase()) && 
@@ -257,7 +266,6 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
               onClick={async () => {
                 if (!plan.isWaitlist && !plan.isAddStorage && !plan.isContactSales) {
                   try {
-                    console.log(plan)
                     await changeSubscriptionPlan(defaultStudio.domain,  plan.name.toLowerCase());
                     console.log('Subscription changed successfully');
                     // refresh the page or update UI to reflect the new plan
@@ -284,19 +292,16 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
 
               }
             </div>}
-            
-          {
-            plan.name === "Studio" ?
-            <RazorpayButton payment_button_id='pl_PmcfmE5GTfrnNY' planame={plan.name}/>
+          { studio?.subscriptionId?.includes(plan.name.toLowerCase()) &&
+            (plan.name === "Studio" ?
+            <RazorpayButton payment_button_id='pl_PmVGqJ2gzI0OLI' planame={plan.name}/>
             : plan.name === "Freelancer" ?
-              <RazorpayButton payment_button_id='pl_PmcfmE5GTfrnNY'  planame={plan.name}/>
+              <RazorpayButton payment_button_id='pl_Pmcdje8Dbj3cYR'  planame={plan.name}/>
               :
               plan.name === "Company" ?
                 <RazorpayButton payment_button_id='pl_PmcfmE5GTfrnNY'  planame={plan.name}/>
-                : <></>
+                : <></>)
           }
-
-
           <p className='waitlist-label'>{plan.isAddStorage ? ' Secure offer price. Pay with UPI' : plan.isContactSales ? 'Talk to a sales. Book Demo' : ' Pay with UPI . Lock the price.'}</p>
         </>
       )}
@@ -314,10 +319,7 @@ function Subscription() {
   const defaultStudio = useSelector(selectUserStudio);
   //reset plans to initialPlans in appropriate interval
   useEffect(() => {
-    const interval = setInterval(() => {
       setPlans(initialPlans);
-    }, 20000);
-    return () => clearInterval(interval);
   }, [plans])
 
   const handleStorageChange = (planName, newDefaultPlan) => {

@@ -186,7 +186,6 @@ export async function changeSubscriptionPlan(studioId, newPlanId) {
     }
 
     const newStorageQuota = newPlan.pricing[0].storage;
-    console.log(newStorageQuota)
     // **Step 9: Update studio document**
     await updateDoc(studioRef, {
       planName: newPlan.name,
@@ -409,7 +408,6 @@ async function generateInvoiceId(studioId,newPlan) {
     const studioCode = `${studioPrefix}${randomStr}`; // e.g., "STK9P"
     // planPrefix newPlan.name based Core - CORE , Freelance - FRE , Studio - STU, Companyy - COM
     function getPlanPrefix(planName) {
-      console.log(planName)
       const prefixMap = {
           "Core": "CORE",
           "Freelancer": "FLN",
@@ -427,17 +425,13 @@ async function generateInvoiceId(studioId,newPlan) {
     const startOfMonth = `${now.getFullYear()}-${month}-01T00:00:00.000Z`;
     const endOfMonth = `${now.getFullYear()}-${month}-${new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()}T23:59:59.999Z`;
     const q = query(
-      invoicesRef,
-      where('studioId', '==', studioId),
-      where('createdAt', '>=', startOfMonth),
-      where('createdAt', '<=', endOfMonth)
+      invoicesRef
     );
     const querySnapshot = await getDocs(q);
-
+    console.log(querySnapshot.size);
     // Calculate sequence number
     const existingInvoices = querySnapshot.size; // Number of invoices this month with this base
-    console.log(existingInvoices)
-    debugger
+
     const seqNum = (existingInvoices + 1).toString().padStart(3, '0'); // e.g., "001"
 
     // Final invoice ID

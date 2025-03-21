@@ -322,6 +322,10 @@ main.subscription{
                 text-shadow: 
                      0px 2px 1px  black;
             cursor: not-allowed;
+
+            &.primary.outline{
+                color: $green-dark-accessible-light;
+            }
         }
         .plan-name{
             font-size: 1.4rem;
@@ -553,9 +557,8 @@ main.subscription{
             }
             p{
                 font-size: 0.8rem;
-                color: $green-accessible-light;
+                color: $gray3-accessible-dark;
                 text-decoration: underline;
-                text-decoration-color: $green-default-light
             }
             margin-bottom: 8px*0;
         }
@@ -571,7 +574,7 @@ main.subscription{
         .waitlist-label{
             font-size: 0.7rem;
             color: $gray4-accessible-dark;
-            margin-bottom: 4px;
+            margin-top: 4px;
         }
         .button{
             width: 100%;
@@ -690,7 +693,6 @@ main.subscription{
                 color: $gray2-default-dark;
                 background-color: $dark-2;
                 box-shadow: 1px 2px 4px black;
-
             }
         }
         &.studio{

@@ -87,25 +87,29 @@ export default function App() {
       dispatch(fetchStudio({currentDomain})).then((a) => {
         console.log(a)
         // Check if trial status warrants showing the modal
+        dispatch(fetchCurrentSubscription({currentDomain})).then((a) => {
+  
+        })
+        .catch((err)=>{
+          console.error(err)
+        })
         
       })
       .catch((err)=>{
         console.error(err)
       })
       
-      if (studio?.trialEndDate) {
-        dispatch(openModal('trialStatus'));
-      }
-      dispatch(fetchCurrentSubscription({currentDomain})).then((a) => {
-  
-      })
-      .catch((err)=>{
-        console.error(err)
-      })
+      
     }
 
-  }, [currentDomain,studio.trialEndDate]);
+  }, [currentDomain]);
 
+  useEffect(() =>{
+
+    if (studio?.trialEndDate) {
+      dispatch(openModal('trialStatus'));
+    }
+  },[studio.trialEndDate])
   useEffect(() => {
     const modalStates = Object.values(selectModal);
     if (modalStates.some(state => state)) {

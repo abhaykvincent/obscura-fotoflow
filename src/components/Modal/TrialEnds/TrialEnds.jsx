@@ -18,17 +18,15 @@ function TrialStatusModal() {
     const currentDate = new Date();
     const trialEndDate = studio?.trialEndDate ? new Date(studio?.trialEndDate) : null;
     const gracePeriodEnd = trialEndDate ? new Date(trialEndDate.getTime() + 30 * 24 * 60 * 60 * 1000) : null;
-    
-  console.log(currentDate >= trialEndDate)
-  console.log(currentDate <= gracePeriodEnd)
-  console.log((trialEndDate - currentDate) / (1000 * 60 * 60 * 24))
+
 
     if (trialEndDate && currentDate < trialEndDate && (trialEndDate - currentDate) / (1000 * 60 * 60 * 24) <= 3) {
       return {
         type: 'endsSoon',
         className: 'trial-ending-soon',
+
+        title:'Your trial is ending soon!',
         messages: [
-          'Your trial is ending soon!',
           `It expires on ${formatDate(trialEndDate)}.`,
           'Upgrade now to maintain full access to all features.'
         ],
@@ -39,20 +37,20 @@ function TrialStatusModal() {
       return {
         type: 'gracePeriod',
         className: 'grace-period-active',
+        title:`Your trial expired on ${formatDate(trialEndDate)}.`,
         messages: [
-          `Your trial expired on ${formatDate(trialEndDate)}.`,
           `May affect some of your projects.`,
           'Pay now to avoid outage.'
         ],
         actionText: 'Pay Now',
-        actionPath: '/pricing',
+        actionPath: `/${studio.domain}/subscription`,
       };
     } else if (trialEndDate && currentDate > gracePeriodEnd ) {
       return {
         type: 'switchedToFree',
         className: 'free-plan-switched',
+        title:'Your trial and grace period have ended.',
         messages: [
-          'Your trial and grace period have ended.',
           'You’ve been automatically switched to the free Core plan.',
           'This includes 5 GB of storage with basic features.'
         ],
@@ -92,6 +90,7 @@ function TrialStatusModal() {
         </div>
         <div className="modal-body">
           <div className="form-section">
+            <h2>{trialStatus.title}</h2>
             {trialStatus.messages.map((message, index) => (
               <p key={index}>{message}</p>
             ))}

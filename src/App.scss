@@ -1541,6 +1541,13 @@ body{
     .form-section{
       margin:0  8px*4 ;
       gap: 8px;
+      text-align: center;
+      h2{
+        margin-bottom: 8px*2;
+      }
+      p{
+        color: $gray3-default-dark;
+      }
       &.contact{
 
         .field{
