@@ -44,6 +44,7 @@ export const createStudio = async (studioData) => {
             createdBy: id,
             updatedBy: id,
         },
+        trialEndDate: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     };
 
     // Subscription document
@@ -65,7 +66,6 @@ export const createStudio = async (studioData) => {
         dates: {
             startDate: currentDate,
             endDate: new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            trialEndDate: new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         },
         pricing: {
             basePrice: 0,

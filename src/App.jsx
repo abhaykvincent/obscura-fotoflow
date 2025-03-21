@@ -37,7 +37,7 @@ import { isPublicPage } from './utils/publicPages';
 // Redux 
 import { showAlert } from './app/slices/alertSlice';
 import { openModal, selectModal } from './app/slices/modalSlice';
-import { fetchCurrentSubscription, fetchStudio, selectCurrentSubscription} from './app/slices/studioSlice';
+import { fetchCurrentSubscription, fetchStudio, selectCurrentSubscription, selectStudio} from './app/slices/studioSlice';
 import { checkAuthStatus, checkStudioStatus, selectIsAuthenticated, selectUser, selectUserStudio } from './app/slices/authSlice';
 import { fetchProjects, selectProjectsStatus} from './app/slices/projectsSlice';
 // Hooks
@@ -61,6 +61,7 @@ export default function App() {
 
   const isLoading = useSelector(selectProjectsStatus);
   const defaultStudio = useSelector(selectUserStudio)
+  const studio = useSelector(selectStudio);
   const currentDomain = defaultStudio?.domain ?? 'guest'; 
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const { keyMap, handlers } = useShortcutsConfig();
@@ -83,27 +84,32 @@ export default function App() {
       .catch((err)=>{
         dispatch(showAlert({ type: 'error', message: 'Check internet connection' }));
       })
-      dispatch(fetchStudio({currentDomain}))
-      .catch((err)=>{
-        console.error(err)
-      })
-      dispatch(fetchCurrentSubscription({currentDomain})).then((a) => {
+      dispatch(fetchStudio({currentDomain})).then((a) => {
         console.log(a)
-        const subscription = a.payload.data
         // Check if trial status warrants showing the modal
-        const trialEndDate = subscription?.dates?.trialEndDate;
-        console.log(subscription)
-        if (trialEndDate) {
-          dispatch(openModal('trialStatus'));
-        }
+        dispatch(fetchCurrentSubscription({currentDomain})).then((a) => {
+  
+        })
+        .catch((err)=>{
+          console.error(err)
+        })
+        
       })
       .catch((err)=>{
         console.error(err)
       })
+      
+      
     }
 
   }, [currentDomain]);
 
+  useEffect(() =>{
+
+    if (studio?.trialEndDate) {
+      dispatch(openModal('trialStatus'));
+    }
+  },[studio.trialEndDate])
   useEffect(() => {
     const modalStates = Object.values(selectModal);
     if (modalStates.some(state => state)) {

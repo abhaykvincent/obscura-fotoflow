@@ -123,27 +123,30 @@ function Sidebar() {
             <div className="label">Setting</div>
           </div>
         </Link>
+
         <div className="plan-labels">
           {
-            getDaysFromNow(currentSubscription?.dates?.trialEndDate) < 0 ?
-            <div className="expiry-label">{`Trial expired
-              ${ Math.abs(getDaysFromNow(currentSubscription?.dates?.trialEndDate))} days ago`}
-            </div>:
-            <div className="expiry-label">{`Trial ends in 
-              ${ getDaysFromNow(currentSubscription?.dates?.trialEndDate)} days`}
-            </div>
+            getDaysFromNow(studio?.trialEndDate) < 0 ?
+              <div className="expiry-label">{`Trial expired
+                ${ Math.abs(getDaysFromNow(studio?.trialEndDate))} days ago`}
+              </div>:
+              getDaysFromNow(studio?.trialEndDate) === 0?
+                <div className="expiry-label">{`Trial ends today`}</div>:
+                <div className="expiry-label">
+                  {`Trial ends in ${ getDaysFromNow(studio?.trialEndDate)} days`}
+                </div>
+          }
+          <p className='plan-name'>{`${studio?.planName !== 'Core' ? '':''} ${studio?.planName} `}
+            {
+              getDaysFromNow(studio?.trialEndDate) <5?
+              <span className='tag free pay-now'>Pay now</span>:
+              studio?.planName === 'Studio' ? 
+                <span className='tag pro'>Trial</span> : 
+                <span className='tag free'>Upgrade</span>
             }
-            <p className='plan-name'>{`${studio?.planName !== 'Core' ? '':''} ${studio?.planName} `}
-              {
-                getDaysFromNow(currentSubscription?.dates?.trialEndDate) <5?
-                <span className='tag free'>Pay now</span>:
-                studio?.planName === 'Studio' ? 
-                  <span className='tag pro'>Trial</span> : 
-                  <span className='tag free'>Upgrade</span>
-              }
 
-            </p>
-          </div>
+          </p>
+        </div>
         <div className="storage-bars">
           
           <div className="storage-bar hot">

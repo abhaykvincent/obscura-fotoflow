@@ -8,6 +8,7 @@ import {
 import {
   fetchStudioSubscriptions,
   selectCurrentSubscription,
+  selectStudio,
   selectStudioSubscriptions,
 } from '../../app/slices/studioSlice';
 import Refresh from '../../components/Refresh/Refresh';
@@ -20,6 +21,7 @@ export default function BillingHistory() {
   const dispatch = useDispatch();
   const domain = useSelector(selectDomain);
   const defaultStudio = useSelector(selectUserStudio);
+  const studio= useSelector(selectStudio)
   const currentSubscription = useSelector(selectCurrentSubscription);
   const subscriptions = useSelector(selectStudioSubscriptions);
 
@@ -110,15 +112,15 @@ export default function BillingHistory() {
           </p>
           <p>
             <strong>Last Updated:</strong>{' '}
-            {getEventTimeAgo(currentSubscription.dates.startDate)}
+            {getEventTimeAgo(studio.startDate)}
           </p>
           <p>
             <strong>Plan Expiration:</strong>{' '}
-            {getDaysFromNow(currentSubscription.dates.endDate)} days remaining
+            {getDaysFromNow(studio.endDate)} days remaining
           </p>
           <p>
             <strong>Free Trial:</strong>{' '}
-            Ends in {getDaysFromNow(currentSubscription.dates.trialEndDate)}{' '}
+            Ends in {getDaysFromNow(studio.trialEndDate)}{' '}
             days <span className="trial-progress"></span>
           </p>
         </div>

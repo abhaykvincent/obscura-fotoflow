@@ -28,9 +28,9 @@ function DeleteConfirmationModal({ itemType, itemName, onDeleteConfirm }) {
           <div className="modal-title">Confirm Deletion</div>
         </div>
         <div className="modal-body">
-          <h4 className="message">
-            Are you sure you want to delete this {itemType.toLowerCase() } <strong className='caution'>{itemName}</strong>?
-          </h4>
+          <h2 className="message">
+            Do you want to delete this {itemType.toLowerCase() } <strong className='caution'>{itemName}</strong>?
+          </h2>
           <p className="note">
             <strong>Note:</strong> This action is permanent and will result in the loss of all associated data related to this {itemType.toLowerCase()}.
           </p>
