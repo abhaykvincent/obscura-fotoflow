@@ -436,7 +436,7 @@ export const createInvoice = async (studioId, plan, subscriptionId, amount, bill
         updatedAt: new Date().toISOString(),
         createdBy: studioId,      // Entity responsible for creation
         updatedBy: null,          // Entity responsible for last update
-        version: 1,               // For future schema migrations
+        version: 2,               // For future schema migrations
       },
 
       // Additional Context (Future-Proofing)
@@ -593,7 +593,7 @@ async function createMigrationInvoice(studioId, plan, subscriptionId, migrationD
       updatedAt: migrationDateISO,
       createdBy: 'MIGRATION_SCRIPT',
       updatedBy: 'MIGRATION_SCRIPT',
-      version: 1,
+      version: 2,
     },
     notes: ['Migrated from v1 system.'],
     externalReference: null,
@@ -618,7 +618,6 @@ export async function migrateStudios() {
   const migrationDate = new Date();
   const migrationDateISO = migrationDate.toISOString();
   const migrationTimestampStr = migrationDate.toISOString().split('T')[0];
-  debugger
 
   console.log(`Found ${studiosSnapshot.size} studios to process.`);
 
@@ -626,7 +625,11 @@ export async function migrateStudios() {
     const studioData = studioDoc.data();
     const studioId = studioDoc.id;
 
-   
+    // Check if already migrated (e.g., has subscriptionId)
+    if (studioData?.metadata?.version === 2) {
+      console.log(`Studio ${studioId} Already has updated. Skipping...`);
+      continue;
+    }
 
     // **Decision Point: What plan to migrate v1 users to?**
     // Simplest: Assume all v1 users were on the 'Core' free plan.
@@ -690,6 +693,7 @@ export async function migrateStudios() {
         updatedAt: migrationDateISO,
         createdBy: 'MIGRATION_SCRIPT',
         updatedBy: 'MIGRATION_SCRIPT',
+        version: 2,
       },
     };
 
@@ -717,6 +721,7 @@ export async function migrateStudios() {
       migratedToV2: true, // A flag to indicate successful migration
       'metadata.updatedAt': migrationDateISO, // Assuming studio has metadata
       'metadata.updatedBy': 'MIGRATION_SCRIPT',
+      'metadata.version': 2,
     };
 
     // Use modular updateDoc with batch (studioDoc.ref is already a DocumentReference)

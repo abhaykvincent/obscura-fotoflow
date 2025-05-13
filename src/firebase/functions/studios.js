@@ -6,6 +6,7 @@ import { isProduction } from "../../analytics/utils";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchCurrentSubscription } from "../../app/slices/studioSlice";
 import { changeSubscriptionPlan, createInvoice } from "./subscription";
+import { version } from "jszip";
 
 
 
@@ -43,6 +44,7 @@ export const createStudio = async (studioData) => {
             updatedAt: new Date().toISOString(),
             createdBy: id,
             updatedBy: id,
+            version: 2
         },
         trialEndDate: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     };
