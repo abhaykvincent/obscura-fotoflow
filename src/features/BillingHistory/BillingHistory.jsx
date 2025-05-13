@@ -7,12 +7,15 @@ import {
 } from '../../app/slices/authSlice';
 import {
   fetchStudioSubscriptions,
+  fetchStudioInvoices,
   selectCurrentSubscription,
   selectStudio,
   selectStudioSubscriptions,
+  selectStudioInvoices
 } from '../../app/slices/studioSlice';
 import Refresh from '../../components/Refresh/Refresh';
 import { getDaysFromNow, getEventTimeAgo } from '../../utils/dateUtils';
+
 
 import './BillingHistory.scss';
 
@@ -24,6 +27,7 @@ export default function BillingHistory() {
   const studio= useSelector(selectStudio)
   const currentSubscription = useSelector(selectCurrentSubscription);
   const subscriptions = useSelector(selectStudioSubscriptions);
+  const invoices = useSelector(selectStudioInvoices);
 
   // State for search and sorting
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,11 +35,15 @@ export default function BillingHistory() {
   const [sortOrder, setSortOrder] = useState('desc');
 
   useEffect(() => {
+    console.log(invoices)
+  }, [invoices]);  
+  useEffect(() => {
     dispatch(fetchStudioSubscriptions({ studioId: defaultStudio.domain }));
+    dispatch(fetchStudioInvoices({ studioId: defaultStudio.domain }));
   }, [dispatch, defaultStudio]);
-
+  
   // Map subscriptions to invoice format
-  const invoices = subscriptions.map((subscription) => ({
+  const subscriptionsTable = subscriptions.map((subscription) => ({
     invoiceId: subscription.id,
     status: subscription.status,
     amount: `₹${subscription.pricing.totalPrice / 100}`, // Assuming price is in cents
@@ -47,16 +55,19 @@ export default function BillingHistory() {
       minute: 'numeric',
       hour12: true,
     }),
+    billing:subscription.billing,
+    plan:subscription.plan,
+    dates:subscription.dates,
     viewLink: '#', // Replace with actual link if needed
     downloadLink: '#', // Placeholder for download functionality
   }));
 
-  // Filter and sort invoices
-  const filteredInvoices = invoices.filter((invoice) =>
+  // Filter and sort Subscriptions
+  const filteredSubscriptions = subscriptionsTable.filter((invoice) =>
     invoice.invoiceId.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const sortedInvoices = [...filteredInvoices].sort((a, b) => {
+  const sortedSubscriptions = [...filteredSubscriptions].sort((a, b) => {
     const valueA = a[sortBy];
     const valueB = b[sortBy];
     if (sortBy === 'created') {
@@ -92,43 +103,108 @@ export default function BillingHistory() {
       <div className="current-plan">
         <h2 className="section-title">Current Plan</h2>
         <div className="plan-details">
-          <p>
-            <strong>Plan Name & Cost:</strong>{' '}
-            {currentSubscription.plan.name}: ₹
-            {currentSubscription.pricing.totalPrice / 100}{' '}
+          <div className='current-plan-label'>{currentSubscription?.plan.name}</div>
+          <p  className='plan-pricing'>₹{currentSubscription?.pricing.totalPrice / 100}{' '}
             <span
               className={`status-tag ${
-                currentSubscription.billing.paymentRecived ? 'paid' : 'unpaid'
+                currentSubscription?.billing.paymentRecived ? 'paid' : 'unpaid'
               }`}
             >
-              {currentSubscription.billing.paymentRecived ? 'Paid' : 'Unpaid'}
+              {currentSubscription?.billing.paymentRecived ? 'Paid' : 'Unpaid'}
             </span>
           </p>
           <p>
-            <strong>Invoice ID:</strong>{' '}
-            <Link to="#" className="link">
-              {currentSubscription.id}
-            </Link>
+            <strong></strong>{' '}
+            {/* <Link to="#" className="link">
+              {currentSubscription?.id}
+            </Link> */}
           </p>
-          <p>
+          {/* <p>
             <strong>Last Updated:</strong>{' '}
-            {getEventTimeAgo(studio.startDate)}
+            {getEventTimeAgo(currentSubscription?.metadata.updatedAt)}
+          </p> */}
+          <p>
+            <strong>Plan Expires </strong>{' '}
+            in {getDaysFromNow(currentSubscription?.dates.endDate)} days
           </p>
           <p>
-            <strong>Plan Expiration:</strong>{' '}
-            {getDaysFromNow(studio.endDate)} days remaining
-          </p>
-          <p>
-            <strong>Free Trial:</strong>{' '}
-            Ends in {getDaysFromNow(studio.trialEndDate)}{' '}
+            <strong>Free Trial </strong>{' '}
+            ends in {getDaysFromNow(studio?.trialEndDate)}{' '}
             days <span className="trial-progress"></span>
           </p>
         </div>
       </div>
 
+      {/* Subscriprions History Section */}
+      <div className="invoice-history">
+        <h2 className="section-title">Subscriptions</h2>
+        <table className="invoice-table">
+          <thead>
+            <tr>
+              <th onClick={() => handleSort('invoiceId')}>
+                Plan{' '}
+                {sortBy === 'invoiceId' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </th>
+              <th onClick={() => handleSort('status')}>
+                Status{' '}
+                {sortBy === 'status' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </th>
+              <th onClick={() => handleSort('amount')} className="align-right">
+                Amount{' '}
+                {sortBy === 'amount' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </th>
+              <th onClick={() => handleSort('created')} className="align-right">
+                Created{' '}
+                {sortBy === 'created' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </th>
+              <th onClick={() => handleSort('created')} className="align-right">
+                Next payment{' '}
+                {sortBy === 'created' && (sortOrder === 'asc' ? '↑' : '↓')}
+              </th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {subscriptionsTable.map((invoice, index) => (
+              <tr key={index} className={`${invoice.status}`}>
+                <td>{invoice.plan.name}</td>
+                <td>
+                  <span
+                    className={`status-tag ${
+                      invoice.status === 'active' ? 'paid' : 'unpaid'
+                    }`}
+                  >
+                    {invoice.status}
+                  </span>
+                </td>
+                <td className="align-right">{invoice.amount}/{invoice.billing.billingCycle}</td>
+                <td className="align-right">{ getEventTimeAgo(invoice.created)}</td>
+                <td className="align-right">{
+                invoice.status === "active"  ?
+                new Date(studio?.trialEndDate) > new Date() ?
+                  getEventTimeAgo(studio?.trialEndDate):
+                  getEventTimeAgo(invoice.dates.endDate)
+                :''
+                }
+                </td>
+                <td className="actions">
+                  <Link to={invoice.viewLink} className="link">
+                    View
+                  </Link>{' '}
+                  |{' '}
+                  <Link to={invoice.downloadLink} className="link">
+                    Download
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      
       {/* Invoice History Section */}
       <div className="invoice-history">
-        <h2 className="section-title">Invoice History (Past 12 Months)</h2>
+        <h2 className="section-title">Invoices</h2>
         <div className="search-bar">
           <input
             type="text"
@@ -160,26 +236,26 @@ export default function BillingHistory() {
             </tr>
           </thead>
           <tbody>
-            {sortedInvoices.map((invoice, index) => (
+          {invoices.map((invoice, index) => (   
               <tr key={index}>
-                <td>{invoice.invoiceId}</td>
+                <td>{invoice.id}</td>
                 <td>
                   <span
                     className={`status-tag ${
                       invoice.status === 'active' ? 'paid' : 'unpaid'
                     }`}
                   >
-                    {invoice.status}
+                    {invoice.payment.status}
                   </span>
                 </td>
-                <td className="align-right">{invoice.amount}</td>
-                <td className="align-right">{invoice.created}</td>
+                <td className="align-right">{invoice.pricing.totalamount}</td>
+                <td className="align-right">{invoice.metadata.createdAt}</td>
                 <td className="actions">
-                  <Link to={invoice.viewLink} className="link">
+                  <Link to={'/'} className="link">
                     View
                   </Link>{' '}
                   |{' '}
-                  <Link to={invoice.downloadLink} className="link">
+                  <Link to={'/'} className="link">
                     Download
                   </Link>
                 </td>

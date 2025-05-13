@@ -139,7 +139,6 @@ export const ProjectCover = ({ project }) => {
                         <p>1.6K <span>Views</span></p>
                     </div> */}
                     <div className="client">
-                        <div className="edit-pen" onClick={handleNameDoubleClick} ></div>
                         {isEditing ? (
                         <div className="editable-data ">
                             <input
@@ -155,6 +154,8 @@ export const ProjectCover = ({ project }) => {
                         ) : (
                         <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
                         )}
+
+                        <div className="edit-pen" onClick={handleNameDoubleClick} ></div>
                         {!isEditing &&<div className="type">{project?.type}</div>}
                         
                         </div>

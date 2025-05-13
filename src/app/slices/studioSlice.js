@@ -7,7 +7,7 @@ import { fetchUsers } from '../../firebase/functions/firestore';
 import { useRevalidator } from 'react-router';
 import { setUserType } from '../../analytics/utils';
 import { fetchStudioByDomain } from '../../firebase/functions/studios';
-import { getCurrentSubscription, getStudioSubscriptions } from '../../firebase/functions/subscription';
+import { getCurrentSubscription, getStudioInvoices, getStudioSubscriptions } from '../../firebase/functions/subscription';
 
 const initialState = {
   data: {
@@ -53,6 +53,7 @@ const initialState = {
     },
   },
   subscriptions: [],
+  invoices: [],
   loading: false,
   error: null,
 };
@@ -82,10 +83,26 @@ export const fetchStudioSubscriptions = createAsyncThunk(
   'studio/fetchStudioSubscriptions',
   async ({ studioId }, { rejectWithValue }) => {
     try {
+
       const result = await getStudioSubscriptions(studioId);
       if (!result.success) {
         throw new Error(result.message);
       }
+      return result.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+export const fetchStudioInvoices = createAsyncThunk(
+  'studio/fetchStudioInvoices',
+  async ({ studioId }, { rejectWithValue }) => {
+    try {
+      const result = await getStudioInvoices(studioId);
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+      console.log(result.data);
       return result.data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -140,6 +157,20 @@ const studioSlice = createSlice({
       .addCase(fetchStudioSubscriptions.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      // New fetchStudioInvoices cases
+      .addCase(fetchStudioInvoices.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchStudioInvoices.fulfilled, (state, action) => {
+        state.loading = false;
+        state.invoices = action.payload; // Store the fetched subscriptions
+        state.error = null;
+      })
+      .addCase(fetchStudioInvoices.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   }
 });
@@ -151,3 +182,4 @@ export const selectStudio = (state) => state.studio.data;
 export const selectCurrentSubscription = (state) => state.studio.currentSubscription;
 export const selectStudioStorageUsage = (state) => state.studio.data?.usage.storage;
 export const selectStudioSubscriptions = (state) => state.studio.subscriptions;
+export const selectStudioInvoices = (state) => state.studio.invoices;

@@ -441,6 +441,12 @@ input,select{
     }
 
   }
+  input{
+
+    border: 1px solid $gray4-accessible-dark;
+    border-bottom: 1px solid $gray2-accessible-dark;
+    border-right: 1px solid $gray2-accessible-dark;
+  }
 .disabled{
     color: $gray5-accessible-light;
     opacity: 0.3 !important;

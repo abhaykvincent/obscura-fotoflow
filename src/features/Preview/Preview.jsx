@@ -49,6 +49,11 @@ function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePrev
 
   return (
     <div className="preview-wrapper">
+      <div className="guide swipe-guide">
+        <div className="swipe-animation-wrapper">
+          <div className="swipe-animation"></div>
+        </div>
+      </div>
       <div className='preview' >
         <SwipeHandler 
           previewIndex={previewIndex}

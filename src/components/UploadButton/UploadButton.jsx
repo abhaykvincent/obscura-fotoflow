@@ -9,6 +9,8 @@ import { openModal } from '../../app/slices/modalSlice';
 import { handleUpload } from '../../utils/uploadOperations';
 import { addAllFileSizesToMB, validateFileTypes } from '../../utils/fileUtils';
 import { createNotification } from '../../app/slices/notificationSlice';
+import { fetchProjects } from '../../app/slices/projectsSlice';
+import { fetchProject } from '../../firebase/functions/firestore';
 
 function UploadButton({ isPhotosImported, setIsPhotosImported, setImageUrls, id, collectionId, setUploadLists, setUploadStatus }) {
   const dispatch = useDispatch();
@@ -30,7 +32,7 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, setImageUrls, id,
     
     // If Space Available
     // Upload files and update storage usage
-    if (importFileSize < (storageLimit.quota -  storageLimit.used) ) {
+    if (importFileSize < (storageLimit?.quota -  storageLimit?.used) ) {
       try {
         const startTime = Date.now();  // Record the start time
         setUploadStatus('open');
@@ -70,6 +72,8 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, setImageUrls, id,
           );
           };
           dispatchNotification()
+
+          console.log(domain)
         setTimeout(() => {
           dispatch(openModal('shareGallery'))
         }, 1000);
@@ -81,6 +85,7 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, setImageUrls, id,
         
           
         dispatch(showAlert({ type: 'success', message: 'Upload Complete' }));
+        
         setIsPhotosImported(false);
       }
     } 

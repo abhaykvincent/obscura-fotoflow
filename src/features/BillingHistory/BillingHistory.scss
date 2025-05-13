@@ -1,8 +1,7 @@
 @import '../../style/variables';
 .billing-container {
-    background-color: #1a1a1a;
+    background-color: $dark-2;
     color: #fff;
-    font-family: 'Arial', sans-serif;
     padding: 20px;
     min-height: 100vh;
   
@@ -58,31 +57,38 @@
   
     // Current Plan
     .current-plan {
+      display: grid;
+      justify-items: start;
       margin-bottom: 30px;
   
       .section-title {
         font-size: 20px;
         font-weight: bold;
         margin-bottom: 15px;
+
       }
   
       .plan-details {
         padding: 15px;
-        background-color: #222;
+        background-color: $dark-2-5;
         border-radius: 4px;
+        color: $gray-default-dark;;
+        border: 1px solid $gray4-default-dark;;
+        border-radius: 8px;
   
         p {
           margin: 8px 0;
           font-size: 14px;
-  
+          color: $gray-default-dark;;
           .status-tag {
             display: inline-block;
             padding: 2px 8px;
             border-radius: 12px;
             font-size: 12px;
             &.paid {
-              background-color: #4caf50;
-              color: #fff;
+              background-color: $dark-2;
+              border: 1px solid $green-default-dark;;
+              color:$green-default-dark;;
             }
             &.unpaid {
               background-color: #f44336;
@@ -107,12 +113,31 @@
             vertical-align: middle;
             margin-left: 5px;
           }
+          &.plan-pricing{
+            display: flex;
+            align-items: center;
+            gap: 8px*1;
+            font-size: 2rem;
+            padding: 8px;
+            margin: 0;
+          }
+        }
+
+        .current-plan-label{
+          font-size: 3rem;
+          padding: 2rem;
+          margin: 0;
+          text-align: center;
+          color: $gray-default-dark;;
+          background: $dark-3;
+          border: 1px solid $gray3-default-dark;;
+          border-radius: 8px;
         }
       }
     }
-  
-    // Invoice History
+    // Invoice Historyf
     .invoice-history {
+      margin-bottom: 18px*2;
       .section-title {
         font-size: 20px;
         font-weight: bold;
@@ -142,7 +167,17 @@
         background-color: #222;
         border-radius: 4px;
         overflow: hidden;
-  
+        background: $dark-2;
+        border: 1px solid $gray3-default-dark;;
+        border-radius: 8px;
+        td{
+          color: $gray2-default-dark;
+        }
+        .active{
+          td{
+            color: white;
+          }
+        }
         th,
         td {
           padding: 12px;
@@ -171,11 +206,11 @@
           border-radius: 12px;
           font-size: 12px;
           &.paid {
-            background-color: #4caf50;
+            background-color: $green-default-dark;
             color: #fff;
           }
           &.unpaid {
-            background-color: #f44336;
+            background-color: #5a5a5a;
             color: #fff;
           }
         }

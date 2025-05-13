@@ -1,7 +1,7 @@
 // Assume Firestore is initialized as 'db'
 import { addMonths, addYears } from "../../utils/dateUtils";
 import { db, storage } from "../app";
-import { doc, getDoc, setDoc, updateDoc, collection, arrayUnion, query, where, getDocs} from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, collection, arrayUnion, query, where, getDocs, orderBy} from 'firebase/firestore';
 
 // Placeholder function to get plan details by planId
 // In Productio, this could fetch from a database or use a static map
@@ -138,7 +138,7 @@ export async function changeSubscriptionPlan(studioId, newPlanId) {
       billing: {
         billingCycle: billingCycle,
         autoRenew: false,
-        paymentRecived: newPrice > 0 ? true : false, // Updated based on payment
+        paymentRecived: /* newPrice > 0 ? true : */ false, // Updated based on payment
         paymentPlatform: newPlan.type === 'free' ? null : 'razorpay',
         paymentMethod: null,
       },
@@ -157,6 +157,7 @@ export async function changeSubscriptionPlan(studioId, newPlanId) {
       status: 'active',
       credit: credit,
       invoiceId: invoiceId, // Add reference to the invoice
+      invoiceHistory: [invoiceId],
       metadata: {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -264,9 +265,9 @@ export async function getStudioSubscriptions(studioId) {
     }
 
     const subscriptionsRef = collection(db, 'subscriptions');
-    const q = query(subscriptionsRef, where('studioId', '==', studioId));
+    // sort by date creaated
+    const q = query(subscriptionsRef, orderBy('metadata.createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
-
     if (querySnapshot.empty) {
       return { success: false, data: null, message: 'No subscriptions found for this studio' };
     }
@@ -274,24 +275,26 @@ export async function getStudioSubscriptions(studioId) {
     const subscriptions = [];
     for (const doc of querySnapshot.docs) {
       const subscriptionData = doc.data();
-      let invoiceData = null;
 
+      /* let invoiceData = null;
       // Fetch the linked invoice if it exists
       if (subscriptionData.invoiceId) {
         const invoiceRef = doc(db, 'invoices', subscriptionData.invoiceId);
+        console.log('invoiceRef', invoiceRef);
         const invoiceDoc = await getDoc(invoiceRef);
+
+console.log('invoiceDoc', invoiceDoc);
         if (invoiceDoc.exists()) {
           invoiceData = invoiceDoc.data();
         }
-      }
+      } */
 
       subscriptions.push({
         id: doc.id,
         ...subscriptionData,
-        invoice: invoiceData, // Include invoice data
+        //invoice: invoiceData, // Include invoice data
       });
     }
-
     return {
       success: true,
       data: subscriptions,
@@ -303,6 +306,73 @@ export async function getStudioSubscriptions(studioId) {
   }
 }
 
+/**
+ * Retrieves all invoices for a given studio 
+ *  Retrieves all invoices  from all sascriptions in subscriptionHistory
+ * @param {string} studioId - The ID of the studio
+ * @returns {Promise<{ success: boolean, data: Array<object> | null, message: string }>}
+ */
+export async function getStudioInvoices(studioId) {
+  try {
+    if (!studioId) {
+      return { success: false, data: null, message: 'Studio ID is required' };
+    }
+    
+    const studioRef = doc(db, 'studios', studioId);
+    const studioDoc = await getDoc(studioRef);
+    if (!studioDoc.exists()) {
+      return { success: false, data: null, message: 'Studio not found' };
+    }
+    
+    const studioData = studioDoc.data();
+    const subscriptionHistory = studioData.subscriptionHistory || [];
+    const invoices = [];
+    
+    // Check if there are no subscriptions
+    if (subscriptionHistory.length === 0) {
+      return { 
+        success: true, 
+        data: [], 
+        message: 'No invoices found for this studio' 
+      };
+    }
+
+    // Loop through all subscriptions
+    for (const subscriptionId of subscriptionHistory) {
+      const subscriptionRef = doc(db, 'subscriptions', subscriptionId);
+      const subscriptionDoc = await getDoc(subscriptionRef);
+      
+      if (subscriptionDoc.exists()) {
+        const subscriptionData = subscriptionDoc.data();
+        const invoiceId = subscriptionData.invoiceId;
+        
+        if (invoiceId && invoiceId !== '') {  // Simplified condition
+          const invoiceRef = doc(db, 'invoices', invoiceId);
+          const invoiceDoc = await getDoc(invoiceRef);
+          
+          if (invoiceDoc.exists()) {
+            const invoiceData = invoiceDoc.data();
+            invoices.push({
+              id: invoiceId,
+              ...invoiceData,
+            });
+          }
+        }
+      }
+    }
+    
+    return {
+      success: true,
+      data: invoices,
+      message: invoices.length > 0 
+        ? 'Invoices retrieved successfully' 
+        : 'No invoices found for this studio'
+    };
+  } catch (error) {
+    console.error('Error fetching invoices:', error.message);
+    return { success: false, data: null, message: `Error: ${error.message}` };
+  }
+}
 
 
 

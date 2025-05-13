@@ -37,7 +37,8 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setProjectData((prevData) => ({ ...prevData, [name]: value }));
+    setProjectData((prevData) => ({ ...prevData, [name]: value, 
+      createdAt: new Date().getTime() }));
   };
 
   const dispatchNotification = (response, user) => {
@@ -63,17 +64,37 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
     );
   };
 
+  const handleNextStep = () => {
+    if (currentStep === 1 && !projectData.type.trim()) {
+      setErrors({ type: "Project type is required" });
+      typeInputRef.current?.focus(); // Focus the type input if it’s empty
+      return;
+    }
+    setCurrentStep(currentStep + 1);
+    setTimeout(() => {
+      nameInputRef.current?.focus(); // Focus the first input in step 2
+    }, 0);
+  };
+  
   const handleSubmit = () => {
-    if (!validateForm(projectData, setErrors, nameInputRef,name2InputRef, typeInputRef)) return;
-
+    if (!validateForm(projectData, setErrors, nameInputRef, name2InputRef, typeInputRef)) {
+      // Focus the first input with an error
+      if (errors.name) {
+        nameInputRef.current?.focus();
+      } else if (errors.name2) {
+        name2InputRef.current?.focus();
+      }
+      return;
+    }
+  
     const domain = currentStudio.domain;
     onClose();
-
+  
     setTimeout(() => {
       const action = isSubProject && parentProjectId
         ? dispatch(createSubProject({ domain, parentProjectId, subProjectData: projectData }))
         : dispatch(addProject({ domain, projectData }));
-
+  
       action
         .then((response) => {
           const { id, subProjectId } = response.payload;
@@ -86,14 +107,6 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
           dispatch(showAlert({ type: "error", message: `Failed to create ${isSubProject ? "sub-project" : "project"}.` }));
         });
     }, 500);
-  };
-
-  const handleNextStep = () => {
-    if (currentStep === 1 && !projectData.type.trim()) {
-      setErrors({ type: "Project type is required" });
-      return;
-    }
-    setCurrentStep(currentStep + 1);
   };
 
   const handlePreviousStep = () => {
@@ -119,22 +132,35 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
           </div>
         </div>
         <div className="modal-body">
-          {currentStep === 1 && (
-            <TemplateSelection
-              projectData={projectData}
-              errors={errors}
-              handleInputChange={handleInputChange}
-            />
-          )}
-          {currentStep === 2 && (
-            <ProjectDetails
-              projectData={projectData}
-              errors={errors}
-              handleInputChange={handleInputChange}
-              nameInputRef={nameInputRef}
-              name2InputRef={name2InputRef}
-            />
-          )}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (currentStep === 1) {
+                handleNextStep();
+              } else if (currentStep === 2) {
+                handleSubmit();
+              }
+            }}
+          >
+            {currentStep === 1 && (
+              <TemplateSelection
+                projectData={projectData}
+                errors={errors}
+                handleInputChange={handleInputChange}
+                handleNextStep={handleNextStep}
+                typeInputRef={typeInputRef} // Pass the ref to TemplateSelection
+              />
+            )}
+            {currentStep === 2 && (
+              <ProjectDetails
+                projectData={projectData}
+                errors={errors}
+                handleInputChange={handleInputChange}
+                nameInputRef={nameInputRef}
+                name2InputRef={name2InputRef}
+              />
+            )}
+          </form>
         </div>
         <div className="actions">
           {currentStep === 1 && (
@@ -171,6 +197,12 @@ const ProjectDetails = ({ projectData, errors, handleInputChange, nameInputRef, 
             placeholder="Sarah"
             type="text"
             onChange={handleInputChange}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && projectData.name.trim()) {
+                e.preventDefault();
+                name2InputRef.current?.focus();
+              }
+            }}
           />
           {errors.name && <div className="error">{errors.name}</div>}
         </div>
@@ -178,7 +210,7 @@ const ProjectDetails = ({ projectData, errors, handleInputChange, nameInputRef, 
           <label>Bride</label>
           <input
             name="name2"
-            ref={nameInputRef}
+            ref={name2InputRef}
             value={projectData.name2}
             placeholder="Matan"
             type="text"
@@ -220,8 +252,7 @@ const ProjectDetails = ({ projectData, errors, handleInputChange, nameInputRef, 
             </div>
           ))}
         </div>
-        <div className='info' htmlFor="">
-          {/* Storage used for this project will be free after ${selected projectData.projectValidityMonths} */}
+        <div className="info">
           After {projectData.projectValidityMonths} months, storage frees up & moved to cold storage for client only access.
         </div>
       </div>

@@ -109,7 +109,7 @@ export default function App() {
     if (studio?.trialEndDate) {
       dispatch(openModal('trialStatus'));
     }
-  },[studio.trialEndDate])
+  },[studio?.trialEndDate])
   useEffect(() => {
     const modalStates = Object.values(selectModal);
     if (modalStates.some(state => state)) {

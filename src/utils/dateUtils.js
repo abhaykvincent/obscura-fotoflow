@@ -138,7 +138,7 @@ export function getEventTimeAgo(dateString) {
     }
   }
 
-  return future ? 'soon' : 'Happening now!'; // Fallback
+  return future ? 'soon' : 'now'; // Fallback
 }
 
 // Helper function to add months to a date (simplified, use a library like date-fns in production)

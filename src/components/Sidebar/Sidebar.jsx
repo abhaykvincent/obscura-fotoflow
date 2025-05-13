@@ -91,7 +91,7 @@ function Sidebar() {
         </Link> */}
         {/* Admin */}
         
-        <p className="label">ADMIN</p>
+        <p className="label"></p>
         {/* <Link to={`/${studioName}/team`}>
           <div className={`menu team ${location.pathname === `/${studioName}/team` ? 'active' : ''}`}>
             <div className="icon"></div>
@@ -99,22 +99,22 @@ function Sidebar() {
           </div>
         </Link> */}
 
-        <Link to={`/${studioName}/notifications`}>
+        {/* <Link to={`/${studioName}/notifications`}>
           <div className={`menu notifications  ${location.pathname === `/${studioName}/notifications` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Notifications</div>
+          </div>
+        </Link> */}
+        <Link to={`/${studioName}/subscription`}>
+          <div className={`menu subscription ${location.pathname === `/${studioName}/subscription` ? 'active' : ''}`}>
+            <div className="icon"></div>
+            <div className="label">Pricing </div>
           </div>
         </Link>
         <Link to={`/${studioName}/storage`}>
           <div className={`menu storage ${location.pathname === `/${studioName}/storage` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Storage</div>
-          </div>
-        </Link>
-        <Link to={`/${studioName}/subscription`}>
-          <div className={`menu subscription ${location.pathname === `/${studioName}/subscription` ? 'active' : ''}`}>
-            <div className="icon"></div>
-            <div className="label">Subscription</div>
           </div>
         </Link>
         <Link to={`/${studioName}/settings`}>
@@ -136,6 +136,7 @@ function Sidebar() {
                   {`Trial ends in ${ getDaysFromNow(studio?.trialEndDate)} days`}
                 </div>
           }
+          <Link  to={`/${studioName}/subscription`}>
           <p className='plan-name'>{`${studio?.planName !== 'Core' ? '':''} ${studio?.planName} `}
             {
               getDaysFromNow(studio?.trialEndDate) <5?
@@ -146,6 +147,7 @@ function Sidebar() {
             }
 
           </p>
+          </Link>
         </div>
         <div className="storage-bars">
           
@@ -235,22 +237,31 @@ function Sidebar() {
           
           
           <Link to={`/${defaultStudio?.domain}/notifications`}>
-            <div className="option">Notifications</div>
+            <div className="option notification">Notifications</div>
           </Link>
           <Link to={`/${defaultStudio?.domain}/subscription`}>
-            <div className="option">Subscription</div>
+            <div className="option subscription">Subscription</div>
           </Link>
           <Link to={`/${defaultStudio?.domain}/storage`}>
-            <div className="option">Storage</div>
+            <div className="option storage">Storage</div>
           </Link>
-          <Link to={`/${defaultStudio?.domain}/subscription`}>
-            <div className="option">Contact</div>
+          <Link to={`/${defaultStudio?.domain}/contact`}>
+            <div className="option contact">Contact</div>
           </Link>
           <Link to={`/${defaultStudio?.domain}/settings`}>
-            <div className="option">Settings</div>
+            <div className="option settings">Settings</div>
           </Link>
             <div className="seperator"></div>
-          <div className="option logout"
+          <div className="option primary switch"
+            onClick={
+              ()=>{
+                dispatch(logout())
+                trackEvent('logout')
+                navigate(`/`)
+              }
+            }
+          >Switch Studio</div>
+          <div className="option primary logout"
             onClick={
               ()=>{
                 dispatch(logout())

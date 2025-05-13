@@ -95,6 +95,7 @@ export const createStudio = async (studioData) => {
 
     // Add invoiceId to subscription document
     subscriptionDoc.invoiceId = invoiceId;
+    subscriptionDoc.invoiceHistory = [invoiceId];
 
     // Save documents
     const studioRef = doc(studiosCollection, studioDoc.domain);
@@ -146,20 +147,6 @@ export const fetchStudios = async () => {
     }));
     return studiosData;
 }
-export const fetchStudioSubscriptions = createAsyncThunk(
-    'studio/fetchStudioSubscriptions',
-    async ({ studioId }, { rejectWithValue }) => {
-      try {
-        const result = await fetchCurrentSubscription(studioId);
-        if (!result.success) {
-          throw new Error(result.message);
-        }
-        return result.data;
-      } catch (error) {
-        return rejectWithValue(error.message);
-      }
-    }
-  );
 export const fetchStudioByDomain = async (currentDomain) => {
     const studiosCollection = collection(db, 'studios');
     const querySnapshot = await getDocs(studiosCollection);

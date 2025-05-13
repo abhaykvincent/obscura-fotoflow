@@ -3,8 +3,15 @@
 main.settings{
     padding: 8px*3;
     padding-left: 8px*4;
+
+    padding-bottom: 0;
     .dashboard-tabs{
         margin-top: 8px*4;
+        .tab-content{
+
+        height: calc(100vh - 8px*29);
+        overflow-y: scroll;
+        }
     }
 }
 .settings-header{
