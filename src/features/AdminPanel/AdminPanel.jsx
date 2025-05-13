@@ -9,6 +9,7 @@ import { set } from 'date-fns';
 import { useNavigate, useParams } from 'react-router';
 import { copyToClipboard, getGalleryURL, getOnboardingReferralURL } from '../../utils/urlUtils';
 import { fetchStudios } from '../../firebase/functions/studios';
+import { migrateStudios } from '../../firebase/functions/subscription';
 
 function AdminPanel() {
     const dispatch = useDispatch();
@@ -151,6 +152,17 @@ function AdminPanel() {
                     </div>
                     <div className="button secondary outline" onClick={() => {/* Implement create studio logic here */}}>
                         Create Ticket
+                    </div>
+                    <div className="button secondary outline" onClick={async () => {
+                            try {
+                                await migrateStudios();
+                                console.log('Studios migrated successfully');
+                            } catch (error) {
+                            console.error('Error migrating Studios:', error.message);
+                            // Optionally show an error message to the user
+                            }
+                        }}>
+                        Migrate Studios
                     </div>
                 </div>
             </div>

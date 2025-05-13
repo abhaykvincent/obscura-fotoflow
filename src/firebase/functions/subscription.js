@@ -1,7 +1,7 @@
 // Assume Firestore is initialized as 'db'
 import { addMonths, addYears } from "../../utils/dateUtils";
 import { db, storage } from "../app";
-import { doc, getDoc, setDoc, updateDoc, collection, arrayUnion, query, where, getDocs, orderBy} from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, writeBatch, collection, arrayUnion, query, where, getDocs, orderBy} from 'firebase/firestore';
 
 // Placeholder function to get plan details by planId
 // In Productio, this could fetch from a database or use a static map
@@ -511,4 +511,225 @@ async function generateInvoiceId(studioId,newPlan) {
     console.error('Error generating invoice ID:', error.message);
     throw error;
   }
+}
+
+
+
+
+// migrationScript.js (to be run with Firebase Admin SDK)
+// const admin = require('firebase-admin');
+// const { addYears } = require('./utils/dateUtils'); // Assuming you have this utility
+
+// admin.initializeApp({
+//   credential: admin.credential.applicationDefault(),
+//   // databaseURL: 'https://<YOUR_PROJECT_ID>.firebaseio.com' // if using RTDB, not needed for Firestore alone
+// });
+
+// const db = admin.firestore();
+
+// --- Helper to get v2 plan details (similar to v2/subscriptions.js) ---
+function getV2PlanDetails(planId) {
+  const plans = {
+    'core-free': {
+      name: 'Core',
+      type: 'free',
+      pricing: [{ storage: 5000, monthlyPrice: 0, yearlyPrice: 0 }], // Assuming storage is 5GB = 5000MB
+      v1Expiry: '2026-07-31', // From v1 initialPlans for 'Core'
+    },
+    // ... Add other v2 plans if needed for more complex migration logic
+  };
+  return plans[planId];
+}
+
+
+/**
+ * Creates a zero-dollar invoice for migration.
+ * @param {string} studioId - The ID of the studio.
+ * @param {object} plan - Snapshot of the plan details.
+ * @param {string} subscriptionId - The ID of the new subscription.
+ * @param {string} migrationDateISO - The migration date in ISO format.
+ * @param {Firestore} db - The Firestore database instance.
+ * @returns {Promise<string>} The ID of the created invoice.
+ */
+async function createMigrationInvoice(studioId, plan, subscriptionId, migrationDateISO, db) {
+  const invoiceId = `MIG-${studioId.slice(0,3).toUpperCase()}-${Date.now()}`; // Simplified ID for migration
+  // Use modular doc function
+  const invoiceRef = doc(db, 'invoices', invoiceId);
+
+  const invoiceData = {
+    id: invoiceId,
+    studioId: studioId,
+    subscriptionId: subscriptionId,
+    pricing: {
+      amount: 0,
+      currency: 'INR',
+      discount: 0,
+      tax: 0,
+      totalAmount: 0,
+    },
+    billing: {
+      cycle: 'yearly', // Assuming default migration to yearly for Core free
+      period: {
+        startDate: migrationDateISO.split('T')[0], // Store date part only
+        // Assuming getV2PlanDetails exists and returns a structure including v1Expiry
+        // and addYears utility exists
+        endDate: getV2PlanDetails(plan.planId)?.v1Expiry || addYears(new Date(migrationDateISO), 1).toISOString().split('T')[0],
+      },
+    },
+    payment: {
+      status: 'paid', // Since it's free or migrated
+      platform: null,
+      transactionId: null,
+      method: null,
+      paidAt: migrationDateISO,
+    },
+    planSnapshot: {
+      id: plan.planId,
+      name: plan.name,
+      type: plan.type,
+    },
+    metadata: {
+      createdAt: migrationDateISO,
+      updatedAt: migrationDateISO,
+      createdBy: 'MIGRATION_SCRIPT',
+      updatedBy: 'MIGRATION_SCRIPT',
+      version: 1,
+    },
+    notes: ['Migrated from v1 system.'],
+    externalReference: null,
+  };
+
+  // Use modular setDoc function
+  await setDoc(invoiceRef, invoiceData);
+  return invoiceId;
+}
+
+/**
+ * Migrates v1 studios to the v2 subscription model.
+ * @param {Firestore} db - The Firestore database instance.
+ * @returns {Promise<void>}
+ */
+export async function migrateStudios() {
+  // Use modular collection and getDocs
+  const studiosCollectionRef = collection(db, 'studios');
+  const studiosSnapshot = await getDocs(studiosCollectionRef);
+
+  const migrationPromises = [];
+  const migrationDate = new Date();
+  const migrationDateISO = migrationDate.toISOString();
+  const migrationTimestampStr = migrationDate.toISOString().split('T')[0];
+  debugger
+
+  console.log(`Found ${studiosSnapshot.size} studios to process.`);
+
+  for (const studioDoc of studiosSnapshot.docs) {
+    const studioData = studioDoc.data();
+    const studioId = studioDoc.id;
+
+    // Check if already migrated (e.g., has subscriptionId)
+    if (studioData.subscriptionId) {
+      console.log(`Studio ${studioId} already has a subscriptionId. Skipping.`);
+      continue;
+    }
+
+    // **Decision Point: What plan to migrate v1 users to?**
+    // Simplest: Assume all v1 users were on the 'Core' free plan.
+    // If you had other ways to determine their plan in v1 (e.g., a `planName` field in studioData), use that.
+    const defaultV1PlanForMigration = 'core-free'; // This is 'Core' in v1
+    // Assuming getV2PlanDetails exists
+    const planDetails = getV2PlanDetails(defaultV1PlanForMigration);
+
+    if (!planDetails) {
+      console.error(`Cannot find plan details for ${defaultV1PlanForMigration} for studio ${studioId}. Skipping.`);
+      continue;
+    }
+
+    const newSubscriptionId = `${studioId}-${planDetails.name.toLowerCase().replace(/\s+/g, '-')}-${migrationTimestampStr}-MIGRATED`;
+    // Use modular doc function
+    const newSubscriptionRef = doc(db, 'subscriptions', newSubscriptionId);
+
+    // Define the end date based on v1's Core plan expiry or a default period
+    let endDateISO;
+    if (planDetails.v1Expiry) {
+        endDateISO = planDetails.v1Expiry;
+    } else {
+        // Default fallback if v1Expiry is not set for the plan
+        // Assuming addYears utility exists
+        endDateISO = addYears(migrationDate, 1).toISOString().split('T')[0]; // e.g., 1 year from migration
+    }
+
+    const newSubscriptionDocData = {
+      id: newSubscriptionId,
+      studioId: studioId,
+      plan: {
+        planId: defaultV1PlanForMigration,
+        name: planDetails.name,
+        type: planDetails.type,
+      },
+      billing: {
+        billingCycle: 'yearly', // Core plan in v1 was free for 12 months, then up to an expiry
+        autoRenew: planDetails.type === 'free', // Or false if you want them to re-confirm
+        paymentRecived: true, // It's free
+        paymentPlatform: null,
+        paymentMethod: null,
+      },
+      dates: {
+        startDate: migrationTimestampStr,
+        endDate: endDateISO,
+      },
+      pricing: {
+        // Use correct pricing for the assumed default yearly cycle
+        basePrice: planDetails.pricing.find(p => p.billingCycle === 'yearly')?.price || planDetails.pricing[0].monthlyPrice, // Find yearly price or fallback
+        discount: 0,
+        tax: 0, // No tax on free plans, or calculate if applicable
+        currency: 'INR',
+        totalPrice: 0, // Free plan total price is 0
+      },
+      status: 'active',
+      credit: 0,
+      invoiceId: null, // Will be set after creating invoice
+      invoiceHistory: [], // Will be populated
+      metadata: {
+        createdAt: migrationDateISO,
+        updatedAt: migrationDateISO,
+        createdBy: 'MIGRATION_SCRIPT',
+        updatedBy: 'MIGRATION_SCRIPT',
+      },
+    };
+
+    // Create a zero-dollar invoice for consistency
+    // Pass the db instance to the helper function
+    const invoiceId = await createMigrationInvoice(studioId, newSubscriptionDocData.plan, newSubscriptionId, migrationDateISO, db);
+    newSubscriptionDocData.invoiceId = invoiceId;
+    newSubscriptionDocData.invoiceHistory.push(invoiceId);
+
+    // Use modular writeBatch function
+    const batch = writeBatch(db);
+
+    // Use modular setDoc with batch
+    batch.set(newSubscriptionRef, newSubscriptionDocData);
+
+    const studioUpdateData = {
+      planName: planDetails.name,
+      subscriptionId: newSubscriptionId,
+      // Assuming planDetails.pricing is an array of objects, find the one matching the cycle
+      'usage.storage.quota': planDetails.pricing.find(p => p.billingCycle === 'yearly')?.storage || planDetails.pricing[0].storage, // Find yearly storage or fallback
+      // Use modular arrayUnion
+      subscriptionHistory: arrayUnion(newSubscriptionId),
+      // Remove any old v1 plan fields if they exist:
+      // oldV1PlanField: deleteField(), // Use modular deleteField
+      migratedToV2: true, // A flag to indicate successful migration
+      'metadata.updatedAt': migrationDateISO, // Assuming studio has metadata
+      'metadata.updatedBy': 'MIGRATION_SCRIPT',
+    };
+
+    // Use modular updateDoc with batch (studioDoc.ref is already a DocumentReference)
+    batch.update(studioDoc.ref, studioUpdateData);
+
+    // Commit the batch
+    migrationPromises.push(batch.commit().then(() => console.log(`Successfully migrated studio ${studioId}`)));
+  }
+
+  await Promise.all(migrationPromises);
+  console.log('Migration process completed.');
 }
