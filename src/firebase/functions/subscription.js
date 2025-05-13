@@ -706,6 +706,7 @@ export async function migrateStudios() {
       'usage.storage.quota': planDetails.pricing.find(p => p.billingCycle === 'yearly')?.storage || planDetails.pricing[0].storage, // Find yearly storage or fallback
       // Use modular arrayUnion
       subscriptionHistory: arrayUnion(newSubscriptionId),
+      trialEndDate: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       // Remove any old v1 plan fields if they exist:
       // oldV1PlanField: deleteField(), // Use modular deleteField
       migratedToV2: true, // A flag to indicate successful migration
