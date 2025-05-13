@@ -263,31 +263,21 @@ export async function getStudioSubscriptions(studioId) {
     if (!studioId) {
       return { success: false, data: null, message: 'Studio ID is required' };
     }
-
+    console.log(studioId)
     const subscriptionsRef = collection(db, 'subscriptions');
-    // sort by date creaated
-    const q = query(subscriptionsRef, orderBy('metadata.createdAt', 'desc'));
+    // sort by date created
+    const q = query(subscriptionsRef, where('studioId', '==', studioId), orderBy('metadata.createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
     if (querySnapshot.empty) {
       return { success: false, data: null, message: 'No subscriptions found for this studio' };
     }
 
+    console.log(studioId)
     const subscriptions = [];
     for (const doc of querySnapshot.docs) {
       const subscriptionData = doc.data();
 
-      /* let invoiceData = null;
-      // Fetch the linked invoice if it exists
-      if (subscriptionData.invoiceId) {
-        const invoiceRef = doc(db, 'invoices', subscriptionData.invoiceId);
-        console.log('invoiceRef', invoiceRef);
-        const invoiceDoc = await getDoc(invoiceRef);
-
-console.log('invoiceDoc', invoiceDoc);
-        if (invoiceDoc.exists()) {
-          invoiceData = invoiceDoc.data();
-        }
-      } */
+      console.log(querySnapshot.docs)
 
       subscriptions.push({
         id: doc.id,
@@ -656,7 +646,7 @@ export async function migrateStudios() {
         // Assuming addYears utility exists
         endDateISO = addYears(migrationDate, 1).toISOString().split('T')[0]; // e.g., 1 year from migration
     }
-
+    console.log(studioId)
     const newSubscriptionDocData = {
       id: newSubscriptionId,
       studioId: studioId,

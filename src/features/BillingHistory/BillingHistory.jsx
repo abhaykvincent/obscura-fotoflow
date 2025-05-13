@@ -43,6 +43,7 @@ export default function BillingHistory() {
   }, [dispatch, defaultStudio]);
   
   // Map subscriptions to invoice format
+  console.log(subscriptions)
   const subscriptionsTable = subscriptions.map((subscription) => ({
     invoiceId: subscription.id,
     status: subscription.status,

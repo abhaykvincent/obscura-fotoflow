@@ -52,7 +52,7 @@ export const createStudio = async (studioData) => {
     // Subscription document
     const subscriptionDoc = {
         id: subscriptionId,
-        studioId: id,
+        studioId: domain,
         plan: {
             planId: 'core-free',
             name: 'Core',
