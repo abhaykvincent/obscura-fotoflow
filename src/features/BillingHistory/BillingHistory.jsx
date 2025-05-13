@@ -47,7 +47,7 @@ export default function BillingHistory() {
     invoiceId: subscription.id,
     status: subscription.status,
     amount: `₹${subscription.pricing.totalPrice / 100}`, // Assuming price is in cents
-    created: new Date(subscription.dates.startDate).toLocaleString('en-US', {
+    created: new Date(subscription.dates?.startDate).toLocaleString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -90,11 +90,11 @@ export default function BillingHistory() {
 
   // Calculate totals
   const totalPaid = subscriptions
-    .filter((s) => s.billing.paymentRecived)
+    .filter((s) => s.billing?.paymentRecived)
     .reduce((sum, s) => sum + s.pricing.totalPrice / 100, 0);
   const totalOutstanding = subscriptions
-    .filter((s) => !s.billing.paymentRecived)
-    .reduce((sum, s) => sum + s.pricing.totalPrice / 100, 0);
+    .filter((s) => !s.billing?.paymentRecived)
+    .reduce((sum, s) => sum + s.pricing?.totalPrice / 100, 0);
 
   return (
     <div className="billing-container">
@@ -103,14 +103,14 @@ export default function BillingHistory() {
       <div className="current-plan">
         <h2 className="section-title">Current Plan</h2>
         <div className="plan-details">
-          <div className='current-plan-label'>{currentSubscription?.plan.name}</div>
-          <p  className='plan-pricing'>₹{currentSubscription?.pricing.totalPrice / 100}{' '}
+          <div className='current-plan-label'>{currentSubscription?.plan?.name}</div>
+          <p  className='plan-pricing'>₹{currentSubscription?.pricing?.totalPrice / 100}{' '}
             <span
               className={`status-tag ${
-                currentSubscription?.billing.paymentRecived ? 'paid' : 'unpaid'
+                currentSubscription?.billing?.paymentRecived ? 'paid' : 'unpaid'
               }`}
             >
-              {currentSubscription?.billing.paymentRecived ? 'Paid' : 'Unpaid'}
+              {currentSubscription?.billing?.paymentRecived ? 'Paid' : 'Unpaid'}
             </span>
           </p>
           <p>
@@ -125,7 +125,7 @@ export default function BillingHistory() {
           </p> */}
           <p>
             <strong>Plan Expires </strong>{' '}
-            in {getDaysFromNow(currentSubscription?.dates.endDate)} days
+            in {getDaysFromNow(currentSubscription?.dates?.endDate)} days
           </p>
           <p>
             <strong>Free Trial </strong>{' '}
@@ -167,7 +167,7 @@ export default function BillingHistory() {
           <tbody>
             {subscriptionsTable.map((invoice, index) => (
               <tr key={index} className={`${invoice.status}`}>
-                <td>{invoice.plan.name}</td>
+                <td>{invoice.plan?.name}</td>
                 <td>
                   <span
                     className={`status-tag ${
@@ -177,22 +177,22 @@ export default function BillingHistory() {
                     {invoice.status}
                   </span>
                 </td>
-                <td className="align-right">{invoice.amount}/{invoice.billing.billingCycle}</td>
+                <td className="align-right">{invoice.amount}/{invoice.billing?.billingCycle}</td>
                 <td className="align-right">{ getEventTimeAgo(invoice.created)}</td>
                 <td className="align-right">{
                 invoice.status === "active"  ?
                 new Date(studio?.trialEndDate) > new Date() ?
                   getEventTimeAgo(studio?.trialEndDate):
-                  getEventTimeAgo(invoice.dates.endDate)
+                  getEventTimeAgo(invoice?.dates?.endDate)
                 :''
                 }
                 </td>
                 <td className="actions">
-                  <Link to={invoice.viewLink} className="link">
+                  <Link to={invoice?.viewLink} className="link">
                     View
                   </Link>{' '}
                   |{' '}
-                  <Link to={invoice.downloadLink} className="link">
+                  <Link to={invoice?.downloadLink} className="link">
                     Download
                   </Link>
                 </td>
