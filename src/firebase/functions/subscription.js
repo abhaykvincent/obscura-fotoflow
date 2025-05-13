@@ -626,11 +626,7 @@ export async function migrateStudios() {
     const studioData = studioDoc.data();
     const studioId = studioDoc.id;
 
-    // Check if already migrated (e.g., has subscriptionId)
-    if (studioData.subscriptionId) {
-      console.log(`Studio ${studioId} already has a subscriptionId. Skipping.`);
-      continue;
-    }
+   
 
     // **Decision Point: What plan to migrate v1 users to?**
     // Simplest: Assume all v1 users were on the 'Core' free plan.
