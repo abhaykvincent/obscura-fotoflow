@@ -18,7 +18,26 @@ export const PROJECT_TYPES = [
     { id: "validity-6", value: "6", label: "6 Months", className: "free-validity" },
     { id: "validity-12", value: "12", label: "1 Year", disabled: true, className: "upgrade-needed" },
   ];
-  
+  export const PROJECT_CATEGORIES = [
+    {
+      category: "Personal",
+      types: [
+        { id: "wedding", value: "Wedding", label: "Wedding" },
+        { id: "birthday", value: "Birthday", label: "Birthday" },
+        { id: "family", value: "Family", label: "Family" },
+        // Add other personal event types as needed
+      ]
+    },
+    {
+      category: "Professional",
+      types: [
+        { id: "headshot", value: "Headshot", label: "Headshot" },
+        { id: "corporate", value: "Corporate", label: "Corporate" },
+        // Add other professional event types as needed
+      ]
+    },
+    // Add additional categories as needed
+  ];
   export const initialProjectData = {
     name: "",
     name2: "",

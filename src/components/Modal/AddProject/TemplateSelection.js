@@ -1,14 +1,17 @@
 import React from 'react';
 import { PROJECT_TYPES } from './constants';
 
-const TemplateSelection = ({ projectData, errors, handleInputChange }) => (
+const TemplateSelection = ({ projectData, errors, handleInputChange,handleNextStep }) => (
   <div className="form-section">
     <div className="project-validity-options template-options">
       {PROJECT_TYPES.map(({ id, value, label }) => (
-        <div className="radio-button-group" key={id}>
+        <div className="radio-button-group" key={id}
+
+        >
           <input
             type="radio"
             id={id}
+          onClick={() => handleNextStep()}
             name="type"
             value={value}
             checked={projectData.type === value}

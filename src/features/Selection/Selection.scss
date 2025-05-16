@@ -114,61 +114,84 @@
           }
         }
       }
+      .selection-completed-label{
+        margin-top: 8px*2;
+        text-align: center;
+        color: $green-accessible-light;
+      }
   }
   .collections-panel{
+    overflow-x: scroll;
+    display: flex;
+    justify-content: center;
+    overflow-x :scroll;
+    margin-top: 8px*3;
+    padding: 0 8px;
+    z-index: 1;
+    .collection-tab{
       display: flex;
-      width: calc(100% - 8px*1);
-      overflow-x: scroll;
-
-      justify-content: center;
-      margin-top: 8px*5;
-      transform: translate(8px*1, 8px*0);
-      z-index: 1;
-      .collection-tab{
-        display: flex;
-        white-space: nowrap;
-        gap: 8px*1;
-        padding: 8px 8px*2 ;
-        margin-left: -1px;
-        background-color: $light-2;
+      gap: 8px*1;
+      padding: 8px 8px*5 ;
+      margin-left: -1px;
+      background-color: $light-3;
+      border-radius: 0px;
+      border: 1px solid none;
+      border-bottom: 2px solid $gray5-accessible-light;
+      color: $gray3-accessible-light ;
+      white-space: nowrap;
+      .photo-count-label{
+        opacity: 0;
+        width: 0px;
+      }
+      &.client-selection-tab{
+        border: 1px solid $green-default-light;
+        padding: 8px*0.5 8px*1.5;
+        font-size: 0.9rem;
         border-radius: 4px;
-        @include boxShadow;
-        border: 1px solid $gray3-default-light;
-        color: $gray3-accessible-light ;
         a{
-          padding: 0;
-          color: $gray-accessible-light;
-        }
-        &.active{
-          border: 1px solid $gray2-default-dark;
-          z-index: 10 !important;
-          a{
-            color: black;
-          }
-          background-color: $light-3;
-        }
+        padding: 0;
+        color: $green-accessible-light ;
+      }
 
       }
-      .collection-tab:nth-child(n) {
-        z-index: calc(5 - var(--n, 0));
+      a{
+        padding: 0;
+        color: $gray-accessible-light;
       }
-      
-      .collection-tab:nth-child(1) {
-        --n: 1;
+      &.active{
+        border-bottom: 2px solid $dark-3;
+        z-index: 10 !important;
+        .photo-count-label{
+          opacity: 0.5;
+          margin-left: 6px;
+          margin-right: 8px;
+        }
+        a{
+          color: black;
+        }
       }
-      
-      .collection-tab:nth-child(2) {
-        --n: 2;
-      }
-      
-      .collection-tab:nth-child(3) {
-        --n: 3;
-      }
-      
-      .collection-tab:nth-child(4) {
-        --n: 4;
-      }
+
     }
+    .collection-tab:nth-child(n) {
+      z-index: calc(5 - var(--n, 0));
+    }
+    
+    .collection-tab:nth-child(1) {
+      --n: 1;
+    }
+    
+    .collection-tab:nth-child(2) {
+      --n: 2;
+    }
+    
+    .collection-tab:nth-child(3) {
+      --n: 3;
+    }
+    
+    .collection-tab:nth-child(4) {
+      --n: 4;
+    }
+  }
   .no-images-message{
     margin: 8px*5 8px 8px 8px;
     text-align: center;
@@ -178,7 +201,6 @@
     margin: 0 auto;
     margin-top: 8px*1;
     padding: 8px;
-   min-height: calc(100vh - 8px*40);
     max-width: 8px*140;
     .photos{
       width: 100%;
@@ -284,9 +306,19 @@
 @media only screen and (max-width: 520px) {
   .App .select-project{
     .collections-panel{
-      padding-left: 4px;
-      padding-bottom: 6px;
+      max-width: 99vw;
+      justify-content: start;
+      .collection-tab{
+        padding: 8px;
+        a{
+          font-size: 0.9rem;
+        }
       }
+      &.client-selection{
+        justify-content: center;
+
+      }
+    }
     .shared-collection{
       padding: 8px;
       
@@ -303,7 +335,6 @@
     .project-header .banner{
     }
     .control-label.label-all-photos{
-      display: none;
     }
     .pagination{
       justify-content: end;

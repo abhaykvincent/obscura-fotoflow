@@ -2,6 +2,7 @@ import {Link} from 'react-router-dom';
 import './ProjectCard.scss'
 import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../../app/slices/authSlice';
+import { getThumbnailUrl1 } from '../../../utils/urlUtils';
 
 function ProjectCard({project}) {   
   const defaultStudio = useSelector(selectUserStudio)
@@ -11,7 +12,7 @@ function ProjectCard({project}) {
         <div className="cover-wrap">
             <div className="project-cover"
             style={{
-                backgroundImage: project.projectCover ?`url(${project.projectCover.replace(/\(/g, '%28').replace(/\)/g, '%29')})` : '',
+                backgroundImage: project.projectCover ?`url(${getThumbnailUrl1(project.projectCover).replace(/\(/g, '%28').replace(/\)/g, '%29')})` : '',
                 backgroundSize: project.projectCover ? 'cover' : '',
                 backgroundBlendMode: project.projectCover ? '' : 'soft-light',
             }}

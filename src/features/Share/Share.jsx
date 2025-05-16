@@ -93,7 +93,7 @@ export default function ShareProject() {
     <div className="">
       <div className="collections-panel">
         {project.collections.map((collection, index) => (
-          collection.uploadedFiles.length !== 0 && 
+          collection.uploadedFiles?.length !== 0 && 
           <div
             key={collection.id}
             className={`

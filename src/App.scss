@@ -28,7 +28,7 @@ a{
   color: inherit;
 }
 p{
-  cursor : default;
+  cursor : inherit;
 }
 body{
   background: $dark-3;
@@ -37,7 +37,11 @@ body{
 .App{
  width: 100vw;
  min-height: 100vh;
- 
+ position: relative;
+
+ .app-wrap{
+  height: 100%;
+ }
 *{
 
   color: white;
@@ -93,7 +97,39 @@ body{
     
     
   }
-  
+  .footer{
+    display: flex;
+    gap: 4px;
+    position: fixed;
+    justify-content: center;
+    height: 8px*2;
+    overflow: hidden;
+    transform: translateX(-50%);
+    left: 50vw;
+    bottom: 8px*0.3;
+    font-size: 0.7rem;
+    color: $gray2-accessible-dark;
+    z-index: 299;
+    opacity: 0.9;
+    a{
+      color: $gray4-accessible-dark;
+
+      text-shadow: 0px 1px 2px black,0px 0px 4px rgba(119, 119, 119, 0.419)
+    }
+    span{
+      color: $gray4-accessible-dark;
+      
+    }
+    .copyright-symbol{
+      color: $gray3-accessible-dark;
+      line-height: 2rem;
+      transform: translateY(-6px);
+      font-size: 1.4rem;
+      text-shadow: 0px 1px 2px black,0px 0px 4px rgb(119, 119, 119)
+
+
+    }
+  }
   .breadcrumbs{
     display: flex;
     padding: 4px 8px;
@@ -172,10 +208,11 @@ body{
     top: $header-height ;
     left: $sidebar-width - 6px;
     width: calc(100vw - #{$sidebar-width} - 8px);
-    min-height: calc(100vh - #{$header-height} - 8px);
+    min-height: calc(100vh - #{$header-height} - 8px*2.6);
     padding: 0 8px*2;
     padding-top: 8px*1;
     margin-left: 8px*1;
+    margin-bottom: 8px*5;
     padding-bottom: 8px*3;
     z-index: 10;
     border: 1px solid $dark-1;
@@ -204,7 +241,7 @@ body{
         overflow: hidden;
         transition-delay: 0.8s;
         transition-timing-function: ease-in;
-        background-color: $dark-3;
+        background-color: rgba(0, 0, 0, 0.7);
         background-image: url('https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=FFFFFF');
         background-blend-mode: normal, luminosity, luminosity;
         animation-name: cover-subtle-pop;
@@ -228,6 +265,10 @@ body{
         &.cover-hide{
           animation: none;
           padding-top: 8px*30;
+          background-position: left, center 20%, right;
+          opacity: 0;
+          animation: fadeInUp 0.2s ease-in 0.1s;
+          animation-fill-mode: forwards;
         }
         .cover-tools{
           display: flex;
@@ -798,13 +839,21 @@ body{
         display: grid;
         justify-content: center;
         padding: 8px;
+        z-index: 40;
+        border-radius: 6px;
+        border: 1px solid #2B2B2B;
+        box-shadow: 0px -1px 1px black;
+        -webkit-backdrop-filter: blur(4px);
+        backdrop-filter: blur(8px);
+        background-color: rgba(16, 16, 16, 0.9);
+        margin-top: -2px;
       }
       .caughtup-label{
         text-align: center;
-        color: $gray5-accessible-dark;
-        padding: 8px;
+        color: $gray6-default-dark;
+        padding: 0px;
         font-size: 0.9rem;
-        margin-top: 8px*4;
+        margin-top: 8px*0;
       }
 
       &.lightMode{
@@ -867,7 +916,7 @@ body{
   }
     .home-header,.search-header {
       position: fixed;
-      right: 0vw;
+      left: 8px*20;
       top: 0vw;
       margin: 8px;
       z-index: 50;
@@ -878,7 +927,7 @@ body{
     justify-items: center;
     margin-top: 8px*4;
     opacity: 0;
-    animation: 0.5s reveal-up 1s forwards;
+    animation: 0.5s reveal-up 1.5s forwards;
     p{
     margin-bottom: 8px*1;
     color: $gray4-default-dark;
@@ -1385,7 +1434,9 @@ body{
     height: calc(100vh - $header-height*2);
     background-color: $dark-2;
     border-radius: $border-radius-1;
-    border: 1px solid $dark-0;
+    border: 1px solid $gray4-accessible-dark;
+    border-top: 1px solid $gray2-accessible-dark;
+    border-left: 1px solid $gray3-accessible-dark;
     padding-bottom: 8px*9;
     transform: translate(100%,0%) scale(0.9);
     opacity: 0;
@@ -1406,7 +1457,8 @@ body{
       opacity: 1;
       animation-name: modal-in-island;
       animation-duration: 0.1s;
-      background-color: rgba(12, 12, 12, 0.9);
+      transition-delay: 0.1s;
+      background-color: rgba(24, 24, 24, 0.8);
       .modal-body{
         height: auto;
         margin-bottom: 8px*4;
@@ -1428,7 +1480,7 @@ body{
       font-weight: 600;
       line-height: 8px*3.5;
       text-align: center;
-      background-color: rgba(0, 0, 0, 0.3);
+      background-color: $dark-3;
       backdrop-filter: blur(8px);
       border-radius: $border-radius-1 $border-radius-1 0 0;
       border-bottom: 1px solid $dark-1;
@@ -1445,19 +1497,13 @@ body{
           height: 8px*1.5;
           width: 8px*1.5;
           border-radius: 50%;
-          transform: scale(0.8);
-          opacity: 0.8;
-          animation-name: control-button-reveal;
-          animation-duration: 1s;
-          animation-fill-mode: forwards;
-          animation-timing-function: ease-out;
+          opacity: 0.6;
           
           &.close{
             background-color: $red-default-dark;
             animation-delay: 0.1s;
             &:hover{
 
-              transform: scale(1) !important;
               opacity: 1 !important;
               transition-duration: 0.2s;
               }
@@ -1467,11 +1513,11 @@ body{
             background-color: $yellow-default-dark;
             animation-duration: 0.15s;
 
-            opacity: 0.1 !important;;
+            opacity: 0.05 !important;;
           }
           &.maximize{
             background-color: $green-default-dark;
-            opacity: 0.1 !important;;
+            opacity: 0.05 !important;;
           }
           &.disabled{
             opacity: 0.1 !important;;
@@ -1496,6 +1542,13 @@ body{
     .form-section{
       margin:0  8px*4 ;
       gap: 8px;
+      text-align: center;
+      h2{
+        margin-bottom: 8px*2;
+      }
+      p{
+        color: $gray3-default-dark;
+      }
       &.contact{
 
         .field{
@@ -1512,13 +1565,12 @@ body{
         margin: 0px;
         font-size: 0.9rem;
         margin-top: 8px*2;
-        /* opacity: 0;
-        animation: fadeInLeft 0.15s ease-out 0.1s; */
+        opacity: 0;
+        animation: fadeInUp 0.2s ease-in;
         animation-fill-mode: forwards;
         &.optional{
           label{opacity: 0.4;}
           input{opacity: 0.4;}
-          
         }
         label{
           text-align: right ;
@@ -1558,7 +1610,7 @@ body{
 
         @for $i from 1 through 12 {
           &:nth-child(#{$i}){
-            animation-delay: 0.03s * $i;
+            animation-delay: 0.01s + 0.1s * $i;
           }
         }
 
@@ -1582,21 +1634,40 @@ body{
           align-items: center;
           gap: 8px*0;
           padding: 8px*0.5 8px*1;
-          border: 1px solid $dark-1;
+          border: 1px solid $gray6-accessible-dark;
+          border-left: 1px solid $gray4-accessible-dark;
+          border-top: 1px solid $gray4-accessible-dark;
+          background-color: $dark-2-5;
+          box-shadow: 2px 1px 0 1px rgba(0, 0, 0, 0.4);
           border-radius: 4px;
+          overflow: hidden;
           cursor: pointer;
           transition-delay: 0s;
           transition-duration: 0.1s;
           &.upgrade-needed{
             opacity: 0.5;
+            border: 1px solid $gray6-accessible-dark;
+            box-shadow: 0px 1px 0 0px rgba(0, 0, 0, 0.4);
             label{
               color: $dark-0;
 
+            }
+            &:hover{
+              color: white;
+              border: 1px solid $gray6-accessible-dark;
+              label{
+                display: flex;
+                cursor: pointer;
+                color: $gray-default-light;
+                transition-duration: 0.1s;
+              }
             }
           }
           &:hover{
             color: white;
             border: 1px solid $dark-0;
+            border-left: 1px solid $gray2-accessible-dark;
+            border-top: 1px solid $gray2-accessible-dark;
             label{
               display: flex;
               cursor: pointer;
@@ -1604,12 +1675,22 @@ body{
               transition-duration: 0.1s;
             }
           }
+          &:active{
+
+            border: 1px solid $green-dark-accessible-light;
+            border-left: 1px solid $green-accessible-light;
+            border-top: 1px solid $green-accessible-light;
+            background-color: $dark-3;
+          }
           // hide radio buttons
           input[type="radio"] {
             display: none; 
           }
           &:has(input:checked){
             border: 1px solid $green-dark-accessible-light;
+            border-left: 1px solid $green-accessible-light;
+            border-top: 1px solid $green-accessible-light;
+            background-color: $dark-3;
             box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);;
             transition-delay: 0.05s;
             transition-duration: 0.1s;
@@ -1639,8 +1720,12 @@ body{
           margin-bottom: 8px*2;
           justify-content: center;
           .radio-button-group{
-            padding: 8px*1.5 8px*2*1.6;
+            padding: 0px;
             font-size: 1.2rem;
+            label{
+              padding: 8px*1.5 8px*2*1.6;
+            }
+            
           }
         }
       }
@@ -1658,6 +1743,21 @@ body{
       :first-of-type .error{
         opacity: 1;
       }
+      .info{
+        display: grid;
+        width: 100%;
+        margin-top: 8px;
+        text-align: left;
+        font-size: 0.8rem;
+        color: $gray4-accessible-dark;
+        opacity: 0.5;
+        grid-column-start: 1;
+        grid-column-end: 3;
+        
+      }
+      :first-of-type .info{
+        opacity: 1;
+      }
     }
     .actions{
       display: flex;
@@ -1669,7 +1769,7 @@ body{
       border-top: 1px solid $dark-1;
       border-radius: 4px;
       padding: 8px*2 8px*4 ;
-      background-color: rgba(0, 0, 0, 0.01);
+      background-color: $dark-3;
       backdrop-filter: blur(8px);
       box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.4);
       gap: 8px
@@ -1753,46 +1853,84 @@ body{
         display: grid;
       position: relative;
       justify-content: center;
-      background-color: $dark-3;
+      background-color: $dark-2-5;
       border: 1px solid $gray6-default-dark;
       border-left: 1px solid $gray5-default-dark;
       border-top: 1px solid $gray5-default-dark;
-      padding: 8px*6 8px*6*1.618;
-      padding-bottom: 0;
+      padding: 8px*4 8px*8*1.618;
+      padding-bottom: 8px*1;
       border-radius: 8px;
-      p{
+      .login-title{
+        color: $gray2-default-dark;
+        opacity: 0;
+        animation: fadeInUp 0.15s ease-out 0.95s;
+        animation-fill-mode: forwards;
+        span{
+          color: $gray4-default-dark;
+
+        }
+      }
+      .login-subtitle{
+        color: $gray4-default-dark;
+        margin-top: 0px;
         margin-bottom: 8px*2;
-        margin-left: 8px*1;
+        font-size: 0.9rem;
+        font-weight: 200;
+        opacity: 0;
+        animation: fadeInUp 0.35s ease-out 1s;
+        animation-fill-mode: forwards;
+      }
+      .login-title-section{
+        color: $gray6-default-light;
+        font-size: 2.2rem;
+        font-weight:600;
+        margin-bottom: -8px*1.2;
+        margin-left: -2px;
+        opacity: 0;
+        animation: fadeInUp 0.25s ease-out 0.9s;
+        animation-fill-mode: forwards;
+        span{
+          color: $gray2-default-light;
+          span{
+            color: $green-dark-accessible-light;
+          }
+        }
+      }
+      p{
+        margin-left: 8px*0;
         text-align: center;
-        color: $gray2-accessible-dark;
         span{
           color: $green-accessible-dark;
         }
       }
         .button{
           height: 8px*6;
-          width: 8px*6*1.618*1.618*1.618*1.618;
           display: flex;
           align-items: center;
-          justify-content: center;
+          justify-content: flex-start;
           padding: 8px*3 8px*3;
-          padding-right: 8px*2;
+          padding-right: 8px*3;
           margin-bottom: 8px*1.618;
           gap: 8px*2;
           background-color: $dark-1;
           border: 1px solid $dark-0;
           color: $gray4-default-light;
-          font-size: 1.1rem;
+          font-size: 1rem;
           font-weight: 200;
           transition-duration: 0.1s;
           box-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+          transform: scale(1);
           &:hover{
             transition-delay: 0.2s;
             border: 1px solid $gray5-accessible-light;
-          } &.google{
+          } 
+          &.google{
             background-color: $dark-3;
-          box-shadow: 2px 2px 2px 1px black;
+            box-shadow: 2px 2px 2px 1px black;
             border: 1px solid $gray2-default-light;
+            opacity: 0;
+            animation: fadeInUp 0.3s ease-out 1.2s;
+            animation-fill-mode: forwards;
             &:hover{
             border: 1px solid $gray6-accessible-light;
           } 
@@ -1800,7 +1938,11 @@ body{
           }
           &.apple{
           color: $gray-default-light;
+          opacity: 0;
+          animation: fadeInUp 0.4s ease-out 2.2s;
+          animation-fill-mode: forwards;
 
+          transform: scale(0.98);
             background-color: $dark-3;
           }
           &.disabled{
@@ -1809,12 +1951,12 @@ body{
           }
          
           .google-logo{
-            width: 8px*4;
-            height: 8px*4;
+            width: 8px*3;
+            height: 8px*3;
             border: none;
             background-image: url('./assets/img/google-logo.png');
             background-position: center center;
-            background-size: 110%;
+            background-size: 100%;
           }
           .apple-logo{
             width: 8px*3;
@@ -1850,14 +1992,22 @@ body{
           gap: 8px*0.5;
           margin-top: 8px*2;
           margin-bottom: 8px*2;
+          opacity: 0;
+          animation: fadeInUp 0.35s ease-out 2.6s;
+          animation-fill-mode: forwards;
           p{
           }
           .create-studio-link{
-
-            opacity: 0.8;
+            width: 100%;
+            margin: 0;
+            padding: 8px*2 ;
+            padding-top: 8px;
+            opacity: 0.4; 
             font-size: 1rem;
-            color: $green-default-dark;
+            color: white;
+            text-align: center;
             transition-duration: 0.2s;
+            cursor: pointer;
             &.fade{
               opacity: 0.4;
             }
@@ -1869,23 +2019,8 @@ body{
             
           
         }
-        .login-branding{
-          opacity: 0.3;
-          margin-top: 8px*1;
-          border-top: 1px solid $dark-0;
-          padding-top: 8px*2;
-          p{
-            span{
-            text-shadow: 1px 1px 0px  black;;
-
-              color: $gray3-accessible-light;
-              span{
-                color: $gray6-accessible-light;
-              }
-            }
-          }
-        }
     }
+    
       .loader{
         height: 8px*3;
         width: 100%;
@@ -1986,6 +2121,27 @@ body{
     }
   }
 
+  .login-branding{
+    width: 100%;
+    opacity: 0.4;
+    margin-top: 8px*1;
+    border-top: 1px solid $dark-0;
+    padding-top: 8px*1;
+
+    position: fixed;
+    bottom: 8px*3;
+    p{
+      text-align: center;
+      span{
+      text-shadow: 1px 1px 0px  black;;
+
+        color: $gray3-accessible-light;
+        span{
+          color: $gray6-accessible-light;
+        }
+      }
+    }
+  }
   .login-container{
    
     .logo{
@@ -2041,15 +2197,15 @@ body{
     }
   }
   .login-footer{
-    width: 100%;
+    width: calc(100% + 8px*40);
     display: flex;
     gap: 8px*0;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    position: fixed;
-    bottom: 0px;
-    left: 0;
+    position: absolute;
+    bottom: -8px*12;
+    left: -8px*20;;
     a{
       font-size: 0.9rem;
       color: $dark-0;
@@ -2058,19 +2214,33 @@ body{
       padding: 8px*2 8px*1;
       transition-duration: 0.2;
       transition-timing-function: ease-out;
+      opacity: 0;
+      cursor: pointer;
       &:hover{
         color: $green-default-dark;
         transition-duration: 0.1s;
         transition-timing-function: ease-in;
         text-decoration-color: $gray-default-dark;
         text-shadow: 1px 1px 0px 0px rgb(10, 10, 10);
+      }@for $i from 1 through 10 {
+        &:nth-child(#{$i}) {
+            $delay: 2.7s + 0.05s * ($i - 1);
+            animation: fadeInUp 0.2s ease-out $delay;
+            animation-fill-mode: forwards;
+        }
       }
     }
-    .ampersand{
-      color: $gray5-default-dark;
+    p.ampersand{
+      color: $gray2-default-dark;
       font-weight: 200;
       transform: scale(1.3);
+      opacity: 0;
+      $delay: 2.5s + 0.05s * 6;
+      animation: fadeInUp 0.5s ease-out $delay;
+      animation-fill-mode: forwards;
     }
+    
+    
   }
   .modal-backdrop{
     position: fixed;
@@ -2078,9 +2248,9 @@ body{
     left:0;
     width: 100%;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.6);
     z-index: 19;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(1px);
     transition-duration: 0.4s;
   }
   .no-items{
@@ -2131,20 +2301,20 @@ body{
 @keyframes modal-in {
   0% {
     margin-left: 8px*5;
-    transform: translate(200%,0%)  scale(1);
+    transform: translate(200%,0%);
     opacity: 0;
   }
   55% {
-    transform: translate(-8px*5,0%)  scale(1);
+    transform: translate(-8px*5,0%)  ;
     opacity: 1;
   }
   60% {
-    transform: translate(-8px*5,0%)  scale(1);
+    transform: translate(-8px*5,0%) ;
     opacity: 1;
   }
   100% {
     margin-left: 8px*0;
-    transform: translate(-8px*3,0%)  scale(1);
+    transform: translate(-8px*3,0%) ;
     opacity: 1;
   }
 }
@@ -2170,20 +2340,20 @@ body{
 }
 @keyframes modal-in-island {
   0% {
-    transform: translate(-50%,calc(-40% - $header-height)) scale(0.8);
+    transform: translate(-50%,-50%) scale(0.8);
     opacity: 0;
   }
   55% {
-    transform: translate(-50%,calc(-50% - $header-height)) scale(1);
+    transform: translate(-50%,-50%)  scale(1);
     opacity: 1;
   }
   60% {
-    transform:translate(-50%,calc(-50% - $header-height)) scale(1.01);
+    transform:translate(-50%,-50%)  scale(1.01);
     opacity: 1;
   }
   100% {
     margin-left: 8px*0;
-    transform: translate(-50%,calc(-50% - $header-height)) scale(1);
+    transform: translate(-50%,-50%) ;
     opacity: 1;
   }
 }
@@ -2329,7 +2499,7 @@ body{
     }
     .photo-wrap{
 
-      width: calc(100vw/4 - $sidebar-width/4 - 8px*2);
+      width: calc(100vw/4 - $sidebar-width/4 - 8px*4);
       position: relative;
       margin-left: -1px;
       margin-top: -1px;

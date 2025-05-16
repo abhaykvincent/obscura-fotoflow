@@ -323,6 +323,58 @@
                 }
         }
     }
+} 
+.guide{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 51;
+    &.swipe-guide{
+        .swipe-animation-wrapper{
+            width: 8px*20;
+            height: 8px*5;
+            position: absolute;
+            bottom: 8px*10;
+            left: calc(50vw - 8px*5);
+            .swipe-animation{
+                position: relative;
+                width: 8px*0;
+                height: 8px*2;
+                margin-left: 0;
+                border-radius: 8px*2;
+                background-color: rgba(255, 255, 255, 0.4);
+                animation:preview-swipe-animation 2s infinite;
+                animation-delay: 5s;
+            }
+            @keyframes preview-swipe-animation  {
+                0%{
+                    width: 8px*0;
+                    left: 8px*18;
+                    background-color: rgba(255, 255, 255, 5);
+                }
+                30%{
+                    width: 8px*20;
+                    left: -8px*8;
+                    background-color: rgba(255, 255, 255, 0.2);
+                    animation-timing-function: ease-out;
+                }
+                60%{
+                    width: 8px*2;
+                    left: -8px*16;
+                    background-color: rgba(255, 255, 255, 0.0);
+                }
+                100%{
+                    width: 8px*0;
+                    left: -8px*32;
+                    background-color: rgba(255, 255, 255, 0);
+                }
+            }
+        }
+    }
+
 }
 .selected-button{
     display: flex;

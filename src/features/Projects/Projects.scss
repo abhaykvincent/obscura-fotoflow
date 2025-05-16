@@ -26,10 +26,29 @@
     margin: 8px 8px*1.5;
     font-size: 0.9rem;
     justify-content: space-between;
+
+    .control-wrap{
+        position: relative;
+        .label{
+            position: absolute;
+            top: -8px*2.2;
+            left: 8px*0.5;
+            color: $gray3-default-dark;
+            font-size: 0.8rem;
+
+            opacity: 0;
+            animation: fadeInLeft 0.5s ease-out 0.04s;
+            animation-fill-mode: forwards;
+            animation-timing-function: ease-out;
+        }
+    }
     .control-label{
       color: $gray3-default-dark;
       padding: 8px;
       &.label-all-photos{
+        color: $gray2-default-dark;
+      }
+      &.label-selected-photos{
         color: $gray2-default-dark;
       }
     }
@@ -57,8 +76,8 @@
           border-right: 1px solid rgba(255, 255, 255, 0.02);
           color: $gray2-accessible-dark;
           white-space: nowrap;
-          cursor: pointer;
           transition-duration: 0.15s;
+          cursor: pointer;
           &:hover{
               background-color: $dark-2;
               color: $gray-accessible-dark;

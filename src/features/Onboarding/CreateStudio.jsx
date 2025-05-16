@@ -4,7 +4,7 @@ import { logout } from '../../app/slices/authSlice';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { update } from 'firebase/database';
-import { checkStudioDomainAvailability } from '../../firebase/functions/firestore';
+import { checkStudioDomainAvailability } from '../../firebase/functions/studios';
 import { openModal } from '../../app/slices/modalSlice';
 import PrivacyPolicy from '../PrivacyPolicy/PrivacyPolicy';
 import { trackEvent } from '../../analytics/utils';

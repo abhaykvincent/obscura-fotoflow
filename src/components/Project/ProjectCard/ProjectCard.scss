@@ -11,7 +11,7 @@
     transition-duration: 0.2s;
     transform: scale(1) translateY(-8px);
     border: 1px solid $gray5-accessible-dark;
-    border-top: 1px solid rgba(186, 230, 186, 0.2);
+    border-top: 1px solid rgba(176, 176, 176, 0.4);
     border-right: 1px solid rgba(162, 194, 156, 0.1);
     margin-top: 0px;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -452,8 +452,9 @@
         &.draft {
             .project-details .details-top .right .status-signal {
                 //background-color: $amber-dark;
-                background-color: $gray-default-dark;
+                background-color: $gray4-default-dark;
                 transform: scale(1.1);
+                border: 0.5px solid $gray3-accessible-dark;
                 box-shadow: 0 1px 1px 1px #151515, 0 0 5px 4px #ffffff16, 0 0 4px 1px #ffffff05, 0 0 20px 10px #ffffff10;
 
                 animation: steady 1.5s infinite;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {  fetchAllReferalsFromFirestore, fetchStudios, fetchUsers } from '../../firebase/functions/firestore';
+import {  fetchAllReferalsFromFirestore, fetchUsers } from '../../firebase/functions/firestore';
 import './AdminPanel.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../app/slices/modalSlice';
@@ -8,6 +8,8 @@ import { fetchReferrals, generateReferral, selectReferrals } from '../../app/sli
 import { set } from 'date-fns';
 import { useNavigate, useParams } from 'react-router';
 import { copyToClipboard, getGalleryURL, getOnboardingReferralURL } from '../../utils/urlUtils';
+import { fetchStudios } from '../../firebase/functions/studios';
+import { migrateStudios } from '../../firebase/functions/subscription';
 
 function AdminPanel() {
     const dispatch = useDispatch();
@@ -150,6 +152,17 @@ function AdminPanel() {
                     </div>
                     <div className="button secondary outline" onClick={() => {/* Implement create studio logic here */}}>
                         Create Ticket
+                    </div>
+                    <div className="button secondary outline" onClick={async () => {
+                            try {
+                                await migrateStudios();
+                                console.log('Studios migrated successfully');
+                            } catch (error) {
+                            console.error('Error migrating Studios:', error.message);
+                            // Optionally show an error message to the user
+                            }
+                        }}>
+                        Migrate Studios
                     </div>
                 </div>
             </div>

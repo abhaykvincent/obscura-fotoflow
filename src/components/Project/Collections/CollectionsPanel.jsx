@@ -11,6 +11,9 @@ const CollectionsPanel = ({ project, collectionId}) => {
   positionCollectionsActiveBox(collectionId,project.collections)
 
   return <div className="galleries">
+            <div className="heading-section">
+              <h3 className='heading'>Galleries <span>{project.collections.length}</span></h3>
+            </div>
     <div className="list">
       
       {

@@ -36,8 +36,8 @@ import { isDeveloper, setUserType } from './analytics/utils';
 import { isPublicPage } from './utils/publicPages';
 // Redux 
 import { showAlert } from './app/slices/alertSlice';
-import { selectModal } from './app/slices/modalSlice';
-import { fetchStudio} from './app/slices/studioSlice';
+import { openModal, selectModal } from './app/slices/modalSlice';
+import { fetchCurrentSubscription, fetchStudio, selectCurrentSubscription, selectStudio} from './app/slices/studioSlice';
 import { checkAuthStatus, checkStudioStatus, selectIsAuthenticated, selectUser, selectUserStudio } from './app/slices/authSlice';
 import { fetchProjects, selectProjectsStatus} from './app/slices/projectsSlice';
 // Hooks
@@ -47,6 +47,9 @@ import Settings from './features/Settings/Settings';
 import UpgradeModal from './components/Subscription/UpgradeModal';
 import { generateReferral } from './app/slices/referralsSlice';
 import FlowPilot from './components/Modal/SupportIcon/FlowPilot';
+import { getCurrentSubscription } from './firebase/functions/subscription';
+import TrialStatusModal from './components/Modal/TrialEnds/TrialEnds';
+import BillingHistory from './features/BillingHistory/BillingHistory';
 
 console.log(`%c Welcome to Fotoflow!`, `color:rgb(98, 255, 0); `);
 if(isDeveloper) console.log(`%c This device is not being tracked by Analytics in production.`, `color: #ff9500; `);
@@ -55,8 +58,10 @@ export default function App() {
   const dispatch = useDispatch();
 
   const user = useSelector(selectUser);
+
   const isLoading = useSelector(selectProjectsStatus);
   const defaultStudio = useSelector(selectUserStudio)
+  const studio = useSelector(selectStudio);
   const currentDomain = defaultStudio?.domain ?? 'guest'; 
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const { keyMap, handlers } = useShortcutsConfig();
@@ -79,14 +84,32 @@ export default function App() {
       .catch((err)=>{
         dispatch(showAlert({ type: 'error', message: 'Check internet connection' }));
       })
-      dispatch(fetchStudio({currentDomain}))
+      dispatch(fetchStudio({currentDomain})).then((a) => {
+        console.log(a)
+        // Check if trial status warrants showing the modal
+        dispatch(fetchCurrentSubscription({currentDomain})).then((a) => {
+  
+        })
+        .catch((err)=>{
+          console.error(err)
+        })
+        
+      })
       .catch((err)=>{
         console.error(err)
       })
+      
+      
     }
 
   }, [currentDomain]);
 
+  useEffect(() =>{
+
+    if (studio?.trialEndDate) {
+      dispatch(openModal('trialStatus'));
+    }
+  },[studio?.trialEndDate])
   useEffect(() => {
     const modalStates = Object.values(selectModal);
     if (modalStates.some(state => state)) {
@@ -99,6 +122,7 @@ export default function App() {
   }, [selectModal]);
   useEffect(() => {
     
+    getCurrentSubscription(defaultStudio.domain)
           
   }, []);
 
@@ -108,7 +132,7 @@ export default function App() {
   // RENDER
   return (
     <div className="App">
-      <HotKeys keyMap={keyMap} handlers={handlers}>
+      <HotKeys keyMap={keyMap} handlers={handlers} className='app-wrap'>
       {/* <FlowPilot userId={defaultStudio?.domain}/> */}
       {isAuthenticated && (!isPublicPage())? (
         <>
@@ -117,6 +141,7 @@ export default function App() {
           <Alert />
           <UploadProgress/>
           <UpgradeModal/>
+          <TrialStatusModal/>
 
         </>
       ) : 
@@ -150,6 +175,7 @@ export default function App() {
                   <Route path="/:studioName/settings" element={<Settings/>} />
                   <Route path="/:studioName/notifications" element={<Notifications />} />
                   <Route path="/:studioName/storage" element={<Storage />} />
+                  <Route path="/:studioName/subscription/history" element={<BillingHistory />} />
                   <Route path="/:studioName/subscription" element={<Subscription />} />
                   <Route path="/:studioName/store" element={<CommingSoon title={'Store'}/>} />
                   <Route path="/:studioName/calendar" element={<CommingSoon title={'Calendar'}/>} />
@@ -169,8 +195,14 @@ export default function App() {
               <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>
             </Routes>
           )}
-          </HotKeys>
 
+    <div className="footer">
+            {/* Made in Kochi by Photographers |  */}
+            <div className='copyright-symbol'>©</div>  
+            <a href="https://www.masanory.com" target="_blank"><span>Fotoflow</span> 2025</a>
+          </div>
+          </HotKeys>
+          
     </div>
     
   );
