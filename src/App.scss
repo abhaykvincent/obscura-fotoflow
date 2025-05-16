@@ -1416,12 +1416,13 @@ body{
       .modal{
         transform: translate(-50%, calc(-40% - 60px))  scale(1);
         animation-name: modal-out;
-        animation-duration: 0.3s;
+        animation-duration: 0.2s;
         animation-fill-mode: forwards;
       }
       .modal-backdrop{
         background: rgba(0, 0, 0, 0);
         transition-delay: 0s;
+        transition-delay: 0.15s;
         transition-duration: 0.4s;
         backdrop-filter: blur(0px);
       }
@@ -2317,40 +2318,40 @@ body{
 }
 @keyframes modal-out {
   0% {
-    transform: translate(-50%, calc(-50% - 60px))  scale(1);
+    transform: translate(-50%, calc(-40% - 60px))  scale(1);
     opacity: 1;
   } 5% {
     margin-left: 8px*0;
-    transform: translate(-50%, calc(-50% - 60px))  scale(1.04);
+    transform: translate(-50%, calc(-40% - 60px))  scale(1.04);
     opacity: 1;
   } 
   80% {
     margin-left: 8px*5;
-    transform: translate(-55%, calc(-50% - 60px))  scale(0.8);
+    transform: translate(-55%, calc(-40% - 60px))  scale(0.8);
     opacity: 0;
   }
   100% {
     margin-left: 8px*5;
-    transform: translate(-55%, calc(-50% - 60px))  scale(0);
+    transform: translate(-55%, calc(-40% - 60px))  scale(0);
     opacity: 0;
   }
 }
 @keyframes modal-in-island {
   0% {
-    transform: translate(-50%,-50%) scale(0.8);
+    transform: translate(-50%,calc(-40% - 60px)) scale(0.8);
     opacity: 0;
   }
   55% {
-    transform: translate(-50%,-50%)  scale(1);
+    transform: translate(-50%,calc(-40% - 60px))  scale(1);
     opacity: 1;
   }
   60% {
-    transform:translate(-50%,-50%)  scale(1.01);
+    transform:translate(-50%,calc(-40% - 60px))  scale(1.01);
     opacity: 1;
   }
   100% {
     margin-left: 8px*0;
-    transform: translate(-50%,-50%) ;
+    transform: translate(-50%,calc(-40% - 60px)) ;
     opacity: 1;
   }
 }
@@ -3032,12 +3033,11 @@ body{
             transform: translate(0%, calc(10%))  scale(1);
             opacity: 0;
             animation-name: none;
-            animation-duration: 0.3s;
+            animation-duration: 0.2s;
             animation-fill-mode: forwards;
           }
           .modal-backdrop{
             background: rgba(0, 0, 0, 0);
-            transition-delay: 0.05s;
             transition-duration: 0.9s;
             transition-timing-function: ease-in;
             backdrop-filter: blur(0px);
