@@ -984,3 +984,33 @@ export const fetchInvitationFromFirebase = async (domain, projectId) => {
     const projectData = projectSnapshot.data();
     return {invitation:projectData.invitation,projectId} || null; // Return invitation data or null if not exists
 };
+
+// Project Operations
+
+/**
+ * Create multiple dummy projects for development/testing.
+ * @param {string} domain - Studio domain.
+ * @param {number} n - Number of dummy projects to create.
+ */
+export const createDummyProjectsInFirestore = async (domain, n = 5) => {
+  for (let i = 1; i <= n; i++) {
+    const dummyProject = {
+      name: `Test Project ${i}`,
+      name2: `Client ${i}`,
+      type: i % 2 === 0 ? 'Wedding' : 'Portrait',
+      projectValidityMonths: [3, 6, 12][i % 3],
+      createdAt: Date.now(),
+      status: 'active',
+      collections: [],
+      events: [],
+      payments: [],
+      expenses: [],
+      budgets: [],
+      projectCover: '',
+      pin: Math.floor(1000 + Math.random() * 9000).toString(),
+      description: `This is a dummy project for development and testing. #${i}`,
+    };
+    await addProjectToStudio(domain, dummyProject);
+  }
+  console.log(`Created ${n} dummy projects in studio: ${domain}`);
+};
