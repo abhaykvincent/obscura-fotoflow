@@ -13,7 +13,7 @@ export const initialPlans = [
     name: 'Core',
     isCurrentPlan: true,
     pricing: [
-      { storage: 5, monthlyPrice: 'Free', yearlyPrice: '₹0', specialOffer: ['for 12 months.','No Credit Card Required']},
+      { storage: 5, monthlyPrice: 'Free', yearlyPrice: '₹0', specialOffer: ['for 12 months.','No CC Required']},
     ],
     features: ['3 galleries/project','3 new projects/month'],
     coreFeatures: ['5 GB Storage','','Gallery','Selection'],
@@ -217,7 +217,7 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
         {currentPricing?.monthlyPrice == 'Free'?<div className="unit"> * </div>:<div className="unit">/mo</div>}
       </div >
       <div className="plan-pricing yearly">
-        <div className="first-month">{currentPricing?.specialOffer[0]}</div>
+        <div className="first-month contract-period">{currentPricing?.specialOffer[0]}</div>
         <div className="first-month iconic">{currentPricing?.specialOffer[1]}</div>
         <div className="first-month">{currentPricing?.specialOffer[2]}</div>
       </div>
@@ -248,12 +248,12 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
       
       {/* !plan.name.includes('Core') */ true && (
         <>
-      {plan.expiry && (
-        <div className="validity">
+      { 
+        <div className={`validity ${plan.expiry ? '' : 'hide'}`}>
           <p className='label'>Free plan will expries on</p>
           <p>{plan.expiry}</p>
         </div>
-      )}
+      }
           <p className='waitlist-label'>{
             studio?.subscriptionId?.includes(plan.name.toLowerCase()) ? 
             <span className="expiry-label">{`Trial ends in ${ getDaysFromNow(studio?.trialEndDate)} days`}</span> :
@@ -302,7 +302,7 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
                 <RazorpayButton payment_button_id='pl_PmcfmE5GTfrnNY'  planame={plan.name}/>
                 : <></>)
           }
-          <p className='waitlist-label'>{plan.isAddStorage ? ' Secure offer price. Pay with UPI' : plan.isContactSales ? 'Talk to a sales. Book Demo' : ' Pay with UPI . Lock the price.'}</p>
+          <p className='waitlist-label'>{plan.name==='Core' ? ' ' : plan.isContactSales ? 'Talk to a sales. Book Demo' : ' Pay with UPI . Lock the price.'}</p>
         </>
       )}
       

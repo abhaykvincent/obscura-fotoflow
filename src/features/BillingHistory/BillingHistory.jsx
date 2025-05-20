@@ -44,6 +44,7 @@ export default function BillingHistory() {
   
   // Map subscriptions to invoice format
   console.log(subscriptions)
+  console.log(currentSubscription)
   const subscriptionsTable = subscriptions.map((subscription) => ({
     invoiceId: subscription.id,
     status: subscription.status,
@@ -108,10 +109,10 @@ export default function BillingHistory() {
           <p  className='plan-pricing'>₹{currentSubscription?.pricing?.totalPrice / 100}{' '}
             <span
               className={`status-tag ${
-                currentSubscription?.billing?.paymentRecived ? 'paid' : 'unpaid'
+                currentSubscription?.billing?.paymentRecived ? 'paid' : currentSubscription?.plan?.type==="free" ? 'free':'unpaid'
               }`}
             >
-              {currentSubscription?.billing?.paymentRecived ? 'Paid' : 'Unpaid'}
+              {currentSubscription?.billing?.paymentRecived ? 'Paid' : currentSubscription?.plan?.type==="free" ? 'Free':'Un-paid'}
             </span>
           </p>
           <p>

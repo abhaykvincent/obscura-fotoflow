@@ -71,10 +71,13 @@
       .plan-details {
         padding: 15px;
         background-color: $dark-2-5;
-        border-radius: 4px;
+        border-radius: 16px;
         color: $gray-default-dark;;
-        border: 1px solid $gray4-default-dark;;
+        border: 1px solid $gray2-default-dark;
+        border-bottom: 1px solid $gray3-default-dark;
+        border-right: 1px solid $gray3-default-dark;
         border-radius: 8px;
+          box-shadow: 1px 1px 2px black;
   
         p {
           margin: 8px 0;
@@ -85,6 +88,7 @@
             padding: 2px 8px;
             border-radius: 12px;
             font-size: 12px;
+
             &.paid {
               background-color: $dark-2;
               border: 1px solid $green-default-dark;;
@@ -94,7 +98,17 @@
               background-color: #f44336;
               color: #fff;
             }
+            &.free {
+              background-color: $dark-2;
+              border: 1px solid $green-default-dark;;
+              color:$green-default-dark;;
+            }
+            
           }
+            &.plan-pricing{
+              color: #fff;
+
+            }
   
           .link {
             color: #4caf50;
@@ -108,7 +122,7 @@
             display: inline-block;
             width: 50px;
             height: 6px;
-            background-color: #4caf50;
+            background-color: $green-default-dark;;
             border-radius: 3px;
             vertical-align: middle;
             margin-left: 5px;
@@ -128,10 +142,12 @@
           padding: 2rem;
           margin: 0;
           text-align: center;
-          color: $gray-default-dark;;
+          color: $gray3-default-light;;
           background: $dark-3;
           border: 1px solid $gray3-default-dark;;
-          border-radius: 8px;
+        border-bottom: 1px solid $gray4-default-dark;
+        border-right: 1px solid $gray4-default-dark;
+          border-radius: 6px;
         }
       }
     }
@@ -206,8 +222,9 @@
           border-radius: 12px;
           font-size: 12px;
           &.paid {
-            background-color: $green-default-dark;
-            color: #fff;
+              background-color: $dark-2;
+              border: 1px solid $green-default-dark;;
+              color:$green-default-dark;;
           }
           &.unpaid {
             background-color: #5a5a5a;

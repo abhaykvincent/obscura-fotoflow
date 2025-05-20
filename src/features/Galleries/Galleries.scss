@@ -722,6 +722,7 @@
 				background-size: cover;
 				background-position:center 20% ;
 				transition-duration: 0.2s;
+					box-shadow: 0px 0px 12px rgba(190, 190, 190, 0) ,  6px 4px 6px rgba(0, 0, 0, 0);;
 				border: 1px solid $gray3-default-dark;
 			}
 			.bthumb2{
@@ -821,7 +822,7 @@
 				.bthumb1{
 					position: absolute;
 					transform: rotate(0deg);
-					border: 1px solid $gray2-default-dark;
+					border: 1px solid $gray3-default-dark;
 					background-blend-mode: normal,color-dodge;
 				}
 				.bthumb2{
@@ -924,6 +925,14 @@
 				&.thumb1{
 					.bthumb1{
 						opacity: 1;
+					box-shadow: 0px 0px 12px rgba(190, 190, 190, 0.5) ,  6px 4px 6px rgba(0, 0, 0, 0.4);;
+						border: 1px solid $gray-default-dark;
+							transition-duration: 1s;
+						.gallery-name{
+							border-top: 1px solid rgba(255, 255, 255, 0.5);
+							transition-duration: 1s;
+							transition-delay: 0.0s;
+						}
 					}
 				}
 			}
