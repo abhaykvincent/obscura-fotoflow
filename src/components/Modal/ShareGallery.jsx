@@ -76,8 +76,10 @@ const modalRef = useModalFocus(visible.shareGallery);
                 <div className='link' >
                   
                     <div className="link-container">
-                    <a className='linkToGallery' href={getGalleryURL('share',domain,project.id)} target='_blank' >.../{domain}{getGalleryURL('share',domain,project.id).split(domain)[1]}</a>
-                    <div className="button icon icon-only open-in-new"></div>
+                    <a className='linkToGallery' href={getGalleryURL('share',domain,project.id)} target='_blank' >.../{domain}{getGalleryURL('share',domain,project.id).split(domain)[1]}
+                      <div className="button icon icon-only open-in-new"></div>
+                    </a>
+                    
                   </div>
                 
               </div>
@@ -92,7 +94,7 @@ const modalRef = useModalFocus(visible.shareGallery);
                     window.open(getGalleryURL('share',domain,project.id), '_blank')
                   }, 2000)
                 }
-                }>Copy</p>
+                }> Link</p>
                 <p className="copy-link button icon  pin" onClick={() => {
                   copyToClipboard(getGalleryURL('share',domain,project.id))
                 }

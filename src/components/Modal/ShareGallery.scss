@@ -74,6 +74,7 @@
             text-decoration: underline;
             text-decoration-color: $green-dark-accessible-light;
             transition-duration: 0.1s;
+            cursor: pointer;
             
         }
         .open-in-new{
@@ -124,6 +125,7 @@
                 border: 1px solid $dark-0;
                 padding: 2px 8px;
                 border-radius: 4px;
+                color: $gray-accessible-light !important;
                 cursor: pointer;
                 
             }

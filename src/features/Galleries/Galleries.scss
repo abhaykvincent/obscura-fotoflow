@@ -937,6 +937,29 @@
 				}
 			}
 		}
+			.thumbnails{
+				.thumbnail{
+				&:hover{
+					transform: translate(0px,0px);
+					transition-duration: 0.2s;
+					transition-delay: 0.0s;
+					transition-timing-function: ease-in;
+					&.thumb1{
+						.bthumb1{
+							opacity: 1;
+						box-shadow: 0px 0px 12px rgba(190, 190, 190, 0.5) ,  6px 4px 6px rgba(0, 0, 0, 0.4);;
+							border: 1px solid $gray-default-dark;
+								transition-duration: 1s;
+							.gallery-name{
+								border-top: 1px solid rgba(255, 255, 255, 0.5);
+								transition-duration: 1s;
+								transition-delay: 0.0s;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	&.new{
