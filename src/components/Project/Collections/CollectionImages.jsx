@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import ImageGallery from '../../ImageGallery/ImageGallery';
 import { fetchImages } from '../../../firebase/functions/firestore';
-import { addAllFileSizesToMB } from '../../../utils/fileUtils';
+// import { addAllFileSizesToMB } from '../../../utils/fileUtils'; // No longer used here
 import UploadButton from '../../UploadButton/UploadButton';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUploadList, setUploadStatuss } from '../../../app/slices/uploadSlice';
+import { 
+    // setUploadList, // To be removed
+    // setUploadStatuss, // To be removed
+    selectUploadStatus, // Added
+    clearUploadSession // Added
+} from '../../../app/slices/uploadSlice';
 import Lottie from 'react-lottie';
 import animationData from '../../../assets/animations/UploadFiles.json';
 import { selectDomain } from '../../../app/slices/authSlice';
@@ -33,9 +38,8 @@ const CollectionImages = ({ id, collectionId, project }) => {
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(16);
 
-    // Upload progress
-    const [uploadList, setUploadLists] = useState([]);
-    const [uploadStatus, setUploadStatus] = useState('close');
+    // Upload progress state (uploadList and uploadStatus) is now managed by Redux.
+    // Local useState for uploadList and uploadStatus are removed.
 
     const [copyStatus, setCopyStatus] = useState('Lightroom');
     
@@ -48,22 +52,25 @@ const CollectionImages = ({ id, collectionId, project }) => {
         },
     };
 
-    // ON Upload status
+    // Global upload status from Redux
+    const globalUploadStatus = useSelector(selectUploadStatus);
+
+    // Handle post-upload actions based on globalUploadStatus
     useEffect(() => {
-        if (uploadStatus === 'completed') {
-            setTimeout(() => setUploadStatus('close'), 1000);
+        if (globalUploadStatus === 'completed') {
+            // showAlert('success', 'All files processed successfully!'); // Alert is shown by handleUpload
+            setTimeout(() => {
+                dispatch(clearUploadSession());
+            }, 3000); // Delay before clearing
+        } else if (globalUploadStatus === 'failed') {
+            // showAlert('error', 'Some files failed to upload.'); // Alert is shown by handleUpload
+            setTimeout(() => {
+                dispatch(clearUploadSession());
+            }, 3000); // Delay before clearing
         }
-        dispatch(setUploadStatuss(uploadStatus));
-    }, [uploadStatus]);
-    useEffect(() => {
-        //start animation  when trefggured
+    }, [globalUploadStatus, dispatch]);
 
-    }, [uploadTrigger]);
-
-    useEffect(() => {
-        dispatch(setUploadList(uploadList));
-    }, [uploadList]);
-
+    // Obsolete useEffects for local uploadList and uploadStatus are removed.
 
     // Initial collection images fetch
     useEffect(() => {
@@ -157,7 +164,18 @@ const CollectionImages = ({ id, collectionId, project }) => {
             
             <div className="header">
                 <div className="options">
-                    <UploadButton {...{ isPhotosImported, setIsPhotosImported, imageUrls, setImageUrls, setUploadStatus, id, collectionId, setUploadLists,  }} />
+                    {/* Updated UploadButton props: removed setUploadStatus, setUploadLists; added dispatch */}
+                    <UploadButton {...{ 
+                        isPhotosImported, 
+                        setIsPhotosImported, 
+                        imageUrls, 
+                        setImageUrls, 
+                        // setUploadStatus, // Removed
+                        id, 
+                        collectionId, 
+                        // setUploadLists, // Removed
+                        dispatch // Added
+                    }} />
                 </div>
                 {collectionImages?.length > 0 || imageUrls.length > 0  ? (
                     <div className="view-control">

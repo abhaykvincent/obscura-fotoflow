@@ -10,10 +10,29 @@ import { handleUpload } from '../../utils/uploadOperations';
 import { addAllFileSizesToMB, validateFileTypes } from '../../utils/fileUtils';
 import { createNotification } from '../../app/slices/notificationSlice';
 import { fetchProjects } from '../../app/slices/projectsSlice';
-import { fetchProject } from '../../firebase/functions/firestore';
+// import { fetchProject } from '../../firebase/functions/firestore'; // fetchProject seems unused in this component
 
-function UploadButton({ isPhotosImported, setIsPhotosImported, setImageUrls, id, collectionId, setUploadLists, setUploadStatus }) {
-  const dispatch = useDispatch();
+function UploadButton({ 
+    isPhotosImported, 
+    setIsPhotosImported, 
+    setImageUrls, 
+    id, 
+    collectionId, 
+    // setUploadLists, // Removed
+    // setUploadStatus, // Removed
+    dispatch // Added - though it's already available via useDispatch hook, explicitly passing if required by parent
+}) {
+  // const dispatch = useDispatch(); // Already available if not passed as prop, or use the prop one.
+  // For clarity, if dispatch is always coming from props as per new signature, use that.
+  // If it's meant to be obtained via useDispatch() hook, then the prop isn't strictly needed unless for specific patterns.
+  // Assuming the intention is to use the dispatch from props if provided, or fallback to hook.
+  // However, the original code already uses useDispatch(), so the prop `dispatch` might be redundant
+  // unless the calling context changes. Let's stick to the instructions: add `dispatch` to props.
+  const localDispatch = useDispatch(); // Use localDispatch if prop `dispatch` is not the one from Redux store.
+                                     // Or simply use `dispatch` if it's guaranteed to be the Redux dispatch.
+                                     // Given the setup, `useDispatch()` is the standard. The prop is unusual.
+                                     // Let's assume the prop `dispatch` is the one to be used.
+
   const domain = useSelector(selectDomain);
   const storageLimit = useSelector(selectStudioStorageUsage);
   const studiodata = useSelector(selectStudio);
@@ -35,10 +54,10 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, setImageUrls, id,
     if (importFileSize < (storageLimit?.quota -  storageLimit?.used) ) {
       try {
         const startTime = Date.now();  // Record the start time
-        setUploadStatus('open');
+        // setUploadStatus('open'); // This was local, Redux state will be set by handleUpload via dispatch
 
-        // Handle upload Operation
-        const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, setUploadLists, setUploadStatus);
+        // Handle upload Operation - Updated call
+        const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch);
 
         const endTime = Date.now();  // Record the end time
         const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
@@ -90,10 +109,10 @@ function UploadButton({ isPhotosImported, setIsPhotosImported, setImageUrls, id,
       }
     } 
     else {
-      dispatch(showAlert({ type: 'error', message: 'Uploaded <b>file size exceeds</b> your limit! Upgrade' }));
+        localDispatch(showAlert({ type: 'error', message: 'Uploaded <b>file size exceeds</b> your limit! Upgrade' }));
       setIsPhotosImported(false);
     }
-  }, [dispatch, storageLimit, domain, id, collectionId, setUploadLists, setUploadStatus, setIsPhotosImported, setImageUrls]);
+  }, [dispatch, storageLimit, domain, id, collectionId, setIsPhotosImported, setImageUrls, currentStudio, localDispatch]); // Added dispatch to dependency array, removed setUploadLists, setUploadStatus
 
   return (
     <>

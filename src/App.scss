@@ -1541,12 +1541,18 @@ body{
     .form-section{
       margin:0  8px*4 ;
       gap: 8px;
-      text-align: center;
+      text-align: start;
       h2{
         margin-bottom: 8px*2;
       }
       p{
-        color: $gray3-default-dark;
+        color: $gray2-default-dark;
+        &.copy-link{
+          color: $gray4-default-light; 
+          &.copy{
+            color: $gray2-default-dark;
+          }
+        }
       }
       &.contact{
 
