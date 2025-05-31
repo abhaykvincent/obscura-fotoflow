@@ -9,6 +9,8 @@ import { trackEvent } from '../../analytics/utils';
 import { selectCurrentSubscription, selectStudio, selectStudioStorageUsage } from '../../app/slices/studioSlice';
 import { convertMegabytes } from '../../utils/stringUtils';
 import { getDaysFromNow, getEventTimeAgo } from '../../utils/dateUtils';
+import StorageDonutChart from './StorageDonutChart'; // Import the new StorageDonutChart component
+
 function Sidebar() {
   
   const dispatch = useDispatch();
@@ -21,12 +23,16 @@ function Sidebar() {
   const params = useParams()
   const studioName = defaultStudio?.domain ?? {domain:'guest',name:'guest'}; 
   const studio= useSelector(selectStudio)
-    const storageLimit = useSelector(selectStudioStorageUsage);
-  const [storageUsage , setStorageUsage] = useState({
-  })
+  const storageLimit = useSelector(selectStudioStorageUsage); // This provides raw usage data
+
+  // State to hold formatted storage usage, though we'll directly use studio?.usage for charts now
+  const [storageUsage , setStorageUsage] = useState({})
+
   const toggleProfileOption = () => {
     setProfileOptionActive((prevState) => !prevState);
   };
+
+  // This useEffect can remain for other parts of the sidebar that might use `storageUsage` state
   useEffect(() => {
     setStorageUsage({
       used: (storageLimit?.used/1000).toFixed(2),
@@ -34,11 +40,25 @@ function Sidebar() {
       usedPercentage: (storageLimit?.used/storageLimit?.quota*100).toFixed(2)
     })
     },[storageLimit])
-    useEffect(()=>{
-      console.log(currentSubscription)
-    },[])
+
+  useEffect(()=>{
+    console.log(currentSubscription)
+  },[currentSubscription])
+
   if(user==='no-studio-found')
-    return 
+    return null; // Return null if no studio is found to prevent rendering issues
+
+  // FIX: Moved variable calculations here, BEFORE they are used in the JSX below.
+  const storageUsedMB = studio?.usage?.storage?.used || 0;
+  const storageQuotaMB = studio?.usage?.storage?.quota || 0;
+  // Following the existing logic from your Sidebar.jsx for archive quota (quota * 2)
+  const archiveQuotaMB = (studio?.usage?.storage?.quota || 0) * 2; 
+
+  // Calculate percentages. Handle division by zero for quotas.
+  const storageUsedPercentage = (storageQuotaMB > 0) ? (storageUsedMB / storageQuotaMB) * 100 : 0;
+  // Assuming archive uses the same 'used' value but a different, larger quota
+  const archiveUsedPercentage = (archiveQuotaMB > 0) ? (storageUsedMB / archiveQuotaMB) * 100 : 0; 
+
   return (
     <div className="sidebar">
       <div className="menu-list">

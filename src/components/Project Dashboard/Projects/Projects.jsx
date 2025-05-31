@@ -74,24 +74,24 @@ function DashboardProjects({project}){
               </div>
             </div>
           
-          {/* <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
+          <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
             <DashboardEvents project={project} />
             <div className="financials-overview">
               <DashboardPayments project={project} />
             </div>
-          </div> */}
+          </div>
 
 
         </>
       ) : (
         <>
           <CollectionsPanel {...{project,collectionId:project.collections[0]?.id}}/>
-        {/*  <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
+         <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
             <DashboardEvents project={project} />
             <div className={`section financials-overview ${project.payments.length > 0 ? 'has-payments' : ''}`}>
               <DashboardPayments project={project} />
             </div>
-          </div> */}
+          </div>
         </>
       ))
       :<>
