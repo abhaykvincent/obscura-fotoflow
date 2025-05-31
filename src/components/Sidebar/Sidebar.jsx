@@ -9,7 +9,6 @@ import { trackEvent } from '../../analytics/utils';
 import { selectCurrentSubscription, selectStudio, selectStudioStorageUsage } from '../../app/slices/studioSlice';
 import { convertMegabytes } from '../../utils/stringUtils';
 import { getDaysFromNow, getEventTimeAgo } from '../../utils/dateUtils';
-import StorageDonutChart from './StorageDonutChart'; // Import the new StorageDonutChart component
 
 function Sidebar() {
   
