@@ -1,0 +1,339 @@
+body {
+    font-family: sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+#auth-container, #app-content, #user-info {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+h4 { /* General h4, including form titles */
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #0056b3; /* Consistent with list item h4 */
+}
+h5 { /* For sub-headings like "Payments Received" */
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 0.95em;
+    font-weight: bold;
+}
+
+
+h2 { /* Section titles like Projects, Packages, etc. */
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 30px;
+}
+
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="date"],
+input[type="number"],
+input[type="file"],
+textarea,
+select {
+    display: block;
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin: 8px 0 12px 0;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+}
+button, .button-like {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border: none;
+    width: auto;
+    padding: 10px 15px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 1em;
+}
+button:hover, .button-like:hover {
+    background-color: #0056b3;
+}
+
+
+textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+#logout-button {
+    background-color: #dc3545;
+    margin-bottom: 20px;
+}
+#logout-button:hover {
+    background-color: #c82333;
+}
+
+#user-info {
+    font-weight: bold;
+    padding: 10px;
+    border: 1px dashed #ccc;
+    margin-bottom: 20px;
+}
+
+/* Navigation Tabs */
+#navigation-buttons {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 5px;
+}
+.nav-tab-btn {
+    background-color: transparent;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: #007bff;
+    margin-right: 5px;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+}
+.nav-tab-btn.active-tab {
+    font-weight: bold;
+    border-bottom: 3px solid #007bff;
+    color: #0056b3;
+}
+.nav-tab-btn:hover {
+    background-color: #e9ecef;
+    border-bottom: 3px solid #0056b3;
+}
+
+
+/* Management Sections Styling */
+.management-section {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+.management-section h2 {
+    margin-top: 0;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+.management-section > button {
+    margin-bottom: 15px;
+}
+
+
+.form-container {
+    margin-top: 15px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    margin-bottom: 20px;
+}
+.form-container label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #555;
+}
+.modal-form { /* For payment form appearing 'over' content */
+    border: 2px solid #007bff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+
+.list-container {
+    margin-top: 15px;
+}
+.list-item {
+    background-color: #fff;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.list-item p {
+    margin: 5px 0;
+    font-size: 0.95em;
+    color: #444;
+}
+.list-item .actions button {
+    font-size: 0.9em;
+    padding: 5px 10px;
+    margin-top: 10px;
+    margin-right: 5px;
+}
+.list-item .actions {
+    margin-top:10px;
+}
+
+
+button.edit-project-btn, button.edit-package-btn, button.edit-quote-btn, button.edit-invoice-btn, button.edit-expense-btn {
+    background-color: #ffc107;
+    color: #333;
+}
+button.edit-project-btn:hover, button.edit-package-btn:hover, button.edit-quote-btn:hover, button.edit-invoice-btn:hover, button.edit-expense-btn:hover {
+    background-color: #e0a800;
+}
+
+button.delete-project-btn, button.delete-package-btn, button.delete-quote-btn, button.delete-invoice-btn, button.delete-expense-btn {
+    background-color: #dc3545;
+}
+button.delete-project-btn:hover, button.delete-package-btn:hover, button.delete-quote-btn:hover, button.delete-invoice-btn:hover, button.delete-expense-btn:hover {
+    background-color: #c82333;
+}
+
+button.manage-quotes-btn, button.manage-invoices-btn {
+    background-color: #17a2b8;
+}
+button.manage-quotes-btn:hover, button.manage-invoices-btn:hover {
+    background-color: #138496;
+}
+button.generate-invoice-from-quote-btn {
+    background-color: #28a745;
+}
+button.generate-invoice-from-quote-btn:hover {
+    background-color: #218838;
+}
+button.record-payment-btn {
+    background-color: #198754; /* Darker Green */
+}
+button.record-payment-btn:hover {
+    background-color: #157347;
+}
+
+
+/* Back to Projects Button */
+.back-to-projects-btn {
+    background-color: #6c757d;
+    margin-bottom: 15px;
+}
+.back-to-projects-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Quote & Invoice Item Rows Styling */
+#quote-items-container .quote-item-row,
+#invoice-items-container .invoice-item-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dotted #eee;
+}
+#quote-items-container .quote-item-row:last-child,
+#invoice-items-container .invoice-item-row:last-child {
+    border-bottom: none;
+}
+#quote-items-container .quote-item-row input,
+#invoice-items-container .invoice-item-row input {
+    margin-right: 8px;
+}
+#quote-items-container .itemDescription,
+#invoice-items-container .itemDescription {
+    flex-grow: 3;
+}
+#quote-items-container .itemQuantity,
+#invoice-items-container .itemQuantity,
+#quote-items-container .itemUnitPrice,
+#invoice-items-container .itemUnitPrice {
+    width: 80px;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+#quote-items-container .itemTotal,
+#invoice-items-container .itemTotal {
+    width: 80px;
+    text-align: right;
+    font-weight: bold;
+    margin-right: 8px;
+}
+#quote-items-container .remove-quote-item-btn,
+#invoice-items-container .remove-invoice-item-btn {
+    background-color: #ef6c7a;
+    padding: 5px 8px;
+    font-size: 0.8em;
+    width: auto;
+    display: inline-block;
+}
+#quote-items-container .remove-quote-item-btn:hover,
+#invoice-items-container .remove-invoice-item-btn:hover {
+    background-color: #e94959;
+}
+
+.total-amount-display {
+    margin-top: 15px;
+    font-size: 1.2em;
+    text-align: right;
+    padding: 10px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+}
+#invoicePaidAmountDisplay {
+    font-weight: normal;
+}
+
+/* Expense Specific Styling */
+#receipt-preview { /* ... */ }
+#upload-progress { /* ... */ }
+.expense-list-item img { /* ... */ }
+
+/* Payment Specific Styling */
+#record-payment-form-container {
+    margin-top: 20px; /* Space above payment form */
+}
+#payment-form-title { /* Specific title for payment form */
+    color: #198754; /* Dark green to match record payment button */
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+.invoice-payments-list {
+    margin-top: 10px;
+    padding-left: 20px; /* Indent payment list slightly */
+    border-top: 1px dashed #eee;
+    padding-top: 10px;
+}
+.payment-details-list {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+.payment-details-list li {
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+
+/* Hide forms and sections by default - JS will show them */
+#create-project-form-container,
+#create-package-form-container,
+#create-quote-form-container,
+#create-invoice-form-container,
+#create-expense-form-container,
+#record-payment-form-container { /* Added payment form */
+    display: none;
+}
+
+#packages-section,
+#quotes-section,
+#invoices-section,
+#expenses-section {
+    display: none;
+}

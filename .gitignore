@@ -1,9 +1,3 @@
-node_modules
-.DS_Store
+node_modules/
+npm-debug.log
 firebase-debug.log
-firestore-debug.log
-
-.firebase/hosting.YnVpbGQ.cache
-
-build/
-

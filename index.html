@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photographer Finance App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="auth-container">
+        <h2>Login</h2>
+        <form id="login-form">
+            <input type="email" id="login-email" placeholder="Email" required>
+            <input type="password" id="login-password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+
+        <h2>Sign Up</h2>
+        <form id="signup-form">
+            <input type="email" id="signup-email" placeholder="Email" required>
+            <input type="password" id="signup-password" placeholder="Password" required>
+            <button type="submit">Sign Up</button>
+        </form>
+    </div>
+
+    <div id="user-info"></div>
+    <button id="logout-button" style="display:none;">Logout</button>
+
+    <div id="app-content" style="display:none;">
+        <h1>Dashboard</h1>
+        <p>Welcome! Manage your finances and projects below.</p>
+        <div id="navigation-buttons">
+             <button id="nav-projects-btn" class="nav-tab-btn active-tab">Projects</button>
+             <button id="nav-packages-btn" class="nav-tab-btn">Packages</button>
+             <button id="nav-expenses-btn" class="nav-tab-btn">Expenses</button>
+        </div>
+
+        <!-- Projects Section -->
+        <section id="projects-section" class="management-section">
+            <h2>Projects</h2>
+            <button id="add-project-btn">Add New Project</button>
+            <div id="create-project-form-container" style="display:none;" class="form-container">
+                <h3 id="project-form-title">Add New Project</h3>
+                <input type="hidden" id="project-id">
+                <label for="projectName">Project Name:</label>
+                <input type="text" id="projectName" required>
+                <label for="clientName">Client Name:</label>
+                <input type="text" id="clientName" required>
+                <label for="clientEmail">Client Email:</label>
+                <input type="email" id="clientEmail">
+                <label for="eventDate">Event Date:</label>
+                <input type="date" id="eventDate">
+                <label for="projectStatus">Status:</label>
+                <select id="projectStatus">
+                    <option value="Lead">Lead</option>
+                    <option value="Quoted">Quoted</option>
+                    <option value="Booked">Booked</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Archived">Archived</option>
+                </select>
+                <button id="save-project-btn">Save Project</button>
+                <button id="cancel-project-btn" type="button">Cancel</button>
+            </div>
+            <div id="projects-list" class="list-container"></div>
+        </section>
+
+        <!-- Packages Section -->
+        <section id="packages-section" class="management-section" style="display:none;">
+            <h2>Packages</h2>
+            <button id="add-package-btn">Add New Package</button>
+            <div id="create-package-form-container" style="display:none;" class="form-container">
+                <h3 id="package-form-title">Add New Package</h3>
+                <input type="hidden" id="package-id">
+                <label for="packageName">Package Name:</label>
+                <input type="text" id="packageName" required>
+                <label for="packageDescription">Description:</label>
+                <textarea id="packageDescription"></textarea>
+                <label for="packageServices">Services (one per line):</label>
+                <textarea id="packageServices" placeholder="e.g., Engagement Shoot - 2 hours&#10;Wedding Album - 30 pages"></textarea>
+                <label for="packageBasePrice">Base Price:</label>
+                <input type="number" id="packageBasePrice" step="0.01" required>
+                <button id="save-package-btn">Save Package</button>
+                <button id="cancel-package-btn" type="button">Cancel</button>
+            </div>
+            <div id="packages-list" class="list-container"></div>
+        </section>
+
+        <!-- Quotes Section (for a specific project) -->
+        <section id="quotes-section" class="management-section" style="display:none;">
+            <button id="back-to-projects-btn-from-quote" class="back-to-projects-btn">&larr; Back to Projects</button>
+            <h2 id="quotes-project-title">Quotes for [Project Name]</h2>
+            <button id="add-quote-btn">Add New Quote</button>
+            <div id="create-quote-form-container" style="display:none;" class="form-container">
+                <h3 id="quote-form-title">Add New Quote</h3>
+                <input type="hidden" id="current-quote-project-id">
+                <input type="hidden" id="current-quote-id">
+                <label for="quoteDate">Quote Date:</label>
+                <input type="date" id="quoteDate" required>
+                <label for="quoteExpiryDate">Expiry Date (Optional):</label>
+                <input type="date" id="quoteExpiryDate">
+                <label for="quoteStatus">Status:</label>
+                <select id="quoteStatus">
+                    <option value="Draft">Draft</option>
+                    <option value="Sent">Sent</option>
+                    <option value="Accepted">Accepted</option>
+                    <option value="Declined">Declined</option>
+                    <option value="Archived">Archived</option>
+                </select>
+                <h4>Quote Items</h4>
+                <div id="quote-items-container"></div>
+                <button id="add-quote-item-btn" type="button">Add Item</button>
+                <div class="total-amount-display"><strong>Total: <span id="quoteTotalAmount">0.00</span></strong></div>
+                <button id="save-quote-btn">Save Quote</button>
+                <button id="cancel-quote-btn" type="button">Cancel</button>
+            </div>
+            <div id="quotes-list" class="list-container"></div>
+        </section>
+
+        <!-- Invoices Section (for a specific project) -->
+        <section id="invoices-section" class="management-section" style="display:none;">
+            <button id="back-to-projects-btn-from-invoice" class="back-to-projects-btn">&larr; Back to Projects</button>
+            <h2 id="invoices-project-title">Invoices for [Project Name]</h2>
+            <button id="add-invoice-btn">Add New Invoice</button>
+            <div id="create-invoice-form-container" style="display:none;" class="form-container">
+                <h3 id="invoice-form-title">Add New Invoice</h3>
+                <input type="hidden" id="current-invoice-project-id">
+                <input type="hidden" id="current-invoice-id">
+                <input type="hidden" id="generated-from-quote-id">
+                <label for="invoiceNumber">Invoice Number:</label>
+                <input type="text" id="invoiceNumber" required>
+                <label for="invoiceDate">Invoice Date:</label>
+                <input type="date" id="invoiceDate" required>
+                <label for="invoiceDueDate">Due Date:</label>
+                <input type="date" id="invoiceDueDate" required>
+                <label for="invoiceStatus">Status:</label>
+                <select id="invoiceStatus">
+                    <option value="Draft">Draft</option>
+                    <option value="Sent">Sent</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Partially Paid">Partially Paid</option>
+                    <option value="Overdue">Overdue</option>
+                    <option value="Void">Void</option>
+                </select>
+                <h4>Invoice Items</h4>
+                <div id="invoice-items-container"></div>
+                <button id="add-invoice-item-btn" type="button">Add Item</button>
+                <div class="total-amount-display">
+                    <strong>Total: <span id="invoiceTotalAmount">0.00</span></strong>
+                </div>
+                <p>Paid Amount: <span id="invoicePaidAmountDisplay">0.00</span></p>
+                <button id="save-invoice-btn">Save Invoice</button>
+                <button id="cancel-invoice-btn" type="button">Cancel</button>
+            </div>
+            <div id="invoices-list" class="list-container">
+                <!-- Invoices will be listed here -->
+            </div>
+
+            <!-- Record Payment Form (Modal or Inline) -->
+            <div id="record-payment-form-container" style="display:none;" class="form-container modal-form">
+                <h4 id="payment-form-title">Record Payment for Invoice #<span id="payment-form-invoice-number"></span></h4>
+                <input type="hidden" id="current-payment-invoice-id">
+                <input type="hidden" id="current-payment-project-id">
+                <label for="paymentDate">Payment Date:</label>
+                <input type="date" id="paymentDate" required>
+                <label for="paymentAmount">Payment Amount:</label>
+                <input type="number" id="paymentAmount" step="0.01" required>
+                <label for="paymentMethod">Payment Method:</label>
+                <select id="paymentMethod">
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="Stripe">Stripe</option>
+                    <option value="PayPal">PayPal</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Check">Check</option>
+                    <option value="Other">Other</option>
+                </select>
+                <label for="paymentReference">Reference (Optional):</label>
+                <input type="text" id="paymentReference">
+                <button id="save-payment-btn">Save Payment</button>
+                <button id="cancel-payment-btn" type="button">Cancel Payment</button>
+            </div>
+        </section>
+
+        <!-- Expenses Section -->
+        <section id="expenses-section" class="management-section" style="display:none;">
+            <h2>Manage Expenses</h2>
+            <button id="add-expense-btn">Record New Expense</button>
+            <div id="create-expense-form-container" style="display:none;" class="form-container">
+                <h3 id="expense-form-title">Record New Expense</h3>
+                <input type="hidden" id="current-expense-id">
+                <label for="expenseDate">Date:</label>
+                <input type="date" id="expenseDate" required>
+                <label for="expenseDescription">Description:</label>
+                <input type="text" id="expenseDescription" required>
+                <label for="expenseAmount">Amount:</label>
+                <input type="number" id="expenseAmount" step="0.01" required>
+                <label for="expenseCategory">Category:</label>
+                <input type="text" id="expenseCategory" placeholder="e.g., Software, Travel, Equipment">
+                <label for="expenseProjectId">Link to Project (Optional):</label>
+                <select id="expenseProjectId">
+                    <option value="">None</option>
+                </select>
+                <label for="expenseReceiptFile">Receipt (Optional):</label>
+                <input type="file" id="expenseReceiptFile" accept="image/*,application/pdf">
+                <img id="receipt-preview" src="#" alt="Receipt Preview" style="display:none; max-width: 200px; max-height: 200px; margin-top: 10px;">
+                <progress id="upload-progress" value="0" max="100" style="display:none; width: 100%;"></progress>
+                <button id="save-expense-btn">Save Expense</button>
+                <button id="cancel-expense-btn" type="button">Cancel</button>
+            </div>
+            <div id="expenses-list" class="list-container"></div>
+        </section>
+
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js"></script>
+
+    <!-- Your app scripts -->
+    <script src="app.js"></script>
+    <script src="auth.js"></script>
+    <script src="project_management.js"></script>
+    <script src="package_management.js"></script>
+    <script src="quote_management.js"></script>
+    <script src="invoice_management.js"></script>
+    <script src="expense_management.js"></script>
+</body>
+</html>
