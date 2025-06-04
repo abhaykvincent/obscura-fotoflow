@@ -111,12 +111,12 @@ function Sidebar() {
         {/* Admin */}
         
         <p className="label"></p>
-        {/* <Link to={`/${studioName}/team`}>
+        <Link to={`/${studioName}/team`}>
           <div className={`menu team ${location.pathname === `/${studioName}/team` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Team</div>
           </div>
-        </Link> */}
+        </Link>
 
         {/* <Link to={`/${studioName}/notifications`}>
           <div className={`menu notifications  ${location.pathname === `/${studioName}/notifications` ? 'active' : ''}`}>
@@ -292,6 +292,18 @@ function Sidebar() {
             }
           >Logout</div>
         </div>
+      </div>
+      <div className="corner-tools">
+        <div className="network-signal">
+          <div className="signals">
+            <div className="signal"></div>
+            <div className="signal active"></div>
+            <div className="signal active"></div>
+          </div>
+        </div>
+        <div className="corner-lock"></div>
+        <div className="time-bay"><span>|</span> </div>
+        <div className="time-bay">10:23 PM <span>|</span> Sun 16 Jul </div>
       </div>
       {/* <div className="subscriptoion status">
         <div className="icon">

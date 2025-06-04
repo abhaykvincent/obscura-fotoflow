@@ -22,21 +22,31 @@ function AssociateCard({associate}) {
                         <h2 className="associate-title">{associate.name}</h2>
                         <p className='access-level'>{capitalizeFirstLetter(associate.projectAccess.accessLevel)}</p>
                     </div>
-                    <div className="roles">
-                        {
-                            associate.projectAccess.roles.map((role,index)=>{
-                                return <p className="associate-type">{capitalizeFirstLetter(role)}</p>
-                            })
+                    <div className="card-details">
 
-                        }
-                    </div>
-                    <div className="card-email">
-                        <div className="icon email"></div>
-                        <p className="associate-email">{associate.email}</p>
-                    </div>
-                    <div className="card-phone">
-                        <div className="icon phone"></div>
-                        <p className="associate-phone">+91 9999-999999</p>
+                        <div className="left-section">
+
+                            <div className="roles">
+                                {
+                                    associate.projectAccess.roles.map((role,index)=>{
+                                        return <p className="associate-type">{capitalizeFirstLetter(role)}</p>
+                                    })
+
+                                }
+                            </div>
+                            <div className="card-email">
+                                <div className="icon email"></div>
+                                <p className="associate-email">{associate.email}</p>
+                            </div>
+                            <div className="card-phone">
+                                <div className="icon phone"></div>
+                                <p className="associate-phone">+91 9999-999999</p>
+                            </div>
+                        </div>
+                        <div className="right-section">
+                            <div className="items project-exp">12 <span>Projects</span></div>
+                            <div className="items project-exp"> <span>7 months ago</span></div>
+                        </div>
                     </div>
             
                 </div>

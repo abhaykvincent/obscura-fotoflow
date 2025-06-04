@@ -167,7 +167,7 @@
             &.invoices .icon{
             background-size: 105%;
             background-image: url('https://img.icons8.com/glyph-neue/64/FFFFFF/check.png');
-            }
+            }s
             &.accounts .icon{
             background-size: 90%;
             background-image: url('https://img.icons8.com/glyph-neue/64/FFFFFF/bank.png');
@@ -205,6 +205,49 @@
         }
         
     }
+    .corner-tools{
+
+        position :absolute;
+        bottom: 8px*7.9;
+        left: 8px;
+        display: flex;
+        gap: 2px;
+    }
+    .time-bay{
+        font-size: 0.7rem;
+        color: $gray2-default-dark;
+        span{
+            color: $gray4-default-dark;
+            margin: 0 3px;
+        }
+    }
+    .corner-lock{
+        width: 8px*2;
+        height: 8px*1.8;
+        background: url('https://img.icons8.com/?size=100&id=85077&format=png&color=FFFFFF');
+        background-size: 80%;
+        background-position: center;
+        background-repeat: no-repeat;
+        opacity: 0.8;
+    }
+    .network-signal{
+        margin-left: -3px;
+        margin-right: 2px;
+        .signals{
+            display: grid;
+            gap: 2px;
+            .signal{
+                width: 3px;
+                height: 3px;
+                border-radius :2px ;
+                background-color: $gray2-default-dark;
+                &.active{
+                    background-color: $green-default-dark;
+
+                }
+            }
+        }
+    }
     .storage-bars{
         position: absolute;
         display: flex;
@@ -212,8 +255,8 @@
         // reverse
         
         width: calc(100% - 8px*1.1);
-        bottom: 8px*16.8;
-        left: 5px;
+        bottom: 8px*16.4;
+        left: 4px;
         padding-bottom: 8px*0;
         border-radius: 8px;
         border-radius: 8px 8px 8px 8px;
@@ -432,7 +475,7 @@
         grid-template-columns:  auto;
         position: absolute;
         bottom: 8px*30.25;
-        left : 6px;
+        left : 5px;
         margin:   0 ;
         margin-right: 0px;
 
@@ -549,7 +592,7 @@
             padding: 0px;
             padding: 8px;
             margin: 4px;
-            margin-left: 8px*1;
+            margin-left: 4px;
             margin-bottom: 8px*-0.75;
             height: 40px;
             width: 8px*18;
@@ -712,7 +755,7 @@
         top: calc(100vh - 8px*7.5);
         padding: 8px*0.5;
         padding-right: 0;
-        margin-left: 8px;
+        margin-left: 6px;
         margin-top: -8px*3;
         width: $sidebar-width - 8px*1.5;
         transform: translateY(-100%)scale(1.02);;

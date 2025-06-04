@@ -34,7 +34,7 @@
             height: 100%;
             min-height: 8px*12;
             width: 8px*15;
-            border-radius: 50%;
+            border-radius: 8px;
             border: 1px solid $gray4-accessible-dark;
             // custome transitio duration for transform: scale
             background-size: 100%;
@@ -92,16 +92,16 @@
         margin-left: -8px*5;
         margin-right: 8px*5;
     }
-    .associate-cover{
+    .associate-cover.avatar{
         height: 8px*15;
-        width: 8px*15;
-        border-radius: 50%;
+        width: 8px*13;
+        border-radius: 8px;
         border: 1px solid $gray3-accessible-dark;
         border-top: 1px solid $gray2-accessible-dark;
         border-left: 1px solid $gray2-accessible-dark;
         background-color: $dark-3;
         background-image: url('https://img.icons8.com/glyph-neue/128/FFFFFF/gender-neutral-user.png');
-        background-size: 60%;
+        background-size: cover ;
         background-position:  center;
         opacity: 1;
         transition-duration: 0.1s;
@@ -111,10 +111,9 @@
     .associate-details{
         display: grid;
         align-content: space-between;
-        margin: 8px*2;
-        margin-right: 8px*1.5;
+        margin: 8px*1.5;
         margin-bottom: 8px*1;
-        margin-top: 8px*1.5;
+        margin-left: 8px*0.5;
         gap: 8px*0.2;
         transition-duration: 0.1s;
         .details-top{
@@ -126,12 +125,12 @@
             }
             .associate-type{
                 padding: 1px 4px;
-            line-height: 8px*2.5;
+            line-height: 8px*2;
             font-weight: 400;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: $gray2-default-dark;
-            background-color: $dark-3;
-            border: 1px solid $dark-0;
+            background-color: $dark-2;
+            border: 1px solid $dark-1;
             border-radius: 4px;
             }
             .right{
@@ -151,6 +150,34 @@
                 }
             }
             .left{
+                .card-details{
+
+                    display :grid;
+                    grid-template-columns: auto auto;
+                    .left-section{
+                        .icon{
+                            opacity: 0.6;
+                        }
+                    }
+                    .right-section{
+                        display: flex;
+                        align-items: end;
+                        gap: 4px;
+                        flex-direction: column;
+                        justify-content: flex-end;
+                        margin-bottom :8px*1;
+                        .items{
+                            font-size: 0.8rem;
+                            text-align: right;
+                            color: $gray2-default-dark;
+                            span{
+                                color: $gray3-default-dark;
+                            font-size: 0.7rem;
+
+                            }
+                        }
+                    }
+                }
                 .roles{
                     display: flex;
                     gap: 4px;
@@ -163,7 +190,7 @@
                     margin-bottom: 4px;
                     .access-level{
                         font-size: 0.8rem;
-                        color: $gray2-accessible-dark
+                        color: $gray4-accessible-dark
                     }
                 }
                 .card-email{

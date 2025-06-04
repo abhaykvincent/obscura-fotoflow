@@ -5,8 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import { changeSubscriptionPlan } from '../../firebase/functions/subscription';
 import { fetchStudio, selectCurrentSubscription, selectStudio } from '../../app/slices/studioSlice';
-import { getDaysFromNow } from '../../utils/dateUtils';
+import { getDaysFromNow, getEventTimeAgo } from '../../utils/dateUtils';
 import { Link } from 'react-router-dom';
+import CurrentPlanSection from '../../features/BillingHistory/CurrentPlanSection';
 
 export const initialPlans = [
   {
@@ -317,6 +318,8 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
 function Subscription() {
   const [plans, setPlans] = useState(initialPlans);
   const defaultStudio = useSelector(selectUserStudio);
+  const currentSubscription = useSelector(selectCurrentSubscription);
+  const studio= useSelector(selectStudio)
   //reset plans to initialPlans in appropriate interval
   useEffect(() => {
       setPlans(initialPlans);
@@ -344,6 +347,12 @@ function Subscription() {
           </div>
         </div>
       </div>
+      <CurrentPlanSection
+              currentSubscription={currentSubscription}
+              studio={studio}
+              getDaysFromNow={getDaysFromNow} // Pass utility functions if needed by the child
+              getEventTimeAgo={getEventTimeAgo} // Pass utility functions if needed by the child
+            />
       <div className="plans-container">
 
       <div className="subscriptions-header">

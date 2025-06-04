@@ -15,6 +15,7 @@ import {
 } from '../../app/slices/studioSlice';
 import Refresh from '../../components/Refresh/Refresh';
 import { getDaysFromNow, getEventTimeAgo } from '../../utils/dateUtils';
+import CurrentPlanSection from './CurrentPlanSection'; // Import the new component
 
 
 import './BillingHistory.scss';
@@ -101,41 +102,13 @@ export default function BillingHistory() {
   return (
     <div className="billing-container">
 
-      {/* Current Plan Section */}
-      <div className="current-plan">
-        <h2 className="section-title">Current Plan</h2>
-        <div className="plan-details">
-          <div className='current-plan-label'>{currentSubscription?.plan?.name}</div>
-          <p  className='plan-pricing'>₹{currentSubscription?.pricing?.totalPrice / 100}{' '}
-            <span
-              className={`status-tag ${
-                currentSubscription?.billing?.paymentRecived ? 'paid' : currentSubscription?.plan?.type==="free" ? 'free':'unpaid'
-              }`}
-            >
-              {currentSubscription?.billing?.paymentRecived ? 'Paid' : currentSubscription?.plan?.type==="free" ? 'Free':'Un-paid'}
-            </span>
-          </p>
-          <p>
-            <strong></strong>{' '}
-            {/* <Link to="#" className="link">
-              {currentSubscription?.id}
-            </Link> */}
-          </p>
-          {/* <p>
-            <strong>Last Updated:</strong>{' '}
-            {getEventTimeAgo(currentSubscription?.metadata.updatedAt)}
-          </p> */}
-          <p>
-            <strong>Plan Expires </strong>{' '}
-            in {getDaysFromNow(currentSubscription?.dates?.endDate)} days
-          </p>
-          <p>
-            <strong>Free Trial </strong>{' '}
-            ends in {getDaysFromNow(studio?.trialEndDate)}{' '}
-            days <span className="trial-progress"></span>
-          </p>
-        </div>
-      </div>
+      {/* Current Plan Section - Now a separate component */}
+      <CurrentPlanSection
+        currentSubscription={currentSubscription}
+        studio={studio}
+        getDaysFromNow={getDaysFromNow} // Pass utility functions if needed by the child
+        getEventTimeAgo={getEventTimeAgo} // Pass utility functions if needed by the child
+      />
 
       {/* Subscriprions History Section */}
       <div className="invoice-history">
