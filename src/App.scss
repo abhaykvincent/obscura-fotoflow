@@ -1452,6 +1452,7 @@ body{
       left: calc(50vw );
       height: auto;
       max-height: 90vh;
+      max-width: 8px*80;
       transform: translate(-50%,calc(-50% - $header-height)) scale(1);
       opacity: 1;
       animation-name: modal-in-island;
@@ -3504,23 +3505,7 @@ body{
       .login-subtitle {
      width: 100%;
       }
-      .button {
-          width: calc(100vw - 8px*8);
-          font-size: 0.9rem;
-          padding-right: 4px;
-          padding-left: 4px;
-          gap: 4px;
-      }
     } 
-    .button {
-        width: calc(100vw - 8px*8);
-        font-size: 0.9rem;
-        padding-right: 4px;
-        padding-left: 4px;
-        gap: 4px;
-    }
-    
-    
   }
     
 }

@@ -29,8 +29,18 @@
 
     .control-wrap{
         position: relative;
+        &.view-type-controls .label{
+            text-align: right;;
+            left: -6px;
+            &.mini-icons{
+                &.view{
+                    
+                }
+            }
+        }
         .label{
             position: absolute;
+            width:100%;
             top: -8px*2.2;
             left: 8px*0.5;
             color: $gray3-default-dark;

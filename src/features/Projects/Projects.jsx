@@ -235,7 +235,7 @@ function Projects() {
                                 </div>
                             </div>
                             {/* <div className="active"></div> */}
-                            <div className="label">View</div>
+                            <div className="label mini-icons view">View</div>
                         </div>
                     </div>
                 )}

@@ -40,9 +40,6 @@ function Sidebar() {
     })
     },[storageLimit])
 
-  useEffect(()=>{
-    console.log(currentSubscription)
-  },[currentSubscription])
 
   if(user==='no-studio-found')
     return null; // Return null if no studio is found to prevent rendering issues
@@ -61,6 +58,7 @@ function Sidebar() {
   return (
     <div className="sidebar">
       <div className="menu-list">
+        <p className="label"></p>
         <Link to={`/${studioName}/home`}>
           <div className={`menu home ${location.pathname === `/${studioName}/` ? 'active' : ''}`}>
             <div className="icon"></div>
@@ -111,12 +109,12 @@ function Sidebar() {
         {/* Admin */}
         
         <p className="label"></p>
-        <Link to={`/${studioName}/team`}>
+        {/* <Link to={`/${studioName}/team`}>
           <div className={`menu team ${location.pathname === `/${studioName}/team` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Team</div>
           </div>
-        </Link>
+        </Link> */}
 
         {/* <Link to={`/${studioName}/notifications`}>
           <div className={`menu notifications  ${location.pathname === `/${studioName}/notifications` ? 'active' : ''}`}>
