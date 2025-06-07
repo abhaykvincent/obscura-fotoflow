@@ -157,7 +157,7 @@ function Projects() {
             <h3 className="month-name">{month}</h3>
             <div className={`projects-list ${viewType}`}>
                 {projectsInMonth.map((project) => (
-                    <ProjectCard project={project} key={project.id} />
+                    <ProjectCard project={project} key={project.id} type='projects'/>
                 ))}
             </div>
         </div>

@@ -443,7 +443,26 @@
             background-size: 40%;
             background-image: url('https://img.icons8.com/ios/150/FFFFFF/birthday.png');
         }
-    }&.Baptism{
+    }
+    &.Family{
+        .project-cover{
+            background-size: 60%;
+            background-image: url('https://img.icons8.com/?size=100&id=Tqqn1DieaMiE&format=png&color=FFFFFF');
+        }
+    }
+    &.Maternity{
+        .project-cover{
+            background-size: 50%;
+            background-image: url('https://img.icons8.com/?size=100&id=xrI3gmcIrVPN&format=png&color=FFFFFF');
+        }
+    }
+    &.Headshot{
+        .project-cover{
+            background-size: 50%;
+            background-image: url('https://img.icons8.com/?size=100&id=423kipnPTZJn&format=png&color=FFFFFF');
+        }
+    }
+    &.Newborn, &.Baptism{
         .project-cover{
             background-size: 50%;
             background-image: url('https://img.icons8.com/external-others-bomsymbols-/91/FFFFFF/external-angel-christmas-decoration-outline-others-bomsymbols-.png');
@@ -599,6 +618,8 @@
 
         }
 
+        // Selectioon completed
+        
     
     @for $i from 1 through 20 {
         &:nth-child(#{$i}) {

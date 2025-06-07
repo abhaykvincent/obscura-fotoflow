@@ -105,13 +105,14 @@ function Home() {
                         <>
                             {selectedProjects.length !== 0 && <div className="section recent">
                                 <h3 className='section-heading'>Selection Completed</h3>
-                                <div className="projects">
+                                <div className="projects selection">
                                 {
                                     selectedProjects.length !== 0? (
                                         selectionCompletedProjects.map((project, index) => (
                                         <ProjectCard
                                             project={project}
                                             key={project.id}
+                                            type='selection'
                                         /> 
                                     ))
                                     ) : (
@@ -129,6 +130,7 @@ function Home() {
                                         <ProjectCard
                                             project={project}
                                             key={project.id}
+                                            type='home'
                                         /> 
                                     ))
                                     ) : (

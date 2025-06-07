@@ -147,6 +147,32 @@
                     }
                 }
             }
+            &.selection{
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 8px*2;
+                .project{
+                    grid-template-columns: 8px*12 auto;
+                }
+                .project-details{
+                    gap: 8px;
+                    .details-top{
+    
+                        .tags{
+                            display:none;
+                        }
+                        .info-bar{
+                            display:none;
+                        }
+                    } 
+                    .project-summary{
+                        height: none;
+                    }
+                } 
+                .project-cover{
+                    min-height: 8px*2;
+                    width:  8px*12;
+                }
+            }
         }
         .shoots{
             display: flex;
@@ -314,17 +340,25 @@
   @media only screen and (max-width: 1500px) {
     .home .section .projects{
         grid-template-columns: 1fr 1fr 1fr;  
-        
+        &.selection{
+            grid-template-columns:  1fr 1fr;  
+        }
     }
 }
 @media only screen and (max-width: 1200px) {
     .home .section .projects{
         grid-template-columns: 1fr 1fr 1fr ;
+        &.selection{
+            grid-template-columns:  1fr 1fr;  
+        }
     }
 }
 @media only screen and (max-width: 1080px) {
     .home .section .projects{
         grid-template-columns: 1fr 1fr 1fr ;
+        &.selection{
+            grid-template-columns:  1fr 1fr;  
+        }
         .project{
             .project-cover{
             }
@@ -337,6 +371,9 @@
     .home {
         .section .projects{
             grid-template-columns: 1fr 1fr  ;
+        }
+        &.selection{
+            grid-template-columns:  1fr;  
         }
         .welcome-section{
             grid-template-columns: 1fr;
@@ -373,6 +410,9 @@
 
     .home .section .projects{
         grid-template-columns: 1fr  ;
+        &.selection{
+            grid-template-columns:  1fr ;  
+        }
     }
     .home 
     {

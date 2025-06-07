@@ -86,7 +86,7 @@ const SearchResults = () => {
             <>
             {projectResults.map((project) => (
                 <div onClick={searchResultClick} key={project.id} >
-              <ProjectCard project={project}  />
+              <ProjectCard project={project} type='search' />
           </div>
             ))}
             </>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {  fetchAllReferalsFromFirestore, fetchUsers } from '../../firebase/functions/firestore';
+import {  createDummyProjectsInFirestore, fetchAllReferalsFromFirestore, fetchUsers } from '../../firebase/functions/firestore';
 import './AdminPanel.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../app/slices/modalSlice';
@@ -10,18 +10,21 @@ import { useNavigate, useParams } from 'react-router';
 import { copyToClipboard, getGalleryURL, getOnboardingReferralURL } from '../../utils/urlUtils';
 import { fetchStudios } from '../../firebase/functions/studios';
 import { migrateStudios } from '../../firebase/functions/subscription';
+import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 
 function AdminPanel() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     // react url page name                 <Route path="/admin/:page" element={<AdminPanel />} />
     const page = useParams().page;
+    const domain = useSelector(selectDomain);
     const [studios, setStudios] = useState([]);
     const [users, setUsers] = useState([]);
     const [selectedTab, setSelectedTab] = useState(page); // State to manage the selected tab
     const [referallsList, setReferallsList] = useState([])
     useEffect(()=>{
-    },[referallsList])
+        console.log(domain)
+    },[domain])
     useEffect(() => {
         const getStudios = async () => {
             try {
@@ -71,6 +74,7 @@ function AdminPanel() {
         <main className="admin-panel">
             <h1 className="admin-title">Admin Panel</h1>
             <div className="admin-dashboard">
+
                 <div className="cards">
                     <div className="group ">
 
@@ -140,29 +144,29 @@ function AdminPanel() {
                     </div>
 
                 </div>
+
                 <div className="admin-actions">
-                    <div className="button secondary outline" onClick={() => {/* Implement create user logic here */}}>
-                        Create User
-                    </div>
-                    <div className="button secondary outline" onClick={() => {/* Implement create studio logic here */}}>
-                        Create Studio
-                    </div>
-                    <div className="button secondary outline" onClick={() => {/* Implement create studio logic here */}}>
-                        Create Referal
-                    </div>
-                    <div className="button secondary outline" onClick={() => {/* Implement create studio logic here */}}>
-                        Create Ticket
-                    </div>
+
                     <div className="button secondary outline" onClick={async () => {
                             try {
                                 await migrateStudios();
                                 console.log('Studios migrated successfully');
                             } catch (error) {
-                            console.error('Error migrating Studios:', error.message);
-                            // Optionally show an error message to the user
+                                console.error('Error migrating Studios:', error.message);
                             }
                         }}>
                         Migrate Studios
+                    </div>
+
+                    <div className="button secondary outline" onClick={async () => {
+                            try {
+                                await createDummyProjectsInFirestore(domain, 20)
+                                console.log('Adding dummy projects successfull');
+                            } catch (error) {
+                                console.error('Error Adding dummy projects:', error.message);
+                            }
+                        }}>
+                        Add Dummy Projects
                     </div>
                 </div>
             </div>

@@ -993,24 +993,69 @@ export const fetchInvitationFromFirebase = async (domain, projectId) => {
  * @param {number} n - Number of dummy projects to create.
  */
 export const createDummyProjectsInFirestore = async (domain, n = 5) => {
-  for (let i = 1; i <= n; i++) {
-    const dummyProject = {
-      name: `Test Project ${i}`,
-      name2: `Client ${i}`,
-      type: i % 2 === 0 ? 'Wedding' : 'Portrait',
-      projectValidityMonths: [3, 6, 12][i % 3],
-      createdAt: Date.now(),
-      status: 'active',
-      collections: [],
-      events: [],
-      payments: [],
-      expenses: [],
-      budgets: [],
-      projectCover: '',
-      pin: Math.floor(1000 + Math.random() * 9000).toString(),
-      description: `This is a dummy project for development and testing. #${i}`,
-    };
-    await addProjectToStudio(domain, dummyProject);
-  }
-  console.log(`Created ${n} dummy projects in studio: ${domain}`);
+    console.log(domain);
+
+    // Arrays for realistic random data
+    const firstNames = ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'Grace', 'Heidi', 'Ivan', 'Judy', 'Kevin', 'Liam', 'Mia', 'Noah', 'Olivia', 'Peter', 'Quinn', 'Rachel', 'Sam', 'Tina', 'Uma', 'Victor', 'Wendy', 'Xavier', 'Yara', 'Zoe'];
+    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Lee', 'Perez', 'Thompson', 'Moore', 'Wright', 'King'];
+    const businessNames = ['Elite Events', 'Pixel Perfect Studio', 'Moment Makers', 'Timeless Captures', 'Dream Lens Photography', 'The Artful Shutter', 'Infinite Frames'];
+
+    const projectTypes = ['Wedding', 'Baptism', 'Birthday', 'Maternity', 'Newborn', 'Headshot', 'Anniversary', 'Family'];
+    const projectStatuses = ['draft', ' ','active', 'selected', 'completed', 'archived'];
+
+    // Helper to get a random timestamp in the past 13 months
+    const now = Date.now();
+    // Using a more precise calculation for 13 months ago
+    const thirteenMonthsAgo = new Date();
+    thirteenMonthsAgo.setMonth(thirteenMonthsAgo.getMonth() - 13);
+    const thirteenMonthsMs = now - thirteenMonthsAgo.getTime(); // Get the precise difference in ms
+
+    for (let i = 1; i <= n; i++) {
+        // Generate random project name (e.g., "Smith & Johnson Wedding" or "Alice's Birthday")
+        let projectName;
+        let clientName;
+        const nameType = Math.random();
+
+        if (nameType < 0.4) { // 40% chance of a couple's name for weddings/anniversaries
+            const name1 = `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+            const name2 = `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+            projectName = `${name1} & ${name2}`;
+            clientName = `${lastNames[Math.floor(Math.random() * lastNames.length)]} Family`;
+        } else if (nameType < 0.8) { // 40% chance of a single person's name
+            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+            projectName = `${firstName} ${lastName}`;
+            clientName = `${firstName} ${lastName}`;
+        } else { // 20% chance of a business name
+            projectName = businessNames[Math.floor(Math.random() * businessNames.length)];
+            clientName = `Client ${Math.floor(100 + Math.random() * 900)}`; // Simple client ID for business projects
+        }
+
+
+        // Make name2 optional (e.g., 50% chance it's present)
+        const optionalName2 = Math.random() < 0.5 ?
+            `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}` :
+            ''; // Empty string if not present
+
+        const randomOffset = Math.floor(Math.random() * thirteenMonthsMs);
+
+        const dummyProject = {
+            name: projectName,
+            name2: optionalName2, // Now optional
+            type: projectTypes[Math.floor(Math.random() * projectTypes.length)], // Random project type
+            projectValidityMonths: [3, 6, 12][i % 3],
+            createdAt: now - randomOffset,
+            status: projectStatuses[Math.floor(Math.random() * projectStatuses.length)], // Random status
+            collections: [],
+            events: [],
+            payments: [],
+            expenses: [],
+            budgets: [],
+            projectCover: '',
+            pin: Math.floor(1000 + Math.random() * 9000).toString(),
+            description: `This is a dummy project for development and testing. #${i} - Client: ${clientName || projectName}`,
+        };
+        await addProjectToStudio(domain, dummyProject);
+    }
+    console.log(`Created ${n} dummy projects in studio: ${domain}`);
 };
