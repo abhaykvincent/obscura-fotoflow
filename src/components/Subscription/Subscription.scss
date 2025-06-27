@@ -762,7 +762,7 @@ main.subscription{
             }
             .cover{
                 width: 100%;
-                padding-top: 100%;
+                padding-top: 80%;
                 background-image: url('../../assets/img/subscription/gray-sphere-3d.avif');
                 background-color: $dark-2;
                 background-size: 40%, 80%;
@@ -819,18 +819,19 @@ main.subscription{
 .modal-container{
     z-index: 45 !important;
 }
-.modal.upgrade{
-    width: 90vw;
+.modal.upgrade.island{
     text-align: center;
     padding-bottom: 0;
     z-index: 91;
+    width: 8px*200;
+    max-width: 8px*120;
     .modal-body{
-        height: calc(100vh - 8px*34) !important;
+        height: calc(100vh - 8px*58) !important;
         
     overflow: scroll;
     }
     .upgrade-content{
-        margin-bottom: 8px*2;
+        margin-bottom: 8px*4;
         font-size: 2rem;
         font-weight: 600;
     }
@@ -839,6 +840,8 @@ main.subscription{
     }
     .form-section{
         padding-bottom: 8px*2;
+        margin: 0 8px*5;
+        text-align: center;
     }
     .core-features{
         display: none;
@@ -882,14 +885,8 @@ main.subscription{
     }
 }
   @media only screen and (max-width: 1500px) {
-    .home .section .projects{
-        grid-template-columns: 1fr 1fr 1fr;
-    }
 }
 @media only screen and (max-width: 1230px) {
-    .home .section .projects{
-        grid-template-columns: 1fr 1fr 1fr ;
-    }
      .plans{
         column-gap: 8px*1.5;
     }
@@ -900,7 +897,6 @@ main.subscription{
         column-gap: 8px*4;
     }
     .home .section .projects{
-        grid-template-columns: 1fr 1fr 1fr ;
         .project{
             .project-cover{
             }
@@ -912,7 +908,6 @@ main.subscription{
 @media only screen and (max-width: 860px) {
     .home {
         .section .projects{
-            grid-template-columns: 1fr 1fr  ;
         }
         .welcome-section{
             grid-template-columns: 1fr;
@@ -983,7 +978,6 @@ main.subscription{
     {
        
         .section .projects{
-            grid-template-columns: 1fr 1fr ;
             .project{
                 .project-cover{
                     width: 80px

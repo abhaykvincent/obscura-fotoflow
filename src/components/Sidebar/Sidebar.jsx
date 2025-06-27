@@ -58,7 +58,6 @@ function Sidebar() {
   return (
     <div className="sidebar">
       <div className="menu-list">
-        <p className="label"></p>
         <Link to={`/${studioName}/home`}>
           <div className={`menu home ${location.pathname === `/${studioName}/` ? 'active' : ''}`}>
             <div className="icon"></div>

@@ -1017,7 +1017,7 @@ export const createDummyProjectsInFirestore = async (domain, n = 5) => {
         const nameType = Math.random();
 
         if (nameType < 0.4) { // 40% chance of a couple's name for weddings/anniversaries
-            const name1 = `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+            const name1 = `${firstNames[Math.floor(Math.random() * firstNames.length)]}`;
             const name2 = `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
             projectName = `${name1} & ${name2}`;
             clientName = `${lastNames[Math.floor(Math.random() * lastNames.length)]} Family`;

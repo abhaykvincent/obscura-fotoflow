@@ -127,7 +127,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
           <div className="modal-title">
             {currentStep === 1 ? "Create project" : currentStep === 2 ? "Project Details" : isSubProject ? "New Sub-Project" : "New Project"}
             <p className="modal-subtitle">
-              {currentStep === 1 ? "Choose Template" : currentStep === 2 ? "Project Details" : isSubProject ? "New Sub-Project" : "New Project"}
+              {currentStep === 1 ? "Choose Template" : currentStep === 2 ? projectData.type : isSubProject ? "New Sub-Project" : "New Project"}
             </p>
           </div>
         </div>
@@ -253,7 +253,7 @@ const ProjectDetails = ({ projectData, errors, handleInputChange, nameInputRef, 
           ))}
         </div>
         <div className="info">
-          After {projectData.projectValidityMonths} months, storage frees up & moved to cold storage for client only access.
+           Storage frees up & archived for future access.
         </div>
       </div>
     </div>

@@ -347,12 +347,6 @@ function Subscription() {
           </div>
         </div>
       </div>
-      <CurrentPlanSection
-              currentSubscription={currentSubscription}
-              studio={studio}
-              getDaysFromNow={getDaysFromNow} // Pass utility functions if needed by the child
-              getEventTimeAgo={getEventTimeAgo} // Pass utility functions if needed by the child
-            />
       <div className="plans-container">
 
       <div className="subscriptions-header">

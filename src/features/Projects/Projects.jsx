@@ -18,6 +18,7 @@ import Refresh from '../../components/Refresh/Refresh';
 
 // --- Styles ---
 import './Projects.scss';
+
 // --- Constants ---
 const FILTER_TABS = {
     ALL: 'all',

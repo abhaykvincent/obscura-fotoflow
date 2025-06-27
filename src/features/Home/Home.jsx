@@ -29,7 +29,7 @@ function Home() {
       const modals = useSelector(selectModal);
     useEffect(() => {
         trackEvent('studio_home_view')
-        setSelectedProjects(selectionCompletedProjects)
+        setSelectedProjects(selectionCompletedProjects.slice(0, 8))
         setRecentProjects(getProjectsByLastUpdated(projects, 8))
         const unsortedUpcommingShoots = getUpcommingShoots(projects, 31)
         const sortedUpcommingShoots = unsortedUpcommingShoots.sort((a, b) => {

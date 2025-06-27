@@ -30,29 +30,31 @@ import SearchResults from './components/Search/SearchResults';
 import Subscription from './components/Subscription/Subscription';
 import UploadProgress from './components/UploadProgress/UploadProgress';
 import Loading, { LoadingLight } from './components/Loading/Loading';
+import Settings from './features/Settings/Settings';
+import BillingHistory from './features/BillingHistory/BillingHistory';
+import FlowPilot from './components/Modal/SupportIcon/FlowPilot';
 import SupportIcon from './components/Modal/SupportIcon/FlowPilot';
+// Modal Components
+import TrialStatusModal from './components/Modal/TrialEnds/TrialEnds';
+import UpgradeModal from './components/Subscription/UpgradeModal';
 // Utils
 import { isDeveloper, setUserType } from './analytics/utils';
 import { isPublicPage } from './utils/publicPages';
 // Redux 
 import { showAlert } from './app/slices/alertSlice';
-import { openModal, selectModal } from './app/slices/modalSlice';
-import { fetchCurrentSubscription, fetchStudio, selectCurrentSubscription, selectStudio} from './app/slices/studioSlice';
+import { selectModal } from './app/slices/modalSlice';
+import { fetchCurrentSubscription, fetchStudio, selectStudio} from './app/slices/studioSlice';
 import { checkAuthStatus, checkStudioStatus, selectIsAuthenticated, selectUser, selectUserStudio } from './app/slices/authSlice';
 import { fetchProjects, selectProjectsStatus} from './app/slices/projectsSlice';
 // Hooks
 import { useShortcutsConfig } from './hooks/shortcutsConfig';
-import useAdminAuth from './hooks/useAdminAuth';
-import Settings from './features/Settings/Settings';
-import UpgradeModal from './components/Subscription/UpgradeModal';
+// Functions
 import { generateReferral } from './app/slices/referralsSlice';
-import FlowPilot from './components/Modal/SupportIcon/FlowPilot';
 import { getCurrentSubscription } from './firebase/functions/subscription';
-import TrialStatusModal from './components/Modal/TrialEnds/TrialEnds';
-import BillingHistory from './features/BillingHistory/BillingHistory';
 
-console.log(`%c Welcome to Fotoflow!`, `color:rgb(98, 255, 0); `);
+console.log(`%c Welcome to Fotoflow!`, `color:rgb(84, 219, 0); `);
 if(isDeveloper) console.log(`%c This device is not being tracked by Analytics in production.`, `color: #ff9500; `);
+
 // APP
 export default function App() {
   const dispatch = useDispatch();
@@ -106,9 +108,11 @@ export default function App() {
 
   useEffect(() =>{
 
-    if (studio?.trialEndDate) {
+    /* if (studio?.trialEndDate) {
+      console.log(studio?.trialEndDate)
+      debugger
       dispatch(openModal('trialStatus'));
-    }
+    } */
   },[studio?.trialEndDate])
   useEffect(() => {
     const modalStates = Object.values(selectModal);
@@ -156,11 +160,6 @@ export default function App() {
               {isAuthenticated && (
                 
                 <>
-                  {/* <Route path="/admin/" element={
-                    <AdminRoute> 
-                      <AdminPanel /> 
-                    </AdminRoute> 
-                  }/> */}
                   <Route path="/masanory-grid" element={<ImageGallery  />} />
                     
                   <Route exact path="/" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />

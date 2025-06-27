@@ -111,10 +111,10 @@ const LoginModal = () => {
       <div className="modal island loginModal">
 
       <div className="actions">
-        <h2 className='login-title-section'><span>Login to Fotoflow<span> .</span></span></h2>
+        <h2 className='login-title-section'><span>Secure Login<span> .</span></span></h2>
         {/* <h2 className='login-title'>Signup <span>.</span> Signin <span>.</span></h2> */}
-        <h3 className='login-subtitle'>Login or create new account to manage your creative projects.</h3>
-      
+        <h3 className='login-subtitle'>Streamlining event photography workflow {/* <a className="green-label" href="">Create your studio</a> */}</h3>
+
         <p className="open-with-login-label">{ loading?'':''}</p>
           {/* <div className='button secondary outline disable'  onClick={openEmailPassordLogin}>Password Login<div className="email-logo"></div></div> */}
           

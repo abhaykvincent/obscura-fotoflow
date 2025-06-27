@@ -1043,13 +1043,13 @@
             display:block
         }
         &.hide{
-            left: 0%;
+            left: 8px*1;
             transition-duration: 0.1s;
 
-        width: 8px*7.5;
+            width: 8px*7.5;
             .menu-list {
                 padding: 8px*1.5;
-                max-height: calc(100vh - 8px*8);
+                max-height: calc(100vh - 8px*8.5);
                 overflow-y: visible;
                 a{
                     transition-duration: 0.1s;x
@@ -1069,6 +1069,12 @@
                     }
                 }
                 }
+        }
+        .plan-labels{
+            display: none;
+        }
+        .corner-tools{
+            display: none;
         }
       }
     }
