@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import './ShareGallery.scss'
+import { styled } from '@mui/material/styles';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
 import { selectDomain } from '../../app/slices/authSlice';
@@ -8,18 +10,82 @@ import { copyToClipboard, extractDomain, getGalleryURL } from '../../utils/urlUt
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
 
+import './ShareGallery.scss'
+
+// Corrected IOSSwitch definition
+const IOSSwitch = styled((props) => (
+  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+))(({ theme, ...props }) => ({ // Destructure props here
+  width: 32,
+  height: 16,
+  padding: 0,
+  '& .MuiSwitch-switchBase': {
+    padding: 0,
+    margin: 2,
+    transitionDuration: '300ms',
+    '&.Mui-checked': {
+      transform: 'translateX(16px)',
+      color: '#fff',
+      '& + .MuiSwitch-track': {
+        // Now 'props.color' is accessible
+        backgroundColor: props.color === 'green' ? '#428924' : '#0c84ff',
+        opacity: 1,
+        border: 0,
+        ...theme.applyStyles('dark', {
+          backgroundColor: '#2ECA45',
+        }),
+      },
+      '&.Mui-disabled + .MuiSwitch-track': {
+        opacity: 0.5,
+      },
+    },
+    '&.Mui-focusVisible .MuiSwitch-thumb': {
+      color: '#33cf4d',
+      border: '6px solid #fff',
+    },
+    '&.Mui-disabled .MuiSwitch-thumb': {
+      color: theme.palette.grey[100],
+      ...theme.applyStyles('dark', {
+        color: theme.palette.grey[600],
+      }),
+    },
+    '&.Mui-disabled + .MuiSwitch-track': {
+      opacity: 0.7,
+      ...theme.applyStyles('dark', {
+        opacity: 0.3,
+      }),
+    },
+  },
+  '& .MuiSwitch-thumb': {
+    boxSizing: 'border-box',
+    width: 12,
+    height: 12,
+  },
+  '& .MuiSwitch-track': {
+    borderRadius: 26 / 2,
+    backgroundColor: '#E9E9EA22',
+    opacity: 1,
+    transition: theme.transitions.create(['background-color'], {
+      duration: 500,
+    }),
+    ...theme.applyStyles('dark', {
+      backgroundColor: '#39393D',
+    }),
+  },
+}));
+
 function ShareGallery({project }) {
   // Get the current location object
   const location = useLocation();
-
-  // Extract the full current URL
-  const currentUrl = window.location.href;
   const dispatch = useDispatch()
+  const currentUrl = window.location.href;
+
   const visible = useSelector(selectModal)
-  const onClose = () => dispatch(closeModalWithAnimation('shareGallery'))
   const domain = useSelector(selectDomain)
 
-const modalRef = useModalFocus(visible.shareGallery);
+  const onClose = () => dispatch(closeModalWithAnimation('shareGallery'))
+
+  const modalRef = useModalFocus(visible.shareGallery);
   if (!visible.shareGallery) {
     return null;
   }
@@ -35,19 +101,16 @@ const modalRef = useModalFocus(visible.shareGallery);
             <div className="control minimize"></div>
             <div className="control maximize"></div>
           </div>
-          <div className="modal-title">Share  Galleries</div>
+          <div className="modal-title">Share Galleries</div>
         </div>
         <div className='modal-body'>
           <div className="form-section">
             {/* map project collections and render it with a check box to select galleries to share */}
           <h4>{project.name}</h4>
-            
+
               <div className="select-galleries">
-                
+
               <div className="galleries-share-list-selection">
-              <p className='client-label'>Select galleries</p>
-              <p className='client-label'>Images</p>
-              <p className='client-label'>Selection</p>
 
                 {project.collections.map((collection, index) => (
                   <>
@@ -55,50 +118,40 @@ const modalRef = useModalFocus(visible.shareGallery);
                     <div key={index} className='gallery-field'>
                       <div className="form-item">
                         <div className="input">
-                          <input type="checkbox" checked={true} onChange={() => {}} />
+                        <FormControlLabel
+                          control={<IOSSwitch  sx={{ m: 1 }} defaultChecked color="green" />} // Pass color to IOSSwitch
+                          label={collection.name}
+                        />
                         </div>
                         <div className="label">
-                          <label>{collection.name}</label>
+                          <label></label>
                         </div>
                       </div>
-                    </div>
-                    {/* Selection choose */}
-                    <div key={index} className='gallery-field count-view'>
-                      <div className="form-item " >
-                        <div className="input">
-                          345
-                        </div>
-                      </div>
-                    </div>
-                    {/* Selection choose */}
-                    <div key={index} className='gallery-field selection-radio'>
-                      <div className="form-item selection" >
-                        <div className="input">
-                          <input type="radio" checked={true} onChange={() => {}} />
-                        </div>
-                      
-                      </div>
+
+                        <FormControlLabel
+                          control={<IOSSwitch sx={{ m: 1 }} defaultChecked color="blue" />} // Pass color to IOSSwitch
+                        />
                     </div>
                   </>
                 ))}
 
               </div>
 
-                
+
               </div>
-              
+
 
               <p className="client-label">Gallery link</p>
               <div className="link-pin">
                 <div className='link' >
-                  
+
                     <div className="link-container">
                     <a className='linkToGallery' href={getGalleryURL('share',domain,project.id)} target='_blank' >.../{domain}{getGalleryURL('share',domain,project.id).split(domain)[1]}
                       <div className="button icon icon-only open-in-new"></div>
                     </a>
-                    
+
                   </div>
-                
+
               </div>
               <p className="copy-link button icon copy pin" onClick={() => {
                   copyToClipboard(getGalleryURL('share',domain,project.id))
@@ -117,25 +170,12 @@ const modalRef = useModalFocus(visible.shareGallery);
                 }
                 }>{project.pin}</p>
             </div>
-              
-              {/* <div className="client-notification">
-              <p className='client-label'>Sent link to Whatsapp</p>
-                  <div className="form-item">
-                  <div className="input">
-                    <input type="checkbox" checked={true}/>
-                  </div>
-                    <div className="label">
-                      <label>{project.name}</label>
-                      <p>+91 {project.phone}</p>
-                    </div>
-                  </div>
-              </div> */}
 
           </div>
         </div>
         <div className="actions">
           <div className="button secondary" onClick={onClose}>Close</div>
-          
+
           {/* <div className="button primary outline"
             onClick={()=>{
               // go to https://wa.me/[phone number]?text=[pre-filled message]

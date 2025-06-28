@@ -912,11 +912,8 @@ main.subscription{
         .welcome-section{
             grid-template-columns: 1fr;
             .welcome-message{
-                &:last-child{
                     margin-top: 0;
                     line-height: 2.5rem;
-
-                }
             }
             .actions{
                 justify-content: flex-start;

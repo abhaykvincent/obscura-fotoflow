@@ -907,6 +907,7 @@
             max-height: calc(100vh - 8px*8);
             overflow-y: visible;
             border: 1px solid $dark-1;
+            padding-bottom: 0;
             a{
                 transition-duration: 0.1s;x
                 .icon {
@@ -946,6 +947,7 @@
                 margin-top: 8px*2;
             }
             .storage-bars{
+                display: none;
                 height: 8px*12.5;
                 box-shadow: none;
                 border: none;
@@ -1007,14 +1009,24 @@
             display: none;
         }
         .profile-options{
-            margin-bottom: 8px;
+            margin-bottom: 0px;
             width: calc(100% - 8px);
             border: 1px $gray4-default-light;
             width: 8px*7;
-            overflow-x: hidden;
             margin-left: 1px;
             background-color: transparent;
             box-shadow: none;
+            bottom: 8px*5;
+            height: 8px*7;
+            transform: scale(0.8);    
+            top: calc(100vh - 104px);
+            .account-name{
+                display: none;
+            }
+            .option-icon{
+                margin-left: 8px*1.5;
+                margin-top: -8px*0;
+            }
             &:hover{
                 .profile{
                     .profile-image{
@@ -1049,6 +1061,7 @@
             width: 8px*7.5;
             .menu-list {
                 padding: 8px*1.5;
+                padding-bottom: 0;
                 max-height: calc(100vh - 8px*8.5);
                 overflow-y: visible;
                 a{
@@ -1090,6 +1103,14 @@
         }
     }
   } */
+    @media only screen and (max-width: 720px) {
+
+    .App{
+      .sidebar{
+        margin-left: -4px;
+      }
+    }
+  }
   @media only screen and (max-width: 520px) {
     .App{
       .sidebar{
@@ -1133,3 +1154,5 @@
         
     }
 }}
+
+ 

@@ -2774,8 +2774,8 @@ body{
         display: none;
       }
       main {
-        left: 8px*10;
-        width: calc(100vw - 8px*12);
+        left: 8px*8.5;
+        width: calc(100vw - 8px*10.5);
         height: calc(100vh - 8px*8.5);;
         overflow-y: scroll;
     padding: 0 8px;
@@ -2788,7 +2788,7 @@ body{
   @media only screen and (max-width: 1080px) {
     .App{
       .header{
-        grid-template-columns: $header-height 1fr 1fr 1fr;
+        grid-template-columns: $header-height+8px*2 1fr 1fr 1fr;
         .logo-wrapper{
           display: none;
         }
@@ -2835,8 +2835,8 @@ body{
         }
       } 
       main {
-        left: 8px*10;
-        width: calc(100vw - 8px*12);
+        left: 8px*8.5;
+        width: calc(100vw - 8px*10.5);
         .project-collection .photos{
           display: flex;
           flex-wrap: wrap;
@@ -2882,8 +2882,8 @@ body{
         display: none;
       }
       main {
-        left: 8px*10;
-        width: calc(100vw - 8px*12);
+        left: 8px*8.5;
+        width: calc(100vw - 8px*10.5);
         &.project-page{
           display: grid;
           grid-template-columns: auto;

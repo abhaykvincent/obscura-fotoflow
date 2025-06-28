@@ -136,7 +136,12 @@
         .details-top{
             display: grid;
             grid-template-columns: auto 8px;
+            gap :8px;
+            .left{
+                overflow-x: hidden;
+            }
             .project-title{
+                white-space: nowrap;
                 transition-duration: 0.1s;
                 transform: scale(1) translateX(0px) translateY(0px);
             font-size: 0.9rem;
@@ -146,7 +151,7 @@
             line-height: 8px*2.5;
             font-weight: 400;
             font-size: 0.8rem;
-            color: $gray3-default-dark;
+            color: $gray2-default-dark;
             }
             .info-bar{
                 display: grid;
