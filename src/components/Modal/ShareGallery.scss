@@ -9,7 +9,7 @@
     }
     .galleries-share-list-selection{
         display: grid;
-        grid-template-columns: 8px*24 8px*8;
+        grid-template-columns: 8px*20 8px*5 8px*6;
         column-gap : 8px*2;
         input{
             height: 8px*3;
@@ -35,6 +35,18 @@
         display: grid;
         grid-template-columns: 8px*24 8px*36;
         gap: 8px*3;
+        &.selection-radio{
+            display: flex;
+            justify-content: center;
+        }
+        &.count-view{
+            display: flex;
+            justify-content: center;
+            font-size: 0.8rem;
+            .input{
+                color: $gray2-default-dark;
+            }
+        }
     }
     .form-item{
         display: flex;

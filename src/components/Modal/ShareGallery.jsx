@@ -46,25 +46,42 @@ const modalRef = useModalFocus(visible.shareGallery);
                 
               <div className="galleries-share-list-selection">
               <p className='client-label'>Select galleries</p>
+              <p className='client-label'>Images</p>
               <p className='client-label'>Selection</p>
+
                 {project.collections.map((collection, index) => (
-                  <div key={index} className='gallery-field'>
-                    <div className="form-item">
-                      <div className="input">
-                        <input type="checkbox" checked={true} onChange={() => {}} />
-                      </div>
-                      <div className="label">
-                        <label>{collection.name}</label>
+                  <>
+                    {/* Gallery choose */}
+                    <div key={index} className='gallery-field'>
+                      <div className="form-item">
+                        <div className="input">
+                          <input type="checkbox" checked={true} onChange={() => {}} />
+                        </div>
+                        <div className="label">
+                          <label>{collection.name}</label>
+                        </div>
                       </div>
                     </div>
-                    <div className="form-item selection" >
-                      <div className="input">
-                        <input type="radio" checked={true} onChange={() => {}} />
+                    {/* Selection choose */}
+                    <div key={index} className='gallery-field count-view'>
+                      <div className="form-item " >
+                        <div className="input">
+                          345
+                        </div>
                       </div>
+                    </div>
+                    {/* Selection choose */}
+                    <div key={index} className='gallery-field selection-radio'>
+                      <div className="form-item selection" >
+                        <div className="input">
+                          <input type="radio" checked={true} onChange={() => {}} />
+                        </div>
                       
+                      </div>
                     </div>
-                  </div>
+                  </>
                 ))}
+
               </div>
 
                 

@@ -2775,9 +2775,13 @@ body{
       }
       main {
         left: 8px*10;
-        width: calc(100vw - 8px*11);
+        width: calc(100vw - 8px*12);
         height: calc(100vh - 8px*8.5);;
         overflow-y: scroll;
+    padding: 0 8px;
+    padding-top: 4px;
+    margin-left: 8px;
+    padding-bottom: 24px;
       }}
     }
   
@@ -2832,7 +2836,7 @@ body{
       } 
       main {
         left: 8px*10;
-        width: calc(100vw - 8px*11);
+        width: calc(100vw - 8px*12);
         .project-collection .photos{
           display: flex;
           flex-wrap: wrap;
@@ -2879,7 +2883,7 @@ body{
       }
       main {
         left: 8px*10;
-        width: calc(100vw - 8px*11);
+        width: calc(100vw - 8px*12);
         &.project-page{
           display: grid;
           grid-template-columns: auto;
@@ -2956,7 +2960,7 @@ body{
     }
     main {
       left: 8px*8;
-      width: calc(100vw - 8px*9);
+      width: calc(100vw - 8px*10);
       height: auto;
       .header{
         .view-control .control-label.label-selected-photos{

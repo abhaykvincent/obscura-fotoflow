@@ -24,6 +24,7 @@
 .view-control{
     display:flex;
     margin: 8px 8px*1.5;
+    margin-bottom: 0;
     font-size: 0.9rem;
     justify-content: space-between;
 
@@ -80,8 +81,9 @@
         }
         display:flex;
         .control{
-          padding: 6px 8px*1.5;
+          padding: 4px 8px*1.2;
           font-weight: 400;
+          font-size: 0.8rem;
           border-radius: $border-radius-1;
           border-right: 1px solid rgba(255, 255, 255, 0.02);
           color: $gray2-accessible-dark;
@@ -103,7 +105,7 @@
             border-top: 1px solid $gray3-accessible-dark;
             border-left: 1px solid $gray3-accessible-dark;
             border-bottom: 1px solid $gray5-accessible-dark;
-            border-radius: 6px !important;
+            border-radius: 8px !important;
             box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);;
             transform: scale(1.1);
             &:hover{
@@ -113,6 +115,7 @@
             
             .icon{
     
+              opacity: 01;
               background-size: 120%;
             }
           }
@@ -122,21 +125,27 @@
             &:hover{
                 .icon{
 
-                    background-size: 110%;
+              &.card-view{background-size: 110%; 
+              }
+              &.list-view{
+                    background-size: 150%; 
+              }
                 }
 
               }
           .icon{
-              width: 8px*2;
-              height: 8px*2;
+              width: 8px*1.6;
+              height: 8px*1.6;
               background-position: center;
               background-size: 100%;
-              
+              opacity: 0.5;
               &.card-view{
                   background-image: url('https://img.icons8.com/sf-black-filled/64/FFFFFF/four-squares.png');
               }
               &.list-view{
-                  background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/list.png');
+                    background-size: 140%;
+                  background-image: url('https://img.icons8.com/?size=100&id=BjLaPJ1cFKRo&format=png&color=FFFFFF');
+                  
               }
           }
           
@@ -164,16 +173,17 @@
     }
     .view-control{
         margin-top: 8px*2;
+        margin-bottom: 8px*1;
     }
     .month-group {
-      margin-bottom: 16px; // Simplified calculation of 8px * 2
-      margin-top: 16px; // Simplified calculation of 8px * 2
+      margin-bottom: 0; // Simplified calculation of 8px * 2
+      margin-top: 0; // Simplified calculation of 8px * 2
       
       // Add staggered animation to the .month-name
       .month-name {
         padding: 8px 16px; // Simplified calculation of 8px * 2
         font-weight: 400;
-        color: $gray-default-dark;
+        color: $gray2-default-dark;
             margin-bottom: 8px*1;
         opacity: 0; // Start as invisible
   
@@ -207,6 +217,38 @@
             }
         }
       }
+
+      &.loaded-more{
+        .month-name {
+          animation-delay: calc(0.0s + 0.1s); // Dynamic delay based on parent index
+        }
+        .projects-list {
+        
+            .project{
+                    @for $i from 1 through 100 {
+                        &:nth-child(#{$i}) {
+                            animation: fadeInUp 0.5s ease-out calc( ( 0.1s + 0.2s + ($i - 1) * 0.04s));
+                            animation-fill-mode: forwards;
+
+                        }
+                    }
+            }
+            &.list{
+                max-width: 8px*60;
+                grid-template-columns: 1fr;
+                gap: 8px*2;
+                .project{
+                    .project-cover{
+                        min-height: 8px*10;
+                        width: 8px*12;
+                    }
+                }
+            }
+        }
+      }
+    }
+    .load-more-container{
+        margin: 8px 8px*2;
     }
     .project{
         &.new{
@@ -333,7 +375,7 @@
         grid-template-columns: 1fr 1fr 1fr;
     }
     .projects-list{
-        gap: 8PX*4;
+        gap: 8PX*2;
         grid-template-columns: 1fr 1fr 1fr  ;
     }
 }
@@ -343,7 +385,7 @@
         grid-template-columns: 1fr 1fr 1fr;
     }
     .projects-list{
-        gap: 8PX*4;
+        gap: 8PX*2;
         grid-template-columns: 1fr 1fr 1fr ;
     }
 }
@@ -352,7 +394,7 @@
         grid-template-columns: 1fr 1fr  ;
     }
     .projects-list{
-        gap: 8PX*4;
+        gap: 8PX*2;
         grid-template-columns: 1fr 1fr 1fr ;
     }
 }
@@ -361,7 +403,7 @@
         grid-template-columns: 1fr 1fr   ;
     }
     .projects-list{
-        gap: 8PX*4;
+        gap: 8PX*2;
         grid-template-columns: 1fr 1fr  ;
     }
 }
@@ -370,7 +412,7 @@
         grid-template-columns: 1fr 1fr    ;
     }
     .projects-list{
-        gap: 8PX*4;
+        gap: 8PX*2;
         grid-template-columns: 1fr 1fr;
     }
 }
@@ -379,7 +421,7 @@
         grid-template-columns: 1fr  ;
     }
     .projects-list{
-        gap: 8PX*4;
+        gap: 8PX*2;
         grid-template-columns: 1fr ;
     }
     .projects{
@@ -393,7 +435,7 @@
         grid-template-columns: 1fr   ;
     }
     .projects-list{
-        gap: 8PX*4;
+        gap: 8PX*2;
         grid-template-columns: 1fr ;
         padding: 8px*2.5;
         

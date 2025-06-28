@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'; // Import useRef
 import { useDispatch, useSelector } from 'react-redux'
 
 // --- Selectors and Actions ---
@@ -7,7 +7,7 @@ import { selectProjects } from '../../app/slices/projectsSlice';
 import { openModal } from '../../app/slices/modalSlice';
 
 // --- Utility Functions ---
-import { getProjectsByStatus } from '../../utils/projectFilters'; // Assuming getRecentProjects is not strictly needed if 'all' shows all. Adapt if needed.
+import { getProjectsByStatus } from '../../utils/projectFilters';
 import { retrieveProjectsViewType, storeProjectsViewType } from '../../utils/localStorageUtills';
 
 // --- Components ---
@@ -33,9 +33,16 @@ const VIEW_TYPES = {
 const MODAL_IDS = {
     CREATE_PROJECT: 'createProject',
 };
+
+const DAY_RANGES = {
+    INITIAL: 90,
+    LOAD_MORE_1: 180,
+    LOAD_MORE_2: 360,
+    ALL_TIME: 720,
+};
+
 // --- Helper Functions ---
 const sortProjectsByDateDesc = (a, b) => {
-    // Prioritize valid dates, treat missing/invalid dates as oldest
     const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
     const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
     return dateB.getTime() - dateA.getTime();
@@ -43,9 +50,7 @@ const sortProjectsByDateDesc = (a, b) => {
 
 const groupProjectsByMonth = (projects) => {
     const grouped = projects.reduce((groups, project) => {
-        // Ensure project has a valid createdAt date for grouping, fallback to current date if needed
         const date = project.createdAt ? new Date(project.createdAt) : new Date();
-        // Use UTC methods for consistency if timezone issues arise, otherwise localeString is fine
         const projectMonthYear = date.toLocaleString('default', { month: 'long', year: 'numeric' });
 
         if (!groups[projectMonthYear]) {
@@ -55,17 +60,15 @@ const groupProjectsByMonth = (projects) => {
         return groups;
     }, {});
 
-    // Sort month keys chronologically (most recent first)
     const sortedMonthKeys = Object.keys(grouped).sort((a, b) => {
-        const dateA = new Date(a + " 1, 1970"); // Add day/year for robust parsing
+        const dateA = new Date(a + " 1, 1970");
         const dateB = new Date(b + " 1, 1970");
         return dateB.getTime() - dateA.getTime();
     });
 
-    // Return sorted groups with sorted projects within each group
     return sortedMonthKeys.map(month => ({
         month,
-        projects: [...grouped[month]].sort(sortProjectsByDateDesc) // Sort projects within the month
+        projects: [...grouped[month]].sort(sortProjectsByDateDesc)
     }));
 };
 
@@ -74,46 +77,75 @@ const groupProjectsByMonth = (projects) => {
 function Projects() {
     const dispatch = useDispatch();
     const defaultStudio = useSelector(selectUserStudio);
-    const allProjects = useSelector(selectProjects); // Renamed for clarity
+    const allProjects = useSelector(selectProjects);
 
     // --- State ---
     const [selectedTab, setSelectedTab] = useState(FILTER_TABS.ALL);
     const initialViewType = retrieveProjectsViewType() || VIEW_TYPES.CARDS;
     const [viewType, setViewType] = useState(initialViewType);
+    const [visibleDays, setVisibleDays] = useState(DAY_RANGES.INITIAL);
+    // Ref to store the keys of initially loaded month groups
+    const initialMonthKeysRef = useRef(new Set());
 
     // --- Effects ---
-    // Update document title when studio info is available/changes
     useEffect(() => {
         if (defaultStudio?.domain) {
             document.title = `${defaultStudio.domain} | Projects`;
         }
     }, [defaultStudio?.domain]);
 
-    // Persist view type preference to local storage
     useEffect(() => {
         storeProjectsViewType(viewType);
     }, [viewType]);
 
     // --- Memoized Derived Data ---
-    // Filter projects based on the selected tab
     const filteredProjects = useMemo(() => {
-        if (selectedTab === FILTER_TABS.SELECTED) {
-            return getProjectsByStatus(allProjects, 'selected'); // Assuming 'selected' is the status string
-        }
-        // Add other filters here if needed (e.g., 'recent' based on a time threshold)
-        // else if (selectedTab === FILTER_TABS.RECENT) {
-        //     return getRecentProjects(allProjects);
-        // }
-        return allProjects; // Default to all projects
-    }, [allProjects, selectedTab]);
+        const now = new Date();
+        const cutoffDate = new Date(now.setDate(now.getDate() - visibleDays));
 
-    // Group and sort the filtered projects
+        const projectsWithinRange = allProjects.filter(project => {
+            const projectDate = new Date(project.createdAt);
+            // Ensure projectDate is a valid date before comparison
+            return !isNaN(projectDate) && projectDate >= cutoffDate;
+        });
+
+        if (selectedTab === FILTER_TABS.SELECTED) {
+            return getProjectsByStatus(projectsWithinRange, 'selected');
+        }
+        return projectsWithinRange;
+    }, [allProjects, selectedTab, visibleDays]);
+
     const groupedProjects = useMemo(() => {
         if (!filteredProjects || filteredProjects.length === 0) {
             return [];
         }
-        return groupProjectsByMonth(filteredProjects);
-    }, [filteredProjects]);
+        const grouped = groupProjectsByMonth(filteredProjects);
+
+        // On initial load (visibleDays === DAY_RANGES.INITIAL), capture the month keys
+        if (visibleDays === DAY_RANGES.INITIAL) {
+            initialMonthKeysRef.current = new Set(grouped.map(group => group.month));
+        }
+        return grouped;
+    }, [filteredProjects, visibleDays]); // Add visibleDays to dependencies
+
+     const hasMoreProjectsToLoad = useMemo(() => {
+        // First, check if there are any projects in total. If not, no need to load more.
+        if (allProjects.length === 0) {
+            return false;
+        }
+
+        const now = new Date();
+        const currentVisibleDate = new Date(now.setDate(now.getDate() - visibleDays));
+
+        // Check if there are any projects older than the current visible range
+        return allProjects.some(project => {
+            const projectDate = new Date(project.createdAt);
+
+            return !isNaN(projectDate) && projectDate < currentVisibleDate;
+        });
+
+    }, [allProjects, visibleDays]);
+
 
     // --- Event Handlers ---
     const handleNewProjectClick = useCallback(() => {
@@ -122,23 +154,38 @@ function Projects() {
 
     const handleTabClick = useCallback((tab) => {
         setSelectedTab(tab);
+        setVisibleDays(DAY_RANGES.INITIAL); // Reset visible days when tab changes
+        // Clear initialMonthKeysRef when tab changes as content will be re-initialised
+        initialMonthKeysRef.current.clear();
     }, []);
 
     const handleViewTypeClick = useCallback((type) => {
         setViewType(type);
     }, []);
 
+    const handleLoadMore = useCallback(() => {
+        setVisibleDays(prevDays => {
+            if (prevDays === DAY_RANGES.INITIAL) {
+                return DAY_RANGES.LOAD_MORE_1;
+            } else if (prevDays === DAY_RANGES.LOAD_MORE_1) {
+                return DAY_RANGES.LOAD_MORE_2;
+            } else if (prevDays === DAY_RANGES.LOAD_MORE_2) {
+                return DAY_RANGES.ALL_TIME;
+            }
+            return prevDays;
+        });
+    }, []);
+
     // --- Render Logic ---
     const renderEmptyState = () => (
-        <div className="section recent"> {/* Consider a more generic class name if needed */}
+        <div className="section recent">
             <h3 className="section-heading">
                 {selectedTab === FILTER_TABS.SELECTED
-                    ? "No selection completed projects found."
+                    ? "No selection completed projects found for this period."
                     : "Create Your First Project"}
             </h3>
-            {/* Show the "Create Project" initiator only if not in a filtered view that implies existence */}
             {selectedTab !== FILTER_TABS.SELECTED && (
-                <div className="projects-list"> {/* Use consistent class */}
+                <div className="projects-list">
                     <div className="project new" onClick={handleNewProjectClick} role="button" tabIndex={0}>
                         <div className="project-cover"></div>
                         <div className="project-details">
@@ -146,43 +193,60 @@ function Projects() {
                                 <h4 className="project-title">Create Project</h4>
                             </div>
                         </div>
-                        <div className="project-options"></div> {/* Keep for layout consistency? */}
+                        <div className="project-options"></div>
                     </div>
                 </div>
+            )}
+            {allProjects.length > 0 && filteredProjects.length === 0 && (
+                 <p className="empty-state-message">No projects found within the current date range. Try loading more.</p>
             )}
         </div>
     );
 
-    const renderProjectGroups = () => groupedProjects.map(({ month, projects: projectsInMonth }, index) => (
-        <div key={month} className="month-group" style={{ '--group-index': index + 1 }}> {/* CSS var for potential animation stagger */}
-            <h3 className="month-name">{month}</h3>
-            <div className={`projects-list ${viewType}`}>
-                {projectsInMonth.map((project) => (
-                    <ProjectCard project={project} key={project.id} type='projects'/>
-                ))}
-            </div>
-        </div>
-    ));
+    const renderProjectGroups = () => (
+        <>
+            {groupedProjects.map(({ month, projects: projectsInMonth }, index) => {
+                const isNewlyLoaded = visibleDays > DAY_RANGES.INITIAL && !initialMonthKeysRef.current.has(month);
+                return (
+                    <div
+                        key={month}
+                        className={`month-group ${isNewlyLoaded ? 'loaded-more' : ''}`} // Add the new class here
+                        style={{ '--group-index': index + 1 }}
+                    >
+                        <h3 className="month-name">{month}</h3>
+                        <div className={`projects-list ${viewType}`}>
+                            {projectsInMonth.map((project) => (
+                                <ProjectCard project={project} key={project.id} type='projects' />
+                            ))}
+                        </div>
+                    </div>
+                );
+            })}
+            {hasMoreProjectsToLoad && (
+                <div className="load-more-container">
+                    <button className="button secondary" onClick={handleLoadMore}>
+                        Load More
+                    </button>
+                </div>
+            )}
+        </>
+    );
 
     if (!defaultStudio) {
-        return <div>Loading studio information...</div>; // Or some placeholder
+        return <div>Loading studio information...</div>;
     }
 
     return (
         <>
-            {/* Modals */}
-            <AddProjectModal /> {/* Assumes AddProjectModal handles its own visibility based on Redux state */}
+            <AddProjectModal />
 
-            {/* App Header (Consider if this belongs in a layout component) */}
             <div className="projects-page-header">
                 <div className="search-bar">
-                    <SearchInput /> {/* Assuming SearchInput handles its own state/logic */}
+                    <SearchInput />
                 </div>
             </div>
 
-            {/* Main Content */}
             <main className="projects">
-                {/* Page Header */}
                 <div className="projects-header">
                     <h1>Projects</h1>
                     <div className="actions">
@@ -192,10 +256,8 @@ function Projects() {
                     </div>
                 </div>
 
-                {/* Controls (Only show if there are projects to control) */}
                 {allProjects.length > 0 && (
                     <div className="view-control">
-                        {/* Filter Controls */}
                         <div className="control-wrap">
                             <div className="controls">
                                 <div
@@ -212,39 +274,33 @@ function Projects() {
                                 >
                                     Selected
                                 </div>
-                                {/* Add more tabs here if needed */}
                             </div>
-                            {/* Active indicator logic might need CSS adjustments based on structure */}
-                            {/* <div className="active"></div> */}
                             <div className="label">Filter</div>
                         </div>
 
-                        {/* View Controls */}
                         <div className="control-wrap view-type-controls">
                             <div className="controls">
                                 <div className={`control ctrl-cards ${viewType === VIEW_TYPES.CARDS ? 'active' : ''}`}
                                     onClick={() => handleViewTypeClick(VIEW_TYPES.CARDS)}
                                     role="button" aria-label="Card View" tabIndex={0}
                                 >
-                                    <div className="icon card-view"></div> {/* Ensure icons are accessible */}
+                                    <div className="icon card-view"></div>
                                 </div>
                                 <div className={`control ctrl-list ${viewType === VIEW_TYPES.LIST ? 'active' : ''}`}
                                     onClick={() => handleViewTypeClick(VIEW_TYPES.LIST)}
                                     role="button" aria-label="List View" tabIndex={0}
                                 >
-                                    <div className="icon list-view"></div> {/* Ensure icons are accessible */}
+                                    <div className="icon list-view"></div>
                                 </div>
                             </div>
-                            {/* <div className="active"></div> */}
                             <div className="label mini-icons view">View</div>
                         </div>
                     </div>
                 )}
 
-                {/* Render Projects List or Empty State */}
-                {filteredProjects.length > 0 ? renderProjectGroups() : renderEmptyState()}
+                {filteredProjects.length > 0 || allProjects.length === 0 ? renderProjectGroups() : renderEmptyState()}
 
-                <Refresh /> {/* Assuming Refresh handles its own logic */}
+                <Refresh />
             </main>
         </>
     );

@@ -24,7 +24,7 @@ export const initialPlans = [
   {
     name: 'Freelancer',
     pricing: [
-      { storage: 100, monthlyPrice: '930',monthlyPriceWas: '₹1,300', yearlyPrice: '₹10,000', specialOffer: ['for 12 months','₹100 OFF','Core +'],defaultPlan: true   },
+      { storage: 100, monthlyPrice: '₹930',monthlyPriceWas: '₹1,300', yearlyPrice: '₹10,000', specialOffer: ['for 12 months','₹100 OFF','Core +'],defaultPlan: true   },
      
     ],
     defaultPlan: 0,
