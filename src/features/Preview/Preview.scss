@@ -109,6 +109,8 @@
                     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
                     font-size: 0.9rem;
                     font-weight: 600;
+                    transition-duration: 0.2s;
+                    transition-delay: 0.5s;
                 }
             }
             .right-controls{
@@ -331,6 +333,7 @@
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.6);
+    animation: swipe-guide-bg-fadeout 1.2s ease-out;
     z-index: 51;
     &.swipe-guide{
         .swipe-animation-wrapper{
@@ -347,7 +350,7 @@
                 border-radius: 8px*2;
                 background-color: rgba(255, 255, 255, 0.4);
                 animation:preview-swipe-animation 2s infinite;
-                animation-delay: 5s;
+                animation-delay: 0.2s;
             }
             @keyframes preview-swipe-animation  {
                 0%{
@@ -432,7 +435,18 @@
         }
     }
 }
-
+@keyframes swipe-guide-bg-fadeout{
+    0%{
+        opacity: 1;
+    }
+    85%{
+        opacity:10;
+    }
+    100%{
+        opacity: 0;
+    }
+    
+}
 @media only screen and (max-width: 1200px) {
     .App{
         .preview{
