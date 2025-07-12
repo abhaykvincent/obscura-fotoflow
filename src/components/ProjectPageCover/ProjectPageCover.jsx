@@ -118,9 +118,6 @@ export const ProjectCover = ({ project }) => {
         }
         if (project?.collections) {
             project.collections.forEach(collection => {
-                if (collection.cover) {
-                    images.push(collection.cover);
-                }
                 if (collection.favoriteImages) {
                     images = [...images, ...collection.favoriteImages];
                 }
