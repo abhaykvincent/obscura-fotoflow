@@ -27,8 +27,10 @@ export const validateFileTypes = (files) => {
 };
 
 export const extractExifData = (file) => {
+    console.log(file)
     EXIF.getData(file, function() {
-        const allMetaData = EXIF.getAllTags(this);
+        const allMetaData = EXIF.getAllTags(this)
         console.log("EXIF Data:", allMetaData);
+        debugger
     });
 };

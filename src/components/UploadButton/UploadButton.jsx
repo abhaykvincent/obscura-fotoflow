@@ -7,7 +7,7 @@ import { showAlert } from '../../app/slices/alertSlice';
 import { openModal } from '../../app/slices/modalSlice';
 
 import { handleUpload } from '../../utils/uploadOperations';
-import { addAllFileSizesToMB, validateFileTypes } from '../../utils/fileUtils';
+import { addAllFileSizesToMB, validateFileTypes, extractExifData } from '../../utils/fileUtils';
 import { createNotification } from '../../app/slices/notificationSlice';
 import { fetchProjects } from '../../app/slices/projectsSlice';
 // import { fetchProject } from '../../firebase/functions/firestore'; // fetchProject seems unused in this component
@@ -40,7 +40,8 @@ function UploadButton({
   const handleFileInputChange = useCallback(async (event) => {
     const selectedFiles = Array.from(event.target.files);
     const importFileSize = addAllFileSizesToMB(selectedFiles);
-
+      console.log(selectedFiles[0])
+      extractExifData(selectedFiles[0]);
     // Validate file types
     if (!validateFileTypes(selectedFiles)) 
     {
@@ -48,6 +49,7 @@ function UploadButton({
       return; // Exit if files are not valid
     }
     setIsPhotosImported(true);
+
     
     // If Space Available
     // Upload files and update storage usage
