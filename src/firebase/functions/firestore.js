@@ -749,6 +749,19 @@ export const addUploadCompletionEventToFirestore = async (domain, projectId, col
             throw new Error('Project does not exist.');
         }
 
+        const projectData = projectSnapshot.data();
+        const existingEvents = projectData.events || [];
+
+        // Check if an event with the same type and date already exists
+        const eventAlreadyExists = existingEvents.some(event => 
+            event.type === collectionName && event.date === eventDate
+        );
+
+        if (eventAlreadyExists) {
+            console.log(`%cUpload completion event for collection ${collectionName} on ${new Date(eventDate).toLocaleDateString()} already exists. Skipping creation.`, `color: orange;`);
+            return; // Do not create a new event
+        }
+
         const eventId = `upload-completion-${collectionId}-${new Date().getTime()}`;
         const eventDate = uploadedFiles[0]?.dateTimeOriginal ? new Date(uploadedFiles[0].dateTimeOriginal).getTime() : new Date().getTime();
         const uploadCompletionEvent = {
