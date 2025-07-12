@@ -19,6 +19,7 @@ function UploadButton({
     setImageUrls, 
     id, 
     collectionId, 
+    collectionName,
     // setUploadLists, // Removed
     // setUploadStatus, // Removed
     dispatch // Added - though it's already available via useDispatch hook, explicitly passing if required by parent
@@ -66,7 +67,7 @@ function UploadButton({
         // setUploadStatus('open'); // This was local, Redux state will be set by handleUpload via dispatch
 
         // Handle upload Operation - Updated call
-        const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch);
+        const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch, collectionName);
 
         const endTime = Date.now();  // Record the end time
         const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds

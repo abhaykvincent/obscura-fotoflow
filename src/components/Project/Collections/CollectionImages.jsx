@@ -173,6 +173,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                         // setUploadStatus, // Removed
                         id, 
                         collectionId, 
+                        collectionName: findCollectionById(project, collectionId)?.name,
                         // setUploadLists, // Removed
                         dispatch // Added
                     }} />

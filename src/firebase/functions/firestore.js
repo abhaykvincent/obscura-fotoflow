@@ -736,7 +736,7 @@ export const addEventToFirestore = async (domain, projectId, eventData) => {
     }
 };
 
-export const addUploadCompletionEventToFirestore = async (domain, projectId, collectionId, uploadedFiles, importFileSize) => {
+export const addUploadCompletionEventToFirestore = async (domain, projectId, collectionId, uploadedFiles, importFileSize, collectionName) => {
     if (!domain || !projectId || !collectionId || !uploadedFiles || uploadedFiles.length === 0) {
         throw new Error('Domain, Project ID, Collection ID, and uploaded files are required.');
     }
@@ -752,7 +752,7 @@ export const addUploadCompletionEventToFirestore = async (domain, projectId, col
         const eventId = `upload-completion-${collectionId}-${new Date().getTime()}`;
         const uploadCompletionEvent = {
             id: eventId,
-            type: 'Photo Upload Completion',
+            type: collectionName,
             date: new Date().getTime(),
             location: '',
             crews: [],
