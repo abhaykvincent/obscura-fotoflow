@@ -110,26 +110,35 @@ export const ProjectCover = ({ project }) => {
     useEffect(() => {
         console.log(project)
     }, [project]);
+
+    const getAllImages = () => {
+        let images = [];
+        if (project?.projectCover) {
+            images.push(project.projectCover);
+        }
+        if (project?.collections) {
+            project.collections.forEach(collection => {
+                if (collection.cover) {
+                    images.push(collection.cover);
+                }
+                if (collection.favoriteImages) {
+                    images = [...images, ...collection.favoriteImages];
+                }
+            });
+        }
+        return images;
+    }
+    const allImages = getAllImages();
     
     return (
         <div
-            className={`project-page-cover ${isSetFocusButton ? "focus-button-active" : ""} ${project?.projectCover ? "cover-show" : "cover-hide"}`}
-            style={{ // Ensure the container height
-                
-                backgroundImage: project?.projectCover ?
-                    `url(${project.projectCover.replace(/\(/g, '%28').replace(/\)/g, '%29').replace('-thumb', '')}),
-                    url(${
-                        project.collections[0]?.favoriteImages   ? 
-                            project.collections[0].favoriteImages[0].replace(/\(/g, '%28').replace(/\)/g, '%29').replace('-thumb', '')
-                            :""}),
-                    url(${project.collections[0]?.favoriteImages? project.collections[0].favoriteImages[1].replace(/\(/g, '%28').replace(/\)/g, '%29').replace('-thumb', ''):''})
-                    ` 
-                    :`url('https://img.icons8.com/?size=256&id=UVEiJZnIRQiE&format=png&color=1f1f1f' , `,
-                backgroundPosition: `${project?.projectCover ? 'center, left , right':'center'}`,
-                backgroundSize: `${project?.projectCover ? "auto 100%":"auto 50% "}`, // Ensure image scaling
-            }}
-            onClick={handleFocusClick}
+            className={`project-page-cover ${isSetFocusButton ? "focus-button-active" : ""} ${project?.projectCover || allImages.length > 0 ? "cover-show" : "cover-hide"}`}
         >
+            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', overflowX: 'auto', scrollbarWidth: 'none' }}>
+                {allImages.map((image, i) => (
+                    <img key={i} src={image.replace('-thumb', '')} style={{ height: '100%', width: 'auto', objectFit: 'cover' }} />
+                ))}
+            </div>
 
             {
             <div className="cover-footer">
@@ -251,4 +260,4 @@ export const ProjectCover = ({ project }) => {
             )}
         </div>
     );
-}    
+}

@@ -1,3 +1,5 @@
+import EXIF from 'exif-js';
+
 // write function to add all the sizes of importef files array
 export const addAllFileSizesToMB = (files) =>{
     let size = 0;
@@ -22,4 +24,13 @@ export const validateFileTypes = (files) => {
         }
     }
     return true;
+};
+
+export const extractExifData = (file) => {
+    console.log(file)
+    EXIF.getData(file, function() {
+        const allMetaData = EXIF.getAllTags(this)
+        console.log("EXIF Data:", allMetaData);
+        debugger
+    });
 };
