@@ -750,10 +750,11 @@ export const addUploadCompletionEventToFirestore = async (domain, projectId, col
         }
 
         const eventId = `upload-completion-${collectionId}-${new Date().getTime()}`;
+        const eventDate = uploadedFiles[0]?.dateTimeOriginal ? new Date(uploadedFiles[0].dateTimeOriginal).getTime() : new Date().getTime();
         const uploadCompletionEvent = {
             id: eventId,
             type: collectionName,
-            date: new Date().getTime(),
+            date: eventDate,
             location: '',
             crews: [],
             collectionId: collectionId,
