@@ -131,7 +131,6 @@ function Storage() {
 
                         if(project.status === 'archived'){
                             return null;
-                            debugger
                         }
                         return (
                             <Link to={
