@@ -47,68 +47,101 @@ function AddCollectionModal({ project }) {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    console.log('Input changed:', name, value);
     setCollectionData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
+const handleSuggestedNameChange = (event) => {
+  const { value } = event.target;
+
+  const updatedData = {
+    ...CollectionData,
+    name: value,
+  };
+
+  setCollectionData(updatedData); // update local state
+  handleSubmit(updatedData); // pass updated state directly
+};
+
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const nameInputRef = useRef(null);
 
-  const validateForm = () => {
+  const validateForm = (data = CollectionData) => {
     let newErrors = {};
-    if (!CollectionData.name.trim()) {
+
+    if (!data.name.trim()) {
       newErrors.name = 'Gallery name is required';
     }
+
     setErrors(newErrors);
+
     if (newErrors.name) {
       nameInputRef.current.focus();
     }
+
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
-    if (isSubmitting) return;
 
-    if (!validateForm()) return;
+ const handleSubmit = (data = CollectionData) => {
+  if (isSubmitting) return;
 
-    setIsSubmitting(true);
-    const domain = defaultStudio.domain;
-    onClose();
+  const isValid = validateForm(data); // validate passed data
+  if (!isValid) return;
 
-    if (collectionsLength.length < collectionsLimit.perProject) {
-      setTimeout(() => {
-        dispatch(addCollection({ domain, projectId: project.id, newCollection: CollectionData }))
-          .then((id) => {
-            trackEvent('collection_created', {
-              project_id: project.id,
-              collection_id: id.payload.collection.id,
-            });
-            dispatch(
-              showAlert({
-                type: 'success',
-                message: `Collection <b>${CollectionData.name}</b> added successfully!`,
-              })
-            );
-            navigate(`/${defaultStudio.domain}/gallery/${project.id}/${id.payload.collection.id}`);
-          })
-          .finally(() => setIsSubmitting(false));
-      }, 500);
-    } else {
-      setIsSubmitting(false);
+  setIsSubmitting(true);
+  const domain = defaultStudio.domain;
+  onClose();
+
+  if (collectionsLength.length < collectionsLimit.perProject) {
+    setTimeout(() => {
       dispatch(
-        showAlert({
-          id: project.id,
-          type: 'error',
-          message: `Project <b>${CollectionData.name}</b>'s 3 Gallery limit reached! Upgrade`,
+        addCollection({
+          domain,
+          projectId: project.id,
+          newCollection: data,
         })
-      );
-      storeLimitContext('Galleries', '3 gallery per project limit reached');
-      setTimeout(() => dispatch(openModal('upgrade')), 2000);
-    }
-  };
+      )
+        .then((id) => {
+          trackEvent('collection_created', {
+            project_id: project.id,
+            collection_id: id.payload.collection.id,
+          });
+
+          dispatch(
+            showAlert({
+              type: 'success',
+              message: `Collection <b>${data.name}</b> added successfully!`,
+            })
+          );
+
+          navigate(
+            `/${defaultStudio.domain}/gallery/${project.id}/${id.payload.collection.id}`
+          );
+        })
+        .finally(() => setIsSubmitting(false));
+    }, 500);
+  } else {
+    setIsSubmitting(false);
+
+    dispatch(
+      showAlert({
+        id: project.id,
+        type: 'error',
+        message: `Project <b>${data.name}</b>'s 3 Gallery limit reached! Upgrade`,
+      })
+    );
+
+    storeLimitContext('Galleries', '3 gallery per project limit reached');
+
+    setTimeout(() => dispatch(openModal('upgrade')), 2000);
+  }
+};
+
   /* async function run() {
     // Provide a prompt that contains text
     const prompt = "Write a story about a magic backpack."
@@ -147,6 +180,7 @@ function AddCollectionModal({ project }) {
         <div className="modal-body">
           <div className="form-section">
             <div className="field">
+
               <label htmlFor="">Gallery name</label>
               <input
                 name="name"
@@ -156,6 +190,7 @@ function AddCollectionModal({ project }) {
                 onChange={handleInputChange}
                 placeholder={placeholders[0]} // Dynamically set placeholder
               />
+
               <label htmlFor=""></label>
               <div className="project-validity-options">
                 {projectTypePlaceholders[project.type]
@@ -172,7 +207,7 @@ function AddCollectionModal({ project }) {
                         name="name"
                         value={placeholder}
                         checked={CollectionData.name === placeholder}
-                        onChange={handleInputChange}
+                        onChange={handleSuggestedNameChange}
                       />
                       <label htmlFor={`template-${placeholder.toLowerCase().replace(/\s+/g, '-')}`}>
                         {placeholder}
@@ -180,6 +215,7 @@ function AddCollectionModal({ project }) {
                     </div>
                   ))}
               </div>
+
               {errors.name && <div className="error">{errors.name}</div>}
             </div>
           </div>
