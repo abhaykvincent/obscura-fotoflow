@@ -8,6 +8,7 @@ const ImageGalleryGrid = React.memo(({ projectId,collectionId, imageUrls }) => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
   const containerRef = useRef(null);
+            const [showOptionsMenu, setShowOptionsMenu] = useState(false);
   const openPreview = (index) => {
     setIsPreviewOpen(true);
     setPreviewIndex(index);
@@ -69,44 +70,52 @@ const ImageGalleryGrid = React.memo(({ projectId,collectionId, imageUrls }) => {
     
       <div className="gallary">
         <div className="photos" ref={containerRef}>
-          {imageUrls.map((fileUrl, index) => (
-            <div className="photo-wrap"
-            key={fileUrl.url}
-              onClick={()=>openPreview(index)}>
-              <div className="hover-options-wrap">
-                <div className="hover-options">
-                  {
-                    fileUrl.status&&
-                    <div className="favorite-wrap">
-                      <div className={`favorite ${fileUrl?.status==='selected'? 'selected' : ''}`}>
-                        <div className="icon"></div>
-                      </div>
-                    </div>
-                  }
-                  <div className="top">
-                    <div className="menu-icon"></div>
-                    <div className="option-menu">
-                      <div className="photo-option">Download</div>
-                      <div className="photo-option">Share</div>
-                      <div className="photo-option">Set as cover</div>
-                      <div className="photo-option">Delete</div>
-                    </div>
-                  </div>
-                  <div className="bottom">
-                      <div className="filename">
-                        {
-                          shortenFileName(fileUrl.name)
-                        }
-                      </div>
+          {imageUrls.map((fileUrl, index) => {
 
+            const handleMenuIconClick = (e) => {
+              e.stopPropagation(); // Prevent parent click event
+              setShowOptionsMenu(!showOptionsMenu);
+            };
+
+            return (
+              <div className="photo-wrap"
+              key={fileUrl.url}
+                onClick={()=>openPreview(index)}>
+                <div className="hover-options-wrap">
+                  <div className="hover-options">
+                    {
+                      fileUrl.status&&
+                      <div className="favorite-wrap">
+                        <div className={`favorite ${fileUrl?.status==='selected'? 'selected' : ''}`}>
+                          <div className="icon"></div>
+                        </div>
+                      </div>
+                    }
+                    <div className="top">
+                      <div className="menu-icon" onClick={handleMenuIconClick}></div>
+                      <div className={`option-menu ${showOptionsMenu ? 'visible' : ''}`} onClick={(e) => e.stopPropagation()}>
+                        <div className="photo-option">Download</div>
+                        <div className="photo-option">Share</div>
+                        <div className="photo-option">Set as cover</div>
+                        <div className="photo-option">Delete</div>
+                      </div>
+                    </div>
+                    <div className="bottom">
+                        <div className="filename">
+                          {
+                            shortenFileName(fileUrl.name)
+                          }
+                        </div>
+
+                    </div>
                   </div>
                 </div>
+                <div className='photo' key={index} 
+                  style={{ backgroundImage: `url("${fileUrl.url}")` }} alt={`File ${index}`}>
+                </div>
               </div>
-              <div className='photo' key={index} 
-                style={{ backgroundImage: `url("${fileUrl.url}")` }} alt={`File ${index}`}>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </>

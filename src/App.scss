@@ -2647,32 +2647,43 @@ body{
             }
           }
           .option-menu{
-            display: none;
             position: absolute;
-            right: -8px*15;
-            top: 8px*4;
+            right: 0;
+            top: 100%; /* Position below the menu-icon */
             width: 8px*18.5;
             padding: 4px 6px;
-            background-color: white;
+            background-color: $dark-2-5; /* Darker background */
             border-radius: 4px;
             opacity: 0;
-            transform: translateY(8px*5);
+            visibility: hidden; /* Hidden by default */
+            transform: translateY(8px); /* Slight initial offset */
+            transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0.2s ease-out;
+            border: 1px solid $dark-1;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+            z-index: 10; /* Ensure it's above other elements */
+
+            &.visible {
+              opacity: 1;
+              visibility: visible;
+              transform: translateY(0);
+            }
+
             .photo-option{
-              padding: 4px 8px;
+              padding: 6px 8px; /* Slightly more padding */
               font-size: 0.9rem;
-              border-bottom: 1px solid $gray6-accessible-light;
+              border-bottom: 1px solid $dark-1; /* Darker border */
               border-radius: 2px;
-              color: $gray5-accessible-dark;
+              color: $gray4-accessible-light; /* Lighter text color */
               font-weight: 500;
               cursor: pointer;
-              //last one
+              transition: background-color 0.1s ease-out, color 0.1s ease-out;
+
               &:last-child{
-              border-bottom: none;
+                border-bottom: none;
               }
               &:hover{
-                display: block;
-                color: $gray6-accessible-dark;
-                background-color: $gray6-accessible-light;
+                color: $light-0; /* White on hover */
+                background-color: $dark-1; /* Darker background on hover */
               }
             }
             // style for every fifth one
