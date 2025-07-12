@@ -91,6 +91,8 @@
 }
     .controls{
         width: 100%;
+        position: relative;
+        z-index: 100;
         .prev{
             position: fixed;
             top: 50vh;
