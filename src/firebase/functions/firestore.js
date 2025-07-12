@@ -453,7 +453,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         }
         // Update collection with new data, including filesCount
         updateDoc(collectionDocRef, {
-            uploadedFiles: arrayUnion(...uploadedFiles),
+            uploadedFiles: arrayUnion(...uploadedFiles.map(file => ({...file, dateTimeOriginal: file.dateTimeOriginal}))),
         })
         .catch(error => {
             console.error(`%cError adding uploaded files to collection ${collectionId} in project ${projectId}: ${error.message}`, `color: red;`);
