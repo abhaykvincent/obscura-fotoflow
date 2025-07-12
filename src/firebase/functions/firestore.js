@@ -735,6 +735,42 @@ export const addEventToFirestore = async (domain, projectId, eventData) => {
         throw error;
     }
 };
+
+export const addUploadCompletionEventToFirestore = async (domain, projectId, collectionId, uploadedFiles, importFileSize) => {
+    if (!domain || !projectId || !collectionId || !uploadedFiles || uploadedFiles.length === 0) {
+        throw new Error('Domain, Project ID, Collection ID, and uploaded files are required.');
+    }
+
+    const projectDocRef = doc(db, 'studios', domain, 'projects', projectId);
+
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
+        }
+
+        const eventId = `upload-completion-${collectionId}-${new Date().getTime()}`;
+        const uploadCompletionEvent = {
+            id: eventId,
+            type: 'Photo Upload Completion',
+            date: new Date().getTime(),
+            location: '',
+            crews: [],
+            collectionId: collectionId,
+            filesCount: uploadedFiles.length,
+            totalSize: importFileSize,
+        };
+
+        await updateDoc(projectDocRef, {
+            events: arrayUnion(uploadCompletionEvent)
+        });
+
+        console.log(`%cAdded upload completion event for Project ${projectId} in ${domain} successfully.`, `color: #54a134;`);
+    } catch (error) {
+        console.error(`%cError adding upload completion event to Project ${projectId} in ${domain}: ${error.message}`, `color: red;`);
+        throw error;
+    }
+};
 // Teams
 export const addCrewToFirestore = async (domain, projectId, eventId, userData) => {
     if (!domain || !projectId || !eventId || !userData) {

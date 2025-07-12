@@ -16,7 +16,7 @@ import {
     // clearUploadSession 
 } from "../app/slices/uploadSlice";
 import { trackEvent } from "../analytics/utils";
-import { addUploadedFilesToFirestore } from "../firebase/functions/firestore";
+import { addUploadedFilesToFirestore, addUploadCompletionEventToFirestore } from "../firebase/functions/firestore";
 import { fetchProjects } from "../app/slices/projectsSlice";
 
 import imageCompression from 'browser-image-compression';
@@ -348,8 +348,9 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
                 let getPIN;
                 // Only successfully uploaded files are passed to Firestore
                 return addUploadedFilesToFirestore(domain, id, collectionId, importFileSize, finalUploadedFiles)
-                    .then((response) => {
+                    .then(async (response) => {
                         getPIN = response.pin;
+                        await addUploadCompletionEventToFirestore(domain, id, collectionId, finalUploadedFiles, importFileSize);
                         showAlert('success', 'All files uploaded successfully!');
                         trackEvent('gallery_uploaded', {
                             domain: domain,

@@ -50,7 +50,7 @@ function DashboardEvents({project})
                     <div className="signal"></div>
                   </div>
                   <div className="date">
-                    <h1>{ event.date.split('-')[2] }</h1>
+                    <h1>{ new Date(event.date).getDate() }</h1>
                     <h5>{ new Date(event.date).toLocaleString('default', { month: 'short' })}
                     </h5>
                   </div>
