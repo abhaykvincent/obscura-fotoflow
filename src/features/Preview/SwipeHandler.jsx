@@ -12,10 +12,10 @@ function SwipeHandler({ children, previewIndex, imagesLength, setPreviewIndex, s
     if (swipeDistance === 0) {
         setShowControls(true);  // Show controls on swipe ends
     } else if (swipeDistance > 50 && previewIndex > 0) {
-        setPreviewIndex(previewIndex - 1);
+        setPreviewIndex(previewIndex - 1, 'right');
         setShowControls(false);  // Hide controls on swipe start
     } else if (swipeDistance < -50 && previewIndex < imagesLength - 1) {
-        setPreviewIndex(previewIndex + 1);
+        setPreviewIndex(previewIndex + 1, 'left');
         setShowControls(false);  // Hide controls on swipe start
     }
   };
@@ -23,9 +23,9 @@ function SwipeHandler({ children, previewIndex, imagesLength, setPreviewIndex, s
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'ArrowRight' && previewIndex < imagesLength - 1) {
-        setPreviewIndex(prevIndex => prevIndex + 1);
+        setPreviewIndex(prevIndex => prevIndex + 1, 'left');
       } else if (e.key === 'ArrowLeft' && previewIndex > 0) {
-        setPreviewIndex(prevIndex => prevIndex - 1);
+        setPreviewIndex(prevIndex => prevIndex - 1, 'right');
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -37,10 +37,10 @@ function SwipeHandler({ children, previewIndex, imagesLength, setPreviewIndex, s
         {children}
         <div className={`controls ${showControls ? 'show' : 'hide'}`}>
             { previewIndex < imagesLength - 1 && (
-                <div className="next" onClick={() => setPreviewIndex(prevIndex => prevIndex + 1)}></div>
+                <div className="next" onClick={() => setPreviewIndex(prevIndex => prevIndex + 1, 'left')}></div>
             )}
             { previewIndex > 0 && (
-                <div className="prev" onClick={() => setPreviewIndex(prevIndex => prevIndex - 1)}></div>
+                <div className="prev" onClick={() => setPreviewIndex(prevIndex => prevIndex - 1, 'right')}></div>
             )}
         </div>
     </div>

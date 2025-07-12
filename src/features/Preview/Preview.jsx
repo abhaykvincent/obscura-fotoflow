@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './Preview.scss';
 import { shortenFileName } from '../../utils/stringUtils';
 import { setCoverPhotoInFirestore, setGalleryCoverPhotoInFirestore } from '../../firebase/functions/firestore';
@@ -9,12 +9,16 @@ import SwipeHandler from './SwipeHandler';
 import { deleteFile } from '../../app/slices/projectsSlice';
 import PreviewControls from './PreviewControls';
 
-function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePreview, projectId, collectionId }) {
+function Preview({ image, previewIndex, setPreviewIndex: setParentPreviewIndex, imagesLength, closePreview, projectId, collectionId }) {
   const { studioName } = useParams();
   const dispatch = useDispatch();
   const [showControls, setShowControls] = useState(true);
-  const [showSwipeGuide, setShowSwipeGuide] = useState(true); // NEW
+  const [showSwipeGuide, setShowSwipeGuide] = useState(true);
+  const [currentImage, setCurrentImage] = useState(image);
+  const [nextImage, setNextImage] = useState(null);
+  const [direction, setDirection] = useState(null); // 'left' or 'right' for animation
 
+  const animationTimeoutRef = useRef(null);
   let hideControlsTimeout;
 
   const handleUserInteraction = () => {
@@ -22,6 +26,31 @@ function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePrev
     clearTimeout(hideControlsTimeout);
     hideControlsTimeout = setTimeout(() => setShowControls(false), 3000);
   };
+
+  const setPreviewIndex = useCallback((newIndex, animDirection) => {
+    if (newIndex === previewIndex) return;
+
+    setDirection(animDirection);
+    setNextImage(image); // The current `image` prop is the one we're moving *from*
+
+    // Clear any existing animation timeout
+    if (animationTimeoutRef.current) {
+      clearTimeout(animationTimeoutRef.current);
+    }
+
+    // Start the animation, then update the current image after it completes
+    animationTimeoutRef.current = setTimeout(() => {
+      setParentPreviewIndex(newIndex); // This will cause the `image` prop to update
+      setDirection(null);
+      setNextImage(null);
+    }, 300); // Match this duration to your CSS animation duration
+  }, [previewIndex, image, setParentPreviewIndex]);
+
+  useEffect(() => {
+    // When the `image` prop changes (meaning setParentPreviewIndex was called),
+    // update the currentImage state.
+    setCurrentImage(image);
+  }, [image]);
 
   const handleDelete = async () => {
     try {
@@ -77,7 +106,11 @@ function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePrev
             collectionId={collectionId}
             studioName={studioName}
           />
-          <ImageDisplay image={image} />
+          <ImageDisplay
+            currentImage={currentImage}
+            nextImage={nextImage}
+            direction={direction}
+          />
         </SwipeHandler>
       </div>
     </div>

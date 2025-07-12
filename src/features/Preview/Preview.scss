@@ -17,21 +17,82 @@
     backdrop-filter: blur(4px);
     overflow: hidden;
     .image-wrap{
+        position: relative; // Ensure images are positioned relative to this container
+        overflow: hidden; // Hide overflowing parts of images during animation
         display: flex;
         height: 100vh;
         width: 100vw;
         align-items: center;
         justify-items: center;
+
         .image{
-            height: calc(100vh);
-            width: 100vw;
+            position: absolute; // Position images absolutely within the wrapper
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-position: center;
-            transition: background-size 0.1s ease;
-            background-size: 100% auto;
+            background-size: contain;
+            transition: transform 0.3s ease-in-out; // Smooth transition for transform
+
+            &.slide-in-left {
+                animation: slideInLeft 0.3s ease-in-out forwards;
+            }
+
+            &.slide-in-right {
+                animation: slideInRight 0.3s ease-in-out forwards;
+            }
+
+            &.slide-out-left {
+                animation: slideOutLeft 0.3s ease-in-out forwards;
+            }
+
+            &.slide-out-right {
+                animation: slideOutRight 0.3s ease-in-out forwards;
+            }
         }
     }
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutLeft {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(100%);
+    }
+}
     .controls{
         width: 100%;
+        position: relative;
+        z-index: 100;
         .prev{
             position: fixed;
             top: 50vh;
@@ -325,7 +386,6 @@
                 }
         }
     }
-} 
 .guide{
     position: absolute;
     top: 0;
