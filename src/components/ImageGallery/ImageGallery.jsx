@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Preview from '../../features/Preview/Preview';
+import downloadImage  from '../../components/ImageDownload/ImageDownload';
 import { shortenFileName } from '../../utils/stringUtils';
 
 // Helper function to group images by lastModified threshold
@@ -187,7 +188,7 @@ const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
                       <div className="top">
                         <div className="menu-icon" onClick={handleMenuIconClick}></div>
                         <div className={`option-menu ${showOptionsMenu ? 'visible' : ''}`} onClick={(e) => e.stopPropagation()}>
-                          <div className="photo-option">Download</div>
+                          <div className="photo-option" onClick={() => downloadImage(fileUrl.url, fileUrl.name)}>Download</div>
                           <div className="photo-option">Share</div>
                           <div className="photo-option">Set as cover</div>
                           <div className="photo-option">Delete</div>

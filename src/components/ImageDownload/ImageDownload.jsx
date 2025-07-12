@@ -2,9 +2,8 @@
 import React from 'react';
 import { trackEvent } from '../../analytics/utils';
 
-async function downloadImage(url, fileName) {
+export async function downloadImage(url, fileName) {
   try {
-
     trackEvent('image_download', {
       project_id: url
     });
