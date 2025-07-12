@@ -139,4 +139,6 @@ To maintain code quality, consistency, and readability across the project, pleas
 *   **Firebase Interaction**: Be mindful of Firebase security rules and data structures. Always verify changes against existing patterns.
 *   **Redux State**: Pay close attention to Redux state immutability and serialization.
 *   **User Confirmation**: For any significant changes or shell commands that modify the file system, explain the action and its potential impact.
-*   **Data Structure**: For any significant changes in the data structure must be updated in Project Data structure Updated.md
+*   **Data Structure**: For any significant changes in the data structure must be updated in Project Data structure Updated.md. use Project Data structure.md as referance to investigate change in DS in the code . Dont use Project Data structure Updated.md as the sourse to find the change in the DS , its only to update the change after ds change investigation.
+When "DS change investigation Protocol" is called do the investigation and update the change in Project Data structure Updated.md
+
