@@ -478,13 +478,6 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
             projectCover: projectData.data().projectCover === '' ? uploadedFiles[0]?.url : projectData.data().projectCover,
             status: "uploaded",
             pin: projectData.data().pin || generateMemorablePIN(4),
-        })
-        .then(() => {
-
-        })
-        .catch(error => {
-            console.error(`%cError updating project ${projectId}: ${error.message}`, `color: red;`);
-            throw error;
         });
             
         await updateDoc(studioDocRef, {
