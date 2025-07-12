@@ -453,7 +453,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         }
         // Update collection with new data, including filesCount
         updateDoc(collectionDocRef, {
-            uploadedFiles: arrayUnion(...uploadedFiles),
+            uploadedFiles: arrayUnion(...uploadedFiles.map(file => ({...file, dateTimeOriginal: file.dateTimeOriginal}))),
         })
         .catch(error => {
             console.error(`%cError adding uploaded files to collection ${collectionId} in project ${projectId}: ${error.message}`, `color: red;`);
@@ -467,7 +467,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
                     return {
                         ...collection,
                         galleryCover : collection?.galleryCover? collection.galleryCover : uploadedFiles[0]?.url,
-                        favoriteImages: collection?.favoriteImages  ? collection.favoriteImages :[uploadedFiles.length>=2 ? uploadedFiles[1]?.url:'',uploadedFiles.length>=3 ? uploadedFiles[2]?.url:''],
+                        favoriteImages: collection?.favoriteImages && collection?.favoriteImages[0] !==''  ? collection.favoriteImages :[uploadedFiles.length>=2 ? uploadedFiles[1]?.url:'',uploadedFiles.length>=3 ? uploadedFiles[2]?.url:''],
                         filesCount: (collection.filesCount || 0) + uploadedFiles.length,
                     };
                 }
@@ -736,7 +736,7 @@ export const addEventToFirestore = async (domain, projectId, eventData) => {
     }
 };
 
-export const addUploadCompletionEventToFirestore = async (domain, projectId, collectionId, uploadedFiles, importFileSize) => {
+export const addUploadCompletionEventToFirestore = async (domain, projectId, collectionId, uploadedFiles, importFileSize, collectionName) => {
     if (!domain || !projectId || !collectionId || !uploadedFiles || uploadedFiles.length === 0) {
         throw new Error('Domain, Project ID, Collection ID, and uploaded files are required.');
     }
@@ -749,11 +749,25 @@ export const addUploadCompletionEventToFirestore = async (domain, projectId, col
             throw new Error('Project does not exist.');
         }
 
+        const projectData = projectSnapshot.data();
+        const existingEvents = projectData.events || [];
+
+        // Check if an event with the same type and date already exists
+        const eventAlreadyExists = existingEvents.some(event => 
+            event.type === collectionName && event.date === eventDate
+        );
+
+        if (eventAlreadyExists) {
+            console.log(`%cUpload completion event for collection ${collectionName} on ${new Date(eventDate).toLocaleDateString()} already exists. Skipping creation.`, `color: orange;`);
+            return; // Do not create a new event
+        }
+
         const eventId = `upload-completion-${collectionId}-${new Date().getTime()}`;
+        const eventDate = uploadedFiles[0]?.dateTimeOriginal ? new Date(uploadedFiles[0].dateTimeOriginal).getTime() : new Date().getTime();
         const uploadCompletionEvent = {
             id: eventId,
-            type: 'Photo Upload Completion',
-            date: new Date().getTime(),
+            type: collectionName,
+            date: eventDate,
             location: '',
             crews: [],
             collectionId: collectionId,

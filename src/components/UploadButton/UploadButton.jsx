@@ -10,6 +10,7 @@ import { handleUpload } from '../../utils/uploadOperations';
 import { addAllFileSizesToMB, validateFileTypes, extractExifData } from '../../utils/fileUtils';
 import { createNotification } from '../../app/slices/notificationSlice';
 import { fetchProjects } from '../../app/slices/projectsSlice';
+
 // import { fetchProject } from '../../firebase/functions/firestore'; // fetchProject seems unused in this component
 
 function UploadButton({ 
@@ -18,6 +19,7 @@ function UploadButton({
     setImageUrls, 
     id, 
     collectionId, 
+    collectionName,
     // setUploadLists, // Removed
     // setUploadStatus, // Removed
     dispatch // Added - though it's already available via useDispatch hook, explicitly passing if required by parent
@@ -41,7 +43,13 @@ function UploadButton({
     const selectedFiles = Array.from(event.target.files);
     const importFileSize = addAllFileSizesToMB(selectedFiles);
       console.log(selectedFiles[0])
-      extractExifData(selectedFiles[0]);
+      //extractExifData(selectedFiles[0]);
+
+      extractExifData(selectedFiles[0]).then(data => {
+        console.log("EXIF Data:", data.DateTimeOriginal.value);
+      });
+
+
     // Validate file types
     if (!validateFileTypes(selectedFiles)) 
     {
@@ -59,7 +67,7 @@ function UploadButton({
         // setUploadStatus('open'); // This was local, Redux state will be set by handleUpload via dispatch
 
         // Handle upload Operation - Updated call
-        const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch);
+        const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch, collectionName);
 
         const endTime = Date.now();  // Record the end time
         const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds

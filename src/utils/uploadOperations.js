@@ -20,7 +20,7 @@ import { addUploadedFilesToFirestore, addUploadCompletionEventToFirestore } from
 import { fetchProjects } from "../app/slices/projectsSlice";
 
 import imageCompression from 'browser-image-compression';
-import { addAllFileSizesToMB } from "./fileUtils";
+import { addAllFileSizesToMB, extractExifData } from "./fileUtils";
 import { doc, updateDoc } from "firebase/firestore";
 import { set } from "date-fns";
 
@@ -46,7 +46,7 @@ const metadata = {
   };
 // File Single upload function
 // Remove setUploadLists, add dispatch and fileId
-export const uploadFile = async (domain, id, collectionId, file, dispatch, fileId) => {
+export const uploadFile = async (domain, id, collectionId, file, dispatch, fileId, dateTimeOriginal) => {
     const MAX_RETRIES = 5;
     const INITIAL_RETRY_DELAY = 500;
     let retries = 0;
@@ -93,6 +93,7 @@ export const uploadFile = async (domain, id, collectionId, file, dispatch, fileI
                     resolve({
                         name: file.name, // Original name might be needed if fileId is different
                         lastModified: file.lastModified,
+                        dateTimeOriginal: dateTimeOriginal,
                         url,
                         fileId // Include fileId in resolution if useful for caller
                     });
@@ -199,7 +200,7 @@ const sliceUpload = async (domain, slice, id, collectionId, dispatch, originalFi
             const originalFile = slice[index];
             const fileId = originalFile.id;
             const namedCompressedFile = new File([compressedFile], originalFile.rawFile.name, { type: compressedFile.type });
-            return uploadFile(domain, id, collectionId, namedCompressedFile, dispatch, fileId);
+            return uploadFile(domain, id, collectionId, namedCompressedFile, dispatch, fileId, originalFile.dateTimeOriginal);
         });
         
         // Combine all upload promises and resolve them concurrently
@@ -217,25 +218,37 @@ const sliceUpload = async (domain, slice, id, collectionId, dispatch, originalFi
 
 // Upload ENTRY POINT
 // Remove setUploadLists, setUploadStatus (local setters), add dispatch
-export const handleUpload = async (domain, files, id, collectionId, importFileSize, dispatch,retries = 2, sliceSize = 32 ) => {
+export const handleUpload = async (domain, files, id, collectionId, importFileSize, dispatch, collectionName, retries = 2, sliceSize = 32 ) => {
     // 1. Generate initialFileObjects with unique IDs for Redux state
     // Using file.name as fileId here, acknowledge potential uniqueness issues.
     // A more robust approach: file.name + '-' + file.lastModified + '-' + file.size or UUID
-    const initialFileObjects = files.map(file => ({
-        id: file.name, // Using file.name as fileId. CONSIDER ROBUSTNESS.
-        name: file.name,
-        size: file.size,
-        status: 'pending',
-        progress: 0,
-        url: null,
-        rawFile: file, // Keep raw file for compression
+    const initialFileObjects = await Promise.all(files.map(async (file) => {
+        const exifData = await extractExifData(file);
+        let dateTimeOriginal = null;
+        if (exifData && exifData.DateTimeOriginal && exifData.DateTimeOriginal.value) {
+            const rawDate = Array.isArray(exifData.DateTimeOriginal.value) ? exifData.DateTimeOriginal.value[0] : exifData.DateTimeOriginal.value;
+            if (rawDate && typeof rawDate === 'string') {
+                const formattedDateString = rawDate.replace(/^(\d{4}):(\d{2}):(\d{2})/, '$1-$2-$3');
+                dateTimeOriginal = new Date(formattedDateString);
+            }
+        }
+        return {
+            id: file.name, // Using file.name as fileId. CONSIDER ROBUSTNESS.
+            name: file.name,
+            size: file.size,
+            status: 'pending',
+            progress: 0,
+            url: null,
+            rawFile: file, // Keep raw file for compression
+            dateTimeOriginal: dateTimeOriginal,
+        };
     }));
 
     // Dispatch startUploadSession with these initial objects
     // Note: startUploadSession needs to be imported from uploadSlice
     // For now, assuming it's available. If not, this will be a placeholder.
     // import { startUploadSession } from "../app/slices/uploadSlice"; needs to be added.
-    dispatch({ type: 'upload/startUploadSession', payload: initialFileObjects.map(({rawFile, ...rest}) => rest) }); // Dispatch only serializable data
+    dispatch({ type: 'upload/startUploadSession', payload: initialFileObjects.map(({rawFile, dateTimeOriginal, ...rest}) => ({...rest, dateTimeOriginal: dateTimeOriginal ? dateTimeOriginal.toISOString() : null})) }); // Dispatch only serializable data
     dispatch({ type: 'upload/setUploadStatus', payload: 'open' });
 
 
@@ -243,10 +256,11 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
     let uploadedFilesCollector = []; // To collect results from sliceUpload
 
     // Prepare file data for slices, including their original fileId
-    const filesWithIds = files.map(file => ({
-        rawFile: file,
-        id: file.name, // Must match the id used in initialFileObjects
+    const filesWithIds = initialFileObjects.map(file => ({
+        rawFile: file.rawFile,
+        id: file.id, // Must match the id used in initialFileObjects
         name: file.name, // Keep name for convenience if needed
+        dateTimeOriginal: file.dateTimeOriginal
     }));
 
 
@@ -299,6 +313,7 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
                         name: result.value.name, // Name from resolved promise
                         url: result.value.url,
                         lastModified: result.value.lastModified, // Ensure this is passed through
+                        dateTimeOriginal: result.value.dateTimeOriginal, // Pass dateTimeOriginal
                         thumbAvailable: true, // Assuming thumb was also attempted
                     });
                 } else if (result.status === 'rejected' || (result.status === 'fulfilled' && (!result.value || !result.value.url))) {
@@ -350,7 +365,7 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
                 return addUploadedFilesToFirestore(domain, id, collectionId, importFileSize, finalUploadedFiles)
                     .then(async (response) => {
                         getPIN = response.pin;
-                        await addUploadCompletionEventToFirestore(domain, id, collectionId, finalUploadedFiles, importFileSize);
+                        await addUploadCompletionEventToFirestore(domain, id, collectionId, finalUploadedFiles, importFileSize, collectionName);
                         showAlert('success', 'All files uploaded successfully!');
                         trackEvent('gallery_uploaded', {
                             domain: domain,
