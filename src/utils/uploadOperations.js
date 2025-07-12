@@ -224,13 +224,24 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
     // A more robust approach: file.name + '-' + file.lastModified + '-' + file.size or UUID
     const initialFileObjects = await Promise.all(files.map(async (file) => {
         const exifData = await extractExifData(file);
-        let dateTimeOriginal = null;
+        let dateTimeOriginal;
         if (exifData && exifData.DateTimeOriginal && exifData.DateTimeOriginal.value) {
             const rawDate = Array.isArray(exifData.DateTimeOriginal.value) ? exifData.DateTimeOriginal.value[0] : exifData.DateTimeOriginal.value;
             if (rawDate && typeof rawDate === 'string') {
                 const formattedDateString = rawDate.replace(/^(\d{4}):(\d{2}):(\d{2})/, '$1-$2-$3');
                 dateTimeOriginal = new Date(formattedDateString);
+            } else {
+                // Fallback to lastModified if dateTimeOriginal is not a valid string
+                dateTimeOriginal = new Date(file.lastModified);
             }
+        } else {
+            // Fallback to lastModified if exifData.DateTimeOriginal is not available
+            dateTimeOriginal = new Date(file.lastModified);
+        }
+
+        // Final fallback to current time if dateTimeOriginal is still not set
+        if (!dateTimeOriginal || isNaN(dateTimeOriginal.getTime())) {
+            dateTimeOriginal = new Date();
         }
         return {
             id: file.name, // Using file.name as fileId. CONSIDER ROBUSTNESS.
