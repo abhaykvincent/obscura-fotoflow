@@ -86,6 +86,10 @@ function ShareGallery({project }) {
   const onClose = () => dispatch(closeModalWithAnimation('shareGallery'))
 
   const modalRef = useModalFocus(visible.shareGallery);
+
+  useEffect(()=>{
+    console.log(project)
+  },[project])
   if (!visible.shareGallery) {
     return null;
   }

@@ -17,6 +17,7 @@ import {
 } from "../app/slices/uploadSlice";
 import { trackEvent } from "../analytics/utils";
 import { addUploadedFilesToFirestore } from "../firebase/functions/firestore";
+import { fetchProjects } from "../app/slices/projectsSlice";
 
 import imageCompression from 'browser-image-compression';
 import { addAllFileSizesToMB } from "./fileUtils";
@@ -356,6 +357,10 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
                             files: finalUploadedFiles.length,
                         });
                         return { uploadedFiles: finalUploadedFiles, pin: getPIN, error: null };
+                    })
+                    .then((response) => {
+                        dispatch(fetchProjects({ currentDomain: domain }));
+                        return response;
                     })
                     .catch((error) => {
                         console.error('Error adding uploaded files to project:', error.message);
