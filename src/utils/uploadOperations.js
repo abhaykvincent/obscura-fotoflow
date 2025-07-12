@@ -20,7 +20,7 @@ import { addUploadedFilesToFirestore, addUploadCompletionEventToFirestore } from
 import { fetchProjects } from "../app/slices/projectsSlice";
 
 import imageCompression from 'browser-image-compression';
-import { addAllFileSizesToMB } from "./fileUtils";
+import { addAllFileSizesToMB, extractExifData } from "./fileUtils";
 import { doc, updateDoc } from "firebase/firestore";
 import { set } from "date-fns";
 
@@ -221,7 +221,14 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
     // 1. Generate initialFileObjects with unique IDs for Redux state
     // Using file.name as fileId here, acknowledge potential uniqueness issues.
     // A more robust approach: file.name + '-' + file.lastModified + '-' + file.size or UUID
-    const initialFileObjects = files.map(file => ({
+    const initialFileObjects = files.map(file => {
+        let exifData;
+        exifData = extractExifData(file).then(data => {
+        console.log("EXIF Data:", data.DateTimeOriginal.value);
+        return data
+        });
+        console.log(exifData)
+        return {
         id: file.name, // Using file.name as fileId. CONSIDER ROBUSTNESS.
         name: file.name,
         size: file.size,
@@ -229,7 +236,8 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
         progress: 0,
         url: null,
         rawFile: file, // Keep raw file for compression
-    }));
+        }
+    });
 
     // Dispatch startUploadSession with these initial objects
     // Note: startUploadSession needs to be imported from uploadSlice

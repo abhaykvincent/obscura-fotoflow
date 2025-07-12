@@ -1,17 +1,17 @@
-import EXIF from 'exif-js';
+import * as ExifReader from 'exifreader';
 
 // write function to add all the sizes of importef files array
-export const addAllFileSizesToMB = (files) =>{
+export const addAllFileSizesToMB = (files) => {
     let size = 0;
     for (const file of files) {
         size += file.size;
     }
     return size / 1000000;
 }
-export const getUsedSpace = (projects) =>{
-    const usedSpace = projects.reduce((acc,project) => {
+export const getUsedSpace = (projects) => {
+    const usedSpace = projects.reduce((acc, project) => {
         return acc + project.totalFileSize
-    },0)
+    }, 0)
     return usedSpace
 }
 
@@ -26,11 +26,14 @@ export const validateFileTypes = (files) => {
     return true;
 };
 
-export const extractExifData = (file) => {
-    console.log(file)
-    EXIF.getData(file, function() {
-        const allMetaData = EXIF.getAllTags(this)
-        console.log("EXIF Data:", allMetaData);
-        debugger
-    });
+export const extractExifData = async (file) => {
+    try {
+        const arrayBuffer = await file.arrayBuffer();
+        const tags = ExifReader.load(arrayBuffer);
+        delete tags['Thumbnail'];
+        return tags;
+    } catch (error) {
+        console.error("Error reading EXIF data:", error);
+        return null;
+    }
 };
