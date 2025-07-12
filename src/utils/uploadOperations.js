@@ -248,7 +248,7 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
     // Note: startUploadSession needs to be imported from uploadSlice
     // For now, assuming it's available. If not, this will be a placeholder.
     // import { startUploadSession } from "../app/slices/uploadSlice"; needs to be added.
-    dispatch({ type: 'upload/startUploadSession', payload: initialFileObjects.map(({rawFile, ...rest}) => rest) }); // Dispatch only serializable data
+    dispatch({ type: 'upload/startUploadSession', payload: initialFileObjects.map(({rawFile, dateTimeOriginal, ...rest}) => ({...rest, dateTimeOriginal: dateTimeOriginal ? dateTimeOriginal.toISOString() : null})) }); // Dispatch only serializable data
     dispatch({ type: 'upload/setUploadStatus', payload: 'open' });
 
 
