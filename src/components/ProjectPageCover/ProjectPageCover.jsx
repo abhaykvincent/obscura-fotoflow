@@ -150,10 +150,15 @@ export const ProjectCover = ({ project }) => {
                             }
                             <div className="edit-pen" onClick={handleNameDoubleClick} ></div>
                         </div>
-
+                        <div className="tags">
+                            {!isEditing &&<div className="tag type">{project?.type}</div>}
+                            <div className="tag">Hindu</div>
+                        </div>
 
                         <ProjectStatus project={project} />
-                            {!isEditing &&<div className="type">{project?.type}</div>}
+                        <div className="button secondary outline icon copy"> Link</div>
+            {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
+                            
                         </div>
                         {
                             project.pin&&

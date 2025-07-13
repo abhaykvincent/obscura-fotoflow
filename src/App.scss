@@ -424,9 +424,20 @@ body{
             box-shadow: 0 1px 1px 1px #022002a3,0 0 10px 5px #00ff0024,0 0 4px 1px #00ff0021,0 0 20px 10px #00ff000e;
             transition-delay: 0.2s;
             transition-duration: 0.2s;
-
-            
           }
+          .project-pin{
+            display: flex;
+            align-items: center;
+            height: 8px*4;
+            padding: 0 8px;
+            margin-left: 8px;
+            color: $gray4-accessible-light;
+            font-size: 0.9rem;
+            background-color: $dark-2;
+            border: 1px solid $gray6-accessible-dark;
+            border-radius: 4px;
+          }
+
           .cover-info{
             display: flex;
             gap: 4px;
@@ -1319,7 +1330,7 @@ body{
     }
   }
   .client{
-    display: grid;
+    display: flex;
     grid-template-columns: auto auto auto;
     justify-items: start;
     justify-content: start;
@@ -1343,7 +1354,7 @@ body{
 
     }
     .edit-pen{
-      opacity: 0.5;
+      opacity: 0.2;
       width: 8px*3;
       height: 8px*2.5;
       background-image: url('https://img.icons8.com/?size=100&id=8192&format=png&color=FFFFFF');
@@ -1414,12 +1425,6 @@ body{
     }
     .type{
 
-      display: block;
-      color: $gray2-default-dark;
-      margin-top: 6px;
-      margin-left: 4px;
-      margin-right: 8px*2;
-      font-size: 0.9rem;
     }
   }
   .project-name-editor{
@@ -1427,6 +1432,22 @@ body{
     gap:8px;
     align-items: center
   }
+    .tags{
+      display: flex;
+      gap: 8px;
+      .tag{
+      display: block;
+      color: $gray2-default-dark;
+      font-size: 0.9rem;
+        padding: 8px*0.2 8px*1;
+        border-radius: 8px;
+        border: 1px solid $gray4-accessible-dark;
+        &.type{
+
+      color: $gray-default-dark;
+        }
+      }
+    }
   .editable-data{
     display: flex;
     gap: 8px;
