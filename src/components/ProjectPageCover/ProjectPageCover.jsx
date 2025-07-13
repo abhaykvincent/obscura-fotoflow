@@ -112,8 +112,8 @@ export const ProjectCover = ({ project }) => {
     }, [project]);
 
     const handleStatusChange = (newStatus) => {
-        if (project.uploadedFilesCount > 0) {
-            dispatch(showAlert({ type: "error", message: "Cannot change status when images are present in the project." }));
+        if (newStatus === 'draft' && project.uploadedFilesCount > 0) {
+            dispatch(showAlert({ type: "error", message: "Cannot change status to Draft when images are present." }));
             return;
         }
         dispatch(updateProjectStatus({ domain: currentStudio.domain, projectId: project.id, newStatus }));
