@@ -1,7 +1,7 @@
 // slices/authSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
-import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore } from '../../firebase/functions/firestore';
+import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/app';
@@ -39,6 +39,14 @@ export const updateProjectName = createAsyncThunk(
     // Call Firestore function to update project name
     await updateProjectNameInFirestore(domain, projectId, newName);
     return { projectId, newName };
+  }
+);
+
+export const updateProjectStatus = createAsyncThunk(
+  'projects/updateProjectStatus',
+  async ({ domain, projectId, newStatus }, { dispatch }) => {
+    await updateProjectStatusInFirestore(domain, projectId, newStatus);
+    return { projectId, newStatus };
   }
 );
 export const updateCollectionName = createAsyncThunk(
@@ -229,6 +237,24 @@ const projectsSlice = createSlice({
         state.status = 'succeeded';
       })
       .addCase(updateProjectName.rejected, (state, action) => {
+        state.status = 'failed';
+        state.loading = false;
+        state.error = action.error.message;
+      });
+      builder
+      .addCase(updateProjectStatus.pending, (state) => {
+        state.status = 'loading';
+        state.loading = true;
+      })
+      .addCase(updateProjectStatus.fulfilled, (state, action) => {
+        const { projectId, newStatus } = action.payload;
+        state.data = state.data.map((project) =>
+          project.id === projectId ? { ...project, status: newStatus } : project
+        );
+        state.loading = false;
+        state.status = 'succeeded';
+      })
+      .addCase(updateProjectStatus.rejected, (state, action) => {
         state.status = 'failed';
         state.loading = false;
         state.error = action.error.message;

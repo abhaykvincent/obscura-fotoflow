@@ -6,7 +6,7 @@ import { selectDomain, selectUserStudio } from "../../app/slices/authSlice";
 import { showAlert } from "../../app/slices/alertSlice";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { setCoverPhotoInFirestore, updateProjectStatusInFirestore } from "../../firebase/functions/firestore";
-import { updateProjectCover, updateProjectName } from "../../app/slices/projectsSlice";
+import { updateProjectCover, updateProjectName, updateProjectStatus } from "../../app/slices/projectsSlice";
 import { convertMegabytes } from "../../utils/stringUtils";
 
 export const ProjectCover = ({ project }) => {
@@ -112,7 +112,7 @@ export const ProjectCover = ({ project }) => {
     }, [project]);
 
     const handleStatusChange = (newStatus) => {
-        updateProjectStatusInFirestore(currentStudio.domain, project.id, newStatus);
+        dispatch(updateProjectStatus({ domain: currentStudio.domain, projectId: project.id, newStatus }));
     };
 
     
