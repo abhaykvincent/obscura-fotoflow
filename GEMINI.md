@@ -139,4 +139,39 @@ To maintain code quality, consistency, and readability across the project, pleas
 *   **Firebase Interaction**: Be mindful of Firebase security rules and data structures. Always verify changes against existing patterns.
 *   **Redux State**: Pay close attention to Redux state immutability and serialization.
 *   **User Confirmation**: For any significant changes or shell commands that modify the file system, explain the action and its potential impact.
-*   **Data Structure**: For any significant changes in the data structure must be updated in Project Data structure Updated.md
+*   **Data Structure**: For any significant changes in the data structure must be updated in Project Data structure Updated.md. Use Project Data structure.md as a reference to investigate changes in DS in the code. Do not use Project Data structure Updated.md as the source to find the change in the DS; it's only to update the change after DS change investigation.
+
+**DS Change Investigation Protocol**:
+
+1.  **Understand the Change**:
+    *   Review the `Project Data structure Updated.md` (or similar documentation) to fully grasp the nature of the change (e.g., new fields, removed fields, type changes, renames).
+    *   **Crucially, determine the *purpose* of the new field and whether it's truly necessary for the intended functionality or display.**
+
+2.  **Identify Affected Code Areas**:
+    *   **Data Interaction Points**: Pinpoint files responsible for reading from and writing to the data structure. This often includes:
+        *   Firebase interaction files (`src/firebase/`, `src/utils/firebaseAuthentication.js`, `src/utils/storageOperations.js`, `src/utils/uploadOperations.js`).
+        *   Redux slices that manage this data (`src/app/slices/`).
+        *   Components that display or manipulate this data (`src/components/`, `src/features/`).
+        *   Utility functions that process or transform this data (`src/utils/`).
+    *   **Tests**: Locate relevant test files that might need updates (`src/**/*.test.js`).
+
+3.  **Search the Codebase for Usage**:
+    *   Use `search_file_content` with relevant keywords (e.g., the old field name, the new field name, the data structure's parent object name) to find all occurrences across the project. I'd typically narrow this down with `include` patterns like `*.js`, `*.jsx`, `*.ts`, `*.tsx`.
+
+4.  **Deep Dive into Affected Files**:
+    *   For each identified file, use `read_file` to examine how the data structure is being used, modified, or displayed. This helps in understanding the impact of the change.
+
+5.  **Formulate a Plan for Adaptation**:
+    *   Based on the investigation, I'd outline the necessary code modifications:
+        *   Updating Redux reducers and selectors to handle the new structure.
+        *   Adjusting Firebase queries or data mapping logic.
+        *   Modifying React components to correctly render or interact with the updated data.
+        *   Refactoring utility functions.
+        *   Updating or creating new tests to ensure the changes work as expected and don't introduce regressions.
+        *   **If the new field is not strictly necessary for the UI or core functionality, consider if it should be used at all, or if existing fields (like `lastModified`) are sufficient.**
+
+6.  **Implement and Verify**:
+    *   Apply the changes using `replace` or `write_file`.
+    *   Run relevant tests (if available) and project-specific build/linting commands (`npm run build`, `npx eslint src/`) to ensure code quality and functionality.
+When "DS change investigation Protocol" is called, perform the investigation and update the change in Project Data structure Updated.md.
+

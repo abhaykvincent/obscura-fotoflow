@@ -26,6 +26,7 @@ import AddPaymentModal from '../../components/Modal/AddPayment';
 import AddBudgetModal from '../../components/Modal/AddBudget';
 
 import './Project.scss';
+import { ProjectPageCoverImages } from '../../components/ProjectPageCover/ProjectPageCoverImages';
 
 export default function Project() {
   const { id } = useParams();
@@ -113,7 +114,7 @@ export default function Project() {
       <AddBudgetModal project={project} />
 
       <main className='project-page'>
-        <ProjectCover project={project} />
+        <ProjectPageCoverImages project={project} />
         <div className="project-dashboard">
           <DashboardProjects project={project} />
         </div>

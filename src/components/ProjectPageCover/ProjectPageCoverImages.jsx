@@ -9,7 +9,7 @@ import { setCoverPhotoInFirestore } from "../../firebase/functions/firestore";
 import { updateProjectCover, updateProjectName } from "../../app/slices/projectsSlice";
 import { convertMegabytes } from "../../utils/stringUtils";
 
-export const ProjectCover = ({ project }) => {
+export const ProjectPageCoverImages = ({ project }) => {
     const dispatch = useDispatch();
     const currentStudio = useSelector(selectUserStudio);
     const domain = useSelector(selectDomain);
@@ -111,95 +111,32 @@ export const ProjectCover = ({ project }) => {
         console.log(project)
     }, [project]);
 
+    const getAllImages = () => {
+        let images = [];
+        if (project?.projectCover) {
+            images.push(project.projectCover);
+        }
+        if (project?.collections) {
+            project.collections.forEach(collection => {
+                if (collection.favoriteImages) {
+                    images = [...images, ...collection.favoriteImages];
+                }
+            });
+        }
+        return images;
+    }
+    const allImages = getAllImages();
     
     return (
         <div
-            className={`project-page-cover project-cover ${isSetFocusButton ? "focus-button-active" : ""} ${project?.projectCover || project?.projectCover.length > 0 ? "cover-show" : "cover-hide"}`}
+            className={`project-page-cover ${isSetFocusButton ? "focus-button-active" : ""} ${project?.projectCover || allImages.length > 0 ? "cover-show" : "cover-hide"}`}
         >
-            {project?.projectCover && <div className="project-cover-image" >
-                <img  src={project?.projectCover.replace('-thumb', '')} style={{ height: '100%', width: 'auto', objectFit: 'cover' }} />
-            </div>}
+            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', overflowX: 'auto', scrollbarWidth: 'none' }}>
+                {allImages.map((image, i) => (
+                    <img key={i} src={image.replace('-thumb', '')} style={{ height: '100%', width: 'auto', objectFit: 'cover' }} />
+                ))}
+            </div>
 
-            {
-            <div className="cover-footer">
-                <div className="static-tools bottom">
-                    {/* <div className="cover-info project-views-count">
-                        <div className="icon-show view"></div>
-                        <p>1.6K <span>Views</span></p>
-                    </div> */}
-                    <div className="client">
-                        {isEditing ? (
-                        <div className="editable-data ">
-                            <input
-                            type="text"
-                            value={newName}
-                            onChange={(e) => setNewName(e.target.value)}
-                            />
-                            <div className="input-edit-actions">
-                            <button className={`${newName === project.name ? 'disabled' : ''} button primary icon icon-only check`} onClick={handleSave}></button>
-                            <button className="button secondary  icon icon-only close" onClick={handleCancel}></button>
-                            </div>
-                        </div>
-                        ) : (
-                        <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
-                        )}
-
-                        <div className="edit-pen" onClick={handleNameDoubleClick} ></div>
-                        {!isEditing &&<div className="type">{project?.type}</div>}
-                        
-                        </div>
-                        {
-                            project.pin&&
-                    <div className="bottom-right">
-
-                        <div className="cover-info project-size">
-                            <div className="icon-show storage"></div>
-                            <p>{ convertMegabytes(project?.totalFileSize)} <span></span> </p>
-                        </div>
-                        <div className="cover-info project-size">
-                            <div className="icon-show image"></div>
-                            <p>
-                                {project?.uploadedFilesCount} <span>Photos  </span>
-                            </p>
-                        </div>
-                        <div className="cover-info project-size">
-                            <div className="icon-show folder"></div>
-                            <p>
-                                {project?.collections.length} <span>Galleries</span>
-                            </p>
-                        </div>
-                    </div>
-                        }
-                </div>
-                
-            </div>}
-            {project.pin&&
-            <div className="static-tools top">
-                <div className="cover-info project-expiry project-archive">
-                    <div className="icon-show expire"></div>
-
-                        <p>Archives 
-                            <span> in </span> 
-                            {
-                                project?.createdAt ? 
-                                Math.ceil(((new Date(project?.createdAt).getTime() + 90 * 24 * 60 * 60 * 1000) - Date.now()) / (1000 * 60 * 60 * 24))
-                                : 0
-                            } Days</p>
-
-                </div>
-                    <div className="cover-info project-expiry">
-                    <div className="icon-show archive"></div>
-                        <p>Expires 
-                            <span> in </span> 
-                            {
-                                project?.createdAt ? 
-                                Math.ceil(((new Date(project?.createdAt).getTime() + 360 * 24 * 60 * 60 * 1000) - Date.now()) / (1000 * 60 * 60 * 24))
-                                : 0
-                            } Days</p>
-
-                    </div>
-                </div>
-            }
             {
             !isSetFocusButton && project.pin? 
                 <div className="cover-tools">
