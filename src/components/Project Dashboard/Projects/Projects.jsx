@@ -13,6 +13,7 @@ import DashboardEvents from '../Events/Events';
 import DashboardTabs from './DashboardTabs/DashboardTabs';
 import AddProjectModal from '../../Modal/AddProject/AddProject';
 import CollectionsPanel from '../../Project/Collections/CollectionsPanel';
+import { ProjectCover } from '../../ProjectPageCover/ProjectPageCover';
 
 function DashboardProjects({project}){
   const dispatch =useDispatch()
@@ -48,6 +49,7 @@ function DashboardProjects({project}){
       </div>
       </div>
       
+      <ProjectCover project={project} />
     {
       projectDashboardView === 'abstract'?
       (project.collections.length === 0 ? (
