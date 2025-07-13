@@ -398,7 +398,7 @@ body{
     .status-signal{
       position: absolute;
       top: 50%; // Center vertically
-      left: 8px*2; // Add some left padding for visual clarity
+      left: 8px*1; // Add some left padding for visual clarity
       transform: translateY(-50%); // Adjust for vertical centering
       width: calc(8px * 1);
       height: calc(8px * 1);

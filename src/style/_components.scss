@@ -452,6 +452,12 @@ input,select{
     }
 
   }
+  .project-status > select {
+    width: auto;
+    padding-right: 8px*1;
+    padding-left: 8px*2.5;
+  }
+
   input{
 
     border: 1px solid $gray4-accessible-dark;
