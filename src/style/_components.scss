@@ -454,8 +454,9 @@ input,select{
   }
   .project-status > select {
     width: auto;
-    padding-right: 8px*1;
-    padding-left: 8px*2.5;
+    padding-left: 8px*3;
+    padding-right: 0px;
+    text-align: start;
   }
 
   input{
