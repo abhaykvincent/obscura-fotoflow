@@ -129,25 +129,31 @@ export const ProjectCover = ({ project }) => {
                         <p>1.6K <span>Views</span></p>
                     </div> */}
                     <div className="client">
-                        {isEditing ? (
-                        <div className="editable-data ">
-                            <input
-                            type="text"
-                            value={newName}
-                            onChange={(e) => setNewName(e.target.value)}
-                            />
-                            <div className="input-edit-actions">
-                            <button className={`${newName === project.name ? 'disabled' : ''} button primary icon icon-only check`} onClick={handleSave}></button>
-                            <button className="button secondary  icon icon-only close" onClick={handleCancel}></button>
-                            </div>
+                        
+                        <div className="project-name-editor">
+                            { isEditing ? (
+                                <div className="editable-data ">
+                                    <input
+                                    type="text"
+                                    value={newName}
+                                    onChange={(e) => setNewName(e.target.value)}
+                                    />
+                                    <div className="input-edit-actions">
+                                        <button className={`${newName === project.name ? 'disabled' : ''} button primary icon icon-only check`} onClick={handleSave}></button>
+                                        <button className="button secondary  icon icon-only close" onClick={handleCancel}></button>
+                                    </div>
+                                </div>
+                            ) 
+                            : (
+                                <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
+                            )
+                            }
+                            <div className="edit-pen" onClick={handleNameDoubleClick} ></div>
                         </div>
-                        ) : (
-                        <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
-                        )}
 
-                        <div className="edit-pen" onClick={handleNameDoubleClick} ></div>
-                        {!isEditing &&<div className="type">{project?.type}</div>}
+
                         <ProjectStatus project={project} />
+                            {!isEditing &&<div className="type">{project?.type}</div>}
                         </div>
                         {
                             project.pin&&
