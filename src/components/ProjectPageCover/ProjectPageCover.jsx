@@ -5,7 +5,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { selectDomain, selectUserStudio } from "../../app/slices/authSlice";
 import { showAlert } from "../../app/slices/alertSlice";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { setCoverPhotoInFirestore } from "../../firebase/functions/firestore";
+import { setCoverPhotoInFirestore, updateProjectStatusInFirestore } from "../../firebase/functions/firestore";
 import { updateProjectCover, updateProjectName } from "../../app/slices/projectsSlice";
 import { convertMegabytes } from "../../utils/stringUtils";
 
@@ -111,6 +111,10 @@ export const ProjectCover = ({ project }) => {
         console.log(project)
     }, [project]);
 
+    const handleStatusChange = (newStatus) => {
+        updateProjectStatusInFirestore(currentStudio.domain, project.id, newStatus);
+    };
+
     
     return (
         <div
@@ -151,7 +155,20 @@ export const ProjectCover = ({ project }) => {
                         {
                             project.pin&&
                     <div className="bottom-right">
-
+                        <div className={`project-status ${project?.status}`}>
+                            <select
+                                className="button secondary"
+                                value={project?.status}
+                                onChange={(e) => handleStatusChange(e.target.value)}
+                            > 
+                                {['draft', 'active', 'selected', 'completed', 'archived'].map(status => (
+                                    <option key={status} value={status}>
+                                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="status-signal" />
+                        </div>
                         <div className="cover-info project-size">
                             <div className="icon-show storage"></div>
                             <p>{ convertMegabytes(project?.totalFileSize)} <span></span> </p>
