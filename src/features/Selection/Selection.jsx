@@ -247,6 +247,9 @@ export default function Selection() {
           >
             Select Again
           </div>
+          <Link to={`/${studioName}/share/${project.id}`} className="button secondary">
+            Go back to gallery
+          </Link>
           </div>
         </div>
       }
