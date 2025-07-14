@@ -45,12 +45,10 @@
 
             &.slide-out-left {
                 animation: slideOutLeft 0.3s ease-in-out forwards;
-                animation-delay: 0.05s;
             }
 
             &.slide-out-right {
                 animation: slideOutRight 0.3s ease-in-out forwards;
-                animation-delay: 0.05s;
             }
         }
     }

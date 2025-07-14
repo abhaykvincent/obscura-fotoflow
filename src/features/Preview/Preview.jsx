@@ -31,7 +31,7 @@ function Preview({ image, previewIndex, setPreviewIndex: setParentPreviewIndex, 
     if (newIndex === previewIndex) return;
 
     setDirection(animDirection);
-    setNextImage(image); // The current `image` prop is the one we're moving *from*
+    
 
     // Clear any existing animation timeout
     if (animationTimeoutRef.current) {
