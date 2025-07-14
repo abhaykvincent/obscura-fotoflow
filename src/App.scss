@@ -215,7 +215,7 @@ body{
     margin-bottom: 8px*5;
     padding-bottom: 8px*3;
     z-index: 10;
-    border: 1px solid $dark-1-5;
+    border: 1px solid $gray4-default-dark;
     border-radius: 8px;
     border-right: 1px solid $dark-1;
     border-bottom: 1px solid $dark-1;
@@ -1354,7 +1354,7 @@ body{
 
     }
     .edit-pen{
-      opacity: 0.2;
+      opacity: 0.3;
       width: 8px*3;
       height: 8px*2.5;
       background-image: url('https://img.icons8.com/?size=100&id=8192&format=png&color=FFFFFF');
@@ -2252,14 +2252,6 @@ body{
         border-radius: 2px;
         border: 1px solid $gray4-default-dark;
 
-        // loop nth child animation delay increments
-        @for $i from 1 through 10 {
-          &:nth-child(#{$i}) {
-              $delay: 0.5s + 0.05s * ($i - 1);
-              animation: fadeInLeft 0.15s ease-out $delay;
-              animation-fill-mode: forwards;
-          }
-        }
          
         
         &:nth-child(1){
@@ -2662,6 +2654,8 @@ body{
         color: $dark-0
       }
     }
+
+
     .photo-wrap{
 
       width: calc(100vw/4 - $sidebar-width/4 - 8px*4);
@@ -2684,6 +2678,7 @@ body{
         top: 0;
         height: 100%;
         padding-top: 70%;
+        opacity: 0;
         //add a loading animation with linear-gradient
         //background: linear-gradient(90deg, $dark-3 20%, $dark-2 40%,$dark-2 60%, $dark-3 80%);
         
@@ -2696,6 +2691,8 @@ body{
         transition-timing-function: ease-out;
         transition: transform 0.2s;
         animation: gallery-photo-reveal 0.2s;
+        animation-fill-mode: forwards;
+        animation-delay: 2s;
         animation-timing-function: ease-out;
       }
       @keyframes gallery-photo-reveal {
@@ -2891,6 +2888,17 @@ body{
       } */
       
     }
+
+        // loop nth child animation delay increments
+        @for $i from 1 through 32 {
+          .photo-wrap:nth-child(#{$i}){
+            .photo{
+                $delay: 0.0s + 0.02s * ($i - 1);
+                animation: gallery-photo-reveal 0.2s ease-out $delay;
+                animation-fill-mode: forwards;
+          }
+          }  
+        }
   }
 }
 
