@@ -60,6 +60,12 @@
     position: relative;
     background-position: center 30%;
     background-size: 100%;
+    .back-btn {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 2;
+    }
     .banner{
       align-items: center;
       max-height: calc(100vh - 8px*60);
