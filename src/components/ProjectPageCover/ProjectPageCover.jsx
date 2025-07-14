@@ -179,6 +179,14 @@ export const ProjectCover = ({ project }) => {
                                 {project?.collections.length} <span>Galleries</span>
                             </p>
                         </div>
+                        {project.status === 'selected' && (
+                            <div className="cover-info project-size">
+                                <div className="icon-show selected"></div>
+                                <p>
+                                    {project?.selectedFilesCount} <span>Selected</span>
+                                </p>
+                            </div>
+                        )}
                     </div>
                         }
                 </div>
