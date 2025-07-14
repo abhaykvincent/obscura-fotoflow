@@ -175,7 +175,12 @@ const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
               };
 
               return (
-                <div className="photo-wrap" key={index} onClick={() => openPreview(index)}>
+                <div
+                  className="photo-wrap"
+                  key={index}
+                  onClick={() => openPreview(index)}
+                  style={{ animationDelay: `${index * 0.01}s` }}
+                >
                   <div className="hover-options-wrap">
                     <div className="hover-options">
                       {fileUrl.status && (

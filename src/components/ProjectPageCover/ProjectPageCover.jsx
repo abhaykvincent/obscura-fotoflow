@@ -5,9 +5,10 @@ import { doc, updateDoc } from "firebase/firestore";
 import { selectDomain, selectUserStudio } from "../../app/slices/authSlice";
 import { showAlert } from "../../app/slices/alertSlice";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { setCoverPhotoInFirestore, updateProjectStatusInFirestore } from "../../firebase/functions/firestore";
-import { updateProjectCover, updateProjectName, updateProjectStatus } from "../../app/slices/projectsSlice";
+import { setCoverPhotoInFirestore } from "../../firebase/functions/firestore";
+import { updateProjectCover, updateProjectName } from "../../app/slices/projectsSlice";
 import { convertMegabytes } from "../../utils/stringUtils";
+import { ProjectStatus } from "../Project/ProjectStatus/ProjectStatus";
 
 export const ProjectCover = ({ project }) => {
     const dispatch = useDispatch();
@@ -111,10 +112,6 @@ export const ProjectCover = ({ project }) => {
         console.log(project)
     }, [project]);
 
-    const handleStatusChange = (newStatus) => {
-        dispatch(updateProjectStatus({ domain: currentStudio.domain, projectId: project.id, newStatus }));
-    };
-
     
     return (
         <div
@@ -132,43 +129,40 @@ export const ProjectCover = ({ project }) => {
                         <p>1.6K <span>Views</span></p>
                     </div> */}
                     <div className="client">
-                        {isEditing ? (
-                        <div className="editable-data ">
-                            <input
-                            type="text"
-                            value={newName}
-                            onChange={(e) => setNewName(e.target.value)}
-                            />
-                            <div className="input-edit-actions">
-                            <button className={`${newName === project.name ? 'disabled' : ''} button primary icon icon-only check`} onClick={handleSave}></button>
-                            <button className="button secondary  icon icon-only close" onClick={handleCancel}></button>
-                            </div>
-                        </div>
-                        ) : (
-                        <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
-                        )}
-
-                        <div className="edit-pen" onClick={handleNameDoubleClick} ></div>
-                        {!isEditing &&<div className="type">{project?.type}</div>}
                         
+                        <div className="project-name-editor">
+                            { isEditing ? (
+                                <div className="editable-data ">
+                                    <input
+                                    type="text"
+                                    value={newName}
+                                    onChange={(e) => setNewName(e.target.value)}
+                                    />
+                                    <div className="input-edit-actions">
+                                        <button className={`${newName === project.name ? 'disabled' : ''} button primary icon icon-only check`} onClick={handleSave}></button>
+                                        <button className="button secondary  icon icon-only close" onClick={handleCancel}></button>
+                                    </div>
+                                </div>
+                            ) 
+                            : (
+                                <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
+                            )
+                            }
+                            <div className="edit-pen" onClick={handleNameDoubleClick} ></div>
+                        </div>
+                        <div className="tags">
+                            {!isEditing &&<div className="tag type">{project?.type}</div>}
+                            <div className="tag">Hindu</div>
+                        </div>
+
+                        <ProjectStatus project={project} />
+                        <div className="button secondary outline icon copy"> Link</div>
+            {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
+                            
                         </div>
                         {
                             project.pin&&
                     <div className="bottom-right">
-                        <div className={`project-status ${project?.status}`}>
-                            <select
-                                className="button secondary"
-                                value={project?.status}
-                                onChange={(e) => handleStatusChange(e.target.value)}
-                            > 
-                                {['draft', 'active', 'selected', 'completed', 'archived'].map(status => (
-                                    <option key={status} value={status}>
-                                        {status.charAt(0).toUpperCase() + status.slice(1)}
-                                    </option>
-                                ))}
-                            </select>
-                            <div className="status-signal" />
-                        </div>
                         <div className="cover-info project-size">
                             <div className="icon-show storage"></div>
                             <p>{ convertMegabytes(project?.totalFileSize)} <span></span> </p>

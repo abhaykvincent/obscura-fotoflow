@@ -23,3 +23,11 @@ This document outlines the changes to the `uploadedFiles` structure within a pro
     - **Type**: `Date | null`
     - **Description**: This new field stores the original date and time when the photo was taken, extracted from the image's EXIF data. It is stored as a JavaScript `Date` object, which Firestore automatically converts to a native Timestamp. If EXIF data is not available or `DateTimeOriginal` is not present, the value will be `null`.
     - **Addition**: Indicated by `+` in the diff, this field has been added to each `uploadedFile` object within a collection.
+
+## Project Status Component Extraction
+
+The `status` field of the `Project` object, as defined in `Project Data structure.md`, remains unchanged in its data structure. However, its handling in the UI has been refactored.
+
+- **`status` field**: The `status` field (e.g., 'draft', 'active', 'completed') is now managed and updated via a dedicated `ProjectStatus` React component located at `src/components/Project/ProjectStatus/ProjectStatus.jsx`.
+- **Logic Relocation**: The logic for changing the project status, including validation (e.g., preventing status change to 'draft' if images are present), has been moved from `src/components/ProjectPageCover/ProjectPageCover.jsx` to the `ProjectStatus` component.
+- **Modularity**: This change improves modularity and maintainability by centralizing status-related UI and logic.
