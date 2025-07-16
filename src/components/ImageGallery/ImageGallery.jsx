@@ -9,7 +9,7 @@ const groupImagesByLastModified = (images, thresholdInMinutes, timeThrottleInMin
   const throttleInMilliseconds = timeThrottleInMinutes * 60 * 1000;
 
   // Sort images by lastModified timestamp
-  const sortedImages = [...images].sort((a, b) => a.lastModified - b.lastModified);
+  const sortedImages = [...images].sort((a, b) => a.dateTimeOriginal - b.dateTimeOriginal);
 
   const groupedImages = [];
   let currentGroup = [];
@@ -19,18 +19,20 @@ const groupImagesByLastModified = (images, thresholdInMinutes, timeThrottleInMin
     if (index === 0) {
       // Initialize first group with the first image
       currentGroup.push(image);
-      groupStartTime = image.lastModified;
+      groupStartTime = image.dateTimeOriginal;
+      console.log(image.dateTimeOriginal)
     } else {
       const previousImage = sortedImages[index - 1];
-      const timeDifference = image.lastModified - previousImage.lastModified;
-      const groupDuration = image.lastModified - groupStartTime;
+      const timeDifference = image.dateTimeOriginal - previousImage.dateTimeOriginal;
+      
+      const groupDuration = image.dateTimeOriginal - groupStartTime;
 
       // Check if the current image exceeds either the threshold or the throttle
       if (timeDifference > thresholdInMilliseconds || groupDuration > throttleInMilliseconds) {
         // Push current group and start a new one
         groupedImages.push(currentGroup);
         currentGroup = [image];
-        groupStartTime = image.lastModified; // Reset group start time
+        groupStartTime = image.dateTimeOriginal; // Reset group start time
       } else {
         // Continue adding to the current group
         currentGroup.push(image);
@@ -126,8 +128,8 @@ const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
   }, [previewIndex]); // Effect runs when previewIndex changes
 
   // Group images by lastModified
-  const timeThreshold = 0.1;
-  const timeThrottle = 0.5; 
+  const timeThreshold = 0.0001;
+  const timeThrottle = 0.0005; 
   const groupedImages = useMemo(() => groupImagesByLastModified(imageUrls, timeThreshold,timeThrottle), [imageUrls, timeThreshold]);
   console.log(groupedImages)
 

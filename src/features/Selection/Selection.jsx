@@ -175,6 +175,9 @@ export default function Selection() {
 
       <Alert />
       <div className="project-header">
+        <Link to={`/${studioName}/share/${project.id}`} className="button back-btn icon back">
+          Back to Gallery
+        </Link>
         <img className='banner' src={images[0]?images[0].url:''} />
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
@@ -234,22 +237,25 @@ export default function Selection() {
       </>)
       :
         <div className="selected-completed">
-            <h4>Selection Completed</h4>
           <div className="completed-animation">
-          <Lottie
-            options={defaultOptions}
-            height={200}
-            width={200}
+            <Lottie
+              options={defaultOptions}
+              height={160}
+              width={160}
+              
             />
-            <p className='selected-files-count'>Selected <b>{selectedImages.length}</b> out of {project.uploadedFilesCount}</p>
-          <div className="button primary"
+
+            <h4>Congratulations!<br/> Your selections are complete</h4>
+            <p className='selected-files-count'>You've chosen <b>{selectedImages.length}</b> beautiful moments out of <b>{project.uploadedFilesCount} </b>photos</p>
+          <Link to={`/${studioName}/share/${project.id}`} className="button large primary ">
+            Go to gallery
+          </Link>
+          <p className='button-label'>Need to make changes? </p>
+          <div className="button  secondary light-mode text"
             onClick={() => setSelectionCompleted(false)}
           >
-            Select Again
+            Select again
           </div>
-          <Link to={`/${studioName}/share/${project.id}`} className="button secondary">
-            Go back to gallery
-          </Link>
           </div>
         </div>
       }

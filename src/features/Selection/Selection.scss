@@ -60,6 +60,12 @@
     position: relative;
     background-position: center 30%;
     background-size: 100%;
+    .back-btn {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 2;
+    }
     .banner{
       align-items: center;
       max-height: calc(100vh - 8px*60);
@@ -77,11 +83,24 @@
     margin: 0 auto;
     margin-top: 8px*4;
     text-align: center;
+    h4{
+      font-size: 2rem;
+    }
     .completed-animation{
       
     }
     .selected-files-count{
-      margin-bottom: 8px*5;
+      margin-top: 8px*2;
+      margin-bottom: 8px*2;
+      color: $dark-0;
+      b{
+        color: $dark-3;
+
+      }
+    }
+    .button-label{
+      color: $gray-accessible-dark;
+      margin-top: 8px*4;
     }
   }
   .shared-collection{
