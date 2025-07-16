@@ -216,8 +216,11 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 </>}
                 </div>
             </div>
+
+
+            
             {imageUrls.length > 0 ? (
-                galleryView === 'grid' ?
+                galleryView !== 'grid' ?
                 <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id,collectionId }} />:
                 <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId }} />
             ) : (
