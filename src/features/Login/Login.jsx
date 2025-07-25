@@ -111,6 +111,7 @@ const LoginModal = () => {
       <div className="modal island loginModal">
 
       <div className="actions">
+
         <h3 className='login-title-section'><span>Secure Login<span>.</span></span></h3>
         {/* <h2 className='login-title'>Signup <span>.</span> Signin <span>.</span></h2> */}
         <h3 className='login-subtitle'>Manage your snaps {/* <a className="green-label" href="">Create your studio</a> */}</h3>
@@ -118,71 +119,76 @@ const LoginModal = () => {
         <p className="open-with-login-label">{ loading?'':''}</p>
           {/* <div className='button secondary outline disable'  onClick={openEmailPassordLogin}>Password Login<div className="email-logo"></div></div> */}
           
-          <div className="sign-in-buttons">
-          {
-          loading? 
-          <div className="">
-            { googleSignInResult?.user?
-              <p>Sign-in as <span>{googleSignInResult?.user?.email}</span></p> :
-              <div className="">
-                <p>
-                    <span className='opening-loader'>... </span>Opening Google Sign-in 
-                    <span className='auth-cancel'
-                      onClick={()=>setLoading(false)}
-                    >Cancel </span>
-                </p>
-              </div> 
-            }
-          </div>:
-          <>
-            <div className={`button apple ${isAppleDevice() ? '':'disabled'}`}  onClick={handleGoogleSignIn}>
-              <div className="logo-container">
-              <div className="apple-logo"></div>
+        <div className="sign-in-buttons">
+        {
+        loading? 
+        <div className="">
+          { googleSignInResult?.user?
+            <p>Sign-in as <span>{googleSignInResult?.user?.email}</span></p> :
+            <div className="">
+              <p>
+                  <span className='opening-loader'>... </span>Opening Google Sign-in 
+                  <span className='auth-cancel'
+                    onClick={()=>setLoading(false)}
+                  >Cancel </span>
+              </p>
+            </div> 
+          }
+        </div>:
+        <>
+          <div className={`button apple ${isAppleDevice() ? '':'disabled'}`}  onClick={handleGoogleSignIn}>
+            <div className="logo-container">
+            <div className="apple-logo"></div>
 
-              </div>
-              Continue with Apple
             </div>
-            <div className='button google'  onClick={handleGoogleSignIn}>
-              <div className="logo-container">
-                <div className="google-logo"></div>
-              </div>
-              Continue with Google
-            </div>
-          </>
-          } 
-            <div className="login-helper-options">
-              <Link to="/onboarding" className={`create-studio-link ${loading? 'fade':''}`}>Create your Studio</Link>
-            </div>
-            
+            Continue with Apple
           </div>
-            
-      <div className="login-footer">
-        <a href="">Demo</a>
-        <a href="">Support</a>
-        <a href="">Recovery</a>
-        <a href="">Region</a>
-        <a href="">Terms of Service </a>
-        <p className="ampersand">&</p>
-        <a href="">Privacy Policy</a>
-      </div>
+          <div className='button google'  onClick={handleGoogleSignIn}>
+            <div className="logo-container">
+              <div className="google-logo"></div>
+            </div>
+            Continue with Google
+          </div>
+        </>
+        } 
+          <div className="login-helper-options">
+            <Link to="/onboarding" className={`create-studio-link ${loading? 'fade':''}`}>Create your Studio</Link>
+          </div>
+          
+        </div>
+          
+        <div className="login-footer">
+          <div className="footer-cta">
+            <div className="footer-cta-button">Need Help ? <span> Chat with us</span></div>
+            <p className="cta-postlabel"></p>
+          </div>
+          <div className="footer-actions">
+            <a href="">Demo</a>
+            <a href="">Recovery</a>
+            <a href="">Region</a>
+            <a href="">Terms of Service </a>
+            <p className="ampersand">&</p>
+            <a href="">Privacy Policy</a>
+          </div>
+        
         </div>
 
-          
-        
+        </div>
+
       </div>
 
       <div className="login-branding">
-              <p> 
-              <span><span> Fotoflow</span> </span>
-              <span>| </span>
-                from the  house 
-                  <> of </>  
-                <span>
-                  <span> Flow</span>
-                  OS
-                </span>
-              </p>
-              </div>
+        <p> 
+          <span><span> Fotoflow</span> </span>
+          <span>| </span>
+            from the  house 
+              <> of </>  
+          <span>
+            <span> Flow</span>
+            OS
+          </span>
+        </p>
+      </div>
     </div>
     <AddStudio/>
     <LoginEmailPassword/>
