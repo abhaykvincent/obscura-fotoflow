@@ -114,7 +114,7 @@ const LoginModal = () => {
 
         <h3 className='login-title-section'><span>Secure Login<span>.</span></span></h3>
         {/* <h2 className='login-title'>Signup <span>.</span> Signin <span>.</span></h2> */}
-        <h3 className='login-subtitle'>Manage your snaps {/* <a className="green-label" href="">Create your studio</a> */}</h3>
+        <h3 className='login-subtitle'>Fotoflow{/* <a className="green-label" href="">Create your studio</a> */}</h3>
 
         <p className="open-with-login-label">{ loading?'':''}</p>
           {/* <div className='button secondary outline disable'  onClick={openEmailPassordLogin}>Password Login<div className="email-logo"></div></div> */}
