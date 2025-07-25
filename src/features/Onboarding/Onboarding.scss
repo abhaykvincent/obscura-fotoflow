@@ -82,10 +82,15 @@
     transition-duration: 0.3s;
     
     &.user-contact-screen{
-        opacity: 0.5;
         transform: scale(0.9) translateX(-8px*2);
         transition-duration: 0.8s;
         transition-delay: 1s;
+        p{
+        opacity: 0.4;
+        }
+        .logged-user{
+        opacity: 1;
+        }
     }
     .button.google-login-button{
         margin: 0;
@@ -383,6 +388,7 @@
               }
               100% {
 
+                opacity: 1;
                 background-position: 50%;
                 border: 1px solid $green-dark-accessible-light;
 
@@ -437,7 +443,7 @@
         &.highlight{
             color: $gray-default-dark;
             transition-duration: 0.5s;
-            transition-delay: 1.2s;
+            transition-delay: 0.8s;
         }
 
     }
@@ -454,7 +460,7 @@
             padding: 8px*5 8px;
             background-color: rgba(255, 0, 0, 0);
             border: 1px solid transparent;
-            border-bottom: 1px solid $gray4-default-dark;
+            border-bottom: 1px solid $gray2-default-dark;
             transition-duration: 0.2s;
             text-shadow: 2px 4px 8px*4 rgba(0, 0, 0, 0.1);
             //autofill
@@ -552,7 +558,7 @@
             margin-top: 8px*3;
             margin-left: -8px;
             gap: 8px*0.5;
-            opacity: 0.2;
+            opacity: 0;
             &.active{
                 opacity: 1;
                 transition-duration: 0.1s;
