@@ -10,6 +10,8 @@ import { useModalFocus } from '../../hooks/modalInputFocus';
 import { set } from 'date-fns';
 import { storeLimitContext } from '../../utils/localStorageUtills';
 import { model } from '../../firebase/app';
+import { use } from 'react';
+import { collection } from 'firebase/firestore';
 /* import { model } from '../../firebase/app'; */
 
 // Mapping of placeholders based on project type
@@ -47,7 +49,6 @@ function AddCollectionModal({ project }) {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    console.log('Input changed:', name, value);
     setCollectionData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -62,7 +63,6 @@ const handleSuggestedNameChange = (event) => {
   };
 
   setCollectionData(updatedData); // update local state
-  handleSubmit(updatedData); // pass updated state directly
 };
 
 
@@ -70,10 +70,11 @@ const handleSuggestedNameChange = (event) => {
   const [errors, setErrors] = useState({});
   const nameInputRef = useRef(null);
 
-  const validateForm = (data = CollectionData) => {
+  const validateForm = (data) => {
+    console.log(data)
     let newErrors = {};
 
-    if (!data.name.trim()) {
+    if (!(data.name || '').trim()) {
       newErrors.name = 'Gallery name is required';
     }
 
@@ -87,7 +88,8 @@ const handleSuggestedNameChange = (event) => {
   };
 
 
- const handleSubmit = (data = CollectionData) => {
+ const handleSubmit = () => {
+  let data = CollectionData;
   if (isSubmitting) return;
 
   const isValid = validateForm(data); // validate passed data
@@ -141,6 +143,10 @@ const handleSuggestedNameChange = (event) => {
     setTimeout(() => dispatch(openModal('upgrade')), 2000);
   }
 };
+useEffect(() => {
+  //console.log('CollectionData updated:', CollectionData);
+
+},[CollectionData])
 
   /* async function run() {
     // Provide a prompt that contains text
@@ -166,6 +172,7 @@ const handleSuggestedNameChange = (event) => {
   return (
     <div className="modal-container" ref={modalRef}>
       <div className="modal create-project island">
+
         <div className="modal-header">
           <div className="modal-controls">
             <div className="control close" onClick={onClose}></div>
@@ -177,6 +184,7 @@ const handleSuggestedNameChange = (event) => {
             <p className="modal-subtitle">- {project.name}'s {project.type}</p>
           </div>
         </div>
+        
         <div className="modal-body">
           <div className="form-section">
             <div className="field">
@@ -220,6 +228,7 @@ const handleSuggestedNameChange = (event) => {
             </div>
           </div>
         </div>
+
         <div className="actions">
           <div className="button secondary" onClick={onClose}>
             Cancel
@@ -228,6 +237,7 @@ const handleSuggestedNameChange = (event) => {
             Create
           </div>
         </div>
+
       </div>
       <div className="modal-backdrop" onClick={onClose}></div>
     </div>
