@@ -44,7 +44,7 @@
   },
   "scripts": {
     "start": "dotenv -e .env.development react-scripts start",
-    "emulator": "firebase emulators:start",
+    "emulator": "firebase emulators:start --host 10.186.57.223",
     "build": "dotenv -e .env.production react-scripts build",
     "deploy": "firebase deploy --only hosting",
     "eject": "react-scripts eject",

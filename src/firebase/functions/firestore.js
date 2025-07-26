@@ -430,7 +430,7 @@ export const fetchCollectionStatus = async (domain, projectId, collectionId) => 
 
         const projectData = projectSnapshot.data();
         const collection = projectData.collections.find(c => c.id === collectionId);
-        console.log(collection)
+        
         if (collection) {
             return collection.status;
         } else {
