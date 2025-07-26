@@ -155,9 +155,16 @@ function ShareGallery({project }) {
                         </div>
                       </div>
 
-                      <div className="input selection-status">
+                      <div className={`input selection-status ${collection.status !== 'visible' ? 'hide' : ''}`}>
                         <FormControlLabel
-                          control={<IOSSwitch sx={{ m: 1 }} defaultChecked color="blue" />} // Pass color to IOSSwitch
+                          control={
+                            <IOSSwitch
+                              sx={{ m: 1 }}
+                              checked={collection.status === 'visible'} // Set checked based on collection status
+                              disabled={collection.status !== 'visible'} // Disable if not visible
+                              color="blue"
+                            />
+                          }
                         />
                       </div>
                     </div>
