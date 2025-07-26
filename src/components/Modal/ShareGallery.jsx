@@ -9,6 +9,7 @@ import { useLocation } from 'react-router';
 import { copyToClipboard, extractDomain, getGalleryURL } from '../../utils/urlUtils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
+import { updateCollectionStatus, updateCollectionStatusThunk } from '../../app/slices/projectsSlice';
 
 import './ShareGallery.scss'
 
@@ -110,20 +111,35 @@ function ShareGallery({project }) {
         <div className='modal-body'>
           <div className="form-section">
             {/* map project collections and render it with a check box to select galleries to share */}
-          <h4>{project.name}</h4>
+          <h4>{project?.name}</h4>
 
               <div className="select-galleries">
 
               <div className="galleries-share-list-selection">
 
-                {project.collections.map((collection, index) => (
+                {project?.collections.map((collection, index) => (
                   <>
                     {/* Gallery choose */}
                     <div key={index} className='gallery-field'>
                       <div className="form-item">
                         <div className="input gallery-status">
                         <FormControlLabel
-                          control={<IOSSwitch  sx={{ m: 1 }} defaultChecked color="green" />} // Pass color to IOSSwitch
+                          control={
+                            <IOSSwitch
+                              sx={{ m: 1 }}
+                              checked={collection.status === 'visible'} // Set checked based on collection status
+                              onChange={(event) => {
+                                const newStatus = event.target.checked ? 'visible' : 'hide';
+                                dispatch(updateCollectionStatus({
+                                  domain,
+                                  projectId: project?.id,
+                                  collectionIndex: index,
+                                  status: newStatus
+                                }));
+                              }}
+                              color="green"
+                            />
+                          }
                           label={
                             <>
                               <div className='gallery-name'>{collection.name}</div>
@@ -159,7 +175,7 @@ function ShareGallery({project }) {
                 <div className='link' >
 
                     <div className="link-container">
-                    <a className='linkToGallery' href={getGalleryURL('share',domain,project.id)} target='_blank' >.../{domain}{getGalleryURL('share',domain,project.id).split(domain)[1]}
+                    <a className='linkToGallery' href={getGalleryURL('share',domain,project?.id)} target='_blank' >.../{domain}{getGalleryURL('share',domain,project?.id).split(domain)[1]}
                       <div className="button icon icon-only open-in-new"></div>
                     </a>
 
@@ -181,7 +197,7 @@ function ShareGallery({project }) {
                 <p className="copy-link button icon  pin" onClick={() => {
                   copyToClipboard(getGalleryURL('share',domain,project.id))
                 }
-                }>{project.pin}</p>
+                }>{project?.pin}</p>
             </div>
 
           </div>

@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
-import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import { getFirestore, connectFirestoreEmulator, doc, updateDoc } from "firebase/firestore";
 import { getAnalytics, isSupported, logEvent } from "firebase/analytics";
 import { getVertexAI, getGenerativeModel } from "firebase/vertexai-preview";
 import { getAuth, connectAuthEmulator, GoogleAuthProvider, signInWithPopup } from "firebase/auth";

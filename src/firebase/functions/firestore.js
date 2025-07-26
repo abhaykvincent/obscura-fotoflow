@@ -697,6 +697,34 @@ export const setGalleryCoverPhotoInFirestore = async (domain, projectId, collect
     }
 };
 
+export const updateCollectionStatusInFirestore = async (domain, projectId, collectionIndex, status) => {
+    try {
+        const projectRef = doc(db, 'studios', domain, 'projects', projectId);
+        const projectSnapshot = await getDoc(projectRef);
+
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
+        }
+
+        const projectData = projectSnapshot.data();
+        const updatedCollections = [...projectData.collections];
+
+        if (collectionIndex >= 0 && collectionIndex < updatedCollections.length) {
+            updatedCollections[collectionIndex] = {
+                ...updatedCollections[collectionIndex],
+                status: status
+            };
+            await updateDoc(projectRef, { collections: updatedCollections });
+            console.log(`Collection ${collectionIndex} status updated to ${status} for project ${projectId}`);
+        } else {
+            throw new Error('Collection index out of bounds.');
+        }
+    } catch (error) {
+        console.error("Error updating collection status:", error);
+        throw error;
+    }
+};
+
 // Event
 export const addEventToFirestore = async (domain, projectId, eventData) => {
     if (!domain || !projectId || !eventData) {

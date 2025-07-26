@@ -1,7 +1,7 @@
 // slices/authSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
-import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
+import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateCollectionStatusInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/app';
@@ -55,6 +55,14 @@ export const updateCollectionName = createAsyncThunk(
     // Call Firestore function to update collection name
     await updateCollectionNameInFirestore(domain, projectId, collectionId, newName);
     return { projectId, collectionId, newName };
+  }
+);
+
+export const updateCollectionStatus = createAsyncThunk(
+  'projects/updateCollectionStatus',
+  async ({ domain, projectId, collectionIndex, status }, { dispatch }) => {
+    await updateCollectionStatusInFirestore(domain, projectId, collectionIndex, status);
+    return { projectId, collectionIndex, status };
   }
 );
 
@@ -343,6 +351,34 @@ const projectsSlice = createSlice({
         state.status = 'succeeded';
       })
       .addCase(updateCollectionName.rejected, (state, action) => {
+        state.status = 'failed';
+        state.loading = false;
+        state.error = action.error.message;
+      });
+      builder
+      .addCase(updateCollectionStatus.pending, (state) => {
+        state.status = 'loading';
+        state.loading = true;
+      })
+      .addCase(updateCollectionStatus.fulfilled, (state, action) => {
+        const { projectId, collectionIndex, status } = action.payload;
+        state.data = state.data.map((project) => {
+          if (project.id === projectId) {
+            const updatedCollections = [...project.collections];
+            if (collectionIndex >= 0 && collectionIndex < updatedCollections.length) {
+              updatedCollections[collectionIndex] = {
+                ...updatedCollections[collectionIndex],
+                status: status
+              };
+            }
+            return { ...project, collections: updatedCollections };
+          }
+          return project;
+        });
+        state.loading = false;
+        state.status = 'succeeded';
+      })
+      .addCase(updateCollectionStatus.rejected, (state, action) => {
         state.status = 'failed';
         state.loading = false;
         state.error = action.error.message;

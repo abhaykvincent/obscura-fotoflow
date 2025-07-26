@@ -1,4 +1,6 @@
 import * as ExifReader from 'exifreader';
+import { db } from '../firebase/app';
+import { doc, updateDoc } from 'firebase/firestore';
 
 // write function to add all the sizes of importef files array
 export const addAllFileSizesToMB = (files) => {
@@ -37,3 +39,4 @@ export const extractExifData = async (file) => {
         return null;
     }
 };
+
