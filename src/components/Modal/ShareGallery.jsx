@@ -121,10 +121,17 @@ function ShareGallery({project }) {
                     {/* Gallery choose */}
                     <div key={index} className='gallery-field'>
                       <div className="form-item">
-                        <div className="input">
+                        <div className="input gallery-status">
                         <FormControlLabel
                           control={<IOSSwitch  sx={{ m: 1 }} defaultChecked color="green" />} // Pass color to IOSSwitch
-                          label={collection.name}
+                          label={
+                            <>
+                              <div className='gallery-name'>{collection.name}</div>
+                              <div className="gallery-images-count">
+                                {collection.filesCount > 1 ? `${collection.filesCount}` : ''}
+                              </div>
+                            </>
+                          }
                         />
                         </div>
                         <div className="label">
@@ -132,9 +139,11 @@ function ShareGallery({project }) {
                         </div>
                       </div>
 
+                      <div className="input selection-status">
                         <FormControlLabel
                           control={<IOSSwitch sx={{ m: 1 }} defaultChecked color="blue" />} // Pass color to IOSSwitch
                         />
+                      </div>
                     </div>
                   </>
                 ))}

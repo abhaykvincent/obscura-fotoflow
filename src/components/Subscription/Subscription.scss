@@ -825,6 +825,9 @@ main.subscription{
     z-index: 91;
     width: 8px*200;
     max-width: 8px*120;
+    & + .modal-backdrop{
+        background-color: #0000006f;
+    }
     .modal-body{
         height: calc(100vh - 8px*58) !important;
         

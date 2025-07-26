@@ -7,12 +7,8 @@ import { closeModal, closeModalWithAnimation, openModal, selectModal } from '../
 import { selectUserStudio } from '../../app/slices/authSlice';
 import { trackEvent } from '../../analytics/utils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
-import { set } from 'date-fns';
 import { storeLimitContext } from '../../utils/localStorageUtills';
-import { model } from '../../firebase/app';
-import { use } from 'react';
-import { collection } from 'firebase/firestore';
-/* import { model } from '../../firebase/app'; */
+import { selectStudio } from '../../app/slices/studioSlice';
 
 // Mapping of placeholders based on project type
 const projectTypePlaceholders = {
@@ -33,10 +29,15 @@ function AddCollectionModal({ project }) {
   const navigate = useNavigate();
   const visible = useSelector(selectModal);
   const defaultStudio = useSelector(selectUserStudio);
+  const studio = useSelector(selectStudio);
+  console.log(studio);
   const collectionsLimit = {
-    perProject: defaultStudio.domain === 'monalisa' ? 24 : 3,
+    perProject: defaultStudio.domain === 'monalisa' ? 24 : 
+    studio.planName === 'Core' ? 3 : 12,
+    
   };
-  let collectionsLength = project?.collections ? project.collections : 0;
+
+  const collectionsLength = project?.collections || [];
 
   const [CollectionData, setCollectionData] = useState({
     name: '',
@@ -71,7 +72,7 @@ const handleSuggestedNameChange = (event) => {
   const nameInputRef = useRef(null);
 
   const validateForm = (data) => {
-    console.log(data)
+    
     let newErrors = {};
 
     if (!(data.name || '').trim()) {
@@ -143,23 +144,7 @@ const handleSuggestedNameChange = (event) => {
     setTimeout(() => dispatch(openModal('upgrade')), 2000);
   }
 };
-useEffect(() => {
-  //console.log('CollectionData updated:', CollectionData);
 
-},[CollectionData])
-
-  /* async function run() {
-    // Provide a prompt that contains text
-    const prompt = "Write a story about a magic backpack."
-  
-    // To generate text output, call generateContent with the text input
-    const result = await model.generateContent(prompt);
-  
-    const response = result.response;
-    const text = response.text();
-    console.log(text);
-  }
-  run(); */
   
   const modalRef = useModalFocus(visible.createCollection);
   if (!visible.createCollection) {
