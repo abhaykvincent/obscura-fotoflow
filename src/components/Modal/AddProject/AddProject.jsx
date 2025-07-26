@@ -189,7 +189,7 @@ const ProjectDetails = ({ projectData, errors, handleInputChange, nameInputRef, 
     {projectData.type === 'Wedding' ? (
       <>
         <div className="field">
-          <label>Groom</label>
+          <label>Bride</label>
           <input
             name="name"
             ref={nameInputRef}
@@ -207,7 +207,7 @@ const ProjectDetails = ({ projectData, errors, handleInputChange, nameInputRef, 
           {errors.name && <div className="error">{errors.name}</div>}
         </div>
         <div className="field">
-          <label>Bride</label>
+          <label>Groom</label>
           <input
             name="name2"
             ref={name2InputRef}
@@ -253,7 +253,7 @@ const ProjectDetails = ({ projectData, errors, handleInputChange, nameInputRef, 
           ))}
         </div>
         <div className="info">
-           Storage frees up & archived for future access.
+           After {projectData.projectValidityMonths} months, only You and the Client can access.
         </div>
       </div>
     </div>
