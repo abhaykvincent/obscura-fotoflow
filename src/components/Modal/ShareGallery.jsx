@@ -142,7 +142,7 @@ function ShareGallery({project }) {
                           }
                           label={
                             <>
-                              <div className='gallery-name'>{collection.name}</div>
+                              <div className={`gallery-name ${collection.status !== 'visible' ? 'hide' : ''}`}>{collection.name}</div>
                               <div className="gallery-images-count">
                                 {collection.filesCount > 1 ? `${collection.filesCount}` : ''}
                               </div>

@@ -73,8 +73,12 @@
         .gallery-name{
             max-width: 8px*16;
             white-space: nowrap;
-
             overflow: hidden;
+            &.hide{
+                color: $gray3-default-dark;
+                text-decoration: line-through;
+                text-decoration-color: $gray2-default-dark;
+            }
         }
         .gallery-images-count{
             width: 8px*4;
