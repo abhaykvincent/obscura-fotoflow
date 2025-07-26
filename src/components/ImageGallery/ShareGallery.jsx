@@ -2,12 +2,14 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Preview from '../../features/Preview/Preview';
 import { getThumbnailUrl } from '../../utils/urlUtils';
 import { trackEvent } from '../../analytics/utils';
+import { fetchCollectionStatus } from '../../firebase/functions/firestore';
 
-const ShareGallery = ({ images,projectId,collectionId }) => {
+const ShareGallery = ({ images,projectId,collectionId, domain }) => {
   const [size, setSize] = useState(12);
   const [loadedImages, setLoadedImages] = useState(images.slice(0, size));
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
+  const [displayGallery, setDisplayGallery] = useState(false);
   //Preview
   const [isPreviewOpen,setIsPreviewOpen] = useState(false);
   const [previewIndex,setPreviewIndex] = useState(0);
@@ -26,6 +28,24 @@ const ShareGallery = ({ images,projectId,collectionId }) => {
     setIsPreviewOpen(false);
    
   }, [images, size]);
+
+  useEffect(() => {
+    const checkCollectionStatus = async () => {
+      try {
+        const status = await fetchCollectionStatus(domain, projectId, collectionId);
+        if (status === 'active') {
+          setDisplayGallery(true);
+        } else {
+          setDisplayGallery(false);
+        }
+      } catch (error) {
+        console.error('Error fetching collection status:', error);
+        setDisplayGallery(false); // Hide gallery on error
+      }
+    };
+
+    checkCollectionStatus();
+  }, [domain, projectId, collectionId]);
 
   useEffect(() => {
     trackEvent('gallery_viewed', {
@@ -94,7 +114,8 @@ const ShareGallery = ({ images,projectId,collectionId }) => {
   }, [loading, hasMore, images]);
   return (
     <div className="gallary">
-      <div className="photos" ref={containerRef}>
+      {displayGallery ? (
+        <div className="photos" ref={containerRef}>
         {
           loadedImages.map((file, index) => (
             index + 1 === loadedImages.length ?
@@ -118,13 +139,14 @@ const ShareGallery = ({ images,projectId,collectionId }) => {
         }
         
       </div>
-      {
+      ) : (
+        <p>This gallery is not active.</p>
+      )}
+      {displayGallery &&
         loading && 
           <div className="loader">LOADING ...</div>
       }
-      {
-          isPreviewOpen && <Preview image={images[previewIndex] } {...{previewIndex,setPreviewIndex,imagesLength:images.length,closePreview,projectId,collectionId}}/>
-      }
+      {displayGallery && isPreviewOpen && <Preview image={images[previewIndex] } {...{previewIndex,setPreviewIndex,imagesLength:images.length,closePreview,projectId,collectionId}}/>}
     </div>
   );
 };

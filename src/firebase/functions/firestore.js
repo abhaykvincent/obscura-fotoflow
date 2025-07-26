@@ -411,6 +411,35 @@ export const updateCollectionNameInFirestore = async (domain, projectId, collect
       throw error;
     }
   };
+export const fetchCollectionStatus = async (domain, projectId, collectionId) => {
+    if (!domain || !projectId || !collectionId) {
+        throw new Error('Domain, Project ID, and Collection ID are required.');
+    }
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
+        }
+
+        const projectData = projectSnapshot.data();
+        const collection = projectData.collections.find(c => c.id === collectionId);
+
+        if (collection) {
+            return collection.status;
+        } else {
+            throw new Error('Collection not found in project.');
+        }
+    } catch (error) {
+        console.error(`Error fetching collection status: ${error.message}`);
+        throw error;
+    }
+};
 // Uploaded Files
 export const fetchImages = async (domain, projectId, collectionId) => {
     let color = domain === '' ? 'gray' : '#0099ff';
