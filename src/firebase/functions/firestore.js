@@ -412,6 +412,7 @@ export const updateCollectionNameInFirestore = async (domain, projectId, collect
     }
   };
 export const fetchCollectionStatus = async (domain, projectId, collectionId) => {
+    console.log(domain, projectId, collectionId);
     if (!domain || !projectId || !collectionId) {
         throw new Error('Domain, Project ID, and Collection ID are required.');
     }
@@ -429,7 +430,7 @@ export const fetchCollectionStatus = async (domain, projectId, collectionId) => 
 
         const projectData = projectSnapshot.data();
         const collection = projectData.collections.find(c => c.id === collectionId);
-
+        console.log(collection)
         if (collection) {
             return collection.status;
         } else {
