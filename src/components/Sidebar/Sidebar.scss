@@ -233,7 +233,7 @@
         opacity: 0.8;
     }
     .network-signal{
-        margin-left: -3px;
+        margin-left: 4px;
         margin-right: 2px;
         .signals{
             display: grid;
@@ -257,7 +257,7 @@
         // reverse
         
         width: calc(100% - 8px*1.1);
-        bottom: 8px*16.4;
+        bottom: 8px*17.4;
         left: 4px;
         padding-bottom: 8px*0;
         border-radius: 8px;
@@ -476,7 +476,7 @@
         display: grid;
         grid-template-columns:  auto;
         position: absolute;
-        bottom: 8px*30.25;
+        bottom: 8px*31.25;
         left : 5px;
         margin:   0 ;
         margin-right: 0px;
@@ -785,7 +785,7 @@
             transform: translateY(-100%) scale(1.05);;
         transition-duration: 0.15s;
         transition-timing-function: ease-out;
-            cursor: grabbing;
+            cursor: pointer;
             .option-icon{
                 transform: rotate(180deg) translateX(8px*2) translateY(8px*0.5);;
                 

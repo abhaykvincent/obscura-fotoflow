@@ -154,7 +154,7 @@ function Sidebar() {
                 </div>
           }
           <Link  to={`/${studioName}/subscription`}>
-          <p className='plan-name'>{`${studio?.planName !== 'Core' ? '':''} ${studio?.planName} `}
+          <p className='plan-name'>{`${studio?.planName !== 'Core' ? '':'Upgrade to'} ${studio?.planName} `}
             {
               getDaysFromNow(studio?.trialEndDate) <5?
               <span className='tag free pay-now'>Pay now</span>:
@@ -293,7 +293,11 @@ function Sidebar() {
       </div>
       <div className="corner-tools">
         <NetworkSignal />
-        <div className="corner-lock"></div>
+        <div className="corner-lock" onClick={() => {
+          dispatch(logout())
+          trackEvent('logout')
+          navigate(`/`)
+        }}></div>
         <div className="time-bay"><span>|</span> </div>
         <div className="time-bay">10:23 PM <span>|</span> Sun 16 Jul </div>
       </div>

@@ -1,26 +1,54 @@
 .network-signal {
-  margin-left: -3px;
-  margin-right: 2px;
-  .signals {
-    display: grid;
-    gap: 2px;
-    .signal {
-        width: 3px;
-        height: 5px;
-        border-radius :2px ;
-        background-color: #a0a0a0;
-      &.active {
-        background-color: #00ff00;
-      }
-      &:nth-child(1) {
-        height: 5px;
-      }
-      &:nth-child(2) {
-        height: 4px;
-      }
-      &:nth-child(3) {
-        height: 3px;
-      }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 8px;
+  height: 8px*1.5;
+
+  .status-indicator {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+
+    &.online {
+      background-color: #28a745; // Green for online
+      box-shadow: 0 0 5px #28a745;
     }
+
+    &.offline {
+      background-color: #dc3545; // Red for offline
+      box-shadow: 0 0 5px #dc3545;
+    }
+
+    &.status-change {
+      animation: blink 1.5s ease-in-out;
+    }
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 1;
+  }
+  35% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0;
+  }
+  98% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
   }
 }

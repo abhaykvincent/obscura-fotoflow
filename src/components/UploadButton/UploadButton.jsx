@@ -9,7 +9,7 @@ import { openModal } from '../../app/slices/modalSlice';
 import { handleUpload } from '../../utils/uploadOperations';
 import { addAllFileSizesToMB, validateFileTypes, extractExifData } from '../../utils/fileUtils';
 import { createNotification } from '../../app/slices/notificationSlice';
-import { fetchProjects } from '../../app/slices/projectsSlice';
+import { fetchProjects, updateCollectionStatus } from '../../app/slices/projectsSlice';
 
 // import { fetchProject } from '../../firebase/functions/firestore'; // fetchProject seems unused in this component
 
@@ -30,11 +30,7 @@ function UploadButton({
   // Assuming the intention is to use the dispatch from props if provided, or fallback to hook.
   // However, the original code already uses useDispatch(), so the prop `dispatch` might be redundant
   // unless the calling context changes. Let's stick to the instructions: add `dispatch` to props.
-  const localDispatch = useDispatch(); // Use localDispatch if prop `dispatch` is not the one from Redux store.
-                                     // Or simply use `dispatch` if it's guaranteed to be the Redux dispatch.
-                                     // Given the setup, `useDispatch()` is the standard. The prop is unusual.
-                                     // Let's assume the prop `dispatch` is the one to be used.
-
+  const localDispatch = useDispatch(); 
   const domain = useSelector(selectDomain);
   const storageLimit = useSelector(selectStudioStorageUsage);
   const studiodata = useSelector(selectStudio);
@@ -101,7 +97,13 @@ function UploadButton({
           );
           };
           dispatchNotification()
-
+          dispatch(updateCollectionStatus
+            ({
+              domain,
+              projectId: id,
+              collectionId: collectionId,
+              status: newStatus
+            }));
           console.log(domain)
         setTimeout(() => {
           dispatch(openModal('shareGallery'))
