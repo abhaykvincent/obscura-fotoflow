@@ -34,6 +34,7 @@ import Settings from './features/Settings/Settings';
 import BillingHistory from './features/BillingHistory/BillingHistory';
 import FlowPilot from './components/Modal/SupportIcon/FlowPilot';
 import SupportIcon from './components/Modal/SupportIcon/FlowPilot';
+import NotFound from './components/NotFound/NotFound';
 // Modal Components
 import TrialStatusModal from './components/Modal/TrialEnds/TrialEnds';
 import UpgradeModal from './components/Subscription/UpgradeModal';
@@ -195,6 +196,7 @@ export default function App() {
               <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>
               <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>
               <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>
+              <Route path="*" element={<NotFound />} />
             </Routes>
           )}
 
