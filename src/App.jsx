@@ -53,8 +53,11 @@ import { generateReferral } from './app/slices/referralsSlice';
 import { getCurrentSubscription } from './firebase/functions/subscription';
 
 console.log(`%c Welcome to Fotoflow!`, `color:rgb(84, 219, 0); `);
-if(isDeveloper) console.log(`%c This device is not being tracked by Analytics in production.`, `color: #ff9500; `);
+if(isDeveloper){
+  console.log(`%c Running is Production`, `color: #ffea00ff; `);
+  console.log(`%c This device is not being tracked by Analytics`, `color: #ff9500; `);
 
+} 
 // APP
 export default function App() {
   const dispatch = useDispatch();
