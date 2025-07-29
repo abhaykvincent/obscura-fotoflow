@@ -9,6 +9,7 @@ import { trackEvent } from '../../analytics/utils';
 import { selectCurrentSubscription, selectStudio, selectStudioStorageUsage } from '../../app/slices/studioSlice';
 import { convertMegabytes } from '../../utils/stringUtils';
 import { getDaysFromNow, getEventTimeAgo } from '../../utils/dateUtils';
+import NetworkSignal from '../NetworkSignal/NetworkSignal';
 
 function Sidebar() {
   
@@ -291,13 +292,7 @@ function Sidebar() {
         </div>
       </div>
       <div className="corner-tools">
-        <div className="network-signal">
-          <div className="signals">
-            <div className="signal"></div>
-            <div className="signal active"></div>
-            <div className="signal active"></div>
-          </div>
-        </div>
+        <NetworkSignal />
         <div className="corner-lock"></div>
         <div className="time-bay"><span>|</span> </div>
         <div className="time-bay">10:23 PM <span>|</span> Sun 16 Jul </div>

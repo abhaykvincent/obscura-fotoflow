@@ -1,0 +1,26 @@
+.network-signal {
+  margin-left: -3px;
+  margin-right: 2px;
+  .signals {
+    display: grid;
+    gap: 2px;
+    .signal {
+        width: 3px;
+        height: 5px;
+        border-radius :2px ;
+        background-color: #a0a0a0;
+      &.active {
+        background-color: #00ff00;
+      }
+      &:nth-child(1) {
+        height: 5px;
+      }
+      &:nth-child(2) {
+        height: 4px;
+      }
+      &:nth-child(3) {
+        height: 3px;
+      }
+    }
+  }
+}
