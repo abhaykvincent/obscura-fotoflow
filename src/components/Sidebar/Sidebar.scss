@@ -594,10 +594,10 @@
             padding: 0px;
             padding: 8px;
             margin: 4px;
-            margin-left: 4px;
+            margin-left: 6px;
             margin-bottom: 8px*-0.75;
             height: 40px;
-            width: 8px*18;
+            width: 8px*18.2;
             background-color: $dark-3;
             border: 1px solid $gray5-default-dark;
             border-top: 1px solid $gray3-default-dark;
@@ -607,8 +607,8 @@
             border-radius: 8px;
             overflow: hidden;
             opacity: 0;
-            transition-duration: 0.2s;
-            transition-timing-function: ease-out;
+            transition-duration: 0.1s;
+            transition-timing-function: ease-in;
             transition-delay: 0.01s;
             overflow: hidden;
                 .option{
@@ -730,7 +730,7 @@
                 
             }
             &.active{
-                bottom: 8px*17;
+                bottom: 8px*18.5;
                 opacity: 1;
                 padding: 8px 4px;
                 height: 8PX*26;
