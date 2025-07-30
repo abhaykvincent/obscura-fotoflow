@@ -281,7 +281,7 @@ function AdminPanel() {
                             <tbody>
                                 {studios.map(studio => (
                                     <React.Fragment key={studio.id}>
-                                        <tr className="clickable-row" onClick={() => handleRowClick(studio.id)}>
+                                        <tr className={`clickable-row ${expandedStudioId === studio.id ? 'selected' : ''}`} onClick={() => handleRowClick(studio.id)}>
                                             <td>{studio.name}</td>
                                             <td>fotoflow.in/{studio.domain}</td>
                                             <td>{studio.domain}</td>
@@ -294,7 +294,8 @@ function AdminPanel() {
                                             <tr className="expanded-row">
                                                 <td colSpan="5">
                                                     <div className="expanded-content">
-                                                        <button className="button secondary outline" onClick={async () => {
+                                                        <button className="button secondary outline" onClick={async (e) => {
+                                                            e.stopPropagation(); // Prevent row click from collapsing
                                                             try {
                                                                 await migrateCollectionsByStudio(studio.domain);
                                                                 console.log('Collections migrated successfully');

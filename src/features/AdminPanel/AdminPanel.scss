@@ -157,6 +157,10 @@
         margin-top: -8px*2;
         .clickable-row {
             cursor: pointer;
+
+            &.selected {
+                background-color: $dark-2;
+            }
         }
 
         .expanded-row {
@@ -175,6 +179,14 @@
             gap: 10px;
             align-items: center;
         }
+            .expanded-content {
+            padding: 15px;
+            background-color: $dark-3;
+            border-top: 1px solid $dark-1;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
 
         .expand-icon {
             display: inline-block;
@@ -185,14 +197,15 @@
         }
 
         .actions {
-            position: absolute;
-            top: -8px*5;
-            right: 8px*2;
+            text-align: right;
             display: flex;
-            width: 8px*8;
+            align-items: center;
             justify-content: flex-end;
-            margin-bottom: 8px*0;
-            z-index: 4;
+            gap: 10px;
+
+            .button {
+                margin-left: 8px;
+            }
         }
         .campainPlatform{
             width: auto;
