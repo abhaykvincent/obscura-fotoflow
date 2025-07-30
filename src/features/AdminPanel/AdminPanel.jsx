@@ -174,16 +174,7 @@ function AdminPanel() {
 
                 <div className="admin-actions">
 
-                    <div className="button secondary outline" onClick={async () => {
-                            try {
-                                await migrateStudios();
-                                console.log('Studios migrated successfully');
-                            } catch (error) {
-                                console.error('Error migrating Studios:', error.message);
-                            }
-                        }}>
-                        Migrate Studios
-                    </div>
+                    
 
                     <div className="button secondary outline" onClick={async () => {
                             try {
@@ -303,7 +294,15 @@ function AdminPanel() {
                                                                 console.error('Error migrating collections:', error.message);
                                                             }
                                                         }}>Migrate Collections</button>
-                                                        {/* Add more studio details here if needed */}
+                                                        <button className="button secondary outline" onClick={async (e) => {
+                                                            e.stopPropagation(); // Prevent row click from collapsing
+                                                            try {
+                                                                await migrateStudios(studio.id);
+                                                                console.log(`Studio ${studio.name} migrated successfully`);
+                                                            } catch (error) {
+                                                                console.error(`Error migrating studio ${studio.name}:`, error.message);
+                                                            }
+                                                        }}>Migrate Studio</button>
                                                     </div>
                                                 </td>
                                             </tr>
