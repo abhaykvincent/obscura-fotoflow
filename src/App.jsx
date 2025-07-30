@@ -142,7 +142,7 @@ export default function App() {
     <div className="App">
       <HotKeys keyMap={keyMap} handlers={handlers} className='app-wrap'>
       {/* <FlowPilot userId={defaultStudio?.domain}/> */}
-      {isAuthenticated && (!isPublicPage())? (
+      {isAuthenticated && (!isPublicPage()) && (
         <>
           <Header />
           <Sidebar />
@@ -152,8 +152,7 @@ export default function App() {
           <TrialStatusModal/>
 
         </>
-      ) : 
-      (<>{ !isPublicPage() && <LoginModal/> }</>)}
+      )}
       {
         isLoading!== 'succeeded' && isAuthenticated && user!=='no-studio-found'  ? 
           (
@@ -191,6 +190,7 @@ export default function App() {
                 </>
               
               )}
+              <Route path="/login" element={<LoginModal />} />
               <Route path="/onboarding" element={<Onboarding />} />
 
               <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>

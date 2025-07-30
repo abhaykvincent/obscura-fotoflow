@@ -4,10 +4,8 @@ export const PROJECT_TYPES = [
     { id: "template-birthday", value: "Birthday", label: "Birthday" },
     { id: "template-maternity", value: "Maternity", label: "Maternity" },
     { id: "template-newborn", value: "Newborn", label: "Newborn" },
-    { id: "template-family", value: "Family", label: "Family" },
     { id: "template-group", value: "Group", label: "Group" },
     { id: "template-travel", value: "Travel", label: "Travel" },
-    { id: "template-event", value: "Event", label: "Event" },
     { id: "template-other", value: "Other", label: "Other" },
   ];
   
