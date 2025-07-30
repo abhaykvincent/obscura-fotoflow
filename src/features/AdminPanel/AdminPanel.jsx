@@ -4,6 +4,7 @@ import './AdminPanel.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../app/slices/modalSlice';
 import AddReferralModal from '../../admin/Modal/AddReferral';
+import ViewDetailsDrawer from '../../admin/Modal/ViewDetailsDrawer';
 import { fetchReferrals, generateReferral, selectReferrals } from '../../app/slices/referralsSlice';
 import { useNavigate, useParams } from 'react-router';
 import { copyToClipboard, getGalleryURL, getOnboardingReferralURL } from '../../utils/urlUtils';
@@ -43,6 +44,11 @@ function AdminPanel() {
     const [studios, setStudios] = useState([]);
     const [users, setUsers] = useState([]);
     const [referallsList, setReferallsList] = useState([])
+    const [expandedStudioId, setExpandedStudioId] = useState(null); // State for expanded studio row
+
+    const handleRowClick = (studioId) => {
+        setExpandedStudioId(expandedStudioId === studioId ? null : studioId);
+    };
     useEffect(()=>{
         console.log(domain)
     },[domain])
@@ -243,13 +249,13 @@ function AdminPanel() {
                             </thead>
                             <tbody>
                                 {users.map(user => (
-                                    <tr key={user.id}>
+                                    <tr key={user.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', user))}>
                                         <td>{user.displayName}</td>
                                         <td>{user.email}</td>
                                         <td>{user.studio.name}</td>
                                         <td>{user.studio.roles[0]}</td>
                                         <td className="actions">
-                                            <button className="button secondary outline">View Details</button>
+                                            {/* Drawer trigger */}
                                         </td>
                                     </tr>
                                 ))}
@@ -274,22 +280,34 @@ function AdminPanel() {
                             </thead>
                             <tbody>
                                 {studios.map(studio => (
-                                    <tr key={studio.id}>
-                                        <td>{studio.name}</td>
-                                        <td>fotoflow.in/{studio.domain}</td>
-                                        <td>{studio.domain}</td>
-                                        <td></td>
-                                        <td className="actions">
-                                            <button className="button secondary outline" onClick={async () => {
-                                                try {
-                                                    await migrateCollectionsByStudio(studio.domain);
-                                                    console.log('Collections migrated successfully');
-                                                } catch (error) {
-                                                    console.error('Error migrating collections:', error.message);
-                                                }
-                                            }}>Migrate Collections</button>
-                                        </td>
-                                    </tr>
+                                    <React.Fragment key={studio.id}>
+                                        <tr className="clickable-row" onClick={() => handleRowClick(studio.id)}>
+                                            <td>{studio.name}</td>
+                                            <td>fotoflow.in/{studio.domain}</td>
+                                            <td>{studio.domain}</td>
+                                            <td></td>
+                                            <td className="actions">
+                                                <span className={`expand-icon ${expandedStudioId === studio.id ? 'expanded' : ''}`}>&#9660;</span>
+                                            </td>
+                                        </tr>
+                                        {expandedStudioId === studio.id && (
+                                            <tr className="expanded-row">
+                                                <td colSpan="5">
+                                                    <div className="expanded-content">
+                                                        <button className="button secondary outline" onClick={async () => {
+                                                            try {
+                                                                await migrateCollectionsByStudio(studio.domain);
+                                                                console.log('Collections migrated successfully');
+                                                            } catch (error) {
+                                                                console.error('Error migrating collections:', error.message);
+                                                            }
+                                                        }}>Migrate Collections</button>
+                                                        {/* Add more studio details here if needed */}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </React.Fragment>
                                 ))}
                             </tbody>
                         </table>
@@ -370,24 +388,24 @@ function AdminPanel() {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr >
+                                <tr className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', { id: '#FAI1001', user: 'John Doe', issue: 'Issue with Studio', status: 'Open', lastUpdated: '2023-09-20' }))}>
                                     <td>#FAI1001</td>
                                     <td>John Doe</td>
                                     <td>Issue with Studio</td>
                                     <td>Open</td>
                                     <td>2023-09-20</td>
                                     <td className="actions">
-                                        <button className="button secondary outline">View Details</button>
+                                        {/* Drawer trigger */}
                                     </td>
                                 </tr>
-                                <tr >
+                                <tr className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', { id: '#FAI1002', user: 'Jane Smith', issue: 'Feature Request', status: 'Closed', lastUpdated: '2023-09-19' }))}>
                                     <td>#FAI1002</td>
                                     <td> Jane Smith</td>
                                     <td>Feature Request</td>
                                     <td>Closed</td>
                                     <td>2023-09-19</td>
                                     <td className="actions">
-                                        <button className="button secondary outline">View Details</button>
+                                        {/* Drawer trigger */}
                                     </td>
                                 </tr>
                             </tbody>
@@ -411,24 +429,24 @@ function AdminPanel() {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr >
+                                <tr className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', { id: '#1', user: 'John Doe', issue: 'Issue with Studio', status: 'Open', lastUpdated: '2023-09-20' }))}>
                                     <td>#1</td>
                                     <td>John Doe</td>
                                     <td>Issue with Studio</td>
                                     <td>Open</td>
                                     <td>2023-09-20</td>
                                     <td className="actions">
-                                        <button className="button secondary outline">View Details</button>
+                                        {/* Drawer trigger */}
                                     </td>
                                 </tr>
-                                <tr >
+                                <tr className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', { id: '#2', user: 'Jane Smith', issue: 'Feature Request', status: 'Closed', lastUpdated: '2023-09-19' }))}>
                                     <td>#2</td>
                                     <td> Jane Smith</td>
                                     <td>Feature Request</td>
                                     <td>Closed</td>
                                     <td>2023-09-19</td>
                                     <td className="actions">
-                                        <button className="button secondary outline">View Details</button>
+                                        {/* Drawer trigger */}
                                     </td>
                                 </tr>
                             </tbody>

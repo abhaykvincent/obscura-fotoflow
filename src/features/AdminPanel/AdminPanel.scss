@@ -155,7 +155,36 @@
         gap: 8px; // Space between support cards
         padding: 8px; // Space around the section
         margin-top: -8px*2;
-        .actions{
+        .clickable-row {
+            cursor: pointer;
+        }
+
+        .expanded-row {
+            background-color: $dark-2;
+            td {
+                padding: 0;
+                border-bottom: none;
+            }
+        }
+
+        .expanded-content {
+            padding: 15px;
+            background-color: $dark-3;
+            border-top: 1px solid $dark-1;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .expand-icon {
+            display: inline-block;
+            transition: transform 0.3s ease;
+            &.expanded {
+                transform: rotate(180deg);
+            }
+        }
+
+        .actions {
             position: absolute;
             top: -8px*5;
             right: 8px*2;
