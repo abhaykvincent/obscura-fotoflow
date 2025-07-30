@@ -11,6 +11,7 @@ import { copyToClipboard, getGalleryURL, getOnboardingReferralURL } from '../../
 import { fetchStudios } from '../../firebase/functions/studios';
 import { migrateStudios } from '../../firebase/functions/subscription';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
+import { showAlert } from '../../app/slices/alertSlice';
 
 function AdminPanel() {
     const dispatch = useDispatch();
@@ -180,8 +181,10 @@ function AdminPanel() {
                             try {
                                 await createDummyProjectsInFirestore(domain, 20)
                                 console.log('Adding dummy projects successfull');
+                                dispatch(showAlert({ type: 'success', message: 'Dummy projects added successfully!' }));
                             } catch (error) {
                                 console.error('Error Adding dummy projects:', error.message);
+                                dispatch(showAlert({ type: 'error', message: `Error adding dummy projects: ${error.message}` }));
                             }
                         }}>
                         Add Dummy Projects
@@ -290,8 +293,10 @@ function AdminPanel() {
                                                             try {
                                                                 await migrateCollectionsByStudio(studio.domain);
                                                                 console.log('Collections migrated successfully');
+                                                                dispatch(showAlert({ type: 'success', message: 'Collections migrated successfully!' }));
                                                             } catch (error) {
                                                                 console.error('Error migrating collections:', error.message);
+                                                                dispatch(showAlert({ type: 'error', message: `Error migrating collections: ${error.message}` }));
                                                             }
                                                         }}>Migrate Collections</button>
                                                         <button className="button secondary outline" onClick={async (e) => {
@@ -299,8 +304,10 @@ function AdminPanel() {
                                                             try {
                                                                 await migrateStudios(studio.id);
                                                                 console.log(`Studio ${studio.name} migrated successfully`);
+                                                                dispatch(showAlert({ type: 'success', message: `Studio ${studio.name} migrated successfully!` }));
                                                             } catch (error) {
                                                                 console.error(`Error migrating studio ${studio.name}:`, error.message);
+                                                                dispatch(showAlert({ type: 'error', message: `Error migrating studio ${studio.name}: ${error.message}` }));
                                                             }
                                                         }}>Migrate Studio</button>
                                                     </div>
