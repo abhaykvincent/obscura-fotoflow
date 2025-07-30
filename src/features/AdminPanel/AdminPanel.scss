@@ -1,4 +1,5 @@
 @import '../../style/variables';
+@import '../BillingHistory/BillingHistory.scss';
 
 .App .admin-panel {
     padding: 8px*1 8px*4;
@@ -140,16 +141,6 @@
         display: grid;
         gap: 8px; // Space between support cards
         padding: 0px; // Space around the section
-
-        .studio-card {
-            display: grid;
-            align-items: center;
-            grid-template-columns: 8px*16 auto auto auto 8px*16  ; // Updated grid template columns
-
-            padding: 16px; // Space around the section
-            border: 1px solid $dark-1;
-            border-radius: 4px;
-        }
     }
 
     .users-list {
@@ -157,67 +148,6 @@
         gap: 8px; // Space between support cards
         padding: 0px; // Space around the section
         
-    }
-    .user-card {
-        display: grid;
-        align-items: center;
-        grid-template-columns: 8px*16 8px*32 8px*16 auto 8px*16 ;// Updated grid template columns
-        padding: 8px;
-        border: 1px solid $dark-1;
-        border-radius: 4px;
-        &.table-header{
-
-        border: 1px solid $dark-2;
-        padding: 0 8px;
-        margin-bottom: -4px;
-        p{
-
-            font-size: 0.8rem;
-            color: $gray4-accessible-dark;
-        }
-        }
-    }
-    .studio-card {
-        display: grid;
-        align-items: center;
-        grid-template-columns: 8px*16 8px*32 8px*16 auto 8px*16 ;// Updated grid template columns
-        padding: 8px 2PX;
-        border: 1px solid $dark-1;
-        border-radius: 4px;
-        &.table-header{
-
-        border: 1px solid $dark-2;
-        padding: 0 8px;
-        margin-bottom: -4px;
-        p{
-
-            font-size: 0.8rem;
-            color: $gray4-accessible-dark;
-        }
-        }
-    }
-    .support-list {
-        display: grid;
-        gap: 8px; // Space between support cards
-        padding: 8px; // Space around the section
-
-        .support-card {
-            display: grid;
-            align-items: center;
-            grid-template-columns: 8px*12 8px*16 8px*16 8px*16 auto 8px*16 ;// Updated grid template columns
-            padding: 8px;
-            border: 1px solid $dark-1;
-            border-radius: 4px;
-            p {
-                margin: 0;
-                color: white; // Text color
-            }
-
-            button {
-                align-self: start; // Align button to the top of the card
-                margin: 0;
-            }
-        }
     }
     .referal-codes-list {
         display: grid;
@@ -235,65 +165,30 @@
             margin-bottom: 8px*0;
             z-index: 4;
         }
-        .referal-codes-card {
-            display: grid;
-            align-items: center;
-            grid-template-columns: 8px*5 8px*18 8px*28  8px*8  auto 8px*20 8px*5  8px*10  8px*11 ;// Updated grid template columns
-            padding: 8px;
-            border: 1px solid $dark-1;
-            gap: 8px;
-            border-radius: 4px;
-            &.passive{
-                border-left: 6px solid $gray4-accessible-dark;
+        .campainPlatform{
+            width: auto;
+            height: 8px*3;
+            background-size: contain;
+            background-position: center;
+            opacity: 0.6;
+            &.whatsapp{
+                opacity: 0.5;
+                background-image: url('https://img.icons8.com/?size=100&id=MW3L3LMSpawR&format=png&color=000000');
             }
-            &.active{
-                border-left: 6px solid $green-accessible-dark;
+            &.direct{
+                background-image: url('https://img.icons8.com/?size=100&id=3685&format=png&color=FFFFFF');
             }
-            .campainPlatform{
-                width: auto;
-                height: 8px*3;
-                background-size: contain;
-                background-position: center;
-                opacity: 0.6;
-                &.whatsapp{
-                    opacity: 0.5;
-                    background-image: url('https://img.icons8.com/?size=100&id=MW3L3LMSpawR&format=png&color=000000');
-                }
-                &.direct{
-                    background-image: url('https://img.icons8.com/?size=100&id=3685&format=png&color=FFFFFF');
-                }
-                &.instagram{
-                    opacity: 0.8;
-                    background-image: url('https://img.icons8.com/?size=100&id=RhYNENh5cxlS&format=png&color=FFFFFF');
-                }
-            }
-            &.table-header{
-                border: 1px solid transparent;
-                    padding: 0 8px;
-                    border-radius: 4px;
-                    margin-top: 8px;
-                p {
-                    padding: 0 ;
-                    margin: 0;
-                    margin-left: 8px*0.5;
-                    font-size: 0.8rem;
-                    color: $gray4-accessible-dark;
-                }
-                
-            }
-            p {
-                margin: 0;
-                color: white; // Text color
-                overflow: hidden;
-                &.id{
-                    color: $dark-0;
-                }
-            }
-
-            button {
-                align-self: start; // Align button to the top of the card
-                margin: 0;
+            &.instagram{
+                opacity: 0.8;
+                background-image: url('https://img.icons8.com/?size=100&id=RhYNENh5cxlS&format=png&color=FFFFFF');
             }
         }
     }
+    .support-list {
+        display: grid;
+        gap: 8px; // Space between support cards
+    }
+    
+    
+    
 }

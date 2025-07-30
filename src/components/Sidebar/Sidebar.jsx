@@ -296,7 +296,7 @@ function Sidebar() {
         <div className="corner-lock" onClick={() => {
           dispatch(logout())
           trackEvent('logout')
-          navigate(`/`)
+          navigate(`/login`)
         }}></div>
         <div className="time-bay"><span>|</span> </div>
         <div className="time-bay">10:23 PM <span>|</span> Sun 16 Jul </div>
