@@ -12,6 +12,9 @@
     z-index: 11;
     box-shadow:  -1px 1px 4px rgba(0, 0, 0, 0);
     transition-duration: 0.2s;
+    &.sleep{
+        opacity: 0.5;
+    }
     .menu-list{
         padding: 8px*1;
         position: relative;

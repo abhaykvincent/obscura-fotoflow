@@ -43,7 +43,7 @@ const CollectionsPanel = ({ project, collectionId}) => {
                 </div>
                 <div className="gallery-name">Upload</div>
               </div>
-            : <Link  key={collection.id} className={`gallery ${collectionId===collection.id && 'active HJ'} ${collection.status !== 'visible' ? 'disabled' : ''}`} to={`/${defaultStudio.domain}/gallery/${project.id}/${collection.id}`}>
+            : <Link  key={collection.id} className={`gallery ${collectionId===collection.id && 'active'} ${collection.status !== 'visible' ? 'disabled' : ''}`} to={`/${defaultStudio.domain}/gallery/${project.id}/${collection.id}`}>
                 <div className="thumbnails">
                   <div className="thumbnail thumb1">
                   <div className={`backthumb bthumb1 ${decodeURIComponent(collection.galleryCover)}`}

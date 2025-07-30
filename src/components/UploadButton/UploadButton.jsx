@@ -101,8 +101,8 @@ function UploadButton({
             ({
               domain,
               projectId: id,
-              collectionId: collectionId,
-              status: newStatus
+              collectionId,
+              status: 'visible'
             }));
           console.log(domain)
         setTimeout(() => {

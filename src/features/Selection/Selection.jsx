@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Lottie from 'react-lottie';
 import animationData from '../../assets/animations/CompletedAnimation.json';
-import { fetchProject, addSelectedImagesToFirestore, updateProjectStatusInFirestore, removeUnselectedImagesFromFirestore } from '../../firebase/functions/firestore';
+import { fetchProject, addSelectedImagesToFirestore, updateProjectStatusInFirestore, removeUnselectedImagesFromFirestore, updateCollectionStatusByCollectionIdInFirestore } from '../../firebase/functions/firestore';
 import GalleryPIN from '../../components/GalleryPIN/GalleryPIN';
 import SelectionGallery from '../../components/ImageGallery/SelectionGallery';
 import PaginationControl from '../../components/PaginationControl/PaginationControl';
@@ -112,14 +112,12 @@ export default function Selection() {
   // handle selection completed
   const saveSelection = async () => {
     try {
-      handleAddOrRemoveSelectedImages()
-      await updateProjectStatusInFirestore(studioName,projectId, 'selected')
-
-    }
-    catch (error) {
+      await handleAddOrRemoveSelectedImages();
+      await updateProjectStatusInFirestore(studioName, projectId, 'selected');
+      await updateCollectionStatusByCollectionIdInFirestore(studioName, projectId, collectionId, 'selected');
+    } catch (error) {
       console.error('Failed to update project status:', error);
     }
-      
   };
 
   const completeSelection = () => {

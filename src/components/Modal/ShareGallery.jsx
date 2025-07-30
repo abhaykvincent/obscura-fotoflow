@@ -133,7 +133,7 @@ function ShareGallery({project }) {
                                 dispatch(updateCollectionStatus({
                                   domain,
                                   projectId: project?.id,
-                                  collectionIndex: index,
+                                  collectionId: collection.id,
                                   status: newStatus
                                 }));
                               }}

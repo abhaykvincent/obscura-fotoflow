@@ -605,6 +605,7 @@ export const addSelectedImagesToFirestore = async (domain, projectId, collection
         });
 
         await updateDoc(collectionDocRef, { ...collectionData, uploadedFiles: updatedImages });
+        updateCollectionStatusByCollectionIdInFirestore(domain, projectId, collectionId, status);
 
         // Update status on the project
         const projectSnapshot = await getDoc(projectDocRef);
@@ -727,7 +728,7 @@ export const setGalleryCoverPhotoInFirestore = async (domain, projectId, collect
     }
 };
 
-export const updateCollectionStatusInFirestore = async (domain, projectId, collectionIndex, status) => {
+export const updateCollectionStatusByCollectionIdInFirestore = async (domain, projectId, collectionId, status) => {
     try {
         const projectRef = doc(db, 'studios', domain, 'projects', projectId);
         const projectSnapshot = await getDoc(projectRef);
@@ -737,18 +738,15 @@ export const updateCollectionStatusInFirestore = async (domain, projectId, colle
         }
 
         const projectData = projectSnapshot.data();
-        const updatedCollections = [...projectData.collections];
+        const updatedCollections = projectData.collections.map(collection => {
+            if (collection.id === collectionId) {
+                return { ...collection, status };
+            }
+            return collection;
+        });
 
-        if (collectionIndex >= 0 && collectionIndex < updatedCollections.length) {
-            updatedCollections[collectionIndex] = {
-                ...updatedCollections[collectionIndex],
-                status: status
-            };
-            await updateDoc(projectRef, { collections: updatedCollections });
-            console.log(`Collection ${collectionIndex} status updated to ${status} for project ${projectId}`);
-        } else {
-            throw new Error('Collection index out of bounds.');
-        }
+        await updateDoc(projectRef, { collections: updatedCollections });
+        console.log(`Collection ${collectionId} status updated to ${status} for project ${projectId}`);
     } catch (error) {
         console.error("Error updating collection status:", error);
         throw error;

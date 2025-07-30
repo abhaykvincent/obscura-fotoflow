@@ -1,7 +1,7 @@
 // slices/authSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
-import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateCollectionStatusInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
+import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateCollectionStatusByCollectionIdInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/app';
@@ -60,9 +60,9 @@ export const updateCollectionName = createAsyncThunk(
 
 export const updateCollectionStatus = createAsyncThunk(
   'projects/updateCollectionStatus',
-  async ({ domain, projectId, collectionIndex, status }, { dispatch }) => {
-    await updateCollectionStatusInFirestore(domain, projectId, collectionIndex, status);
-    return { projectId, collectionIndex, status };
+  async ({ domain, projectId, collectionId, status }, { dispatch }) => {
+    await updateCollectionStatusByCollectionIdInFirestore(domain, projectId, collectionId, status);
+    return { projectId, collectionId, status };
   }
 );
 
@@ -361,16 +361,15 @@ const projectsSlice = createSlice({
         state.loading = true;
       })
       .addCase(updateCollectionStatus.fulfilled, (state, action) => {
-        const { projectId, collectionIndex, status } = action.payload;
+        const { projectId, collectionId, status } = action.payload;
         state.data = state.data.map((project) => {
           if (project.id === projectId) {
-            const updatedCollections = [...project.collections];
-            if (collectionIndex >= 0 && collectionIndex < updatedCollections.length) {
-              updatedCollections[collectionIndex] = {
-                ...updatedCollections[collectionIndex],
-                status: status
-              };
-            }
+            const updatedCollections = project.collections.map((collection) => {
+              if (collection.id === collectionId) {
+                return { ...collection, status };
+              }
+              return collection;
+            });
             return { ...project, collections: updatedCollections };
           }
           return project;

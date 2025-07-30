@@ -156,9 +156,12 @@ export const ProjectCover = ({ project }) => {
                         </div>
 
                         <ProjectStatus project={project} />
-                        <div className="button secondary outline icon copy"> Link</div>
-            {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
-                            
+                        <div className="link-pin">
+                            <div className="button secondary outline icon copy"> Link</div>
+                            {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
+            
+
+                        </div>  
                         </div>
                         {
                             project.pin&&
