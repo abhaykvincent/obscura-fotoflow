@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../app/slices/modalSlice';
 import AddReferralModal from '../../admin/Modal/AddReferral';
 import { fetchReferrals, generateReferral, selectReferrals } from '../../app/slices/referralsSlice';
-import { set } from 'date-fns';
 import { useNavigate, useParams } from 'react-router';
 import { copyToClipboard, getGalleryURL, getOnboardingReferralURL } from '../../utils/urlUtils';
 import { fetchStudios } from '../../firebase/functions/studios';
@@ -17,10 +16,32 @@ function AdminPanel() {
     const navigate = useNavigate();
     // react url page name                 <Route path="/admin/:page" element={<AdminPanel />} />
     const page = useParams().page;
+
+    // Initialize selectedTab based on URL, then localStorage, then default
+    const [selectedTab, setSelectedTab] = useState(() => {
+        const storedTab = localStorage.getItem('adminPanelLastTab');
+        if (page) {
+            return page; // URL parameter takes precedence
+        } else if (storedTab) {
+            return storedTab; // Use stored tab if no URL parameter
+        }
+        return 'users'; // Default tab if neither URL nor localStorage has a value
+    });
+
+    // Effect to update URL if initial tab came from localStorage or default
+    useEffect(() => {
+        if (!page && selectedTab) { // If no page in URL, but we have a selectedTab
+            // Only navigate if the current URL path is not already matching the selectedTab
+            // This prevents unnecessary navigations and potential infinite loops
+            if (window.location.pathname !== `/admin/${selectedTab}`) {
+                navigate(`/admin/${selectedTab}`, { replace: true });
+            }
+        }
+    }, [page, selectedTab, navigate]); // Dependencies for this useEffect
+
     const domain = useSelector(selectDomain);
     const [studios, setStudios] = useState([]);
     const [users, setUsers] = useState([]);
-    const [selectedTab, setSelectedTab] = useState(page); // State to manage the selected tab
     const [referallsList, setReferallsList] = useState([])
     useEffect(()=>{
         console.log(domain)
@@ -62,7 +83,7 @@ function AdminPanel() {
     const handleTabChange = (tab) => {
         // update react router url
         if(tab.length>0){
-
+            localStorage.setItem('adminPanelLastTab', tab); // Save to localStorage
             navigate(`/admin/${tab}`);
            setSelectedTab(tab);
         }
