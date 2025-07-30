@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {  createDummyProjectsInFirestore, fetchAllReferalsFromFirestore, fetchUsers } from '../../firebase/functions/firestore';
+import {  createDummyProjectsInFirestore, fetchAllReferalsFromFirestore, fetchUsers, migrateCollectionsByStudio } from '../../firebase/functions/firestore';
 import './AdminPanel.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../app/slices/modalSlice';
@@ -239,6 +239,14 @@ function AdminPanel() {
                             <p>fotoflow.in/{studio.domain}</p>
                             <p>{studio.domain}</p>
                             {/* Add more details and actions here */}
+                            <button className="button secondary outline" onClick={async () => {
+                                try {
+                                    await migrateCollectionsByStudio(studio.domain);
+                                    console.log('Collections migrated successfully');
+                                } catch (error) {
+                                    console.error('Error migrating collections:', error.message);
+                                }
+                            }}>Migrate Collections</button>
                         </div>
                     ))}
                 </section>

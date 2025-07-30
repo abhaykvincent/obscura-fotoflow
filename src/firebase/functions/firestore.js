@@ -740,7 +740,11 @@ export const updateCollectionStatusByCollectionIdInFirestore = async (domain, pr
         const projectData = projectSnapshot.data();
         const updatedCollections = projectData.collections.map(collection => {
             if (collection.id === collectionId) {
-                return { ...collection, status };
+                return { 
+                    ...collection, 
+                    status ,
+                    version: 2
+                };
             }
             return collection;
         });
@@ -1158,3 +1162,5 @@ export const createDummyProjectsInFirestore = async (domain, n = 5) => {
     }
     console.log(`Created ${n} dummy projects in studio: ${domain}`);
 };
+
+export * from './admin-firestore';
