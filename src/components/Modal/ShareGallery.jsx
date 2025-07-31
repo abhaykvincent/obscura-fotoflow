@@ -111,7 +111,10 @@ function ShareGallery({project }) {
         <div className='modal-body'>
           <div className="form-section">
             {/* map project collections and render it with a check box to select galleries to share */}
-          <h4>{project?.name}</h4>
+            <div className="gallery-details">
+              <h4>{project?.name}</h4>
+              
+            </div>
 
               <div className="select-galleries">
 
@@ -144,7 +147,7 @@ function ShareGallery({project }) {
                             <>
                               <div className={`gallery-name ${collection.status !== 'visible' ? 'hide' : ''}`}>{collection.name}</div>
                               <div className="gallery-images-count">
-                                {collection.filesCount > 1 ? `${collection.filesCount}` : ''}
+                                {collection.filesCount > 1 ? `${collection.filesCount}56 Photos` : ''}
                               </div>
                             </>
                           }
@@ -156,6 +159,7 @@ function ShareGallery({project }) {
                       </div>
 
                       <div className={`input selection-status ${collection.status !== 'visible' ? 'hide' : ''}`}>
+                        <div className="selection-icon"></div>        
                         <FormControlLabel
                           control={
                             <IOSSwitch
@@ -176,36 +180,60 @@ function ShareGallery({project }) {
 
               </div>
 
-
               <p className="client-label">Gallery link</p>
               <div className="link-pin">
                 <div className='link' >
 
                     <div className="link-container">
-                    <a className='linkToGallery' href={getGalleryURL('share',domain,project?.id)} target='_blank' >.../{domain}{getGalleryURL('share',domain,project?.id).split(domain)[1]}
+                    <a className='linkToGallery' href={getGalleryURL('share',domain,project?.id)} target='_blank' >{getGalleryURL('share',domain,project?.id)}
                       <div className="button icon icon-only open-in-new"></div>
                     </a>
 
                   </div>
 
               </div>
-              <p className="copy-link button icon copy pin" onClick={() => {
-                  copyToClipboard(getGalleryURL('share',domain,project.id))
-                  dispatch(showAlert({
-                    message: 'Link copied to clipboard',
-                    type: 'success'
-                  }))
-                  setTimeout(() => {
-                    // open link in new windowcgetGalleryURL('share',domain,project.id)
-                    window.open(getGalleryURL('share',domain,project.id), '_blank')
-                  }, 2000)
-                }
-                }> Link</p>
-                <p className="copy-link button icon  pin" onClick={() => {
-                  copyToClipboard(getGalleryURL('share',domain,project.id))
-                }
-                }>{project?.pin}</p>
             </div>
+              <div className="gallery-view-status">
+                <div className="link-group">
+                  <div className="button primary outline text-only  icon link"
+                    onClick={() => {
+                      // open link in new tab
+                      window.open(getGalleryURL('share', domain, project?.id), '_blank');
+                    }}
+                  >Gallery Link</div>
+                  <div className="button primary outline text-only  icon copy"
+                    onClick={() => {
+                      copyToClipboard(getGalleryURL('share', domain, project?.id));
+                      dispatch(showAlert({ type: 'success', message: 'Gallery link copied to clipboard!' }));
+                    }}
+                  ></div>
+                </div>
+                <div className="button secondary  transparent-button icon public">Public</div>
+              
+                <p className="client-label">Anyone with this link</p>
+              </div>
+              <div className="gallery-view-status">
+
+                <div className="link-group">
+                <div className="button primary outline text-only  icon link"
+                  onClick={() => {
+                    // open link in new tab
+                    window.open(getGalleryURL('selection', domain, project?.id), '_blank');
+                  }
+                }
+                >Selection Link</div>
+                <div className="button primary outline text-only  icon copy"
+                  onClick={() => {
+                    copyToClipboard(getGalleryURL('selection', domain, project?.id));
+                    dispatch(showAlert({ type: 'success', message: 'Selection link copied to clipboard!' }));
+                  }}
+                ></div>
+                </div>
+                <div className="button secondary outline icon pin">{project?.pin}</div>
+                <p className="client-label">Client Only</p>
+              </div>
+
+
 
           </div>
         </div>

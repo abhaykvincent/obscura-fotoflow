@@ -1667,7 +1667,7 @@ body{
         &.copy-link{
           color: $gray4-default-light; 
           &.copy{
-            color: $gray2-default-dark;
+            color: $gray4-default-light;
             &:active{
                 transition-duration: 0.01s;
                 color: $green-default-dark;

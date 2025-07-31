@@ -1,5 +1,5 @@
 @import './variables';
-.button{
+.App .button{
     display: inline-block;
     padding: 5px 8px*1.8;
     border-radius: 5px;
@@ -20,7 +20,7 @@
     transform:  scale(1);
     &:hover{
         opacity: 0.9;
-        transition-duration: 0.1s;
+        transition-duration: 0.03s;
         transition-timing-function: ease-out;
         transform:  scale(1.05);
         box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2);
@@ -56,6 +56,13 @@
                 color: $gray-default-dark;
             }
               
+        }
+        &.text-only{
+            color: $green-default-light;
+            border: none;
+            background: none;
+            box-shadow: none;
+            padding-right: 4px
         }
 
     }
@@ -96,8 +103,8 @@
             }
         }
         &.transparent-button{
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background-color: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.0)!important;
+            background-color: rgba(128, 128, 128, 0.005) !important;
             //filter blur backkground
             backdrop-filter: blur(10px);
             box-shadow: 1px 1px 1px rgba(57, 57, 57, 0.2);
@@ -138,6 +145,9 @@
     &.icon{
         &.icon-only{
             padding: 2px 8px;
+            background-color: transparent;
+            border: none;
+            color: transparent;
             &::before{
                 margin-right: 0;
                 background-position: center;
@@ -149,7 +159,7 @@
             margin-left: -4px;
             width: 8px*3;
             height: 100%;
-            padding: 8px;
+            padding: 2px 8px;
             color: transparent;
             background-size: 100%;
             background-position: center;
@@ -187,6 +197,27 @@
             background-image: url('https://img.icons8.com/?size=100&id=Y4LcZ9Qw1Par&format=png&color=FFFFFF');
             padding-top: 4px;
             margin-right: 8px;
+            opacity: 0.6;
+        }
+        &.public::before{
+            background-size: 100%;
+            background-image: url('https://img.icons8.com/?size=100&id=Kqsi3v5rWFW9&format=png&color=FFFFFF');
+            padding-top: 4px;
+            margin-right: 4px;
+            opacity: 0.6;
+        }
+        &.link::before{
+            background-size: 100%;
+            background-image: url('https://img.icons8.com/?size=100&id=85799&format=png&color=FFFFFF');
+            padding-top: 4px;
+            margin-right: 4px;
+            opacity: 0.9;
+        }
+        &.private::before{
+            background-size: 100%;
+            background-image: url('https://img.icons8.com/?size=100&id=Kqsi3v5rWFW9&format=png&color=FFFFFF');
+            padding-top: 4px;
+            margin-right: 4px;
             opacity: 0.6;
         }
         &.unarchive::before{
@@ -281,6 +312,14 @@
             background-size: 90%;
             background-position: center center;
             background-image: url('https://img.icons8.com/?size=100&id=10497&format=png&color=FFFFFF');
+            
+        }
+        &.checkmark::before{
+            margin-right: 6px;
+            margin-bottom: -4px;
+            background-size: 90%;
+            background-position: center center;
+            background-image: url('https://img.icons8.com/?size=100&id=114054&format=png&color=228BE6');
             
         }
         &.share::before{

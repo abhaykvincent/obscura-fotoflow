@@ -32,7 +32,7 @@
     }
     .gallery-field{
         display: grid;
-        grid-template-columns: 8px*24 8px*6 8px*12 ;
+        grid-template-columns: auto 8px*28 8px*12 ;
         align-items: center;
         gap: 8px*3;
         &.selection-radio{
@@ -81,7 +81,7 @@
             }
         }
         .gallery-images-count{
-            width: 8px*4;
+            width: 8px*12;
             height: 1.2rem;
             margin-left: 8px*2;
             font-size: 0.8rem;
@@ -90,25 +90,118 @@
     }
     .gallery-name{
     }
-    h4{
+    .gallery-details{
+        display: flex;
+        gap: 8px*2;justify-content: space-between;
+        border-bottom: 1px solid rgba(215, 215, 215, 0.1);
         padding-bottom: 8px*2;
-        font-size: 1.2rem;
-        border-bottom: 1px solid $dark-1;
+        h4{
+            font-size: 1.2rem;
+            color: $gray3-default-light;
+            margin: 0;
+    
+        }
+        
+        
     }
+    .gallery-view-status{
+            display: grid;
+            grid-template-columns: 8px*22 8px*12 8px*18;
+            align-items: center;
+            gap: 8px*0.5;
+            .button.icon{
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 1rem;
+                &.secondary{
+                    font-size: 0.9rem;
+                    
+                    &.transparent-button{
+                        
+                    font-weight: 400;
+                    color: $gray-default-dark;
+                    }
+                }
+                &.copy{
+                padding: 4px 2px;
+                    margin-left: -8px*1.5;
+                    margin-right: 8px*0.5;
+                    opacity: 0.2;
+                    &:hover{
+                        opacity: 1;
+                    }
+                    &::before{
+                        background-size: 80%;
+                    }
+                }
+            }
+            .link-group{
+                display: flex;
+                align-items: center;
+                gap: 8px*1;
+                .link{
+                    color: $green-accessible-light;
+                    text-decoration: underline;
+                    text-decoration-color: $gray4-default-dark;
+                    transition-duration: 0.1s;
+                    cursor: pointer;
+                    &:hover{
+                        color: $green-accessible-dark;
+                        text-decoration-color: $green-accessible-dark;
+                    }
+                }   
+            }
+        }
     .select-galleries{
 
-        padding-top: 8px*0;
+        padding-top: 8px*1;
         padding-bottom: 8px*2;
         margin-bottom: 8px*2;
-        border-bottom: 1px solid $dark-1;
+        border-bottom: 1px solid rgba(215, 215, 215, 0.1);
+        .selection-icon{
+            background: #0C84FF url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="rgba(255, 255, 255, 0)"><path d="M1 7 L5 11 L13 1" stroke-width="2" stroke="white" fill="transparent"/></svg>');
+            background-size: 50%;
+            background-repeat: no-repeat;
+            background-position: center;
+
+            width: 8px*2.5;
+            height: 8px*2.5;
+            margin-right: 8px*1;
+            opacity: 0.8;
+            border-radius: 50%;
+        }
+        .selection-status{
+            display: flex;
+            align-items: center;
+            gap: 8px*1;
+            .button.icon{
+                padding: 4px 8px;
+                border-radius: 4px;
+                background-color: $dark-2-5;
+                color: $gray-default-dark;
+                font-size: 0.9rem;
+            }
+            &.hide{
+
+
+                .selection-icon{
+                    background: #E9E9EA22  url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="rgba(255, 255, 255, 0)"><path d="M1 7 L5 11 L13 1" stroke-width="2" stroke="white" fill="transparent"/></svg>');
+            background-size: 50%;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.5;
+                }
+            }
+        }
     }
     .link-container{
-        padding: 4px;
+        padding: 0px;
         white-space: nowrap;;
         .linkToGallery{
-            color: $green-accessible-dark;
+            padding: 8px;
+            color: $gray-accessible-dark;
             text-decoration: underline;
-            text-decoration-color: $green-default-light;
+            text-decoration-color: $gray4-default-dark;
             transition-duration: 0.1s;
             cursor: pointer;
             
@@ -116,17 +209,25 @@
         .open-in-new{
             box-shadow: none;
             border: none;
+            padding: 0;
+            margin-left: 8px;
             opacity: 0.4;
-            transform: scale(1) translateX(0px) translateY(0px);
+            transform: scale(1) translateX(0px) translateY(px);
+            text-decoration-color: rgba(255, 255, 255, 0) !important;
+            background-color: rgba(255, 0, 0, 0)  !important;
+            transition-duration: 0.1s;
+            transition-delay: 0.1s;
         }
         &:hover{
             transform: scale(1);
             .open-in-new{
-            transform: scale(1.025) translateX(2px) translateY(-1px);
+            transform: scale(1.025) translateX(1px) translateY(-1px);
+            transition-duration: 0.2s;
             opacity: 1;
             }
             .linkToGallery{
             color: $green-accessible-light;
+            text-decoration-color: $green-accessible-light;
 
             }
         }
@@ -139,6 +240,7 @@
         gap: 8px*1;
         padding: 4px;
         padding-left: 0;
+        margin-bottom: 8px*2;
         font-size: 1rem;
         .link{
             display:flex;
@@ -146,12 +248,17 @@
             align-items: center;
             color: $green-accessible-light;
             background-color: #E9E9EA0a;
+            border: 1px solid $gray4-default-dark;
+            backdrop-filter: blur(4px);
             padding: 4px 4px;
             padding-left: 8px;
             padding-right: 0px;
             height: 8px*4.5;
             border-radius: 4px;
+
             &:hover{
+            background-color: #0000003d;
+            border: 1px solid $gray3-default-dark;
                 .copy-link{
                 opacity: 1;
                 }
