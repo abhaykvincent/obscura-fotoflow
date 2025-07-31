@@ -23,8 +23,8 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   const visible = useSelector(selectModal);
   const currentStudio = useSelector(selectUserStudio);
   const user = useSelector(selectUser);
-
-  const [projectData, setProjectData] = useState(initialProjectData);
+  console.log(user)
+  const [projectData, setProjectData] = useState({ ...initialProjectData, team: [{ name: user.name, image: user.image }] });
   const [errors, setErrors] = useState({});
   const [currentStep, setCurrentStep] = useState(1);
 
@@ -153,6 +153,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
             )}
             {currentStep === 2 && (
               <ProjectDetails
+                user={user}
                 projectData={projectData}
                 errors={errors}
                 handleInputChange={handleInputChange}
@@ -184,7 +185,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
 }
 
 
-const ProjectDetails = ({ projectData, errors, handleInputChange, nameInputRef, name2InputRef }) => (
+const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInputRef, name2InputRef }) => (
   <div className="form-section">
     {projectData.type === 'Wedding' ? (
       <>
@@ -233,6 +234,19 @@ const ProjectDetails = ({ projectData, errors, handleInputChange, nameInputRef, 
         {errors.name && <div className="error">{errors.name}</div>}
       </div>
     )}
+    <div className="field">
+      <label>Team</label>
+      <div className="team-members">
+          <div className="team-member">
+            <div className="profile-image"
+              style={{
+                backgroundImage: `url(${user?.photoURL})`
+              }}
+            ></div>
+            <span className="team-member-name">{user?.displayName}</span>
+          </div>
+      </div>
+    </div>
     <div className="field">
       <label>Validity</label>
       <div className="project-validity-wrap">

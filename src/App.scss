@@ -1700,7 +1700,7 @@ body{
         }
         label{
           text-align: right ;
-          color: $gray3-default-light;
+          color: $gray-default-light;
           font-size: 1.2rem;
           &.ai-label{
             color: $green-default-light;
@@ -1742,15 +1742,47 @@ body{
 
         &:hover{
           label{
-            color: $gray2-default-dark;
+            color: $gray4-default-light;
           }
-          
-  input{
 
-    border: 1px solid $gray4-accessible-dark;
-    border-bottom: 1px solid $gray2-accessible-dark;
-    border-right: 1px solid $gray2-accessible-dark;
-  }
+          
+          input{
+
+          border: 1px solid $gray4-accessible-dark;
+          border-bottom: 1px solid $gray2-accessible-dark;
+          border-right: 1px solid $gray2-accessible-dark;
+          }
+        }
+
+        .team-members{
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          transition-duration: 0.4s;
+          .team-member{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            border: 1px solid #242426;
+            border-left: 1px solid #444446;
+            border-top: 1px solid #444446;
+            background-color: rgb(21, 21, 21);
+            box-shadow: 2px 1px 0 1px rgba(0, 0, 0, 0.4);
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            transition-delay: 0s;
+            transition-duration: 0.1s;
+            .profile-image{
+              width: 8px*3;
+              height: 8px*3;
+              border-radius: 50%;
+              background-size: cover;
+              background-position: center;
+              background-repeat: no-repeat;
+            }
+          }
         }
         &.three{
           

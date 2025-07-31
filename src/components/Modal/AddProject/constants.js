@@ -51,5 +51,6 @@ export const PROJECT_TYPES = [
     status: "draft",
     projectValidityMonths: '6',
     createdAt: new Date().getTime(),
-    lastOpened: new Date().getTime(),
+  lastOpened: new Date().getTime(),
+  team: [],
   };

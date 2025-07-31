@@ -11,6 +11,7 @@ const initialState = {
   user: {
     name:'',
     email: '',
+    image: '',
     access: [] // Array of studio names the user has access to
   },
   currentStudio: {
@@ -147,7 +148,7 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = { ...state.user, ...action.payload, name: action.payload.displayName, image: action.payload.photoURL };
         if(action.payload !== 'no-studio-found') {
           state.currentStudio = action.payload.studio;
         }

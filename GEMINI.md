@@ -33,36 +33,6 @@ This document provides guidelines for the Gemini CLI agent to effectively intera
 *   `data-structure/`: Markdown files describing key data structures (e.g., `Project Data structure.md`).
 *   `.env.development`, `.env.production`: Environment variables.
 
-## 4. Development Workflow
-
-*   **Starting the Development Server**:
-    ```bash
-    npm start
-    ```
-    (This uses `dotenv -e .env.development react-scripts start` as defined in `package.json`.)
-
-*   **Building for Production**:
-    ```bash
-    npm run build
-    ```
-    (This uses `dotenv -e .env.production react-scripts build`.)
-
-*   **Firebase Emulator**:
-    ```bash
-    npm run emulator
-    ```
-
-
-*   **Linting/Formatting**:
-    *   The project uses ESLint (configured via `eslintConfig` in `package.json`).
-    *   No explicit linting script is provided in `package.json` for direct execution. Assume `react-scripts` handles basic linting during development/build. If manual linting is required, `npx eslint src/` could be used.
-    *   Follow existing code style and formatting.
-
-## 5. Firebase Specifics
-
-*   **Firestore Rules**: Defined in `firebase/firestore.rules`. Adhere to these rules when modifying data access.
-*   **Storage Rules**: Defined in `firebase/storage.rules`. Adhere to these rules when modifying file storage access.
-*   **Firebase Functions**: Located in `firebase/functions/`. Changes to backend logic should be made here.
 
 ## 6. Redux State Management
 
@@ -140,4 +110,4 @@ To maintain code quality, consistency, and readability across the project, pleas
 *   **Redux State**: Pay close attention to Redux state immutability and serialization.
 *   **User Confirmation**: For any significant changes or shell commands that modify the file system, explain the action and its potential impact.
 *   **Data Structure**: For any significant changes in the data structure must be updated in Project Data structure Updated.md. use Project Data structure.md as referance to investigate change in DS in the code . Dont use Project Data structure Updated.md as the sourse to find the change in the DS , its only to update the change after ds change investigation.
-
+*   **Git commit message**: When making changes, show clear and descriptive commit messages after response.
