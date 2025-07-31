@@ -400,7 +400,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.8);
     animation: swipe-guide-bg-fadeout 1.2s ease-out;
     z-index: 51;
     &.swipe-guide{
@@ -408,7 +408,7 @@
             width: 8px*20;
             height: 8px*5;
             position: absolute;
-            bottom: 8px*10;
+            bottom: 30vh;
             left: calc(50vw - 8px*5);
             .swipe-animation{
                 position: relative;
@@ -429,11 +429,11 @@
                 30%{
                     width: 8px*20;
                     left: -8px*8;
-                    background-color: rgba(255, 255, 255, 0.2);
+                    background-color: rgba(255, 255, 255, 0.8);
                     animation-timing-function: ease-out;
                 }
-                60%{
-                    width: 8px*2;
+                70%{
+                    width: 8px*0;
                     left: -8px*16;
                     background-color: rgba(255, 255, 255, 0.0);
                 }

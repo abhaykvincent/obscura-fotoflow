@@ -208,6 +208,10 @@ function ShareGallery({project }) {
                     }}
                   ></div>
                 </div>
+
+                <div className="button icon icon-only qr-code  "></div>
+                <div className="button primary outline  ">Share</div>
+                
                 <div className="button secondary  transparent-button icon public">Public</div>
               
                 <p className="client-label">Anyone with this link</p>
@@ -215,13 +219,13 @@ function ShareGallery({project }) {
               <div className="gallery-view-status">
 
                 <div className="link-group">
-                <div className="button primary outline text-only  icon link"
-                  onClick={() => {
-                    // open link in new tab
-                    window.open(getGalleryURL('selection', domain, project?.id), '_blank');
+                  <div className="button primary outline text-only  icon link"
+                    onClick={() => {
+                      // open link in new tab
+                      window.open(getGalleryURL('selection', domain, project?.id), '_blank');
+                    }
                   }
-                }
-                >Selection Link</div>
+                  >Selection Link</div>
                 <div className="button primary outline text-only  icon copy"
                   onClick={() => {
                     copyToClipboard(getGalleryURL('selection', domain, project?.id));
@@ -229,6 +233,9 @@ function ShareGallery({project }) {
                   }}
                 ></div>
                 </div>
+                <div className="button icon icon-only qr-code  "></div>
+
+                <div className="button primary outline ">Share</div>
                 <div className="button secondary outline icon pin">{project?.pin}</div>
                 <p className="client-label">Client Only</p>
               </div>

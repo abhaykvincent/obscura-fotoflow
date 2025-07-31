@@ -14,6 +14,7 @@ import TemplateSelection from './TemplateSelection';
 // Utils
 import { validateForm } from './validation';
 import { initialProjectData, VALIDITY_OPTIONS } from './constants';
+import './AddProject.scss';
 
 
 
@@ -24,7 +25,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   const currentStudio = useSelector(selectUserStudio);
   const user = useSelector(selectUser);
   console.log(user)
-  const [projectData, setProjectData] = useState({ ...initialProjectData, team: [{ name: user.name, image: user.image }] });
+  const [projectData, setProjectData] = useState({ ...initialProjectData});
   const [errors, setErrors] = useState({});
   const [currentStep, setCurrentStep] = useState(1);
 
@@ -185,7 +186,18 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
 }
 
 
-const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInputRef, name2InputRef }) => (
+const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInputRef, name2InputRef }) => {
+  const [animateValidity, setAnimateValidity] = useState(false);
+
+  useEffect(() => {
+    if (projectData.projectValidityMonths) {
+      setAnimateValidity(true);
+      const timer = setTimeout(() => setAnimateValidity(false), 500); // Animation duration
+      return () => clearTimeout(timer);
+    }
+  }, [projectData.projectValidityMonths]);
+
+  return (
   <div className="form-section">
     {projectData.type === 'Wedding' ? (
       <>
@@ -267,11 +279,11 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
           ))}
         </div>
         <div className="info">
-           After <span> <b>{projectData.projectValidityMonths}</b> months,</span> only <span>you &  client</span> can access.
+           After <span> <b className={animateValidity ? 'validity-change-animation' : ''}>{projectData.projectValidityMonths} months</b> ,</span> only <span>you &  client</span> can access.
         </div>
       </div>
     </div>
   </div>
-);
+)};
 
 export default AddProjectModal;
