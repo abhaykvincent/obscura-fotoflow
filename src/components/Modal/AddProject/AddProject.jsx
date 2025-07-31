@@ -267,7 +267,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
           ))}
         </div>
         <div className="info">
-           After {projectData.projectValidityMonths} months, only You and the Client can access.
+           After <span> <b>{projectData.projectValidityMonths}</b> months,</span> only <span>you &  client</span> can access.
         </div>
       </div>
     </div>
