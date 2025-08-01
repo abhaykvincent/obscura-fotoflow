@@ -17,6 +17,7 @@ import Teams from './features/Teams/Teams';
 import ImageGallery from './x-draft/masanory-grid';
 import Onboarding from './features/Onboarding/Onboarding';
 import AdminPanel from './features/AdminPanel/AdminPanel';
+import AdminPane from './features/AdminPanel/AdminPane';
 import Notifications from './features/Notifications/Notifications';
 import CommingSoon from './components/CommingSoon/CommingSoon';
 import InvitationPage from './features/Invitation/InvitationPage';
@@ -187,6 +188,7 @@ export default function App() {
 
                   <Route exact path="/admin" element={<AdminPanel />} />
                   <Route exact path="/admin/:page" element={<AdminPanel />} />
+                  <Route exact path="/tools" element={<AdminPane />} />
                 </>
               
               )}

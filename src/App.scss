@@ -18,6 +18,24 @@
   box-sizing: border-box;
   font-family: 'Product Sans';
   cursor: inherit;
+  /* &::-webkit-scrollbar{
+      margin-top: 8px*1;
+      width: 8px*1.5;
+      background: rgba(108, 108, 108, 0.2) ;
+      padding: 2px;
+
+      cursor: pointer;
+      
+    }
+    &::-webkit-scrollbar-thumb{
+      background: rgba(108, 108, 108, 0.2) ;
+
+      border-radius: 8px;
+      width: 8px*0.5;
+      border: 4px solid $dark-2; 
+      margin:8px;
+      cursor: grab;
+    } */
 }
 h1,h2{
   font-family: 'Product Sans';
@@ -224,6 +242,9 @@ body{
     inset 1px 1px 2px 0px rgba(0, 0, 0, 0.8), 
     0px 0px 8px 2px rgb(255 255 255 / 2%);
     background-color: $dark-2;
+    // scrollbar styling
+
+    
     &.project-page{
       display: grid;
       grid-template-rows: auto auto auto;
@@ -231,7 +252,6 @@ body{
       align-items: start;
       min-height: 50vh;
       padding-right: 8px;
-      overflow: hidden;
       padding-top: 0;
       .project-page-cover{
         position: relative;
