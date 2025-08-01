@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {  createDummyProjectsInFirestore, fetchAllReferalsFromFirestore, fetchUsers, migrateCollectionsByStudio } from '../../firebase/functions/firestore';
+import { fetchAllReferalsFromFirestore, fetchUsers, migrateCollectionsByStudio } from '../../firebase/functions/firestore';
 import './AdminPanel.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../app/slices/modalSlice';
@@ -177,18 +177,7 @@ function AdminPanel() {
 
                     
 
-                    <div className="button secondary outline" onClick={async () => {
-                            try {
-                                await createDummyProjectsInFirestore(domain, 20)
-                                console.log('Adding dummy projects successfull');
-                                dispatch(showAlert({ type: 'success', message: 'Dummy projects added successfully!' }));
-                            } catch (error) {
-                                console.error('Error Adding dummy projects:', error.message);
-                                dispatch(showAlert({ type: 'error', message: `Error adding dummy projects: ${error.message}` }));
-                            }
-                        }}>
-                        Add Dummy Projects
-                    </div>
+                    
                 </div>
             </div>
 
