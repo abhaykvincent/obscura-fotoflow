@@ -130,6 +130,11 @@ function ShareGallery({project }) {
 
               <div className="galleries-share-list-selection">
 
+                    <div className='gallery-field'>
+                      
+                      <div className="client-label">Galleries</div>
+                      <div className="client-label">Selection</div>
+                    </div>
                 {project?.collections.map((collection, index) => (
                   <>
                     {/* Gallery choose */}
@@ -190,19 +195,19 @@ function ShareGallery({project }) {
 
               </div>
 
-              <p className="client-label">Gallery link</p>
+              {/* <p className="client-label">Gallery link</p>
               <div className="link-pin">
                 <div className='link' >
 
-                    <div className="link-container">
+                  <div className="link-container">
                     <a className='linkToGallery' href={getGalleryURL('share',domain,project?.id)} target='_blank' >{getGalleryURL('share',domain,project?.id)}
                       <div className="button icon icon-only open-in-new"></div>
                     </a>
-
                   </div>
 
-              </div>
-            </div>
+                </div>
+              </div> */}
+
               <div className="gallery-view-status">
                 <div className="link-group">
                   <div className="button primary outline text-only  icon link"
@@ -218,13 +223,13 @@ function ShareGallery({project }) {
                     }}
                   ></div>
                 </div>
-
-                <div className="button icon icon-only qr-code" title="Show QR Code" onClick={() => handleOpenQRCodeModal(getGalleryURL('share', domain, project?.id))}></div>
-                <div className="button primary outline  ">Share</div>
                 
+                <p className="client-label">Anyone with link</p>
                 <div className="button secondary  transparent-button icon public">Public</div>
               
-                <p className="client-label">Anyone with this link</p>
+                <div className="button icon icon-only qr-code" title="Show QR Code" onClick={() => handleOpenQRCodeModal(getGalleryURL('share', domain, project?.id))}></div>
+                <div className="button primary outline  ">Share</div>
+
               </div>
               <div className="gallery-view-status">
 
@@ -243,11 +248,13 @@ function ShareGallery({project }) {
                   }}
                 ></div>
                 </div>
-                <div className="button icon icon-only qr-code" title="Show QR Code" onClick={() => handleOpenQRCodeModal(getGalleryURL('selection', domain, project?.id))}></div>
 
-                <div className="button primary outline ">Share</div>
-                <div className="button secondary outline icon pin">{project?.pin}</div>
                 <p className="client-label">Client Only</p>
+                <div className="button secondary outline icon pin">{project?.pin}</div>
+
+                <div className="button icon icon-only qr-code" title="Show QR Code" onClick={() => handleOpenQRCodeModal(getGalleryURL('selection', domain, project?.id))}></div>
+                <div className="button primary outline ">Share</div>
+                
               </div>
 
 
