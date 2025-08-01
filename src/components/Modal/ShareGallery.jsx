@@ -11,6 +11,7 @@ import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
 import { updateCollectionStatus, updateCollectionStatusThunk } from '../../app/slices/projectsSlice';
 import QRCodeModal from './QRCodeModal';
+import { QRCodeCanvas } from 'qrcode.react';
 
 import './ShareGallery.scss'
 
@@ -98,6 +99,19 @@ function ShareGallery({project }) {
   const handleOpenQRCodeModal = (url) => {
     setQrCodeUrl(url);
     dispatch(openModal('qrCode'));
+  };
+
+  const downloadQRCode = () => {
+    const canvas = document.getElementById('qr-code-canvas');
+    const pngUrl = canvas
+      .toDataURL('image/png')
+      .replace('image/png', 'image/octet-stream');
+    let downloadLink = document.createElement('a');
+    downloadLink.href = pngUrl;
+    downloadLink.download = 'qr-code.png';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
   };
 
 
@@ -227,8 +241,13 @@ function ShareGallery({project }) {
                 <p className="client-label">Anyone with link</p>
                 <div className="button secondary  transparent-button icon public">Public</div>
               
-                <div className="button icon icon-only qr-code" title="Show QR Code" onClick={() => handleOpenQRCodeModal(getGalleryURL('share', domain, project?.id))}></div>
                 <div className="button primary outline  ">Share</div>
+
+                <div className="qr-code-preview">
+                  <div className="qr-code-container">
+                    <QRCodeCanvas value={getGalleryURL('selection', domain, project?.id)} size={80} />
+                  </div>
+                </div>
 
               </div>
               <div className="gallery-view-status">
@@ -251,12 +270,7 @@ function ShareGallery({project }) {
 
                 <p className="client-label">Client Only</p>
                 <div className="button secondary outline icon pin">{project?.pin}</div>
-
-                <div className="button icon icon-only qr-code" title="Show QR Code" onClick={() => handleOpenQRCodeModal(getGalleryURL('selection', domain, project?.id))}></div>
                 <div className="button primary outline ">Share</div>
-                <div className="qr-code-preview">
-                  
-                </div>
               </div>
 
 

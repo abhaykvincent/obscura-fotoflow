@@ -107,9 +107,10 @@
     }
     .gallery-view-status{
             display: grid;
-            grid-template-columns: 8px*14   auto 8px*10 8px*3.5  8px*9 8px*8;
+            grid-template-columns: 8px*14   8px*16 8px*10   8px*9 8px*12;
             align-items: center;
             gap: 8px*1;
+            margin-top: 8px*0;
             margin-bottom: 8px*0.5;
             .button.icon{
                 padding: 4px 8px;
@@ -138,10 +139,10 @@
                 }
             }
 
-                .primary{
-                    font-size: 0.9rem;
-                    padding: 4px 6px;
-                }
+            .primary{
+                font-size: 0.9rem;
+                padding: 4px 6px;
+            }
             .link-group{
                 display: flex;
                 align-items: center;
@@ -160,13 +161,39 @@
             }
             .client-label{
                 text-align: end;
+                color: $gray4-default-dark;
+            }
+            .qr-code-preview{
+                width: 8px*14;
+                height: 100%;
+                position: relative;
+                    transition-duration: 0.1s;
+                &:hover{
+                    transform: scale(1.1);
+
+                    transition-duration: 0.1s;
+                }
+                .qr-code-container{
+
+                    position: absolute;
+                    top: -8px*1;
+                    left: 8px*2;
+                    height: 8px*12;
+                    padding: 8px*1;
+                    border-radius: 4px;
+                    background: rgba(255, 255, 255, 0.9);
+                    canvas{
+                        width: 8px*5;
+                        height: 100%;
+                    }
+                }
             }
         }
     .select-galleries{
 
         padding-top: 8px*1;
         padding-bottom: 8px*2;
-        margin-bottom: 8px*2;
+        margin-bottom: 8px*4;
         border-bottom: 1px solid rgba(215, 215, 215, 0.1);
         .selection-icon{
             background: #0C84FF url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="rgba(255, 255, 255, 0)"><path d="M1 7 L5 11 L13 1" stroke-width="2" stroke="white" fill="transparent"/></svg>');
