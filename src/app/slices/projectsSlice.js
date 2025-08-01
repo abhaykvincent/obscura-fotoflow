@@ -357,29 +357,21 @@ const projectsSlice = createSlice({
       });
       builder
       .addCase(updateCollectionStatus.pending, (state) => {
-        state.status = 'loading';
-        state.loading = true;
       })
       .addCase(updateCollectionStatus.fulfilled, (state, action) => {
         const { projectId, collectionId, status } = action.payload;
-        state.data = state.data.map((project) => {
-          if (project.id === projectId) {
-            const updatedCollections = project.collections.map((collection) => {
-              if (collection.id === collectionId) {
-                return { ...collection, status };
-              }
-              return collection;
-            });
-            return { ...project, collections: updatedCollections };
+        const projectToUpdate = state.data.find((project) => project.id === projectId);
+        if (projectToUpdate) {
+          const collectionToUpdate = projectToUpdate.collections.find(
+            (collection) => collection.id === collectionId
+          );
+          if (collectionToUpdate) {
+            collectionToUpdate.status = status;
           }
-          return project;
-        });
-        state.loading = false;
-        state.status = 'succeeded';
+        }
       })
       .addCase(updateCollectionStatus.rejected, (state, action) => {
         state.status = 'failed';
-        state.loading = false;
         state.error = action.error.message;
       });
       builder

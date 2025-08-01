@@ -9,7 +9,7 @@ import { useLocation } from 'react-router';
 import { copyToClipboard, extractDomain, getGalleryURL } from '../../utils/urlUtils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
-import { updateCollectionStatus, updateCollectionStatusThunk } from '../../app/slices/projectsSlice';
+import { updateCollectionStatus } from '../../app/slices/projectsSlice';
 import QRCodeModal from './QRCodeModal';
 import { QRCodeCanvas } from 'qrcode.react';
 import logo from '../../assets/img/logo192.png';

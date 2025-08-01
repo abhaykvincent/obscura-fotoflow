@@ -223,6 +223,12 @@ function Sidebar() {
               <div className="label">Admin</div>
             </div>
           </Link>
+          <Link to={`/production`}>
+            <div className={`menu admin ${location.pathname === `/production` ? 'selected' : ''}`}>
+              <div className="icon"></div>
+              <div className="label">Production</div>
+            </div>
+          </Link>
           </>
         }
 
