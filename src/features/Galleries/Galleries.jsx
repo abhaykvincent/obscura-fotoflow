@@ -123,12 +123,7 @@ export default function Galleries({}) {
         <div className="type"></div>
       </div>
       <div className={`project-options ${project?.pin?'':'disabled'}`}>
-      {project?.pin &&
-        <div className="button secondery pin icon" 
-          onClick={()=>{}} 
-          >{project.pin}
-        </div>
-      }
+      
         <div className="button primary share" onClick={()=>
           {project?.pin 
             ? dispatch(openModal('shareGallery'))
