@@ -161,6 +161,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
                 projectData={projectData}
                 errors={errors}
                 handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit} // Pass handleSubmit
                 nameInputRef={nameInputRef}
                 name2InputRef={name2InputRef}
               />
