@@ -8,6 +8,8 @@
     font-size: 1rem;
 }
 .side-panel{
+    width: 50vw;
+    height: 8px*200;
     display: grid;
     align-items: center;
     grid-template-rows: 8px*0 8px*5 auto 8px*5 auto;
@@ -30,11 +32,14 @@
         margin-top: 4px;
     }
     .timeline{
+        position: absolute;
+        top: 0;
         display: grid;
         grid-template-columns: 2px auto ;
         opacity: 0.2;
         overflow-y: scroll;
-        .events{display: flex;
+        .events{
+            display: flex;
             flex-direction: column-reverse;
             gap: 8px*0;
             border-radius: 4px;
@@ -153,7 +158,7 @@
                 .body{
 
                     display: grid;
-                    grid-template-columns: 8px*1.5  auto ;
+                    grid-template-columns: auto  auto ;
                     background-color: $dark-3;
                     padding: 6px 8px;
                     padding-left: 8px;
