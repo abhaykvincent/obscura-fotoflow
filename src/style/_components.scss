@@ -232,6 +232,13 @@
             margin-right: 4px;
             opacity: 0.6;
         }
+        &.qr-code-scan::before{
+            background-size: 100%;
+            background-image: url('https://img.icons8.com/?size=100&id=cHde1Zv1CKnP&format=png&color=FFFFFF');
+            padding-top: 4px;
+            margin-right: 4px;
+            opacity: 0.6;
+        }
         &.unarchive::before{
             background-image: url('https://img.icons8.com/?size=100&id=lZpz4xZ2jAww&format=png&color=FFFFFF');
             background-size: 100%;

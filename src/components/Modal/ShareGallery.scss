@@ -71,7 +71,7 @@
         align-items: center;
     
         .gallery-name{
-            max-width: 8px*16;
+            max-width: 8px*24;
             white-space: nowrap;
             overflow: hidden;
             &.hide{
@@ -95,14 +95,21 @@
         gap: 8px*1;
         justify-content: space-between;
         align-items: center;
-            align-content: center;
-        border-bottom: 1px solid rgba(215, 215, 215, 0.1);
-        padding-bottom: 8px*2;
-        h4{
+        align-content: center;
+        .gallery-details-project{
+            
+        }
+        .project-name{
             font-size: 1.2rem;
-            color: $gray3-default-light;
+            color: $gray4-default-light;
             margin: 0;
     
+        }
+        .project-type{
+            font-size: 0.9rem;
+            color: $gray-default-light;
+            margin: 0;
+
         }
         
         
@@ -236,8 +243,8 @@
     .share-project-details{
 
         display: flex;
-        gap: 8px*2;
-            height: 8px*16;
+        gap: 8px*4;
+            height: 8px*12;
         .project-cover{
                 height: 100%;
                 border: 2px solid $gray-default-light;
@@ -249,11 +256,42 @@
 
         }
     }
-    .link-container{
+    .link-pin{
         padding: 0px;
         white-space: nowrap;;
-        .linkToGallery{
+        .link{
+            display:flex;
+            justify-content: space-between;
+            align-items: center;
+            color: $green-accessible-light;
+            background-color: #E9E9EA0a;
+            border: 1px solid $gray4-default-dark;
+            backdrop-filter: blur(4px);
             padding: 0px 4px;
+            padding-left: 8px;
+            padding-right: 0px;
+            height: 8px*3.5;
+            border-radius: 4px;
+
+            &:hover{
+            background-color: #0000003d;
+            border: 1px solid $gray3-default-dark;
+                .copy-link{
+                opacity: 1;
+                }
+            }
+            .copy-link{
+                opacity: 0.5;
+                border: 1px solid $dark-0;
+                padding: 2px 8px;
+                border-radius: 4px;
+                color: $gray-accessible-light !important;
+                cursor: pointer;
+                
+            }
+        }
+        .linkToGallery{
+            padding: 0px;
             font-size: 0.9rem;
             color: $gray2-accessible-dark;
             text-decoration: underline;
@@ -300,37 +338,6 @@
         padding-left: 0;
         margin-bottom: 8px*0;
         font-size: 1rem;
-        .link{
-            display:flex;
-            justify-content: space-between;
-            align-items: center;
-            color: $green-accessible-light;
-            background-color: #E9E9EA0a;
-            border: 1px solid $gray4-default-dark;
-            backdrop-filter: blur(4px);
-            padding: 0px 4px;
-            padding-left: 8px;
-            padding-right: 8px;
-            height: 8px*4;
-            border-radius: 4px;
-
-            &:hover{
-            background-color: #0000003d;
-            border: 1px solid $gray3-default-dark;
-                .copy-link{
-                opacity: 1;
-                }
-            }
-            .copy-link{
-                opacity: 0.5;
-                border: 1px solid $dark-0;
-                padding: 2px 8px;
-                border-radius: 4px;
-                color: $gray-accessible-light !important;
-                cursor: pointer;
-                
-            }
-        }
         .pin{
             padding: 8px 12px;
             border-radius: 4px;

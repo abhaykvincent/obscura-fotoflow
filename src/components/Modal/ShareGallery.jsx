@@ -9,7 +9,7 @@ import { useLocation } from 'react-router';
 import { copyToClipboard, extractDomain, getGalleryURL } from '../../utils/urlUtils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
-import { updateCollectionStatus, updateCollectionStatusThunk } from '../../app/slices/projectsSlice';
+import { updateCollectionStatus } from '../../app/slices/projectsSlice';
 import QRCodeModal from './QRCodeModal';
 import { QRCodeCanvas } from 'qrcode.react';
 import logo from '../../assets/img/logo192.png';
@@ -142,7 +142,7 @@ function ShareGallery({project }) {
               </div>
               <div className="gallery-details">
                 <div className="gallery-details-project">
-                 <h4>{project?.name}</h4>
+                 <h4 className="project-name">{project?.name}</h4>
                   <div className="project-type">{project?.type}</div>
 
                 </div>
@@ -167,7 +167,7 @@ function ShareGallery({project }) {
 
                     <div className='gallery-field'>
                       
-                      <div className="client-label">Galleries</div>
+                      <div className="client-label"></div>
                       <div className="client-label">Selection</div>
                     </div>
                 {project?.collections.map((collection, index) => (
@@ -202,9 +202,6 @@ function ShareGallery({project }) {
                             </>
                           }
                         />
-                        </div>
-                        <div className="label">
-                          <label></label>
                         </div>
                       </div>
 
@@ -317,7 +314,7 @@ function ShareGallery({project }) {
         </div>
       </div>
       <div className="modal-backdrop" onClick={onClose}></div>
-      {visible.qrCode && <QRCodeModal url={qrCodeUrl} />}
+      {visible.qrCode && <QRCodeModal url={qrCodeUrl} project={project} />}
     </div>
   );
 }
