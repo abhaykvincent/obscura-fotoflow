@@ -12,7 +12,7 @@ import { showAlert } from '../../app/slices/alertSlice';
 import { updateCollectionStatus, updateCollectionStatusThunk } from '../../app/slices/projectsSlice';
 import QRCodeModal from './QRCodeModal';
 import { QRCodeCanvas } from 'qrcode.react';
-import logo from '../../assets/img/fotoflow-pro-logo.svg';
+import logo from '../../assets/img/logo192.png';
 
 import './ShareGallery.scss'
 

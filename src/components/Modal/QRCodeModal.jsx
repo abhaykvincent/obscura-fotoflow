@@ -6,7 +6,7 @@ import { closeModalWithAnimation, selectModal } from '../../app/slices/modalSlic
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import './QRCodeModal.scss';
 
-import logo from '../../assets/img/fotoflow-pro-logo.svg';
+import logo from '../../assets/img/logo192.png';
 
 function QRCodeModal({ url }) {
   const dispatch = useDispatch();
