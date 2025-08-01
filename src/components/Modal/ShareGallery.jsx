@@ -243,9 +243,9 @@ function ShareGallery({project }) {
               
                 <div className="button primary outline  ">Share</div>
 
-                <div className="qr-code-preview">
+                <div className="qr-code-preview" onClick={() => handleOpenQRCodeModal(getGalleryURL('share', domain, project?.id))}>
                   <div className="qr-code-container">
-                    <QRCodeCanvas value={getGalleryURL('selection', domain, project?.id)} size={80} />
+                    <QRCodeCanvas value={getGalleryURL('share', domain, project?.id)} size={80} />
                   </div>
                 </div>
 
@@ -271,6 +271,7 @@ function ShareGallery({project }) {
                 <p className="client-label">Client Only</p>
                 <div className="button secondary outline icon pin">{project?.pin}</div>
                 <div className="button primary outline ">Share</div>
+
               </div>
 
 
