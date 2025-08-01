@@ -12,6 +12,7 @@ import { showAlert } from '../../app/slices/alertSlice';
 import { updateCollectionStatus, updateCollectionStatusThunk } from '../../app/slices/projectsSlice';
 import QRCodeModal from './QRCodeModal';
 import { QRCodeCanvas } from 'qrcode.react';
+import logo from '../../assets/img/fotoflow-pro-logo.svg';
 
 import './ShareGallery.scss'
 
@@ -254,7 +255,12 @@ function ShareGallery({project }) {
 
                 <div className="qr-code-preview" onClick={() => handleOpenQRCodeModal(getGalleryURL('share', domain, project?.id))}>
                   <div className="qr-code-container">
-                    <QRCodeCanvas value={getGalleryURL('share', domain, project?.id)} size={80} />
+                    <QRCodeCanvas value={getGalleryURL('share', domain, project?.id)} size={80} imageSettings={{
+                      src: logo,
+                      excavate: true,
+                      height: 20,
+                      width: 20
+                    }} />
                   </div>
                 </div>
 
@@ -281,6 +287,7 @@ function ShareGallery({project }) {
                 <div className="button secondary outline icon pin">{project?.pin}</div>
                 <div className="button primary outline ">Share</div>
 
+                
               </div>
 
 

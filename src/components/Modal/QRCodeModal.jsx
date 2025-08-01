@@ -6,6 +6,8 @@ import { closeModalWithAnimation, selectModal } from '../../app/slices/modalSlic
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import './QRCodeModal.scss';
 
+import logo from '../../assets/img/fotoflow-pro-logo.svg';
+
 function QRCodeModal({ url }) {
   const dispatch = useDispatch();
   const visible = useSelector(selectModal);
@@ -43,7 +45,12 @@ function QRCodeModal({ url }) {
         </div>
         <div className="modal-body">
           <div className="qr-code-container">
-            <QRCodeCanvas id="qr-code-canvas" value={url} size={256} />
+            <QRCodeCanvas id="qr-code-canvas" value={url} size={256} imageSettings={{
+              src: logo,
+              excavate: true,
+              height: 64,
+              width: 64
+            }} />
           </div>
           <p className="qr-code-label">Scan the code to view the gallery</p>
         </div>
