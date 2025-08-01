@@ -3,15 +3,18 @@ import React from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
+import { selectStudio } from '../../app/slices/studioSlice';
 import { useModalFocus } from '../../hooks/modalInputFocus';
+//getGalleryURL
+import { getGalleryURL } from '../../utils/urlUtils';
 import './QRCodeModal.scss';
 
 import logo from '../../assets/img/logo192.png';
 
-function QRCodeModal({ url }) {
+function QRCodeModal({ project, url }) {
   const dispatch = useDispatch();
   const visible = useSelector(selectModal);
-
+  const studio = useSelector(selectStudio);
   const onClose = () => dispatch(closeModalWithAnimation('qrCode'));
   const modalRef = useModalFocus(visible.qrCode);
 
@@ -44,6 +47,10 @@ function QRCodeModal({ url }) {
           <div className="modal-title">Scan QR Code</div>
         </div>
         <div className="modal-body">
+          <p className="qr-code-label"> 
+              <div className="button primary outline text-only  icon qr-code-scan"></div>
+            
+            Scan to view gallery</p>
           <div className="qr-code-container">
             <QRCodeCanvas id="qr-code-canvas" value={url} size={256} imageSettings={{
               src: logo,
@@ -52,7 +59,22 @@ function QRCodeModal({ url }) {
               width: 64
             }} />
           </div>
-          <p className="qr-code-label">Scan the code to view the gallery</p>
+
+          <h3 className="qr-code-name">{project?.name}</h3>
+          <p className="qr-code-type">{project?.type}</p>
+
+          <div className="link-pin">
+            <div className='link' >
+            
+                <div className="link-container">
+                  <a className='linkToGallery' href={getGalleryURL('share',studio?.domain,project?.id)} target='_blank' > 
+                    ...{getGalleryURL('share',studio?.domain,project?.id).slice(-40)}
+                    <div className="button icon icon-only open-in-new"></div>
+                  </a>
+                </div>
+              </div>
+              <div className="button primary outline text-only  icon copy"></div>
+          </div>
         </div>
         <div className="actions">
           <div className="button secondary" onClick={onClose}>Close</div>

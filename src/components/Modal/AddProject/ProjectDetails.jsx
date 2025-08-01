@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { VALIDITY_OPTIONS } from './constants';
 
-const ProjectDetails = ({ user, projectData, errors, handleInputChange, handleSubmit, nameInputRef, name2InputRef }) => {
+const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInputRef, name2InputRef }) => {
   const [animateValidity, setAnimateValidity] = useState(false);
 
   useEffect(() => {
@@ -43,12 +43,8 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, handleSu
               placeholder="Matan"
               type="text"
               onChange={handleInputChange}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  handleSubmit();
-                }
-              }}
+
+              // 
             />
             {errors.name2 && <div className="error">{errors.name2}</div>}
           </div>
