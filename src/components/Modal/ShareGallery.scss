@@ -91,9 +91,11 @@
     .gallery-name{
     }
     .gallery-details{
-        display: flex;
-        gap: 8px*4;
+        display: grid;
+        gap: 8px*1;
         justify-content: space-between;
+        align-items: center;
+            align-content: center;
         border-bottom: 1px solid rgba(215, 215, 215, 0.1);
         padding-bottom: 8px*2;
         h4{
@@ -107,9 +109,10 @@
     }
     .gallery-view-status{
             display: grid;
-            grid-template-columns: 8px*22  8px*3.5  8px*9 8px*10 auto;
+            grid-template-columns: 8px*14   8px*16 8px*10   8px*9 8px*12;
             align-items: center;
             gap: 8px*1;
+            margin-top: 8px*0;
             margin-bottom: 8px*0.5;
             .button.icon{
                 padding: 4px 8px;
@@ -138,10 +141,10 @@
                 }
             }
 
-                .primary{
-                    font-size: 0.9rem;
-                    padding: 4px 6px;
-                }
+            .primary{
+                font-size: 0.9rem;
+                padding: 4px 6px;
+            }
             .link-group{
                 display: flex;
                 align-items: center;
@@ -158,12 +161,41 @@
                     }
                 }   
             }
+            .client-label{
+                text-align: end;
+                color: $gray4-default-dark;
+            }
+            .qr-code-preview{
+                width: 8px*14;
+                height: 100%;
+                position: relative;
+                    transition-duration: 0.1s;
+                &:hover{
+                    transform: scale(1.1);
+
+                    transition-duration: 0.1s;
+                }
+                .qr-code-container{
+
+                    position: absolute;
+                    top: -8px*1;
+                    left: 8px*2;
+                    height: 8px*12;
+                    padding: 8px*1;
+                    border-radius: 4px;
+                    background: rgba(255, 255, 255, 0.9);
+                    canvas{
+                        width: 8px*5;
+                        height: 100%;
+                    }
+                }
+            }
         }
     .select-galleries{
 
         padding-top: 8px*1;
         padding-bottom: 8px*2;
-        margin-bottom: 8px*2;
+        margin-bottom: 8px*4;
         border-bottom: 1px solid rgba(215, 215, 215, 0.1);
         .selection-icon{
             background: #0C84FF url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="rgba(255, 255, 255, 0)"><path d="M1 7 L5 11 L13 1" stroke-width="2" stroke="white" fill="transparent"/></svg>');
@@ -201,12 +233,29 @@
             }
         }
     }
+    .share-project-details{
+
+        display: flex;
+        gap: 8px*2;
+            height: 8px*16;
+        .project-cover{
+                height: 100%;
+                border: 2px solid $gray-default-light;
+                border-radius: 8px*0.5;
+                overflow: hidden;
+            img{
+                height: 100%;
+            }
+
+        }
+    }
     .link-container{
         padding: 0px;
         white-space: nowrap;;
         .linkToGallery{
-            padding: 8px;
-            color: $gray-accessible-dark;
+            padding: 0px 4px;
+            font-size: 0.9rem;
+            color: $gray2-accessible-dark;
             text-decoration: underline;
             text-decoration-color: $gray4-default-dark;
             transition-duration: 0.1s;
@@ -217,6 +266,8 @@
             box-shadow: none;
             border: none;
             padding: 0;
+
+            margin: 8px*0;
             margin-left: 8px;
             opacity: 0.4;
             transform: scale(1) translateX(0px) translateY(px);
@@ -241,13 +292,13 @@
 }
     .link-pin{
         display: grid;
-        grid-template-columns: auto 8px*11 8px*11;
+        grid-template-columns: auto 8px*4;
         align-items: center;
         justify-content: start;
         gap: 8px*1;
         padding: 4px;
         padding-left: 0;
-        margin-bottom: 8px*2;
+        margin-bottom: 8px*0;
         font-size: 1rem;
         .link{
             display:flex;
@@ -257,10 +308,10 @@
             background-color: #E9E9EA0a;
             border: 1px solid $gray4-default-dark;
             backdrop-filter: blur(4px);
-            padding: 4px 4px;
+            padding: 0px 4px;
             padding-left: 8px;
-            padding-right: 0px;
-            height: 8px*4.5;
+            padding-right: 8px;
+            height: 8px*4;
             border-radius: 4px;
 
             &:hover{
@@ -296,7 +347,7 @@
     .client-label{
         font-size: 0.8rem;
         margin-top: 0px;
-        color: $gray-default-light;
+        color: $gray3-default-dark;
     }
     .client-notification{
         margin-top: 8px*3;

@@ -11,6 +11,7 @@ import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
 import { updateCollectionStatus, updateCollectionStatusThunk } from '../../app/slices/projectsSlice';
 import QRCodeModal from './QRCodeModal';
+import { QRCodeCanvas } from 'qrcode.react';
 
 import './ShareGallery.scss'
 
@@ -100,6 +101,19 @@ function ShareGallery({project }) {
     dispatch(openModal('qrCode'));
   };
 
+  const downloadQRCode = () => {
+    const canvas = document.getElementById('qr-code-canvas');
+    const pngUrl = canvas
+      .toDataURL('image/png')
+      .replace('image/png', 'image/octet-stream');
+    let downloadLink = document.createElement('a');
+    downloadLink.href = pngUrl;
+    downloadLink.download = 'qr-code.png';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  };
+
 
   if (!visible.shareGallery) {
     return null;
@@ -116,20 +130,45 @@ function ShareGallery({project }) {
             <div className="control minimize"></div>
             <div className="control maximize"></div>
           </div>
-          <div className="modal-title">Share Galleries</div>
+          <div className="modal-title">Share Gallery</div>
         </div>
         <div className='modal-body'>
           <div className="form-section">
             {/* map project collections and render it with a check box to select galleries to share */}
-            <div className="gallery-details">
-              <h4>{project?.name}</h4>
-              
+            <div className="share-project-details">
+              <div className="project-cover">
+                <img src={project?.projectCover || '/images/default-cover.jpg'} alt="Project Cover" />
+              </div>
+              <div className="gallery-details">
+                <div className="gallery-details-project">
+                 <h4>{project?.name}</h4>
+                  <div className="project-type">{project?.type}</div>
+
+                </div>
+                <div className="link-pin">
+                  <div className='link' >
+
+                    <div className="link-container">
+                      <a className='linkToGallery' href={getGalleryURL('share',domain,project?.id)} target='_blank' > ...{getGalleryURL('share',domain,project?.id).slice(-40)}
+                        <div className="button icon icon-only open-in-new"></div>
+                      </a>
+                    </div>
+                  </div>
+                    <div className="button primary outline text-only  icon copy"></div>
+
+                </div>
+              </div>
             </div>
 
               <div className="select-galleries">
 
               <div className="galleries-share-list-selection">
 
+                    <div className='gallery-field'>
+                      
+                      <div className="client-label">Galleries</div>
+                      <div className="client-label">Selection</div>
+                    </div>
                 {project?.collections.map((collection, index) => (
                   <>
                     {/* Gallery choose */}
@@ -190,19 +229,8 @@ function ShareGallery({project }) {
 
               </div>
 
-              <p className="client-label">Gallery link</p>
-              <div className="link-pin">
-                <div className='link' >
+              
 
-                    <div className="link-container">
-                    <a className='linkToGallery' href={getGalleryURL('share',domain,project?.id)} target='_blank' >{getGalleryURL('share',domain,project?.id)}
-                      <div className="button icon icon-only open-in-new"></div>
-                    </a>
-
-                  </div>
-
-              </div>
-            </div>
               <div className="gallery-view-status">
                 <div className="link-group">
                   <div className="button primary outline text-only  icon link"
@@ -218,13 +246,18 @@ function ShareGallery({project }) {
                     }}
                   ></div>
                 </div>
-
-                <div className="button icon icon-only qr-code" title="Show QR Code" onClick={() => handleOpenQRCodeModal(getGalleryURL('share', domain, project?.id))}></div>
-                <div className="button primary outline  ">Share</div>
                 
+                <p className="client-label">Anyone with link</p>
                 <div className="button secondary  transparent-button icon public">Public</div>
               
-                <p className="client-label">Anyone with this link</p>
+                <div className="button primary outline  ">Share</div>
+
+                <div className="qr-code-preview" onClick={() => handleOpenQRCodeModal(getGalleryURL('share', domain, project?.id))}>
+                  <div className="qr-code-container">
+                    <QRCodeCanvas value={getGalleryURL('share', domain, project?.id)} size={80} />
+                  </div>
+                </div>
+
               </div>
               <div className="gallery-view-status">
 
@@ -243,11 +276,11 @@ function ShareGallery({project }) {
                   }}
                 ></div>
                 </div>
-                <div className="button icon icon-only qr-code" title="Show QR Code" onClick={() => handleOpenQRCodeModal(getGalleryURL('selection', domain, project?.id))}></div>
 
-                <div className="button primary outline ">Share</div>
-                <div className="button secondary outline icon pin">{project?.pin}</div>
                 <p className="client-label">Client Only</p>
+                <div className="button secondary outline icon pin">{project?.pin}</div>
+                <div className="button primary outline ">Share</div>
+
               </div>
 
 
@@ -273,7 +306,7 @@ function ShareGallery({project }) {
             // go to https://wa.me/[phone number]?text=[pre-filled message]
             window.open(`https://wa.me/?text=Hey, I have a project that I'd like to share with you. Check it out at ${getGalleryURL('share',domain,project.id)}/`,'_blank');
           }}
-          >Share</div>
+          >Done</div>
         </div>
       </div>
       <div className="modal-backdrop" onClick={onClose}></div>

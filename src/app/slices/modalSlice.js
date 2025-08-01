@@ -21,7 +21,8 @@ const initialState = {
 export const closeModalWithAnimation = createAsyncThunk(
   'projects/closeModalWithAnimation',
   async (modalName, { dispatch }) => {
-    const modalElement = document.querySelector(`.modal-container`);
+    const modalElements = document.querySelectorAll(`.modal-container`);
+    const modalElement = modalElements[modalElements.length - 1];
     if (modalElement) {
       modalElement.classList.add('closingModal');
     }
