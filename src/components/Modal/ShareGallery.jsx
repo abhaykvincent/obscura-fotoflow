@@ -3,13 +3,14 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
+import { closeModal, closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
 import { selectDomain } from '../../app/slices/authSlice';
 import { useLocation } from 'react-router';
 import { copyToClipboard, extractDomain, getGalleryURL } from '../../utils/urlUtils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
 import { updateCollectionStatus, updateCollectionStatusThunk } from '../../app/slices/projectsSlice';
+import QRCodeModal from './QRCodeModal';
 
 import './ShareGallery.scss'
 
@@ -83,6 +84,8 @@ function ShareGallery({project }) {
 
   const visible = useSelector(selectModal)
   const domain = useSelector(selectDomain)
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
+
 
   const onClose = () => dispatch(closeModalWithAnimation('shareGallery'))
 
@@ -91,6 +94,13 @@ function ShareGallery({project }) {
   useEffect(()=>{
     console.log(project)
   },[project])
+
+  const handleOpenQRCodeModal = (url) => {
+    setQrCodeUrl(url);
+    dispatch(openModal('qrCode'));
+  };
+
+
   if (!visible.shareGallery) {
     return null;
   }
@@ -209,7 +219,7 @@ function ShareGallery({project }) {
                   ></div>
                 </div>
 
-                <div className="button icon icon-only qr-code  "></div>
+                <div className="button icon icon-only qr-code" title="Show QR Code" onClick={() => handleOpenQRCodeModal(getGalleryURL('share', domain, project?.id))}></div>
                 <div className="button primary outline  ">Share</div>
                 
                 <div className="button secondary  transparent-button icon public">Public</div>
@@ -233,7 +243,7 @@ function ShareGallery({project }) {
                   }}
                 ></div>
                 </div>
-                <div className="button icon icon-only qr-code  "></div>
+                <div className="button icon icon-only qr-code" title="Show QR Code" onClick={() => handleOpenQRCodeModal(getGalleryURL('selection', domain, project?.id))}></div>
 
                 <div className="button primary outline ">Share</div>
                 <div className="button secondary outline icon pin">{project?.pin}</div>
@@ -267,6 +277,7 @@ function ShareGallery({project }) {
         </div>
       </div>
       <div className="modal-backdrop" onClick={onClose}></div>
+      {visible.qrCode && <QRCodeModal url={qrCodeUrl} />}
     </div>
   );
 }
