@@ -16,38 +16,39 @@ import { validateForm } from './validation';
 import { initialProjectData, VALIDITY_OPTIONS } from './constants';
 import './AddProject.scss';
 
-
-
 function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const visible = useSelector(selectModal);
+  const { createProject: isVisible } = useSelector(selectModal);
   const currentStudio = useSelector(selectUserStudio);
   const user = useSelector(selectUser);
-  console.log(user)
-  const [projectData, setProjectData] = useState({ ...initialProjectData});
+
+  const [projectData, setProjectData] = useState({ ...initialProjectData });
   const [errors, setErrors] = useState({});
   const [currentStep, setCurrentStep] = useState(1);
 
   const nameInputRef = useRef(null);
   const name2InputRef = useRef(null);
   const typeInputRef = useRef(null);
-  const modalRef = useModalFocus(visible.createProject);
+  const modalRef = useModalFocus(isVisible);
 
   const onClose = () => dispatch(closeModalWithAnimation("createProject"));
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setProjectData((prevData) => ({ ...prevData, [name]: value, 
-      createdAt: new Date().getTime() }));
+    setProjectData((prevData) => ({
+      ...prevData,
+      [name]: value,
+      createdAt: new Date().getTime(),
+    }));
   };
 
-  const dispatchNotification = (response, user) => {
+  const dispatchNotification = (payload, user) => {
     dispatch(
       createNotification({
         studioId: currentStudio.domain,
         notificationData: {
-          title: response.payload.name,
+          title: payload.name,
           message: `A new project was successfully created`,
           type: 'project',
           actionLink: '/projects',
@@ -57,7 +58,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
             createdAt: new Date().toISOString(),
             eventType: 'project_created',
             createdBy: user.email,
-            projectName: 'Project Name',
+            projectName: payload.name,
             authMethod: 'google',
           },
         },
@@ -68,53 +69,60 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   const handleNextStep = () => {
     if (currentStep === 1 && !projectData.type.trim()) {
       setErrors({ type: "Project type is required" });
-      typeInputRef.current?.focus(); // Focus the type input if it’s empty
+      typeInputRef.current?.focus();
       return;
     }
     setCurrentStep(currentStep + 1);
-    setTimeout(() => {
-      nameInputRef.current?.focus(); // Focus the first input in step 2
-    }, 0);
+    setTimeout(() => nameInputRef.current?.focus(), 0);
   };
-  
-  const handleSubmit = () => {
+
+  const handleSubmit = async () => {
     if (!validateForm(projectData, setErrors, nameInputRef, name2InputRef, typeInputRef)) {
-      // Focus the first input with an error
-      if (errors.name) {
-        nameInputRef.current?.focus();
-      } else if (errors.name2) {
-        name2InputRef.current?.focus();
-      }
+      if (errors.name) nameInputRef.current?.focus();
+      else if (errors.name2) name2InputRef.current?.focus();
       return;
     }
-  
+
     const domain = currentStudio.domain;
     onClose();
-  
-    setTimeout(() => {
-      const action = isSubProject && parentProjectId
-        ? dispatch(createSubProject({ domain, parentProjectId, subProjectData: projectData }))
-        : dispatch(addProject({ domain, projectData }));
-  
-      action
-        .then((response) => {
-          const { id, subProjectId } = response.payload;
-          dispatch(showAlert({ type: "success", message: `${isSubProject ? "Sub-Project" : "Project"} created successfully!` }));
-          dispatchNotification(response, user);
-          navigate(`/${domain}/project/${isSubProject ? `${parentProjectId}/sub-project/${subProjectId}` : id}`);
-        })
-        .catch((error) => {
-          console.error(`Error creating ${isSubProject ? "sub-project" : "project"}:`, error);
-          dispatch(showAlert({ type: "error", message: `Failed to create ${isSubProject ? "sub-project" : "project"}.` }));
-        });
-    }, 500);
+
+    await new Promise(resolve => setTimeout(resolve, 500)); // Wait for animation
+
+    const projectType = isSubProject ? "Sub-Project" : "Project";
+    const action = isSubProject && parentProjectId
+      ? createSubProject({ domain, parentProjectId, subProjectData: projectData })
+      : addProject({ domain, projectData });
+
+    try {
+      const payload = await dispatch(action).unwrap();
+      
+      dispatchNotification(payload, user);
+      dispatch(showAlert({ type: "success", message: `${projectType} created successfully!` }));
+
+      const { id, subProjectId } = payload;
+      const navigateTo = isSubProject ? `${parentProjectId}/sub-project/${subProjectId}` : id;
+      navigate(`/${domain}/project/${navigateTo}`);
+    } catch (error) {
+      console.error(`Error creating ${projectType.toLowerCase()}:`, error);
+      dispatch(showAlert({ type: "error", message: `Failed to create ${projectType.toLowerCase()}.` }));
+    }
   };
 
   const handlePreviousStep = () => {
     setCurrentStep(currentStep - 1);
   };
 
-  if (!visible.createProject) return null;
+  const getModalTitle = () => {
+    if (currentStep === 1) return "Create project";
+    return isSubProject ? "New Sub-Project" : "Project Details";
+  };
+
+  const getModalSubtitle = () => {
+    if (currentStep === 1) return "Choose Template";
+    return projectData.type || (isSubProject ? "New Sub-Project" : "New Project");
+  };
+
+  if (!isVisible) return null;
 
   return (
     <div className="modal-container" ref={modalRef}>
@@ -126,33 +134,27 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
             <div className="control maximize"></div>
           </div>
           <div className="modal-title">
-            {currentStep === 1 ? "Create project" : currentStep === 2 ? "Project Details" : isSubProject ? "New Sub-Project" : "New Project"}
-            <p className="modal-subtitle">
-              {currentStep === 1 ? "Choose Template" : currentStep === 2 ? projectData.type : isSubProject ? "New Sub-Project" : "New Project"}
-            </p>
+            {getModalTitle()}
+            <p className="modal-subtitle">{getModalSubtitle()}</p>
           </div>
         </div>
         <div className="modal-body">
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (currentStep === 1) {
-                handleNextStep();
-              } else if (currentStep === 2) {
-                handleSubmit();
-              }
+              if (currentStep === 2) handleSubmit();
+              else handleNextStep();
             }}
           >
-            {currentStep === 1 && (
+            {currentStep === 1 ? (
               <TemplateSelection
                 projectData={projectData}
                 errors={errors}
                 handleInputChange={handleInputChange}
                 handleNextStep={handleNextStep}
-                typeInputRef={typeInputRef} // Pass the ref to TemplateSelection
+                typeInputRef={typeInputRef}
               />
-            )}
-            {currentStep === 2 && (
+            ) : (
               <ProjectDetails
                 user={user}
                 projectData={projectData}
@@ -166,15 +168,15 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
         </div>
         <div className="actions">
           {currentStep === 1 && (
-            <button className="button secondary" onClick={onClose}>Cancel</button>
+            <button type="button" className="button secondary" onClick={onClose}>Cancel</button>
           )}
           {currentStep > 1 && (
-            <button className="button secondary" onClick={handlePreviousStep}>Back</button>
+            <button type="button" className="button secondary" onClick={handlePreviousStep}>Back</button>
           )}
           {currentStep < 2 ? (
-            <button className="button primary" onClick={handleNextStep}>Next</button>
+            <button type="button" className="button primary" onClick={handleNextStep}>Next</button>
           ) : (
-            <button className="button primary" onClick={handleSubmit}>
+            <button type="button" className="button primary" onClick={handleSubmit}>
               {isSubProject ? "Create Sub-Project" : "Create Project"}
             </button>
           )}
@@ -185,54 +187,55 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   );
 }
 
-
 const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInputRef, name2InputRef }) => {
   const [animateValidity, setAnimateValidity] = useState(false);
 
   useEffect(() => {
     if (projectData.projectValidityMonths) {
       setAnimateValidity(true);
-      const timer = setTimeout(() => setAnimateValidity(false), 500); // Animation duration
+      const timer = setTimeout(() => setAnimateValidity(false), 500);
       return () => clearTimeout(timer);
     }
   }, [projectData.projectValidityMonths]);
 
-  return (
-  <div className="form-section">
-    {projectData.type === 'Wedding' ? (
-      <>
-        <div className="field">
-          <label>Bride</label>
-          <input
-            name="name"
-            ref={nameInputRef}
-            value={projectData.name}
-            placeholder="Sarah"
-            type="text"
-            onChange={handleInputChange}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && projectData.name.trim()) {
-                e.preventDefault();
-                name2InputRef.current?.focus();
-              }
-            }}
-          />
-          {errors.name && <div className="error">{errors.name}</div>}
-        </div>
-        <div className="field">
-          <label>Groom</label>
-          <input
-            name="name2"
-            ref={name2InputRef}
-            value={projectData.name2}
-            placeholder="Matan"
-            type="text"
-            onChange={handleInputChange}
-          />
-          {errors.name2 && <div className="error">{errors.name2}</div>}
-        </div>
-      </>
-    ) : (
+  const renderNameFields = () => {
+    if (projectData.type === 'Wedding') {
+      return (
+        <>
+          <div className="field">
+            <label>Bride</label>
+            <input
+              name="name"
+              ref={nameInputRef}
+              value={projectData.name}
+              placeholder="Sarah"
+              type="text"
+              onChange={handleInputChange}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && projectData.name.trim()) {
+                  e.preventDefault();
+                  name2InputRef.current?.focus();
+                }
+              }}
+            />
+            {errors.name && <div className="error">{errors.name}</div>}
+          </div>
+          <div className="field">
+            <label>Groom</label>
+            <input
+              name="name2"
+              ref={name2InputRef}
+              value={projectData.name2}
+              placeholder="Matan"
+              type="text"
+              onChange={handleInputChange}
+            />
+            {errors.name2 && <div className="error">{errors.name2}</div>}
+          </div>
+        </>
+      );
+    }
+    return (
       <div className="field">
         <label>Project Name</label>
         <input
@@ -245,45 +248,50 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
         />
         {errors.name && <div className="error">{errors.name}</div>}
       </div>
-    )}
-    <div className="field">
-      <label>Team</label>
-      <div className="team-members">
+    );
+  };
+
+  return (
+    <div className="form-section">
+      {renderNameFields()}
+      <div className="field">
+        <label>Team</label>
+        <div className="team-members">
           <div className="team-member">
-            <div className="profile-image"
-              style={{
-                backgroundImage: `url(${user?.photoURL})`
-              }}
-            ></div>
+            <div
+              className="profile-image"
+              style={{ backgroundImage: `url(${user?.photoURL})` }}
+            />
             <span className="team-member-name">{user?.displayName}</span>
           </div>
-      </div>
-    </div>
-    <div className="field">
-      <label>Validity</label>
-      <div className="project-validity-wrap">
-        <div className="project-validity-options">
-          {VALIDITY_OPTIONS.map(({ id, value, label, disabled, className }) => (
-            <div className={`radio-button-group ${className}`} key={id}>
-              <input
-                type="radio"
-                id={id}
-                name="projectValidityMonths"
-                value={value}
-                checked={projectData.projectValidityMonths === value}
-                onChange={handleInputChange}
-                disabled={disabled}
-              />
-              <label htmlFor={id}>{label}</label>
-            </div>
-          ))}
-        </div>
-        <div className="info">
-           After <span> <b className={animateValidity ? 'validity-change-animation' : ''}>{projectData.projectValidityMonths} months</b> ,</span> only <span>you &  client</span> can access.
         </div>
       </div>
+      <div className="field">
+        <label>Validity</label>
+        <div className="project-validity-wrap">
+          <div className="project-validity-options">
+            {VALIDITY_OPTIONS.map(({ id, value, label, disabled, className }) => (
+              <div className={`radio-button-group ${className}`} key={id}>
+                <input
+                  type="radio"
+                  id={id}
+                  name="projectValidityMonths"
+                  value={value}
+                  checked={projectData.projectValidityMonths === value}
+                  onChange={handleInputChange}
+                  disabled={disabled}
+                />
+                <label htmlFor={id}>{label}</label>
+              </div>
+            ))}
+          </div>
+          <div className="info">
+            After <span> <b className={animateValidity ? 'validity-change-animation' : ''}>{projectData.projectValidityMonths} months</b> ,</span> only <span>you & client</span> can access.
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-)};
+  );
+};
 
 export default AddProjectModal;
