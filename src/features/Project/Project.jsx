@@ -24,6 +24,7 @@ import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 import AddExpenseModal from '../../components/Modal/AddExpense';
 import AddPaymentModal from '../../components/Modal/AddPayment';
 import AddBudgetModal from '../../components/Modal/AddBudget';
+import SidePanel from '../../components/Project/SidePanel/SidePanel'
 
 import './Project.scss';
 import { ProjectPageCoverImages } from '../../components/ProjectPageCover/ProjectPageCoverImages';

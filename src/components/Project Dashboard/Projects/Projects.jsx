@@ -13,6 +13,7 @@ import DashboardEvents from '../Events/Events';
 import DashboardTabs from './DashboardTabs/DashboardTabs';
 import AddProjectModal from '../../Modal/AddProject/AddProject';
 import CollectionsPanel from '../../Project/Collections/CollectionsPanel';
+import SidePanel from '../../Project/SidePanel/SidePanel'
 import { ProjectCover } from '../../ProjectPageCover/ProjectPageCover';
 
 function DashboardProjects({project}){
@@ -81,7 +82,10 @@ function DashboardProjects({project}){
             <div className="financials-overview">
               <DashboardPayments project={project} />
             </div>
+
+                    <SidePanel project={project} />
           </div>
+
 
 
         </>
@@ -93,6 +97,8 @@ function DashboardProjects({project}){
             <div className={`section financials-overview ${project.payments.length > 0 ? 'has-payments' : ''}`}>
               <DashboardPayments project={project} />
             </div>
+
+        <SidePanel project={project} />
           </div>
         </>
       ))
