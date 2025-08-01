@@ -254,7 +254,9 @@ function ShareGallery({project }) {
 
                 <div className="button icon icon-only qr-code" title="Show QR Code" onClick={() => handleOpenQRCodeModal(getGalleryURL('selection', domain, project?.id))}></div>
                 <div className="button primary outline ">Share</div>
-                
+                <div className="qr-code-preview">
+                  
+                </div>
               </div>
 
 

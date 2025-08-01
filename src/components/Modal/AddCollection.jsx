@@ -181,6 +181,12 @@ const handleSuggestedNameChange = (event) => {
                 value={CollectionData.name}
                 type="text"
                 onChange={handleInputChange}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSubmit();
+                  }
+                }}
                 placeholder={placeholders[0]} // Dynamically set placeholder
               />
 
