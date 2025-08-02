@@ -165,6 +165,7 @@
             height: 100%;
             padding: 2px 8px;
             color: transparent;
+            text-decoration: none;
             background-size: 100%;
             background-position: center;
             background-repeat: no-repeat;
@@ -219,11 +220,12 @@
             opacity: 0.6;
         }
         &.link::before{
-            background-size: 100%;
+            text-decoration: none;
+            background-size: 80%;
             background-image: url('https://img.icons8.com/?size=100&id=85799&format=png&color=FFFFFF');
             padding-top: 4px;
             margin-right: 4px;
-            opacity: 0.9;
+            opacity: 0.7;
         }
         &.private::before{
             background-size: 100%;
@@ -328,7 +330,7 @@
         &.pin::before{
             margin-right: 6px;
             margin-bottom: -4px;
-            background-size: 90%;
+            background-size: 80%;
             background-position: center center;
             background-image: url('https://img.icons8.com/?size=100&id=10497&format=png&color=FFFFFF');
             
