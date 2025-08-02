@@ -1,7 +1,7 @@
 // slices/authSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
-import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateCollectionStatusByCollectionIdInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
+import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateCollectionSelectionStatusByCollectionIdInFirestore, updateCollectionStatusByCollectionIdInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/app';
@@ -62,6 +62,14 @@ export const updateCollectionStatus = createAsyncThunk(
   'projects/updateCollectionStatus',
   async ({ domain, projectId, collectionId, status }, { dispatch }) => {
     await updateCollectionStatusByCollectionIdInFirestore(domain, projectId, collectionId, status);
+    return { projectId, collectionId, status };
+  }
+);
+
+export const updateCollectionSelectionStatus = createAsyncThunk(
+  'projects/updateCollectionSelectionStatus',
+  async ({ domain, projectId, collectionId, status }, { dispatch }) => {
+    await updateCollectionSelectionStatusByCollectionIdInFirestore(domain, projectId, collectionId, status);
     return { projectId, collectionId, status };
   }
 );
@@ -371,6 +379,25 @@ const projectsSlice = createSlice({
         }
       })
       .addCase(updateCollectionStatus.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      });
+      builder
+      .addCase(updateCollectionSelectionStatus.pending, (state) => {
+      })
+      .addCase(updateCollectionSelectionStatus.fulfilled, (state, action) => {
+        const { projectId, collectionId, status } = action.payload;
+        const projectToUpdate = state.data.find((project) => project.id === projectId);
+        if (projectToUpdate) {
+          const collectionToUpdate = projectToUpdate.collections.find(
+            (collection) => collection.id === collectionId
+          );
+          if (collectionToUpdate) {
+            collectionToUpdate.selectionStatus = status;
+          }
+        }
+      })
+      .addCase(updateCollectionSelectionStatus.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
