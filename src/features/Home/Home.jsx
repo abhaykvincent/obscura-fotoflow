@@ -123,7 +123,7 @@ function Home() {
                             }
                             <div className="section recent">
                                 <h3 className='section-heading'>Recent Projects</h3>
-                                <div className="projects">
+                                <div className="projects recent">
                                 {
                                     recentProjects.length !== 0? (
                                     recentProjects.map((project, index) => (
