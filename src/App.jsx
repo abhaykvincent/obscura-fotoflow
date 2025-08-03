@@ -198,7 +198,7 @@ export default function App() {
               <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>
               <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>
               <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>
-              <Route path="*" element={<NotFound />} />
+              <Route path="*" element={<LoginModal />} />
             </Routes>
           )}
 
