@@ -171,7 +171,13 @@ function Sidebar() {
           <div className="storage-bar hot">
             <div className="storage-labels">
               <div className="icon "></div>
-              <p>Storage</p>
+              <p>Storage </p><div className="storage-labels used-quota-gb">
+              <p className="used-gb">
+                {Math.round(storageUsage?.usedPercentage)}% 
+                <span>{convertMegabytes(studio?.usage?.storage?.used)}</span>  </p>
+                <div className="slash">/</div>
+              <p className="quota-gb">{convertMegabytes(studio?.usage?.storage?.quota)}</p>
+            </div>
               </div>
             <div className="used-bar"
               style={{
@@ -179,26 +185,28 @@ function Sidebar() {
               }}
             ></div>
             <div className="quota-bar"></div>
-            <div className="storage-labels used-quota-gb">
-              <p className="used-gb"><span>{convertMegabytes(studio?.usage?.storage?.used)}</span>  {Math.round(storageUsage?.usedPercentage)}%</p>
-              <p className="quota-gb">{convertMegabytes(studio?.usage?.storage?.quota)}</p>
-            </div>
+            
           </div>
-          <div className="storage-bar hot cold">
+          <div className="storage-bar cold">
+            <div className="used-bar"
+              style={{
+                width: `${storageUsage?.usedPercentage}%`
+              }}
+            ></div>
+            <div className="quota-bar"></div>
             <div className="storage-labels">
               <div className="icon "></div>
               <p>Archive</p>
+
+              <div className="storage-labels used-quota-gb">
+                <p className="used-gb">
+                  {Math.round(storageUsage?.usedPercentage)}%
+                  <span>{convertMegabytes(studio?.usage?.storage?.used)} </span>
+                </p>
+                <div className="slash">/</div>
+                <p className="quota-gb">{convertMegabytes(studio?.usage?.storage?.quota*2)}</p>
               </div>
-            <div className="used-bar"
-              style={{
-                width: `${storageUsage?.usedPercentage}%`
-              }}
-            ></div>
-            <div className="quota-bar"></div>
-            <div className="storage-labels used-quota-gb">
-              <p className="used-gb"><span>{convertMegabytes(studio?.usage?.storage?.used)} </span> {Math.round(storageUsage?.usedPercentage)}%</p>
-              <p className="quota-gb">{convertMegabytes(studio?.usage?.storage?.quota*2)}</p>
-            </div>
+              </div>
           </div>
           
         </div>

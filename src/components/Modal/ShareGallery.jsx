@@ -9,7 +9,7 @@ import { useLocation } from 'react-router';
 import { copyToClipboard, extractDomain, getGalleryURL } from '../../utils/urlUtils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
-import { updateCollectionStatus } from '../../app/slices/projectsSlice';
+import { updateSelectionGalleryStatus, updateCollectionStatus } from '../../app/slices/projectsSlice';
 import QRCodeModal from './QRCodeModal';
 import { QRCodeCanvas } from 'qrcode.react';
 import logo from '../../assets/img/logo192.png';
@@ -211,8 +211,17 @@ function ShareGallery({project }) {
                           control={
                             <IOSSwitch
                               sx={{ m: 1 }}
-                              checked={collection.status === 'visible'} // Set checked based on collection status
+                              checked={collection.selectionGallery === true} // Set checked based on collection status
                               disabled={collection.status !== 'visible'} // Disable if not visible
+                              onChange={(event) => {
+                                const newStatus = event.target.checked ? true: false;
+                                dispatch(updateSelectionGalleryStatus({
+                                  domain,
+                                  projectId: project?.id,
+                                  collectionId: collection.id,
+                                  status: newStatus
+                                }));
+                              }}
                               color="blue"
                             />
                           }

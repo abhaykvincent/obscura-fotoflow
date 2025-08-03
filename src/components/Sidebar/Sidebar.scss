@@ -256,6 +256,7 @@
         position: absolute;
         display: flex;
         flex-direction: column;
+        gap:4px;
         // reverse
         
         width: calc(100% - 8px*1.1);
@@ -269,7 +270,7 @@
         border-top: 1px solid $gray5-default-dark;
         margin-left: 0;
         margin-bottom: 8px*1;
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 1);
         box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.8);
         
         opacity: 0;
@@ -281,12 +282,12 @@
             width: 100%;
             margin-bottom: 8px*0;
             padding: 8px*0.6 8px*1.2;
-            border-bottom: 1px solid $gray6-accessible-dark;
             .storage-labels{
-                margin-bottom: -2px;
+                margin-top: 0px;
                 width: 100%;
                 display: grid;
                 grid-template-columns: 8px*0 auto 1fr;
+                align-items: center;
                 gap: 0px;
                 .icon{
                     width: 8px*2;
@@ -309,9 +310,8 @@
                     white-space: nowrap;
                     width: 100%;
                     font-size: 0.8rem;
-                    color: $gray4-default-dark;;
+                    color: $gray2-default-dark;;
                     font-weight: 600;
-                    margin-bottom: 6px;
                     .bold{
                     color: $gray-default-dark;
                     margin-right: 1px;
@@ -328,10 +328,11 @@
                 &.used-quota-gb{
                     width :100%;
                     height: 8px*2;
-                    margin-top: 8px*0.75;
+                    margin-top: 8px*0.25;
                     display: grid;
-                    grid-template-columns: auto auto;
-                    justify-content: space-between;
+                    grid-template-columns: auto auto auto;
+                    justify-content: end;
+                    gap:8px*0.25;
 
                     padding-right: 4px;
                     padding-left: 2px;
@@ -340,13 +341,23 @@
                     font-size: 0.6rem;
                     margin: 0;
                     span{
-                        margin-right: 8px*0.5;
+                        margin-left: 8px*0.5;
                         font-size: 0.6rem;
                         color: $green-dark-accessible-light;
                     }
                 }
-                .quota-gb{
+                .used-gb{
                     
+                    font-weight: 400;
+                }
+                .slash{
+                    font-size: 0.7rem;
+                    color: $gray3-default-dark;;
+                    margin-top: -1px;
+
+                }
+                .quota-gb{
+                    font-weight: 600;
                     color: $gray-default-dark;;
                 }
 
@@ -378,28 +389,41 @@
             }
             &.hot{
                 margin-top: 0px;
-                background-color: black;
                 border-radius: 8px ;
+                margin-bottom : 8px*0.5;
+
+                .storage-labels{
+                    margin-bottom:2px;
+                }
             }
             &.cold{
                 opacity: 0.8;
-                background-color: rgb(16, 16, 16);
+                margin-top: 8px*0.5;
+                padding-top:0;
                 .used-bar{
                     height: 4px;
                     width: 20%;
-                    background: $gray-default-dark;
+                    background: $gray4-default-light;
                     box-shadow:  0px 0px 0px 0px $green-accessible-dark,inset 0px 1px 1px 0px rgba(0, 0, 0, 0.5);
 
                 }
                 .quota-bar{
                     height: 4px;
 
+                    margin-bottom: 8px*0.5;
                     border-radius: 5px;                
-                    background-color: rgb(54, 67, 66);
+                    background-color: rgb(33, 39, 38);
 
                 }
                 .storage-labels{
+                    margin-top:8px;
+                .storage-labels{
+                    margin-top:0px;
+                }
                     p{
+                        margin-bottom:0px;
+                        margin-top:0px;
+                    color: $gray3-default-dark;;
                         .bold{
                             color: $gray4-default-light;
                         }
@@ -421,7 +445,6 @@
             &:last-of-type{
                 
                 border-bottom: 1px solid transparent;
-                padding-bottom: 0px;
                 }
             
         }
@@ -478,7 +501,7 @@
         display: grid;
         grid-template-columns:  auto;
         position: absolute;
-        bottom: 8px*31.25;
+        bottom: 8px*29;
         left : 5px;
         margin:   0 ;
         margin-right: 0px;
