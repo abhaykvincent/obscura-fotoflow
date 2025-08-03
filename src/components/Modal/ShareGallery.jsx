@@ -206,7 +206,7 @@ function ShareGallery({project }) {
                       </div>
 
                       <div className={`input selection-status ${collection.status !== 'visible' ? 'hide' : ''}`}>
-                        <div className="selection-icon"></div>        
+                             
                         <FormControlLabel
                           control={
                             <IOSSwitch
@@ -226,6 +226,8 @@ function ShareGallery({project }) {
                             />
                           }
                         />
+                        <div className="selection-icon"></div>   
+                        
                       </div>
                     </div>
                   </>
