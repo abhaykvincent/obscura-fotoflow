@@ -757,6 +757,62 @@ export const updateCollectionStatusByCollectionIdInFirestore = async (domain, pr
     }
 };
 
+
+export const updateSelectionGalleryStatusByCollectionIdInFirestore = async (domain, projectId, collectionId, status) => {
+    try {
+        const projectRef = doc(db, 'studios', domain, 'projects', projectId);
+        const projectSnapshot = await getDoc(projectRef);
+
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
+        }
+
+        const projectData = projectSnapshot.data();
+        const updatedCollections = projectData.collections.map(collection => {
+            if (collection.id === collectionId) {
+                return { 
+                    ...collection, 
+                    selectionGallery:status,
+                };
+            }
+            return collection;
+        });
+
+        await updateDoc(projectRef, { collections: updatedCollections });
+        console.log(`Collection ${collectionId} selection gallery status updated to ${status} for project ${projectId}`);
+    } catch (error) {
+        console.error("Error updating collection selection gallery status:", error);
+        throw error;
+    }
+};
+export const updateCollectionSelectionStatusByCollectionIdInFirestore = async (domain, projectId, collectionId, status) => {
+    try {
+        const projectRef = doc(db, 'studios', domain, 'projects', projectId);
+        const projectSnapshot = await getDoc(projectRef);
+
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
+        }
+
+        const projectData = projectSnapshot.data();
+        const updatedCollections = projectData.collections.map(collection => {
+            if (collection.id === collectionId) {
+                return { 
+                    ...collection, 
+                    selectionStatus:status,
+                };
+            }
+            return collection;
+        });
+
+        await updateDoc(projectRef, { collections: updatedCollections });
+        console.log(`Collection ${collectionId} selection status updated to ${status} for project ${projectId}`);
+    } catch (error) {
+        console.error("Error updating collection selection status:", error);
+        throw error;
+    }
+};
+
 // Event
 export const addEventToFirestore = async (domain, projectId, eventData) => {
     if (!domain || !projectId || !eventData) {
