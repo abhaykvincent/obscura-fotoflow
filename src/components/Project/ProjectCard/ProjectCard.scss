@@ -140,10 +140,12 @@
             .left{
             }
             .project-title{
+                max-width: 8px*20;
                 white-space: nowrap;
+                overflow: hidden;
                 transition-duration: 0.1s;
                 transform: scale(1) translateX(0px) translateY(0px);
-            font-size: 0.9rem;
+                font-size: 0.9rem;
             }
             .project-type{
                 margin-top: -2px;

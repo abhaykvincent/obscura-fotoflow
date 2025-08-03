@@ -68,7 +68,7 @@
     }
     .section{
         padding: 8px;
-        margin-bottom: 8px*1;
+        margin-bottom: 8px*2;
         opacity: 0;
         transform: translateX(8px);
         transition: opacity 0.5s, transform 0.5s;
@@ -111,7 +111,7 @@
             padding-right: 8px*2;
             margin-left: 8px;
             margin-top: 8px*1;
-            margin-bottom: 8px*2;
+            margin-bottom: 8px*1;
             color: $gray2-default-dark;
             transition-duration: 0.2s;
             a{
@@ -124,7 +124,7 @@
             }
         }
         .projects{
-            padding: 0 8px;
+            padding: 8px 8px;
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr;
             gap: 8px*4;
@@ -153,6 +153,8 @@
             &.selection{
                 grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
                 gap: 8px*2;
+                overflow-x: scroll;
+                padding-top: 8px*2;
                 .project{
                     grid-template-columns: 8px*12 auto;
                 }
@@ -175,6 +177,9 @@
                     min-height: 8px*2;
                     width:  8px*12;
                 }
+            }
+            &.recent{
+                padding-top: 8px*2;
             }
         }
         .shoots{
@@ -343,9 +348,10 @@
   @media only screen and (max-width: 1500px) {
     .home .section{
         padding: 0;
-        padding-right: 8px*2;
+        padding-right: 8px*0;
         .projects{
             grid-template-columns: 1fr 1fr 1fr;  
+            padding-right: 8px*3;
             &.selection{
                 grid-template-columns:  1fr 1fr 1fr 1fr;  
             }
@@ -362,9 +368,9 @@
 }
 @media only screen and (max-width: 1000px) {
     .home .section .projects{
-        grid-template-columns: 1fr 1fr 1fr ;
+        grid-template-columns:  1fr 1fr ;
         &.selection{
-            grid-template-columns:  1fr 1fr 1fr  !important;  
+            grid-template-columns:  35vw 35vw 35vw  !important;  
         }
         .project{
             .project-cover{
@@ -405,7 +411,7 @@
     .home .section .projects{
             grid-template-columns: 1fr !important ;
         &.selection{
-            grid-template-columns:  1fr;  
+            grid-template-columns:  60vw 60vw !important;  
         }
         .project{
             .project-cover{
