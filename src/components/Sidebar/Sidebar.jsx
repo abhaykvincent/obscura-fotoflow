@@ -187,7 +187,7 @@ function Sidebar() {
             <div className="quota-bar"></div>
             
           </div>
-          <div className="storage-bar cold">
+          {/* <div className="storage-bar cold">
             <div className="used-bar"
               style={{
                 width: `${storageUsage?.usedPercentage}%`
@@ -207,7 +207,7 @@ function Sidebar() {
                 <p className="quota-gb">{convertMegabytes(studio?.usage?.storage?.quota*2)}</p>
               </div>
               </div>
-          </div>
+          </div> */}
           
         </div>
 
