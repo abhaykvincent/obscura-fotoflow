@@ -8,6 +8,7 @@ import { openModal } from '../../app/slices/modalSlice';
 // --- Components ---
 import SearchInput from '../../components/Search/SearchInput';
 import Refresh from '../../components/Refresh/Refresh';
+import AddPackageModal from '../../components/Modal/AddPackage/AddPackage';
 
 // --- Styles ---
 import './Packages.scss';
@@ -24,8 +25,7 @@ function Packages() {
     }, [defaultStudio?.domain]);
 
     const handleNewPackageClick = useCallback(() => {
-        // dispatch(openModal(MODAL_IDS.CREATE_PROJECT));
-        console.log("New Package click");
+        dispatch(openModal('createPackage'));
     }, [dispatch]);
 
 
@@ -35,7 +35,7 @@ function Packages() {
 
     return (
         <>
-            {/* <AddProjectModal /> */}
+            <AddPackageModal />
 
             <div className="projects-page-header">
                 <div className="search-bar">

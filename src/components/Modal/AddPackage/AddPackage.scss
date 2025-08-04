@@ -1,0 +1,26 @@
+.create-package {
+  .modal-body {
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+
+      label {
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+      }
+
+      input {
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .error-message {
+        color: red;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+      }
+    }
+  }
+}
