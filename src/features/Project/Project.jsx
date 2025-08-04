@@ -116,7 +116,6 @@ export default function Project() {
         <div className="project-dashboard">
           <DashboardProjects project={project} />
         </div>
-        <Refresh />
       </main>
 
       <div className="project-info gallary-page-info project-page-info">

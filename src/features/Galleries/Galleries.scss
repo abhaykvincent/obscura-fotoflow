@@ -235,10 +235,9 @@
 		@include boxed;
 		border-radius: 8px;
 		background-color: $dark-3;
-		box-shadow: 1px 1px 4px  black;
+		box-shadow: 1px 1px 4px  $dark-3;
 	}
 	.status{
-		position: absolute;
 		top: 0;
 		right: 0;
 		padding: 6px;
@@ -354,6 +353,13 @@
 			max-width: calc(100vw - 8px*13);
 		}
 	}
+	.dashboard-overview {
+		display: grid;
+		grid-template-columns: auto auto;
+		justify-content: space-between;
+		align-items: start;
+		width: 100%;
+	}
 	.tools-overview{
 		display: grid;
 		justify-items: start;
@@ -458,7 +464,7 @@
 					}
 					&.draft{
 						border: 1px solid $gray5-default-dark;
-						background-color: $dark-2;
+						background-color: $dark-2-5;
 						box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5) , inset 1px 1px 2px rgba(0, 0, 0, 0.5);
 						opacity: 0.8;
 						&:hover{
@@ -1532,10 +1538,17 @@
 @media only screen and (max-width: 1080px) {
     .project-dashboard{
 		flex-wrap: wrap;
+
+
+		.dashboard-overview{
+			width: calc(100vw - 8px*16);
+
+			}
 		.financials-overview{
+
+			grid-template-columns: auto;
 		}
 		.shoots{
-			grid-column: 1/3;
 		}
 	}
 }
@@ -1545,7 +1558,6 @@
 
 		}
 		.shoots{
-			grid-column: 1/3;
 		}
 		.project-dashboard-header .tools {
 			margin-right: 0px;
@@ -1564,10 +1576,9 @@
 		.financials-overview{
 			grid-template-columns: auto;
 		}
+		.dashboard-overview{
+		}
 		.shoots {
-			display: grid;
-			grid-column: 1 / 2;
-			grid-row: 2 / 3;
 			.headings{
 				grid-template-columns: 1fr;
 			}
@@ -1602,8 +1613,6 @@
 		}
 		.shoots {
 			display: grid;
-			grid-column: 1 / 2;
-			grid-row: 2 / 3;
 			.headings{
 				grid-template-columns: 1fr;
 				padding-right: 8px*2;
