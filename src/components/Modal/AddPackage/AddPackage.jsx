@@ -5,42 +5,57 @@ import { addPackage } from '../../../app/slices/packagesSlice';
 import { selectUserStudio } from '../../../app/slices/authSlice';
 import { showAlert } from '../../../app/slices/alertSlice';
 import { useModalFocus } from '../../../hooks/modalInputFocus';
+import TemplateSelection from './TemplateSelection';
+import PackageDetails from './PackageDetails';
 import './AddPackage.scss';
+
+const initialPackageData = {
+  template: '',
+  name: '',
+  description: '',
+  tiers: [
+    { name: 'Standard', price: '', services: [''] },
+  ],
+};
 
 function AddPackageModal() {
   const dispatch = useDispatch();
   const { createPackage: isVisible } = useSelector(selectModal);
   const currentStudio = useSelector(selectUserStudio);
-  const [packageName, setPackageName] = useState('');
-  const [error, setError] = useState('');
-  const nameInputRef = useRef(null);
+  const [packageData, setPackageData] = useState(initialPackageData);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [errors, setErrors] = useState({});
   const modalRef = useModalFocus(isVisible);
 
-  const onClose = () => dispatch(closeModalWithAnimation("createPackage"));
+  const onClose = () => dispatch(closeModalWithAnimation('createPackage'));
 
   const handleInputChange = (event) => {
-    setPackageName(event.target.value);
-    if (error) setError('');
+    const { name, value } = event.target;
+    setPackageData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = async () => {
-    if (!packageName.trim()) {
-      setError('Package name is required');
-      nameInputRef.current?.focus();
+  const handleNextStep = () => {
+    if (currentStep === 1 && !packageData.template) {
+      setErrors({ template: 'Please select a template' });
       return;
     }
+    setErrors({});
+    setCurrentStep(2);
+  };
 
+  const handlePreviousStep = () => setCurrentStep(1);
+
+  const handleSubmit = async () => {
+    // Validation logic here
     const domain = currentStudio.domain;
     onClose();
-
     await new Promise(resolve => setTimeout(resolve, 500));
-
     try {
-      await dispatch(addPackage({ domain, packageData: { name: packageName } })).unwrap();
-      dispatch(showAlert({ type: "success", message: `Package created successfully!` }));
+      await dispatch(addPackage({ domain, packageData })).unwrap();
+      dispatch(showAlert({ type: 'success', message: 'Package created successfully!' }));
     } catch (error) {
-      console.error(`Error creating package:`, error);
-      dispatch(showAlert({ type: "error", message: `Failed to create package.` }));
+      console.error('Error creating package:', error);
+      dispatch(showAlert({ type: 'error', message: 'Failed to create package.' }));
     }
   };
 
@@ -56,35 +71,34 @@ function AddPackageModal() {
             <div className="control maximize"></div>
           </div>
           <div className="modal-title">
-            Create Package
-            <p className="modal-subtitle">New Package</p>
+            {currentStep === 1 ? 'Create Package' : 'Package Details'}
+            <p className="modal-subtitle">{currentStep === 1 ? 'Choose a template' : packageData.template}</p>
           </div>
         </div>
         <div className="modal-body">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSubmit();
-            }}
-          >
-            <div className="form-group">
-              <label htmlFor="packageName">Package Name</label>
-              <input
-                type="text"
-                id="packageName"
-                name="packageName"
-                ref={nameInputRef}
-                value={packageName}
-                onChange={handleInputChange}
-                placeholder="Enter package name"
-              />
-              {error && <p className="error-message">{error}</p>}
-            </div>
-          </form>
+          {currentStep === 1 ? (
+            <TemplateSelection
+              packageData={packageData}
+              setPackageData={setPackageData}
+              errors={errors}
+            />
+          ) : (
+            <PackageDetails
+              packageData={packageData}
+              setPackageData={setPackageData}
+              handleInputChange={handleInputChange}
+              errors={errors}
+            />
+          )}
         </div>
         <div className="actions">
-          <button type="button" className="button secondary" onClick={onClose}>Cancel</button>
-          <button type="button" className="button primary" onClick={handleSubmit}>Create Package</button>
+          {currentStep === 1 && <button type="button" className="button secondary" onClick={onClose}>Cancel</button>}
+          {currentStep > 1 && <button type="button" className="button secondary" onClick={handlePreviousStep}>Back</button>}
+          {currentStep < 2 ? (
+            <button type="button" className="button primary" onClick={handleNextStep}>Next</button>
+          ) : (
+            <button type="button" className="button primary" onClick={handleSubmit}>Create Package</button>
+          )}
         </div>
       </div>
       <div className="modal-backdrop" onClick={onClose}></div>

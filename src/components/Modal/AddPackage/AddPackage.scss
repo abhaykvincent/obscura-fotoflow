@@ -1,25 +1,56 @@
-.create-package {
+.modal.create-package {
   .modal-body {
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 1rem;
-
-      label {
-        margin-bottom: 0.5rem;
-        font-weight: bold;
+    .template-selection {
+      h2 {
+        margin-bottom: 1rem;
       }
-
-      input {
-        padding: 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+      .templates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1rem;
+        .template-card {
+          padding: 1rem;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          text-align: center;
+          cursor: pointer;
+          transition: all 0.2s ease-in-out;
+          &.selected {
+            background-color: #e0e0e0;
+            border-color: #333;
+          }
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          }
+        }
       }
+    }
 
-      .error-message {
-        color: red;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
+    .package-details {
+      .tier {
+        border: 1px solid #eee;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+
+        .tier-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
+        }
+
+        .service-input {
+          display: flex;
+          align-items: center;
+          margin-bottom: 0.5rem;
+
+          input {
+            flex-grow: 1;
+            margin-right: 0.5rem;
+          }
+        }
       }
     }
   }
