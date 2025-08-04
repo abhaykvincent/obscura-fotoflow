@@ -17,7 +17,7 @@ import Teams from './features/Teams/Teams';
 import ImageGallery from './x-draft/masanory-grid';
 import Onboarding from './features/Onboarding/Onboarding';
 import AdminPanel from './features/AdminPanel/AdminPanel';
-import AdminPane from './features/AdminPanel/AdminPane';
+import DeveloperTools from './features/AdminPanel/DeveloperTools';
 import Notifications from './features/Notifications/Notifications';
 import CommingSoon from './components/CommingSoon/CommingSoon';
 import InvitationPage from './features/Invitation/InvitationPage';
@@ -188,7 +188,7 @@ export default function App() {
 
                   <Route exact path="/admin" element={<AdminPanel />} />
                   <Route exact path="/admin/:page" element={<AdminPanel />} />
-                  <Route exact path="/tools" element={<AdminPane />} />
+                  <Route exact path="/tools" element={<DeveloperTools />} />
                 </>
               
               )}
@@ -198,7 +198,7 @@ export default function App() {
               <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>
               <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>
               <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>
-              <Route path="*" element={<NotFound />} />
+              <Route path="*" element={<LoginModal />} />
             </Routes>
           )}
 

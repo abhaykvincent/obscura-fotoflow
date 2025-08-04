@@ -5,7 +5,7 @@ import { addDummyProjects } from '../../app/slices/adminPaneSlice';
 import { selectDomain } from '../../app/slices/authSlice';
 import './AdminPanel.scss';
 
-function AdminPane() {
+function DeveloperTools() {
     const dispatch = useDispatch();
     const domain = useSelector(selectDomain);
 
@@ -24,7 +24,7 @@ function AdminPane() {
 
     return (
         <main className="admin-panel billing-container">
-            <h1 className="admin-title">Admin Pane</h1>
+            <h1 className="admin-title">Developer Tools</h1>
             <div className="admin-dashboard">
                 <div className="admin-actions">
                     <div className="button secondary outline" onClick={handleAddDummyProjects}>
@@ -36,4 +36,4 @@ function AdminPane() {
     );
 }
 
-export default AdminPane;
+export default DeveloperTools;

@@ -1988,6 +1988,11 @@ body{
           }
         }
       }
+      &:nth-child(5n){
+        .option-menu{
+        right: -8px*1 !important
+        }
+    }
       &:hover{
         border: 1px solid $dark-2;      
         border-left: 1px solid $dark-1;      
@@ -2020,11 +2025,6 @@ body{
           }
         }
       }
-      &:nth-child(5n){
-        .option-menu{
-        right: -8px*1 !important
-        }
-    }
       // when clicked and stay the style
       /* &:active{
         
@@ -2042,6 +2042,21 @@ body{
                 animation-fill-mode: forwards;
           }
           }  
+        }
+        .photo-wrap{
+          &:hover{
+
+          animation: photo-hover-animamtion 0.2s;
+          animation-fill-mode: forwards;
+          @keyframes photo-hover-animamtion {
+            0%{
+              transform: scale(1)translateY(8px*0);
+            }
+            100%{
+              transform: scale(1.1)translateY(0px);
+            }
+          }
+          }
         }
   }
 }

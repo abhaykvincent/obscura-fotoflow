@@ -33,6 +33,7 @@ export const migrateCollectionsByStudio = async (domain) => {
                     return {
                         ...collection,
                         status: 'visible', // Default status if not set
+                        selectionGallery: true,
                         version: 2, // or some other migration logic
                     };
                 }
