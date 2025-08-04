@@ -27,7 +27,7 @@
     margin-bottom: 0;
     font-size: 0.9rem;
     justify-content: space-between;
-
+    height: 8px*5;
     .control-wrap{
         position: relative;
         &.view-type-controls .label{
@@ -81,15 +81,19 @@
         }
         display:flex;
         .control{
-          padding: 4px 8px*1.2;
+          padding: 4px 8px*1.4;
           font-weight: 400;
           font-size: 0.8rem;
+          line-height: 1rem;
           border-radius: $border-radius-1;
-          border-right: 1px solid rgba(255, 255, 255, 0.02);
+          border: 1px solid rgba(255, 255, 255, 0.02);
           color: $gray2-accessible-dark;
           white-space: nowrap;
-          transition-duration: 0.15s;
+          gap:4px;
+          transition-duration: 0.1s;
+              transition-timing-function: ease-out;
           cursor: pointer;
+            transform: scale(1);
           &:hover{
               background-color: $dark-2;
               color: $gray-accessible-dark;
@@ -108,8 +112,11 @@
             border-radius: 8px !important;
             box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);;
             transform: scale(1.1);
+              transition-duration: 0.05s;
+              transition-timing-function: ease-in;
+              z-index:10;
             &:hover{
-              border: 1px solid $gray3-accessible-dark;
+              
               transition-duration: 0.1s;
             }
             
@@ -150,6 +157,10 @@
           }
           
         }
+      }
+      .filter-controls{
+        display:flex;
+        gap: 8px*3;
       }
   }
   .projects {

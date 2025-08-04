@@ -55,27 +55,27 @@ function DashboardProjects({project}){
       projectDashboardView === 'abstract'?
       (project.collections.length === 0 ? (
         <>  
-            <div className="gallery new empty-gallery" 
-            onClick={()=>dispatch(openModal('createCollection'))}>
-              <div className="heading-section">
-                <h3 className='heading'>Galleries <span>{project.collections.length}</span></h3>
-              </div>
-              <div className="thumbnails">
-                <div className="thumbnail thumb1">
-                  <div className="backthumb bthumb1">
-                    <div className="button primary outline"
-                    onClick={() => {
-                      // Your action for Delete
-                      dispatch(openModal('createCollection'));
-                    }}
-                    >New Gallery</div>
-                  </div>
-                  <div className="backthumb bthumb2"></div>
-                  <div className="backthumb bthumb3"></div>
-                  <div className="backthumb bthumb4"></div>
+          <div className="gallery new empty-gallery" 
+          onClick={()=>dispatch(openModal('createCollection'))}>
+            <div className="heading-section">
+              <h3 className='heading'>Galleries <span>{project.collections.length}</span></h3>
+            </div>
+            <div className="thumbnails">
+              <div className="thumbnail thumb1">
+                <div className="backthumb bthumb1">
+                  <div className="button primary outline"
+                  onClick={() => {
+                    // Your action for Delete
+                    dispatch(openModal('createCollection'));
+                  }}
+                  >New Gallery</div>
                 </div>
+                <div className="backthumb bthumb2"></div>
+                <div className="backthumb bthumb3"></div>
+                <div className="backthumb bthumb4"></div>
               </div>
             </div>
+          </div>
           
           <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
             <DashboardEvents project={project} />
@@ -92,13 +92,16 @@ function DashboardProjects({project}){
       ) : (
         <>
           <CollectionsPanel {...{project,collectionId:project.collections[0]?.id}}/>
+          <div className="dashboard-overview">
          <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
             <DashboardEvents project={project} />
             <div className={`section financials-overview ${project.payments.length > 0 ? 'has-payments' : ''}`}>
               <DashboardPayments project={project} />
             </div>
 
+          </div>
         <SidePanel project={project} />
+
           </div>
         </>
       ))
