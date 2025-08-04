@@ -1,14 +1,16 @@
-import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 // --- Selectors and Actions ---
 import { selectUserStudio } from '../../app/slices/authSlice';
 import { openModal } from '../../app/slices/modalSlice';
+import { fetchPackages, selectPackages, selectPackagesLoading, selectPackagesError } from '../../app/slices/packagesSlice';
 
 // --- Components ---
 import SearchInput from '../../components/Search/SearchInput';
 import Refresh from '../../components/Refresh/Refresh';
 import AddPackageModal from '../../components/Modal/AddPackage/AddPackage';
+import PackageCard from '../../components/Cards/PackageCard/PackageCard';
 
 // --- Styles ---
 import './Packages.scss';
@@ -17,17 +19,20 @@ import './Packages.scss';
 function Packages() {
     const dispatch = useDispatch();
     const defaultStudio = useSelector(selectUserStudio);
+    const packages = useSelector(selectPackages);
+    const loading = useSelector(selectPackagesLoading);
+    const error = useSelector(selectPackagesError);
 
     useEffect(() => {
         if (defaultStudio?.domain) {
             document.title = `${defaultStudio.domain} | Packages`;
+            dispatch(fetchPackages(defaultStudio.domain));
         }
-    }, [defaultStudio?.domain]);
+    }, [defaultStudio?.domain, dispatch]);
 
     const handleNewPackageClick = useCallback(() => {
         dispatch(openModal('createPackage'));
     }, [dispatch]);
-
 
     if (!defaultStudio) {
         return <div>Loading studio information...</div>;
@@ -52,8 +57,12 @@ function Packages() {
                         </button>
                     </div>
                 </div>
-                <div>
-                  Packages will be listed here.
+                <div className="packages-list">
+                    {loading && <p>Loading packages...</p>}
+                    {error && <p>Error: {error}</p>}
+                    {packages.map(pkg => (
+                        <PackageCard key={pkg.id} packageData={pkg} />
+                    ))}
                 </div>
 
                 <Refresh />

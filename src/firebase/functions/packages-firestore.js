@@ -1,5 +1,5 @@
 import { db } from "../app";
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc, getDocs } from "firebase/firestore";
 import { generateRandomString } from "../../utils/stringUtils";
 
 export const addPackageToFirestore = async (domain, packageData) => {
@@ -19,6 +19,19 @@ export const addPackageToFirestore = async (domain, packageData) => {
     return newPackageData;
   } catch (error) {
     console.error('Error adding package:', error.message);
+    throw error;
+  }
+};
+
+export const fetchPackagesFromFirestore = async (domain) => {
+  try {
+    const studioDocRef = doc(db, 'studios', domain);
+    const packagesCollectionRef = collection(studioDocRef, 'packages');
+    const querySnapshot = await getDocs(packagesCollectionRef);
+    const packages = querySnapshot.docs.map(doc => doc.data());
+    return packages;
+  } catch (error) {
+    console.error('Error fetching packages:', error.message);
     throw error;
   }
 };

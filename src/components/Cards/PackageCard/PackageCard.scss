@@ -1,0 +1,22 @@
+.package-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .package-card-header {
+    h3 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+  }
+
+  .package-card-body {
+    p {
+      margin: 0;
+      color: #555;
+    }
+  }
+}

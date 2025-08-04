@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { addPackageToFirestore } from '../../firebase/functions/packages-firestore';
+import { addPackageToFirestore, fetchPackagesFromFirestore } from '../../firebase/functions/packages-firestore';
 
 export const addPackage = createAsyncThunk(
   'packages/addPackage',
@@ -7,6 +7,18 @@ export const addPackage = createAsyncThunk(
     try {
       const newPackage = await addPackageToFirestore(domain, packageData);
       return newPackage;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchPackages = createAsyncThunk(
+  'packages/fetchPackages',
+  async (domain, { rejectWithValue }) => {
+    try {
+      const packages = await fetchPackagesFromFirestore(domain);
+      return packages;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -32,6 +44,18 @@ const packagesSlice = createSlice({
         state.packages.push(action.payload);
       })
       .addCase(addPackage.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchPackages.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchPackages.fulfilled, (state, action) => {
+        state.loading = false;
+        state.packages = action.payload;
+      })
+      .addCase(fetchPackages.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
