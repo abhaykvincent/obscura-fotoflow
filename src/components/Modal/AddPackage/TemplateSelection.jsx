@@ -8,17 +8,22 @@ function TemplateSelection({ packageData, setPackageData, errors }) {
   };
 
   return (
-    <div className="template-selection">
+    <div className="form-section">
       <h2>Select a Template</h2>
-      <div className="templates-grid">
+      <div className="project-validity-options template-options">
         {templates.map((template) => (
-          <div
-            key={template}
-            className={`template-card ${packageData.template === template ? 'selected' : ''}`}
+          <div className="radio-button-group" key={template}
+
+        >
+          <input
+            type="radio"
+            id={template}
             onClick={() => handleTemplateSelection(template)}
-          >
-            {template}
-          </div>
+            name="type"
+          />
+          <label htmlFor={template}>{template}</label>
+        </div>
+
         ))}
       </div>
       {errors.template && <p className="error-message">{errors.template}</p>}
