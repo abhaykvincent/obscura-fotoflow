@@ -7,36 +7,15 @@ FotoFlow is a comprehensive web application designed for managing and sharing ph
 The application employs a client-server architecture where the React-based frontend interacts directly with various Firebase services. This setup allows for a scalable and secure environment for photo management. Redux is central to the frontend, ensuring predictable state management across the application.
 
 ## 3. Technology Stack
-### Frontend
-*   **Frontend**: `Javascript`, `React.js`
-*   **State Management**: `Redux Toolkit`
+
+*   **Frontend**: React.js
+*   **State Management**: Redux Toolkit
+*   **Styling**: Sass, Tailwind CSS (with `tailwind-merge`, `tailwindcss-animate`)
+*   **Backend/Database**: Firebase (Firestore, Cloud Storage, Authentication)
+*   **EXIF Data Handling**: `exifreader`
+*   **Image Compression**: `browser-image-compression`
 *   **Routing**: `react-router-dom`
-*   **Styling**: `SCSS`
-
-
-### Backend
-*   **BaaS**: `Firebase` 
-*   **Database**: `Firestore`
-*   **Storage**: `Cloud Storage`
-*   **Authentication**: `Firebase Authentication`
-*   **Serverless Functions**: `Firebase Cloud Functions`
-
-
-
-### DevOps
-*   **CI/CD**: `Firebase CLI`
-*   **Analytics**: `Firebase Analytics`
-*   **Monitoring**: `Google Cloud Platform`
-
-
-### Third-party Services               
-*   **Payment Gateway**: `Razorpay`
-*   **Email/SMS Services**: Custom `Cloud Functions`   
-*   **EXIF Data Handling**: `exifreader`  
-*   **Image Handling**:
-    *   **Image Compression**: `browser-image-compression`    
-    *   **EXIF Data Handling**: `exifreader`  
-
+*   **UI Components**: Material-UI (`@mui/material`), Radix UI (`@radix-ui/react-dropdown-menu`), `sonner` (for toasts)
 
 ## 4. Core Components (High-Level)
 
