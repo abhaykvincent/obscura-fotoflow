@@ -7,7 +7,8 @@ import { showAlert } from '../../../app/slices/alertSlice';
 import { useModalFocus } from '../../../hooks/modalInputFocus';
 import TemplateSelection from './TemplateSelection';
 import PackageDetails from './PackageDetails';
-import './AddPackage.scss';
+import PricingTierDetails from './PricingTierDetails';
+import '../AddProject/AddProject.scss';
 
 const initialPackageData = {
   template: '',
@@ -39,14 +40,26 @@ function AddPackageModal() {
       setErrors({ template: 'Please select a template' });
       return;
     }
+    // Add validation for PackageDetailsForm before moving to PricingTierDetails
+    if (currentStep === 2) {
+      if (!packageData.name.trim()) {
+        setErrors({ name: 'Package Name is required' });
+        return;
+      }
+      if (!packageData.description.trim()) {
+        setErrors({ description: 'Description is required' });
+        return;
+      }
+    }
     setErrors({});
-    setCurrentStep(2);
+    setCurrentStep(currentStep + 1);
   };
 
-  const handlePreviousStep = () => setCurrentStep(1);
+  const handlePreviousStep = () => setCurrentStep(currentStep - 1);
 
   const handleSubmit = async () => {
-    // Validation logic here
+    // Final validation before submission (e.g., for PricingTierDetails)
+    // For now, assuming PricingTierDetails has its own internal validation or is optional
     const domain = currentStudio.domain;
     onClose();
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -56,6 +69,32 @@ function AddPackageModal() {
     } catch (error) {
       console.error('Error creating package:', error);
       dispatch(showAlert({ type: 'error', message: 'Failed to create package.' }));
+    }
+  };
+
+  const getModalTitle = () => {
+    switch (currentStep) {
+      case 1:
+        return 'Create Package';
+      case 2:
+        return 'Package Details';
+      case 3:
+        return 'Pricing Tiers';
+      default:
+        return 'Create Package';
+    }
+  };
+
+  const getModalSubtitle = () => {
+    switch (currentStep) {
+      case 1:
+        return 'Choose a template';
+      case 2:
+        return packageData.template;
+      case 3:
+        return packageData.name || 'Configure Tiers';
+      default:
+        return 'Choose a template';
     }
   };
 
@@ -71,18 +110,19 @@ function AddPackageModal() {
             <div className="control maximize"></div>
           </div>
           <div className="modal-title">
-            {currentStep === 1 ? 'Create Package' : 'Package Details'}
-            <p className="modal-subtitle">{currentStep === 1 ? 'Choose a template' : packageData.template}</p>
+            {getModalTitle()}
+            <p className="modal-subtitle">{getModalSubtitle()}</p>
           </div>
         </div>
         <div className="modal-body">
-          {currentStep === 1 ? (
+          {currentStep === 1 && (
             <TemplateSelection
               packageData={packageData}
               setPackageData={setPackageData}
               errors={errors}
             />
-          ) : (
+          )}
+          {currentStep === 2 && (
             <PackageDetails
               packageData={packageData}
               setPackageData={setPackageData}
@@ -90,11 +130,17 @@ function AddPackageModal() {
               errors={errors}
             />
           )}
+          {currentStep === 3 && (
+            <PricingTierDetails
+              packageData={packageData}
+              setPackageData={setPackageData}
+            />
+          )}
         </div>
         <div className="actions">
           {currentStep === 1 && <button type="button" className="button secondary" onClick={onClose}>Cancel</button>}
           {currentStep > 1 && <button type="button" className="button secondary" onClick={handlePreviousStep}>Back</button>}
-          {currentStep < 2 ? (
+          {currentStep < 3 ? (
             <button type="button" className="button primary" onClick={handleNextStep}>Next</button>
           ) : (
             <button type="button" className="button primary" onClick={handleSubmit}>Create Package</button>
