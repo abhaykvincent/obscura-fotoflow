@@ -71,6 +71,12 @@ function Sidebar() {
             <div className="label">Projects</div>
           </div>
         </Link>
+        <Link to={`/${studioName}/packages`}>
+          <div className={`menu packages ${location.pathname === `/${studioName}/packages` ? 'active' : ''}`}>
+            <div className="icon"></div>
+            <div className="label">Packages</div>
+          </div>
+        </Link>
         {
           // only on developement
           process.env.NODE_ENV === 'development' &&
