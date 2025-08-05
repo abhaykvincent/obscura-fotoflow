@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { VALIDITY_OPTIONS } from './constants';
+import { VALIDITY_OPTIONS,ARCHIVE_OPTIONS } from './constants';
 
 const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInputRef, name2InputRef }) => {
   const [animateValidity, setAnimateValidity] = useState(false);
@@ -83,7 +83,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
         </div>
       </div>
       <div className="field">
-        <label>Validity</label>
+        <label>Archive in</label>
         <div className="project-validity-wrap">
           <div className="project-validity-options">
             {VALIDITY_OPTIONS.map(({ id, value, label, disabled, className }) => (
@@ -103,6 +103,30 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
           </div>
           <div className="info">
             After <span> <b className={animateValidity ? 'validity-change-animation' : ''}>{projectData.projectValidityMonths} months</b> ,</span> only <span>you & client</span> can access.
+          </div>
+        </div>
+      </div>
+      <div className="field">
+        <label>Validity</label>
+        <div className="project-validity-wrap">
+          <div className="project-validity-options">
+            {ARCHIVE_OPTIONS.map(({ id, value, label, disabled, className }) => (
+              <div className={`radio-button-group ${className}`} key={id}>
+                <input
+                  type="radio"
+                  id={id}
+                  name="projectValidityMonths"
+                  value={value}
+                  checked={projectData.projectValidityMonths === value}
+                  onChange={handleInputChange}
+                  disabled={disabled}
+                />
+                <label htmlFor={id}>{label}</label>
+              </div>
+            ))}
+          </div>
+          <div className="info">
+            Files will be deleted after <span> <b className={animateValidity ? 'validity-change-animation' : ''}>{projectData.projectValidityMonths} years</b>.</span>
           </div>
         </div>
       </div>

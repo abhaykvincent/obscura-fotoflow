@@ -211,7 +211,7 @@ animation-timing-function: ease-out;
 
     align-self:start;
     color: #8e8e93;
-        margin-top:8px;
+        margin-top:4px;
         &.ai-label{
         color: $green-default-light;
         opacity: 0;
@@ -306,106 +306,135 @@ animation-timing-function: ease-out;
     flex-wrap: wrap;
     gap: 8px*1;
     transition-duration: 0.4s;
-    .radio-button-group{
-        display: flex;
-        align-items: center;
-        gap: 8px*0;
-        padding: 8px*0.5 8px*1;
-        border: 1px solid $gray6-accessible-dark;
-        border-left: 1px solid $gray4-accessible-dark;
-        border-top: 1px solid $gray4-accessible-dark;
-        background-color: $dark-2-5;
-        box-shadow: 2px 1px 0 1px rgba(0, 0, 0, 0.4);
-        border-radius: 4px;
-        overflow: hidden;
-        cursor: pointer;
-        transition-delay: 0s;
-        transition-duration: 0.1s;
-        &.upgrade-needed{
-        opacity: 0.5;
-        border: 1px solid $gray6-accessible-dark;
-        box-shadow: 0px 1px 0 0px rgba(0, 0, 0, 0.4);
-        label{
-            color: $dark-0;
+      .radio-button-group{
+          display: flex;
+          align-items: center;
+          gap: 8px*0;
+          padding: 8px*0.5 8px*1;
+          border: 1px solid $gray6-accessible-dark;
+          border-left: 1px solid $gray4-accessible-dark;
+          border-top: 1px solid $gray4-accessible-dark;
+          background-color: $dark-2-5;
+          box-shadow: 2px 1px 0 1px rgba(0, 0, 0, 0.4);
+          border-radius: 4px;
+          overflow: hidden;
+          cursor: pointer;
+          transition-delay: 0s;
+          transition-duration: 0.1s;
+          &.upgrade-needed{
+          opacity: 0.5;
+          border: 1px solid $gray6-accessible-dark;
+          box-shadow: 0px 1px 0 0px rgba(0, 0, 0, 0.4);
+          label{
+              color: $dark-0;
 
-        }
-        &:hover{
-            color: white;
-            border: 1px solid $gray6-accessible-dark;
-            label{
-            display: flex;
-            cursor: pointer;
-            color: $gray-default-light;
-            transition-duration: 0.1s;
-            }
-        }
-        }
-        &:hover{
-        color: white;
-        border: 1px solid $dark-0;
-        border-left: 1px solid $gray2-accessible-dark;
-        border-top: 1px solid $gray2-accessible-dark;
-        label{
-            display: flex;
-            cursor: pointer;
-            color: $gray4-default-light;
-            transition-duration: 0.1s;
-        }
-        }
-        &:active{
+          }
+          &:hover{
+              color: white;
+              border: 1px solid $gray6-accessible-dark;
+              label{
+              display: flex;
+              cursor: pointer;
+              color: $gray-default-light;
+              transition-duration: 0.1s;
+              }
+          }
+          }
+          &:hover{
+          color: white;
+          border: 1px solid $dark-0;
+          border-left: 1px solid $gray2-accessible-dark;
+          border-top: 1px solid $gray2-accessible-dark;
+          label{
+              display: flex;
+              cursor: pointer;
+              color: $gray4-default-light;
+              transition-duration: 0.1s;
+          }
+          }
+          &:active{
 
-        border: 1px solid $green-dark-accessible-light;
-        border-left: 1px solid $green-accessible-light;
-        border-top: 1px solid $green-accessible-light;
-        background-color: $dark-3;
-        }
-        // hide radio buttons
-        input[type="radio"] {
-        display: none; 
-        }
-        &:has(input:checked){
-        border: 1px solid $green-dark-accessible-light;
-        border-left: 1px solid $green-accessible-light;
-        border-top: 1px solid $green-accessible-light;
-        background-color: $dark-3;
-        box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);;
-        transition-delay: 0.05s;
-        transition-duration: 0.1s;
-        label{
-            color: $gray5-accessible-light;
-        }
-        }
-        label{
-        display: flex;
-        font-size: 1rem;
-        cursor: pointer;
-            transition-duration: 0.2s;
-            color: $gray-default-light;
-        }
-        label.free-validity{
-        &::after{
-            content: "Free";
-            font-size: 0.8rem;
-            color: $green-dark-accessible-light;;
-            padding: 0px 4px;
-            margin-left: 4px;
-            border: 1px solid $dark-2;
-            border-radius: 2px;
-        }
-        }
+          border: 1px solid $green-dark-accessible-light;
+          border-left: 1px solid $green-accessible-light;
+          border-top: 1px solid $green-accessible-light;
+          background-color: $dark-3;
+          }
+          // hide radio buttons
+          input[type="radio"] {
+          display: none; 
+          }
+          &:has(input:checked){
+          border: 1px solid $green-dark-accessible-light;
+          border-left: 1px solid $green-accessible-light;
+          border-top: 1px solid $green-accessible-light;
+          background-color: $dark-3;
+          box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);;
+          transition-delay: 0.05s;
+          transition-duration: 0.1s;
+          label{
+              color: $gray5-accessible-light;
+          }
+          }
+          label{
+          display: flex;
+          font-size: 1rem;
+          cursor: pointer;
+              transition-duration: 0.2s;
+              color: $gray-default-light;
+          }
+          label.free-validity{
+          &::after{
+              content: "Free";
+              font-size: 0.8rem;
+              color: $green-dark-accessible-light;;
+              padding: 0px 4px;
+              margin-left: 4px;
+              border: 1px solid $dark-2;
+              border-radius: 2px;
+          }
+          }
+      }
+      &.template-options{
+          margin-bottom: 8px*2;
+          justify-content: start;
+          .radio-button-group{
+          padding: 0px;
+          font-size: 1.2rem;
+          label{
+              padding: 8px*1.5 8px*2*1.6;
+          }
+          
+          }
+      }
+      
     }
-    &.template-options{
-        margin-bottom: 8px*2;
-        justify-content: center;
+    .project-validity-wrap{
+      label{
+        margin:0;
+      }
+      }
+    &.stared-templates{
+      gap:8px*2;
+      .project-validity-options{
         .radio-button-group{
-        padding: 0px;
-        font-size: 1.2rem;
-        label{
-            padding: 8px*1.5 8px*2*1.6;
+        margin: 8px*0.5;
+              border: 1px solid $dark-0;
+              border-radius: 8px;
+          label{
+              padding: 8px*1.6 *2  8px*1.6 *3;
+            font-size: 1.3rem;
+              color: $gray5-default-light;
+          }
         }
-        
-        }
+      }
     }
+    &.other-templates{
+      width: 8px*64;
+      overflow-x: scroll;
+        .template-options{
+          display: flex;
+          flex-wrap: nowrap;
+        }
     }
     .error{
     display: grid;
@@ -424,7 +453,7 @@ animation-timing-function: ease-out;
     .info{
     display: flex;
     width: 100%;
-    margin-top: 8px;
+    margin-top: 4px;
     text-align: left;
     font-size: 0.8rem;
     color: $gray4-accessible-dark;
@@ -437,7 +466,7 @@ animation-timing-function: ease-out;
         margin: 0 4px;
     }
     b{
-        color: $gray-default-dark;
+        color: $gray2-default-dark;
         font-weight: 400;
         margin: 0 1px;
     }
