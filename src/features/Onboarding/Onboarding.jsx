@@ -313,7 +313,7 @@ function Onboarding() {
           !user?.email && invitationReferral  &&
           <>
           <h3 className='continue-with'>Continue with</h3>
-          <div className={`button primary google-login-button ${errors.email && 'error-shake'}`}  onClick={handleGoogleSignIn}>Google <div className="google-logo"></div></div>
+          <div className={`button google-login-button ${errors.email && 'error-shake'}`}  onClick={handleGoogleSignIn}>Google <div className="google-logo"></div></div>
           </>
         }
 
