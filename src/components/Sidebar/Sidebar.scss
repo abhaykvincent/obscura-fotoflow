@@ -833,8 +833,11 @@
             gap: 4px;
         }
         .studio-name{
+            width: 8px*10;
+            white-space: nowrap;
             font-weight: 600;
             font-size: 0.9rem;
+            overflow:hidden;
         }
         .profile-name{
             font-weight: 500;

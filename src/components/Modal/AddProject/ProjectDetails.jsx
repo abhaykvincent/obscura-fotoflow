@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { VALIDITY_OPTIONS,ARCHIVE_OPTIONS } from './constants';
-
+import { selectUserStudio } from "../../../app/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
 const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInputRef, name2InputRef }) => {
   const [animateValidity, setAnimateValidity] = useState(false);
-
+    const currentStudio = useSelector(selectUserStudio);
   useEffect(() => {
     if (projectData.projectValidityMonths) {
       setAnimateValidity(true);
@@ -70,7 +71,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
   return (
     <div className="form-section">
       {renderNameFields()}
-      <div className="field">
+      <div className="field team-field">
         <label>Team</label>
         <div className="team-members">
           <div className="team-member">
@@ -83,7 +84,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
         </div>
       </div>
       <div className="field">
-        <label>Archive in</label>
+        <label>Live</label>
         <div className="project-validity-wrap">
           <div className="project-validity-options">
             {VALIDITY_OPTIONS.map(({ id, value, label, disabled, className }) => (
@@ -101,13 +102,10 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
               </div>
             ))}
           </div>
-          <div className="info">
-            After <span> <b className={animateValidity ? 'validity-change-animation' : ''}>{projectData.projectValidityMonths} months</b> ,</span> only <span>you & client</span> can access.
-          </div>
         </div>
       </div>
-      <div className="field">
-        <label>Validity</label>
+      <div className="field validity-field">
+        <label>Archive</label>
         <div className="project-validity-wrap">
           <div className="project-validity-options">
             {ARCHIVE_OPTIONS.map(({ id, value, label, disabled, className }) => (
