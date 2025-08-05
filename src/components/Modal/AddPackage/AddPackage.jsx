@@ -9,6 +9,7 @@ import TemplateSelection from './TemplateSelection';
 import PackageDetails from './PackageDetails';
 import PricingTierDetails from './PricingTierDetails';
 import '../AddProject/AddProject.scss';
+import './AddPackage.scss';
 
 const initialPackageData = {
   template: '',

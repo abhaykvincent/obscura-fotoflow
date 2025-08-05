@@ -207,6 +207,11 @@ animation-timing-function: ease-out;
         text-align: right ;
         color: $gray-default-light;
         font-size: 1.2rem;
+    display: grid;
+
+    align-self:start;
+    color: #8e8e93;
+        margin-top:8px;
         &.ai-label{
         color: $green-default-light;
         opacity: 0;

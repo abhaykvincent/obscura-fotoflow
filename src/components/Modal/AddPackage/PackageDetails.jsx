@@ -49,8 +49,8 @@ function PackageDetails({ packageData, setPackageData, handleInputChange, errors
   };
 
   return (
-    <div className="package-details">
-      <div className="form-group">
+    <div className="package-details form-section">
+      <div className="form-group field">
         <label htmlFor="name">Package Name</label>
         <input
           type="text"
@@ -62,9 +62,9 @@ function PackageDetails({ packageData, setPackageData, handleInputChange, errors
         />
         {errors.name && <p className="error-message">{errors.name}</p>}
       </div>
-      <div className="form-group">
+      <div className="form-group field">
         <label htmlFor="description">Description</label>
-        <textarea
+        <input
           id="description"
           name="description"
           value={packageData.description}

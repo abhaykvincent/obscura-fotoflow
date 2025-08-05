@@ -9,7 +9,6 @@ function TemplateSelection({ packageData, setPackageData, errors }) {
 
   return (
     <div className="form-section">
-      <h2>Select a Template</h2>
       <div className="project-validity-options template-options">
         {templates.map((template) => (
           <div className="radio-button-group" key={template}

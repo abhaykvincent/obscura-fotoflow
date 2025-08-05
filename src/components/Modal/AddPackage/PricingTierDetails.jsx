@@ -42,14 +42,24 @@ function PricingTierDetails({ packageData, setPackageData }) {
 
   return (
     <div className="pricing-tier-details">
-      <h3>Pricing Tiers</h3>
-      {packageData.tiers.map((tier, tierIndex) => (
-        <div key={tierIndex} className="tier">
+      <div className="tiers-panel">
+
+      {
+        packageData.tiers.map((tier, tierIndex) => (
           <div className="tier-header">
-            <h4>Tier {tierIndex + 1}</h4>
-            <button type="button" className="button danger" onClick={() => removeTier(tierIndex)}>Remove</button>
+            <h4 className="tier-title">Tier {tierIndex + 1}</h4>
+            <button type="button" className="button primary text-only  icon close" onClick={() => removeTier(tierIndex)}></button>
           </div>
-          <div className="form-group">
+        ))
+      }
+      {packageData.tiers.length < 3 && (
+        <button type="button" className="button primary" onClick={addTier}>Add Tier</button>
+      )}
+      </div>
+      {packageData.tiers.map((tier, tierIndex) => (
+        <div key={tierIndex} className="tier form-section">
+          
+          <div className="form-group field">
             <label htmlFor={`tier-name-${tierIndex}`}>Tier Name</label>
             <input
               type="text"
@@ -60,7 +70,7 @@ function PricingTierDetails({ packageData, setPackageData }) {
               placeholder="e.g., Standard, Premium"
             />
           </div>
-          <div className="form-group">
+          <div className="form-group field">
             <label htmlFor={`tier-price-${tierIndex}`}>Price</label>
             <input
               type="text"
@@ -71,26 +81,27 @@ function PricingTierDetails({ packageData, setPackageData }) {
               placeholder="e.g., $500"
             />
           </div>
-          <div className="form-group">
+          <div className="form-group field">
             <label>Services</label>
-            {tier.services.map((service, serviceIndex) => (
-              <div key={serviceIndex} className="service-input">
-                <input
-                  type="text"
-                  value={service}
-                  onChange={(e) => handleServiceChange(tierIndex, serviceIndex, e)}
-                  placeholder="e.g., 4 hours of coverage"
-                />
-                <button type="button" className="button danger" onClick={() => removeService(tierIndex, serviceIndex)}>Remove</button>
-              </div>
-            ))}
-            <button type="button" className="button secondary" onClick={() => addService(tierIndex)}>Add Service</button>
+            <div className="services-container">
+              {tier.services.map((service, serviceIndex) => (
+                <div key={serviceIndex} className="service-input">
+                  <input
+                    type="text"
+                    value={service}
+                    onChange={(e) => handleServiceChange(tierIndex, serviceIndex, e)}
+                    placeholder="e.g., 4 hours of coverage"
+                  />
+                  <button type="button" className="button primary text-only icon delete" onClick={() => removeService(tierIndex, serviceIndex)}></button>
+                </div>
+              ))}
+            <button type="button" className="button secondary icon add" onClick={() => addService(tierIndex)}>Add Service</button>
+
+            </div>
           </div>
         </div>
       ))}
-      {packageData.tiers.length < 3 && (
-        <button type="button" className="button primary" onClick={addTier}>Add Tier</button>
-      )}
+      
     </div>
   );
 }
