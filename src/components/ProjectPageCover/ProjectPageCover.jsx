@@ -117,9 +117,13 @@ export const ProjectCover = ({ project }) => {
         <div
             className={`project-page-cover project-cover ${isSetFocusButton ? "focus-button-active" : ""} ${project?.projectCover || project?.projectCover.length > 0 ? "cover-show" : "cover-hide"}`}
         >
-            {project?.projectCover && <div className="project-cover-image" >
+            {project?.projectCover ? <div className="project-cover-image" >
                 <img  src={project?.projectCover.replace('-thumb', '')} style={{ height: '100%', width: 'auto', objectFit: 'cover' }} />
-            </div>}
+            </div>:
+            <div className="project-cover-image no-cover-image" >
+                
+            </div>
+        }
 
             {
             <div className="cover-footer">
@@ -156,11 +160,14 @@ export const ProjectCover = ({ project }) => {
                         </div>
 
                         <ProjectStatus project={project} />
+
+                        <div className="link-pin">
+                            <div className="button secondary outline icon archive"> Archive</div>
+                            {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
+                        </div> 
                         <div className="link-pin">
                             <div className="button secondary outline icon copy"> Link</div>
                             {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
-            
-
                         </div>  
                         </div>
                         {
