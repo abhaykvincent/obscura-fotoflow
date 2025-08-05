@@ -8,6 +8,7 @@ import './App.scss';
 import Home from './features/Home/Home';
 import Project from './features/Project/Project';
 import Projects from './features/Projects/Projects';
+import Packages from './features/Packages/Packages';
 import LoginModal from './features/Login/Login';
 import ShareProject from './features/Share/Share';
 import Storage from './features/Storage/Storage';
@@ -175,6 +176,7 @@ export default function App() {
                   <Route exact path="/:studioName/portfolio-editor" element={<PortfolioWebsite />} />
                   <Route exact path="/:studioName/invitation-creator/:projectId" element={<InvitationPage/>} />
                   <Route path="/:studioName/projects" element={<Projects />} />
+                  <Route path="/:studioName/packages" element={<Packages />} />
                   <Route path="/:studioName/settings" element={<Settings/>} />
                   <Route path="/:studioName/notifications" element={<Notifications />} />
                   <Route path="/:studioName/storage" element={<Storage />} />

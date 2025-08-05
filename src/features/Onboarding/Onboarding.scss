@@ -75,7 +75,7 @@
     }
 .user-authentication{
     display: grid;
-    margin-bottom: 8px*4;
+    margin-bottom: 8px*1;
     justify-content: start;
     opacity: 1;
     transform: scale(1) translateX(-8px*0);
@@ -253,7 +253,8 @@
     display: flex;
     justify-content: start;
     align-items: center;
-    margin-top: 2px;
+    margin-top: 8px*4;
+    margin-left: -8px*3;
     gap: 8px*2;
     &.minimize-gmail-user{
         .logout-button{

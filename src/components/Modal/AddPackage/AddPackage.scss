@@ -1,0 +1,113 @@
+@import '../../../style/variables';
+.modal.create-package {
+  .modal-body {
+    .template-selection {
+      h2 {
+        margin-bottom: 1rem;
+      }
+      .templates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1rem;
+        .template-card {
+          padding: 1rem;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          text-align: center;
+          cursor: pointer;
+          transition: all 0.2s ease-in-out;
+          &.selected {
+            background-color: #e0e0e0;
+            border-color: #333;
+          }
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          }
+        }
+      }
+    }
+    .pricing-tier-details{
+        .tiers-panel{
+                height: 8px*16;
+            margin-bottom:8px;
+            display: flex;
+            grid-template-columns: auto auto;
+            gap:8px;
+            justify-items: center;
+            justify-content: center;
+            .button.primary{
+                display: grid;
+                align-self: center;
+            }
+            .tier-header{
+                    position: relative;
+                display: grid;
+                align-items:center;
+                width: 8px*16;
+                height: 8px*14;
+                border: 1px solid $dark-1;
+                border-radius: 8px;
+                .tier-title{
+                    text-align:center;
+                }
+                    &:hover{
+                        .close::before{
+                            opacity:0.6;
+
+                            transition-delay: 0.2s;
+                        }
+                    }
+                .close{
+                    position: absolute;
+                    top: 0px;
+                    right:0px;
+                    &::before{
+                        background-size: 40% ;
+                            transition-duration:0.1s;
+                            transition-timing-function:ease-in;
+                            opacity:0.4;
+                    }
+                    &:hover{
+                        &::before{
+                            transition-duration:0.1s;
+                            transition-timing-function:ease-in;
+                            background-size: 60% ;
+                            opacity:0.9;
+                        }
+                    }
+                }
+            }
+        }
+        .tier{
+            .services-container{
+                display:grid;
+                gap:8px;
+            }
+            .service-input {
+            display: grid;
+            grid-template-columns: auto 8px*4;
+            align-items: center;
+            margin-bottom: 0rem;
+            }
+        }
+    }
+
+  }
+    .package-details {
+      .tier {
+        border: 1px solid #eee;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+
+        .tier-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
+        }
+
+      }
+    }
+}

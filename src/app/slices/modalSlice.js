@@ -16,7 +16,8 @@ const initialState = {
     loginEmailPassword: false,
     upgrade:false,
     trialStatus:false,
-    qrCode:false
+    qrCode:false,
+    createPackage: false,
 };
 export const closeModalWithAnimation = createAsyncThunk(
   'projects/closeModalWithAnimation',

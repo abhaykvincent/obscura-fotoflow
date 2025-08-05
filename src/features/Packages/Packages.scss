@@ -1,0 +1,466 @@
+@import '../../style/variables';
+
+
+.packages-header,.package-teams-header{
+    display: grid;
+    grid-template-columns: 1fr auto;
+    justify-content: space-between;
+    padding: 8px*1.5 8px*1.5;
+    h1{
+
+    animation: fadeInLeft 0.5s ease-out 0s;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-out;
+    }
+    .actions{
+        display: flex;
+        justify-content: flex-end;
+        opacity: 0;
+        animation: fadeInLeft 0.4s ease-out 0.2s;
+        animation-fill-mode: forwards;
+        animation-timing-function: ease-out;
+    }
+}
+.view-control{
+    display:flex;
+    margin: 8px 8px*1.5;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    justify-content: space-between;
+    height: 8px*5;
+    .control-wrap{
+        position: relative;
+        &.view-type-controls .label{
+            text-align: right;;
+            left: -6px;
+            &.mini-icons{
+                &.view{
+                    
+                }
+            }
+        }
+        .label{
+            position: absolute;
+            width:100%;
+            top: -8px*2.2;
+            left: 8px*0.5;
+            color: $gray3-default-dark;
+            font-size: 0.8rem;
+
+            opacity: 0;
+            animation: fadeInLeft 0.5s ease-out 0.04s;
+            animation-fill-mode: forwards;
+            animation-timing-function: ease-out;
+        }
+    }
+    .control-label{
+      color: $gray3-default-dark;
+      padding: 8px;
+      &.label-all-photos{
+        color: $gray2-default-dark;
+      }
+      &.label-selected-photos{
+        color: $gray2-default-dark;
+      }
+    }
+    .controls{
+        border-radius: $border-radius-1+1;
+        transition-duration: 0.15s;
+        background: linear-gradient(120deg, $dark-1 -80%, $dark-2 20%,$dark-2 60%, $dark-3 100%);
+        border: 1px solid $gray6-accessible-dark;
+        border-top: 1px solid $gray5-accessible-dark;
+        border-bottom: 1px solid $gray6-accessible-dark;;
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);;
+        opacity: 0;
+    
+        animation: fadeInLeft 0.5s ease-out 0.05s;
+        animation-fill-mode: forwards;
+        animation-timing-function: ease-out;
+        &:hover{
+          transition-duration: 0.1s;
+        }
+        display:flex;
+        .control{
+          padding: 4px 8px*1.4;
+          font-weight: 400;
+          font-size: 0.8rem;
+          line-height: 1rem;
+          border-radius: $border-radius-1;
+          border: 1px solid rgba(255, 255, 255, 0.02);
+          color: $gray2-accessible-dark;
+          white-space: nowrap;
+          gap:4px;
+          transition-duration: 0.1s;
+              transition-timing-function: ease-out;
+          cursor: pointer;
+            transform: scale(1);
+          &:hover{
+              background-color: $dark-2;
+              color: $gray-accessible-dark;
+              transition-duration: 0.1s;
+              &:last-child{
+                  border-radius: 8px;
+              }
+          }
+          &.active{
+            color: $light-0;
+            background-color: $dark-4;
+            border: 1px solid $gray5-accessible-dark;
+            border-top: 1px solid $gray3-accessible-dark;
+            border-left: 1px solid $gray3-accessible-dark;
+            border-bottom: 1px solid $gray5-accessible-dark;
+            border-radius: 8px !important;
+            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);;
+            transform: scale(1.1);
+              transition-duration: 0.05s;
+              transition-timing-function: ease-in;
+              z-index:10;
+            &:hover{
+              
+              transition-duration: 0.1s;
+            }
+            
+            .icon{
+    
+              opacity: 01;
+              background-size: 120%;
+            }
+          }
+          &.disabled{
+              opacity: 0.2;
+            }
+            &:hover{
+                .icon{
+
+              &.card-view{background-size: 110%; 
+              }
+              &.list-view{
+                    background-size: 150%; 
+              }
+                }
+
+              }
+          .icon{
+              width: 8px*1.6;
+              height: 8px*1.6;
+              background-position: center;
+              background-size: 100%;
+              opacity: 0.5;
+              &.card-view{
+                  background-image: url('https://img.icons8.com/sf-black-filled/64/FFFFFF/four-squares.png');
+              }
+              &.list-view{
+                    background-size: 140%;
+                  background-image: url('https://img.icons8.com/?size=100&id=BjLaPJ1cFKRo&format=png&color=FFFFFF');
+                  
+              }
+          }
+          
+        }
+      }
+      .filter-controls{
+        display:flex;
+        gap: 8px*3;
+      }
+  }
+  .packages {
+    .section-heading{
+        
+        display: inline-block;
+        width: auto;
+        font-weight: 400;
+        padding: 8px*1 0;
+        padding-top: 0;
+        padding-right: 8px*2;
+        margin-left: 8px;
+        margin-top: 8px*2;
+        margin-bottom: 8px*1;
+        border-bottom: 2px solid $gray6-default-dark;
+        color: $gray3-default-light;
+        transition-duration: 0.2s;
+        opacity: 0;
+        animation: fadeInUp 0.5s ease-out forwards;
+        animation-delay: 0.5s;
+    }
+    .view-control{
+        margin-top: 8px*2;
+        margin-bottom: 8px*1;
+    }
+    .month-group {
+      margin-bottom: 0; // Simplified calculation of 8px * 2
+      margin-top: 0; // Simplified calculation of 8px * 2
+      
+      // Add staggered animation to the .month-name
+      .month-name {
+        padding: 8px 16px; // Simplified calculation of 8px * 2
+        font-weight: 400;
+        font-size: 1rem;
+        color: $gray2-default-dark;
+            margin-bottom: 8px*1;
+        opacity: 0; // Start as invisible
+  
+        animation: fadeInUp 0.5s ease-out forwards;
+        animation-delay: calc(0.35s + 0.25s * (var(--group-index) - 1)); // Dynamic delay based on parent index
+      }
+
+      .packages-list {
+        padding: 8px 16px; // Simplified calculation of 8px * 2
+        font-weight: 400;
+        color: $gray-default-dark;
+        
+        .package{
+                @for $i from 1 through 100 {
+                    &:nth-child(#{$i}) {
+                        animation: fadeInUp 0.5s ease-out calc( ( 0.45s + 0.15s * (var(--group-index) - 1) + ($i - 1) * 0.015s));
+                        animation-fill-mode: forwards;
+
+                    }
+                }
+        }
+        &.list{
+            max-width: 8px*60;
+            grid-template-columns: 1fr;
+            gap: 8px*2;
+            .package{
+                .package-cover{
+                    min-height: 8px*10;
+                    width: 8px*12;
+                }
+            }
+        }
+      }
+
+      &.loaded-more{
+        .month-name {
+          animation-delay: calc(0.0s + 0.1s); // Dynamic delay based on parent index
+        }
+        .packages-list {
+        
+            .package{
+                    @for $i from 1 through 100 {
+                        &:nth-child(#{$i}) {
+                            animation: fadeInUp 0.5s ease-out calc( ( 0.1s + 0.2s + ($i - 1) * 0.04s));
+                            animation-fill-mode: forwards;
+
+                        }
+                    }
+            }
+            &.list{
+                max-width: 8px*60;
+                grid-template-columns: 1fr;
+                gap: 8px*2;
+                .package{
+                    .package-cover{
+                        min-height: 8px*10;
+                        width: 8px*12;
+                    }
+                }
+            }
+        }
+      }
+    }
+    .load-more-container{
+        margin: 8px 8px*2;
+    }
+    .package{
+        &.new{
+
+            animation-duration: 0.6s;
+        animation-delay: 0.65s;
+        }
+    }
+  }
+  
+  
+@keyframes delete-caution {
+    0% {
+        opacity: 0;
+    }
+    25% {
+        opacity: 0.8;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      /* transform: translateY(-8px); */
+    }
+    100% {
+      opacity: 1;
+      /* transform: translateY(0); */
+    }
+  }
+
+
+
+
+  .packages-list{
+    padding: 0 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 8px*3;
+    width: 100%;
+    padding: 8px*1.5;
+    padding-top: 8px;
+    
+    .message{
+        color: $gray4-default-dark;
+    }
+    
+    &.completed{
+        h3::after{
+            font-size: 0.9rem;
+            font-weight: 400;
+            margin-left: 8px*1;
+            content: 'Client Approved';
+            color: $gray3-default-dark;
+        }
+        .package{
+            grid-template-columns: auto 8px*16;
+
+            .package-options{
+                align-items: center;
+            }
+        }
+    }
+}
+.package-teams-list{
+    padding: 0 8px;
+    display: grid;
+    grid-template-columns: minmax(200px, 480px) minmax(200px, 480px) minmax(200px, 480px);
+    gap: 8px*3;
+    row-gap: 8px*4;
+    width: 100%;
+    padding: 8px*3;
+    padding-top: 8px;
+    margin-top: 8px*3;
+    
+    .message{
+        color: $gray4-default-dark;
+    }
+    
+    &.completed{
+        h3::after{
+            font-size: 0.9rem;
+            font-weight: 400;
+            margin-left: 8px*1;
+            content: 'Client Approved';
+            color: $gray3-default-dark;
+        }
+        .package{
+            grid-template-columns: auto 8px*16;
+
+            .package-options{
+                align-items: center;
+            }
+        }
+    }
+}
+
+//write a media quer for divces less than 1200px
+@media only screen and (max-width: 1800px) {
+    .package-teams-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+    .packages-list{
+        gap: 8PX*3;
+        grid-template-columns: 1fr 1fr 1fr 1fr ;
+    }
+}
+@media only screen and (max-width: 1600px) {
+    .package-teams-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .packages-list{
+        gap: 8PX*3;
+        grid-template-columns: 1fr 1fr 1fr  ;
+    }
+}
+@media only screen and (max-width: 1300px) {
+    .package-teams-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .packages-list{
+        gap: 8PX*2.5;
+        grid-template-columns: 1fr 1fr 1fr  ;
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .package-teams-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .packages-list{
+        gap: 8PX*2.5;
+        grid-template-columns: 1fr 1fr 1fr ;
+    }
+}
+@media only screen and (max-width: 1080px) {
+    .package-teams-list{
+        grid-template-columns: 1fr 1fr  ;
+    }
+    .packages-list{
+        gap: 8PX*2.5;
+        grid-template-columns: 1fr 1fr 1fr ;
+    }
+}
+@media only screen and (max-width: 960px) {
+    .package-teams-list{
+        grid-template-columns: 1fr 1fr   ;
+    }
+    .packages-list{
+        gap: 8PX*2;
+        grid-template-columns: 1fr 1fr  ;
+    }
+}
+@media only screen and (max-width: 860px) {
+    .package-teams-list{
+        grid-template-columns: 1fr 1fr    ;
+    }
+    .packages-list{
+        gap: 8PX*2.5;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+@media only screen and (max-width: 640px) {
+    .package-teams-list{
+        grid-template-columns: 1fr  ;
+    }
+    .packages-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr ;
+    }
+    .packages{
+        .view-type-controls{
+            display: none;
+        }
+    }
+}
+@media only screen and (max-width: 520px) {
+    .package-teams-list{
+        grid-template-columns: 1fr   ;
+    }
+    .packages-list{
+        gap: 8PX*2;
+        grid-template-columns: 1fr ;
+        padding: 8px*2.5;
+        
+    }
+    .packages-header .actions{
+    }
+}
+@media only screen and (max-width: 480px) {
+    .package-teams-list{
+        grid-template-columns: 1fr  ;
+    }
+    .packages-list{
+        gap: 8PX*4;
+        grid-template-columns: 1fr ;
+    }
+}

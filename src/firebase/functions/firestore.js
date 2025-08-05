@@ -1220,3 +1220,4 @@ export const createDummyProjectsInFirestore = async (domain, n = 5) => {
 };
 
 export * from './admin-firestore';
+export * from './packages-firestore';
