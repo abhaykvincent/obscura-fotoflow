@@ -1,7 +1,7 @@
 // slices/authSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
-import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateCollectionSelectionStatusByCollectionIdInFirestore, updateSelectionGalleryStatusByCollectionIdInFirestore, updateCollectionStatusByCollectionIdInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
+import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateCollectionSelectionStatusByCollectionIdInFirestore, updateSelectionGalleryStatusByCollectionIdInFirestore, updateCollectionStatusByCollectionIdInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore, updateProjectStorageToArchive } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/app';
@@ -15,9 +15,46 @@ const initialState = {
 };
 // Projects
 export const fetchProjects = createAsyncThunk(
-  'projects/fetchProjects', 
-  ({currentDomain}) => {
-  return fetchProjectsFromFirestore(currentDomain)
+  'projects/fetchProjects',
+  async ({ currentDomain }) => {
+    const projects = await fetchProjectsFromFirestore(currentDomain);
+
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+
+    const processedProjects = await Promise.all(projects.map(async (project) => {
+      // Ensure createdAt exists and is a valid timestamp, and the project is not already archived
+      if (project.createdAt && typeof project.createdAt === 'number' && project.storage?.status !== 'archive') {
+        const createdAtDate = new Date(project.createdAt);
+
+        // Check if the project's creation date is before 3 months ago
+        if (createdAtDate < threeMonthsAgo) {
+          // Update the project in Firestore
+          await updateProjectStorageToArchive(currentDomain, project.id);
+          
+          const newStorageHistoryEntry = {
+            status: 'archive',
+            dateMoved: Date.now(),
+          };
+
+          // Return a new project object with updated storage information for the Redux state
+          return {
+            ...project,
+            storage: {
+              ...project.storage, // Preserve existing storage properties
+              status: 'archive',
+            },
+            storageHistory: project.storageHistory
+              ? [...project.storageHistory, newStorageHistoryEntry]
+              : [newStorageHistoryEntry],
+          };
+        }
+      }
+      // Return the project as is if it doesn't meet the archive criteria
+      return project;
+    }));
+
+    return processedProjects;
   }
 );
 

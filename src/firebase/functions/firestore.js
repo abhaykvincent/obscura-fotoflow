@@ -327,6 +327,43 @@ export const updateProjectLastOpenedInFirestore = async (domain, projectId) => {
         throw error;
     }
 };
+
+export const updateProjectStorageToArchive = async (domain, projectId) => {
+    if (!domain || !projectId) {
+        throw new Error('Domain and Project ID are required for archiving.');
+    }
+
+    const projectDocRef = doc(db, 'studios', domain, 'projects', projectId);
+
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+
+        if (projectSnapshot.exists()) {
+            const projectData = projectSnapshot.data();
+            const newStorageHistoryEntry = {
+                status: 'archive',
+                dateMoved: Date.now(),
+            };
+
+            const updatedData = {
+                storage: {
+                    ...projectData.storage,
+                    status: 'archive',
+                },
+                storageHistory: arrayUnion(newStorageHistoryEntry)
+            };
+
+            await updateDoc(projectDocRef, updatedData);
+            console.log(`Project ${projectId} storage status updated to archive.`);
+        } else {
+            console.error(`Project ${projectId} does not exist.`);
+            throw new Error('Project does not exist.');
+        }
+    } catch (error) {
+        console.error(`Error updating project storage for ${projectId}: ${error.message}`);
+        throw error;
+    }
+};
   
 // Collection Operations
 export const addCollectionToStudioProject = async (domain, projectId, collectionData) => {
