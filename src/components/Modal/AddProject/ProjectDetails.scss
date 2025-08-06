@@ -1,0 +1,10 @@
+.advanced-toggle {
+    cursor: pointer;
+    color: #007bff;
+    text-align: right;
+    margin-top: 1rem;
+  
+    &:hover {
+      text-decoration: underline;
+    }
+  }
