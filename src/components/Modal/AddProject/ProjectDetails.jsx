@@ -91,15 +91,15 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
       <div className="field live-field">
         <label></label>
         <div
-          className="advanced-toggle"
+          className={`advanced-toggle ${showAdvanced ? 'up' : 'down'}`}
           onClick={() => setShowAdvanced(!showAdvanced)}
         >
-          <span>{showAdvanced ? 'Hide Advanced' : 'Advanced'}</span>
-          <span className="arrow">{showAdvanced ? '▼' : '▲'}</span>
+          <span>{showAdvanced ? 'Hide Options' : 'Advanced'}</span>
+          <span className={`arrow`}></span>
         </div>
       </div>
       <div className={`advanced-options ${showAdvanced ? 'show' : ''}`}>
-        <>
+        <div className="advanced-options-inner">
           <div className="field live-field">
             <label>Live</label>
             <div className="project-validity-wrap">
@@ -145,7 +145,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
               </div>
             </div>
           </div>
-        </>
+        </div>
       </div>
     </div>
   );
