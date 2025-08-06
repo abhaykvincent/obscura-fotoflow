@@ -43,10 +43,10 @@ export const fetchProjects = createAsyncThunk(
             storage: {
               ...project.storage, // Preserve existing storage properties
               status: 'archive',
-            },
-            storageHistory: project.storageHistory
-              ? [...project.storageHistory, newStorageHistoryEntry]
+              storageHistory: project.storage?.storageHistory
+              ? [...project.storage.storageHistory, newStorageHistoryEntry]
               : [newStorageHistoryEntry],
+            },
           };
         }
       }

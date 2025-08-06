@@ -349,8 +349,8 @@ export const updateProjectStorageToArchive = async (domain, projectId) => {
                 storage: {
                     ...projectData.storage,
                     status: 'archive',
-                },
-                storageHistory: arrayUnion(newStorageHistoryEntry)
+                    storageHistory: arrayUnion(newStorageHistoryEntry)
+                }
             };
 
             await updateDoc(projectDocRef, updatedData);
