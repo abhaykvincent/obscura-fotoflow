@@ -60,6 +60,7 @@ function PackageDetails({ packageData, setPackageData, handleInputChange, errors
           onChange={handleInputChange}
           placeholder="e.g., Christian Wedding Packages"
         />
+            <span></span>
         {errors.name && <p className="error-message">{errors.name}</p>}
       </div>
       <div className="form-group field">

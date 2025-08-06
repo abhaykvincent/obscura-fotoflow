@@ -1,8 +1,9 @@
+@import '../../../style/variables';
 .advanced-toggle {
     cursor: pointer;
-    color: #007bff;
-    text-align: right;
-    margin-top: 1rem;
+    color: $green-default-dark;
+    text-align: left;
+    margin-top: 0px;
   
     &:hover {
       text-decoration: underline;

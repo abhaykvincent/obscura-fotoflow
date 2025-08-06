@@ -35,6 +35,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
                 }
               }}
             />
+            <span></span>
             {errors.name && <div className="error">{errors.name}</div>}
           </div>
           <div className="field">
@@ -49,6 +50,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
 
               // 
             />
+            <span></span>
             {errors.name2 && <div className="error">{errors.name2}</div>}
           </div>
         </>
@@ -56,7 +58,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
     }
     return (
       <div className="field">
-        <label>Project Name</label>
+        <label>Name</label>
         <input
           name="name"
           ref={nameInputRef}
@@ -65,13 +67,14 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
           type="text"
           onChange={handleInputChange}
         />
+            <span></span>
         {errors.name && <div className="error">{errors.name}</div>}
       </div>
     );
   };
 
   return (
-    <div className="form-section">
+    <div className="form-section project-details">
       {renderNameFields()}
       <div className="field team-field">
         <label>Team</label>
@@ -85,7 +88,16 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
           </div>
         </div>
       </div>
-      {showAdvanced ? (
+      <div className="field live-field">
+        <label>Options</label>
+        <div
+          className="advanced-toggle"
+          onClick={() => setShowAdvanced(!showAdvanced)}
+        >
+        {showAdvanced ? 'Hide Advanced' : 'Advanced'}
+        </div>
+      </div>
+      {showAdvanced && (
         <>
           <div className="field live-field">
             <label>Live</label>
@@ -133,14 +145,6 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
             </div>
           </div>
         </>
-      ) : (
-        <div
-          className="advanced-toggle"
-          onClick={() => setShowAdvanced(true)}
-          style={{ cursor: 'pointer', color: '#007bff', textAlign: 'right', marginTop: '1rem' }}
-        >
-          Advanced
-        </div>
       )}
     </div>
   );
