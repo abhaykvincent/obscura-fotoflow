@@ -1,11 +1,31 @@
 @import '../../../style/variables';
 .advanced-toggle {
     cursor: pointer;
-    color: $green-default-dark;
     text-align: left;
     margin-top: 0px;
-  
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    span{
+
+    color: $green-default-dark;
+    }
     &:hover {
-      text-decoration: underline;
+    }
+
+    .arrow {
+        font-size: 0.8rem;
     }
   }
+
+.advanced-options {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out;
+  .field{
+        animation-delay: 0s !important;
+  }
+  &.show {
+    max-height: 500px; // Adjust this value to fit the content
+  }
+}
