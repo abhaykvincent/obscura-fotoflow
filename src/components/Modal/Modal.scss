@@ -517,9 +517,17 @@ animation-timing-function: ease-out;
     text-align: center;
     padding: 8px*2;
     .message{
-        margin-bottom: 8px;
         .caution{
         color: $orange-accessible-dark;
+        }
+        &.top{
+        margin-bottom: 8px;
+        color: $gray-accessible-dark;
+
+        }
+        &.bottom{
+        margin-bottom: 8px*2;
+
         }
     }
     .note{

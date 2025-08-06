@@ -267,6 +267,25 @@ function Projects() {
                                         onClick={() => handleTabClick(FILTER_TABS.ALL)}
                                         role="button" tabIndex={0}
                                     >
+                                        Active
+                                    </div>
+                                    <div
+                                        className={`control ctrl-draft ${selectedTab === FILTER_TABS.SELECTED ? 'active' : ''}`}
+                                        onClick={() => handleTabClick(FILTER_TABS.SELECTED)}
+                                        role="button" tabIndex={0}
+                                    >
+                                        Archive
+                                    </div>
+                                </div>
+                                <div className="label">Storage</div>
+                            </div>
+                            <div className="control-wrap">
+                                <div className="controls">
+                                    <div
+                                        className={`control ctrl-all ${selectedTab === FILTER_TABS.ALL ? 'active' : ''}`}
+                                        onClick={() => handleTabClick(FILTER_TABS.ALL)}
+                                        role="button" tabIndex={0}
+                                    >
                                         All
                                     </div>
                                     <div
@@ -292,25 +311,6 @@ function Projects() {
                                     </div>
                                 </div>
                                 <div className="label">Filter</div>
-                            </div>
-                            <div className="control-wrap">
-                                <div className="controls">
-                                    <div
-                                        className={`control ctrl-all ${selectedTab === FILTER_TABS.ALL ? 'active' : ''}`}
-                                        onClick={() => handleTabClick(FILTER_TABS.ALL)}
-                                        role="button" tabIndex={0}
-                                    >
-                                        Active
-                                    </div>
-                                    <div
-                                        className={`control ctrl-draft ${selectedTab === FILTER_TABS.SELECTED ? 'active' : ''}`}
-                                        onClick={() => handleTabClick(FILTER_TABS.SELECTED)}
-                                        role="button" tabIndex={0}
-                                    >
-                                        Archive
-                                    </div>
-                                </div>
-                                <div className="label">Storage</div>
                             </div>
                         </div>
 
