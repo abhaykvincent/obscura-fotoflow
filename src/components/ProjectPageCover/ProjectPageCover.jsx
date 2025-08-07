@@ -9,6 +9,7 @@ import { setCoverPhotoInFirestore } from "../../firebase/functions/firestore";
 import { updateProjectCover, updateProjectName } from "../../app/slices/projectsSlice";
 import { convertMegabytes } from "../../utils/stringUtils";
 import { ProjectStatus } from "../Project/ProjectStatus/ProjectStatus";
+import { getGalleryURL } from "../../utils/urlUtils";
 
 export const ProjectCover = ({ project }) => {
     const dispatch = useDispatch();
@@ -165,11 +166,21 @@ export const ProjectCover = ({ project }) => {
                             <div className="button secondary outline icon archive"> Archive</div>
                             {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
                         </div> 
-                        <div className="link-pin">
-                            <div className="button secondary outline icon copy"> Link</div>
-                            {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
-                        </div>  
                         </div>
+
+
+                                  <div className="link-pin">
+                                    <div className='link' >
+                                    
+                                        <div className="link-container">
+                                          <a className='linkToGallery' href={getGalleryURL('share',currentStudio?.domain,project?.id)} target='_blank' > 
+                                            ...{getGalleryURL('share',currentStudio?.domain,project?.id).slice(-40)}
+                                            <div className="button icon icon-only open-in-new"></div>
+                                          </a>
+                                        </div>
+                                      </div>
+                                      <div className="button primary outline text-only  icon copy"></div>
+                                  </div>
                         {
                             project.pin&&
                     <div className="bottom-right">
@@ -199,6 +210,9 @@ export const ProjectCover = ({ project }) => {
                         )}
                     </div>
                         }
+                    <div className="project-metadata">
+                        <p>Project created on Jan 12, 2025</p>
+                    </div>
                 </div>
                 
             </div>}

@@ -167,7 +167,7 @@ function ShareGallery({project }) {
 
                     <div className='gallery-field'>
                       
-                      <div className="client-label"></div>
+                      <div className="client-label">Gallery</div>
                       <div className="client-label">Selection</div>
                     </div>
                 {project?.collections.map((collection, index) => (

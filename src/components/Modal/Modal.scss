@@ -328,7 +328,7 @@ animation-timing-function: ease-out;
           border: 1px solid $gray6-accessible-dark;
           border-left: 1px solid $gray5-accessible-dark;
           border-top: 1px solid $gray4-accessible-dark;
-          background-color: $dark-2-5;
+          background-color: $dark-1-5;
           box-shadow: 2px 1px 0 1px rgba(0, 0, 0, 0.4);
           border-radius: 6px;
           overflow: hidden;
@@ -360,7 +360,6 @@ animation-timing-function: ease-out;
           border-left: 1px solid $gray2-accessible-dark;
           border-top: 1px solid $gray2-accessible-dark;
           label{
-              display: flex;
               cursor: pointer;
               color: $gray4-default-light;
               transition-duration: 0.1s;
@@ -410,7 +409,7 @@ animation-timing-function: ease-out;
       }
       &.template-options{
           margin-bottom: 8px*2;
-          justify-content: start;
+          justify-content: center;
           .radio-button-group{
           padding: 0px;
           font-size: 1.2rem;
@@ -429,7 +428,7 @@ animation-timing-function: ease-out;
       }
       }
     &.stared-templates{
-        margin-top: 8px*6;
+        margin-top: 8px*4;
       gap:8px*2;
       .project-validity-options{
         .radio-button-group{
@@ -438,11 +437,52 @@ animation-timing-function: ease-out;
               border: 1px solid $dark-0;
               border-radius: 6px;
           label{
-              padding: 8px*1.6 *2  8px*1.6 *3;
+              padding: 8px*1.6 *1.2  8px*1.6 *3;
             font-size: 1.3rem;
               color: $gray5-default-light;
+              opacity:0.8;
           }
         }
+      }
+      .stared-templates-label{
+        text-align: center;
+        font-size: 1.2rem;
+        margin-bottom: 8px*3;
+      }
+      .radio-button-group{
+        label{
+        display: grid;
+        justify-items:center;
+        gap:8px*1;
+        &::before{
+          content: '.';
+          color:rgba(51, 45, 45, 0);
+          width:8px*4;
+          height:8px*4;
+          background-size: 90%;
+          background-repeat: no-repeat;
+          background-position: center;
+
+        }
+        &.template-wedding{
+          &::before{
+            background-image: url('https://img.icons8.com/?size=100&id=59805&format=png&color=54a134');
+          }
+        }
+        &.template-birthday{
+          &::before{
+            background-image: url('https://img.icons8.com/?size=100&id=1VGGbDqqEsoJ&format=png&color=FFFFFF');
+          }
+        }
+        &.template-baptism{
+          &::before{
+          background-size: 105%;
+            background-image: url('https://img.icons8.com/?size=100&id=gZZsLShowwc1&format=png&color=FFFFFF');
+          }
+        }
+
+        }
+
       }
     }
     &.other-templates{
@@ -904,7 +944,7 @@ top: 0;
 left:0;
 width: 100%;
 height: 100vh;
-background-color: rgba(14, 14, 14, 0.2);
+background-color: rgba(14, 14, 14, 0.5);
 z-index: 19;
 backdrop-filter: blur(1px);
 transition-duration: 0.4s;
