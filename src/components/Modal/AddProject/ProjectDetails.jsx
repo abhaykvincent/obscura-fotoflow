@@ -84,7 +84,9 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
               className="profile-image"
               style={{ backgroundImage: `url(${user?.photoURL})` }}
             />
-            <span className="team-member-name">{user?.displayName}</span>
+            <span className="team-member-name">{user?.displayName}
+              
+            </span>
           </div>
         </div>
       </div>
