@@ -238,6 +238,7 @@ main.subscription{
             align-items: center;
             margin-bottom: 8px*2;
             margin-top: -8px*1;
+            padding: 8px*0 8px*2;
             .subscriptions-heading{
                 font-size: 1.8rem;
                 margin-top: 8px*0;
@@ -249,6 +250,7 @@ main.subscription{
             .subscriptions-options{
                 display: flex;
                 align-items: center;
+                justify-content: center;
                 .tags{
                     display:flex;
                 }
@@ -925,7 +927,11 @@ main.subscription{
         }
 
     }
-     .plans .plan{
+     .plans{
+            grid-template-columns: minmax(100px, 240px) minmax(100px, 240px);
+            column-gap: 8px*4;
+
+        .plan{
         .plan-features{
             margin-top: 8px*4;
             margin-bottom: 8px*4;
@@ -958,6 +964,7 @@ main.subscription{
             .first-month{
                 font-size: 1rem;
             }
+        }
         }
 
         .waitlist-label{
@@ -992,11 +999,36 @@ main.subscription{
         }
     }
     
-    
+    .subscription{
+        .welcome-section{
+            grid-template-columns: 1fr;
+            .welcome-message-top
+            {
+                h1{
+                    line-height: 3rem;
+                }
+                h2{
+                    margin-top: 8px*2;
+                    margin-bottom: 8px*2;
+                    line-height: 1.5rem;
+
+                }
+            }
+
+            .actions{
+                justify-content: flex-start;
+                margin-top: 8px*4;
+            }
+        }
      .plans-container{
         margin-left: 0;
-        
+        .subscriptions-header{
+            grid-template-columns: 1fr;
+            justify-content: center
+        }
     } 
+
+    }
     .plans{
         padding: 8px*0;
         grid-template-columns: 1fr;
@@ -1043,25 +1075,6 @@ main.subscription{
     }
     .subscription 
     {
-        .welcome-section{
-            grid-template-columns: 1fr;
-            .welcome-message-top
-            {
-                h1{
-                    line-height: 3rem;
-                }
-                h2{
-                    margin-top: 8px*2;
-                    line-height: 2.5rem;
-
-                }
-            }
-
-            .actions{
-                justify-content: flex-start;
-                margin-top: 8px*4;
-            }
-        }
         .section .projects{
             grid-template-columns: 1fr;
         }

@@ -25,7 +25,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
               name="name"
               ref={nameInputRef}
               value={projectData.name}
-              placeholder="Sarah"
+              placeholder="Avani"
               type="text"
               onChange={handleInputChange}
               onKeyDown={(e) => {
@@ -44,7 +44,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
               name="name2"
               ref={name2InputRef}
               value={projectData.name2}
-              placeholder="Matan"
+              placeholder="Adi"
               type="text"
               onChange={handleInputChange}
 
@@ -63,7 +63,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
           name="name"
           ref={nameInputRef}
           value={projectData.name}
-          placeholder="Sarah & Matan"
+          placeholder={projectData.type === 'Wedding' ? 'Saanvi' : 'Neel Alex'}
           type="text"
           onChange={handleInputChange}
         />
@@ -93,7 +93,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
       <div className="field live-field">
         <label></label>
         <div
-          className={`advanced-toggle ${showAdvanced ? 'up' : 'down'}`}
+          className={`advanced-toggle ${showAdvanced ? 'down' : 'up'}`}
           onClick={() => setShowAdvanced(!showAdvanced)}
         >
           <span>{showAdvanced ? 'Hide Options' : 'Advanced'}</span>

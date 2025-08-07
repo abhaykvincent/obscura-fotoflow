@@ -318,7 +318,7 @@ animation-timing-function: ease-out;
     .project-validity-options{
     display: flex;
     flex-wrap: wrap;
-    gap: 8px*1;
+    gap: 8px*2;
     transition-duration: 0.4s;
       .radio-button-group{
           display: flex;
@@ -471,13 +471,13 @@ animation-timing-function: ease-out;
         }
         &.template-birthday{
           &::before{
-            background-image: url('https://img.icons8.com/?size=100&id=1VGGbDqqEsoJ&format=png&color=FFFFFF');
+            background-image: url('https://img.icons8.com/?size=100&id=1VGGbDqqEsoJ&format=png&color=54a134');
           }
         }
         &.template-baptism{
           &::before{
           background-size: 105%;
-            background-image: url('https://img.icons8.com/?size=100&id=gZZsLShowwc1&format=png&color=FFFFFF');
+            background-image: url('https://img.icons8.com/?size=100&id=gZZsLShowwc1&format=png&color=54a134');
           }
         }
 

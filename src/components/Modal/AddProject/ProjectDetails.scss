@@ -33,13 +33,13 @@
       background-position: center;
       
     }
-    &.down{
+    &.up{
       .arrow {
         opacity:0.5;
         background-image: url('https://img.icons8.com/?size=100&id=lCACQM0xDqsw&format=png&color=336c1b')
       }
     }
-    &.up{
+    &.down{
       margin-top:8px*2;
       margin-bottom:8px;
       .arrow {
