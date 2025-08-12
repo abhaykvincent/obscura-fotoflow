@@ -7,7 +7,7 @@
 	display: flex;
 	align-items: center;
 	gap: 8px*2;
-	top: 8px*2;
+	top: 8px*22;
 	right: 8px*2;
 	height: 8px*5;
 	div{
@@ -235,10 +235,9 @@
 		@include boxed;
 		border-radius: 8px;
 		background-color: $dark-3;
-		box-shadow: 1px 1px 4px  black;
+		box-shadow: 1px 1px 4px  $dark-3;
 	}
 	.status{
-		position: absolute;
 		top: 0;
 		right: 0;
 		padding: 6px;
@@ -354,6 +353,13 @@
 			max-width: calc(100vw - 8px*13);
 		}
 	}
+	.dashboard-overview {
+		display: grid;
+		grid-template-columns: auto auto;
+		justify-content: space-between;
+		align-items: start;
+		width: 100%;
+	}
 	.tools-overview{
 		display: grid;
 		justify-items: start;
@@ -458,7 +464,7 @@
 					}
 					&.draft{
 						border: 1px solid $gray5-default-dark;
-						background-color: $dark-2;
+						background-color: $dark-2-5;
 						box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5) , inset 1px 1px 2px rgba(0, 0, 0, 0.5);
 						opacity: 0.8;
 						&:hover{
@@ -527,10 +533,50 @@
 				gap: 8px;
 				border: 1px solid $dark-1;;;
 				padding:  8px*1.6;
+				.ring-chart{
+					position: relative;
+				}
 				.message{
 					font-size: 0.8rem;
 					text-align: center;
 					color: $gray-accessible-dark;
+				}
+				.amounts-insight{
+					position: absolute;
+					width: 100%;
+					height: 100% ;
+					top: 0px;
+					left: 0px;
+					display: grid;    
+					align-items: center;
+					justify-items: center;
+					align-content: center;
+					justify-content: center;
+						.amount{
+								color: $gray2-default-dark;
+								&.highlight{
+									font-size: 1.5rem;;
+									color: $gray6-default-light;
+									text-shadow: 0px 0px 24px #6ff53597, 0px 0px 4px #6ff535cb;;
+									
+								}
+								&.of{
+									transform: translateX(-4px);
+									font-size: 0.8rem;;
+								}
+								&.paid-label{
+									margin-top: -8px*1.5;
+									font-size: 0.6rem;;
+									color: $green-default-dark;
+								}
+								span{
+								color: $gray3-default-dark;
+									font-size: 0.5rem;;
+								
+							}
+
+						}
+							
 				}
 				.button{
 					width: 100%;
@@ -539,6 +585,7 @@
 				transition-duration: 0.1s;
 				transition-timing-function: ease-out;
 				cursor: pointer;
+				
 				&:hover
 				{
 					transform: scale(1.02) translateY(-2px);
@@ -570,6 +617,11 @@
 					}
 				}
 			}
+			&.single{
+					.amounts-insight{
+						opacity: 0.3;
+					}
+				}
 			&:hover{
 				.payments-list{
 					.amount-card{
@@ -722,6 +774,7 @@
 				background-size: cover;
 				background-position:center 20% ;
 				transition-duration: 0.2s;
+					box-shadow: 0px 0px 12px rgba(190, 190, 190, 0) ,  6px 4px 6px rgba(0, 0, 0, 0);;
 				border: 1px solid $gray3-default-dark;
 			}
 			.bthumb2{
@@ -821,7 +874,7 @@
 				.bthumb1{
 					position: absolute;
 					transform: rotate(0deg);
-					border: 1px solid $gray2-default-dark;
+					border: 1px solid $gray3-default-dark;
 					background-blend-mode: normal,color-dodge;
 				}
 				.bthumb2{
@@ -924,6 +977,39 @@
 				&.thumb1{
 					.bthumb1{
 						opacity: 1;
+					box-shadow: 
+					0px 2px 2px px rgba(0, 0, 0, 0.6),
+					0px 0px 8px rgba(190, 190, 190, 0.3) ;
+						border: 1px solid $gray-default-dark;
+							transition-duration: 1s;
+						.gallery-name{
+							border-top: 1px solid rgba(255, 255, 255, 0.5);
+							transition-duration: 1s;
+							transition-delay: 0.0s;
+						}
+					}
+				}
+			}
+		}
+			.thumbnails{
+				.thumbnail{
+				&:hover{
+					transform: translate(0px,0px);
+					transition-duration: 0.2s;
+					transition-delay: 0.0s;
+					transition-timing-function: ease-in;
+					&.thumb1{
+						.bthumb1{
+							opacity: 1;
+						box-shadow: 0px 0px 12px rgba(190, 190, 190, 0.5) ,  6px 4px 6px rgba(0, 0, 0, 0.4);;
+							border: 1px solid $gray-default-dark;
+								transition-duration: 1s;
+							.gallery-name{
+								border-top: 1px solid rgba(255, 255, 255, 0.5);
+								transition-duration: 1s;
+								transition-delay: 0.0s;
+							}
+						}
 					}
 				}
 			}
@@ -948,12 +1034,15 @@
 				}
 				&.thumb1{
 					grid-row: 1/3;
+		transform: none;
 				}
 				.backthumb{
 					border: 1px solid $gray4-default-dark;
+					border-style: dashed;
 					background-color: $dark-3;
 					&:hover{
 					border: 1px solid $gray2-default-dark;
+					border-style: dashed;
 						
 					}
 				}
@@ -972,6 +1061,7 @@
 					height: 8px*16;
 					transform: rotate(0deg) translateY(0px) translateX(0px) scale(1);
 					box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+					opacity: 0.6;
 					.button{
 						position: absolute;
 						bottom: 4px;	
@@ -1062,7 +1152,6 @@
 	
 }
 .selected{
-	margin-left: 4px;
 	.thumbnails{
 		.thumbnail{
 			.count{
@@ -1196,7 +1285,7 @@
 					padding: 4px;
 					box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
 					.date{
-						margin-bottom: 8px*1;
+						margin-bottom: 8px*0.5;
 						border-radius: 4px;
 						border-radius: 4px;
 						padding: 4px 8px*2;
@@ -1390,7 +1479,7 @@
 	margin: auto;
 	background-color: $dark-2;
 	border: 1px solid $dark-0;
-	border-radius: 50%;
+	border-radius: 8px;
 	box-shadow: 2px 2px 4px  rgb(0, 0, 0);;
 	background-size: 100% !important;
 	&.jane-0005{
@@ -1449,10 +1538,17 @@
 @media only screen and (max-width: 1080px) {
     .project-dashboard{
 		flex-wrap: wrap;
+
+
+		.dashboard-overview{
+			width: calc(100vw - 8px*16);
+
+			}
 		.financials-overview{
+
+			grid-template-columns: auto;
 		}
 		.shoots{
-			grid-column: 1/3;
 		}
 	}
 }
@@ -1462,7 +1558,6 @@
 
 		}
 		.shoots{
-			grid-column: 1/3;
 		}
 		.project-dashboard-header .tools {
 			margin-right: 0px;
@@ -1481,10 +1576,9 @@
 		.financials-overview{
 			grid-template-columns: auto;
 		}
+		.dashboard-overview{
+		}
 		.shoots {
-			display: grid;
-			grid-column: 1 / 2;
-			grid-row: 2 / 3;
 			.headings{
 				grid-template-columns: 1fr;
 			}
@@ -1519,8 +1613,6 @@
 		}
 		.shoots {
 			display: grid;
-			grid-column: 1 / 2;
-			grid-row: 2 / 3;
 			.headings{
 				grid-template-columns: 1fr;
 				padding-right: 8px*2;

@@ -5,15 +5,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import { changeSubscriptionPlan } from '../../firebase/functions/subscription';
 import { fetchStudio, selectCurrentSubscription, selectStudio } from '../../app/slices/studioSlice';
-import { getDaysFromNow } from '../../utils/dateUtils';
+import { getDaysFromNow, getEventTimeAgo } from '../../utils/dateUtils';
 import { Link } from 'react-router-dom';
+import CurrentPlanSection from '../../features/BillingHistory/CurrentPlanSection';
 
 export const initialPlans = [
   {
     name: 'Core',
     isCurrentPlan: true,
     pricing: [
-      { storage: 5, monthlyPrice: 'Free', yearlyPrice: '₹0', specialOffer: ['for 12 months.','No Credit Card Required']},
+      { storage: 5, monthlyPrice: 'Free', yearlyPrice: '₹0', specialOffer: ['for Forever.','No CC Required']},
     ],
     features: ['3 galleries/project','3 new projects/month'],
     coreFeatures: ['5 GB Storage','','Gallery','Selection'],
@@ -23,7 +24,7 @@ export const initialPlans = [
   {
     name: 'Freelancer',
     pricing: [
-      { storage: 100, monthlyPrice: '930',monthlyPriceWas: '₹1,300', yearlyPrice: '₹10,000', specialOffer: ['for 12 months','₹100 OFF','Core +'],defaultPlan: true   },
+      { storage: 100, monthlyPrice: '₹930',monthlyPriceWas: '₹1,300', yearlyPrice: '₹10,000', specialOffer: ['for 12 months','₹100 OFF','Core +'],defaultPlan: true   },
      
     ],
     defaultPlan: 0,
@@ -217,7 +218,7 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
         {currentPricing?.monthlyPrice == 'Free'?<div className="unit"> * </div>:<div className="unit">/mo</div>}
       </div >
       <div className="plan-pricing yearly">
-        <div className="first-month">{currentPricing?.specialOffer[0]}</div>
+        <div className="first-month contract-period">{currentPricing?.specialOffer[0]}</div>
         <div className="first-month iconic">{currentPricing?.specialOffer[1]}</div>
         <div className="first-month">{currentPricing?.specialOffer[2]}</div>
       </div>
@@ -248,12 +249,12 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
       
       {/* !plan.name.includes('Core') */ true && (
         <>
-      {plan.expiry && (
-        <div className="validity">
+      { 
+        <div className={`validity ${plan.expiry ? '' : 'hide'}`}>
           <p className='label'>Free plan will expries on</p>
           <p>{plan.expiry}</p>
         </div>
-      )}
+      }
           <p className='waitlist-label'>{
             studio?.subscriptionId?.includes(plan.name.toLowerCase()) ? 
             <span className="expiry-label">{`Trial ends in ${ getDaysFromNow(studio?.trialEndDate)} days`}</span> :
@@ -302,7 +303,7 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
                 <RazorpayButton payment_button_id='pl_PmcfmE5GTfrnNY'  planame={plan.name}/>
                 : <></>)
           }
-          <p className='waitlist-label'>{plan.isAddStorage ? ' Secure offer price. Pay with UPI' : plan.isContactSales ? 'Talk to a sales. Book Demo' : ' Pay with UPI . Lock the price.'}</p>
+          <p className='waitlist-label'>{plan.name==='Core' ? ' ' : plan.isContactSales ? 'Talk to a sales. Book Demo' : ' Pay with UPI . Lock the price.'}</p>
         </>
       )}
       
@@ -317,6 +318,8 @@ export const PlanCard = ({plan, defaultPlan,defaultStorage, onStorageChange }) =
 function Subscription() {
   const [plans, setPlans] = useState(initialPlans);
   const defaultStudio = useSelector(selectUserStudio);
+  const currentSubscription = useSelector(selectCurrentSubscription);
+  const studio= useSelector(selectStudio)
   //reset plans to initialPlans in appropriate interval
   useEffect(() => {
       setPlans(initialPlans);

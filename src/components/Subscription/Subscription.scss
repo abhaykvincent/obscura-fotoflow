@@ -238,6 +238,7 @@ main.subscription{
             align-items: center;
             margin-bottom: 8px*2;
             margin-top: -8px*1;
+            padding: 8px*0 8px*2;
             .subscriptions-heading{
                 font-size: 1.8rem;
                 margin-top: 8px*0;
@@ -249,6 +250,7 @@ main.subscription{
             .subscriptions-options{
                 display: flex;
                 align-items: center;
+                justify-content: center;
                 .tags{
                     display:flex;
                 }
@@ -276,6 +278,9 @@ main.subscription{
         }
 
         
+    }
+    .current-plan{
+        margin-left: 8px*4;
     }
 }
 .plans{
@@ -343,11 +348,10 @@ main.subscription{
             
             color: $gray-accessible-light;
             z-index: 2;
-            margin-top: 4px;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
             border: 1px solid $gray4-accessible-dark;
 
-            font-size: 0.7rem;
+            font-size: 0.8rem;
         }
         .plan-pricing{
             display: flex;
@@ -413,7 +417,7 @@ main.subscription{
             &.yearly{
                 display: grid;
                 margin-top: -8px*2.5;
-                margin-bottom:8px*2.5;
+                margin-bottom:8px*0.5;
                 margin-left: 8px;
                 padding-bottom: 8px*1;
                 h1{
@@ -441,9 +445,15 @@ main.subscription{
                 font-size: 0.9rem;
                 margin-top: 0px;
                 color: $green-accessible-light;
-                background:  #9494943a;
+                background:  #bcbcbc3a;
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
+                &.contract-period{
+                    color: $gray-accessible-light;
+                    background: #bcbcbc76;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                }
             }
             .iconic{
                 margin-top: 0px;
@@ -551,16 +561,19 @@ main.subscription{
         }
         .validity{
             line-break: anywhere;
+            margin-bottom: 8px*2;
             .label{
-                color: $gray4-accessible-dark;
+                color: $gray5-accessible-dark;
                 text-decoration: none;
             }
             p{
                 font-size: 0.8rem;
-                color: $gray3-accessible-dark;
+                color: $gray4-accessible-dark;
                 text-decoration: underline;
             }
-            margin-bottom: 8px*0;
+            &.hide{
+                opacity:0 !important;
+            }
         }
         .disable{
             opacity: 0.5;
@@ -628,7 +641,7 @@ main.subscription{
             }
 
             .button.primary{
-                border: 1px solid $gray-accessible-dark;
+                border: 1px solid $gray2-accessible-dark;
                 color: $gray6-accessible-light;;
                 background-color: $gray6-accessible-dark;;
             }
@@ -651,7 +664,7 @@ main.subscription{
                 border: 1px solid $gray3-accessible-dark;
                 z-index: 2;
                 border-radius: 4px;
-                opacity: 0.8;
+                opacity: 1;
                 margin-bottom: 8px;
                 margin-top: 0;
                 font-size: 0.8rem;
@@ -689,8 +702,8 @@ main.subscription{
                     }
             }
             .button.primary {
-                border: 1px solid $gray4-default-dark;
-                color: $gray2-default-dark;
+                border: 1px solid $gray2-default-dark;
+                color: $gray-default-dark;
                 background-color: $dark-2;
                 box-shadow: 1px 2px 4px black;
             }
@@ -749,6 +762,7 @@ main.subscription{
 
                 }
             }
+
             .cover{
                 width: 100%;
                 padding-top: 100%;
@@ -808,18 +822,22 @@ main.subscription{
 .modal-container{
     z-index: 45 !important;
 }
-.modal.upgrade{
-    width: 90vw;
+.modal.upgrade.island{
     text-align: center;
     padding-bottom: 0;
     z-index: 91;
+    width: 8px*200;
+    max-width: 8px*120;
+    & + .modal-backdrop{
+        background-color: #0000006f;
+    }
     .modal-body{
-        height: calc(100vh - 8px*34) !important;
+        height: 8px*64 !important;
         
     overflow: scroll;
     }
     .upgrade-content{
-        margin-bottom: 8px*2;
+        margin-bottom: 8px*4;
         font-size: 2rem;
         font-weight: 600;
     }
@@ -828,6 +846,8 @@ main.subscription{
     }
     .form-section{
         padding-bottom: 8px*2;
+        margin: 0 8px*5;
+        text-align: center;
     }
     .core-features{
         display: none;
@@ -871,14 +891,8 @@ main.subscription{
     }
 }
   @media only screen and (max-width: 1500px) {
-    .home .section .projects{
-        grid-template-columns: 1fr 1fr 1fr;
-    }
 }
 @media only screen and (max-width: 1230px) {
-    .home .section .projects{
-        grid-template-columns: 1fr 1fr 1fr ;
-    }
      .plans{
         column-gap: 8px*1.5;
     }
@@ -889,7 +903,6 @@ main.subscription{
         column-gap: 8px*4;
     }
     .home .section .projects{
-        grid-template-columns: 1fr 1fr 1fr ;
         .project{
             .project-cover{
             }
@@ -901,16 +914,12 @@ main.subscription{
 @media only screen and (max-width: 860px) {
     .home {
         .section .projects{
-            grid-template-columns: 1fr 1fr  ;
         }
         .welcome-section{
             grid-template-columns: 1fr;
             .welcome-message{
-                &:last-child{
                     margin-top: 0;
                     line-height: 2.5rem;
-
-                }
             }
             .actions{
                 justify-content: flex-start;
@@ -919,7 +928,11 @@ main.subscription{
         }
 
     }
-     .plans .plan{
+     .plans{
+            grid-template-columns: minmax(100px, 240px) minmax(100px, 240px);
+            column-gap: 8px*4;
+
+        .plan{
         .plan-features{
             margin-top: 8px*4;
             margin-bottom: 8px*4;
@@ -953,6 +966,7 @@ main.subscription{
                 font-size: 1rem;
             }
         }
+        }
 
         .waitlist-label{
             font-size: 1rem;
@@ -972,10 +986,9 @@ main.subscription{
     {
        
         .section .projects{
-            grid-template-columns: 1fr 1fr ;
             .project{
                 .project-cover{
-                    width: 80px
+                    width: 8px*13;
                 }
                 .project-details{
                     margin-left: -24px;
@@ -987,11 +1000,36 @@ main.subscription{
         }
     }
     
-    
+    .subscription{
+        .welcome-section{
+            grid-template-columns: 1fr;
+            .welcome-message-top
+            {
+                h1{
+                    line-height: 3rem;
+                }
+                h2{
+                    margin-top: 8px*2;
+                    margin-bottom: 8px*2;
+                    line-height: 1.5rem;
+
+                }
+            }
+
+            .actions{
+                justify-content: flex-start;
+                margin-top: 8px*4;
+            }
+        }
      .plans-container{
         margin-left: 0;
-        
+        .subscriptions-header{
+            grid-template-columns: 1fr;
+            justify-content: center
+        }
     } 
+
+    }
     .plans{
         padding: 8px*0;
         grid-template-columns: 1fr;
@@ -1038,25 +1076,6 @@ main.subscription{
     }
     .subscription 
     {
-        .welcome-section{
-            grid-template-columns: 1fr;
-            .welcome-message-top
-            {
-                h1{
-                    line-height: 3rem;
-                }
-                h2{
-                    margin-top: 8px*2;
-                    line-height: 2.5rem;
-
-                }
-            }
-
-            .actions{
-                justify-content: flex-start;
-                margin-top: 8px*4;
-            }
-        }
         .section .projects{
             grid-template-columns: 1fr;
         }

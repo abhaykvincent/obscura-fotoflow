@@ -55,86 +55,7 @@
       }
     }
   
-    // Current Plan
-    .current-plan {
-      display: grid;
-      justify-items: start;
-      margin-bottom: 30px;
-  
-      .section-title {
-        font-size: 20px;
-        font-weight: bold;
-        margin-bottom: 15px;
-
-      }
-  
-      .plan-details {
-        padding: 15px;
-        background-color: $dark-2-5;
-        border-radius: 4px;
-        color: $gray-default-dark;;
-        border: 1px solid $gray4-default-dark;;
-        border-radius: 8px;
-  
-        p {
-          margin: 8px 0;
-          font-size: 14px;
-          color: $gray-default-dark;;
-          .status-tag {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            &.paid {
-              background-color: $dark-2;
-              border: 1px solid $green-default-dark;;
-              color:$green-default-dark;;
-            }
-            &.unpaid {
-              background-color: #f44336;
-              color: #fff;
-            }
-          }
-  
-          .link {
-            color: #4caf50;
-            text-decoration: none;
-            &:hover {
-              text-decoration: underline;
-            }
-          }
-  
-          .trial-progress {
-            display: inline-block;
-            width: 50px;
-            height: 6px;
-            background-color: #4caf50;
-            border-radius: 3px;
-            vertical-align: middle;
-            margin-left: 5px;
-          }
-          &.plan-pricing{
-            display: flex;
-            align-items: center;
-            gap: 8px*1;
-            font-size: 2rem;
-            padding: 8px;
-            margin: 0;
-          }
-        }
-
-        .current-plan-label{
-          font-size: 3rem;
-          padding: 2rem;
-          margin: 0;
-          text-align: center;
-          color: $gray-default-dark;;
-          background: $dark-3;
-          border: 1px solid $gray3-default-dark;;
-          border-radius: 8px;
-        }
-      }
-    }
+   
     // Invoice Historyf
     .invoice-history {
       margin-bottom: 18px*2;
@@ -160,7 +81,9 @@
           }
         }
       }
-  
+      table{
+        border-collapse: collapse; 
+      }
       .invoice-table {
         width: 100%;
         border-collapse: collapse;
@@ -170,8 +93,32 @@
         background: $dark-2;
         border: 1px solid $gray3-default-dark;;
         border-radius: 8px;
-        td{
-          color: $gray2-default-dark;
+        .clickable-row{
+          cursor: pointer;
+          &:hover {
+            background-color: $dark-2-5;
+            border: 1px solid $gray-default-dark !important;
+          }
+          &.selected{
+            background-color: $dark-2-5;
+             td{
+            border-bottom: $gray2-default-dark 1px solid;
+              border-bottom: 1px  solid $gray6-default-dark !important;
+            }
+          }
+        }
+        .expanded-row{
+          td{
+
+            padding: 8px 8px*2;
+            border-bottom: $gray2-default-dark 1px solid;
+            background-color: $dark-2;
+          }
+          .expanded-content{
+            display: flex;
+            gap: 8px;
+            flex-direction: row-reverse
+          }
         }
         .active{
           td{
@@ -180,7 +127,7 @@
         }
         th,
         td {
-          padding: 12px;
+          padding: 8px*2;
           text-align: left;
           border-bottom: 1px solid #333;
         }
@@ -206,8 +153,9 @@
           border-radius: 12px;
           font-size: 12px;
           &.paid {
-            background-color: $green-default-dark;
-            color: #fff;
+              background-color: $dark-2;
+              border: 1px solid $green-default-dark;;
+              color:$green-default-dark;;
           }
           &.unpaid {
             background-color: #5a5a5a;
@@ -242,4 +190,99 @@
         }
       }
     }
-  }
+  } // Current Plan
+    .current-plan {
+      display: grid;
+      justify-items: center;
+      margin-bottom: 30px;
+  
+      .section-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 15px;
+
+      }
+  
+      .plan-details {
+        padding: 15px;
+        background-color: $dark-2-5;
+        border-radius: 16px;
+        color: $gray-default-dark;;
+        border: 1px solid $gray2-default-dark;
+        border-bottom: 1px solid $gray3-default-dark;
+        border-right: 1px solid $gray3-default-dark;
+        border-radius: 8px;
+          box-shadow: 1px 1px 2px black;
+  
+        p {
+          margin: 8px 0;
+          font-size: 14px;
+          color: $gray-default-dark;;
+          .status-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+
+            &.paid {
+              background-color: $dark-2;
+              border: 1px solid $green-default-dark;;
+              color:$green-default-dark;;
+            }
+            &.unpaid {
+              background-color: #f44336;
+              color: #fff;
+            }
+            &.free {
+              background-color: $dark-2;
+              border: 1px solid $green-default-dark;;
+              color:$green-default-dark;;
+            }
+            
+          }
+            &.plan-pricing{
+              color: #fff;
+
+            }
+  
+          .link {
+            color: #4caf50;
+            text-decoration: none;
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+  
+          .trial-progress {
+            display: inline-block;
+            width: 50px;
+            height: 6px;
+            background-color: $green-default-dark;;
+            border-radius: 3px;
+            vertical-align: middle;
+            margin-left: 5px;
+          }
+          &.plan-pricing{
+            display: flex;
+            align-items: center;
+            gap: 8px*1;
+            font-size: 2rem;
+            padding: 8px;
+            margin: 0;
+          }
+        }
+
+        .current-plan-label{
+          font-size: 3rem;
+          padding: 2rem 6rem;
+          margin: 0;
+          text-align: center;
+          color: $gray3-default-light;;
+          background: $dark-3;
+          border: 1px solid $gray3-default-dark;;
+        border-bottom: 1px solid $gray4-default-dark;
+        border-right: 1px solid $gray4-default-dark;
+          border-radius: 6px;
+        }
+      }
+    }

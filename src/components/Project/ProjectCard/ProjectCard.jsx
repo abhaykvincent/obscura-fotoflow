@@ -4,10 +4,16 @@ import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../../app/slices/authSlice';
 import { getThumbnailUrl1 } from '../../../utils/urlUtils';
 
-function ProjectCard({project}) {   
+function ProjectCard({project,type}) {   
   const defaultStudio = useSelector(selectUserStudio)
   return (
-    <Link className={`project ${project.id} ${project.type?project.type:''} ${project.status?project.status:''}`} to={`/${defaultStudio.domain}/project/${project.id}`} key={project.id}
+    <Link className={`project 
+        ${project.id} 
+        ${project.type?project.type:''} 
+        ${project.status?project.status:''}
+        ${type?type:''} 
+        `} 
+        to={`/${defaultStudio.domain}/project/${project.id}`} key={project.id}
     >
         <div className="cover-wrap">
             <div className="project-cover"

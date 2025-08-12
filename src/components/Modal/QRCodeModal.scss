@@ -1,0 +1,47 @@
+@import '../../style/variables.scss';
+.App .qr-code-modal {
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 8px*65;
+      padding:  1rem 2rem;
+      margin: 0 !important;
+    }
+  
+    .qr-code-container {
+      margin-bottom: 8px;
+      padding: 8px*2;
+      border-radius: 8px*0.5;
+      background: rgba(255, 255, 255, 1);
+    }
+  
+    .qr-code-label {
+      font-size: 1.1rem;
+
+      margin: 8px*2 0;
+      color: $gray-default-light;
+    }
+
+    .qr-code-brand{
+      font-size: 1rem;
+      font-weight: 500;
+      color: $gray2-default-dark;
+      margin-bottom: 8px*2;
+      margin-top: -8px*1;
+    }
+    .qr-code-name{
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: $gray4-default-light;
+    }
+    .qr-code-type{
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: $gray-default-light;
+      margin-bottom: 8px*2;
+      margin-top: 8px*0;
+    }
+  }
+  

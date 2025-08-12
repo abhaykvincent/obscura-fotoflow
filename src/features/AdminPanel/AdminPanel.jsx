@@ -1,27 +1,58 @@
 import React, { useEffect, useState } from 'react';
-import {  fetchAllReferalsFromFirestore, fetchUsers } from '../../firebase/functions/firestore';
+import { fetchAllReferalsFromFirestore, fetchUsers, migrateCollectionsByStudio } from '../../firebase/functions/firestore';
 import './AdminPanel.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../app/slices/modalSlice';
 import AddReferralModal from '../../admin/Modal/AddReferral';
+import ViewDetailsDrawer from '../../admin/Modal/ViewDetailsDrawer';
 import { fetchReferrals, generateReferral, selectReferrals } from '../../app/slices/referralsSlice';
-import { set } from 'date-fns';
 import { useNavigate, useParams } from 'react-router';
 import { copyToClipboard, getGalleryURL, getOnboardingReferralURL } from '../../utils/urlUtils';
 import { fetchStudios } from '../../firebase/functions/studios';
 import { migrateStudios } from '../../firebase/functions/subscription';
+import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
+import { showAlert } from '../../app/slices/alertSlice';
 
 function AdminPanel() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     // react url page name                 <Route path="/admin/:page" element={<AdminPanel />} />
     const page = useParams().page;
+
+    // Initialize selectedTab based on URL, then localStorage, then default
+    const [selectedTab, setSelectedTab] = useState(() => {
+        const storedTab = localStorage.getItem('adminPanelLastTab');
+        if (page) {
+            return page; // URL parameter takes precedence
+        } else if (storedTab) {
+            return storedTab; // Use stored tab if no URL parameter
+        }
+        return 'users'; // Default tab if neither URL nor localStorage has a value
+    });
+
+    // Effect to update URL if initial tab came from localStorage or default
+    useEffect(() => {
+        if (!page && selectedTab) { // If no page in URL, but we have a selectedTab
+            // Only navigate if the current URL path is not already matching the selectedTab
+            // This prevents unnecessary navigations and potential infinite loops
+            if (window.location.pathname !== `/admin/${selectedTab}`) {
+                navigate(`/admin/${selectedTab}`, { replace: true });
+            }
+        }
+    }, [page, selectedTab, navigate]); // Dependencies for this useEffect
+
+    const domain = useSelector(selectDomain);
     const [studios, setStudios] = useState([]);
     const [users, setUsers] = useState([]);
-    const [selectedTab, setSelectedTab] = useState(page); // State to manage the selected tab
     const [referallsList, setReferallsList] = useState([])
+    const [expandedStudioId, setExpandedStudioId] = useState(null); // State for expanded studio row
+
+    const handleRowClick = (studioId) => {
+        setExpandedStudioId(expandedStudioId === studioId ? null : studioId);
+    };
     useEffect(()=>{
-    },[referallsList])
+        console.log(domain)
+    },[domain])
     useEffect(() => {
         const getStudios = async () => {
             try {
@@ -59,7 +90,7 @@ function AdminPanel() {
     const handleTabChange = (tab) => {
         // update react router url
         if(tab.length>0){
-
+            localStorage.setItem('adminPanelLastTab', tab); // Save to localStorage
             navigate(`/admin/${tab}`);
            setSelectedTab(tab);
         }
@@ -68,9 +99,10 @@ function AdminPanel() {
     return (
         <>
         <AddReferralModal/>
-        <main className="admin-panel">
+        <main className="admin-panel billing-container">
             <h1 className="admin-title">Admin Panel</h1>
             <div className="admin-dashboard">
+
                 <div className="cards">
                     <div className="group ">
 
@@ -140,30 +172,12 @@ function AdminPanel() {
                     </div>
 
                 </div>
+
                 <div className="admin-actions">
-                    <div className="button secondary outline" onClick={() => {/* Implement create user logic here */}}>
-                        Create User
-                    </div>
-                    <div className="button secondary outline" onClick={() => {/* Implement create studio logic here */}}>
-                        Create Studio
-                    </div>
-                    <div className="button secondary outline" onClick={() => {/* Implement create studio logic here */}}>
-                        Create Referal
-                    </div>
-                    <div className="button secondary outline" onClick={() => {/* Implement create studio logic here */}}>
-                        Create Ticket
-                    </div>
-                    <div className="button secondary outline" onClick={async () => {
-                            try {
-                                await migrateStudios();
-                                console.log('Studios migrated successfully');
-                            } catch (error) {
-                            console.error('Error migrating Studios:', error.message);
-                            // Optionally show an error message to the user
-                            }
-                        }}>
-                        Migrate Studios
-                    </div>
+
+                    
+
+                    
                 </div>
             </div>
 
@@ -203,133 +217,238 @@ function AdminPanel() {
 
             {/* Tab content */}
             { selectedTab === 'users' && (
-                <section className="users-list">
-                    <div className="user-card table-header">
-                            <p>NAME</p>
-                            <p>EMAIL</p>
-                            <p>STUDIOS</p>
-                            <p>ROLES</p>
-                        </div>
-                    {users.map(user => (
-                        <div key={user.id} className="user-card">
-                            <p>{user.displayName}</p>
-                            <p>{user.email}</p>
-                            <p>{user.studio.name}</p>
-                            <p>{user.studio.roles[0]}</p>
-                            <button className="button secondary outline">View Details</button>
-                        </div>
-                    ))}
-                </section>
+                <div className="invoice-history">
+                    <section className="users-list">
+                        <h2 className="section-title">Users</h2>
+                        <table className="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th>NAME</th>
+                                    <th>EMAIL</th>
+                                    <th>STUDIOS</th>
+                                    <th>ROLES</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {users.map(user => (
+                                    <tr key={user.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', user))}>
+                                        <td>{user.displayName}</td>
+                                        <td>{user.email}</td>
+                                        <td>{user.studio.name}</td>
+                                        <td>{user.studio.roles[0]}</td>
+                                        <td className="actions">
+                                            {/* Drawer trigger */}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
             )}
             { selectedTab === 'studios' && (
-                <section className="studios-list">
-                    <div className="studio-card table-header">
-                        <p>NAME</p>
-                        <p>DOMAIN</p>
-                        <p>STUDIOS</p>
-                        <p>ROLES</p>
-                    </div>
-                    {studios.map(studio => (
-                        <div key={studio.id} className="studio-card" >
-                            <p>{studio.name}</p>
-                            <p>fotoflow.in/{studio.domain}</p>
-                            <p>{studio.domain}</p>
-                            {/* Add more details and actions here */}
-                        </div>
-                    ))}
-                </section>
+                <div className="invoice-history">
+                    <section className="studios-list">
+                        <h2 className="section-title">Studios</h2>
+                        <table className="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th>NAME</th>
+                                    <th>DOMAIN</th>
+                                    <th>STUDIOS</th>
+                                    <th>ROLES</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {studios.map(studio => (
+                                    <React.Fragment key={studio.id}>
+                                        <tr className={`clickable-row ${expandedStudioId === studio.id ? 'selected' : ''}`} onClick={() => handleRowClick(studio.id)}>
+                                            <td>{studio.name}</td>
+                                            <td>fotoflow.in/{studio.domain}</td>
+                                            <td>{studio.domain}</td>
+                                            <td></td>
+                                            <td className="actions">
+                                                <span className={`expand-icon ${expandedStudioId === studio.id ? 'expanded' : ''}`}>&#9660;</span>
+                                            </td>
+                                        </tr>
+                                        {expandedStudioId === studio.id && (
+                                            <tr className="expanded-row">
+                                                <td colSpan="5">
+                                                    <div className="expanded-content">
+                                                        <button className="button secondary outline" onClick={async (e) => {
+                                                            e.stopPropagation(); // Prevent row click from collapsing
+                                                            try {
+                                                                await migrateCollectionsByStudio(studio.domain);
+                                                                console.log('Collections migrated successfully');
+                                                                dispatch(showAlert({ type: 'success', message: 'Collections migrated successfully!' }));
+                                                            } catch (error) {
+                                                                console.error('Error migrating collections:', error.message);
+                                                                dispatch(showAlert({ type: 'error', message: `Error migrating collections: ${error.message}` }));
+                                                            }
+                                                        }}>Migrate Collections</button>
+                                                        <button className="button secondary outline" onClick={async (e) => {
+                                                            e.stopPropagation(); // Prevent row click from collapsing
+                                                            try {
+                                                                await migrateStudios(studio.id);
+                                                                console.log(`Studio ${studio.name} migrated successfully`);
+                                                                dispatch(showAlert({ type: 'success', message: `Studio ${studio.name} migrated successfully!` }));
+                                                            } catch (error) {
+                                                                console.error(`Error migrating studio ${studio.name}:`, error.message);
+                                                                dispatch(showAlert({ type: 'error', message: `Error migrating studio ${studio.name}: ${error.message}` }));
+                                                            }
+                                                        }}>Migrate Studio</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </React.Fragment>
+                                ))}
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
             )}
             { selectedTab === 'referal-codes' && (
+                <div className="invoice-history">
                     <section className="referal-codes-list">
                         <div className="actions">
                             <div className="button primary  icon referal"
                                 onClick={()=>{dispatch(openModal('addReferral'))}}
                             >New</div>
                         </div>
-                    <div className="referal-codes-card table-header">
-                        <p>ID</p>
-                        <p>User name</p>
-                        <p>Email</p>
-                        <p>Medium</p>
-                        <p>Type</p>
-                        <p>Phone</p>
-                        <p>Used</p>
-                        <p>Code</p>
-                        <p>Send Code</p>
-                    </div>
-                    {
-                        referallsList.map((referral,index)=>{
-                            return(
-                                <div className={`referal-codes-card ${referral?.status}`} key={index}>
-                                    <p className='id'>{referral?.id.slice(0,4)}</p>
-                                    <p>{referral?.name}</p>
-                                    <p>{referral?.email}</p>
-                                    <p className={ `campainPlatform ${referral?.campainPlatform}`}> </p>
-                                    <p>{referral?.type}</p>
-                                    <p>{referral?.phoneNumber}</p>
-                                    <p>{referral?.used}/{referral?.quota}</p>
-                                    <p className='button icon copy'
-                                        onClick={() => {
-                                            copyToClipboard(referral?.code[0])
-                                        }}
-                                    > {referral?.code[0]}</p>
-                                    <a className="button secondary outline icon open-in-new"
-                                    href={`https://wa.me/${referral?.phoneNumber}?text=${encodeURIComponent(getOnboardingReferralURL(referral?.code[0])).trim()}`}
-                                    target="_blank"
-                                        onClick={
-                                            () => {
-                                                copyToClipboard(getOnboardingReferralURL(referral?.code[0]))
-                                            }
-                                        }
-                                    >Send</a>
-                                </div>
-                            )
-                        })
-                    }
-                        {/* Add more support tickets here */}
+                        <h2 className="section-title">Referral & Codes</h2>
+                        <table className="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User name</th>
+                                    <th>Email</th>
+                                    <th>Medium</th>
+                                    <th>Type</th>
+                                    <th>Phone</th>
+                                    <th>Used</th>
+                                    <th>Code</th>
+                                    <th>Send Code</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    referallsList.map((referral,index)=>{
+                                        return(
+                                            <tr className={`${referral?.status}`} key={index}>
+                                                <td>{referral?.id.slice(0,4)}</td>
+                                                <td>{referral?.name}</td>
+                                                <td>{referral?.email}</td>
+                                                <td><span className={ `campainPlatform ${referral?.campainPlatform}`}> </span></td>
+                                                <td>{referral?.type}</td>
+                                                <td>{referral?.phoneNumber}</td>
+                                                <td>{referral?.used}/{referral?.quota}</td>
+                                                <td><span className='button icon copy'
+                                                    onClick={() => {
+                                                        copyToClipboard(referral?.code[0])
+                                                    }}
+                                                > {referral?.code[0]}</span></td>
+                                                <td><a className="button secondary outline icon open-in-new"
+                                                href={`https://wa.me/${referral?.phoneNumber}?text=${encodeURIComponent(getOnboardingReferralURL(referral?.code[0])).trim()}`}
+                                                target="_blank"
+                                                    onClick={
+                                                        () => {
+                                                            copyToClipboard(getOnboardingReferralURL(referral?.code[0]))
+                                                        }
+                                                    }
+                                                >Send</a></td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                            </tbody>
+                        </table>
                     </section>
+                </div>
             )}
             { selectedTab === 'ai-ticket' && (
+                <div className="invoice-history">
                     <section className="support-list">
-                        <div className="support-card">
-                            <p>#FAI1001</p>
-                            <p>John Doe</p>
-                            <p>Issue with Studio</p>
-                            <p>Open</p>
-                            <p>Last Updated: 2023-09-20</p>
-                            <button className="button secondary outline">View Details</button>
-                        </div>
-                        <div className="support-card">
-                            <p>#FAI1002</p>
-                            <p> Jane Smith</p>
-                            <p>Feature Request</p>
-                            <p>Closed</p>
-                            <p>Last Updated: 2023-09-19</p>
-                            <button className="button secondary outline">View Details</button>
-                        </div>
-                        {/* Add more support tickets here */}
+                        <h2 className="section-title">AI Tickets</h2>
+                        <table className="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th>Ticket ID</th>
+                                    <th>User</th>
+                                    <th>Issue</th>
+                                    <th>Status</th>
+                                    <th>Last Updated</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', { id: '#FAI1001', user: 'John Doe', issue: 'Issue with Studio', status: 'Open', lastUpdated: '2023-09-20' }))}>
+                                    <td>#FAI1001</td>
+                                    <td>John Doe</td>
+                                    <td>Issue with Studio</td>
+                                    <td>Open</td>
+                                    <td>2023-09-20</td>
+                                    <td className="actions">
+                                        {/* Drawer trigger */}
+                                    </td>
+                                </tr>
+                                <tr className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', { id: '#FAI1002', user: 'Jane Smith', issue: 'Feature Request', status: 'Closed', lastUpdated: '2023-09-19' }))}>
+                                    <td>#FAI1002</td>
+                                    <td> Jane Smith</td>
+                                    <td>Feature Request</td>
+                                    <td>Closed</td>
+                                    <td>2023-09-19</td>
+                                    <td className="actions">
+                                        {/* Drawer trigger */}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </section>
+                </div>
             )}
             { selectedTab === 'support' && (
+                <div className="invoice-history">
                     <section className="support-list">
-                        <div className="support-card">
-                            <p>#1</p>
-                            <p>John Doe</p>
-                            <p>Issue with Studio</p>
-                            <p>Open</p>
-                            <p>Last Updated: 2023-09-20</p>
-                            <button className="button secondary outline">View Details</button>
-                        </div>
-                        <div className="support-card">
-                            <p>#2</p>
-                            <p> Jane Smith</p>
-                            <p>Feature Request</p>
-                            <p>Closed</p>
-                            <p>Last Updated: 2023-09-19</p>
-                            <button className="button secondary outline">View Details</button>
-                        </div>
-                        {/* Add more support tickets here */}
+                        <h2 className="section-title">Support Tickets</h2>
+                        <table className="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th>Ticket ID</th>
+                                    <th>User</th>
+                                    <th>Issue</th>
+                                    <th>Status</th>
+                                    <th>Last Updated</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', { id: '#1', user: 'John Doe', issue: 'Issue with Studio', status: 'Open', lastUpdated: '2023-09-20' }))}>
+                                    <td>#1</td>
+                                    <td>John Doe</td>
+                                    <td>Issue with Studio</td>
+                                    <td>Open</td>
+                                    <td>2023-09-20</td>
+                                    <td className="actions">
+                                        {/* Drawer trigger */}
+                                    </td>
+                                </tr>
+                                <tr className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', { id: '#2', user: 'Jane Smith', issue: 'Feature Request', status: 'Closed', lastUpdated: '2023-09-19' }))}>
+                                    <td>#2</td>
+                                    <td> Jane Smith</td>
+                                    <td>Feature Request</td>
+                                    <td>Closed</td>
+                                    <td>2023-09-19</td>
+                                    <td className="actions">
+                                        {/* Drawer trigger */}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </section>
+                </div>
             )}
             
             <div className="info-bar"></div>

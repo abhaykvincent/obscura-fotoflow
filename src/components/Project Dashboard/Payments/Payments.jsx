@@ -51,13 +51,12 @@ function DashboardPayments({ project }) {
                   strokeWidth="2"
                 />
               )}
-              <g
-              >
-
-              <text x="10" y="18" className="amount highlight">{totalPayments && formatDecimalK(totalPayments)}</text>
-              <text x="12" y="24" className="amount">/ {formatDecimalK(project.budgets?.amount ? project.budgets?.amount:0)}</text>
-              </g>
             </svg>
+              <div className="amounts-insight">
+                <p className="amount paid-label">paid</p>
+                <p x="10" y="18" className="amount highlight">{totalPayments && formatDecimalK(totalPayments)}</p>
+                <p x="12" y="24" className="amount of"><span>of</span> {formatDecimalK(project.budgets?.amount ? project.budgets?.amount:0)}</p>
+              </div>
           </div>
           <div className="message">
             {!project.budgets

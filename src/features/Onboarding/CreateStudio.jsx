@@ -195,7 +195,7 @@ const CreateStudio = ({active,next,setCreateAccountData,createAccountData,update
               {
                 studioDomain.length>3 &&
                 (isDomainAvailable ?
-                  <p className='input-reaction subdomain-available'>{`Sub-domain Available`}</p>:
+                  <p className='input-reaction subdomain-available'>{`Available`}</p>:
                   <p className='input-reaction'>{`Sub-domain already taken. `}</p>)
               }
             </div>

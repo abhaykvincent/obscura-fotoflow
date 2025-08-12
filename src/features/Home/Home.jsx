@@ -29,7 +29,7 @@ function Home() {
       const modals = useSelector(selectModal);
     useEffect(() => {
         trackEvent('studio_home_view')
-        setSelectedProjects(selectionCompletedProjects)
+        setSelectedProjects(selectionCompletedProjects.slice(0, 8))
         setRecentProjects(getProjectsByLastUpdated(projects, 8))
         const unsortedUpcommingShoots = getUpcommingShoots(projects, 31)
         const sortedUpcommingShoots = unsortedUpcommingShoots.sort((a, b) => {
@@ -105,13 +105,14 @@ function Home() {
                         <>
                             {selectedProjects.length !== 0 && <div className="section recent">
                                 <h3 className='section-heading'>Selection Completed</h3>
-                                <div className="projects">
+                                <div className="projects selection">
                                 {
                                     selectedProjects.length !== 0? (
                                         selectionCompletedProjects.map((project, index) => (
                                         <ProjectCard
                                             project={project}
                                             key={project.id}
+                                            type='selection'
                                         /> 
                                     ))
                                     ) : (
@@ -122,13 +123,14 @@ function Home() {
                             }
                             <div className="section recent">
                                 <h3 className='section-heading'>Recent Projects</h3>
-                                <div className="projects">
+                                <div className="projects recent">
                                 {
                                     recentProjects.length !== 0? (
                                     recentProjects.map((project, index) => (
                                         <ProjectCard
                                             project={project}
                                             key={project.id}
+                                            type='home'
                                         /> 
                                     ))
                                     ) : (

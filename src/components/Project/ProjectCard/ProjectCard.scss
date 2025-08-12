@@ -136,17 +136,23 @@
         .details-top{
             display: grid;
             grid-template-columns: auto 8px;
+            gap :8px;
+            .left{
+            }
             .project-title{
+                max-width: 8px*20;
+                white-space: nowrap;
+                overflow: hidden;
                 transition-duration: 0.1s;
                 transform: scale(1) translateX(0px) translateY(0px);
-            font-size: 0.9rem;
+                font-size: 0.9rem;
             }
             .project-type{
                 margin-top: -2px;
             line-height: 8px*2.5;
             font-weight: 400;
             font-size: 0.8rem;
-            color: $gray3-default-dark;
+            color: $gray2-default-dark;
             }
             .info-bar{
                 display: grid;
@@ -443,7 +449,26 @@
             background-size: 40%;
             background-image: url('https://img.icons8.com/ios/150/FFFFFF/birthday.png');
         }
-    }&.Baptism{
+    }
+    &.Family{
+        .project-cover{
+            background-size: 60%;
+            background-image: url('https://img.icons8.com/?size=100&id=Tqqn1DieaMiE&format=png&color=FFFFFF');
+        }
+    }
+    &.Maternity{
+        .project-cover{
+            background-size: 50%;
+            background-image: url('https://img.icons8.com/?size=100&id=xrI3gmcIrVPN&format=png&color=FFFFFF');
+        }
+    }
+    &.Headshot{
+        .project-cover{
+            background-size: 50%;
+            background-image: url('https://img.icons8.com/?size=100&id=423kipnPTZJn&format=png&color=FFFFFF');
+        }
+    }
+    &.Newborn, &.Baptism{
         .project-cover{
             background-size: 50%;
             background-image: url('https://img.icons8.com/external-others-bomsymbols-/91/FFFFFF/external-angel-christmas-decoration-outline-others-bomsymbols-.png');
@@ -599,6 +624,8 @@
 
         }
 
+        // Selectioon completed
+        
     
     @for $i from 1 through 20 {
         &:nth-child(#{$i}) {

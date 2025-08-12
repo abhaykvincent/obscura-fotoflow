@@ -596,13 +596,27 @@ async function createMigrationInvoice(studioId, plan, subscriptionId, migrationD
 
 /**
  * Migrates v1 studios to the v2 subscription model.
- * @param {Firestore} db - The Firestore database instance.
+ * @param {string} [studioIdToMigrate] - Optional: The ID of a specific studio to migrate. If not provided, all studios will be migrated.
  * @returns {Promise<void>}
  */
-export async function migrateStudios() {
-  // Use modular collection and getDocs
+export async function migrateStudios(studioIdToMigrate) {
   const studiosCollectionRef = collection(db, 'studios');
-  const studiosSnapshot = await getDocs(studiosCollectionRef);
+  let studiosSnapshot;
+
+  if (studioIdToMigrate) {
+    // If a specific studioId is provided, fetch only that studio
+    const studioDocRef = doc(db, 'studios', studioIdToMigrate);
+    const studioDoc = await getDoc(studioDocRef);
+    if (studioDoc.exists()) {
+      studiosSnapshot = { docs: [studioDoc], size: 1 };
+    } else {
+      console.log(`Studio ${studioIdToMigrate} not found. No migration performed.`);
+      return;
+    }
+  } else {
+    // If no specific studioId, fetch all studios
+    studiosSnapshot = await getDocs(studiosCollectionRef);
+  }
 
   const migrationPromises = [];
   const migrationDate = new Date();

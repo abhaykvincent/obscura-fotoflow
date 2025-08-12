@@ -20,6 +20,16 @@ const CollectionsPanel = ({ project, collectionId}) => {
       project.collections.length > 0 ? 
         <div className="gallery-list">
           
+          <div className="gallery new" 
+            onClick={() => dispatch(openModal('createCollection'))}>
+            <div className="thumbnails">
+              <div className="thumbnail thumb1">
+                <div className="backthumb bthumb1">
+                  <div className="button primary outline">Create Gallery</div>
+                </div>
+              </div>
+            </div>
+          </div>
           {project.collections.map((collection) => (
             
             collection.pin=="" ?
@@ -43,7 +53,7 @@ const CollectionsPanel = ({ project, collectionId}) => {
                 </div>
                 <div className="gallery-name">Upload</div>
               </div>
-            : <Link  key={collection.id} className={`gallery ${collectionId===collection.id && 'active'}`} to={`/${defaultStudio.domain}/gallery/${project.id}/${collection.id}`}>
+            : <Link  key={collection.id} className={`gallery ${collectionId===collection.id && 'active'} ${collection.status !== 'visible' ? 'disabled' : ''}`} to={`/${defaultStudio.domain}/gallery/${project.id}/${collection.id}`}>
                 <div className="thumbnails">
                   <div className="thumbnail thumb1">
                   <div className={`backthumb bthumb1 ${decodeURIComponent(collection.galleryCover)}`}
@@ -79,16 +89,6 @@ const CollectionsPanel = ({ project, collectionId}) => {
 
             
           ))}
-          <div className="gallery new" 
-            onClick={() => dispatch(openModal('createCollection'))}>
-            <div className="thumbnails">
-              <div className="thumbnail thumb1">
-                <div className="backthumb bthumb1">
-                  <div className="button primary outline">Create Gallery</div>
-                </div>
-              </div>
-            </div>
-          </div>
           {/* <div className="active-box box"></div> */}
         </div>:''
       }
