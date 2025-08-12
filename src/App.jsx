@@ -70,6 +70,8 @@ export default function App() {
   const isLoading = useSelector(selectProjectsStatus);
   const defaultStudio = useSelector(selectUserStudio)
   const studio = useSelector(selectStudio);
+
+  const modals = useSelector(selectModal);
   const currentDomain = defaultStudio?.domain ?? 'guest'; 
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const { keyMap, handlers } = useShortcutsConfig();
@@ -115,14 +117,13 @@ export default function App() {
   }, [currentDomain]);
 
   useEffect(() =>{
-
     if (studio?.trialEndDate) {
       console.log(studio?.trialEndDate)
-      dispatch(openModal('trialStatus'));
     }
   },[studio?.trialEndDate])
   useEffect(() => {
-    const modalStates = Object.values(selectModal);
+    const modalStates = Object.values(modals);
+    console.log(modalStates)
     if (modalStates.some(state => state)) {
       window.scrollTo(0, 0);
       document.body.style.overflow = 'hidden';
@@ -130,7 +131,7 @@ export default function App() {
     else {
       document.body.style.overflow = 'auto';
     }
-  }, [selectModal]);
+  }, [modals]);
   useEffect(() => {
     
     getCurrentSubscription(defaultStudio.domain)
