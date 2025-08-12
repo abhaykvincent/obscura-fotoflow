@@ -45,7 +45,7 @@ import { isDeveloper, setUserType } from './analytics/utils';
 import { isPublicPage } from './utils/publicPages';
 // Redux 
 import { showAlert } from './app/slices/alertSlice';
-import { selectModal } from './app/slices/modalSlice';
+import { openModal, selectModal } from './app/slices/modalSlice';
 import { fetchCurrentSubscription, fetchStudio, selectStudio} from './app/slices/studioSlice';
 import { checkAuthStatus, checkStudioStatus, selectIsAuthenticated, selectUser, selectUserStudio } from './app/slices/authSlice';
 import { fetchProjects, selectProjectsStatus} from './app/slices/projectsSlice';
@@ -57,7 +57,7 @@ import { getCurrentSubscription } from './firebase/functions/subscription';
 
 console.log(`%c Welcome to Fotoflow!`, `color:rgb(84, 219, 0);`);
 if (isDeveloper) {
-  console.log(`%c Running in Production`, `color: #ffea00ff;`); // Corrected "is Production"
+  console.log(`%c Running in Developement Mode`, `color: #ffea00ff;`); // Corrected "is Production"
   console.log(`%c This device is not being tracked by Analytics`, `color: #ff9500;`);
 }
 
@@ -81,31 +81,33 @@ export default function App() {
  
   // ON Render
   useEffect(() => {
-    // Check studio status
+    // Check authentication status
     dispatch(checkAuthStatus())
     dispatch(checkStudioStatus())
 
     if(currentDomain !== 'guest')
     {
-      // Fetch studio data
+      // Fetching data for studio
+      console.log(`%cFetching data for ${currentDomain}...`,`color: gray`)
       dispatch(fetchProjects({currentDomain}))
       .catch((err)=>{
         dispatch(showAlert({ type: 'error', message: 'Check internet connection' }));
       })
+
       dispatch(fetchStudio({currentDomain})).then((a) => {
-        console.log(a)
-        // Check if trial status warrants showing the modal
-        dispatch(fetchCurrentSubscription({currentDomain})).then((a) => {
-  
-        })
+
+        dispatch(fetchCurrentSubscription({currentDomain}))
         .catch((err)=>{
           console.error(err)
         })
-        
+
       })
       .catch((err)=>{
         console.error(err)
       })
+
+      // Running Job Schedulers
+      
       
       
     }
@@ -114,11 +116,10 @@ export default function App() {
 
   useEffect(() =>{
 
-    /* if (studio?.trialEndDate) {
+    if (studio?.trialEndDate) {
       console.log(studio?.trialEndDate)
-      debugger
       dispatch(openModal('trialStatus'));
-    } */
+    }
   },[studio?.trialEndDate])
   useEffect(() => {
     const modalStates = Object.values(selectModal);

@@ -114,12 +114,12 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   };
 
   const getModalTitle = () => {
-    if (currentStep === 1) return "Create project";
+    if (currentStep === 1) return "Choose template";
     return isSubProject ? "New Sub-Project" : "Project Details";
   };
 
   const getModalSubtitle = () => {
-    if (currentStep === 1) return "Choose Template";
+    if (currentStep === 1) return "New project";
     return projectData.type || (isSubProject ? "New Sub-Project" : "New Project");
   };
 
@@ -179,7 +179,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
             <button type="button" className="button primary" onClick={handleNextStep}>Next</button>
           ) : (
             <button type="button" className="button primary" onClick={handleSubmit}>
-              {isSubProject ? "Create Sub-Project" : "Create Project"}
+              {isSubProject ? "Create Sub-Project" : "Create project"}
             </button>
           )}
         </div>

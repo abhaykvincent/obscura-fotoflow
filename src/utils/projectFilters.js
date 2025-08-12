@@ -1,4 +1,3 @@
-  // Project Filters
   export const getRecentProjects = (projects, limit) => {
     // Create a shallow copy of the projects array to avoid mutating the original
     const projectsCopy = [...projects];
@@ -40,4 +39,8 @@
         return event.id === eventId
       })
     );
+  };
+
+  export const getProjectsByStorageStatus = (projects, status) => {
+    return projects.filter(project => project.storage?.status === status);
   };

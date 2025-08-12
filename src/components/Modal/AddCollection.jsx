@@ -215,6 +215,7 @@ const handleSuggestedNameChange = (event) => {
                   ))}
               </div>
 
+            <span></span>
               {errors.name && <div className="error">{errors.name}</div>}
             </div>
           </div>

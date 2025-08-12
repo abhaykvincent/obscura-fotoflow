@@ -7,7 +7,7 @@ import { selectProjects } from '../../app/slices/projectsSlice';
 import { openModal } from '../../app/slices/modalSlice';
 
 // --- Utility Functions ---
-import { getProjectsByStatus } from '../../utils/projectFilters';
+import {  getProjectsByStatus, getProjectsByStorageStatus} from '../../utils/projectFilters';
 import { retrieveProjectsViewType, storeProjectsViewType } from '../../utils/localStorageUtills';
 
 // --- Components ---
@@ -36,7 +36,7 @@ const MODAL_IDS = {
 };
 
 const DAY_RANGES = {
-    INITIAL: 90,
+    INITIAL: 180,
     LOAD_MORE_1: 180,
     LOAD_MORE_2: 360,
     ALL_TIME: 720,
@@ -110,6 +110,9 @@ function Projects() {
             return !isNaN(projectDate) && projectDate >= cutoffDate;
         });
 
+        if (selectedTab === FILTER_TABS.ARCHIVED) {
+            return getProjectsByStorageStatus(projectsWithinRange, 'archive')
+        }
         if (selectedTab === FILTER_TABS.SELECTED) {
             return getProjectsByStatus(projectsWithinRange, 'selected');
         }
@@ -263,6 +266,27 @@ function Projects() {
                             <div className="control-wrap">
                                 <div className="controls">
                                     <div
+                                        className={`control status-control control-live  ${selectedTab === FILTER_TABS.ALL ? 'active' : ''}`}
+                                        onClick={() => handleTabClick(FILTER_TABS.ALL)}
+                                        role="button" tabIndex={0}
+                                    >
+                                        <div className="status-signal"></div>
+                                        Live
+                                    </div>
+                                    <div
+                                        className={`control status-control control-archive ${selectedTab === FILTER_TABS.ARCHIVED ? 'active' : ''}`}
+                                        onClick={() => handleTabClick(FILTER_TABS.ARCHIVED)}
+                                        role="button" tabIndex={0}
+                                    >
+                                        <div className="status-signal"></div>
+                                        Archive
+                                    </div>
+                                </div>
+                                <div className="label">Storage</div>
+                            </div>
+                            <div className="control-wrap">
+                                <div className="controls">
+                                    <div
                                         className={`control ctrl-all ${selectedTab === FILTER_TABS.ALL ? 'active' : ''}`}
                                         onClick={() => handleTabClick(FILTER_TABS.ALL)}
                                         role="button" tabIndex={0}
@@ -292,25 +316,6 @@ function Projects() {
                                     </div>
                                 </div>
                                 <div className="label">Filter</div>
-                            </div>
-                            <div className="control-wrap">
-                                <div className="controls">
-                                    <div
-                                        className={`control ctrl-all ${selectedTab === FILTER_TABS.ALL ? 'active' : ''}`}
-                                        onClick={() => handleTabClick(FILTER_TABS.ALL)}
-                                        role="button" tabIndex={0}
-                                    >
-                                        Active
-                                    </div>
-                                    <div
-                                        className={`control ctrl-draft ${selectedTab === FILTER_TABS.SELECTED ? 'active' : ''}`}
-                                        onClick={() => handleTabClick(FILTER_TABS.SELECTED)}
-                                        role="button" tabIndex={0}
-                                    >
-                                        Archive
-                                    </div>
-                                </div>
-                                <div className="label">Storage</div>
                             </div>
                         </div>
 

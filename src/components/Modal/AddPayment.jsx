@@ -104,6 +104,7 @@ function AddPaymentModal({ project }) {
               onChange={handleInputChange}
             />
           </div>
+            <span></span>
             {errors.name && <div className="error">{errors.name}</div>}
             {/* AI suggested */}
           <div className="field ai-suggestion">

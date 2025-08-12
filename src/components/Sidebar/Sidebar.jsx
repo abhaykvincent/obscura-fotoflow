@@ -179,7 +179,7 @@ function Sidebar() {
               <div className="icon "></div>
               <p>Storage </p><div className="storage-labels used-quota-gb">
               <p className="used-gb">
-                {Math.round(storageUsage?.usedPercentage)}% 
+                {/* {Math.round(storageUsage?.usedPercentage)}%  */}
                 <span>{convertMegabytes(studio?.usage?.storage?.used)}</span>  </p>
                 <div className="slash">/</div>
               <p className="quota-gb">{convertMegabytes(studio?.usage?.storage?.quota)}</p>
@@ -262,7 +262,8 @@ function Sidebar() {
               <div className="profile-name">
                 {/* MArquee one after other in quere repeate */}
                 <div className="roles" direction="left" behavior="scroll" scrollamount="2" scrolldelay="2" loop="3" style={{whiteSpace: 'nowrap'}}>
-                  <div className="role">Photographer</div>
+                  <div className="role admin">Admin</div>
+                  <div className="role photographer">Photo</div>
                   
                   </div>
                 </div>
