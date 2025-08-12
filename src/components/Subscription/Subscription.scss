@@ -664,7 +664,7 @@ main.subscription{
                 border: 1px solid $gray3-accessible-dark;
                 z-index: 2;
                 border-radius: 4px;
-                opacity: 0.8;
+                opacity: 1;
                 margin-bottom: 8px;
                 margin-top: 0;
                 font-size: 0.8rem;
@@ -762,9 +762,10 @@ main.subscription{
 
                 }
             }
+
             .cover{
                 width: 100%;
-                padding-top: 80%;
+                padding-top: 100%;
                 background-image: url('../../assets/img/subscription/gray-sphere-3d.avif');
                 background-color: $dark-2;
                 background-size: 40%, 80%;
@@ -987,7 +988,7 @@ main.subscription{
         .section .projects{
             .project{
                 .project-cover{
-                    width: 80px
+                    width: 8px*13;
                 }
                 .project-details{
                     margin-left: -24px;

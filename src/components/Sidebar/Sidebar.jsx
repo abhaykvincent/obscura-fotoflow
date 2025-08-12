@@ -179,7 +179,7 @@ function Sidebar() {
               <div className="icon "></div>
               <p>Storage </p><div className="storage-labels used-quota-gb">
               <p className="used-gb">
-                {Math.round(storageUsage?.usedPercentage)}% 
+                {/* {Math.round(storageUsage?.usedPercentage)}%  */}
                 <span>{convertMegabytes(studio?.usage?.storage?.used)}</span>  </p>
                 <div className="slash">/</div>
               <p className="quota-gb">{convertMegabytes(studio?.usage?.storage?.quota)}</p>

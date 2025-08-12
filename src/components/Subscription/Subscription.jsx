@@ -14,7 +14,7 @@ export const initialPlans = [
     name: 'Core',
     isCurrentPlan: true,
     pricing: [
-      { storage: 5, monthlyPrice: 'Free', yearlyPrice: '₹0', specialOffer: ['for 12 months.','No CC Required']},
+      { storage: 5, monthlyPrice: 'Free', yearlyPrice: '₹0', specialOffer: ['for Forever.','No CC Required']},
     ],
     features: ['3 galleries/project','3 new projects/month'],
     coreFeatures: ['5 GB Storage','','Gallery','Selection'],

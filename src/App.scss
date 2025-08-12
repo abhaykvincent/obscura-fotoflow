@@ -607,6 +607,9 @@ body{
           left:8px;
           padding-top: 8px*2;
           padding-bottom: 8px*2;
+          .link-pin-container{
+            display: flex;
+          }
         }
       }
       .project-cover-image{
@@ -2309,7 +2312,6 @@ body{
     main {
       left: 8px*8;
       width: calc(100vw - 8px*10);
-      height: auto;
       .header{
         .view-control .control-label.label-selected-photos{
           display: none;

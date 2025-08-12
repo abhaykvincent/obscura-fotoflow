@@ -45,7 +45,7 @@ import { isDeveloper, setUserType } from './analytics/utils';
 import { isPublicPage } from './utils/publicPages';
 // Redux 
 import { showAlert } from './app/slices/alertSlice';
-import { selectModal } from './app/slices/modalSlice';
+import { openModal, selectModal } from './app/slices/modalSlice';
 import { fetchCurrentSubscription, fetchStudio, selectStudio} from './app/slices/studioSlice';
 import { checkAuthStatus, checkStudioStatus, selectIsAuthenticated, selectUser, selectUserStudio } from './app/slices/authSlice';
 import { fetchProjects, selectProjectsStatus} from './app/slices/projectsSlice';
@@ -116,11 +116,10 @@ export default function App() {
 
   useEffect(() =>{
 
-    /* if (studio?.trialEndDate) {
+    if (studio?.trialEndDate) {
       console.log(studio?.trialEndDate)
-      debugger
       dispatch(openModal('trialStatus'));
-    } */
+    }
   },[studio?.trialEndDate])
   useEffect(() => {
     const modalStates = Object.values(selectModal);

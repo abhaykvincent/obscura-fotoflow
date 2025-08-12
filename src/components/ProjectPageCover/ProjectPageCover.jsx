@@ -164,11 +164,10 @@ export const ProjectCover = ({ project }) => {
 
                         <div className="link-pin">
                             <div className="button secondary outline icon archive"> Archive</div>
-                            {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
                         </div> 
                         </div>
 
-
+                                <div className="link-pin-container">
                                   <div className="link-pin">
                                     <div className='link' >
                                     
@@ -180,7 +179,11 @@ export const ProjectCover = ({ project }) => {
                                         </div>
                                       </div>
                                       <div className="button primary outline text-only  icon copy"></div>
+
                                   </div>
+                                        {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
+
+                                </div>
                         {
                             project.pin&&
                     <div className="bottom-right">
@@ -208,11 +211,12 @@ export const ProjectCover = ({ project }) => {
                                 </p>
                             </div>
                         )}
+                        <div className="project-metadata">
+                            <p>Project created on Jan 12, 2025</p>
+                        </div>
                     </div>
                         }
-                    <div className="project-metadata">
-                        <p>Project created on Jan 12, 2025</p>
-                    </div>
+                    
                 </div>
                 
             </div>}
