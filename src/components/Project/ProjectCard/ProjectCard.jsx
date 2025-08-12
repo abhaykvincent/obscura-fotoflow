@@ -2,16 +2,23 @@ import {Link} from 'react-router-dom';
 import './ProjectCard.scss'
 import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../../app/slices/authSlice';
+import { getThumbnailUrl1 } from '../../../utils/urlUtils';
 
-function ProjectCard({project}) {   
+function ProjectCard({project,type}) {   
   const defaultStudio = useSelector(selectUserStudio)
   return (
-    <Link className={`project ${project.id} ${project.type?project.type:''} ${project.status?project.status:''}`} to={`/${defaultStudio.domain}/project/${project.id}`} key={project.id}
+    <Link className={`project 
+        ${project.id} 
+        ${project.type?project.type:''} 
+        ${project.status?project.status:''}
+        ${type?type:''} 
+        `} 
+        to={`/${defaultStudio.domain}/project/${project.id}`} key={project.id}
     >
         <div className="cover-wrap">
             <div className="project-cover"
             style={{
-                backgroundImage: project.projectCover ?`url(${project.projectCover.replace(/\(/g, '%28').replace(/\)/g, '%29')})` : '',
+                backgroundImage: project.projectCover ?`url(${getThumbnailUrl1(project.projectCover).replace(/\(/g, '%28').replace(/\)/g, '%29')})` : '',
                 backgroundSize: project.projectCover ? 'cover' : '',
                 backgroundBlendMode: project.projectCover ? '' : 'soft-light',
             }}

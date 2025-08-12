@@ -198,6 +198,7 @@
       padding: 8px;
     }
     .collections-panel{
+      max-width: 99vw;
       justify-content: start;
       &.client-selection{
         justify-content: center;

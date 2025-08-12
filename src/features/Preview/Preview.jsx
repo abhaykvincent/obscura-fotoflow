@@ -1,5 +1,4 @@
-// Preview.jsx
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './Preview.scss';
 import { shortenFileName } from '../../utils/stringUtils';
 import { setCoverPhotoInFirestore, setGalleryCoverPhotoInFirestore } from '../../firebase/functions/firestore';
@@ -10,20 +9,49 @@ import SwipeHandler from './SwipeHandler';
 import { deleteFile } from '../../app/slices/projectsSlice';
 import PreviewControls from './PreviewControls';
 
-function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePreview,projectId, collectionId }) {
+function Preview({ image, previewIndex, setPreviewIndex: setParentPreviewIndex, imagesLength, closePreview, projectId, collectionId }) {
   const { studioName } = useParams();
   const dispatch = useDispatch();
-  // States for managing controls visibility and interaction timeout
   const [showControls, setShowControls] = useState(true);
+  const [showSwipeGuide, setShowSwipeGuide] = useState(true);
+  const [currentImage, setCurrentImage] = useState(image);
+  const [nextImage, setNextImage] = useState(null);
+  const [direction, setDirection] = useState(null); // 'left' or 'right' for animation
+
+  const animationTimeoutRef = useRef(null);
   let hideControlsTimeout;
 
-  // Function to show controls and reset hide timer
   const handleUserInteraction = () => {
-    setShowControls(true);  // Show controls on interaction
-    clearTimeout(hideControlsTimeout);  // Reset timer if it exists
-    hideControlsTimeout = setTimeout(() => setShowControls(false), 3000); // Hide after 3s
+    setShowControls(true);
+    clearTimeout(hideControlsTimeout);
+    hideControlsTimeout = setTimeout(() => setShowControls(false), 3000);
   };
-  
+
+  const setPreviewIndex = useCallback((newIndex, animDirection) => {
+    if (newIndex === previewIndex) return;
+
+    setDirection(animDirection);
+    
+
+    // Clear any existing animation timeout
+    if (animationTimeoutRef.current) {
+      clearTimeout(animationTimeoutRef.current);
+    }
+
+    // Start the animation, then update the current image after it completes
+    animationTimeoutRef.current = setTimeout(() => {
+      setParentPreviewIndex(newIndex); // This will cause the `image` prop to update
+      setDirection(null);
+      setNextImage(null);
+    }, 300); // Match this duration to your CSS animation duration
+  }, [previewIndex, image, setParentPreviewIndex]);
+
+  useEffect(() => {
+    // When the `image` prop changes (meaning setParentPreviewIndex was called),
+    // update the currentImage state.
+    setCurrentImage(image);
+  }, [image]);
+
   const handleDelete = async () => {
     try {
       await dispatch(deleteFile({ studioName, projectId, collectionId, imageUrl: image.url, imageName: image.name }));
@@ -34,12 +62,10 @@ function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePrev
     }
   };
 
-
-  // Attach event listeners to reset timer on touch or click
   useEffect(() => {
     window.addEventListener('mousemove', handleUserInteraction);
     window.addEventListener('touchstart', handleUserInteraction);
-    handleUserInteraction(); // Start with showing controls
+    handleUserInteraction();
     return () => {
       clearTimeout(hideControlsTimeout);
       window.removeEventListener('mousemove', handleUserInteraction);
@@ -47,8 +73,21 @@ function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePrev
     };
   }, []);
 
+  // Hide swipe guide after 2 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSwipeGuide(false), 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="preview-wrapper">
+      {showSwipeGuide && (
+        <div className="guide swipe-guide">
+          <div className="swipe-animation-wrapper">
+            <div className="swipe-animation"></div>
+          </div>
+        </div>
+      )}
       <div className='preview' >
         <SwipeHandler 
           previewIndex={previewIndex}
@@ -67,7 +106,11 @@ function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePrev
             collectionId={collectionId}
             studioName={studioName}
           />
-          <ImageDisplay image={image} />
+          <ImageDisplay
+            currentImage={currentImage}
+            nextImage={nextImage}
+            direction={direction}
+          />
         </SwipeHandler>
       </div>
     </div>

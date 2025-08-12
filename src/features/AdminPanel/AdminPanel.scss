@@ -1,4 +1,5 @@
 @import '../../style/variables';
+@import '../BillingHistory/BillingHistory.scss';
 
 .App .admin-panel {
     padding: 8px*1 8px*4;
@@ -140,16 +141,6 @@
         display: grid;
         gap: 8px; // Space between support cards
         padding: 0px; // Space around the section
-
-        .studio-card {
-            display: grid;
-            align-items: center;
-            grid-template-columns: 8px*16 auto auto auto 8px*16  ; // Updated grid template columns
-
-            padding: 16px; // Space around the section
-            border: 1px solid $dark-1;
-            border-radius: 4px;
-        }
     }
 
     .users-list {
@@ -158,142 +149,88 @@
         padding: 0px; // Space around the section
         
     }
-    .user-card {
-        display: grid;
-        align-items: center;
-        grid-template-columns: 8px*16 8px*32 8px*16 auto 8px*16 ;// Updated grid template columns
-        padding: 8px;
-        border: 1px solid $dark-1;
-        border-radius: 4px;
-        &.table-header{
-
-        border: 1px solid $dark-2;
-        padding: 0 8px;
-        margin-bottom: -4px;
-        p{
-
-            font-size: 0.8rem;
-            color: $gray4-accessible-dark;
-        }
-        }
-    }
-    .studio-card {
-        display: grid;
-        align-items: center;
-        grid-template-columns: 8px*16 8px*32 8px*16 auto 8px*16 ;// Updated grid template columns
-        padding: 8px 2PX;
-        border: 1px solid $dark-1;
-        border-radius: 4px;
-        &.table-header{
-
-        border: 1px solid $dark-2;
-        padding: 0 8px;
-        margin-bottom: -4px;
-        p{
-
-            font-size: 0.8rem;
-            color: $gray4-accessible-dark;
-        }
-        }
-    }
-    .support-list {
-        display: grid;
-        gap: 8px; // Space between support cards
-        padding: 8px; // Space around the section
-
-        .support-card {
-            display: grid;
-            align-items: center;
-            grid-template-columns: 8px*12 8px*16 8px*16 8px*16 auto 8px*16 ;// Updated grid template columns
-            padding: 8px;
-            border: 1px solid $dark-1;
-            border-radius: 4px;
-            p {
-                margin: 0;
-                color: white; // Text color
-            }
-
-            button {
-                align-self: start; // Align button to the top of the card
-                margin: 0;
-            }
-        }
-    }
     .referal-codes-list {
         display: grid;
         position: relative;
         gap: 8px; // Space between support cards
         padding: 8px; // Space around the section
         margin-top: -8px*2;
-        .actions{
-            position: absolute;
-            top: -8px*5;
-            right: 8px*2;
-            display: flex;
-            width: 8px*8;
-            justify-content: flex-end;
-            margin-bottom: 8px*0;
-            z-index: 4;
-        }
-        .referal-codes-card {
-            display: grid;
-            align-items: center;
-            grid-template-columns: 8px*5 8px*18 8px*28  8px*8  auto 8px*20 8px*5  8px*10  8px*11 ;// Updated grid template columns
-            padding: 8px;
-            border: 1px solid $dark-1;
-            gap: 8px;
-            border-radius: 4px;
-            &.passive{
-                border-left: 6px solid $gray4-accessible-dark;
-            }
-            &.active{
-                border-left: 6px solid $green-accessible-dark;
-            }
-            .campainPlatform{
-                width: auto;
-                height: 8px*3;
-                background-size: contain;
-                background-position: center;
-                opacity: 0.6;
-                &.whatsapp{
-                    opacity: 0.5;
-                    background-image: url('https://img.icons8.com/?size=100&id=MW3L3LMSpawR&format=png&color=000000');
-                }
-                &.direct{
-                    background-image: url('https://img.icons8.com/?size=100&id=3685&format=png&color=FFFFFF');
-                }
-                &.instagram{
-                    opacity: 0.8;
-                    background-image: url('https://img.icons8.com/?size=100&id=RhYNENh5cxlS&format=png&color=FFFFFF');
-                }
-            }
-            &.table-header{
-                border: 1px solid transparent;
-                    padding: 0 8px;
-                    border-radius: 4px;
-                    margin-top: 8px;
-                p {
-                    padding: 0 ;
-                    margin: 0;
-                    margin-left: 8px*0.5;
-                    font-size: 0.8rem;
-                    color: $gray4-accessible-dark;
-                }
-                
-            }
-            p {
-                margin: 0;
-                color: white; // Text color
-                overflow: hidden;
-                &.id{
-                    color: $dark-0;
-                }
-            }
+        .clickable-row {
+            cursor: pointer;
 
-            button {
-                align-self: start; // Align button to the top of the card
-                margin: 0;
+            &.selected {
+                background-color: $dark-2;
+            }
+        }
+
+        .expanded-row {
+            background-color: $dark-2;
+            td {
+                padding: 0;
+                border-bottom: none;
+            }
+        }
+
+        .expanded-content {
+            padding: 15px;
+            background-color: $dark-3;
+            border-top: 1px solid $dark-1;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+            .expanded-content {
+            padding: 15px;
+            background-color: $dark-3;
+            border-top: 1px solid $dark-1;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .expand-icon {
+            display: inline-block;
+            transition: transform 0.3s ease;
+            &.expanded {
+                transform: rotate(180deg);
+            }
+        }
+
+        .actions {
+            text-align: right;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+
+            .button {
+                margin-left: 8px;
+            }
+        }
+        .campainPlatform{
+            width: auto;
+            height: 8px*3;
+            background-size: contain;
+            background-position: center;
+            opacity: 0.6;
+            &.whatsapp{
+                opacity: 0.5;
+                background-image: url('https://img.icons8.com/?size=100&id=MW3L3LMSpawR&format=png&color=000000');
+            }
+            &.direct{
+                background-image: url('https://img.icons8.com/?size=100&id=3685&format=png&color=FFFFFF');
+            }
+            &.instagram{
+                opacity: 0.8;
+                background-image: url('https://img.icons8.com/?size=100&id=RhYNENh5cxlS&format=png&color=FFFFFF');
             }
         }
     }
+    .support-list {
+        display: grid;
+        gap: 8px; // Space between support cards
+    }
+    
+    
+    
 }

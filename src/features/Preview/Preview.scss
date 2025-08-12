@@ -17,21 +17,90 @@
     backdrop-filter: blur(4px);
     overflow: hidden;
     .image-wrap{
+        position: relative; // Ensure images are positioned relative to this container
+        overflow: hidden; // Hide overflowing parts of images during animation
         display: flex;
         height: 100vh;
         width: 100vw;
         align-items: center;
         justify-items: center;
+
         .image{
-            height: calc(100vh);
-            width: 100vw;
+            position: absolute; // Position images absolutely within the wrapper
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-position: center;
-            transition: background-size 0.1s ease;
-            background-size: 100% auto;
+            background-size: contain;
+            transition: transform 0.3s ease-in-out; // Smooth transition for transform
+
+            &.slide-in-left {
+                animation: slideInLeft 0.3s ease-in-out forwards;
+            }
+
+            &.slide-in-right {
+                animation: slideInRight 0.3s ease-in-out forwards;
+            }
+
+            &.slide-out-left {
+                animation: slideOutLeft 0.3s ease-in-out forwards;
+            }
+
+            &.slide-out-right {
+                animation: slideOutRight 0.3s ease-in-out forwards;
+            }
         }
     }
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutLeft {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
     .controls{
         width: 100%;
+        position: relative;
+        z-index: 100;
         .prev{
             position: fixed;
             top: 50vh;
@@ -109,6 +178,8 @@
                     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
                     font-size: 0.9rem;
                     font-weight: 600;
+                    transition-duration: 0.2s;
+                    transition-delay: 0.5s;
                 }
             }
             .right-controls{
@@ -323,6 +394,58 @@
                 }
         }
     }
+.guide{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    animation: swipe-guide-bg-fadeout 1.2s ease-out;
+    z-index: 51;
+    &.swipe-guide{
+        .swipe-animation-wrapper{
+            width: 8px*20;
+            height: 8px*5;
+            position: absolute;
+            bottom: 30vh;
+            left: calc(50vw - 8px*5);
+            .swipe-animation{
+                position: relative;
+                width: 8px*0;
+                height: 8px*2;
+                margin-left: 0;
+                border-radius: 8px*2;
+                background-color: rgba(255, 255, 255, 0.4);
+                animation:preview-swipe-animation 2s infinite;
+                animation-delay: 0.2s;
+            }
+            @keyframes preview-swipe-animation  {
+                0%{
+                    width: 8px*0;
+                    left: 8px*18;
+                    background-color: rgba(255, 255, 255, 5);
+                }
+                30%{
+                    width: 8px*20;
+                    left: -8px*8;
+                    background-color: rgba(255, 255, 255, 0.8);
+                    animation-timing-function: ease-out;
+                }
+                70%{
+                    width: 8px*0;
+                    left: -8px*16;
+                    background-color: rgba(255, 255, 255, 0.0);
+                }
+                100%{
+                    width: 8px*0;
+                    left: -8px*32;
+                    background-color: rgba(255, 255, 255, 0);
+                }
+            }
+        }
+    }
+
 }
 .selected-button{
     display: flex;
@@ -380,7 +503,18 @@
         }
     }
 }
-
+@keyframes swipe-guide-bg-fadeout{
+    0%{
+        opacity: 1;
+    }
+    85%{
+        opacity:10;
+    }
+    100%{
+        opacity: 0;
+    }
+    
+}
 @media only screen and (max-width: 1200px) {
     .App{
         .preview{

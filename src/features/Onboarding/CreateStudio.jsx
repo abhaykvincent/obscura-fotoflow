@@ -4,7 +4,7 @@ import { logout } from '../../app/slices/authSlice';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { update } from 'firebase/database';
-import { checkStudioDomainAvailability } from '../../firebase/functions/firestore';
+import { checkStudioDomainAvailability } from '../../firebase/functions/studios';
 import { openModal } from '../../app/slices/modalSlice';
 import PrivacyPolicy from '../PrivacyPolicy/PrivacyPolicy';
 import { trackEvent } from '../../analytics/utils';
@@ -195,7 +195,7 @@ const CreateStudio = ({active,next,setCreateAccountData,createAccountData,update
               {
                 studioDomain.length>3 &&
                 (isDomainAvailable ?
-                  <p className='input-reaction subdomain-available'>{`Sub-domain Available`}</p>:
+                  <p className='input-reaction subdomain-available'>{`Available`}</p>:
                   <p className='input-reaction'>{`Sub-domain already taken. `}</p>)
               }
             </div>

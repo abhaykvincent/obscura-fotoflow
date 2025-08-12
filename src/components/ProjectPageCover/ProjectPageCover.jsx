@@ -8,6 +8,8 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { setCoverPhotoInFirestore } from "../../firebase/functions/firestore";
 import { updateProjectCover, updateProjectName } from "../../app/slices/projectsSlice";
 import { convertMegabytes } from "../../utils/stringUtils";
+import { ProjectStatus } from "../Project/ProjectStatus/ProjectStatus";
+import { getGalleryURL } from "../../utils/urlUtils";
 
 export const ProjectCover = ({ project }) => {
     const dispatch = useDispatch();
@@ -110,26 +112,19 @@ export const ProjectCover = ({ project }) => {
     useEffect(() => {
         console.log(project)
     }, [project]);
+
     
     return (
         <div
-            className={`project-page-cover ${isSetFocusButton ? "focus-button-active" : ""} ${project?.projectCover ? "cover-show" : "cover-hide"}`}
-            style={{ // Ensure the container height
-                
-                backgroundImage: project?.projectCover ?
-                    `url(${project.projectCover.replace(/\(/g, '%28').replace(/\)/g, '%29').replace('-thumb', '')}),
-                    url(${
-                        project.collections[0]?.favoriteImages   ? 
-                            project.collections[0].favoriteImages[0].replace(/\(/g, '%28').replace(/\)/g, '%29').replace('-thumb', '')
-                            :""}),
-                    url(${project.collections[0]?.favoriteImages? project.collections[0].favoriteImages[1].replace(/\(/g, '%28').replace(/\)/g, '%29').replace('-thumb', ''):''})
-                    ` 
-                    :`url('https://img.icons8.com/?size=256&id=UVEiJZnIRQiE&format=png&color=1f1f1f' , `,
-                backgroundPosition: `${project?.projectCover ? 'center, left , right':'center'}`,
-                backgroundSize: `${project?.projectCover ? "auto 100%":"auto 50% "}`, // Ensure image scaling
-            }}
-            onClick={handleFocusClick}
+            className={`project-page-cover project-cover ${isSetFocusButton ? "focus-button-active" : ""} ${project?.projectCover || project?.projectCover.length > 0 ? "cover-show" : "cover-hide"}`}
         >
+            {project?.projectCover ? <div className="project-cover-image" >
+                <img  src={project?.projectCover.replace('-thumb', '')} style={{ height: '100%', width: 'auto', objectFit: 'cover' }} />
+            </div>:
+            <div className="project-cover-image no-cover-image" >
+                
+            </div>
+        }
 
             {
             <div className="cover-footer">
@@ -139,29 +134,59 @@ export const ProjectCover = ({ project }) => {
                         <p>1.6K <span>Views</span></p>
                     </div> */}
                     <div className="client">
-                        <div className="edit-pen" onClick={handleNameDoubleClick} ></div>
-                        {isEditing ? (
-                        <div className="editable-data ">
-                            <input
-                            type="text"
-                            value={newName}
-                            onChange={(e) => setNewName(e.target.value)}
-                            />
-                            <div className="input-edit-actions">
-                            <button className={`${newName === project.name ? 'disabled' : ''} button primary icon icon-only check`} onClick={handleSave}></button>
-                            <button className="button secondary  icon icon-only close" onClick={handleCancel}></button>
-                            </div>
-                        </div>
-                        ) : (
-                        <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
-                        )}
-                        {!isEditing &&<div className="type">{project?.type}</div>}
                         
+                        <div className="project-name-editor">
+                            { isEditing ? (
+                                <div className="editable-data ">
+                                    <input
+                                    type="text"
+                                    value={newName}
+                                    onChange={(e) => setNewName(e.target.value)}
+                                    />
+                                    <div className="input-edit-actions">
+                                        <button className={`${newName === project.name ? 'disabled' : ''} button primary icon icon-only check`} onClick={handleSave}></button>
+                                        <button className="button secondary  icon icon-only close" onClick={handleCancel}></button>
+                                    </div>
+                                </div>
+                            ) 
+                            : (
+                                <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
+                            )
+                            }
+                            <div className="edit-pen" onClick={handleNameDoubleClick} ></div>
                         </div>
+                        <div className="tags">
+                            {!isEditing &&<div className="tag type">{project?.type}</div>}
+                            <div className="tag">Hindu</div>
+                        </div>
+
+                        <ProjectStatus project={project} />
+
+                        <div className="link-pin">
+                            <div className="button secondary outline icon archive"> Archive</div>
+                        </div> 
+                        </div>
+
+                                <div className="link-pin-container">
+                                  <div className="link-pin">
+                                    <div className='link' >
+                                    
+                                        <div className="link-container">
+                                          <a className='linkToGallery' href={getGalleryURL('share',currentStudio?.domain,project?.id)} target='_blank' > 
+                                            ...{getGalleryURL('share',currentStudio?.domain,project?.id).slice(-40)}
+                                            <div className="button icon icon-only open-in-new"></div>
+                                          </a>
+                                        </div>
+                                      </div>
+                                      <div className="button primary outline text-only  icon copy"></div>
+
+                                  </div>
+                                        {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
+
+                                </div>
                         {
                             project.pin&&
                     <div className="bottom-right">
-
                         <div className="cover-info project-size">
                             <div className="icon-show storage"></div>
                             <p>{ convertMegabytes(project?.totalFileSize)} <span></span> </p>
@@ -178,8 +203,20 @@ export const ProjectCover = ({ project }) => {
                                 {project?.collections.length} <span>Galleries</span>
                             </p>
                         </div>
+                        {project.status === 'selected' && (
+                            <div className="cover-info project-size">
+                                <div className="icon-show selected"></div>
+                                <p>
+                                    {project?.selectedFilesCount} <span>Selected</span>
+                                </p>
+                            </div>
+                        )}
+                        <div className="project-metadata">
+                            <p>Project created on Jan 12, 2025</p>
+                        </div>
                     </div>
                         }
+                    
                 </div>
                 
             </div>}
@@ -250,4 +287,4 @@ export const ProjectCover = ({ project }) => {
             )}
         </div>
     );
-}    
+}

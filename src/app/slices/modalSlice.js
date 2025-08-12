@@ -14,12 +14,16 @@ const initialState = {
     addBudget: false,
     addReferral: false,
     loginEmailPassword: false,
-    upgrade:false
+    upgrade:false,
+    trialStatus:false,
+    qrCode:false,
+    createPackage: false,
 };
 export const closeModalWithAnimation = createAsyncThunk(
   'projects/closeModalWithAnimation',
   async (modalName, { dispatch }) => {
-    const modalElement = document.querySelector(`.modal-container`);
+    const modalElements = document.querySelectorAll(`.modal-container`);
+    const modalElement = modalElements[modalElements.length - 1];
     if (modalElement) {
       modalElement.classList.add('closingModal');
     }

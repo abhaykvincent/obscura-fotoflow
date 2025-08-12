@@ -7,33 +7,37 @@ import { closeModal, closeModalWithAnimation, openModal, selectModal } from '../
 import { selectUserStudio } from '../../app/slices/authSlice';
 import { trackEvent } from '../../analytics/utils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
-import { set } from 'date-fns';
 import { storeLimitContext } from '../../utils/localStorageUtills';
-import { model } from '../../firebase/app';
-/* import { model } from '../../firebase/app'; */
+import { selectStudio } from '../../app/slices/studioSlice';
+
 // Mapping of placeholders based on project type
 const projectTypePlaceholders = {
-  Wedding: ['Save the Date', 'Engagement', 'Wedding Day', 'Reception', 'Bride', 'Groom', 'Couple'],
-  Baptism: ['Ceremony', 'Family Portraits', 'Godparents', 'Celebration', 'Candle Lighting'],
-  Birthday: ['Cake Cutting', 'Candles', 'Group Photos', 'Decorations', 'Party Games'],
-  Maternity: ['Bump Photos', 'Family Maternity', 'Outdoor Shoot', 'Studio Shoot', 'Baby Announcement'],
-  Newborn: ['First Photos', 'Family with Baby', 'Sleeping Poses', 'Tiny Details', 'Sibling Photos'],
-  Headshot: ['Group', 'Portraits', 'Fashion','Professional'],
-  Anniversary: ['Couple Portraits', 'Vow Renewal', 'Celebration', 'Candlelight Dinner', 'Family Gathering'],
-  Family: ['Family Portraits', 'Generational Photos', 'Outdoor Shoot', 'Holiday Photos', 'Candid Moments'],
-  Group: ['Team Photos', 'Friends Gathering', 'Event Group Photos', 'Formal Portraits', 'Candid Shots'],
-  Travel: ['Landscape Photos', 'Cultural Moments', 'Adventure Shots', 'Local Cuisine', 'Travel Diary'],
-  Event: ['Event Highlights', 'Guest Photos', 'Decorations', 'Speeches', 'Candid Moments'],
+  Wedding: ['Save the Date', 'Engagement', 'Wedding Day', 'Reception', 'Bride', 'Groom', 'Album'],
+  Baptism: ['Baptism','Ceremony', 'Family', 'Godparents', 'Album'],
+  Birthday: ['Birthday', 'Party','Group', 'Decorations'],
+  Maternity: [ 'Maternity','Outdoor ','Bump Photos', 'Family Maternity', 'Studio Shoot'],
+  Newborn: ['Sleeping Poses', 'Family with Baby', 'Sibling'],
+  Headshot: [ 'Portraits','Group', 'Fashion','Professional'],
+  Anniversary: ['Couple', 'Celebration','Family Gathering'],
+  Family: ['Family', 'Generational Photos', 'Outdoor', 'Holiday', 'Candid Moments'],
+  Group: ['Team', 'Friends ', 'Event','Candid Shots'],
+  Travel: ['Travel','Landscape', 'Cultural', 'Adventure', 'Food'],
+  Event: ['Highlights', 'Guest', 'Decorations', 'Speeches', 'Candid'],
 };
 function AddCollectionModal({ project }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const visible = useSelector(selectModal);
   const defaultStudio = useSelector(selectUserStudio);
+  const studio = useSelector(selectStudio);
+  console.log(studio);
   const collectionsLimit = {
-    perProject: defaultStudio.domain === 'monalisa' ? 24 : 3,
+    perProject: defaultStudio.domain === 'monalisa' ? 24 : 
+    studio.planName === 'Core' ? 3 : 12,
+    
   };
-  let collectionsLength = project?.collections ? project.collections : 0;
+
+  const collectionsLength = project?.collections || [];
 
   const [CollectionData, setCollectionData] = useState({
     name: '',
@@ -51,75 +55,96 @@ function AddCollectionModal({ project }) {
       [name]: value,
     }));
   };
+const handleSuggestedNameChange = (event) => {
+  const { value } = event.target;
+
+  const updatedData = {
+    ...CollectionData,
+    name: value,
+  };
+
+  setCollectionData(updatedData); // update local state
+};
+
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const nameInputRef = useRef(null);
 
-  const validateForm = () => {
+  const validateForm = (data) => {
+    
     let newErrors = {};
-    if (!CollectionData.name.trim()) {
+
+    if (!(data.name || '').trim()) {
       newErrors.name = 'Gallery name is required';
     }
+
     setErrors(newErrors);
+
     if (newErrors.name) {
       nameInputRef.current.focus();
     }
+
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
-    if (isSubmitting) return;
 
-    if (!validateForm()) return;
+ const handleSubmit = () => {
+  let data = CollectionData;
+  if (isSubmitting) return;
 
-    setIsSubmitting(true);
-    const domain = defaultStudio.domain;
-    onClose();
+  const isValid = validateForm(data); // validate passed data
+  if (!isValid) return;
 
-    if (collectionsLength.length < collectionsLimit.perProject) {
-      setTimeout(() => {
-        dispatch(addCollection({ domain, projectId: project.id, newCollection: CollectionData }))
-          .then((id) => {
-            trackEvent('collection_created', {
-              project_id: project.id,
-              collection_id: id.payload.collection.id,
-            });
-            dispatch(
-              showAlert({
-                type: 'success',
-                message: `Collection <b>${CollectionData.name}</b> added successfully!`,
-              })
-            );
-            navigate(`/${defaultStudio.domain}/gallery/${project.id}/${id.payload.collection.id}`);
-          })
-          .finally(() => setIsSubmitting(false));
-      }, 500);
-    } else {
-      setIsSubmitting(false);
+  setIsSubmitting(true);
+  const domain = defaultStudio.domain;
+  onClose();
+
+  if (collectionsLength.length < collectionsLimit.perProject) {
+    setTimeout(() => {
       dispatch(
-        showAlert({
-          id: project.id,
-          type: 'error',
-          message: `Project <b>${CollectionData.name}</b>'s 3 Gallery limit reached! Upgrade`,
+        addCollection({
+          domain,
+          projectId: project.id,
+          newCollection: data,
         })
-      );
-      storeLimitContext('Galleries', '3 gallery per project limit reached');
-      setTimeout(() => dispatch(openModal('upgrade')), 2000);
-    }
-  };
-  /* async function run() {
-    // Provide a prompt that contains text
-    const prompt = "Write a story about a magic backpack."
-  
-    // To generate text output, call generateContent with the text input
-    const result = await model.generateContent(prompt);
-  
-    const response = result.response;
-    const text = response.text();
-    console.log(text);
+      )
+        .then((id) => {
+          trackEvent('collection_created', {
+            project_id: project.id,
+            collection_id: id.payload.collection.id,
+          });
+
+          dispatch(
+            showAlert({
+              type: 'success',
+              message: `Collection <b>${data.name}</b> added successfully!`,
+            })
+          );
+
+          navigate(
+            `/${defaultStudio.domain}/gallery/${project.id}/${id.payload.collection.id}`
+          );
+        })
+        .finally(() => setIsSubmitting(false));
+    }, 500);
+  } else {
+    setIsSubmitting(false);
+
+    dispatch(
+      showAlert({
+        id: project.id,
+        type: 'error',
+        message: `Project <b>${data.name}</b>'s 3 Gallery limit reached! Upgrade`,
+      })
+    );
+
+    storeLimitContext('Galleries', '3 gallery per project limit reached');
+
+    setTimeout(() => dispatch(openModal('upgrade')), 2000);
   }
-  run(); */
+};
+
   
   const modalRef = useModalFocus(visible.createCollection);
   if (!visible.createCollection) {
@@ -132,6 +157,7 @@ function AddCollectionModal({ project }) {
   return (
     <div className="modal-container" ref={modalRef}>
       <div className="modal create-project island">
+
         <div className="modal-header">
           <div className="modal-controls">
             <div className="control close" onClick={onClose}></div>
@@ -143,9 +169,11 @@ function AddCollectionModal({ project }) {
             <p className="modal-subtitle">- {project.name}'s {project.type}</p>
           </div>
         </div>
+        
         <div className="modal-body">
           <div className="form-section">
             <div className="field">
+
               <label htmlFor="">Gallery name</label>
               <input
                 name="name"
@@ -153,8 +181,15 @@ function AddCollectionModal({ project }) {
                 value={CollectionData.name}
                 type="text"
                 onChange={handleInputChange}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSubmit();
+                  }
+                }}
                 placeholder={placeholders[0]} // Dynamically set placeholder
               />
+
               <label htmlFor=""></label>
               <div className="project-validity-options">
                 {projectTypePlaceholders[project.type]
@@ -171,7 +206,7 @@ function AddCollectionModal({ project }) {
                         name="name"
                         value={placeholder}
                         checked={CollectionData.name === placeholder}
-                        onChange={handleInputChange}
+                        onChange={handleSuggestedNameChange}
                       />
                       <label htmlFor={`template-${placeholder.toLowerCase().replace(/\s+/g, '-')}`}>
                         {placeholder}
@@ -179,10 +214,13 @@ function AddCollectionModal({ project }) {
                     </div>
                   ))}
               </div>
+
+            <span></span>
               {errors.name && <div className="error">{errors.name}</div>}
             </div>
           </div>
         </div>
+
         <div className="actions">
           <div className="button secondary" onClick={onClose}>
             Cancel
@@ -191,6 +229,7 @@ function AddCollectionModal({ project }) {
             Create
           </div>
         </div>
+
       </div>
       <div className="modal-backdrop" onClick={onClose}></div>
     </div>

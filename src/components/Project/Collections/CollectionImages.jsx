@@ -1,22 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import ImageGallery from '../../ImageGallery/ImageGallery';
 import { fetchImages } from '../../../firebase/functions/firestore';
-import { addAllFileSizesToMB } from '../../../utils/fileUtils';
+import { addAllFileSizesToMB, validateFileTypes } from '../../../utils/fileUtils';
 import UploadButton from '../../UploadButton/UploadButton';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUploadList, setUploadStatuss } from '../../../app/slices/uploadSlice';
+import { 
+    selectUploadStatus,
+    clearUploadSession
+} from '../../../app/slices/uploadSlice';
 import Lottie from 'react-lottie';
 import animationData from '../../../assets/animations/UploadFiles.json';
-import { selectDomain } from '../../../app/slices/authSlice';
+import { selectDomain, selectUserStudio } from '../../../app/slices/authSlice';
 import DownloadFiles from '../../DownloadFiles/DownloadFiles';
 import { findCollectionById } from '../../../utils/CollectionQuery';
 import { openModal } from '../../../app/slices/modalSlice';
 import ImageGalleryGrid from '../../ImageGallery/ImageGalleryGrid';
 import { showAlert } from '../../../app/slices/alertSlice';
+import { selectStudioStorageUsage } from '../../../app/slices/studioSlice';
+import { handleUpload } from '../../../utils/uploadOperations';
+import { createNotification } from '../../../app/slices/notificationSlice';
+import { updateCollectionStatus } from '../../../app/slices/projectsSlice';
 
 const CollectionImages = ({ id, collectionId, project }) => {
     const dispatch = useDispatch();
     const domain = useSelector(selectDomain);
+    const storageLimit = useSelector(selectStudioStorageUsage);
+    const currentStudio = useSelector(selectUserStudio);
     // dark light mode
     const [displayMode, setDisplayMode] = useState('darkMode');
     const [uploadTrigger, setUploadTrigger] = useState(false);
@@ -33,9 +42,8 @@ const CollectionImages = ({ id, collectionId, project }) => {
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(16);
 
-    // Upload progress
-    const [uploadList, setUploadLists] = useState([]);
-    const [uploadStatus, setUploadStatus] = useState('close');
+    // Upload progress state (uploadList and uploadStatus) is now managed by Redux.
+    // Local useState for uploadList and uploadStatus are removed.
 
     const [copyStatus, setCopyStatus] = useState('Lightroom');
     
@@ -48,22 +56,121 @@ const CollectionImages = ({ id, collectionId, project }) => {
         },
     };
 
-    // ON Upload status
-    useEffect(() => {
-        if (uploadStatus === 'completed') {
-            setTimeout(() => setUploadStatus('close'), 1000);
+    // Global upload status from Redux
+    const globalUploadStatus = useSelector(selectUploadStatus);
+
+    const handleDroppedFiles = async (files) => {
+        const selectedFiles = Array.from(files);
+        const importFileSize = addAllFileSizesToMB(selectedFiles);
+    
+        // Validate file types
+        if (!validateFileTypes(selectedFiles)) {
+            dispatch(showAlert({ type: 'error', message: 'Currently, only .jpg, .jpeg, and .png. More to come!' }));
+            return; // Exit if files are not valid
         }
-        dispatch(setUploadStatuss(uploadStatus));
-    }, [uploadStatus]);
+        setIsPhotosImported(true);
+    
+        
+        // If Space Available
+        // Upload files and update storage usage
+        if (importFileSize < (storageLimit?.quota -  storageLimit?.used) ) {
+          try {
+            const startTime = Date.now();  // Record the start time
+    
+            // Handle upload Operation - Updated call
+            const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch, findCollectionById(project, collectionId)?.name);
+    
+            const endTime = Date.now();  // Record the end time
+            const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
+            console.log(`%c Upload Session Duration : ${duration} seconds`, 'color:#32adf0');
+                
+            const uploadedImages = resp.uploadedFiles
+    
+            setImageUrls(prevUrls => [...prevUrls, ...uploadedImages]);
+            
+            const dispatchNotification = () => {
+              dispatch(
+                createNotification({
+                  studioId: currentStudio.domain, // Replace with the appropriate project or studio ID
+                  notificationData: {
+                    title: '', // Updated title
+                    message: `${uploadedImages.length }new photos uploaded`, // Updated message
+                    type: 'project', // Changed type to 'project'
+                    actionLink: '/projects', // Updated action link to navigate to projects
+                    priority: 'normal',
+                    isRead: false,
+                    metadata: {
+                      createdAt: new Date().toISOString(),
+                      eventType: 'project_created', // Updated event type
+                      createdBy: 'system', // Added creator's email
+                      projectName: 'Project Name', // Add the project name if available
+                      authMethod: 'google', // Optional: Include if relevant
+                    },
+                  },
+                })
+              );
+              };
+              dispatchNotification()
+              dispatch(updateCollectionStatus
+                ({
+                  domain,
+                  projectId: id,
+                  collectionId,
+                  status: 'visible'
+                }));
+              console.log(domain)
+            setTimeout(() => {
+              dispatch(openModal('shareGallery'))
+            }, 1000);
+            
+    
+          } catch (error) {
+            dispatch(showAlert({ type: 'error', message: 'Upload failed, please try again!' }));
+          } finally {
+            
+              
+            dispatch(showAlert({ type: 'success', message: 'Upload Complete' }));
+            
+            setIsPhotosImported(false);
+          }
+        } 
+        else {
+            dispatch(showAlert({ type: 'error', message: 'Uploaded <b>file size exceeds</b> your limit! Upgrade' }));
+          setIsPhotosImported(false);
+        }
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+            handleDroppedFiles(files);
+            e.dataTransfer.clearData();
+        }
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+    // Handle post-upload actions based on globalUploadStatus
     useEffect(() => {
-        //start animation  when trefggured
+        if (globalUploadStatus === 'completed') {
+            // showAlert('success', 'All files processed successfully!'); // Alert is shown by handleUpload
+            setTimeout(() => {
+                dispatch(clearUploadSession());
+            }, 3000); // Delay before clearing
+        } else if (globalUploadStatus === 'failed') {
+            // showAlert('error', 'Some files failed to upload.'); // Alert is shown by handleUpload
+            setTimeout(() => {
+                dispatch(clearUploadSession());
+            }, 3000); // Delay before clearing
+        }
+    }, [globalUploadStatus, dispatch]);
 
-    }, [uploadTrigger]);
-
-    useEffect(() => {
-        dispatch(setUploadList(uploadList));
-    }, [uploadList]);
-
+    // Obsolete useEffects for local uploadList and uploadStatus are removed.
 
     // Initial collection images fetch
     useEffect(() => {
@@ -157,7 +264,19 @@ const CollectionImages = ({ id, collectionId, project }) => {
             
             <div className="header">
                 <div className="options">
-                    <UploadButton {...{ isPhotosImported, setIsPhotosImported, imageUrls, setImageUrls, setUploadStatus, id, collectionId, setUploadLists,  }} />
+                    {/* Updated UploadButton props: removed setUploadStatus, setUploadLists; added dispatch */}
+                    <UploadButton {...{ 
+                        isPhotosImported, 
+                        setIsPhotosImported, 
+                        imageUrls, 
+                        setImageUrls, 
+                        // setUploadStatus, // Removed
+                        id, 
+                        collectionId, 
+                        collectionName: findCollectionById(project, collectionId)?.name,
+                        // setUploadLists, // Removed
+                        dispatch // Added
+                    }} />
                 </div>
                 {collectionImages?.length > 0 || imageUrls.length > 0  ? (
                     <div className="view-control">
@@ -197,12 +316,20 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 </>}
                 </div>
             </div>
+
+
+            
             {imageUrls.length > 0 ? (
                 galleryView === 'grid' ?
                 <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id,collectionId }} />:
                 <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId }} />
             ) : (
-                <label htmlFor="fileInput" className={`drop-upload ${isPhotosImported ? 'active' : ''}`}>
+                <label 
+                    htmlFor="fileInput" 
+                    className={`drop-upload ${isPhotosImported ? 'active' : ''}`}
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                >
                     <div className="drop-area">
                         <Lottie options={defaultOptions} height={150} width={150} />
                         <h2>Drop files here</h2>

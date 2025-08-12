@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { fetchImageUrls } from '../../utils/storageOperations';
 import { findCollectionById } from '../../utils/CollectionQuery';
 import './Share.scss';
-import { fetchProject, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
+import { fetchCollectionStatus, fetchProject, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
 import ShareGallery from '../../components/ImageGallery/ShareGallery';
 import { useSelector } from 'react-redux';
 import { selectDomain, selectIsAuthenticated, selectUser, selectUserStudio } from '../../app/slices/authSlice';
@@ -32,6 +32,7 @@ export default function ShareProject() {
   const [imageUrls, setImageUrls] = useState([]);
   const defaultStudio = useSelector(selectUserStudio)
 
+  const [displayGallery, setDisplayGallery] = useState(false);
   const [page,setPage]=useState(1);
   const [size,setSize]=useState(100);
   // Fetch Images
@@ -85,6 +86,23 @@ export default function ShareProject() {
     setPage(1)
   }, [project, collectionId]);
 
+  useEffect(() => {
+    const checkCollectionStatus = async () => {
+      try {
+        const status = await fetchCollectionStatus(studioName, projectId, collectionId, {domain: studioName});
+        if (status === 'visible') {
+          setDisplayGallery(true);
+        } else {
+          setDisplayGallery(false);
+        }
+      } catch (error) {
+        console.error('Error fetching collection status:', error);
+        setDisplayGallery(false); // Hide gallery on error
+      }
+    };
+
+    checkCollectionStatus();
+  }, [studioName, projectId, collectionId]);
   if(!project) return
   
   // Collections panel
@@ -93,13 +111,12 @@ export default function ShareProject() {
     <div className="">
       <div className="collections-panel">
         {project.collections.map((collection, index) => (
-          collection.uploadedFiles.length !== 0 && 
-          <div
+          collection.uploadedFiles?.length !== 0 && 
+        
+          collection.uploadedFiles !== undefined && <div
             key={collection.id}
             className={`
-              collection-tab 
-              ${collection.id === collectionId || (!collectionId && index === 0) ? 'active' : ''}
-              ${collection.uploadedFiles === undefined ? 'disabled' : ''}
+              collection-tab  active
             `}
           >
             {
@@ -131,7 +148,7 @@ export default function ShareProject() {
         </div>
       </div>
       <div className="shared-collection">
-        <ShareGallery images={imageUrls} projectId={projectId} collectionId={collectionId}/>
+        <ShareGallery images={imageUrls} projectId={projectId} collectionId={collectionId} domain={studioName}/>
         
         {/* !!! HIGH Cloud Cost Trigger */}
         {/* DONOT USE until we have a better way to handle this */}

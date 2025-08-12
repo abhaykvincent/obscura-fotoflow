@@ -2,7 +2,7 @@ import React, { useCallback, memo } from 'react';
 import { useDispatch } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
 
-const SelectionGallery = ({ images, selectedImages,setUnselectedImages, setSelectedImages }) => {
+const SelectionGallery = ({ project, images, selectedImages,setUnselectedImages, setSelectedImages }) => {
   
   const dispatch = useDispatch()
   const handleImageClick = useCallback((fileUrl) => {
@@ -34,14 +34,21 @@ const SelectionGallery = ({ images, selectedImages,setUnselectedImages, setSelec
     <div
       className="photo"
       key={index}
-      onClick={() => handleImageClick(fileUrl)}
+      onClick={() => project.status !== "selected" ? handleImageClick(fileUrl) : dispatch(showAlert({
+        type: 'warning',
+        message: 'Selection Completed!',
+      }))}
     >
       <img className="img" src={fileUrl.url} alt={`File ${index}`} />
-      <input
+      
+      {project.status !== "selected" && <input
         type="checkbox"
         checked={selectedImages.includes(fileUrl)}
-        onChange={() => handleImageClick(fileUrl)}
-      />
+        onChange={() => project.status !== "selected" ? handleImageClick(fileUrl) : dispatch(showAlert({
+          type: 'warning',
+          message: 'Selection Completed!',
+        }))}
+      />}
     </div>
   ));
 

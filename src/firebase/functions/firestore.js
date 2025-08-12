@@ -8,137 +8,17 @@ import { generateMemorablePIN, generateRandomString, toKebabCase, toTitleCase} f
 import { removeUndefinedFields } from "../../utils/generalUtils";
 
 
-// Studio
-export const createStudio = async (studioData) => {
-    const { name } = studioData;
-    const id = `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
 
-    const studiosCollection = collection(db, 'studios');
-    const studioDoc = {
-        id: id,
-        name: studioData.name,
-        domain: studioData.domain, // Assuming domain is part of studioData
-        status: 'active', // Enum: ['active', 'inactive', 'suspended']
-        batch: '002',
-        usage: {
-            storage: {
-                quota: 5 * 1000, // 5 GB
-                used: 0, // 0 GB
-            },
-            projects: {
-                weeklyUsed: 0,
-                monthlyUsed: 0,
-            },
-        },
-        planId: 'core-free', // Reference to a plan in the 'plans' collection
-        subscriptionId: id + '-core-free-' + new Date().toISOString().split('T')[0], // Reference to a subscription in the 'subscriptions' collection
-        
-        metadata: {
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            createdBy: id, // User or admin who created the subscription
-            updatedBy: id, // User or admin who last updated the subscription
-        },
-    };
-
-    // Create a separate subscription document
-    const subscriptionDoc = {
-        id: studioDoc.subscriptionId,
-        studioId: id, // Reference to the studio
-        planId: 'core-free', // Reference to the plan
-        name: 'Core',   // Core, Freelancer, Studio, Compaany
-        type: 'free', // Enum: ['free', 'paid', 'enterprise']
-        status: 'active', // Enum: ['active', 'trial', 'expired', 'canceled']
-        
-        billingCycle: 'yearly',
-        trialEndDate: null,
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        autoRenew: true,
-
-        pricing: {
-            basePrice: 0,
-            discount: 0,
-            tax: 0,
-            currency: 'INR', // Enum: ['INR', 'USD', 'CAD', 'EUR', 'GBP', 'AUD', 'JPY', 'HKD', 'SGD']
-            totalPrice: 0,
-        },
-        paymentPlatform: null, // Enum: ['razorpay']
-        paymentMethod: null,  // Enum: ['upi','credit-card', 'debit-card', 'net-banking', 'cash']
-       
-        metadata: {
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            createdBy: id, // User or admin who created the subscription
-            updatedBy: id, // User or admin who last updated the subscription
-        },
-    };
-
-    // Save studio and subscription documents
-    const studioRef = doc(studiosCollection, studioDoc.domain);
-    const subscriptionRef = doc(collection(db, 'subscriptions'), subscriptionDoc.id);
-
-    try {
-        await setDoc(studioRef, studioDoc);
-        await setDoc(subscriptionRef, subscriptionDoc);
-
-        console.log('Studio and subscription created successfully.');
-        return { studio: studioDoc, subscription: subscriptionDoc };
-    } catch (error) {
-        console.error('Error creating studio or subscription:', error.message);
-        throw error;
-    }
-};
-export const checkStudioDomainAvailability = async (domain) => {
-    const studiosCollection = collection(db, 'studios');
-    const querySnapshot = await getDocs(studiosCollection);
-    const studiosData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-    }));
-    const studio = studiosData.find((studio) => studio.domain === domain);
-
-    return !studio;
-};
-export const fetchStudiosOfUser = async (email) => {
-    const usersCollection = collection(db, 'users');
-    const querySnapshot = await getDocs(usersCollection);
-    const usersData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-    }));
-    const user = usersData.find((user) => user.email === email);
-    const studio = user?.studio
-    return studio;
-};
-export const fetchStudios = async () => {
-    const studiosCollection = collection(db, 'studios');
-    const querySnapshot = await getDocs(studiosCollection);
-    const studiosData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-    }));
-    return studiosData;
-}
-export const fetchStudioByDomain = async (currentDomain) => {
-    const studiosCollection = collection(db, 'studios');
-    const querySnapshot = await getDocs(studiosCollection);
-    const studiosData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-    }));
-    const studio = studiosData.find((studio) => studio.domain === currentDomain);
-
-    return studio;
-};
 // Users
 export const createUser = async (userData) => {
-    const {email,studio} = userData;
+    const {email,studio,displayName,photoURL} = userData;
+    console.log(displayName)
     const usersCollection = collection(db, 'users');
     const userDoc = {
-        displayName:'',
+        displayName: displayName,
         email : email,
         studio : studio,
+        photoURL : photoURL,
     }
     await setDoc(doc(usersCollection, userDoc.email), userDoc)
     return userDoc
@@ -151,6 +31,16 @@ export const fetchUsers = async () => {
         ...doc.data(),
     }));
     return usersData;
+};
+export const fetchUserByEmail = async (email) => {
+    const usersCollection = collection(db, 'users');
+    const querySnapshot = await getDocs(usersCollection);
+    const usersData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    const user = usersData.find((user) => user.email === email);
+    return user;
 };
 // Referrals
 export const fetchAllReferalsFromFirestore  = async () => {
@@ -263,6 +153,7 @@ export const acceptInvitationCode = async (invitationCode) => {
 // Projects //
 export const fetchProjectsFromFirestore = async (domain) => {
     try{
+        console.log(domain)
         let color = domain === '' ? 'gray' : '#0099ff';
         const studioDocRef = doc(db, 'studios', domain);
         const projectsCollectionRef = collection(studioDocRef, 'projects');
@@ -436,6 +327,43 @@ export const updateProjectLastOpenedInFirestore = async (domain, projectId) => {
         throw error;
     }
 };
+
+export const updateProjectStorageToArchive = async (domain, projectId) => {
+    if (!domain || !projectId) {
+        throw new Error('Domain and Project ID are required for archiving.');
+    }
+
+    const projectDocRef = doc(db, 'studios', domain, 'projects', projectId);
+
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+
+        if (projectSnapshot.exists()) {
+            const projectData = projectSnapshot.data();
+            const newStorageHistoryEntry = {
+                status: 'archive',
+                dateMoved: Date.now(),
+            };
+
+            const updatedData = {
+                storage: {
+                    ...projectData.storage,
+                    status: 'archive',
+                    storageHistory: arrayUnion(newStorageHistoryEntry)
+                }
+            };
+
+            await updateDoc(projectDocRef, updatedData);
+            console.log(`Project ${projectId} storage status updated to archive.`);
+        } else {
+            console.error(`Project ${projectId} does not exist.`);
+            throw new Error('Project does not exist.');
+        }
+    } catch (error) {
+        console.error(`Error updating project storage for ${projectId}: ${error.message}`);
+        throw error;
+    }
+};
   
 // Collection Operations
 export const addCollectionToStudioProject = async (domain, projectId, collectionData) => {
@@ -520,6 +448,36 @@ export const updateCollectionNameInFirestore = async (domain, projectId, collect
       throw error;
     }
   };
+export const fetchCollectionStatus = async (domain, projectId, collectionId) => {
+    console.log(domain, projectId, collectionId);
+    if (!domain || !projectId || !collectionId) {
+        throw new Error('Domain, Project ID, and Collection ID are required.');
+    }
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
+        }
+
+        const projectData = projectSnapshot.data();
+        const collection = projectData.collections.find(c => c.id === collectionId);
+        
+        if (collection) {
+            return collection.status;
+        } else {
+            throw new Error('Collection not found in project.');
+        }
+    } catch (error) {
+        console.error(`Error fetching collection status: ${error.message}`);
+        throw error;
+    }
+};
 // Uploaded Files
 export const fetchImages = async (domain, projectId, collectionId) => {
     let color = domain === '' ? 'gray' : '#0099ff';
@@ -562,7 +520,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         }
         // Update collection with new data, including filesCount
         updateDoc(collectionDocRef, {
-            uploadedFiles: arrayUnion(...uploadedFiles),
+            uploadedFiles: arrayUnion(...uploadedFiles.map(file => ({...file, dateTimeOriginal: file.dateTimeOriginal}))),
         })
         .catch(error => {
             console.error(`%cError adding uploaded files to collection ${collectionId} in project ${projectId}: ${error.message}`, `color: red;`);
@@ -576,7 +534,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
                     return {
                         ...collection,
                         galleryCover : collection?.galleryCover? collection.galleryCover : uploadedFiles[0]?.url,
-                        favoriteImages: collection?.favoriteImages  ? collection.favoriteImages :[uploadedFiles.length>=2 ? uploadedFiles[1]?.url:'',uploadedFiles.length>=3 ? uploadedFiles[2]?.url:''],
+                        favoriteImages: collection?.favoriteImages && collection?.favoriteImages[0] !==''  ? collection.favoriteImages :[uploadedFiles.length>=2 ? uploadedFiles[1]?.url:'',uploadedFiles.length>=3 ? uploadedFiles[2]?.url:''],
                         filesCount: (collection.filesCount || 0) + uploadedFiles.length,
                     };
                 }
@@ -587,13 +545,6 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
             projectCover: projectData.data().projectCover === '' ? uploadedFiles[0]?.url : projectData.data().projectCover,
             status: "uploaded",
             pin: projectData.data().pin || generateMemorablePIN(4),
-        })
-        .then(() => {
-
-        })
-        .catch(error => {
-            console.error(`%cError updating project ${projectId}: ${error.message}`, `color: red;`);
-            throw error;
         });
             
         await updateDoc(studioDocRef, {
@@ -691,6 +642,7 @@ export const addSelectedImagesToFirestore = async (domain, projectId, collection
         });
 
         await updateDoc(collectionDocRef, { ...collectionData, uploadedFiles: updatedImages });
+        updateCollectionStatusByCollectionIdInFirestore(domain, projectId, collectionId, status);
 
         // Update status on the project
         const projectSnapshot = await getDoc(projectDocRef);
@@ -813,6 +765,91 @@ export const setGalleryCoverPhotoInFirestore = async (domain, projectId, collect
     }
 };
 
+export const updateCollectionStatusByCollectionIdInFirestore = async (domain, projectId, collectionId, status) => {
+    try {
+        const projectRef = doc(db, 'studios', domain, 'projects', projectId);
+        const projectSnapshot = await getDoc(projectRef);
+
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
+        }
+
+        const projectData = projectSnapshot.data();
+        const updatedCollections = projectData.collections.map(collection => {
+            if (collection.id === collectionId) {
+                return { 
+                    ...collection, 
+                    status ,
+                    version: 2
+                };
+            }
+            return collection;
+        });
+
+        await updateDoc(projectRef, { collections: updatedCollections });
+        console.log(`Collection ${collectionId} status updated to ${status} for project ${projectId}`);
+    } catch (error) {
+        console.error("Error updating collection status:", error);
+        throw error;
+    }
+};
+
+
+export const updateSelectionGalleryStatusByCollectionIdInFirestore = async (domain, projectId, collectionId, status) => {
+    try {
+        const projectRef = doc(db, 'studios', domain, 'projects', projectId);
+        const projectSnapshot = await getDoc(projectRef);
+
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
+        }
+
+        const projectData = projectSnapshot.data();
+        const updatedCollections = projectData.collections.map(collection => {
+            if (collection.id === collectionId) {
+                return { 
+                    ...collection, 
+                    selectionGallery:status,
+                };
+            }
+            return collection;
+        });
+
+        await updateDoc(projectRef, { collections: updatedCollections });
+        console.log(`Collection ${collectionId} selection gallery status updated to ${status} for project ${projectId}`);
+    } catch (error) {
+        console.error("Error updating collection selection gallery status:", error);
+        throw error;
+    }
+};
+export const updateCollectionSelectionStatusByCollectionIdInFirestore = async (domain, projectId, collectionId, status) => {
+    try {
+        const projectRef = doc(db, 'studios', domain, 'projects', projectId);
+        const projectSnapshot = await getDoc(projectRef);
+
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
+        }
+
+        const projectData = projectSnapshot.data();
+        const updatedCollections = projectData.collections.map(collection => {
+            if (collection.id === collectionId) {
+                return { 
+                    ...collection, 
+                    selectionStatus:status,
+                };
+            }
+            return collection;
+        });
+
+        await updateDoc(projectRef, { collections: updatedCollections });
+        console.log(`Collection ${collectionId} selection status updated to ${status} for project ${projectId}`);
+    } catch (error) {
+        console.error("Error updating collection selection status:", error);
+        throw error;
+    }
+};
+
 // Event
 export const addEventToFirestore = async (domain, projectId, eventData) => {
     if (!domain || !projectId || !eventData) {
@@ -848,6 +885,56 @@ export const addEventToFirestore = async (domain, projectId, eventData) => {
     } catch (error) {
         color = 'red';
         console.error(`%cError adding event ${id} to Project ${projectId} in ${domain}: ${error.message}`, `color: ${color};`);
+        throw error;
+    }
+};
+
+export const addUploadCompletionEventToFirestore = async (domain, projectId, collectionId, uploadedFiles, importFileSize, collectionName) => {
+    if (!domain || !projectId || !collectionId || !uploadedFiles || uploadedFiles.length === 0) {
+        throw new Error('Domain, Project ID, Collection ID, and uploaded files are required.');
+    }
+
+    const projectDocRef = doc(db, 'studios', domain, 'projects', projectId);
+
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+        if (!projectSnapshot.exists()) {
+            throw new Error('Project does not exist.');
+        }
+
+        const projectData = projectSnapshot.data();
+        const existingEvents = projectData.events || [];
+
+        // Check if an event with the same type and date already exists
+        const eventAlreadyExists = existingEvents.some(event => 
+            event.type === collectionName && event.date === eventDate
+        );
+
+        if (eventAlreadyExists) {
+            console.log(`%cUpload completion event for collection ${collectionName} on ${new Date(eventDate).toLocaleDateString()} already exists. Skipping creation.`, `color: orange;`);
+            return; // Do not create a new event
+        }
+
+        const eventId = `upload-completion-${collectionId}-${new Date().getTime()}`;
+        const eventDate = uploadedFiles[0]?.dateTimeOriginal ? new Date(uploadedFiles[0].dateTimeOriginal).getTime() : new Date().getTime();
+        const uploadCompletionEvent = {
+            id: eventId,
+            type: collectionName,
+            date: eventDate,
+            location: '',
+            crews: [],
+            collectionId: collectionId,
+            filesCount: uploadedFiles.length,
+            totalSize: importFileSize,
+        };
+
+        await updateDoc(projectDocRef, {
+            events: arrayUnion(uploadCompletionEvent)
+        });
+
+        console.log(`%cAdded upload completion event for Project ${projectId} in ${domain} successfully.`, `color: #54a134;`);
+    } catch (error) {
+        console.error(`%cError adding upload completion event to Project ${projectId} in ${domain}: ${error.message}`, `color: red;`);
         throw error;
     }
 };
@@ -1093,3 +1180,81 @@ export const fetchInvitationFromFirebase = async (domain, projectId) => {
     const projectData = projectSnapshot.data();
     return {invitation:projectData.invitation,projectId} || null; // Return invitation data or null if not exists
 };
+
+// Project Operations
+
+/**
+ * Create multiple dummy projects for development/testing.
+ * @param {string} domain - Studio domain.
+ * @param {number} n - Number of dummy projects to create.
+ */
+export const createDummyProjectsInFirestore = async (domain, n = 5) => {
+    console.log(domain);
+
+    // Arrays for realistic random data
+    const firstNames = ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'Grace', 'Heidi', 'Ivan', 'Judy', 'Kevin', 'Liam', 'Mia', 'Noah', 'Olivia', 'Peter', 'Quinn', 'Rachel', 'Sam', 'Tina', 'Uma', 'Victor', 'Wendy', 'Xavier', 'Yara', 'Zoe'];
+    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Lee', 'Perez', 'Thompson', 'Moore', 'Wright', 'King'];
+    const businessNames = ['Elite Events', 'Pixel Perfect Studio', 'Moment Makers', 'Timeless Captures', 'Dream Lens Photography', 'The Artful Shutter', 'Infinite Frames'];
+
+    const projectTypes = ['Wedding', 'Baptism', 'Birthday', 'Maternity', 'Newborn', 'Headshot', 'Anniversary', 'Family'];
+    const projectStatuses = ['draft', ' ','active', 'selected', 'completed', 'archived'];
+
+    // Helper to get a random timestamp in the past 13 months
+    const now = Date.now();
+    // Using a more precise calculation for 13 months ago
+    const thirteenMonthsAgo = new Date();
+    thirteenMonthsAgo.setMonth(thirteenMonthsAgo.getMonth() - 13);
+    const thirteenMonthsMs = now - thirteenMonthsAgo.getTime(); // Get the precise difference in ms
+
+    for (let i = 1; i <= n; i++) {
+        // Generate random project name (e.g., "Smith & Johnson Wedding" or "Alice's Birthday")
+        let projectName;
+        let clientName;
+        const nameType = Math.random();
+
+        if (nameType < 0.4) { // 40% chance of a couple's name for weddings/anniversaries
+            const name1 = `${firstNames[Math.floor(Math.random() * firstNames.length)]}`;
+            const name2 = `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+            projectName = `${name1} & ${name2}`;
+            clientName = `${lastNames[Math.floor(Math.random() * lastNames.length)]} Family`;
+        } else if (nameType < 0.8) { // 40% chance of a single person's name
+            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+            projectName = `${firstName} ${lastName}`;
+            clientName = `${firstName} ${lastName}`;
+        } else { // 20% chance of a business name
+            projectName = businessNames[Math.floor(Math.random() * businessNames.length)];
+            clientName = `Client ${Math.floor(100 + Math.random() * 900)}`; // Simple client ID for business projects
+        }
+
+
+        // Make name2 optional (e.g., 50% chance it's present)
+        const optionalName2 = Math.random() < 0.5 ?
+            `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}` :
+            ''; // Empty string if not present
+
+        const randomOffset = Math.floor(Math.random() * thirteenMonthsMs);
+
+        const dummyProject = {
+            name: projectName,
+            name2: optionalName2, // Now optional
+            type: projectTypes[Math.floor(Math.random() * projectTypes.length)], // Random project type
+            projectValidityMonths: [3, 6, 12][i % 3],
+            createdAt: now - randomOffset,
+            status: projectStatuses[Math.floor(Math.random() * projectStatuses.length)], // Random status
+            collections: [],
+            events: [],
+            payments: [],
+            expenses: [],
+            budgets: [],
+            projectCover: '',
+            pin: Math.floor(1000 + Math.random() * 9000).toString(),
+            description: `This is a dummy project for development and testing. #${i} - Client: ${clientName || projectName}`,
+        };
+        await addProjectToStudio(domain, dummyProject);
+    }
+    console.log(`Created ${n} dummy projects in studio: ${domain}`);
+};
+
+export * from './admin-firestore';
+export * from './packages-firestore';

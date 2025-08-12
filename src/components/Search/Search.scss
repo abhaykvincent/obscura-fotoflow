@@ -76,18 +76,21 @@
         display: flex;
         align-items: center;
         margin:8px*0.75 0px;
+        opacity: 0;
+        animation: fadeInUp 0.5s ease-out 0.8s;
+        animation-fill-mode: forwards;
         .search-input{
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          text-align: center;
-          border-radius: 8px*1 !important;
-          width: 8px*14;
-          padding: 8px;
-          height: 8px*4;
-        background-color: $dark-2;
-        border: 1px solid $dark-1;
-        box-shadow: inset -1px 1px 2px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-radius: 8px*1 !important;
+            width: 8px*14;
+            padding: 8px;
+            height: 8px*4;
+            background-color: $dark-2-5;
+            border: 1px solid $dark-1;
+            box-shadow: inset -1px 1px 2px rgba(0, 0, 0, 0.3);
         &::placeholder{
             color: $gray-accessible-dark;
             text-shadow: inset -1px 1px 2px rgba(0, 0, 0, 0.3);
@@ -108,6 +111,11 @@
         .icon.button{
             height: 100%;
             margin-left: 8px;
+            opacity: 0;
+            padding: 8px*0.7 8px;
+            animation: fadeInUp 0.5s ease-in 0.7s;
+            animation-fill-mode: forwards;
+            background: none;
         }
     }
   }

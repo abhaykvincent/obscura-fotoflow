@@ -1,6 +1,5 @@
 @import '../../style/variables';
 main.subscription{
-    margin-top: -8px*4;
     z-index: 99;
 }
 .welcome-section{
@@ -234,9 +233,12 @@ main.subscription{
         animation-timing-function: ease-out;
         .subscriptions-header{
             display: grid;
-            justify-content: center;
+            grid-template-columns: 8px*12 auto 8px*12;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 8px*2;
             margin-top: -8px*1;
+            padding: 8px*0 8px*2;
             .subscriptions-heading{
                 font-size: 1.8rem;
                 margin-top: 8px*0;
@@ -248,6 +250,7 @@ main.subscription{
             .subscriptions-options{
                 display: flex;
                 align-items: center;
+                justify-content: center;
                 .tags{
                     display:flex;
                 }
@@ -275,6 +278,9 @@ main.subscription{
         }
 
         
+    }
+    .current-plan{
+        margin-left: 8px*4;
     }
 }
 .plans{
@@ -305,9 +311,26 @@ main.subscription{
                 }
               }
         }
-        .current-plan {
+        .button.current-plan {
             border: none;
-            margin-top: 8px*4;
+            margin-top: 8px*0.5;
+            color: $gray4-accessible-dark;;
+            border: 1px solid $dark-1;
+            border-right: 1px solid $dark-0;
+            border-bottom: 1px solid $dark-0;
+            background-color: $dark-2;
+            transform: none;
+            box-shadow: 
+                inset 0px 1px 2px 1px black, 
+                inset 0px 0px 2px 0px #4a9a287e, 
+                inset 0px 0px 8px*1.5 1px #5ebe341e !important;
+                text-shadow: 
+                     0px 2px 1px  black;
+            cursor: not-allowed;
+
+            &.primary.outline{
+                color: $green-dark-accessible-light;
+            }
         }
         .plan-name{
             font-size: 1.4rem;
@@ -322,12 +345,13 @@ main.subscription{
             position: relative;
             text-align: center;
             border-radius: 4px;
-            color: $green-default-light;
+            
+            color: $gray-accessible-light;
             z-index: 2;
-            margin-top: 4px;
-            margin-bottom: 4px;
-            border: 1px solid $gray3-accessible-dark;
+            margin-bottom: 8px;
+            border: 1px solid $gray4-accessible-dark;
 
+            font-size: 0.8rem;
         }
         .plan-pricing{
             display: flex;
@@ -393,6 +417,7 @@ main.subscription{
             &.yearly{
                 display: grid;
                 margin-top: -8px*2.5;
+                margin-bottom:8px*0.5;
                 margin-left: 8px;
                 padding-bottom: 8px*1;
                 h1{
@@ -420,14 +445,20 @@ main.subscription{
                 font-size: 0.9rem;
                 margin-top: 0px;
                 color: $green-accessible-light;
-                background: linear-gradient(90deg, #ffffff3a 0%,  #ffffff21 90%);
+                background:  #bcbcbc3a;
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
+                &.contract-period{
+                    color: $gray-accessible-light;
+                    background: #bcbcbc76;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                }
             }
             .iconic{
                 margin-top: 0px;
                 color: $green-accessible-light;
-                background: linear-gradient(90deg, #1f470ec4 10%,#427f28 47%, #427f28 55%, #142f09 90%);
+                background: linear-gradient(90deg, #1f470ec4 0%,#427f28 47%, #427f28 55%, #142f09 100%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
             }
@@ -449,7 +480,7 @@ main.subscription{
             }
         }
         .core-features{
-            margin-bottom: 8px*0;
+            margin-bottom: 8px*2;
             margin-top: 8px*1;
             h4{
                 display: flex;
@@ -460,7 +491,7 @@ main.subscription{
                 font-weight: 300;
                 margin-bottom: 8px;
                 line-height:0.9rem;
-                color: $gray3-accessible-light;
+                color: $gray-accessible-light;
                 p{
                     padding: 5px 8px;
                     cursor: pointer;
@@ -530,17 +561,19 @@ main.subscription{
         }
         .validity{
             line-break: anywhere;
+            margin-bottom: 8px*2;
             .label{
-                color: $gray4-accessible-dark;
+                color: $gray5-accessible-dark;
                 text-decoration: none;
             }
             p{
                 font-size: 0.8rem;
-                color: $green-accessible-light;
+                color: $gray4-accessible-dark;
                 text-decoration: underline;
-                text-decoration-color: $green-default-light
             }
-            margin-bottom: 8px*0;
+            &.hide{
+                opacity:0 !important;
+            }
         }
         .disable{
             opacity: 0.5;
@@ -553,14 +586,19 @@ main.subscription{
         }
         .waitlist-label{
             font-size: 0.7rem;
-            color: $gray2-accessible-dark;
-            margin-bottom: 4px;
+            color: $gray4-accessible-dark;
+            margin-top: 4px;
         }
         .button{
             width: 100%;
             margin-bottom: 0px;
         }
 
+        .button{
+            &.primary{
+                box-shadow: 1px 2px 1px 1px #000000,1px -1px 16px 2px #537f2835;
+            }
+        }
         &.company{
             background-color: $dark-3;
             overflow: hidden;
@@ -601,6 +639,12 @@ main.subscription{
                 animation-iteration-count: infinite;
 
             }
+
+            .button.primary{
+                border: 1px solid $gray2-accessible-dark;
+                color: $gray6-accessible-light;;
+                background-color: $gray6-accessible-dark;;
+            }
         }
         &.studio,&.freelancer{
             background-color: $dark-3;
@@ -616,11 +660,13 @@ main.subscription{
             .storage-counter{
                 position: relative;
                 text-align: center;
-                color: $green-accessible-light;
-                border: 1px solid $gray5-accessible-dark;
+                color: $green-dark-accessible-light;
+                border: 1px solid $gray3-accessible-dark;
                 z-index: 2;
-                border-radius: 6px;
-                opacity: 0.8;
+                border-radius: 4px;
+                opacity: 1;
+                margin-bottom: 8px;
+                margin-top: 0;
                 font-size: 0.8rem;
                 box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);
 
@@ -650,19 +696,23 @@ main.subscription{
                 z-index: 2;
                 box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);
 
-                font-size: 0.7rem;
+                font-size: 0.8rem;
                     &::after{
                         content: "";
                     }
             }
+            .button.primary {
+                border: 1px solid $gray2-default-dark;
+                color: $gray-default-dark;
+                background-color: $dark-2;
+                box-shadow: 1px 2px 4px black;
+            }
         }
         &.studio{
-            border: 1px solid #1b3204;
-            border-top: 1px solid #65a222;
-            border-left: 1px solid #2f510b;
-            border-bottom: 1px solid #152505;
-            box-shadow: 0px 2px 8px black;
-            margin-top: -4px;
+            border: 1px solid #1b3204 !important;
+            border-top: 1px solid #65a222!important;
+            border-left: 1px solid #2f510b!important;
+            box-shadow: 0px 2px 8px black!important;
             .plan-name{
                 position: relative;
                 text-align: center;
@@ -684,7 +734,7 @@ main.subscription{
                 position: relative;
                 text-align: center;
                 color: $green-default-light;
-                border: 1px solid $green-dark-accessible-light;
+                border: 1px solid $gray-accessible-light;
                 z-index: 2;
                 border-radius: 4px;
                 box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);
@@ -712,6 +762,7 @@ main.subscription{
 
                 }
             }
+
             .cover{
                 width: 100%;
                 padding-top: 100%;
@@ -722,6 +773,12 @@ main.subscription{
                 background-blend-mode:lighten;
                 opacity: 0.8;
             }
+            .button.primary {
+                border: 1px solid $dark-0;
+                color: $dark-0;
+                background-color: $dark-2;
+
+            }
         }
         &.agency,&.enterprise,&.premium,&.print-shop{
             .cover{
@@ -729,26 +786,58 @@ main.subscription{
             }
         }
         &.active{
+            background-color: $dark-2;
+            border: 1px solid $gray3-accessible-dark;
+            .cover{
+                background-color: $dark-2;
+            }
+            .waitlist-label{
+                color: $gray3-default-light;
+                .expiry-label{
+                    color: $gray-default-light;
 
-            border: 2px solid $gray4-accessible-dark;
+                }
+            }
+        }
+        .expiry-label{
+
+            color: $gray4-default-dark;
+        }
+    }
+    #pl_PmVGqJ2gzI0OLI{
+        .waitlist-label{
+            opacity: 0.2;
+
+            color: #3c3b3b !important;
+            transition-duration: 0.4s;
+            transition-timing-function: ease-in;
+        }
+        &:hover + .waitlist-label{
+            color: #fafafa;
+            transition-duration: 0.1s;
+            transition-timing-function: ease-in;
         }
     }
 }
 .modal-container{
     z-index: 45 !important;
 }
-.modal.upgrade{
-    width: 90vw;
+.modal.upgrade.island{
     text-align: center;
     padding-bottom: 0;
     z-index: 91;
+    width: 8px*200;
+    max-width: 8px*120;
+    & + .modal-backdrop{
+        background-color: #0000006f;
+    }
     .modal-body{
-        height: calc(100vh - 8px*34) !important;
+        height: 8px*64 !important;
         
     overflow: scroll;
     }
     .upgrade-content{
-        margin-bottom: 8px*2;
+        margin-bottom: 8px*4;
         font-size: 2rem;
         font-weight: 600;
     }
@@ -757,6 +846,8 @@ main.subscription{
     }
     .form-section{
         padding-bottom: 8px*2;
+        margin: 0 8px*5;
+        text-align: center;
     }
     .core-features{
         display: none;
@@ -800,14 +891,8 @@ main.subscription{
     }
 }
   @media only screen and (max-width: 1500px) {
-    .home .section .projects{
-        grid-template-columns: 1fr 1fr 1fr;
-    }
 }
 @media only screen and (max-width: 1230px) {
-    .home .section .projects{
-        grid-template-columns: 1fr 1fr 1fr ;
-    }
      .plans{
         column-gap: 8px*1.5;
     }
@@ -818,7 +903,6 @@ main.subscription{
         column-gap: 8px*4;
     }
     .home .section .projects{
-        grid-template-columns: 1fr 1fr 1fr ;
         .project{
             .project-cover{
             }
@@ -830,16 +914,12 @@ main.subscription{
 @media only screen and (max-width: 860px) {
     .home {
         .section .projects{
-            grid-template-columns: 1fr 1fr  ;
         }
         .welcome-section{
             grid-template-columns: 1fr;
             .welcome-message{
-                &:last-child{
                     margin-top: 0;
                     line-height: 2.5rem;
-
-                }
             }
             .actions{
                 justify-content: flex-start;
@@ -848,7 +928,11 @@ main.subscription{
         }
 
     }
-     .plans .plan{
+     .plans{
+            grid-template-columns: minmax(100px, 240px) minmax(100px, 240px);
+            column-gap: 8px*4;
+
+        .plan{
         .plan-features{
             margin-top: 8px*4;
             margin-bottom: 8px*4;
@@ -882,6 +966,7 @@ main.subscription{
                 font-size: 1rem;
             }
         }
+        }
 
         .waitlist-label{
             font-size: 1rem;
@@ -901,10 +986,9 @@ main.subscription{
     {
        
         .section .projects{
-            grid-template-columns: 1fr 1fr ;
             .project{
                 .project-cover{
-                    width: 80px
+                    width: 8px*13;
                 }
                 .project-details{
                     margin-left: -24px;
@@ -916,11 +1000,36 @@ main.subscription{
         }
     }
     
-    
+    .subscription{
+        .welcome-section{
+            grid-template-columns: 1fr;
+            .welcome-message-top
+            {
+                h1{
+                    line-height: 3rem;
+                }
+                h2{
+                    margin-top: 8px*2;
+                    margin-bottom: 8px*2;
+                    line-height: 1.5rem;
+
+                }
+            }
+
+            .actions{
+                justify-content: flex-start;
+                margin-top: 8px*4;
+            }
+        }
      .plans-container{
         margin-left: 0;
-        
+        .subscriptions-header{
+            grid-template-columns: 1fr;
+            justify-content: center
+        }
     } 
+
+    }
     .plans{
         padding: 8px*0;
         grid-template-columns: 1fr;
@@ -967,25 +1076,6 @@ main.subscription{
     }
     .subscription 
     {
-        .welcome-section{
-            grid-template-columns: 1fr;
-            .welcome-message-top
-            {
-                h1{
-                    line-height: 3rem;
-                }
-                h2{
-                    margin-top: 8px*2;
-                    line-height: 2.5rem;
-
-                }
-            }
-
-            .actions{
-                justify-content: flex-start;
-                margin-top: 8px*4;
-            }
-        }
         .section .projects{
             grid-template-columns: 1fr;
         }

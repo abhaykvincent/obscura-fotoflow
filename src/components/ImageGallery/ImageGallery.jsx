@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Preview from '../../features/Preview/Preview';
+import downloadImage  from '../../components/ImageDownload/ImageDownload';
 import { shortenFileName } from '../../utils/stringUtils';
 
 // Helper function to group images by lastModified threshold
@@ -8,7 +9,7 @@ const groupImagesByLastModified = (images, thresholdInMinutes, timeThrottleInMin
   const throttleInMilliseconds = timeThrottleInMinutes * 60 * 1000;
 
   // Sort images by lastModified timestamp
-  const sortedImages = [...images].sort((a, b) => a.lastModified - b.lastModified);
+  const sortedImages = [...images].sort((a, b) => a.dateTimeOriginal - b.dateTimeOriginal);
 
   const groupedImages = [];
   let currentGroup = [];
@@ -18,18 +19,20 @@ const groupImagesByLastModified = (images, thresholdInMinutes, timeThrottleInMin
     if (index === 0) {
       // Initialize first group with the first image
       currentGroup.push(image);
-      groupStartTime = image.lastModified;
+      groupStartTime = image.dateTimeOriginal;
+      console.log(image.dateTimeOriginal)
     } else {
       const previousImage = sortedImages[index - 1];
-      const timeDifference = image.lastModified - previousImage.lastModified;
-      const groupDuration = image.lastModified - groupStartTime;
+      const timeDifference = image.dateTimeOriginal - previousImage.dateTimeOriginal;
+      
+      const groupDuration = image.dateTimeOriginal - groupStartTime;
 
       // Check if the current image exceeds either the threshold or the throttle
       if (timeDifference > thresholdInMilliseconds || groupDuration > throttleInMilliseconds) {
         // Push current group and start a new one
         groupedImages.push(currentGroup);
         currentGroup = [image];
-        groupStartTime = image.lastModified; // Reset group start time
+        groupStartTime = image.dateTimeOriginal; // Reset group start time
       } else {
         // Continue adding to the current group
         currentGroup.push(image);
@@ -93,6 +96,7 @@ const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
 
+              const [showOptionsMenu, setShowOptionsMenu] = useState(false);
   const containerRef = useRef(null);
   const openPreview = (index) => {
     setIsPreviewOpen(true);
@@ -124,8 +128,8 @@ const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
   }, [previewIndex]); // Effect runs when previewIndex changes
 
   // Group images by lastModified
-  const timeThreshold = 0.1;
-  const timeThrottle = 0.5; 
+  const timeThreshold = 0.0001;
+  const timeThrottle = 0.0005; 
   const groupedImages = useMemo(() => groupImagesByLastModified(imageUrls, timeThreshold,timeThrottle), [imageUrls, timeThreshold]);
   console.log(groupedImages)
 
@@ -165,37 +169,50 @@ const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
           <div className="photos" ref={containerRef}>
             <TimestampDisplay timestamp={group[0].lastModified} />
 
-            {group.map((fileUrl, index) =>  (
-              <div className="photo-wrap" key={index} onClick={() => openPreview(index)}>
-                <div className="hover-options-wrap">
-                  <div className="hover-options">
-                    {fileUrl.status && (
-                      <div className="favorite-wrap">
-                        <div className={`favorite ${fileUrl?.status === 'selected' ? 'selected' : ''}`}>
-                          <div className="icon"></div>
+            {group.map((fileUrl, index) =>  {
+
+              const handleMenuIconClick = (e) => {
+                e.stopPropagation(); // Prevent parent click event
+                setShowOptionsMenu(!showOptionsMenu);
+              };
+
+              return (
+                <div
+                  className="photo-wrap"
+                  key={index}
+                  onClick={() => openPreview(index)}
+                  style={{ animationDelay: `${index * 0.01}s` }}
+                >
+                  <div className="hover-options-wrap">
+                    <div className="hover-options">
+                      {fileUrl.status && (
+                        <div className="favorite-wrap">
+                          <div className={`favorite ${fileUrl?.status === 'selected' ? 'selected' : ''}`}>
+                            <div className="icon"></div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="top">
+                        <div className="menu-icon" onClick={handleMenuIconClick}></div>
+                        <div className={`option-menu ${showOptionsMenu ? 'visible' : ''}`} onClick={(e) => e.stopPropagation()}>
+                          <div className="photo-option" onClick={() => downloadImage(fileUrl.url, fileUrl.name)}>Download</div>
+                          <div className="photo-option">Share</div>
+                          <div className="photo-option">Set as cover</div>
+                          <div className="photo-option">Delete</div>
                         </div>
                       </div>
-                    )}
-                    <div className="top">
-                      <div className="menu-icon"></div>
-                      <div className="option-menu">
-                        <div className="photo-option">Download</div>
-                        <div className="photo-option">Share</div>
-                        <div className="photo-option">Set as cover</div>
-                        <div className="photo-option">Delete</div>
-                      </div>
-                    </div>
-                    <div className="bottom">
-                      <div className="filename">
-                        {shortenFileName(fileUrl.name)}
+                      <div className="bottom">
+                        <div className="filename">
+                          {shortenFileName(fileUrl.name)}
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <div className="photo" style={{ backgroundImage: `url("${fileUrl.url}")` }} alt={`File ${index}`}>
+                  </div>
                 </div>
-                <div className="photo" style={{ backgroundImage: `url("${fileUrl.url}")` }} alt={`File ${index}`}>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
       ))}
       {isPreviewOpen && <Preview image={imageUrls[previewIndex]} {...{ previewIndex, setPreviewIndex, imagesLength: imageUrls.length, closePreview, projectId,collectionId,setPreviewIndex }} />}

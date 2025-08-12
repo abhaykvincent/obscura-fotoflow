@@ -1,0 +1,26 @@
+@import '../../../style/variables';
+@import '../../../style/components';
+
+.validity-change-animation {
+      color: #757575;
+    animation: iconic-gradient 1s ease-out;
+  }
+  
+  @keyframes iconic-gradient {
+    0% {
+      background-position: 0% 50%;
+      color: #757575;
+    }
+    70% {
+        background-position: 100% 50%;
+        color: $green-default-dark;
+        transform: scale(1.2) rotate(5deg);
+      }
+    100% {
+        background-position: 100% 50%;
+      color: #757575;
+        transform: scale(1.2) rotate(5deg);
+      }
+
+  }
+  

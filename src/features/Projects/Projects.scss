@@ -24,12 +24,42 @@
 .view-control{
     display:flex;
     margin: 8px 8px*1.5;
+    margin-bottom: 0;
     font-size: 0.9rem;
     justify-content: space-between;
+    height: 8px*5;
+    .control-wrap{
+        position: relative;
+        &.view-type-controls .label{
+            text-align: right;;
+            left: -6px;
+            &.mini-icons{
+                &.view{
+                    
+                }
+            }
+        }
+        .label{
+            position: absolute;
+            width:100%;
+            top: -8px*2.2;
+            left: 8px*0.5;
+            color: $gray3-default-dark;
+            font-size: 0.8rem;
+
+            opacity: 0;
+            animation: fadeInLeft 0.5s ease-out 0.04s;
+            animation-fill-mode: forwards;
+            animation-timing-function: ease-out;
+        }
+    }
     .control-label{
       color: $gray3-default-dark;
       padding: 8px;
       &.label-all-photos{
+        color: $gray2-default-dark;
+      }
+      &.label-selected-photos{
         color: $gray2-default-dark;
       }
     }
@@ -51,14 +81,19 @@
         }
         display:flex;
         .control{
-          padding: 6px 8px*1.5;
+          padding: 4px 8px*1.4;
           font-weight: 400;
+          font-size: 0.8rem;
+          line-height: 1.1rem;
           border-radius: $border-radius-1;
-          border-right: 1px solid rgba(255, 255, 255, 0.02);
+          border: 1px solid rgba(255, 255, 255, 0.02);
           color: $gray2-accessible-dark;
           white-space: nowrap;
+          gap:4px;
+          transition-duration: 0.1s;
+              transition-timing-function: ease-out;
           cursor: pointer;
-          transition-duration: 0.15s;
+            transform: scale(1);
           &:hover{
               background-color: $dark-2;
               color: $gray-accessible-dark;
@@ -74,16 +109,23 @@
             border-top: 1px solid $gray3-accessible-dark;
             border-left: 1px solid $gray3-accessible-dark;
             border-bottom: 1px solid $gray5-accessible-dark;
-            border-radius: 6px !important;
+            border-radius: 8px !important;
             box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);;
             transform: scale(1.1);
+            transition-duration: 0.05s;
+            transition-timing-function: ease-in;
+            z-index:10;
+            .status-signal{
+                opacity: 1;
+            }
             &:hover{
-              border: 1px solid $gray3-accessible-dark;
+              
               transition-duration: 0.1s;
             }
             
             .icon{
     
+              opacity: 01;
               background-size: 120%;
             }
           }
@@ -93,25 +135,64 @@
             &:hover{
                 .icon{
 
-                    background-size: 110%;
+              &.card-view{background-size: 110%; 
+              }
+              &.list-view{
+                    background-size: 150%; 
+              }
                 }
 
               }
           .icon{
-              width: 8px*2;
-              height: 8px*2;
+              width: 8px*1.6;
+              height: 8px*1.6;
               background-position: center;
               background-size: 100%;
-              
+              opacity: 0.5;
               &.card-view{
                   background-image: url('https://img.icons8.com/sf-black-filled/64/FFFFFF/four-squares.png');
               }
               &.list-view{
-                  background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/list.png');
+                    background-size: 140%;
+                  background-image: url('https://img.icons8.com/?size=100&id=BjLaPJ1cFKRo&format=png&color=FFFFFF');
+                  
               }
           }
+          &.status-control{
+            display:flex;
+            align-items: center;
+            gap:5px;
+            padding-left:8px;
+          }
+                .status-signal{
+                    height: 5px;
+                    width: 5px;
+                    border-radius: 50%;
+                    transform: scale(1);   
+                    transition-duration: 0.2s; 
+                    opacity: 0.6;
+                }
+
+                    &.control-live{
+                        .status-signal{
+                            background-color: $green-default-light;
+                            // add a neon glow effect brop shadows
+                            box-shadow: 0 1px 1px 1px #022002a3,0 0 10px 5px #00ff0024,0 0 4px 1px #00ff0021,0 0 20px 10px #00ff000e;
+                        }
+                    }
+                    &.control-archive{
+                        .status-signal{
+                            background-color: $gray2-default-dark;
+                            // add a neon glow effect brop shadows
+                            box-shadow: 0 1px 1px 1px #1a1a1aa3,0 0 10px 5px #74747424,0 0 20px 10px #8a8a8a05;
+                        }
+                    }
           
         }
+      }
+      .filter-controls{
+        display:flex;
+        gap: 8px*3;
       }
   }
   .projects {
@@ -133,20 +214,25 @@
         animation: fadeInUp 0.5s ease-out forwards;
         animation-delay: 0.5s;
     }
+    .view-control{
+        margin-top: 8px*2;
+        margin-bottom: 8px*1;
+    }
     .month-group {
-      margin-bottom: 16px; // Simplified calculation of 8px * 2
-      margin-top: 16px; // Simplified calculation of 8px * 2
+      margin-bottom: 0; // Simplified calculation of 8px * 2
+      margin-top: 0; // Simplified calculation of 8px * 2
       
       // Add staggered animation to the .month-name
       .month-name {
         padding: 8px 16px; // Simplified calculation of 8px * 2
         font-weight: 400;
-        color: $gray-default-dark;
+        font-size: 1rem;
+        color: $gray2-default-dark;
             margin-bottom: 8px*1;
         opacity: 0; // Start as invisible
   
         animation: fadeInUp 0.5s ease-out forwards;
-        animation-delay: calc(0.4s + 0.5s * (var(--group-index) - 1)); // Dynamic delay based on parent index
+        animation-delay: calc(0.35s + 0.25s * (var(--group-index) - 1)); // Dynamic delay based on parent index
       }
 
       .projects-list {
@@ -157,7 +243,7 @@
         .project{
                 @for $i from 1 through 100 {
                     &:nth-child(#{$i}) {
-                        animation: fadeInUp 0.5s ease-out calc( ( 0.45s + 0.3s * (var(--group-index) - 1) + ($i - 1) * 0.04s));
+                        animation: fadeInUp 0.5s ease-out calc( ( 0.45s + 0.15s * (var(--group-index) - 1) + ($i - 1) * 0.015s));
                         animation-fill-mode: forwards;
 
                     }
@@ -175,6 +261,38 @@
             }
         }
       }
+
+      &.loaded-more{
+        .month-name {
+          animation-delay: calc(0.0s + 0.1s); // Dynamic delay based on parent index
+        }
+        .projects-list {
+        
+            .project{
+                    @for $i from 1 through 100 {
+                        &:nth-child(#{$i}) {
+                            animation: fadeInUp 0.5s ease-out calc( ( 0.1s + 0.2s + ($i - 1) * 0.04s));
+                            animation-fill-mode: forwards;
+
+                        }
+                    }
+            }
+            &.list{
+                max-width: 8px*60;
+                grid-template-columns: 1fr;
+                gap: 8px*2;
+                .project{
+                    .project-cover{
+                        min-height: 8px*10;
+                        width: 8px*12;
+                    }
+                }
+            }
+        }
+      }
+    }
+    .load-more-container{
+        margin: 8px 8px*2;
     }
     .project{
         &.new{
@@ -250,6 +368,7 @@
     width: 100%;
     padding: 8px*3;
     padding-top: 8px;
+    margin-top: 8px*3;
     
     .message{
         color: $gray4-default-dark;
@@ -280,7 +399,7 @@
         grid-template-columns: 1fr 1fr 1fr 1fr;
     }
     .projects-list{
-        gap: 8PX*4;
+        gap: 8PX*3;
         grid-template-columns: 1fr 1fr 1fr 1fr ;
     }
 }
@@ -290,7 +409,7 @@
         grid-template-columns: 1fr 1fr 1fr;
     }
     .projects-list{
-        gap: 8PX*4;
+        gap: 8PX*3;
         grid-template-columns: 1fr 1fr 1fr  ;
     }
 }
@@ -300,7 +419,7 @@
         grid-template-columns: 1fr 1fr 1fr;
     }
     .projects-list{
-        gap: 8PX*4;
+        gap: 8PX*2.5;
         grid-template-columns: 1fr 1fr 1fr  ;
     }
 }
@@ -310,7 +429,7 @@
         grid-template-columns: 1fr 1fr 1fr;
     }
     .projects-list{
-        gap: 8PX*4;
+        gap: 8PX*2.5;
         grid-template-columns: 1fr 1fr 1fr ;
     }
 }
@@ -319,7 +438,7 @@
         grid-template-columns: 1fr 1fr  ;
     }
     .projects-list{
-        gap: 8PX*4;
+        gap: 8PX*2.5;
         grid-template-columns: 1fr 1fr 1fr ;
     }
 }
@@ -328,7 +447,7 @@
         grid-template-columns: 1fr 1fr   ;
     }
     .projects-list{
-        gap: 8PX*4;
+        gap: 8PX*2;
         grid-template-columns: 1fr 1fr  ;
     }
 }
@@ -337,7 +456,7 @@
         grid-template-columns: 1fr 1fr    ;
     }
     .projects-list{
-        gap: 8PX*4;
+        gap: 8PX*2.5;
         grid-template-columns: 1fr 1fr;
     }
 }
@@ -360,7 +479,7 @@
         grid-template-columns: 1fr   ;
     }
     .projects-list{
-        gap: 8PX*4;
+        gap: 8PX*2;
         grid-template-columns: 1fr ;
         padding: 8px*2.5;
         

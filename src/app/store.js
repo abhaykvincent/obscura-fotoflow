@@ -9,7 +9,9 @@ import teamsReducer from './slices/teamsSlice'
 import shortcutsReducer from './slices/shortcutSlice'
 import searchReducer from './slices/searchSlice'
 import referralsReducer from './slices/referralsSlice'
-import notificationReducer from './slices/notificationSlice'
+import notificationReducer from './slices/notificationSlice';
+import adminPaneReducer from './slices/adminPaneSlice';
+import packagesReducer from './slices/packagesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -24,5 +26,7 @@ export const store = configureStore({
     teams: teamsReducer,
     shortcuts: shortcutsReducer,
     notifications: notificationReducer,
+    adminPane: adminPaneReducer,
+    packages: packagesReducer,
   },
 });

@@ -1,0 +1,54 @@
+.network-signal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 8px;
+  height: 8px*1.5;
+
+  .status-indicator {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+
+    &.online {
+      background-color: #28a745; // Green for online
+      box-shadow: 0 0 5px #28a745;
+    }
+
+    &.offline {
+      background-color: #dc3545; // Red for offline
+      box-shadow: 0 0 5px #dc3545;
+    }
+
+    &.status-change {
+      animation: blink 1.5s ease-in-out;
+    }
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 1;
+  }
+  35% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0;
+  }
+  98% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

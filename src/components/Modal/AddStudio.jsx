@@ -5,7 +5,7 @@ import { addProject } from '../../app/slices/projectsSlice';
 import { useNavigate } from 'react-router';
 import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
 import { selectCreateStudioModal, selectUserStudio } from '../../app/slices/authSlice';
-import { createStudio } from '../../firebase/functions/firestore';
+import { createStudio } from '../../firebase/functions/studios';
 
 function AddStudio() {
     const dispatch = useDispatch();

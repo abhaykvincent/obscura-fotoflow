@@ -3,7 +3,7 @@ import { getUsedSpace } from '../../utils/fileUtils';
 import { fullAccess, getStudiosOfUser, isAlreadyInStudio, users } from '../../data/teams';
 import firebase from 'firebase/app';
 import { auth, storage } from '../../firebase/app';
-import { fetchAllReferalsFromFirestore, fetchStudioByDomain, fetchUsers, generateReferralInFirebase, validateInvitationCodeFromFirestore } from '../../firebase/functions/firestore';
+import { fetchAllReferalsFromFirestore, fetchUsers, generateReferralInFirebase, validateInvitationCodeFromFirestore } from '../../firebase/functions/firestore';
 import { useRevalidator } from 'react-router';
 import { setUserType } from '../../analytics/utils';
 

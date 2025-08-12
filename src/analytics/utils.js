@@ -14,8 +14,8 @@ export const isDeveloper =  userAgent.includes('Mozilla/5.0')
 
 
 
+export const isProduction = process.env.NODE_ENV === 'production';
 export const trackEvent = (eventName, eventParams = {}) => {
-    const isProduction = process.env.NODE_ENV === 'production';
     
     // Production Mode - log events to Google Analytics
     if (isProduction) {

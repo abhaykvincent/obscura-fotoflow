@@ -24,8 +24,10 @@ import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 import AddExpenseModal from '../../components/Modal/AddExpense';
 import AddPaymentModal from '../../components/Modal/AddPayment';
 import AddBudgetModal from '../../components/Modal/AddBudget';
+import SidePanel from '../../components/Project/SidePanel/SidePanel'
 
 import './Project.scss';
+import { ProjectPageCoverImages } from '../../components/ProjectPageCover/ProjectPageCoverImages';
 
 export default function Project() {
   const { id } = useParams();
@@ -42,7 +44,7 @@ export default function Project() {
   const [project, setProject] = useState(null);
   const [pinText, setPinText] = useState('');
   const [pinIconClass, setPinIconClass] = useState('hide');
-  const [projectStatus, setProjectStatus] = useState('draft');
+  
 
   const selectedProject = useMemo(() => 
     projects?.find((p) => p.id === id),
@@ -64,7 +66,7 @@ export default function Project() {
     if (project) {
       document.title = `${project.name}'s ${project.type} | ${defaultStudio.name}`;
       setPinText(project.pin);
-      setProjectStatus(project.status);
+      
       updateProjectLastOpenedInFirestore(domain, project.id);
 
       if (project.collections.length === 0) {
@@ -88,10 +90,7 @@ export default function Project() {
     });
   };
 
-  const handleStatusChange = (newStatus) => {
-    setProjectStatus(newStatus);
-    updateProjectStatusInFirestore(defaultStudio.domain, project.id, newStatus);
-  };
+  
 
   const handleDeleteProject = () => 
     dispatch(deleteProject({ domain, projectId: id }));
@@ -113,11 +112,10 @@ export default function Project() {
       <AddBudgetModal project={project} />
 
       <main className='project-page'>
-        <ProjectCover project={project} />
+        <ProjectPageCoverImages project={project} />
         <div className="project-dashboard">
           <DashboardProjects project={project} />
         </div>
-        <Refresh />
       </main>
 
       <div className="project-info gallary-page-info project-page-info">
@@ -128,20 +126,7 @@ export default function Project() {
         </div>
         <div className="client"></div>
         <div className="project-options options">
-          <div className={`project-status ${projectStatus}`}>
-            <select
-              className="button secondary"
-              value={projectStatus}
-              onChange={(e) => handleStatusChange(e.target.value)}
-            > 
-              {['draft', 'active', 'selected', 'completed', 'archived'].map(status => (
-                <option key={status} value={status}>
-                  {status.charAt(0).toUpperCase() + status.slice(1)}
-                </option>
-              ))}
-            </select>
-            <div className="status-signal" />
-          </div>
+          
 
           <div className={`button tertiary icon pin ${pinIconClass}`} onClick={handlePinCopy}>
             {pinText}
