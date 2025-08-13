@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchSmartGalleryFromFirestore, updateSmartGallerySectionsInFirestore } from '../../firebase/functions/smartGalleryFirestore';
+import { fetchSmartGalleryFromFirestore, updateSmartGalleryInFirestore } from '../../firebase/functions/smartGalleryFirestore';
 
 const initialState = {
   data: null,
@@ -17,15 +17,16 @@ export const fetchSmartGallery = createAsyncThunk(
   }
 );
 
-export const updateSmartGallerySections = createAsyncThunk(
-  'smartGallery/updateSmartGallerySections',
-  async ({ domain, projectId, collectionId, sections }) => {
-    await updateSmartGallerySectionsInFirestore(domain, projectId, collectionId, sections);
-    return sections; // Return the updated sections to update the Redux state
+export const updateSmartGallery = createAsyncThunk(
+  'smartGallery/updateSmartGallery',
+  async ({ domain, projectId, collectionId, smartGallery }) => {
+    await updateSmartGalleryInFirestore(domain, projectId, collectionId, smartGallery);
+    return smartGallery; // Return the updated smartGallery to update the Redux state
   }
 );
 
-const smartGallerySlice = createSlice({
+const smartGallerySlice = createSlice
+({
   name: 'smartGallery',
   initialState,
   reducers: {
@@ -44,17 +45,14 @@ const smartGallerySlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
-      .addCase(updateSmartGallerySections.pending, (state) => {
+      .addCase(updateSmartGallery.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(updateSmartGallerySections.fulfilled, (state, action) => {
+      .addCase(updateSmartGallery.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        if (state.data) {
-          state.data.sections = action.payload;
-          state.data.updatedAt = Date.now(); // Update updatedAt timestamp
-        }
+        state.data = action.payload; // Update the entire smartGallery object
       })
-      .addCase(updateSmartGallerySections.rejected, (state, action) => {
+      .addCase(updateSmartGallery.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });

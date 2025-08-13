@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import './ImageGalleryDesigner.scss';
 import GallerySections from './GallerySections/GallerySections';
 import { findCollectionById } from '../../utils/CollectionQuery';
-import { fetchSmartGallery, updateSmartGallerySections, selectSmartGallery, selectSmartGalleryStatus } from '../../app/slices/smartGallerySlice';
+import { fetchSmartGallery, updateSmartGallery, selectSmartGallery, selectSmartGalleryStatus } from '../../app/slices/smartGallerySlice';
 import { selectStudio } from '../../app/slices/studioSlice';
 
 const ImageGalleryDesigner = ({ project, collectionId }) => {
@@ -19,6 +19,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
   const [showColorDialog, setShowColorDialog] = useState(false);
   const [showFocusDialog, setShowFocusDialog] = useState(false);
   const [showCoverSizeDialog, setShowCoverSizeDialog] = useState(false);
+  const [showAddSectionDialog, setShowAddSectionDialog] = useState(false); // New state
   const [focusPoint, setFocusPoint] = useState({ x: 0.5, y: 0.5 });
   const [initialFocusPoint, setInitialFocusPoint] = useState({ x: 0.5, y: 0.5 });
   const [coverSize, setCoverSize] = useState('medium');
@@ -72,72 +73,89 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
   };
 
   const handleColorSelect = (color) => {
-    dispatch(updateSmartGallerySections({
-      domain: project.domain,
+    if (!domain || !project?.id || !collectionId || !smartGalleryData) {
+      console.error("Missing data for updateSmartGallery: domain, projectId, collectionId, or smartGalleryData is undefined.");
+      return;
+    }
+    const updatedSmartGallery = { ...smartGalleryData, overlayColor: color, updatedAt: Date.now() };
+    dispatch(updateSmartGallery({
+      domain: domain,
       projectId: project.id,
       collectionId,
-      sections: smartGalleryData.sections, // Keep existing sections
-      overlayColor: color,
+      smartGallery: updatedSmartGallery,
     }));
     setOverlayColor(color);
     setShowColorDialog(false);
   };
 
   const handleCoverSizeSelect = (size) => {
-    dispatch(updateSmartGallerySections({
-      domain: project.domain,
+    if (!domain || !project?.id || !collectionId || !smartGalleryData) {
+      console.error("Missing data for updateSmartGallery: domain, projectId, collectionId, or smartGalleryData is undefined.");
+      return;
+    }
+    const updatedSmartGallery = { ...smartGalleryData, coverSize: size, updatedAt: Date.now() };
+    dispatch(updateSmartGallery({
+      domain: domain,
       projectId: project.id,
       collectionId,
-      sections: smartGalleryData.sections, // Keep existing sections
-      coverSize: size,
+      smartGallery: updatedSmartGallery,
     }));
     setCoverSize(size);
     setShowCoverSizeDialog(false);
   };
 
   const handleTextPositionChange = () => {
+    if (!domain || !project?.id || !collectionId || !smartGalleryData) {
+      console.error("Missing data for updateSmartGallery: domain, projectId, collectionId, or smartGalleryData is undefined.");
+      return;
+    }
     const positions = ['center', 'top-left', 'top-right', 'bottom-left', 'bottom-right'];
     const currentIndex = positions.indexOf(textPosition);
     const nextIndex = (currentIndex + 1) % positions.length;
     const newTextPosition = positions[nextIndex];
-    dispatch(updateSmartGallerySections({
-      domain: project.domain,
+    const updatedSmartGallery = { ...smartGalleryData, textPosition: newTextPosition, updatedAt: Date.now() };
+    dispatch(updateSmartGallery({
+      domain: domain,
       projectId: project.id,
       collectionId,
-      sections: smartGalleryData.sections, // Keep existing sections
-      textPosition: newTextPosition,
+      smartGallery: updatedSmartGallery,
     }));
     setTextPosition(newTextPosition);
   };
 
   const handleContentChange = (e, fieldName) => {
+    if (!domain || !project?.id || !collectionId || !smartGalleryData) {
+      console.error("Missing data for updateSmartGallery: domain, projectId, collectionId, or smartGalleryData is undefined.");
+      return;
+    }
     const newValue = e.target.innerText;
-    let updatedData = { ...smartGalleryData };
+    let updatedSmartGallery = { ...smartGalleryData, updatedAt: Date.now() };
     if (fieldName === 'name') {
-      updatedData.name = newValue;
+      updatedSmartGallery.name = newValue;
       setTitle(newValue);
     } else if (fieldName === 'description') {
-      updatedData.description = newValue;
+      updatedSmartGallery.description = newValue;
       setDescription(newValue);
     }
-    dispatch(updateSmartGallerySections({
-      domain: project.domain,
+    dispatch(updateSmartGallery({
+      domain: domain,
       projectId: project.id,
       collectionId,
-      sections: updatedData.sections, // Pass updated sections
-      name: updatedData.name, // Pass updated name
-      description: updatedData.description, // Pass updated description
-      // ... other fields if they are part of the smartGallery update
+      smartGallery: updatedSmartGallery,
     }));
   };
 
   const handleSaveFocus = () => {
-    dispatch(updateSmartGallerySections({
-      domain: project.domain,
+    if (!domain || !project?.id || !collectionId || !smartGalleryData) {
+      console.error("Missing data for updateSmartGallery: domain, projectId, collectionId, or smartGalleryData is undefined.");
+      return;
+    }
+    const updatedSmartGallery = { ...smartGalleryData, focusPoint: focusPoint, updatedAt: Date.now() };
+    dispatch(updateSmartGallery({
+      domain: domain,
       projectId: project.id,
       collectionId,
-      sections: smartGalleryData.sections, // Keep existing sections
-      focusPoint: focusPoint,
+      smartGallery: updatedSmartGallery,
     }));
     setInitialFocusPoint(focusPoint);
     setShowFocusDialog(false);
@@ -149,13 +167,60 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
   };
 
   const handleSectionsUpdate = (newSections) => {
-    dispatch(updateSmartGallerySections({
-      domain: project.domain,
+    if (!domain || !project?.id || !collectionId || !smartGalleryData) {
+      console.error("Missing data for updateSmartGallery: domain, projectId, collectionId, or smartGalleryData is undefined.");
+      return;
+    }
+    const updatedSmartGallery = { ...smartGalleryData, sections: newSections, updatedAt: Date.now() };
+    dispatch(updateSmartGallery({
+      domain: domain,
       projectId: project.id,
       collectionId,
-      sections: newSections,
+      smartGallery: updatedSmartGallery,
     }));
     setSections(newSections);
+  };
+
+  const handleAddSection = (type) => {
+    if (!domain || !project?.id || !collectionId || !smartGalleryData) {
+      console.error("Missing data for updateSmartGallery: domain, projectId, collectionId, or smartGalleryData is undefined.");
+      return;
+    }
+
+    let newSection;
+    const newSectionId = `${type}-${collectionId}-${Date.now()}`; // Unique ID for the new section
+    const currentSections = smartGalleryData.sections || [];
+    const newOrder = currentSections.length > 0 ? Math.max(...currentSections.map(s => s.order || 0)) + 1 : 1;
+
+    switch (type) {
+      case 'image-grid':
+        newSection = {
+          id: newSectionId,
+          type: 'image-grid',
+          order: newOrder,
+          images: [], // Empty array for new image grid
+          gridSettings: {
+            columns: 3,
+            spacing: '16px',
+            aspectRatio: 'auto',
+          },
+        };
+        break;
+      // Add cases for other section types here
+      default:
+        console.warn('Unknown section type:', type);
+        return;
+    }
+
+    const updatedSections = [...currentSections, newSection];
+    const updatedSmartGallery = { ...smartGalleryData, sections: updatedSections, updatedAt: Date.now() };
+    dispatch(updateSmartGallery({
+      domain: domain,
+      projectId: project.id,
+      collectionId,
+      smartGallery: updatedSmartGallery,
+    }));
+    setShowAddSectionDialog(false); // Close the dialog after adding
   };
 
   if (smartGalleryStatus === 'loading') {
@@ -251,9 +316,16 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
             )}
           </div>
           <button  className='button text-only  icon delete-red dark-icon'></button>
+          <button className='button text-only icon add-section dark-icon' onClick={() => setShowAddSectionDialog(true)}></button> 
           </div>
         </div>
       </div>
+      {showAddSectionDialog && (
+        <div className="add-section-dialog">
+          <button onClick={() => handleAddSection('image-grid')}>Add Image Grid</button>
+          <button onClick={() => setShowAddSectionDialog(false)}>Cancel</button>
+        </div>
+      )}
       <GallerySections sections={smartGalleryData.sections} onSectionsUpdate={handleSectionsUpdate} id={project.id} collectionId={collectionId} collectionName={findCollectionById(project, collectionId)?.name} />
     </div>
   );

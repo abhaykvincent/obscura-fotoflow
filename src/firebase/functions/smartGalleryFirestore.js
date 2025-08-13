@@ -19,16 +19,16 @@ export const fetchSmartGalleryFromFirestore = async (domain, projectId, collecti
     }
 };
 
-export const updateSmartGallerySectionsInFirestore = async (domain, projectId, collectionId, sections) => {
+export const updateSmartGalleryInFirestore = async (domain, projectId, collectionId, smartGallery) => {
     try {
+        console.log(domain, projectId, collectionId, smartGallery)
         const collectionDocRef = doc(db, 'studios', domain, 'projects', projectId, 'collections', collectionId);
         await updateDoc(collectionDocRef, {
-            'smartGallery.sections': sections,
-            'smartGallery.updatedAt': Date.now(),
+            smartGallery: smartGallery,
         });
-        console.log(`Smart gallery sections updated successfully for collection ${collectionId}.`);
+        console.log(`Smart gallery updated successfully for collection ${collectionId}.`);
     } catch (error) {
-        console.error(`Error updating smart gallery sections for collection ${collectionId}:`, error);
+        console.error(`Error updating smart gallery for collection ${collectionId}:`, error);
         throw error;
     }
 };
