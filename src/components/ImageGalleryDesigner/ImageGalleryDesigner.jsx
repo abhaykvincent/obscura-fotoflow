@@ -6,7 +6,8 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
   const [description, setDescription] = useState(project.type);
   const [textPosition, setTextPosition] = useState('center');
   const [overlayColor, setOverlayColor] = useState('rgba(0, 0, 0, 0.5)');
-  const [showColorDialog, setShowColorDialog] = useState(false);
+  const [showColorDialog, setShowColorDialog] = useState(true);
+  let leaveTimeout;
 
   const colors = ['#000000', '#ffffff', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff'];
 
@@ -24,6 +25,17 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
 
   const handleContentChange = (e, setter) => {
     setter(e.target.innerText);
+  };
+
+  const handleMouseEnter = () => {
+    clearTimeout(leaveTimeout);
+    setShowColorDialog(true);
+  };
+
+  const handleMouseLeave = () => {
+    leaveTimeout = setTimeout(() => {
+      setShowColorDialog(true);
+    }, 200);
   };
 
   return (
@@ -58,24 +70,31 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
 
 
         <div className="toolbar">
-          <button>Focus Point</button>
-          <button>Cover Size</button>
-          <button onClick={handleTextPositionChange}>Text Position</button>
-          <button onClick={() => setShowColorDialog(!showColorDialog)}>Overlay Colour</button>
-          <button>Delete Cover</button>
-        </div>
-        {showColorDialog && (
-          <div className="color-dialog">
-            {colors.map((color) => (
-              <div
-                key={color}
-                className="color-swatch"
-                style={{ backgroundColor: color }}
-                onClick={() => handleColorSelect(color)}
-              ></div>
-            ))}
+          <div className="tools-container">
+
+          <button className='button text-only  icon set-focus dark-icon'></button>
+          <button className='button text-only  icon cover-size dark-icon' ></button>
+          <button  className='button text-only  icon title-position dark-icon' 
+            onClick={handleTextPositionChange}>
+          </button>
+          <div className="overlay-colour" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+            <button  className='button text-only  icon colour-wheel dark-icon'></button>
+            {showColorDialog && (
+              <div className="color-dialog">
+                {colors.map((color) => (
+                  <div
+                    key={color}
+                    className="color-swatch"
+                    style={{ backgroundColor: color }}
+                    onClick={() => handleColorSelect(color)}
+                  ></div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+          <button  className='button text-only  icon delete-red dark-icon'></button>
+          </div>
+        </div>
       </div>
     </div>
   );
