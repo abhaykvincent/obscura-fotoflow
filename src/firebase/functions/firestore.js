@@ -534,7 +534,12 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
                     return {
                         ...collection,
                         galleryCover : collection?.galleryCover? collection.galleryCover : uploadedFiles[0]?.url,
-                        favoriteImages: collection?.favoriteImages && collection?.favoriteImages[0] !==''  ? collection.favoriteImages :[uploadedFiles.length>=2 ? uploadedFiles[1]?.url:'',uploadedFiles.length>=3 ? uploadedFiles[2]?.url:''],
+                        favoriteImages: collection?.favoriteImages && collection?.favoriteImages[0] !== ''
+                            ? collection.favoriteImages
+                            : [
+                                uploadedFiles.length >= 2 ? uploadedFiles[1]?.url || '' : '',
+                                uploadedFiles.length >= 3 ? uploadedFiles[2]?.url || '' : ''
+                              ],
                         filesCount: (collection.filesCount || 0) + uploadedFiles.length,
                     };
                 }

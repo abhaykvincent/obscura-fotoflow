@@ -2,15 +2,20 @@ import React, { useState } from 'react';
 import ImageGrid from './ImageGrid';
 import Carousel from './Carousel';
 import TextBlock from './TextBlock';
+import SubGallery from './SubGallery';
+import Embed from './Embed';
+import { BsImage, BsCollection, BsTextareaT, BsCode } from 'react-icons/bs';
 import './GallerySections.scss';
 
 const sectionComponents = {
   'image-grid': ImageGrid,
   carousel: Carousel,
   'text-block': TextBlock,
+  'sub-gallery': SubGallery,
+  embed: Embed,
 };
 
-const GallerySections = ({ sections, onSectionsUpdate }) => {
+const GallerySections = ({id, collectionId, collectionName, sections, onSectionsUpdate }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [insertionIndex, setInsertionIndex] = useState(null);
 
@@ -63,8 +68,12 @@ const GallerySections = ({ sections, onSectionsUpdate }) => {
                 <SectionComponent
                   section={section}
                   onSectionUpdate={(updatedSection) =>
-                    handleSectionUpdate(updatedSection, index)
+                    handleSectionUpdate(updatedSection, index) 
                   }
+                  id={id}
+                  collectionId={collectionId}
+                  collectionName={collectionName}
+
                 />
               ) : null}
               <div className="add-section-icon-container bottom">
@@ -89,18 +98,34 @@ const GallerySections = ({ sections, onSectionsUpdate }) => {
             </div>
             <div className="add-section-dialog-body">
               <div className="section-option" onClick={() => addSection('image-grid')}>
-                <div className="section-option-icon">ICON</div>
+                <div className="section-option-icon"><BsImage /></div>
                 <div className="section-option-text">
                   <h3>Media</h3>
                   <p>Create a media section.</p>
                 </div>
                 <div className="section-option-add">+</div>
               </div>
+              <div className="section-option" onClick={() => addSection('sub-gallery')}>
+                <div className="section-option-icon"><BsCollection /></div>
+                <div className="section-option-text">
+                  <h3>Sub-Galleryuytfv</h3>
+                  <p>Add multiple galleries.</p>
+                </div>
+                <div className="section-option-add">+</div>
+              </div>
               <div className="section-option" onClick={() => addSection('text-block')}>
-                <div className="section-option-icon">ICON</div>
+                <div className="section-option-icon"><BsTextareaT /></div>
                 <div className="section-option-text">
                   <h3>Text</h3>
                   <p>Add a title and paragraph.</p>
+                </div>
+                <div className="section-option-add">+</div>
+              </div>
+              <div className="section-option" onClick={() => addSection('embed')}>
+                <div className="section-option-icon"><BsCode /></div>
+                <div className="section-option-text">
+                  <h3>Embed</h3>
+                  <p>Paste an embed code.</p>
                 </div>
                 <div className="section-option-add">+</div>
               </div>

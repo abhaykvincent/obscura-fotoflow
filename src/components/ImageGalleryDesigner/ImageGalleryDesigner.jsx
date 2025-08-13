@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ImageGalleryDesigner.scss';
 import GallerySections from './GallerySections/GallerySections';
+import { findCollectionById } from '../../utils/CollectionQuery';
 
 const ImageGalleryDesigner = ({ project, collectionId }) => {
   const [title, setTitle] = useState(project.name);
@@ -163,7 +164,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
           </div>
         </div>
       </div>
-      <GallerySections sections={sections} onSectionsUpdate={setSections} />
+      <GallerySections sections={sections} onSectionsUpdate={setSections} id={project.id} collectionId={collectionId} collectionName={findCollectionById(project, collectionId)?.name} />
     </div>
   );
 };
