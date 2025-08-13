@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ImageGalleryDesigner.scss';
+import GallerySections from './GallerySections/GallerySections';
 
 const ImageGalleryDesigner = ({ project, collectionId }) => {
   const [title, setTitle] = useState(project.name);
@@ -12,6 +13,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
   const [focusPoint, setFocusPoint] = useState(project.focusPoint || { x: 0.5, y: 0.5 });
   const [initialFocusPoint, setInitialFocusPoint] = useState(project.focusPoint || { x: 0.5, y: 0.5 });
   const [coverSize, setCoverSize] = useState('medium');
+  const [sections, setSections] = useState(project.sections || []);
   let leaveTimeout;
 
   const colors = ['#000000', '#ffffff', '#ff6961', '#ffb340', '#ffd426', '#428924', '#66d4cf', '#5de6ff', '#70d7ff', '#409cff', '#7d7aff', '#da8fff', '#ff6482', '#b59469', '#aeaeae', '#7c7c80', '#545456', '#444446', '#363638', '#242426'];
@@ -161,6 +163,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
           </div>
         </div>
       </div>
+      <GallerySections sections={sections} onSectionsUpdate={setSections} />
     </div>
   );
 };

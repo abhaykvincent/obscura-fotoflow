@@ -1,0 +1,20 @@
+.gallery-sections {
+  margin-top: 20px;
+
+  .add-section-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+
+    button {
+      padding: 10px 15px;
+      border: 1px solid #ccc;
+      background-color: #f0f0f0;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #e0e0e0;
+      }
+    }
+  }
+}
