@@ -223,6 +223,7 @@ const sliceUpload = async (domain, slice, id, collectionId, dispatch, originalFi
 // Upload ENTRY POINT
 // Remove setUploadLists, setUploadStatus (local setters), add dispatch
 export const handleUpload = async (domain, files, id, collectionId, importFileSize, dispatch, collectionName, retries = 2, sliceSize = 32 ) => {
+    console.log(domain, files, id, collectionId, importFileSize, dispatch, collectionName, retries, sliceSize)
     // 1. Generate initialFileObjects with unique IDs for Redux state
     // Using file.name as fileId here, acknowledge potential uniqueness issues.
     // A more robust approach: file.name + '-' + file.lastModified + '-' + file.size or UUID
