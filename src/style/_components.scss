@@ -292,6 +292,13 @@
             background-position: center;
             background-image: url('https://img.icons8.com/?size=100&id=N1vYa7LVzeKx&format=png&color=000000');
         }
+        &.title-font.dark-icon::before{
+            margin-right: 0;
+            margin-left: 0;
+            background-size: 80%;
+            background-position: center;
+            background-image: url('https://img.icons8.com/?size=100&id=24758&format=png&color=1A1A1A');
+        }
         &.cover-size.dark-icon::before{
             margin-right: 0;
             margin-left: 0;
@@ -302,14 +309,14 @@
         &.delete-red.dark-icon::before{
             margin-right: 0;
             margin-left: 0;
-            background-size: 100%;
+            background-size: 90%;
             background-position: center;
             background-image: url('https://img.icons8.com/?size=100&id=67884&format=png&color=ff2d55');
         }
         &.colour-wheel.dark-icon::before{
             margin-right: 0;
             margin-left: 0;
-            background-size: 100%;
+            background-size: 85%;
             background-position: center;
             background-image: url('https://img.icons8.com/?size=100&id=EDu09r33OBsd&format=png&color=000000');
         }
