@@ -905,6 +905,8 @@ export const addUploadCompletionEventToFirestore = async (domain, projectId, col
         const projectData = projectSnapshot.data();
         const existingEvents = projectData.events || [];
 
+        const eventDate = uploadedFiles[0]?.dateTimeOriginal ? new Date(uploadedFiles[0].dateTimeOriginal).getTime() : new Date().getTime();
+
         // Check if an event with the same type and date already exists
         const eventAlreadyExists = existingEvents.some(event => 
             event.type === collectionName && event.date === eventDate
@@ -916,7 +918,6 @@ export const addUploadCompletionEventToFirestore = async (domain, projectId, col
         }
 
         const eventId = `upload-completion-${collectionId}-${new Date().getTime()}`;
-        const eventDate = uploadedFiles[0]?.dateTimeOriginal ? new Date(uploadedFiles[0].dateTimeOriginal).getTime() : new Date().getTime();
         const uploadCompletionEvent = {
             id: eventId,
             type: collectionName,
