@@ -197,5 +197,78 @@
         border-color: #fff;
       }
     }
+
+    .focus-control {
+      position: relative;
+    }
+
+    .focus-dialog {
+      position: absolute;
+      bottom: 8px*5.5; // Adjust position to be above the toolbar
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 1);
+      border-radius: 8px;
+      padding: 10px;
+      z-index: 5; // Ensure it's above the toolbar
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -8px*2;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 2px;
+        border-width: 8px;
+        border-style: solid;
+        border-color: white transparent transparent transparent;
+      }
+    }
+
+    .focus-control:hover .focus-dialog {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(-10px);
+    }
+
+    .focus-image-container {
+      position: relative;
+      cursor: crosshair;
+    }
+
+    .focus-image {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+
+    .focus-point {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 2px solid white;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .focus-actions {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 10px;
+
+      button {
+        background-color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    }
   }
 }

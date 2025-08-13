@@ -6,7 +6,9 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
   const [description, setDescription] = useState(project.type);
   const [textPosition, setTextPosition] = useState('center');
   const [overlayColor, setOverlayColor] = useState('rgba(0, 0, 0, 0.5)');
-  const [showColorDialog, setShowColorDialog] = useState(true);
+  const [showColorDialog, setShowColorDialog] = useState(false);
+  const [showFocusDialog, setShowFocusDialog] = useState(false);
+  const [focusPoint, setFocusPoint] = useState({ x: 0.5, y: 0.5 });
   let leaveTimeout;
 
   const colors = ['#000000', '#ffffff', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff'];
@@ -27,15 +29,22 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
     setter(e.target.innerText);
   };
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = (setter) => {
     clearTimeout(leaveTimeout);
-    setShowColorDialog(true);
+    setter(true);
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = (setter) => {
     leaveTimeout = setTimeout(() => {
-      setShowColorDialog(true);
+      setter(false);
     }, 200);
+  };
+
+  const handleFocusClick = (e) => {
+    const rect = e.target.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    setFocusPoint({ x, y });
   };
 
   return (
@@ -61,7 +70,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
         </div>
         <div className="cover-overlay" style={{ backgroundColor: overlayColor }}></div>
         {project.projectCover ? (
-          <img src={project.projectCover} alt="Cover" className="cover-photo" />
+          <img src={project.projectCover} alt="Cover" className="cover-photo" style={{ objectPosition: `${focusPoint.x * 100}% ${focusPoint.y * 100}%` }} />
         ) : (
           <div className="cover-photo-placeholder">
             <span>Cover Photo</span>
@@ -72,12 +81,26 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
         <div className="toolbar">
           <div className="tools-container">
 
-          <button className='button text-only  icon set-focus dark-icon'></button>
+          <div className="focus-control" onMouseEnter={() => handleMouseEnter(setShowFocusDialog)} onMouseLeave={() => handleMouseLeave(setShowFocusDialog)}>
+              <button className='button text-only  icon set-focus dark-icon'></button>
+              {showFocusDialog && (
+                <div className="focus-dialog">
+                  <div className="focus-image-container" onClick={handleFocusClick}>
+                    <img src={project.projectCover} alt="Cover" className="focus-image" />
+                    <div className="focus-point" style={{ left: `${focusPoint.x * 100}%`, top: `${focusPoint.y * 100}%` }}></div>
+                  </div>
+                  <div className="focus-actions">
+                    <button onClick={() => setShowFocusDialog(false)}>Save</button>
+                    <button onClick={() => setShowFocusDialog(false)}>Cancel</button>
+                  </div>
+                </div>
+              )}
+            </div>
           <button className='button text-only  icon cover-size dark-icon' ></button>
           <button  className='button text-only  icon title-position dark-icon' 
             onClick={handleTextPositionChange}>
           </button>
-          <div className="overlay-colour" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <div className="overlay-colour" onMouseEnter={() => handleMouseEnter(setShowColorDialog)} onMouseLeave={() => handleMouseLeave(setShowColorDialog)}>
             <button  className='button text-only  icon colour-wheel dark-icon'></button>
             {showColorDialog && (
               <div className="color-dialog">
