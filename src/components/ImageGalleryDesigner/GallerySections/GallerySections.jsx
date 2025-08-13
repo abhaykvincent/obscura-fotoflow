@@ -37,10 +37,25 @@ const GallerySections = ({ sections, onSectionsUpdate }) => {
   return (
     <div className="gallery-sections">
       <div className="section-container">
+        {sections.length === 0 && (
+          <div className="add-section-icon-container top">
+            <button className="add-section-icon" onClick={() => openDialog(0)}>
+              
+            </button>
+          </div>
+        )}
         {sections.map((section, index) => {
           const SectionComponent = sectionComponents[section.type];
           return (
             <div key={section.id} className="section-wrapper">
+              <div className="add-section-icon-container top">
+                <button
+                  className="add-section-icon"
+                  onClick={() => openDialog(index)}
+                >
+                  
+                </button>
+              </div>
               {SectionComponent ? (
                 <SectionComponent
                   section={section}
@@ -49,24 +64,17 @@ const GallerySections = ({ sections, onSectionsUpdate }) => {
                   }
                 />
               ) : null}
-              <div className="add-section-icon-container">
+              <div className="add-section-icon-container bottom">
                 <button
                   className="add-section-icon"
                   onClick={() => openDialog(index + 1)}
                 >
-                  +
+                  
                 </button>
               </div>
             </div>
           );
         })}
-        {sections.length === 0 && (
-          <div className="add-section-icon-container">
-            <button className="add-section-icon" onClick={() => openDialog(0)}>
-              +
-            </button>
-          </div>
-        )}
       </div>
 
       {dialogOpen && (
