@@ -4,7 +4,7 @@ import './TextBlock.scss';
 const TextBlock = ({ section, onSectionUpdate }) => {
   return (
     <div className="text-block-section">
-      <h2>Text Block</h2>
+      <h1 contentEditable>Text Block</h1>
       <div
         contentEditable
         suppressContentEditableWarning={true}
