@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ImageGalleryDesigner.scss';
 
 const ImageGalleryDesigner = ({ project, collectionId }) => {
@@ -8,7 +8,8 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
   const [overlayColor, setOverlayColor] = useState('rgba(0, 0, 0, 0.5)');
   const [showColorDialog, setShowColorDialog] = useState(false);
   const [showFocusDialog, setShowFocusDialog] = useState(false);
-  const [focusPoint, setFocusPoint] = useState({ x: 0.5, y: 0.5 });
+  const [focusPoint, setFocusPoint] = useState(project.focusPoint || { x: 0.5, y: 0.5 });
+  const [initialFocusPoint, setInitialFocusPoint] = useState(project.focusPoint || { x: 0.5, y: 0.5 });
   let leaveTimeout;
 
   const colors = ['#000000', '#ffffff', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff'];
@@ -34,10 +35,12 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
     setter(true);
   };
 
-  const handleMouseLeave = (setter) => {
-    leaveTimeout = setTimeout(() => {
-      setter(false);
-    }, 200);
+  const handleMouseLeave = (setter, condition) => {
+    if (condition) {
+      leaveTimeout = setTimeout(() => {
+        setter(false);
+      }, 200);
+    }
   };
 
   const handleFocusClick = (e) => {
@@ -46,6 +49,25 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
     const y = (e.clientY - rect.top) / rect.height;
     setFocusPoint({ x, y });
   };
+
+  const handleSaveFocus = () => {
+    setInitialFocusPoint(focusPoint);
+    setShowFocusDialog(false);
+    // Here you would typically save the focusPoint to your backend
+  };
+
+  const handleCancelFocus = () => {
+    setFocusPoint(initialFocusPoint);
+    setShowFocusDialog(false);
+  };
+
+  useEffect(() => {
+    if (showFocusDialog) {
+      setInitialFocusPoint(focusPoint);
+    }
+  }, [showFocusDialog]);
+
+  const focusChanged = initialFocusPoint.x !== focusPoint.x || initialFocusPoint.y !== focusPoint.y;
 
   return (
     <div className="image-gallery-designer">
@@ -81,7 +103,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
         <div className="toolbar">
           <div className="tools-container">
 
-          <div className="focus-control" onMouseEnter={() => handleMouseEnter(setShowFocusDialog)} onMouseLeave={() => handleMouseLeave(setShowFocusDialog)}>
+          <div className="focus-control" onMouseEnter={() => handleMouseEnter(setShowFocusDialog)} onMouseLeave={() => handleMouseLeave(setShowFocusDialog, focusChanged)}>
               <button className='button text-only  icon set-focus dark-icon'></button>
               {showFocusDialog && (
                 <div className="focus-dialog">
@@ -90,8 +112,8 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
                     <div className="focus-point" style={{ left: `${focusPoint.x * 100}%`, top: `${focusPoint.y * 100}%` }}></div>
                   </div>
                   <div className="focus-actions">
-                    <button onClick={() => setShowFocusDialog(false)}>Save</button>
-                    <button onClick={() => setShowFocusDialog(false)}>Cancel</button>
+                    <button className='save-button' onClick={handleSaveFocus} disabled={!focusChanged}>Save</button>
+                    <button className='cancel-button' onClick={handleCancelFocus}>Cancel</button>
                   </div>
                 </div>
               )}
@@ -100,7 +122,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
           <button  className='button text-only  icon title-position dark-icon' 
             onClick={handleTextPositionChange}>
           </button>
-          <div className="overlay-colour" onMouseEnter={() => handleMouseEnter(setShowColorDialog)} onMouseLeave={() => handleMouseLeave(setShowColorDialog)}>
+          <div className="overlay-colour" onMouseEnter={() => handleMouseEnter(setShowColorDialog)} onMouseLeave={() => handleMouseLeave(setShowColorDialog, false)}>
             <button  className='button text-only  icon colour-wheel dark-icon'></button>
             {showColorDialog && (
               <div className="color-dialog">

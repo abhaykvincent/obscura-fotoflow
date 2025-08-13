@@ -1,3 +1,5 @@
+
+@import '../../style/variables';
 .App .image-gallery-designer {
   min-height: 80vh;
   .cover-photo-container {
@@ -118,7 +120,7 @@
 
         box-shadow: none;
         opacity: 1;
-        background-color: transparent !important;
+        background-color: transparent;
         
         &::before{
           opacity: 0.9;
@@ -127,7 +129,7 @@
           filter: drop-shadow(1px 1px 1px #ffffff);
         }
         &:hover{
-        background-color: white !important;
+        background-color: white ;
           &::before{
             opacity: 1;
             transform: scale(1.2);
@@ -263,11 +265,26 @@
       margin-top: 10px;
 
       button {
-        background-color: #fff;
         border: none;
         padding: 5px 10px;
         border-radius: 5px;
         cursor: pointer;
+        &.save-button{
+          background: $green-accessible-dark;
+          color:white;
+          transition-duration: 0.1s;
+          transition-delay: 0.1s;
+          transition-timing-function: ease-in;
+          &:hover{
+            background: $green-accessible-light;
+          }
+        }
+
+        &:disabled {
+          background-color: #cccccc00;
+          color: rgba(0, 0, 0, 0.3);
+          cursor: not-allowed;
+        }
       }
     }
   }
