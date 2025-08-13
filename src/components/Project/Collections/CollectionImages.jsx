@@ -20,6 +20,7 @@ import { selectStudioStorageUsage } from '../../../app/slices/studioSlice';
 import { handleUpload } from '../../../utils/uploadOperations';
 import { createNotification } from '../../../app/slices/notificationSlice';
 import { updateCollectionStatus } from '../../../app/slices/projectsSlice';
+import ImageGalleryDesigner from '../../ImageGalleryDesigner/ImageGalleryDesigner';
 
 const CollectionImages = ({ id, collectionId, project }) => {
     const dispatch = useDispatch();
@@ -28,6 +29,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
     const currentStudio = useSelector(selectUserStudio);
     // dark light mode
     const [displayMode, setDisplayMode] = useState('darkMode');
+    const [galleryMode, setGalleryMode] = useState('workflowMode');
     const [uploadTrigger, setUploadTrigger] = useState(false);
 
     // Files
@@ -263,21 +265,16 @@ const CollectionImages = ({ id, collectionId, project }) => {
             </div>
             
             <div className="header">
-                <div className="options">
-                    {/* Updated UploadButton props: removed setUploadStatus, setUploadLists; added dispatch */}
-                    <UploadButton {...{ 
-                        isPhotosImported, 
-                        setIsPhotosImported, 
-                        imageUrls, 
-                        setImageUrls, 
-                        // setUploadStatus, // Removed
-                        id, 
-                        collectionId, 
-                        collectionName: findCollectionById(project, collectionId)?.name,
-                        // setUploadLists, // Removed
-                        dispatch // Added
-                    }} />
-                </div>
+                <div className="view-control gallery-mode">
+                        <div className="control-wrap">
+                            <div className="controls">
+                                <div className={`control ${galleryMode === 'workflowMode' ? 'active' : ''}`} onClick={() => { setDisplayMode('darkMode') ;setGalleryMode('workflowMode')}}>Worklow</div>
+                                <div className={`control ${galleryMode === 'designMode' ? 'active' : ''}`} onClick={() => {setDisplayMode('lightMode') ;setGalleryMode('designMode')}}>Design {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
+                            </div>
+                            <div className={`active`}></div>
+                        </div>
+                    </div>
+                
                 {collectionImages?.length > 0 || imageUrls.length > 0  ? (
                     <div className="view-control">
                         <div className="control-label label-all-photos">{collectionImages?.length ? collectionImages?.length: imageUrls.length} Photos</div>
@@ -293,7 +290,8 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 ) : (
                     <div className="empty-message"></div>
                 )}
-                
+                <div className="options">
+
                 <div className="open-buttons ">
                     { !showAllPhotos ?
                     <><div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
@@ -315,39 +313,66 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 </div>
                 </>}
                 </div>
+                    {/* Updated UploadButton props: removed setUploadStatus, setUploadLists; added dispatch */}
+                    <UploadButton {...{ 
+                        isPhotosImported, 
+                        setIsPhotosImported, 
+                        imageUrls, 
+                        setImageUrls, 
+                        // setUploadStatus, // Removed
+                        id, 
+                        collectionId, 
+                        collectionName: findCollectionById(project, collectionId)?.name,
+                        // setUploadLists, // Removed
+                        dispatch // Added
+                    }} />
+                </div>
             </div>
 
 
             
-            {imageUrls.length > 0 ? (
-                galleryView === 'grid' ?
-                <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id,collectionId }} />:
-                <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId }} />
-            ) : (
-                <label 
-                    htmlFor="fileInput" 
-                    className={`drop-upload ${isPhotosImported ? 'active' : ''}`}
-                    onDrop={handleDrop}
-                    onDragOver={handleDragOver}
-                >
-                    <div className="drop-area">
-                        <Lottie options={defaultOptions} height={150} width={150} />
-                        <h2>Drop files here</h2>
-                        <p>or use the "Upload" Button</p>
-                    </div>
-                </label>
-            )}
-            {<div className="image-gallery-bottom-panel">
-                {/* <div className="button secondary">Load All</div> */}
+            {
+                galleryMode === 'workflowMode' && (
+                    
                 
-                {collectionImages?.length !== imageUrls.length && collectionImages?.length >0 && <div className={`button primary`}
-                    onClick={() => setPage(page + 1)}
-                >Load More</div>}
+                imageUrls.length > 0 ? (
+                    galleryView === 'grid' ?
+                    <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id,collectionId }} />:
+                    <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId }} />
+                ) : (
+                    <label 
+                        htmlFor="fileInput" 
+                        className={`drop-upload ${isPhotosImported ? 'active' : ''}`}
+                        onDrop={handleDrop}
+                        onDragOver={handleDragOver}
+                    >
+                        <div className="drop-area">
+                            <Lottie options={defaultOptions} height={150} width={150} />
+                            <h2>Drop files here</h2>
+                            <p>or use the "Upload" Button</p>
+                        </div>
+                    </label>
+                )
+                )
+            }
+            {
+                galleryMode === 'designMode' &&(
+                <ImageGalleryDesigner {...{project, collectionId }} />
+            )
+            }
 
-                {(imageUrls.length !==0 && collectionImages?.length === imageUrls.length)  && <p className='caughtup-label label'>You are all caught up!</p>}
+            {
+                <div className="image-gallery-bottom-panel">
+                    {/* <div className="button secondary">Load All</div> */}
+                    
+                    {collectionImages?.length !== imageUrls.length && collectionImages?.length >0 && <div className={`button primary`}
+                        onClick={() => setPage(page + 1)}
+                    >Load More</div>}
 
-            </div>
-}
+                    {(imageUrls.length !==0 && collectionImages?.length === imageUrls.length)  && <p className='caughtup-label label'>You are all caught up!</p>}
+
+                </div>
+            }
             
         </div>
     );

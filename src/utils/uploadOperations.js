@@ -46,7 +46,7 @@ const metadata = {
   };
 // File Single upload function
 // Remove setUploadLists, add dispatch and fileId
-export const uploadFile = async (domain, id, collectionId, file, dispatch, fileId, dateTimeOriginal) => {
+export const uploadFile = async (domain, id, collectionId, file, dispatch, fileId, dateTimeOriginal, dimensions) => {
     const MAX_RETRIES = 5;
     const INITIAL_RETRY_DELAY = 500;
     let retries = 0;
@@ -95,7 +95,8 @@ export const uploadFile = async (domain, id, collectionId, file, dispatch, fileI
                         lastModified: file.lastModified,
                         dateTimeOriginal: dateTimeOriginal,
                         url,
-                        fileId // Include fileId in resolution if useful for caller
+                        fileId, // Include fileId in resolution if useful for caller
+                        dimensions,
                     });
                 }
             );
@@ -149,8 +150,11 @@ export const uploadFile = async (domain, id, collectionId, file, dispatch, fileI
                         dispatch(updateUploadFile({ fileId, changes: { status: 'uploaded', url: url, progress: 100 } }));
                         resolve({
                             name: file.name,
+                            lastModified: file.lastModified,
+                            dateTimeOriginal: dateTimeOriginal,
                             url,
-                            fileId
+                            fileId,
+                            dimensions,
                         });
                     }
                 );
@@ -200,7 +204,7 @@ const sliceUpload = async (domain, slice, id, collectionId, dispatch, originalFi
             const originalFile = slice[index];
             const fileId = originalFile.id;
             const namedCompressedFile = new File([compressedFile], originalFile.rawFile.name, { type: compressedFile.type });
-            return uploadFile(domain, id, collectionId, namedCompressedFile, dispatch, fileId, originalFile.dateTimeOriginal);
+            return uploadFile(domain, id, collectionId, namedCompressedFile, dispatch, fileId, originalFile.dateTimeOriginal, originalFile.dimensions);
         });
         
         // Combine all upload promises and resolve them concurrently
@@ -243,6 +247,16 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
         if (!dateTimeOriginal || isNaN(dateTimeOriginal.getTime())) {
             dateTimeOriginal = new Date();
         }
+
+        const dimensions = {};
+        const width = exifData?.ImageWidth?.value || exifData?.PixelXDimension?.value;
+        const height = exifData?.ImageHeight?.value || exifData?.PixelYDimension?.value;
+
+        if (width && height) {
+            dimensions.width = Array.isArray(width) ? width[0] : width;
+            dimensions.height = Array.isArray(height) ? height[0] : height;
+        }
+
         return {
             id: file.name, // Using file.name as fileId. CONSIDER ROBUSTNESS.
             name: file.name,
@@ -252,6 +266,7 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
             url: null,
             rawFile: file, // Keep raw file for compression
             dateTimeOriginal: dateTimeOriginal,
+            dimensions: dimensions,
         };
     }));
 
@@ -271,7 +286,8 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
         rawFile: file.rawFile,
         id: file.id, // Must match the id used in initialFileObjects
         name: file.name, // Keep name for convenience if needed
-        dateTimeOriginal: file.dateTimeOriginal
+        dateTimeOriginal: file.dateTimeOriginal,
+        dimensions: file.dimensions,
     }));
 
 
@@ -325,6 +341,7 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
                         url: result.value.url,
                         lastModified: result.value.lastModified, // Ensure this is passed through
                         dateTimeOriginal: result.value.dateTimeOriginal, // Pass dateTimeOriginal
+                        dimensions: result.value.dimensions,
                         thumbAvailable: true, // Assuming thumb was also attempted
                     });
                 } else if (result.status === 'rejected' || (result.status === 'fulfilled' && (!result.value || !result.value.url))) {
