@@ -20,6 +20,7 @@ import { selectStudioStorageUsage } from '../../../app/slices/studioSlice';
 import { handleUpload } from '../../../utils/uploadOperations';
 import { createNotification } from '../../../app/slices/notificationSlice';
 import { updateCollectionStatus } from '../../../app/slices/projectsSlice';
+import ImageGalleryDesigner from '../../ImageGalleryDesigner/ImageGalleryDesigner';
 
 const CollectionImages = ({ id, collectionId, project }) => {
     const dispatch = useDispatch();
@@ -356,7 +357,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
             }
             {
                 galleryMode === 'designMode' &&(
-                <p className="galleryMode">yt</p>
+                <ImageGalleryDesigner {...{project, collectionId }} />
             )
             }
 
