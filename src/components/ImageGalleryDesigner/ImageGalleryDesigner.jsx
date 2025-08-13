@@ -8,15 +8,23 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
   const [overlayColor, setOverlayColor] = useState('rgba(0, 0, 0, 0.5)');
   const [showColorDialog, setShowColorDialog] = useState(false);
   const [showFocusDialog, setShowFocusDialog] = useState(false);
+  const [showCoverSizeDialog, setShowCoverSizeDialog] = useState(false);
   const [focusPoint, setFocusPoint] = useState(project.focusPoint || { x: 0.5, y: 0.5 });
   const [initialFocusPoint, setInitialFocusPoint] = useState(project.focusPoint || { x: 0.5, y: 0.5 });
+  const [coverSize, setCoverSize] = useState('medium');
   let leaveTimeout;
 
   const colors = ['#000000', '#ffffff', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff'];
+  const coverSizes = ['small', 'medium', 'large'];
 
   const handleColorSelect = (color) => {
     setOverlayColor(color);
     setShowColorDialog(false);
+  };
+
+  const handleCoverSizeSelect = (size) => {
+    setCoverSize(size);
+    setShowCoverSizeDialog(false);
   };
 
   const handleTextPositionChange = () => {
@@ -36,7 +44,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
   };
 
   const handleMouseLeave = (setter, condition) => {
-    if (condition) {
+    if (!condition) {
       leaveTimeout = setTimeout(() => {
         setter(false);
       }, 200);
@@ -71,7 +79,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
 
   return (
     <div className="image-gallery-designer">
-      <div className="cover-photo-container">
+      <div className={`cover-photo-container ${coverSize}`}>
         <div className={`text-overlay ${textPosition}`}>
           <h1
             className="cover-title"
@@ -118,7 +126,16 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
                 </div>
               )}
             </div>
-          <button className='button text-only  icon cover-size dark-icon' ></button>
+            <div className="cover-size-control" onMouseEnter={() => handleMouseEnter(setShowCoverSizeDialog)} onMouseLeave={() => handleMouseLeave(setShowCoverSizeDialog, false)}>
+              <button className='button text-only  icon cover-size dark-icon' ></button>
+              {showCoverSizeDialog && (
+                <div className="cover-size-dialog">
+                  {coverSizes.map((size) => (
+                    <button key={size} onClick={() => handleCoverSizeSelect(size)}>{size}</button>
+                  ))}
+                </div>
+              )}
+            </div>
           <button  className='button text-only  icon title-position dark-icon' 
             onClick={handleTextPositionChange}>
           </button>

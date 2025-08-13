@@ -14,6 +14,9 @@
     overflow: hidden;
     position: relative; // Needed for absolute positioning of the toolbar
 
+    &.large{
+      height: 50vh;
+    }
     .cover-overlay {
       position: absolute;
       top: 0;
@@ -286,6 +289,67 @@
           cursor: not-allowed;
         }
       }
+    }
+
+    &.small {
+      height: 200px;
+    }
+
+    &.medium {
+      height: 300px;
+    }
+
+    &.large {
+      height: 400px;
+    }
+
+    .cover-size-control {
+      position: relative;
+    }
+
+    .cover-size-dialog {
+      position: absolute;
+      bottom: 8px*5.5; // Adjust position to be above the toolbar
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 1);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      z-index: 5; // Ensure it's above the toolbar
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -8px*2;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 2px;
+        border-width: 8px;
+        border-style: solid;
+        border-color: white transparent transparent transparent;
+      }
+
+      button {
+        background-color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    }
+
+    .cover-size-control:hover .cover-size-dialog {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(-10px);
     }
   }
 }
