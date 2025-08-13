@@ -1,7 +1,7 @@
 import React from 'react';
 import './ImageGalleryDesigner.scss';
 
-const ImageGalleryDesigner = ({project, collectionId }) => {
+const ImageGalleryDesigner = ({ project, collectionId }) => {
   console.log(project)
   return (
     <div className="image-gallery-designer">
@@ -13,6 +13,13 @@ const ImageGalleryDesigner = ({project, collectionId }) => {
             <span>Cover Photo</span>
           </div>
         )}
+        <div className="toolbar">
+          <button>Focus Point</button>
+          <button>Cover Size</button>
+          <button>Text Position</button>
+          <button>Overlay Colour</button>
+          <button>Delete Cover</button>
+        </div>
       </div>
     </div>
   );

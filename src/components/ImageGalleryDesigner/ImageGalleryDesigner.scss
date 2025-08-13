@@ -1,4 +1,5 @@
 .image-gallery-designer {
+  min-height: 80vh;
   .cover-photo-container {
     width: 100%;
     height: 300px;
@@ -9,6 +10,7 @@
     border: 2px dashed #ccc;
     border-radius: 8px;
     overflow: hidden;
+    position: relative; // Needed for absolute positioning of the toolbar
 
     .cover-photo {
       width: 100%;
@@ -19,6 +21,34 @@
     .cover-photo-placeholder {
       text-align: center;
       color: #999;
+    }
+
+    .toolbar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+
+      button {
+        background-color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    }
+
+    &:hover .toolbar {
+      opacity: 1;
+      visibility: visible;
     }
   }
 }
