@@ -20,14 +20,6 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
   return (
     <div className="image-gallery-designer">
       <div className="cover-photo-container">
-        {project.projectCover ? (
-          <img src={project.projectCover} alt="Cover" className="cover-photo" />
-        ) : (
-          <div className="cover-photo-placeholder">
-            <span>Cover Photo</span>
-          </div>
-        )}
-
         <div className={`text-overlay ${textPosition}`}>
           <h1
             className="cover-title"
@@ -46,6 +38,15 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
             {description}
           </p>
         </div>
+        <div className="cover-overlay"></div>
+        {project.projectCover ? (
+          <img src={project.projectCover} alt="Cover" className="cover-photo" />
+        ) : (
+          <div className="cover-photo-placeholder">
+            <span>Cover Photo</span>
+          </div>
+        )}
+
 
         <div className="toolbar">
           <button>Focus Point</button>
