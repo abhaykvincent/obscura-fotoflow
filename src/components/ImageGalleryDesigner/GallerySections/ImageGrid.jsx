@@ -15,7 +15,7 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate })
    
     const importFileSize = 0; // Placeholder
     console.log(domain, acceptedFiles, id, collectionId, importFileSize, collectionName)
-    handleUpload(domain, acceptedFiles, id, collectionId, importFileSize, dispatch, collectionName);
+        handleUpload(domain, acceptedFiles, id, collectionId, importFileSize, dispatch, collectionName, section.id);
   }, [section.id, dispatch]);
 
   const handleFileSelect = (event) => {
