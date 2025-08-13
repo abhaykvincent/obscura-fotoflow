@@ -374,6 +374,22 @@ export const addCollectionToStudioProject = async (domain, projectId, collection
         id: `${id}`,
         name,
         status,
+        smartGallery: {
+            id: `${id}`,
+            name: name,
+            description: "",
+            projectCover: "",
+            focusPoint: {
+                x: 0.5,
+                y: 0.5
+            },
+            coverSize: "medium",
+            textPosition: "center",
+            overlayColor: "rgba(0, 0, 0, 0.5)",
+            sections: [],
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+        },
     };
 
     try {
@@ -521,6 +537,18 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         // Update collection with new data, including filesCount
         updateDoc(collectionDocRef, {
             uploadedFiles: arrayUnion(...uploadedFiles.map(file => ({...file, dateTimeOriginal: file.dateTimeOriginal}))),
+            smartGallery: {
+                ...collectionData.data().smartGallery,
+                sections: [
+                    ...collectionData.data().smartGallery.sections,
+                    {
+                        id: `image-grid-${collectionId}-${new Date().getTime()}`,
+                        type: 'image-grid',
+                        order: 1,
+                        images: uploadedFiles,
+                    }
+                ],
+            },
         })
         .catch(error => {
             console.error(`%cError adding uploaded files to collection ${collectionId} in project ${projectId}: ${error.message}`, `color: red;`);
@@ -528,7 +556,15 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         });
 
         const pin = generateMemorablePIN(4)
+        const imageGridEvent = {
+            type: 'image-grid',
+            id: `image-grid-${collectionId}-${new Date().getTime()}`,
+            images: uploadedFiles,
+            collectionId: collectionId,
+            date: new Date().getTime(),
+        };
         updateDoc(projectDocRef, {
+            events: arrayUnion(imageGridEvent),
             collections: projectData.data().collections.map(collection => {
                 if (collection.id === collectionId) {
                     return {
