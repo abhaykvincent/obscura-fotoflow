@@ -23,6 +23,55 @@
       color: #999;
     }
 
+    .text-overlay {
+      position: absolute;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      &.center {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      &.top-left {
+        top: 20px;
+        left: 20px;
+        text-align: left;
+      }
+      &.top-right {
+        top: 20px;
+        right: 20px;
+        text-align: right;
+      }
+      &.bottom-left {
+        bottom: 20px;
+        left: 20px;
+        text-align: left;
+      }
+      &.bottom-right {
+        bottom: 20px;
+        right: 20px;
+        text-align: right;
+      }
+
+      .cover-title,
+      .cover-description {
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        margin: 0;
+      }
+
+      .cover-title {
+        color: white;;
+        font-size: 2.5rem;
+        font-weight: bold;
+      }
+
+      .cover-description {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.75);;
+      }
+    }
+
     .toolbar {
       position: absolute;
       bottom: 0;
