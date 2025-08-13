@@ -14,7 +14,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
   const [coverSize, setCoverSize] = useState('medium');
   let leaveTimeout;
 
-  const colors = ['#000000', '#ffffff', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff'];
+  const colors = ['#000000', '#ffffff', '#ff6961', '#ffb340', '#ffd426', '#428924', '#66d4cf', '#5de6ff', '#70d7ff', '#409cff', '#7d7aff', '#da8fff', '#ff6482', '#b59469', '#aeaeae', '#7c7c80', '#545456', '#444446', '#363638', '#242426'];
   const coverSizes = ['small', 'medium', 'large'];
 
   const handleColorSelect = (color) => {
@@ -138,6 +138,9 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
             </div>
           <button  className='button text-only  icon title-position dark-icon' 
             onClick={handleTextPositionChange}>
+          </button>
+          <button  className='button text-only  icon title-font dark-icon' 
+            >
           </button>
           <div className="overlay-colour" onMouseEnter={() => handleMouseEnter(setShowColorDialog)} onMouseLeave={() => handleMouseLeave(setShowColorDialog, false)}>
             <button  className='button text-only  icon colour-wheel dark-icon'></button>
