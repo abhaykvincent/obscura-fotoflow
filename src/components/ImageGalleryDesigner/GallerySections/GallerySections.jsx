@@ -96,27 +96,11 @@ const GallerySections = ({ sections, onSectionsUpdate }) => {
                 </div>
                 <div className="section-option-add">+</div>
               </div>
-              <div className="section-option" onClick={() => addSection('sub-gallery')}>
-                <div className="section-option-icon">ICON</div>
-                <div className="section-option-text">
-                  <h3>Sub-Gallery</h3>
-                  <p>Add multiple galleries.</p>
-                </div>
-                <div className="section-option-add">+</div>
-              </div>
               <div className="section-option" onClick={() => addSection('text-block')}>
                 <div className="section-option-icon">ICON</div>
                 <div className="section-option-text">
                   <h3>Text</h3>
                   <p>Add a title and paragraph.</p>
-                </div>
-                <div className="section-option-add">+</div>
-              </div>
-              <div className="section-option" onClick={() => addSection('embed')}>
-                <div className="section-option-icon">ICON</div>
-                <div className="section-option-text">
-                  <h3>Embed</h3>
-                  <p>Paste an embed code.</p>
                 </div>
                 <div className="section-option-add">+</div>
               </div>
