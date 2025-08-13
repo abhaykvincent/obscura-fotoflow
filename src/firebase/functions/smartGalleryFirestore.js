@@ -1,5 +1,28 @@
 import { db } from "../app";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, Timestamp } from "firebase/firestore"; // Import Timestamp
+
+// Helper function to convert Firestore Timestamps to Unix timestamps (milliseconds)
+const convertTimestampsToMillis = (obj) => {
+    if (obj === null || typeof obj !== 'object') {
+        return obj;
+    }
+
+    if (obj instanceof Timestamp) {
+        return obj.toMillis();
+    }
+
+    if (Array.isArray(obj)) {
+        return obj.map(item => convertTimestampsToMillis(item));
+    }
+
+    const newObj = {};
+    for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            newObj[key] = convertTimestampsToMillis(obj[key]);
+        }
+    }
+    return newObj;
+};
 
 export const fetchSmartGalleryFromFirestore = async (domain, projectId, collectionId) => {
     try {
@@ -8,7 +31,9 @@ export const fetchSmartGalleryFromFirestore = async (domain, projectId, collecti
 
         if (collectionSnapshot.exists()) {
             const collectionData = collectionSnapshot.data();
-            return collectionData.smartGallery || null;
+            // Convert any Firestore Timestamps in smartGallery to milliseconds
+            const smartGallery = convertTimestampsToMillis(collectionData.smartGallery) || null;
+            return smartGallery;
         } else {
             console.warn(`Collection ${collectionId} not found for project ${projectId} in domain ${domain}`);
             return null;
