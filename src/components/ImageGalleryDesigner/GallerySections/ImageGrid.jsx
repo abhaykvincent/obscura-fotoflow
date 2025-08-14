@@ -10,6 +10,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragOverlay,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -68,7 +69,7 @@ const SortableImage = ({ image, ...props }) => {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0 : 1, // Hide original when dragging
     ...props.style,
   };
 
@@ -87,6 +88,7 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate })
   const containerRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [layout, setLayout] = useState([]);
+  const [activeImage, setActiveImage] = useState(null);
 
   useLayoutEffect(() => {
     const observer = new ResizeObserver(entries => {
@@ -150,6 +152,20 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate })
     useSensor(KeyboardSensor)
   );
 
+  const handleImageDragStart = (event) => {
+    const { active } = event;
+    const image = images.find((img) => img.url === active.id);
+    if (image) {
+      for (const row of layout) {
+        const layoutImage = row.find(img => img.url === image.url);
+        if (layoutImage) {
+          setActiveImage(layoutImage);
+          break;
+        }
+      }
+    }
+  };
+
   const handleImageDragEnd = (event) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
@@ -161,6 +177,7 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate })
         onSectionUpdate({ ...section, images: newImages });
       }
     }
+    setActiveImage(null);
   };
 
   return (
@@ -188,7 +205,7 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate })
           </div>
         </div>
       ) : (
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleImageDragEnd}>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleImageDragStart} onDragEnd={handleImageDragEnd}>
           <SortableContext items={images.map(img => img.url)} strategy={rectSortingStrategy}>
             <div className="image-grid-display" ref={containerRef}>
               {layout.map((row, rowIndex) => (
@@ -205,6 +222,19 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate })
               ))}
             </div>
           </SortableContext>
+          <DragOverlay>
+            {activeImage ? (
+              <img
+                src={activeImage.url}
+                style={{
+                  width: activeImage.width,
+                  height: activeImage.height,
+                  borderRadius: '4px',
+                }}
+                alt="dragged image"
+              />
+            ) : null}
+          </DragOverlay>
         </DndContext>
       )}
     </div>
