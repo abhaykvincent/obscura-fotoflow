@@ -50,14 +50,14 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
   const SectionComponent = sectionComponents[section.type];
 
   return (
-    <div ref={setNodeRef} style={style} className="section-wrapper">
+    <div ref={setNodeRef} style={style} className="section-wrapper" {...attributes} {...listeners}>
       <div className="toolbar vertical">
         <div className="tools-container">
           <button className='button text-only icon section-settings dark-icon'></button>
           <button className='button text-only icon delete-red dark-icon'></button>
         </div>
-        <div className="tools-container drag-handle" {...attributes} {...listeners}>
-          <BsGripVertical />
+        <div className="tools-container">
+          {/* No specific drag handle icon needed here anymore */}
         </div>
       </div>
       <div className="add-section-icon-container top">
