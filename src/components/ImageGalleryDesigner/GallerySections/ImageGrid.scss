@@ -1,5 +1,5 @@
 .image-grid-section {
-  padding: 20px;
+  padding: 8px*5 0px;
   min-height: 8PX*10;
 
   .upload-area {
@@ -28,6 +28,18 @@
       display: flex;
       gap: 10px;
       margin-bottom: 10px;
+      div[role="button"] {
+        img{
+
+          border: 1px solid #007bff00;
+        }
+        &:hover{
+          img{
+
+            border: 1px solid #66b346;
+          }
+        }
+      }
     }
   }
 }
