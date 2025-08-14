@@ -15,7 +15,10 @@
     min-height: 8px*3;
     cursor: grab;
     // aria-pressed true
-
+&.default-wrapper{
+  
+    min-height: 100vh;
+}
     &:hover {
       
       cursor: grab;
