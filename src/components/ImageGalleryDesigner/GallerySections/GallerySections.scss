@@ -13,10 +13,21 @@
     padding:0px 0;
 
     min-height: 8px*3;
+    cursor: grab;
+    // aria-pressed true
+
+    &:hover {
+      
+      cursor: grab;
+    }
+    &[aria-pressed="true"] {
+      
+      cursor: grabbing;
+    }
     .toolbar{
       display: grid;
       align-content: center;
-      bottom: 50%;
+      top: 8px*5;
       transform: translateX(8px*4) translateY(50%);
     }
     &:hover .toolbar {

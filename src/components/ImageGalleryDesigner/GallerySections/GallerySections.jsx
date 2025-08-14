@@ -10,7 +10,7 @@ import {
   DndContext,
   closestCenter,
   KeyboardSensor,
-  PointerSensor,
+  PointerSensor as DndPointerSensor,
   useSensor,
   useSensors,
   DragOverlay,
@@ -23,6 +23,25 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+
+// Custom Pointer Sensor that ignores elements with data-no-dnd="true"
+class CustomPointerSensor extends DndPointerSensor {
+  static activators = [
+    {
+      eventName: 'onPointerDown',
+      handler: ({ nativeEvent: event }) => {
+        if (
+          !event.isPrimary ||
+          event.button !== 0 ||
+          event.target.closest('[data-no-dnd="true"]')
+        ) {
+          return false;
+        }
+        return true;
+      },
+    },
+  ];
+}
 
 const sectionComponents = {
   'image-grid': ImageGrid,
@@ -54,10 +73,13 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
     <div ref={setNodeRef} style={style} className="section-wrapper" {...attributes} {...listeners}>
       <div className="toolbar vertical">
         <div className="tools-container">
-          <button className='button text-only icon section-settings dark-icon' onMouseDown={(e) => e.stopPropagation()}></button>
+          <button
+            className='button text-only icon section-settings dark-icon'
+            data-no-dnd="true"
+          ></button>
           <button
             className='button text-only icon delete-red dark-icon'
-            onMouseDown={(e) => e.stopPropagation()}
+            data-no-dnd="true"
             onClick={() => handleDeleteSection(section.id)}
           ></button>
         </div>
@@ -70,7 +92,7 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
           <button
             className="add-section-icon"
             onClick={() => openDialog(index)}
-            onMouseDown={(e) => e.stopPropagation()}
+            data-no-dnd="true"
           >
           </button>
         </div>
@@ -91,7 +113,7 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
           <button
             className="add-section-icon"
             onClick={() => openDialog(index + 1)}
-            onMouseDown={(e) => e.stopPropagation()}
+            data-no-dnd="true"
           >
           </button>
         </div>
@@ -134,7 +156,7 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
   const [activeSection, setActiveSection] = useState(null);
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(CustomPointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
