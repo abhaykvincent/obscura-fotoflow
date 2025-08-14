@@ -32,7 +32,7 @@ const sectionComponents = {
   embed: Embed,
 };
 
-const SortableSection = ({ section, index, id, collectionId, collectionName, handleSectionUpdate, openDialog }) => {
+const SortableSection = ({ section, index, id, collectionId, collectionName, handleSectionUpdate, openDialog, isAnySectionDragging }) => {
   const {
     attributes,
     listeners,
@@ -61,14 +61,16 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
           {/* No specific drag handle icon needed here anymore */}
         </div>
       </div>
-      <div className="add-section-icon-container top">
-        <button
-          className="add-section-icon"
-          onClick={() => openDialog(index)}
-          onMouseDown={(e) => e.stopPropagation()}
-        >
-        </button>
-      </div>
+      {!isAnySectionDragging && (
+        <div className="add-section-icon-container top">
+          <button
+            className="add-section-icon"
+            onClick={() => openDialog(index)}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+          </button>
+        </div>
+      )}
       {SectionComponent ? (
         <SectionComponent
           section={section}
@@ -80,14 +82,16 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
           collectionName={collectionName}
         />
       ) : null}
-      <div className="add-section-icon-container bottom">
-        <button
-          className="add-section-icon"
-          onClick={() => openDialog(index + 1)}
-          onMouseDown={(e) => e.stopPropagation()}
-        >
-        </button>
-      </div>
+      {!isAnySectionDragging && (
+        <div className="add-section-icon-container bottom">
+          <button
+            className="add-section-icon"
+            onClick={() => openDialog(index + 1)}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+          </button>
+        </div>
+      )}
     </div>
   );
 };
@@ -106,9 +110,6 @@ const SectionDragOverlay = ({ section, id, collectionId, collectionName }) => {
         <div className="tools-container">
         </div>
       </div>
-      <div className="add-section-icon-container top">
-        <button className="add-section-icon"></button>
-      </div>
       {SectionComponent ? (
         <SectionComponent
           section={section}
@@ -118,9 +119,6 @@ const SectionDragOverlay = ({ section, id, collectionId, collectionName }) => {
           collectionName={collectionName}
         />
       ) : null}
-      <div className="add-section-icon-container bottom">
-        <button className="add-section-icon"></button>
-      </div>
     </div>
   );
 }
@@ -213,6 +211,7 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
                 id={id}
                 collectionId={collectionId}
                 collectionName={collectionName}
+                isAnySectionDragging={!!activeSection}
               />
             ))}
           </div>
