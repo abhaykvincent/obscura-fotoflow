@@ -21,7 +21,7 @@
     background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5)
   }
-  button {
+  button.button.icon {
     background-color: #fff;
     border: none;
     padding: 8px 6px;
@@ -33,7 +33,7 @@
     background-color: transparent;
     
     &::before{
-      opacity: 0.9;
+      opacity: 1 !important;
       transform: scale(1);
       padding: 8px*1.5;
       filter: drop-shadow(1px 1px 1px #ffffff);
