@@ -6,6 +6,7 @@ import SubGallery from './SubGallery';
 import Embed from './Embed';
 import { BsImage, BsCollection, BsTextareaT, BsCode } from 'react-icons/bs';
 import './GallerySections.scss';
+import { orderBy } from 'firebase/firestore';
 
 const sectionComponents = {
   'image-grid': ImageGrid,
@@ -26,7 +27,13 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
   };
 
   const addSection = (type) => {
-    const newSection = { type, id: Date.now() };
+    const newSection = { 
+      
+      type, 
+      id: Date.now(),
+      images:[],
+      order: insertionIndex,
+    };
     const newSections = [...sections];
     newSections.splice(insertionIndex, 0, newSection);
     onSectionsUpdate(newSections);

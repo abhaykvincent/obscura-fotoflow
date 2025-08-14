@@ -171,7 +171,11 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
       console.error("Missing data for updateSmartGallery: domain, projectId, collectionId, or smartGalleryData is undefined.");
       return;
     }
-    const updatedSmartGallery = { ...smartGalleryData, sections: newSections, updatedAt: Date.now() };
+    const updatedSmartGallery = { ...smartGalleryData, 
+      sections: newSections, updatedAt: Date.now() 
+    
+    };
+    debugger
     dispatch(updateSmartGallery({
       domain: domain,
       projectId: project.id,
@@ -214,6 +218,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
 
     const updatedSections = [...currentSections, newSection];
     const updatedSmartGallery = { ...smartGalleryData, sections: updatedSections, updatedAt: Date.now() };
+    debugger
     dispatch(updateSmartGallery({
       domain: domain,
       projectId: project.id,
@@ -326,7 +331,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
           <button onClick={() => setShowAddSectionDialog(false)}>Cancel</button>
         </div>
       )}
-      <GallerySections sections={smartGalleryData.sections} onSectionsUpdate={handleSectionsUpdate} id={project.id} collectionId={collectionId} collectionName={findCollectionById(project, collectionId)?.name} />
+      <GallerySections sections={smartGalleryData.sections} onSectionsUpdate={handleSectionsUpdate} onAddSection={handleAddSection} id={project.id} collectionId={collectionId} collectionName={findCollectionById(project, collectionId)?.name} />
     </div>
   );
 };

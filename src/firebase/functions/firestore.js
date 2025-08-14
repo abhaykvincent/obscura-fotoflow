@@ -550,14 +550,16 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         // Find the section to update or create a new one if sectionId is not provided or not found
         let updatedSections = [];
         let sectionFound = false;
-
+        console.log(sectionId)
         if (sectionId) {
             updatedSections = currentSmartGallery.sections.map(section => {
                 if (section.id === sectionId) {
                     sectionFound = true;
+    
                     return {
                         ...section,
-                        images: [...section.images, ...uploadedFiles], // Append new images
+                        images: [...section.images,
+                             ...uploadedFiles], // Append new images
                     };
                 }
                 return section;
@@ -577,8 +579,12 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
             ];
         }
 
+        const updatedSmartGallery = {
+            ...currentSmartGallery,
+            sections: updatedSections,
+        };
         // Call updateSmartGalleryInFirestore
-        await updateSmartGalleryInFirestore(domain, projectId, collectionId, currentSmartGallery);
+        await updateSmartGalleryInFirestore(domain, projectId, collectionId, updatedSmartGallery);
 
         const pin = generateMemorablePIN(4)
         const imageGridEvent = {
