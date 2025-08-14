@@ -6,8 +6,7 @@ import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUn
 import { deleteCollectionFromStorage, deleteProjectFromStorage } from "../../utils/storageOperations";
 import { generateMemorablePIN, generateRandomString, toKebabCase, toTitleCase} from "../../utils/stringUtils";
 import { removeUndefinedFields } from "../../utils/generalUtils";
-
-
+import { fetchSmartGalleryFromFirestore, updateSmartGalleryInFirestore } from './smartGalleryFirestore';
 
 // Users
 export const createUser = async (userData) => {
@@ -517,7 +516,7 @@ export const fetchImages = async (domain, projectId, collectionId) => {
         return []
     }
 };
-export const addUploadedFilesToFirestore = async (domain, projectId, collectionId, importFileSize, uploadedFiles) => {
+export const addUploadedFilesToFirestore = async (domain, projectId, collectionId, importFileSize, uploadedFiles, sectionId) => {
     let color = domain === '' ? 'gray' : 'green';
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
@@ -535,25 +534,57 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
             throw new Error('Collection does not exist.');
         }
         // Update collection with new data, including filesCount
+        // Update collection with new data, including filesCount
+        // Update collection with new data, including filesCount
         updateDoc(collectionDocRef, {
             uploadedFiles: arrayUnion(...uploadedFiles.map(file => ({...file, dateTimeOriginal: file.dateTimeOriginal}))),
-            smartGallery: {
-                ...collectionData.data().smartGallery,
-                sections: [
-                    ...collectionData.data().smartGallery.sections,
-                    {
-                        id: `image-grid-${collectionId}-${new Date().getTime()}`,
-                        type: 'image-grid',
-                        order: 1,
-                        images: uploadedFiles,
-                    }
-                ],
-            },
         })
         .catch(error => {
             console.error(`%cError adding uploaded files to collection ${collectionId} in project ${projectId}: ${error.message}`, `color: red;`);
             throw error;
         });
+
+        // Fetch current smart gallery
+        const currentSmartGallery = await fetchSmartGalleryFromFirestore(domain, projectId, collectionId);
+
+        // Find the section to update or create a new one if sectionId is not provided or not found
+        let updatedSections = [];
+        let sectionFound = false;
+        console.log(sectionId)
+        if (sectionId) {
+            updatedSections = currentSmartGallery.sections.map(section => {
+                if (section.id === sectionId) {
+                    sectionFound = true;
+    
+                    return {
+                        ...section,
+                        images: [...section.images,
+                             ...uploadedFiles], // Append new images
+                    };
+                }
+                return section;
+            });
+        }
+
+        if (!sectionFound) {
+            // If sectionId was not provided or not found, create a new image-grid section
+            updatedSections = [
+                ...currentSmartGallery.sections,
+                {
+                    id: `image-grid-${collectionId}-${new Date().getTime()}`, // Generate a new ID
+                    type: 'image-grid',
+                    order: currentSmartGallery.sections.length + 1, // Place at the end
+                    images: uploadedFiles,
+                }
+            ];
+        }
+
+        const updatedSmartGallery = {
+            ...currentSmartGallery,
+            sections: updatedSections,
+        };
+        // Call updateSmartGalleryInFirestore
+        await updateSmartGalleryInFirestore(domain, projectId, collectionId, updatedSmartGallery);
 
         const pin = generateMemorablePIN(4)
         const imageGridEvent = {

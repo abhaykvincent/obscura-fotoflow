@@ -1,7 +1,6 @@
 .image-grid-section {
   padding: 20px;
-  margin-bottom: 20px;
-  min-height: 8PX*40;
+  min-height: 8PX*10;
 
   .upload-area {
     border: 2px dashed #ccc;
@@ -36,4 +35,30 @@
       border-radius: 4px;
     }
   }
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; // Space between elements
+}
+
+.upload-icon {
+  width: 60px; // Adjust size as needed
+  height: 60px;
+  color: #888; // Match existing text color
+}
+
+.upload-main-text {
+  font-size: 1.4em; // Slightly larger for main text
+  font-weight: bold;
+  margin: 0;
+}
+
+.upload-sub-text {
+  font-size: 1em;
+  color: #aaa; // Lighter color for sub text
+  margin: 0;
 }

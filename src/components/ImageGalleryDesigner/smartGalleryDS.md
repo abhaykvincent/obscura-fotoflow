@@ -23,8 +23,11 @@ A single gallery document in Firestore would represent a complete smart gallery.
     // Array of section objects, defining the content and layout
     // Order of sections in this array determines their display order
   ],
+
+  "metadata": {
   "createdAt": "2025-08-13T10:00:00Z", // ISO 8601 string
   "updatedAt": "2025-08-13T10:30:00Z"  // ISO 8601 string
+  }
 }
 ```
 
@@ -54,31 +57,16 @@ A section for displaying a grid of images.
   "images": [
     {
       "id": "image_id_001",
-      "url": "https://example.com/image1.jpg",
-      "thumbnailUrl": "https://example.com/image1_thumb.jpg", // Optional
-      "caption": "Sunset over the mountains", // Optional
-      "altText": "A beautiful sunset with orange and purple hues", // Optional
-      "metadata": {
-        "aperture": "f/2.8",
-        "shutterSpeed": "1/250s",
-        "iso": 100,
-        "cameraModel": "Sony Alpha a7 III"
-      }, // Optional: EXIF or other image metadata
       "layout": "standard" // Optional: "standard", "full-width", "half-width", "square", etc.
     },
     {
       "id": "image_id_002",
-      "url": "https://example.com/image2.jpg",
-      "thumbnailUrl": "https://example.com/image2_thumb.jpg",
-      "caption": "Forest path",
-      "altText": "A winding path through a dense forest",
       "layout": "standard"
     }
   ],
   "gridSettings": {
     "columns": 3, // Number of columns in the grid
     "spacing": "16px", // Spacing between images
-    "aspectRatio": "1:1" // Optional: "1:1", "4:3", "16:9", "auto"
   }
 }
 ```
@@ -95,12 +83,10 @@ A section for displaying images in a carousel/slideshow format.
   "images": [
     {
       "id": "image_id_003",
-      "url": "https://example.com/image3.jpg",
       "caption": "City skyline at night"
     },
     {
       "id": "image_id_004",
-      "url": "https://example.com/image4.jpg",
       "caption": "Abstract art"
     }
   ],
@@ -130,41 +116,6 @@ A section for rich text content.
   "backgroundColor": "#f9f9f9" // Optional
 }
 ```
-
-### 3.4. `sub-gallery` Section
-
-A section to embed other existing galleries or collections.
-
-```json
-{
-  "id": "section_id_sub_gallery_001",
-  "type": "sub-gallery",
-  "order": 4,
-  "galleryIds": [
-    "gallery_id_456", // ID of another gallery document
-    "gallery_id_789"
-  ],
-  "displayType": "thumbnails", // "thumbnails", "list", "carousel"
-  "title": "Related Galleries", // Optional title for this section
-  "description": "Explore more of my work." // Optional description
-}
-```
-
-### 3.5. `embed` Section
-
-A section to embed external content (e.g., YouTube videos, Spotify playlists, custom HTML).
-
-```json
-{
-  "id": "section_id_embed_001",
-  "type": "embed",
-  "order": 5,
-  "embedCode": "<iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>", // Raw HTML/embed code
-  "sourceUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // Optional: Original URL of the embedded content
-  "caption": "My favorite song" // Optional
-}
-```
-
 ## 4. Considerations for Firestore
 
 *   **Document Size:** For galleries with a very large number of images (e.g., thousands), consider storing image details in a subcollection (e.g., `galleries/{galleryId}/images/{imageId}`) rather than directly in the `images` array within the section. This prevents hitting Firestore document size limits. For typical galleries, embedding directly in the array should be fine.

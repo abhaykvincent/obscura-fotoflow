@@ -222,7 +222,7 @@ const sliceUpload = async (domain, slice, id, collectionId, dispatch, originalFi
 
 // Upload ENTRY POINT
 // Remove setUploadLists, setUploadStatus (local setters), add dispatch
-export const handleUpload = async (domain, files, id, collectionId, importFileSize, dispatch, collectionName, retries = 2, sliceSize = 32 ) => {
+export const handleUpload = async (domain, files, id, collectionId, importFileSize, dispatch, collectionName, sectionId, retries = 2, sliceSize = 32 ) => {
     console.log(domain, files, id, collectionId, importFileSize, dispatch, collectionName, retries, sliceSize)
     // 1. Generate initialFileObjects with unique IDs for Redux state
     // Using file.name as fileId here, acknowledge potential uniqueness issues.
@@ -391,7 +391,7 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
                 
                 let getPIN;
                 // Only successfully uploaded files are passed to Firestore
-                return addUploadedFilesToFirestore(domain, id, collectionId, importFileSize, finalUploadedFiles)
+                return addUploadedFilesToFirestore(domain, id, collectionId, importFileSize, finalUploadedFiles, sectionId)
                     .then(async (response) => {
                         getPIN = response.pin;
                         await addUploadCompletionEventToFirestore(domain, id, collectionId, finalUploadedFiles, importFileSize, collectionName);
