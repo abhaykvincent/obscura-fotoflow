@@ -143,6 +143,7 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
+        autoScroll={false}
       >
         <SortableContext
           items={sections.map(s => s.id)}
