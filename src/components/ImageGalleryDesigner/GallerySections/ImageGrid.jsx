@@ -80,6 +80,24 @@ const SortableImage = ({ image, ...props }) => {
   );
 };
 
+// New component for the drag overlay
+const ImageDragOverlay = ({ image }) => {
+  return (
+    <div style={{ width: image.width, height: image.height, borderRadius: '4px' }}>
+      <img
+        src={image.url}
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'block',
+          borderRadius: '4px',
+        }}
+        alt="dragged image"
+      />
+    </div>
+  );
+};
+
 const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate }) => {
   const dispatch = useDispatch();
   const [images, setImages] = useState(section.images || []);
@@ -224,15 +242,7 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate })
           </SortableContext>
           <DragOverlay>
             {activeImage ? (
-              <img
-                src={activeImage.url}
-                style={{
-                  width: activeImage.width,
-                  height: activeImage.height,
-                  borderRadius: '4px',
-                }}
-                alt="dragged image"
-              />
+              <ImageDragOverlay image={activeImage} />
             ) : null}
           </DragOverlay>
         </DndContext>
