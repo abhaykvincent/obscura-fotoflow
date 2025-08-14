@@ -13,6 +13,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragOverlay,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -44,7 +45,7 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0 : 1,
   };
 
   const SectionComponent = sectionComponents[section.type];
@@ -91,9 +92,44 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
   );
 };
 
+// New component for the drag overlay
+const SectionDragOverlay = ({ section, id, collectionId, collectionName }) => {
+  const SectionComponent = sectionComponents[section.type];
+
+  return (
+    <div className="section-wrapper is-dragging-overlay">
+      <div className="toolbar vertical">
+        <div className="tools-container">
+          <button className='button text-only icon section-settings dark-icon'></button>
+          <button className='button text-only icon delete-red dark-icon'></button>
+        </div>
+        <div className="tools-container">
+        </div>
+      </div>
+      <div className="add-section-icon-container top">
+        <button className="add-section-icon"></button>
+      </div>
+      {SectionComponent ? (
+        <SectionComponent
+          section={section}
+          onSectionUpdate={() => {}}
+          id={id}
+          collectionId={collectionId}
+          collectionName={collectionName}
+        />
+      ) : null}
+      <div className="add-section-icon-container bottom">
+        <button className="add-section-icon"></button>
+      </div>
+    </div>
+  );
+}
+
+
 const GallerySections = ({id, collectionId, collectionName, sections, onSectionsUpdate }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [insertionIndex, setInsertionIndex] = useState(null);
+  const [activeSection, setActiveSection] = useState(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -108,6 +144,11 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
     onSectionsUpdate(newSections);
   };
 
+  const handleDragStart = (event) => {
+    const { active } = event;
+    setActiveSection(sections.find((s) => s.id === active.id));
+  };
+
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
@@ -118,6 +159,7 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
         onSectionsUpdate(newSections);
       }
     }
+    setActiveSection(null);
   };
 
   const addSection = (type) => {
@@ -144,6 +186,7 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         autoScroll={false}
       >
@@ -174,6 +217,16 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
             ))}
           </div>
         </SortableContext>
+        <DragOverlay>
+          {activeSection ? (
+            <SectionDragOverlay
+              section={activeSection}
+              id={id}
+              collectionId={collectionId}
+              collectionName={collectionName}
+            />
+          ) : null}
+        </DragOverlay>
       </DndContext>
 
       {dialogOpen && (
