@@ -14,12 +14,15 @@
 
     min-height: 8px*3;
     .toolbar{
+      display: grid;
+      align-content: center;
       bottom: 50%;
       transform: translateX(8px*4) translateY(50%);
     }
     &:hover .toolbar {
       opacity: 1;
       visibility: visible;
+      height: 100%;
       transform: translateX(0%) translateY(50%);
       .button{
       }
