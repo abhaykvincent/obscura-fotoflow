@@ -175,7 +175,6 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
       sections: newSections, updatedAt: Date.now() 
     
     };
-    debugger
     dispatch(updateSmartGallery({
       domain: domain,
       projectId: project.id,
@@ -218,7 +217,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
 
     const updatedSections = [...currentSections, newSection];
     const updatedSmartGallery = { ...smartGalleryData, sections: updatedSections, updatedAt: Date.now() };
-    debugger
+
     dispatch(updateSmartGallery({
       domain: domain,
       projectId: project.id,

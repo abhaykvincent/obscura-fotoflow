@@ -83,11 +83,12 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
             <div key={section.id} className="section-wrapper">
               <div className="toolbar vertical">
                 <div className="tools-container">
-                  <button className='button text-only  icon cover-size dark-icon' ></button>                                                        
-                  <button className='button text-only  icon move-up dark-icon' onClick={() => handleMoveUp(index)}></button>            
-                  <button className='button text-only  icon move-down dark-icon' onClick={() => handleMoveDown(index)}></button>   
-                  <button className='button text-only  icon options dark-icon'></button>
+                  <button className='button text-only  icon section-settings dark-icon'></button>                                  
                   <button  className='button text-only  icon delete-red dark-icon'></button>
+                </div>
+                <div className="tools-container">                                    
+                  <button className='button text-only  icon move-up dark-icon' onClick={() => handleMoveUp(index)}></button>            
+                  <button className='button text-only  icon move-down dark-icon' onClick={() => handleMoveDown(index)}></button>  
                 </div>
               </div>
               <div className="add-section-icon-container top">
