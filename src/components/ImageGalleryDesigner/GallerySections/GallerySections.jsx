@@ -32,7 +32,7 @@ const sectionComponents = {
   embed: Embed,
 };
 
-const SortableSection = ({ section, index, id, collectionId, collectionName, handleSectionUpdate, openDialog, isAnySectionDragging }) => {
+const SortableSection = ({ section, index, id, collectionId, collectionName, handleSectionUpdate, openDialog, isAnySectionDragging, handleDeleteSection }) => {
   const {
     attributes,
     listeners,
@@ -55,7 +55,11 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
       <div className="toolbar vertical">
         <div className="tools-container">
           <button className='button text-only icon section-settings dark-icon' onMouseDown={(e) => e.stopPropagation()}></button>
-          <button className='button text-only icon delete-red dark-icon' onMouseDown={(e) => e.stopPropagation()}></button>
+          <button
+            className='button text-only icon delete-red dark-icon'
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={() => handleDeleteSection(section.id)}
+          ></button>
         </div>
         <div className="tools-container">
           {/* No specific drag handle icon needed here anymore */}
@@ -142,6 +146,11 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
     onSectionsUpdate(newSections);
   };
 
+  const handleDeleteSection = (sectionId) => {
+    const newSections = sections.filter((s) => s.id !== sectionId);
+    onSectionsUpdate(newSections);
+  };
+
   const handleDragStart = (event) => {
     const { active } = event;
     setActiveSection(sections.find((s) => s.id === active.id));
@@ -212,6 +221,7 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
                 collectionId={collectionId}
                 collectionName={collectionName}
                 isAnySectionDragging={!!activeSection}
+                handleDeleteSection={handleDeleteSection}
               />
             ))}
           </div>
