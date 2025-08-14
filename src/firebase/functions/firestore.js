@@ -582,6 +582,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         const updatedSmartGallery = {
             ...currentSmartGallery,
             sections: updatedSections,
+            projectCover: projectData.data().projectCover === '' ? uploadedFiles[0]?.url : projectData.data().projectCover
         };
         // Call updateSmartGalleryInFirestore
         await updateSmartGalleryInFirestore(domain, projectId, collectionId, updatedSmartGallery);
