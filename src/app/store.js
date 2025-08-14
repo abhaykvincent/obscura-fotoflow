@@ -12,9 +12,11 @@ import referralsReducer from './slices/referralsSlice'
 import notificationReducer from './slices/notificationSlice';
 import adminPaneReducer from './slices/adminPaneSlice';
 import packagesReducer from './slices/packagesSlice';
+import smartGalleryReducer from './slices/smartGallerySlice';
 
 export const store = configureStore({
   reducer: {
+    smartGallery: smartGalleryReducer,
     auth: authReducer,
     alert: alertReducer,
     projects: projectsReducer,

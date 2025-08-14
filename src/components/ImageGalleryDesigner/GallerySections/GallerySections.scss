@@ -12,7 +12,7 @@
     position: relative;
     padding:0px 0;
 
-    min-height: 8px*5;
+    min-height: 8px*3;
 
     .add-section-icon-container {
       display: flex;
@@ -26,11 +26,11 @@
       transition: opacity 0.2s ease-in-out;
       z-index: 10;
       &.top {
-        top: -18px;
+        top: -8px*5;
       }
 
       &.bottom {
-        bottom: -23px;
+        bottom: -8px*0.2;
 
       }
 
