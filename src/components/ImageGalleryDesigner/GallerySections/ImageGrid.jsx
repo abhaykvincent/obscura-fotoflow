@@ -1,22 +1,97 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useLayoutEffect, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { handleUpload } from '../../../utils/uploadOperations';
 import './ImageGrid.scss';
 import { selectDomain } from '../../../app/slices/authSlice';
 
+const computeLayout = (images, containerWidth, targetRowHeight, gap) => {
+  if (!containerWidth || !images || images.length === 0) return [];
+
+  const rows = [];
+  let currentRow = [];
+  let currentRowWidth = 0;
+
+  images.forEach(image => {
+    if (!image.dimensions || !image.dimensions.width || !image.dimensions.height) {
+      // Skip images without dimensions
+      return;
+    }
+    const aspectRatio = image.dimensions.width / image.dimensions.height;
+    const scaledWidth = targetRowHeight * aspectRatio;
+
+    if (currentRowWidth + scaledWidth + (currentRow.length > 0 ? gap : 0) > containerWidth && currentRow.length > 0) {
+      const totalAspectRatio = currentRow.reduce((acc, img) => acc + (img.dimensions.width / img.dimensions.height), 0);
+      const rowHeight = (containerWidth - (currentRow.length - 1) * gap) / totalAspectRatio;
+
+      rows.push(currentRow.map(img => ({
+        ...img,
+        width: rowHeight * (img.dimensions.width / img.dimensions.height),
+        height: rowHeight,
+      })));
+
+      currentRow = [image];
+      currentRowWidth = scaledWidth;
+    } else {
+      currentRow.push(image);
+      currentRowWidth += scaledWidth + (currentRow.length > 1 ? gap : 0);
+    }
+  });
+
+  if (currentRow.length > 0) {
+    rows.push(currentRow.map(img => ({
+      ...img,
+      width: targetRowHeight * (img.dimensions.width / img.dimensions.height),
+      height: targetRowHeight,
+    })));
+  }
+
+  return rows;
+};
+
+
 const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate }) => {
   const dispatch = useDispatch();
   const [images, setImages] = useState(section.images || []);
   const uploadState = useSelector(state => state.upload);
- const domain = useSelector(selectDomain);
+  const domain = useSelector(selectDomain);
+
+  const containerRef = useRef(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const [layout, setLayout] = useState([]);
+
+  useLayoutEffect(() => {
+    const observer = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        setContainerWidth(entry.contentRect.width);
+      }
+    });
+
+    const currentRef = containerRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (images && containerWidth) {
+      const targetRowHeight = 200;
+      const gap = 10;
+      const computedLayout = computeLayout(images, containerWidth, targetRowHeight, gap);
+      setLayout(computedLayout);
+    }
+  }, [images, containerWidth]);
+
+
   const onDrop = useCallback((acceptedFiles) => {
-    // Assuming 'domain', 'id', 'collectionId', 'importFileSize', 'collectionName' are available from props or context
-    // For now, using placeholders. You'll need to replace these with actual values.
-   
-    const importFileSize = 0; // Placeholder
-    console.log(domain, acceptedFiles, id, collectionId, importFileSize, collectionName)
-        handleUpload(domain, acceptedFiles, id, collectionId, importFileSize, dispatch, collectionName, section.id);
-  }, [section.id, dispatch]);
+    const importFileSize = 0;
+    handleUpload(domain, acceptedFiles, id, collectionId, importFileSize, dispatch, collectionName, section.id);
+  }, [section.id, dispatch, domain, id, collectionId, collectionName]);
 
   const handleFileSelect = (event) => {
     const files = Array.from(event.target.files);
@@ -36,7 +111,6 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate })
     onDrop(files);
   };
 
-  // Update local state when section.images changes (e.g., after successful upload)
   React.useEffect(() => {
     if (section.images) {
       setImages(section.images);
@@ -68,10 +142,18 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate })
           </div>
         </div>
       ) : (
-        <div className="image-grid-display">
-          {/* Render your images here */}
-          {images.map((image, index) => (
-            <img key={index} src={image.url} alt={`Gallery Image ${index}`} />
+        <div className="image-grid-display" ref={containerRef}>
+          {layout.map((row, rowIndex) => (
+            <div key={rowIndex} className="image-grid-row">
+              {row.map((image, imgIndex) => (
+                <img
+                  key={imgIndex}
+                  src={image.url}
+                  alt={`Gallery Image ${imgIndex}`}
+                  style={{ width: image.width, height: image.height, borderRadius: '4px' }}
+                />
+              ))}
+            </div>
           ))}
         </div>
       )}
