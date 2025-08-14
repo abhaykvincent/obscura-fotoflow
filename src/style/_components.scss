@@ -169,7 +169,8 @@
             background-size: 100%;
             background-position: center;
             background-repeat: no-repeat;
-            filter: drop-shadow(1px 1px 1px #222);
+            filter: drop-shadow(1px 1px 1px #ffffff00);
+            text-shadow: none;
              background-size: 100%;
                 opacity: 0.7;
              
@@ -298,6 +299,20 @@
             background-size: 80%;
             background-position: center;
             background-image: url('https://img.icons8.com/?size=100&id=24758&format=png&color=1A1A1A');
+        }
+        &.move-up.dark-icon::before{
+            margin-right: 0;
+            margin-left: 0;
+            background-size: 80%;
+            background-position: center;
+            background-image: url('https://img.icons8.com/?size=100&id=39787&format=png&color=000000');
+        }
+        &.move-down.dark-icon::before{
+            margin-right: 0;
+            margin-left: 0;
+            background-size: 80%;
+            background-position: center;
+            background-image: url('https://img.icons8.com/?size=100&id=39786&format=png&color=000000');
         }
         &.cover-size.dark-icon::before{
             margin-right: 0;

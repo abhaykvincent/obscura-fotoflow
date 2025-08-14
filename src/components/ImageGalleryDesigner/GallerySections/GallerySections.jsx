@@ -26,6 +26,24 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
     onSectionsUpdate(newSections);
   };
 
+  const handleMoveUp = (index) => {
+    if (index > 0) {
+      const newSections = [...sections];
+      const [movedSection] = newSections.splice(index, 1);
+      newSections.splice(index - 1, 0, movedSection);
+      onSectionsUpdate(newSections);
+    }
+  };
+
+  const handleMoveDown = (index) => {
+    if (index < sections.length - 1) {
+      const newSections = [...sections];
+      const [movedSection] = newSections.splice(index, 1);
+      newSections.splice(index + 1, 0, movedSection);
+      onSectionsUpdate(newSections);
+    }
+  };
+
   const addSection = (type) => {
     const newSection = { 
       
@@ -65,9 +83,9 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
             <div key={section.id} className="section-wrapper">
               <div className="toolbar vertical">
                 <div className="tools-container">
-                  <button className='button text-only  icon cover-size dark-icon' ></button>
-                  <button className='button text-only  icon move-up dark-icon'></button>
-                  <button className='button text-only  icon move-down dark-icon'></button>
+                  <button className='button text-only  icon cover-size dark-icon' ></button>                                                        
+                  <button className='button text-only  icon move-up dark-icon' onClick={() => handleMoveUp(index)}></button>            
+                  <button className='button text-only  icon move-down dark-icon' onClick={() => handleMoveDown(index)}></button>   
                   <button className='button text-only  icon options dark-icon'></button>
                   <button  className='button text-only  icon delete-red dark-icon'></button>
                 </div>
