@@ -10,9 +10,10 @@ import {
   DndContext,
   closestCenter,
   KeyboardSensor,
-  PointerSensor,
+  PointerSensor as DndPointerSensor,
   useSensor,
   useSensors,
+  DragOverlay,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -23,6 +24,25 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+// Custom Pointer Sensor that ignores elements with data-no-dnd="true"
+class CustomPointerSensor extends DndPointerSensor {
+  static activators = [
+    {
+      eventName: 'onPointerDown',
+      handler: ({ nativeEvent: event }) => {
+        if (
+          !event.isPrimary ||
+          event.button !== 0 ||
+          event.target.closest('[data-no-dnd="true"]')
+        ) {
+          return false;
+        }
+        return true;
+      },
+    },
+  ];
+}
+
 const sectionComponents = {
   'image-grid': ImageGrid,
   carousel: Carousel,
@@ -31,7 +51,7 @@ const sectionComponents = {
   embed: Embed,
 };
 
-const SortableSection = ({ section, index, id, collectionId, collectionName, handleSectionUpdate, openDialog }) => {
+const SortableSection = ({ section, index, id, collectionId, collectionName, handleSectionUpdate, openDialog, isAnySectionDragging, handleDeleteSection }) => {
   const {
     attributes,
     listeners,
@@ -44,7 +64,7 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0 : 1,
   };
 
   const SectionComponent = sectionComponents[section.type];
@@ -53,20 +73,30 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
     <div ref={setNodeRef} style={style} className="section-wrapper" {...attributes} {...listeners}>
       <div className="toolbar vertical">
         <div className="tools-container">
-          <button className='button text-only icon section-settings dark-icon'></button>
-          <button className='button text-only icon delete-red dark-icon'></button>
+          <button
+            className='button text-only icon section-settings dark-icon'
+            data-no-dnd="true"
+          ></button>
+          <button
+            className='button text-only icon delete-red dark-icon'
+            data-no-dnd="true"
+            onClick={() => handleDeleteSection(section.id)}
+          ></button>
         </div>
         <div className="tools-container">
           {/* No specific drag handle icon needed here anymore */}
         </div>
       </div>
-      <div className="add-section-icon-container top">
-        <button
-          className="add-section-icon"
-          onClick={() => openDialog(index)}
-        >
-        </button>
-      </div>
+      {!isAnySectionDragging && (
+        <div className="add-section-icon-container top">
+          <button
+            className="add-section-icon"
+            onClick={() => openDialog(index)}
+            data-no-dnd="true"
+          >
+          </button>
+        </div>
+      )}
       {SectionComponent ? (
         <SectionComponent
           section={section}
@@ -78,23 +108,55 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
           collectionName={collectionName}
         />
       ) : null}
-      <div className="add-section-icon-container bottom">
-        <button
-          className="add-section-icon"
-          onClick={() => openDialog(index + 1)}
-        >
-        </button>
-      </div>
+      {!isAnySectionDragging && (
+        <div className="add-section-icon-container bottom">
+          <button
+            className="add-section-icon"
+            onClick={() => openDialog(index + 1)}
+            data-no-dnd="true"
+          >
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
+// New component for the drag overlay
+const SectionDragOverlay = ({ section, id, collectionId, collectionName }) => {
+  const SectionComponent = sectionComponents[section.type];
+
+  return (
+    <div className="section-wrapper is-dragging-overlay">
+      <div className="toolbar vertical">
+        <div className="tools-container">
+          <button className='button text-only icon section-settings dark-icon'></button>
+          <button className='button text-only icon delete-red dark-icon'></button>
+        </div>
+        <div className="tools-container">
+        </div>
+      </div>
+      {SectionComponent ? (
+        <SectionComponent
+          section={section}
+          onSectionUpdate={() => {}}
+          id={id}
+          collectionId={collectionId}
+          collectionName={collectionName}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+
 const GallerySections = ({id, collectionId, collectionName, sections, onSectionsUpdate }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [insertionIndex, setInsertionIndex] = useState(null);
+  const [activeSection, setActiveSection] = useState(null);
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(CustomPointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -104,6 +166,16 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
     const newSections = [...sections];
     newSections[index] = updatedSection;
     onSectionsUpdate(newSections);
+  };
+
+  const handleDeleteSection = (sectionId) => {
+    const newSections = sections.filter((s) => s.id !== sectionId);
+    onSectionsUpdate(newSections);
+  };
+
+  const handleDragStart = (event) => {
+    const { active } = event;
+    setActiveSection(sections.find((s) => s.id === active.id));
   };
 
   const handleDragEnd = (event) => {
@@ -116,6 +188,7 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
         onSectionsUpdate(newSections);
       }
     }
+    setActiveSection(null);
   };
 
   const addSection = (type) => {
@@ -142,6 +215,7 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         autoScroll={false}
       >
@@ -168,10 +242,22 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
                 id={id}
                 collectionId={collectionId}
                 collectionName={collectionName}
+                isAnySectionDragging={!!activeSection}
+                handleDeleteSection={handleDeleteSection}
               />
             ))}
           </div>
         </SortableContext>
+        <DragOverlay>
+          {activeSection ? (
+            <SectionDragOverlay
+              section={activeSection}
+              id={id}
+              collectionId={collectionId}
+              collectionName={collectionName}
+            />
+          ) : null}
+        </DragOverlay>
       </DndContext>
 
       {dialogOpen && (
