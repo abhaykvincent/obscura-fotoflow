@@ -4,9 +4,24 @@ import Carousel from './Carousel';
 import TextBlock from './TextBlock';
 import SubGallery from './SubGallery';
 import Embed from './Embed';
-import { BsImage, BsCollection, BsTextareaT, BsCode } from 'react-icons/bs';
+import { BsImage, BsCollection, BsTextareaT, BsCode, BsGripVertical } from 'react-icons/bs';
 import './GallerySections.scss';
-import { orderBy } from 'firebase/firestore';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const sectionComponents = {
   'image-grid': ImageGrid,
@@ -16,9 +31,74 @@ const sectionComponents = {
   embed: Embed,
 };
 
+const SortableSection = ({ section, index, id, collectionId, collectionName, handleSectionUpdate, openDialog }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: section.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const SectionComponent = sectionComponents[section.type];
+
+  return (
+    <div ref={setNodeRef} style={style} className="section-wrapper">
+      <div className="toolbar vertical">
+        <div className="tools-container">
+          <button className='button text-only icon section-settings dark-icon'></button>
+          <button className='button text-only icon delete-red dark-icon'></button>
+        </div>
+        <div className="tools-container drag-handle" {...attributes} {...listeners}>
+          <BsGripVertical />
+        </div>
+      </div>
+      <div className="add-section-icon-container top">
+        <button
+          className="add-section-icon"
+          onClick={() => openDialog(index)}
+        >
+        </button>
+      </div>
+      {SectionComponent ? (
+        <SectionComponent
+          section={section}
+          onSectionUpdate={(updatedSection) =>
+            handleSectionUpdate(updatedSection, index)
+          }
+          id={id}
+          collectionId={collectionId}
+          collectionName={collectionName}
+        />
+      ) : null}
+      <div className="add-section-icon-container bottom">
+        <button
+          className="add-section-icon"
+          onClick={() => openDialog(index + 1)}
+        >
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const GallerySections = ({id, collectionId, collectionName, sections, onSectionsUpdate }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [insertionIndex, setInsertionIndex] = useState(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const handleSectionUpdate = (updatedSection, index) => {
     const newSections = [...sections];
@@ -26,29 +106,22 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
     onSectionsUpdate(newSections);
   };
 
-  const handleMoveUp = (index) => {
-    if (index > 0) {
-      const newSections = [...sections];
-      const [movedSection] = newSections.splice(index, 1);
-      newSections.splice(index - 1, 0, movedSection);
-      onSectionsUpdate(newSections);
-    }
-  };
-
-  const handleMoveDown = (index) => {
-    if (index < sections.length - 1) {
-      const newSections = [...sections];
-      const [movedSection] = newSections.splice(index, 1);
-      newSections.splice(index + 1, 0, movedSection);
-      onSectionsUpdate(newSections);
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = sections.findIndex((s) => s.id === active.id);
+      const newIndex = sections.findIndex((s) => s.id === over.id);
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newSections = arrayMove(sections, oldIndex, newIndex);
+        onSectionsUpdate(newSections);
+      }
     }
   };
 
   const addSection = (type) => {
-    const newSection = { 
-      
-      type, 
-      id: Date.now(),
+    const newSection = {
+      type,
+      id: `${type}-${Date.now()}`, // More robust ID
       images:[],
       order: insertionIndex,
     };
@@ -66,63 +139,39 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
 
   return (
     <div className="gallery-sections">
-      <div className="section-container">
-        {sections.length === 0 && (
-
-          <div className="section-wrapper">
-            <div className="add-section-icon-container top">
-              <button className="add-section-icon" onClick={() => openDialog(0)}>
-                
-              </button>
-            </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={sections.map(s => s.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="section-container">
+            {sections.length === 0 && (
+              <div className="section-wrapper">
+                <div className="add-section-icon-container top">
+                  <button className="add-section-icon" onClick={() => openDialog(0)}>
+                  </button>
+                </div>
+              </div>
+            )}
+            {sections.map((section, index) => (
+              <SortableSection
+                key={section.id}
+                index={index}
+                section={section}
+                handleSectionUpdate={handleSectionUpdate}
+                openDialog={openDialog}
+                id={id}
+                collectionId={collectionId}
+                collectionName={collectionName}
+              />
+            ))}
           </div>
-        )}
-        {sections.map((section, index) => {
-          const SectionComponent = sectionComponents[section.type];
-          return (
-            <div key={section.id} className="section-wrapper">
-              <div className="toolbar vertical">
-                <div className="tools-container">
-                  <button className='button text-only  icon section-settings dark-icon'></button>                                  
-                  <button  className='button text-only  icon delete-red dark-icon'></button>
-                </div>
-                <div className="tools-container">                                    
-                  <button className='button text-only  icon move-up dark-icon' onClick={() => handleMoveUp(index)}></button>            
-                  <button className='button text-only  icon move-down dark-icon' onClick={() => handleMoveDown(index)}></button>  
-                </div>
-              </div>
-              <div className="add-section-icon-container top">
-                <button
-                  className="add-section-icon"
-                  onClick={() => openDialog(index)}
-                >
-                  
-                </button>
-              </div>
-              {SectionComponent ? (
-                <SectionComponent
-                  section={section}
-                  onSectionUpdate={(updatedSection) =>
-                    handleSectionUpdate(updatedSection, index) 
-                  }
-                  id={id}
-                  collectionId={collectionId}
-                  collectionName={collectionName}
-
-                />
-              ) : null}
-              <div className="add-section-icon-container bottom">
-                <button
-                  className="add-section-icon"
-                  onClick={() => openDialog(index + 1)}
-                >
-                  
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+        </SortableContext>
+      </DndContext>
 
       {dialogOpen && (
         <div className="add-section-dialog-overlay" onClick={() => setDialogOpen(false)}>
@@ -143,7 +192,7 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
               <div className="section-option" onClick={() => addSection('sub-gallery')}>
                 <div className="section-option-icon"><BsCollection /></div>
                 <div className="section-option-text">
-                  <h3>Sub-Galleryuytfv</h3>
+                  <h3>Sub-Gallery</h3>
                   <p>Add multiple galleries.</p>
                 </div>
                 <div className="section-option-add">+</div>
