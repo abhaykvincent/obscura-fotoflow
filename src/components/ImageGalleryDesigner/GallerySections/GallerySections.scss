@@ -25,16 +25,20 @@
       cursor: grabbing;
     }
     .toolbar{
+      position: sticky;
       display: grid;
-      align-content: center;
-      top: 8px*5;
-      transform: translateX(8px*4) translateY(50%);
+      height: 0px;
+      bottom: auto;
+      left:auto;
+      top:8px*6;
+
+      padding: 0;
+      transform: translateX(8px*4) translateY(0%);
     }
     &:hover .toolbar {
       opacity: 1;
       visibility: visible;
-      height: 100%;
-      transform: translateX(0%) translateY(50%);
+      transform: translateX(0%) translateY(0%);
       .button{
       }
     }
