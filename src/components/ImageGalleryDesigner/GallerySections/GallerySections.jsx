@@ -63,6 +63,15 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
           const SectionComponent = sectionComponents[section.type];
           return (
             <div key={section.id} className="section-wrapper">
+              <div className="toolbar vertical">
+                <div className="tools-container">
+                  <button className='button text-only  icon cover-size dark-icon' ></button>
+                  <button className='button text-only  icon move-up dark-icon'></button>
+                  <button className='button text-only  icon move-down dark-icon'></button>
+                  <button className='button text-only  icon options dark-icon'></button>
+                  <button  className='button text-only  icon delete-red dark-icon'></button>
+                </div>
+              </div>
               <div className="add-section-icon-container top">
                 <button
                   className="add-section-icon"
