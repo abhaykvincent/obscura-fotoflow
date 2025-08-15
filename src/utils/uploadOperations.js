@@ -46,7 +46,7 @@ const metadata = {
   };
 // File Single upload function
 // Remove setUploadLists, add dispatch and fileId
-export const uploadFile = async (domain, id, collectionId, file, dispatch, fileId, dateTimeOriginal) => {
+export const uploadFile = async (domain, id, collectionId, file, dispatch, fileId, dateTimeOriginal, dimensions) => {
     const MAX_RETRIES = 5;
     const INITIAL_RETRY_DELAY = 500;
     let retries = 0;
@@ -95,7 +95,8 @@ export const uploadFile = async (domain, id, collectionId, file, dispatch, fileI
                         lastModified: file.lastModified,
                         dateTimeOriginal: dateTimeOriginal,
                         url,
-                        fileId // Include fileId in resolution if useful for caller
+                        fileId, // Include fileId in resolution if useful for caller
+                        dimensions,
                     });
                 }
             );
@@ -149,8 +150,11 @@ export const uploadFile = async (domain, id, collectionId, file, dispatch, fileI
                         dispatch(updateUploadFile({ fileId, changes: { status: 'uploaded', url: url, progress: 100 } }));
                         resolve({
                             name: file.name,
+                            lastModified: file.lastModified,
+                            dateTimeOriginal: dateTimeOriginal,
                             url,
-                            fileId
+                            fileId,
+                            dimensions,
                         });
                     }
                 );
@@ -200,7 +204,7 @@ const sliceUpload = async (domain, slice, id, collectionId, dispatch, originalFi
             const originalFile = slice[index];
             const fileId = originalFile.id;
             const namedCompressedFile = new File([compressedFile], originalFile.rawFile.name, { type: compressedFile.type });
-            return uploadFile(domain, id, collectionId, namedCompressedFile, dispatch, fileId, originalFile.dateTimeOriginal);
+            return uploadFile(domain, id, collectionId, namedCompressedFile, dispatch, fileId, originalFile.dateTimeOriginal, originalFile.dimensions);
         });
         
         // Combine all upload promises and resolve them concurrently
@@ -218,11 +222,29 @@ const sliceUpload = async (domain, slice, id, collectionId, dispatch, originalFi
 
 // Upload ENTRY POINT
 // Remove setUploadLists, setUploadStatus (local setters), add dispatch
-export const handleUpload = async (domain, files, id, collectionId, importFileSize, dispatch, collectionName, retries = 2, sliceSize = 32 ) => {
+export const handleUpload = async (domain, files, id, collectionId, importFileSize, dispatch, collectionName, sectionId, retries = 2, sliceSize = 32 ) => {
+    console.log(domain, files, id, collectionId, importFileSize, dispatch, collectionName, retries, sliceSize)
     // 1. Generate initialFileObjects with unique IDs for Redux state
     // Using file.name as fileId here, acknowledge potential uniqueness issues.
     // A more robust approach: file.name + '-' + file.lastModified + '-' + file.size or UUID
     const initialFileObjects = await Promise.all(files.map(async (file) => {
+        // Function to get image dimensions using Image object
+        const getImageDimensions = (file) => {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    resolve({ width: img.naturalWidth, height: img.naturalHeight });
+                    URL.revokeObjectURL(img.src); // Clean up the object URL
+                };
+                img.onerror = () => {
+                    console.warn(`Could not load image to get dimensions for ${file.name}.`);
+                    resolve({ width: 0, height: 0 }); // Resolve with 0,0 on error
+                    URL.revokeObjectURL(img.src);
+                };
+                img.src = URL.createObjectURL(file);
+            });
+        };
+
         const exifData = await extractExifData(file);
         let dateTimeOriginal;
         if (exifData && exifData.DateTimeOriginal && exifData.DateTimeOriginal.value) {
@@ -243,6 +265,11 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
         if (!dateTimeOriginal || isNaN(dateTimeOriginal.getTime())) {
             dateTimeOriginal = new Date();
         }
+
+        // Get dimensions from Image object for accuracy
+        const { width, height } = await getImageDimensions(file);
+        const dimensions = { width, height };
+
         return {
             id: file.name, // Using file.name as fileId. CONSIDER ROBUSTNESS.
             name: file.name,
@@ -252,6 +279,7 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
             url: null,
             rawFile: file, // Keep raw file for compression
             dateTimeOriginal: dateTimeOriginal,
+            dimensions: dimensions,
         };
     }));
 
@@ -271,7 +299,8 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
         rawFile: file.rawFile,
         id: file.id, // Must match the id used in initialFileObjects
         name: file.name, // Keep name for convenience if needed
-        dateTimeOriginal: file.dateTimeOriginal
+        dateTimeOriginal: file.dateTimeOriginal,
+        dimensions: file.dimensions,
     }));
 
 
@@ -325,6 +354,7 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
                         url: result.value.url,
                         lastModified: result.value.lastModified, // Ensure this is passed through
                         dateTimeOriginal: result.value.dateTimeOriginal, // Pass dateTimeOriginal
+                        dimensions: result.value.dimensions,
                         thumbAvailable: true, // Assuming thumb was also attempted
                     });
                 } else if (result.status === 'rejected' || (result.status === 'fulfilled' && (!result.value || !result.value.url))) {
@@ -373,7 +403,7 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
                 
                 let getPIN;
                 // Only successfully uploaded files are passed to Firestore
-                return addUploadedFilesToFirestore(domain, id, collectionId, importFileSize, finalUploadedFiles)
+                return addUploadedFilesToFirestore(domain, id, collectionId, importFileSize, finalUploadedFiles, sectionId)
                     .then(async (response) => {
                         getPIN = response.pin;
                         await addUploadCompletionEventToFirestore(domain, id, collectionId, finalUploadedFiles, importFileSize, collectionName);
