@@ -20,7 +20,6 @@ const groupImagesByLastModified = (images, thresholdInMinutes, timeThrottleInMin
       // Initialize first group with the first image
       currentGroup.push(image);
       groupStartTime = image.dateTimeOriginal;
-      console.log(image.dateTimeOriginal)
     } else {
       const previousImage = sortedImages[index - 1];
       const timeDifference = image.dateTimeOriginal - previousImage.dateTimeOriginal;

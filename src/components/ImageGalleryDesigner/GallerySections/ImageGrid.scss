@@ -1,0 +1,71 @@
+.image-grid-section {
+  padding: 8px*5 0px;
+  min-height: 8PX*10;
+
+  .upload-area {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: #007bff;
+      color: #007bff;
+      background-color: #f0f8ff;
+    }
+
+    p {
+      margin: 0;
+      font-size: 1.2em;
+    }
+  }
+
+    .image-grid-display {
+    .image-grid-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      div[role="button"] {
+        img{
+
+          border: 1px solid #007bff00;
+        }
+        &:hover{
+          img{
+
+            border: 1px solid #66b346;
+          }
+        }
+      }
+    }
+  }
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; // Space between elements
+}
+
+.upload-icon {
+  width: 60px; // Adjust size as needed
+  height: 60px;
+  color: #888; // Match existing text color
+}
+
+.upload-main-text {
+  font-size: 1.4em; // Slightly larger for main text
+  font-weight: bold;
+  margin: 0;
+}
+
+.upload-sub-text {
+  font-size: 1em;
+  color: #aaa; // Lighter color for sub text
+  margin: 0;
+}

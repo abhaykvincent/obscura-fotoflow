@@ -1,0 +1,310 @@
+
+@import '../../style/variables';
+ .image-gallery-designer {
+  min-height: 80vh;
+  padding: 8px;
+  .cover-photo-container {
+    width: 100%;
+    height: 300px;
+    padding: 0px;
+    margin-top: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative; // Needed for absolute positioning of the toolbar
+    
+    &.large{
+      height: 50vh;
+    }
+    .cover-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      opacity: 0.1;
+      z-index: 1;
+    }
+
+    .cover-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      border-radius: 4px;
+
+      transition-duration: 0.1s;
+      transition-timing-function: ease-in-out;
+    }
+
+    .cover-photo-placeholder {
+      text-align: center;
+      color: #999;
+      z-index: 0;
+    }
+
+    .text-overlay {
+      position: absolute;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      z-index: 2;
+      &.center {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      &.top-left {
+        top: 20px;
+        left: 20px;
+        text-align: left;
+      }
+      &.top-right {
+        top: 20px;
+        right: 20px;
+        text-align: right;
+      }
+      &.bottom-left {
+        bottom: 20px;
+        left: 20px;
+        text-align: left;
+      }
+      &.bottom-right {
+        bottom: 20px;
+        right: 20px;
+        text-align: right;
+      }
+
+      .cover-title,
+      .cover-description {
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        margin: 0;
+      }
+
+      .cover-title {
+        color: white;;
+        font-size: 2.5rem;
+        font-weight: bold;
+      }
+
+      .cover-description {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.75);;
+      }
+    }
+
+    &:hover .toolbar {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0%);
+      .button{
+      }
+    }
+
+    .color-dialog {
+      position: absolute;
+      bottom: 8px*5.5; // Adjust position to be above the toolbar
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 1);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      width: 8px*24;
+      z-index: 5; // Ensure it's above the toolbar
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -8px*2;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 2px;
+        border-width: 8px;
+        border-style: solid;
+        border-color: white transparent transparent transparent;
+      }
+    }
+    .overlay-colour{
+      position: relative;
+    }
+    .overlay-colour:hover .color-dialog {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(-10px);
+    }
+
+    .color-swatch {
+      width: 24px;
+      height: 24px;
+      margin: 5px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid white;
+      transition: border-color 0.2s ease;
+      box-shadow: inset  0 1px 1px rgba(0, 0, 0, 0.1), 0 2px 2px rgba(0, 0, 0, 0.4);
+
+      &:hover {
+        border-color: #fff;
+      }
+    }
+
+    .focus-control {
+      position: relative;
+    }
+
+    .focus-dialog {
+      position: absolute;
+      bottom: 8px*5.5; // Adjust position to be above the toolbar
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 1);
+      border-radius: 8px;
+      padding: 10px;
+      z-index: 5; // Ensure it's above the toolbar
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -8px*2;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 2px;
+        border-width: 8px;
+        border-style: solid;
+        border-color: white transparent transparent transparent;
+      }
+    }
+
+    .focus-control:hover .focus-dialog {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(-10px);
+    }
+
+    .focus-image-container {
+      position: relative;
+      cursor: crosshair;
+    }
+
+    .focus-image {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+
+    .focus-point {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 2px solid white;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .focus-actions {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 10px;
+
+      button {
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        &.save-button{
+          background: $green-accessible-dark;
+          color:white;
+          transition-duration: 0.1s;
+          transition-delay: 0.1s;
+          transition-timing-function: ease-in;
+          &:hover{
+            background: $green-accessible-light;
+          }
+        }
+
+        &:disabled {
+          background-color: #cccccc00;
+          color: rgba(0, 0, 0, 0.3);
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    &.small {
+      height: 200px;
+    }
+
+    &.medium {
+      height: 300px;
+    }
+
+    &.large {
+      height: 400px;
+    }
+
+    .cover-size-control {
+      position: relative;
+    }
+
+    .cover-size-dialog {
+      position: absolute;
+      bottom: 8px*5.5; // Adjust position to be above the toolbar
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 1);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      z-index: 5; // Ensure it's above the toolbar
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -8px*2;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 2px;
+        border-width: 8px;
+        border-style: solid;
+        border-color: white transparent transparent transparent;
+      }
+
+      button {
+        background-color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    }
+
+    .cover-size-control:hover .cover-size-dialog {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(-10px);
+    }
+  }
+}
