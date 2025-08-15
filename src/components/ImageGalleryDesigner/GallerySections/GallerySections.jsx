@@ -225,7 +225,7 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
         >
           <div className="section-container">
             {sections.length === 0 && (
-              <div className="section-wrapper">
+              <div className="section-wrapper default-wrapper">
                 <div className="add-section-icon-container top">
                   <button className="add-section-icon" onClick={() => openDialog(0)}>
                   </button>

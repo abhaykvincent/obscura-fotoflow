@@ -262,7 +262,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
         </div>
         <div className="cover-overlay" style={{ backgroundColor: smartGalleryData.overlayColor }}></div>
         {smartGalleryData.projectCover ? (
-          <img src={smartGalleryData.projectCover} alt="Cover" className="cover-photo" style={{ objectPosition: `${smartGalleryData.focusPoint.x * 100}% ${smartGalleryData.focusPoint.y * 100}%` }} />
+          <img src={smartGalleryData.projectCover} alt="Cover" className="cover-photo" style={{ objectPosition: `${(showFocusDialog ? focusPoint.x : smartGalleryData.focusPoint.x) * 100}% ${(showFocusDialog ? focusPoint.y : smartGalleryData.focusPoint.y) * 100}%` }} />
         ) : (
           <div className="cover-photo-placeholder">
             <span>Cover Photo</span>
@@ -277,8 +277,8 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
               <button className='button text-only  icon set-focus dark-icon'></button>
               {showFocusDialog && (
                 <div className="focus-dialog">
-                  <div className="focus-image-container" onClick={handleFocusClick}>
-                    <img src={smartGalleryData.projectCover} alt="Cover" className="focus-image" />
+                  <div className="focus-image-container">
+                    <img src={smartGalleryData.projectCover} alt="Cover" className="focus-image" onClick={handleFocusClick} />
                     <div className="focus-point" style={{ left: `${focusPoint.x * 100}%`, top: `${focusPoint.y * 100}%` }}></div>
                   </div>
                   <div className="focus-actions">

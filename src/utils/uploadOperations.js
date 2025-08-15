@@ -228,6 +228,23 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
     // Using file.name as fileId here, acknowledge potential uniqueness issues.
     // A more robust approach: file.name + '-' + file.lastModified + '-' + file.size or UUID
     const initialFileObjects = await Promise.all(files.map(async (file) => {
+        // Function to get image dimensions using Image object
+        const getImageDimensions = (file) => {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    resolve({ width: img.naturalWidth, height: img.naturalHeight });
+                    URL.revokeObjectURL(img.src); // Clean up the object URL
+                };
+                img.onerror = () => {
+                    console.warn(`Could not load image to get dimensions for ${file.name}.`);
+                    resolve({ width: 0, height: 0 }); // Resolve with 0,0 on error
+                    URL.revokeObjectURL(img.src);
+                };
+                img.src = URL.createObjectURL(file);
+            });
+        };
+
         const exifData = await extractExifData(file);
         let dateTimeOriginal;
         if (exifData && exifData.DateTimeOriginal && exifData.DateTimeOriginal.value) {
@@ -249,14 +266,9 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
             dateTimeOriginal = new Date();
         }
 
-        const dimensions = {};
-        const width = exifData?.ImageWidth?.value || exifData?.PixelXDimension?.value;
-        const height = exifData?.ImageHeight?.value || exifData?.PixelYDimension?.value;
-
-        if (width && height) {
-            dimensions.width = Array.isArray(width) ? width[0] : width;
-            dimensions.height = Array.isArray(height) ? height[0] : height;
-        }
+        // Get dimensions from Image object for accuracy
+        const { width, height } = await getImageDimensions(file);
+        const dimensions = { width, height };
 
         return {
             id: file.name, // Using file.name as fileId. CONSIDER ROBUSTNESS.
