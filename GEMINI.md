@@ -27,3 +27,8 @@ This document provides guidelines for the Gemini CLI agent to effectively intera
 
 # Coding Guidelines
 Maintain code quality, consistency, and readability across the project
+
+
+## Response instructions
+*  After each response, provide a summary of the changes made.
+*  after summary, mention type of change made (e.g., "bug fix", "feature addition", "documentation update").
