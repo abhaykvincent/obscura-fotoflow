@@ -54,6 +54,7 @@ export default function SmartGallery() {
                 style={{ backgroundImage: `url(${collection.uploadedFiles[0]?.url})` }}
               >
                 <div className="collection-name">{toTitleCase(collection.name)}</div>
+                <div className="collection-image-count">{collection.uploadedFiles.length} images</div>
               </div>
             </Link>
           )
