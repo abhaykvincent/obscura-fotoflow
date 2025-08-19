@@ -241,6 +241,17 @@ function ShareGallery({project }) {
               
 
               <div className="gallery-view-status">
+
+                <div className="link-group">
+                  <div className="button primary outline text-only  icon link"
+                    onClick={() => {
+                      // open link in new tab
+                      window.open(getGalleryURL('smart-gallery', domain, project?.id), '_blank');
+                    }}
+                  >Smart Gallery</div>
+                  </div>
+                </div>
+              <div className="gallery-view-status">
                 <div className="link-group">
                   <div className="button primary outline text-only  icon link"
                     onClick={() => {

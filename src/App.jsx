@@ -54,6 +54,7 @@ import { useShortcutsConfig } from './hooks/shortcutsConfig';
 // Functions
 import { generateReferral } from './app/slices/referralsSlice';
 import { getCurrentSubscription } from './firebase/functions/subscription';
+import SmartGallery from './features/SmartGallery/SmartGallery';
 
 console.log(`%c Welcome to Fotoflow!`, `color:rgb(84, 219, 0);`);
 if (isDeveloper) {
@@ -200,6 +201,7 @@ export default function App() {
               <Route path="/onboarding" element={<Onboarding />} />
 
               <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>
+              <Route path="/:studioName/smart-gallery/:projectId" element={<SmartGallery/>}/>
               <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>
               <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>
               <Route path="*" element={<LoginModal />} />
