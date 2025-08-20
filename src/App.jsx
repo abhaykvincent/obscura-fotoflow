@@ -13,6 +13,7 @@ import LoginModal from './features/Login/Login';
 import ShareProject from './features/Share/Share';
 import Storage from './features/Storage/Storage';
 import Galleries from './features/Galleries/Galleries';
+import SelectionPIN from './features/Selection/SelectionPIN';
 import Selection from './features/Selection/Selection';
 import Teams from './features/Teams/Teams';
 import ImageGallery from './x-draft/masanory-grid';
@@ -202,6 +203,7 @@ export default function App() {
 
               <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>
               <Route path="/:studioName/smart-gallery/:projectId" element={<SmartGallery/>}/>
+              <Route path="/:studioName/selection/:projectId/pin" element={<SelectionPIN/>}/>
               <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>
               <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>
               <Route path="*" element={<LoginModal />} />
