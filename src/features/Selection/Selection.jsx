@@ -179,7 +179,7 @@ export default function Selection() {
 
       <Alert />
       <div className="project-header">
-        <Link to={`/${studioName}/share/${project.id}`} className="button back-btn icon back">
+        <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button back-btn icon back">
           Back to Gallery
         </Link>
         <img className='banner' src={images[0]?images[0].url:''} />
