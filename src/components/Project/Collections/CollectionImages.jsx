@@ -143,7 +143,6 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 })
               );
               };
-              dispatchNotification()
               dispatch(updateCollectionStatus
                 ({
                   domain,
