@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+
 import ImageGallery from '../../ImageGallery/ImageGallery';
 import { fetchImages } from '../../../firebase/functions/firestore';
 import { addAllFileSizesToMB, validateFileTypes } from '../../../utils/fileUtils';
@@ -23,6 +24,7 @@ import { updateCollectionStatus } from '../../../app/slices/projectsSlice';
 import ImageGalleryDesigner from '../../ImageGalleryDesigner/ImageGalleryDesigner';
 
 const CollectionImages = ({ id, collectionId, project }) => {
+    const projectCollectionRef = useRef(null);
     const dispatch = useDispatch();
     const domain = useSelector(selectDomain);
     const storageLimit = useSelector(selectStudioStorageUsage);
@@ -57,6 +59,35 @@ const CollectionImages = ({ id, collectionId, project }) => {
             preserveAspectRatio: 'xMidYMid slice',
         },
     };
+
+    const galleryPageRef = useRef(null);
+
+    useEffect(() => {
+        galleryPageRef.current = document.querySelector('.gallery-page');
+
+        const handleScroll = () => {
+            if (projectCollectionRef.current && galleryPageRef.current) {
+                const projectCollectionTop = projectCollectionRef.current.getBoundingClientRect().top;
+                const galleryPageTop = galleryPageRef.current.getBoundingClientRect().top;
+
+                if (projectCollectionTop <= galleryPageTop + 2) {
+                    projectCollectionRef.current.classList.add('scrolled-top');
+                } else {
+                    projectCollectionRef.current.classList.remove('scrolled-top');
+                }
+            }
+        };
+
+        if (galleryPageRef.current) {
+            galleryPageRef.current.addEventListener('scroll', handleScroll);
+        }
+
+        return () => {
+            if (galleryPageRef.current) {
+                galleryPageRef.current.removeEventListener('scroll', handleScroll);
+            }
+        };
+    }, []);
 
     // Global upload status from Redux
     const globalUploadStatus = useSelector(selectUploadStatus);
@@ -242,8 +273,16 @@ const CollectionImages = ({ id, collectionId, project }) => {
         });
     };
 
+    const handleDesignClick = () => {
+        setDisplayMode('lightMode');
+        setGalleryMode('designMode');
+        if (projectCollectionRef.current) {
+            projectCollectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start'});
+        }
+    };
+
     return (
-        <div className={`project-collection ${displayMode}`}>
+        <div className={`project-collection ${displayMode}`} ref={projectCollectionRef}>
             <div className="dark-light-mode">
                 <div className="view-control">
                     <div className="control-wrap">
@@ -269,7 +308,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                         <div className="control-wrap">
                             <div className="controls">
                                 <div className={`control ${galleryMode === 'workflowMode' ? 'active' : ''}`} onClick={() => { setDisplayMode('darkMode') ;setGalleryMode('workflowMode')}}>Worklow</div>
-                                <div className={`control ${galleryMode === 'designMode' ? 'active' : ''}`} onClick={() => {setDisplayMode('lightMode') ;setGalleryMode('designMode')}}>Design {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
+                                <div className={`control ${galleryMode === 'designMode' ? 'active' : ''}`} onClick={handleDesignClick}>Design {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
                             </div>
                             <div className={`active`}></div>
                         </div>

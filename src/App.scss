@@ -750,6 +750,17 @@ body{
     .project-collection{
       margin: 8px;
       margin-top: 8px*0;
+        transition-duration: 0.1s;
+      &.scrolled-top {
+        transition-duration: 0.05s;
+        .header{
+          width: calc(100% + 8px*6 + 2px*2);
+          margin-left: -8px*3 - 2px*1;
+        transition-duration: 0.1s;
+        transition-timing-function: ease-out;
+        padding: 4px*1 8px*1.618;
+        }
+      }
       background-color: $dark-2;
       border-radius: $border-radius-1;
       @include boxed;
@@ -760,14 +771,17 @@ body{
             animation-fill-mode: forwards;
             animation-timing-function: ease-out; */
       .header{
+          width: 100%;
+          margin-left: -8px*0;
         display: grid;
         grid-template-columns: 1fr   auto 1fr;
         padding-bottom: 8px*2;
         padding: 8px*1 8px*1.618;
         align-items: center;
         position: sticky !important;
-        top:-8px*2;
+        top:-8px;
         z-index:40;
+        transition-duration: 0.05s;
         border-radius: 6px;
         border:1px solid $dark-1;
         box-shadow: 0px 1px 1px black;
@@ -1091,29 +1105,38 @@ body{
             }
           }
         }
-        .header{
-          background-color: $light-2;
-          border: 1px solid $gray4-accessible-light;
+        &.scrolled-top{
+
+          .header{
+            background-color: rgba(94, 94, 94, 0.1);
+          border: 1px solid rgba(123, 123, 123, 0.2);
           box-shadow: 1px 1px 2px  rgba(0, 0, 0, 0.05);
           .view-control{
             .controls {
-              background: $gray5-accessible-light;
-              border: 1px solid $gray3-accessible-light;
+              background: rgba(255, 255, 255, 0.3);
+              border: 1px solid rgba(0, 0, 0, 0.3);
               box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
               .control{
-                color: $gray4-accessible-dark;
+                color: rgba(0, 0, 0, 0.722);
   
                 &.active{
-                  border: 1px solid $gray2-accessible-light;
+                  border: 1px solid rgba(0, 0, 0, 0.1);
 
-                  background-color: $gray5-accessible-light;
+                  background-color: rgba(255, 255, 255, 0.4);
                   color: $gray6-accessible-dark;
                   box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
                 }
               } 
             }
           }
+          }
         }
+        .header{
+          background-color: rgba(0, 0, 0, 0.9);
+          
+        }
+        /* .header{
+        } */
         .drop-area{
           background-color: $light-2;
           border: 1px solid $gray5-accessible-light;
