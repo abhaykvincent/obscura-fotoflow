@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import Lottie from 'react-lottie';
 import animationData from '../../assets/animations/CompletedAnimation.json';
 import { fetchProject, addSelectedImagesToFirestore, updateProjectStatusInFirestore, removeUnselectedImagesFromFirestore, updateCollectionStatusByCollectionIdInFirestore } from '../../firebase/functions/firestore';
@@ -10,6 +10,7 @@ import { selectDomain } from '../../app/slices/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { trackEvent } from '../../analytics/utils';
 import { toTitleCase } from '../../utils/stringUtils';
+import { isPinValid } from '../../utils/pinUtils';
 import { showAlert } from '../../app/slices/alertSlice';
 import Alert from '../../components/Alert/Alert';
 
@@ -31,6 +32,7 @@ export default function Selection() {
 
   const [showAllPhotos, setShowAllPhotos] = useState(true);
 
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const defaultOptions = {
     loop: false,
@@ -42,6 +44,12 @@ export default function Selection() {
   };
   collectionId = collectionId || project?.collections[0]?.id;
   
+  useEffect(() => {
+    if (!isPinValid()) {
+      navigate(`/${studioName}/selection/${projectId}/pin`);
+    }
+  }, [studioName, projectId, navigate]);
+
   useEffect(() => {
     document.body.style.backgroundColor = 'white';
   }, []);
