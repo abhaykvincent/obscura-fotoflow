@@ -70,7 +70,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 const projectCollectionTop = projectCollectionRef.current.getBoundingClientRect().top;
                 const galleryPageTop = galleryPageRef.current.getBoundingClientRect().top;
 
-                if (projectCollectionTop <= galleryPageTop) {
+                if (projectCollectionTop <= galleryPageTop + 2) {
                     projectCollectionRef.current.classList.add('scrolled-top');
                 } else {
                     projectCollectionRef.current.classList.remove('scrolled-top');
