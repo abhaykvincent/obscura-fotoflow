@@ -95,13 +95,15 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
       : addProject({ domain, projectData });
 
     try {
-      const payload = await dispatch(action).unwrap();
-      
+      const response = await dispatch(action);
+      const payload = response.payload;
       dispatchNotification(payload, user);
       dispatch(showAlert({ type: "success", message: `${projectType} created successfully!` }));
 
       const { id, subProjectId } = payload;
       const navigateTo = isSubProject ? `${parentProjectId}/sub-project/${subProjectId}` : id;
+      console.log(`/${domain}/project/${navigateTo}`)
+
       navigate(`/${domain}/project/${navigateTo}`);
     } catch (error) {
       console.error(`Error creating ${projectType.toLowerCase()}:`, error);

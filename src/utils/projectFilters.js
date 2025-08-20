@@ -16,17 +16,14 @@
   export const getUpcommingShoots = (projects, buffer) => {
     // find all events from all projects array and return all events in buffer days
     const shoots = projects.reduce((acc, project) => {
-      return [...acc, ...project.events];
+      return [...acc, ...(project.events || [])];
     }, []);
     const today = new Date();
     const bufferDate = new Date(today.getTime() + buffer * 24 * 60 * 60 * 1000);
 
-    let  bufferedShoots = shoots.filter(shoot => {
-      console.log(new Date(shoot.date).toLocaleDateString(), bufferDate.toLocaleDateString())
-      console.log(new Date(shoot.date) <= bufferDate)
+    const bufferedShoots = shoots.filter(shoot => {
       return new Date(shoot.date) <= bufferDate && new Date(shoot.date) >= today
-  })
-    console.log(bufferedShoots)
+    })
     return bufferedShoots
 
   };
