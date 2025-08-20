@@ -9,6 +9,13 @@
 }
 
 .smart-gallery-page {
+  .action-buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
   p {
     color: black;
   }
