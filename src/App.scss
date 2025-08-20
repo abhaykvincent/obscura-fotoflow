@@ -750,6 +750,12 @@ body{
     .project-collection{
       margin: 8px;
       margin-top: 8px*0;
+        transition-duration: 0.1s;
+      &.scrolled-top {
+        margin:0;
+        margin-top: 8px*4;
+        transition-duration: 0.05s;
+      }
       background-color: $dark-2;
       border-radius: $border-radius-1;
       @include boxed;

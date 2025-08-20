@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+
 import ImageGallery from '../../ImageGallery/ImageGallery';
 import { fetchImages } from '../../../firebase/functions/firestore';
 import { addAllFileSizesToMB, validateFileTypes } from '../../../utils/fileUtils';
@@ -58,6 +59,35 @@ const CollectionImages = ({ id, collectionId, project }) => {
             preserveAspectRatio: 'xMidYMid slice',
         },
     };
+
+    const galleryPageRef = useRef(null);
+
+    useEffect(() => {
+        galleryPageRef.current = document.querySelector('.gallery-page');
+
+        const handleScroll = () => {
+            if (projectCollectionRef.current && galleryPageRef.current) {
+                const projectCollectionTop = projectCollectionRef.current.getBoundingClientRect().top;
+                const galleryPageTop = galleryPageRef.current.getBoundingClientRect().top;
+
+                if (projectCollectionTop <= galleryPageTop) {
+                    projectCollectionRef.current.classList.add('scrolled-top');
+                } else {
+                    projectCollectionRef.current.classList.remove('scrolled-top');
+                }
+            }
+        };
+
+        if (galleryPageRef.current) {
+            galleryPageRef.current.addEventListener('scroll', handleScroll);
+        }
+
+        return () => {
+            if (galleryPageRef.current) {
+                galleryPageRef.current.removeEventListener('scroll', handleScroll);
+            }
+        };
+    }, []);
 
     // Global upload status from Redux
     const globalUploadStatus = useSelector(selectUploadStatus);
