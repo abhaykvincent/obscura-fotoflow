@@ -4,7 +4,7 @@ import ImageGrid from '../ImageGalleryDesigner/GallerySections/ImageGrid';
 const SectionRenderer = ({ section }) => {
   switch (section.type) {
     case 'image-grid':
-      return <ImageGrid section={section} />;
+      return <ImageGrid section={section} isViewOnly={true} />;
     default:
       return <div>Unknown Section Type</div>;
   }

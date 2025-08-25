@@ -84,13 +84,6 @@ export default function SmartGallery() {
     <>
       {loading && <LoadingLight />}
       <div className="share-project">
-        <div className="project-header">
-          <img className='banner' src={project.projectCover} alt="" />
-          <div className="gallery-info">
-            <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
-            <p className='projet-type'>{toTitleCase(project.type)}</p>
-          </div>
-        </div>
         <div className="shared-collection">
           <SmartAlbum domain={studioName} projectId={projectId} collectionId={collectionId} />
           {project.type !== "FUNERAL" && <p className='studio-tag-line'>{`smile with ${studioName}`}</p>}

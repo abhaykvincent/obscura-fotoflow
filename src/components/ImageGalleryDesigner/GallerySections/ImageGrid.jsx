@@ -63,8 +63,8 @@ const computeLayout = (images, containerWidth, targetRowHeight, gap) => {
   return rows;
 };
 
-const SortableImage = ({ image, ...props }) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: image.url });
+const SortableImage = ({ image, isViewOnly, ...props }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: image.url, disabled: isViewOnly });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -98,7 +98,7 @@ const ImageDragOverlay = ({ image }) => {
   );
 };
 
-const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, toggleScaleControl }) => {
+const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, toggleScaleControl, isViewOnly }) => {
   const [showScaleControl, setShowScaleControl] = useState(false);
 
   useEffect(() => {
@@ -209,7 +209,7 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
 
   return (
     <div className="image-grid-section">
-      {images.length === 0 ? (
+      {images.length === 0 && !isViewOnly ? (
         <div
           className="upload-area"
           onDragOver={handleDragOver}
@@ -231,9 +231,38 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
             <p className="upload-sub-text">or click to upload</p>
           </div>
         </div>
+      ) : images.length === 0 && isViewOnly ? (
+        <div className="no-images-message">
+          <p>No images to display.</p>
+        </div>
       ) : (
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleImageDragStart} onDragEnd={handleImageDragEnd}>
-          <SortableContext items={images.map(img => img.url)} strategy={rectSortingStrategy}>
+        <>
+          {!isViewOnly ? (
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleImageDragStart} onDragEnd={handleImageDragEnd}>
+              <SortableContext items={images.map(img => img.url)} strategy={rectSortingStrategy}>
+                <div className="image-grid-display" ref={containerRef}>
+                  {layout.map((row, rowIndex) => (
+                    <div key={rowIndex} className="image-grid-row">
+                      {row.map((image, imgIndex) => (
+                        <SortableImage
+                          key={image.url}
+                          image={image}
+                          alt={`Gallery Image ${imgIndex}`}
+                          style={{ width: image.width, height: image.height }}
+                          isViewOnly={isViewOnly}
+                        />
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </SortableContext>
+              <DragOverlay>
+                {activeImage ? (
+                  <ImageDragOverlay image={activeImage} />
+                ) : null}
+              </DragOverlay>
+            </DndContext>
+          ) : (
             <div className="image-grid-display" ref={containerRef}>
               {layout.map((row, rowIndex) => (
                 <div key={rowIndex} className="image-grid-row">
@@ -243,18 +272,29 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
                       image={image}
                       alt={`Gallery Image ${imgIndex}`}
                       style={{ width: image.width, height: image.height }}
+                      isViewOnly={isViewOnly}
                     />
                   ))}
                 </div>
               ))}
             </div>
-          </SortableContext>
-          <DragOverlay>
-            {activeImage ? (
-              <ImageDragOverlay image={activeImage} />
-            ) : null}
-          </DragOverlay>
-        </DndContext>
+          )}
+          {showScaleControl && !isViewOnly && (
+            <div className="scale-control">
+              <label htmlFor="scale-slider">Image Scale:</label>
+              <input
+                type="range"
+                id="scale-slider"
+                min="50"
+                max="300"
+                value={section.gridSettings?.scale || 100}
+                onChange={handleScaleChange}
+              />
+              <span>{section.gridSettings?.scale || 100}%</span>
+            </div>
+          )}
+        </>
+
       )}
     </div>
   );
