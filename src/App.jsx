@@ -201,9 +201,9 @@ export default function App() {
               )}
               <Route path="/login" element={<LoginModal />} />
               <Route path="/onboarding" element={<Onboarding />} />
-
+              
+              <Route path="/:studioName/smart-gallery/:projectId/:collectionId?" element={<SmartGallery/>}/>
               <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>
-              <Route path="/:studioName/smart-gallery/:projectId" element={<SmartGallery/>}/>
               <Route path="/:studioName/selection/:projectId/pin" element={<SelectionPIN/>}/>
               <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>
               <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>

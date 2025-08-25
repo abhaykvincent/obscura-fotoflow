@@ -1,98 +1,101 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { fetchImageUrls } from '../../utils/storageOperations';
 import './SmartGallery.scss';
-import { fetchProject } from '../../firebase/functions/firestore';
+import { fetchCollectionStatus, fetchProject, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
+import ShareGallery from '../../components/ImageGallery/ShareGallery';
 import { useSelector } from 'react-redux';
-import { selectIsAuthenticated, selectUser } from '../../app/slices/authSlice';
+import { selectDomain, selectIsAuthenticated, selectUser, selectUserStudio } from '../../app/slices/authSlice';
 import { toTitleCase } from '../../utils/stringUtils';
-import { setUserType } from '../../analytics/utils';
+import { setUserType, trackEvent } from '../../analytics/utils';
+import { set } from 'date-fns';
 import { LoadingLight } from '../../components/Loading/Loading';
-import GalleryPIN from '../../components/GalleryPIN/GalleryPIN';
 
 export default function SmartGallery() {
-  const { studioName, projectId } = useParams();
+  const { studioName, projectId, collectionId } = useParams();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
   const [loading, setLoading] = useState(true);
-  const [project, setProject] = useState(null);
-
+  
   useEffect(() => {
     document.body.style.backgroundColor = 'white';
   }, []);
 
+  const [project, setProject] = useState();
+  const [imageUrls, setImageUrls] = useState([]);
+  const [displayGallery, setDisplayGallery] = useState(false);
+
+  const fetchProjectData = async () => {
+    try {
+      const projectData = await fetchProject(studioName, projectId);
+      setProject(projectData);
+      
+      if (!isAuthenticated || user === 'no-studio-found') {
+        setUserType('Guest');
+      }
+    } catch (error) {
+      console.error('Failed to fetch project:', error);
+    }
+  };
+
+  const findCollectionById = (collections, collectionId) => {
+    return collections.find((collection) => collection.id === collectionId);
+  }
+
   useEffect(() => {
-    const fetchProjectData = async () => {
+    fetchProjectData().then(() => {
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!project) return;
+
+    const currentCollectionId = collectionId || project.collections[0]?.id;
+    const collection = findCollectionById(project.collections, currentCollectionId);
+    document.title = `${project.name} | ${collection?.name} | Gallery`;
+    const newImages = project?.collections.find((collection) => collection.id === currentCollectionId)?.uploadedFiles;
+    setImageUrls(newImages);
+  }, [project, collectionId]);
+
+  useEffect(() => {
+    const checkCollectionStatus = async () => {
       try {
-        const projectData = await fetchProject(studioName, projectId);
-        setProject(projectData);
-        if (!isAuthenticated || user === 'no-studio-found') {
-          setUserType('Guest');
+        const status = await fetchCollectionStatus(studioName, projectId, collectionId, { domain: studioName });
+        if (status === 'visible') {
+          setDisplayGallery(true);
+        } else {
+          setDisplayGallery(false);
         }
       } catch (error) {
-        console.error('Failed to fetch project:', error);
-      } finally {
-        setLoading(false);
+        console.error('Error fetching collection status:', error);
+        setDisplayGallery(false);
       }
     };
 
-    fetchProjectData();
-  }, [studioName, projectId, isAuthenticated, user]);
+    checkCollectionStatus();
+  }, [studioName, projectId, collectionId]);
 
-  useEffect(() => {
-    if (project) {
-      document.title = `${toTitleCase(project.name)} | Smart Gallery`;
-    }
-  }, [project]);
-
-  const CollectionsGrid = () => {
-    return (
-      <div className="collections-grid">
-        {project.collections.map((collection) => (
-          collection.uploadedFiles?.length > 0 && (
-            <Link key={collection.id} to={`/${studioName}/share/${project.id}/${collection.id}`} className="collection-card-link">
-              <div
-                className="collection-card"
-                style={{ backgroundImage: `url(${collection.uploadedFiles[0]?.url})` }}
-              >
-                <div className="collection-name">{toTitleCase(collection.name)}</div>
-                <div className="collection-image-count">{collection.uploadedFiles.length} images</div>
-              </div>
-            </Link>
-          )
-        ))}
-      </div>
-    );
-  };
-
-  if (loading) {
-    return <LoadingLight />;
-  }
-
-  if (!project) {
-    return <div>Project not found.</div>;
-  }
+  if (!project) return null;
 
   return (
-    <div className="smart-gallery-page">
-      <div className="project-header">
-        <img className='banner' src={project.projectCover} alt={`${project.name} cover`} />
-        <div className="gallery-info">
-          <h1 className='project-name'>{toTitleCase(project.name)}</h1>
-          <p className='project-type'>{toTitleCase(project.type)}</p>
+    <>
+      {loading && <LoadingLight />}
+      <div className="share-project">
+        <div className="project-header">
+          <img className='banner' src={project.projectCover} alt="" />
+          <div className="gallery-info">
+            <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
+            <p className='projet-type'>{toTitleCase(project.type)}</p>
+          </div>
+        </div>
+        <div className="shared-collection">
+          <ShareGallery images={imageUrls} projectId={projectId} collectionId={collectionId} domain={studioName} />
+          {project.type !== "FUNERAL" && <p className='studio-tag-line'>{`smile with ${studioName}`}</p>}
         </div>
       </div>
-      <div className="action-buttons-container">
-        <Link to={`/${studioName}/selection/${project.id}/pin`} className="button secondary icon selected">
-          Select Photos
-        </Link>
-        <Link to={`/${studioName}/selection/${project.id}/pin`} className="button primary icon download">
-          Download
-        </Link>
-      </div>
-      <div className="collections-container">
-        <CollectionsGrid />
-      </div>
-      {project.type !== "FUNERAL" && <p className='studio-tag-line'>{`smile with ${studioName}`}</p>}
-    </div>
+    </>
   );
 }
