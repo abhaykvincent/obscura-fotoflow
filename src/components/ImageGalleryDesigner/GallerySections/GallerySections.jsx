@@ -51,7 +51,7 @@ const sectionComponents = {
   embed: Embed,
 };
 
-const SortableSection = ({ section, index, id, collectionId, collectionName, handleSectionUpdate, openDialog, isAnySectionDragging, handleDeleteSection, sections }) => {
+const SortableSection = ({ section, index, id, collectionId, collectionName, handleSectionUpdate, openDialog, isAnySectionDragging, handleDeleteSection, sections, handleMerge }) => {
   const {
     attributes,
     listeners,
@@ -107,6 +107,7 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
           {showTopMerge && (
             <button
               className="merge-sections-icon"
+              onClick={() => handleMerge(index - 1)}
               data-no-dnd="true"
             ></button>
           )}
@@ -133,6 +134,7 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
           {showBottomMerge && (
             <button
               className="merge-sections-icon"
+              onClick={() => handleMerge(index)}
               data-no-dnd="true"
             ></button>
           )}
@@ -181,6 +183,20 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const handleMerge = (index) => {
+    const newSections = [...sections];
+    const section1 = newSections[index];
+    const section2 = newSections[index + 1];
+
+    if (section1.type === 'image-grid' && section2.type === 'image-grid') {
+      const mergedImages = [...(section1.images || []), ...(section2.images || [])];
+      const updatedSection1 = { ...section1, images: mergedImages };
+      newSections[index] = updatedSection1;
+      newSections.splice(index + 1, 1);
+      onSectionsUpdate(newSections);
+    }
+  };
 
   const handleSectionUpdate = (updatedSection, index) => {
     const newSections = [...sections];
@@ -265,6 +281,7 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
                 isAnySectionDragging={!!activeSection}
                 handleDeleteSection={handleDeleteSection}
                 sections={sections}
+                handleMerge={handleMerge}
               />
             ))}
           </div>
