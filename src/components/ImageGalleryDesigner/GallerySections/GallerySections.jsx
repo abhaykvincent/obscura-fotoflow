@@ -99,15 +99,14 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
       </div>
       {!isAnySectionDragging && (
         <div className="add-section-icon-container top">
-          {showTopMerge ? (
+          <button
+            className="add-section-icon"
+            onClick={() => openDialog(index)}
+            data-no-dnd="true"
+          ></button>
+          {showTopMerge && (
             <button
               className="merge-sections-icon"
-              data-no-dnd="true"
-            ></button>
-          ) : (
-            <button
-              className="add-section-icon"
-              onClick={() => openDialog(index)}
               data-no-dnd="true"
             ></button>
           )}
@@ -126,15 +125,14 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
       ) : null}
       {!isAnySectionDragging && (
         <div className="add-section-icon-container bottom">
-          {showBottomMerge ? (
+          <button
+            className="add-section-icon"
+            onClick={() => openDialog(index + 1)}
+            data-no-dnd="true"
+          ></button>
+          {showBottomMerge && (
             <button
               className="merge-sections-icon"
-              data-no-dnd="true"
-            ></button>
-          ) : (
-            <button
-              className="add-section-icon"
-              onClick={() => openDialog(index + 1)}
               data-no-dnd="true"
             ></button>
           )}
