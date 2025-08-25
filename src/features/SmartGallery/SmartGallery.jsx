@@ -7,6 +7,7 @@ import { selectIsAuthenticated, selectUser } from '../../app/slices/authSlice';
 import { toTitleCase } from '../../utils/stringUtils';
 import { setUserType } from '../../analytics/utils';
 import { LoadingLight } from '../../components/Loading/Loading';
+import GalleryPIN from '../../components/GalleryPIN/GalleryPIN';
 
 export default function SmartGallery() {
   const { studioName, projectId } = useParams();
@@ -81,11 +82,11 @@ export default function SmartGallery() {
         </div>
       </div>
       <div className="action-buttons-container">
-        <Link to={`/${studioName}/selection/${project.id}/pin`} className="button primary">
-          Make Selection
+        <Link to={`/${studioName}/selection/${project.id}/pin`} className="button secondary icon selected">
+          Select Photos
         </Link>
-        <Link to={`/${studioName}/share/${project.id}`} className="button secondary">
-          View Gallery
+        <Link to={`/${studioName}/selection/${project.id}/pin`} className="button primary icon download">
+          Download
         </Link>
       </div>
       <div className="collections-container">

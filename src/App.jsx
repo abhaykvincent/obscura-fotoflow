@@ -43,7 +43,7 @@ import TrialStatusModal from './components/Modal/TrialEnds/TrialEnds';
 import UpgradeModal from './components/Subscription/UpgradeModal';
 // Utils
 import { isDeveloper, setUserType } from './analytics/utils';
-import { isPublicPage } from './utils/publicPages';
+import { isPublicPage,isLightModePage } from './utils/publicPages';
 // Redux 
 import { showAlert } from './app/slices/alertSlice';
 import { openModal, selectModal } from './app/slices/modalSlice';
@@ -77,6 +77,7 @@ export default function App() {
   const currentDomain = defaultStudio?.domain ?? 'guest'; 
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const { keyMap, handlers } = useShortcutsConfig();
+
   useEffect(() => {
     if(isAuthenticated && user!=='no-studio-found'){
       setUserType('Photographer');
@@ -145,7 +146,7 @@ export default function App() {
 
   // RENDER
   return (
-    <div className="App">
+    <div className={`App ${isLightModePage() && 'light-mode-page'}`}>
       <HotKeys keyMap={keyMap} handlers={handlers} className='app-wrap'>
       {/* <FlowPilot userId={defaultStudio?.domain}/> */}
       {isAuthenticated && (!isPublicPage()) && (
