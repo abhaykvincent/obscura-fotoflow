@@ -42,6 +42,10 @@ function UploadButton({
       //extractExifData(selectedFiles[0]);
 
       extractExifData(selectedFiles[0]).then(data => {
+        if (!data.DateTimeOriginal) {
+          console.log("No EXIF data found.");
+          return;
+        }
         console.log("EXIF Data:", data.DateTimeOriginal.value);
       });
 
