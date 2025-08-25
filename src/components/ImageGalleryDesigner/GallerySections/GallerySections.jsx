@@ -51,7 +51,7 @@ const sectionComponents = {
   embed: Embed,
 };
 
-const SortableSection = ({ section, index, id, collectionId, collectionName, handleSectionUpdate, openDialog, isAnySectionDragging, handleDeleteSection }) => {
+const SortableSection = ({ section, index, id, collectionId, collectionName, handleSectionUpdate, openDialog, isAnySectionDragging, handleDeleteSection, sections }) => {
   const {
     attributes,
     listeners,
@@ -68,6 +68,16 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
   };
 
   const SectionComponent = sectionComponents[section.type];
+
+  const showTopMerge =
+    index > 0 &&
+    section.type === 'image-grid' &&
+    sections[index - 1]?.type === 'image-grid';
+
+  const showBottomMerge =
+    index < sections.length - 1 &&
+    section.type === 'image-grid' &&
+    sections[index + 1]?.type === 'image-grid';
 
   return (
     <div ref={setNodeRef} style={style} className="section-wrapper" {...attributes} {...listeners}>
@@ -89,12 +99,18 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
       </div>
       {!isAnySectionDragging && (
         <div className="add-section-icon-container top">
-          <button
-            className="add-section-icon"
-            onClick={() => openDialog(index)}
-            data-no-dnd="true"
-          >
-          </button>
+          {showTopMerge ? (
+            <button
+              className="merge-sections-icon"
+              data-no-dnd="true"
+            ></button>
+          ) : (
+            <button
+              className="add-section-icon"
+              onClick={() => openDialog(index)}
+              data-no-dnd="true"
+            ></button>
+          )}
         </div>
       )}
       {SectionComponent ? (
@@ -110,12 +126,18 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
       ) : null}
       {!isAnySectionDragging && (
         <div className="add-section-icon-container bottom">
-          <button
-            className="add-section-icon"
-            onClick={() => openDialog(index + 1)}
-            data-no-dnd="true"
-          >
-          </button>
+          {showBottomMerge ? (
+            <button
+              className="merge-sections-icon"
+              data-no-dnd="true"
+            ></button>
+          ) : (
+            <button
+              className="add-section-icon"
+              onClick={() => openDialog(index + 1)}
+              data-no-dnd="true"
+            ></button>
+          )}
         </div>
       )}
     </div>
@@ -244,6 +266,7 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
                 collectionName={collectionName}
                 isAnySectionDragging={!!activeSection}
                 handleDeleteSection={handleDeleteSection}
+                sections={sections}
               />
             ))}
           </div>
