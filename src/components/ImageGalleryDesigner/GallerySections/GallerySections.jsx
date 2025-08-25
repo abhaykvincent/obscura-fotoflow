@@ -51,7 +51,7 @@ const sectionComponents = {
   embed: Embed,
 };
 
-const SortableSection = ({ section, index, id, collectionId, collectionName, handleSectionUpdate, openDialog, isAnySectionDragging, handleDeleteSection }) => {
+const SortableSection = ({ section, index, id, collectionId, collectionName, handleSectionUpdate, openDialog, isAnySectionDragging, handleDeleteSection, sections, handleMerge }) => {
   const {
     attributes,
     listeners,
@@ -68,6 +68,16 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
   };
 
   const SectionComponent = sectionComponents[section.type];
+
+  const showTopMerge =
+    index > 0 &&
+    section.type === 'image-grid' &&
+    sections[index - 1]?.type === 'image-grid';
+
+  const showBottomMerge =
+    index < sections.length - 1 &&
+    section.type === 'image-grid' &&
+    sections[index + 1]?.type === 'image-grid';
 
   return (
     <div ref={setNodeRef} style={style} className="section-wrapper" {...attributes} {...listeners}>
@@ -93,8 +103,14 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
             className="add-section-icon"
             onClick={() => openDialog(index)}
             data-no-dnd="true"
-          >
-          </button>
+          ></button>
+          {showTopMerge && (
+            <button
+              className="merge-sections-icon"
+              onClick={() => handleMerge(index - 1)}
+              data-no-dnd="true"
+            ></button>
+          )}
         </div>
       )}
       {SectionComponent ? (
@@ -114,8 +130,14 @@ const SortableSection = ({ section, index, id, collectionId, collectionName, han
             className="add-section-icon"
             onClick={() => openDialog(index + 1)}
             data-no-dnd="true"
-          >
-          </button>
+          ></button>
+          {showBottomMerge && (
+            <button
+              className="merge-sections-icon"
+              onClick={() => handleMerge(index)}
+              data-no-dnd="true"
+            ></button>
+          )}
         </div>
       )}
     </div>
@@ -161,6 +183,20 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const handleMerge = (index) => {
+    const newSections = [...sections];
+    const section1 = newSections[index];
+    const section2 = newSections[index + 1];
+
+    if (section1.type === 'image-grid' && section2.type === 'image-grid') {
+      const mergedImages = [...(section1.images || []), ...(section2.images || [])];
+      const updatedSection1 = { ...section1, images: mergedImages };
+      newSections[index] = updatedSection1;
+      newSections.splice(index + 1, 1);
+      onSectionsUpdate(newSections);
+    }
+  };
 
   const handleSectionUpdate = (updatedSection, index) => {
     const newSections = [...sections];
@@ -244,6 +280,8 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
                 collectionName={collectionName}
                 isAnySectionDragging={!!activeSection}
                 handleDeleteSection={handleDeleteSection}
+                sections={sections}
+                handleMerge={handleMerge}
               />
             ))}
           </div>
