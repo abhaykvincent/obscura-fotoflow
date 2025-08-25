@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { fetchImageUrls } from '../../utils/storageOperations';
 import './SmartGallery.scss';
 import { fetchCollectionStatus, fetchProject, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
-import ShareGallery from '../../components/ImageGallery/ShareGallery';
+import SmartAlbum from '../../components/ImageGallery/SmartAlbum';
 import { useSelector } from 'react-redux';
 import { selectDomain, selectIsAuthenticated, selectUser, selectUserStudio } from '../../app/slices/authSlice';
 import { toTitleCase } from '../../utils/stringUtils';
@@ -92,7 +92,7 @@ export default function SmartGallery() {
           </div>
         </div>
         <div className="shared-collection">
-          <ShareGallery images={imageUrls} projectId={projectId} collectionId={collectionId} domain={studioName} />
+          <SmartAlbum domain={studioName} projectId={projectId} collectionId={collectionId} />
           {project.type !== "FUNERAL" && <p className='studio-tag-line'>{`smile with ${studioName}`}</p>}
         </div>
       </div>

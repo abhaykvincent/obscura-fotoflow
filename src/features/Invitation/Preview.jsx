@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectDomain } from '../../app/slices/authSlice';
 import { useParams } from 'react-router';
 import { getGoogleMapsUrl } from '../../utils/urlUtils';
-import ImageGallery from '../../x-draft/masanory-grid';
 import WishMessages from './WishMessages';
 
 const Preview = ({ editor, data,project }) => {
@@ -225,16 +224,6 @@ const initialMessages = [
           </div>
           <WishMessages initialMessages={initialMessages} data={data} />
           <div className="invitation-image-gallery">
-            <ImageGallery imageUrls={[
-              "http://127.0.0.1:9199/v0/b/fotoflow-dev.appspot.com/o/lorem%2Fcharlotte-walker-uQais%2Fpoiuyy-cTlPq%2FIM_00077.jpg?alt=media&token=a85e9ad5-6d31-4dac-81d7-b5ef3c67366c",
-              "http://127.0.0.1:9199/v0/b/fotoflow-dev.appspot.com/o/lorem%2Fmichael-johnson-YjWna%2F-MQNYs%2FIM_00077.jpg?alt=media&token=3cd06776-da32-4634-91a3-3c2c2eb93831",
-              "http://127.0.0.1:9199/v0/b/fotoflow-dev.appspot.com/o/lorem%2Fmichael-johnson-YjWna%2F-MQNYs%2FIM_00064%20(3).jpg?alt=media&token=2945dc6b-e561-4abf-9a47-762fc8af5461",
-              "http://127.0.0.1:9199/v0/b/fotoflow-dev.appspot.com/o/lorem%2Fmichael-johnson-YjWna%2F-MQNYs%2FIM_00062.jpg?alt=media&token=39e8ca15-48ac-4dd6-b499-c976779c86c7",
-              "http://127.0.0.1:9199/v0/b/fotoflow-dev.appspot.com/o/lorem%2Fmichael-johnson-YjWna%2F-MQNYs%2FIM_00057.jpg?alt=media&token=9d91f2ce-dd2f-40ce-98b5-0de8cde993c4"
-            ]}
-            
-            galleryRef ={galleryRef}
-            />
           </div>
           <div className="power-button"></div>
           <div className="volume-button"></div>

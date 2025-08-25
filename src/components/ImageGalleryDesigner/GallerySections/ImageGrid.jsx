@@ -98,7 +98,18 @@ const ImageDragOverlay = ({ image }) => {
   );
 };
 
-const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate }) => {
+const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, toggleScaleControl }) => {
+  const [showScaleControl, setShowScaleControl] = useState(false);
+
+  useEffect(() => {
+    if (toggleScaleControl) {
+      toggleScaleControl.current = () => setShowScaleControl(prev => !prev);
+    }
+  }, [toggleScaleControl]);
+  const handleScaleChange = (event) => {
+    const newScale = Number(event.target.value);
+    onSectionUpdate({ ...section, gridSettings: { ...section.gridSettings, scale: newScale } });
+  };
   const dispatch = useDispatch();
   const [images, setImages] = useState(section.images || []);
   const domain = useSelector(selectDomain);
@@ -111,7 +122,14 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate })
   useLayoutEffect(() => {
     const observer = new ResizeObserver(entries => {
       for (let entry of entries) {
-        setContainerWidth(entry.contentRect.width);
+        const newContainerWidth = entry.contentRect.width;
+        setContainerWidth(newContainerWidth);
+        if (images && newContainerWidth) {
+          const targetRowHeight = 200;
+          const gap = 10;
+          const computedLayout = computeLayout(images, newContainerWidth, targetRowHeight, gap);
+          setLayout(computedLayout);
+        }
       }
     });
 
@@ -125,16 +143,7 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate })
         observer.unobserve(currentRef);
       }
     };
-  }, []);
-
-  useEffect(() => {
-    if (images && containerWidth) {
-      const targetRowHeight = 200;
-      const gap = 10;
-      const computedLayout = computeLayout(images, containerWidth, targetRowHeight, gap);
-      setLayout(computedLayout);
-    }
-  }, [images, containerWidth]);
+  }, [images]); // Add images to dependency array
 
   const onDrop = useCallback((acceptedFiles) => {
     const importFileSize = 0;
