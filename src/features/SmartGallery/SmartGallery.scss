@@ -3,159 +3,159 @@
 
 @font-face {
   font-family: 'Lastri';
-  src: url('../../fonts/LastriRegular.woff') format('woff');
+  src: 
+       url('../../fonts/LastriRegular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
 
-.smart-gallery-page {
-  .action-buttons-container {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin: 24px 0;
-  }
-
-  p {
+.share-project{
+  p{
     color: black;
   }
-
-  .project-header {
-    display: grid;
-    position: relative;
-    background-position: center 30%;
-    background-size: 100%;
-
-    .banner {
-      align-items: center;
-      max-height: calc(100vh - 8px * 12);
-      max-width: calc(100vw);
-      position: relative;
-      top: 0;
-      margin: 0 auto;
-      margin-bottom: 8px * 5;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 20%, rgba(255, 255, 255, 1) 90%, rgba(255, 255, 255, 1) 100%);
-      z-index: 1;
-    }
+  .align-center{
+    text-align: center;
   }
-
-  .gallery-info {
+  .gallery-info{
     position: relative;
     z-index: 3;
     color: rgba(0, 0, 0, 0.9);
     text-align: center;
-
-    .project-name {
+    .projet-name{
       font-family: 'Lastri', sans-serif;
-      padding: 0 8px;
-      font-size: 2rem;
-      color: rgba(0, 0, 0, 0.9);
+        padding: 0 8px;
+        font-size: 2rem;
+        color: rgba(0, 0, 0, 0.9);
     }
-
-    .project-type {
+    .projet-type{
       color: rgba(0, 0, 0, 0.5);
       margin-top: 4px;
     }
-  }
+    p{
+      
+      color: rgba(0, 0, 0, 0.7);
+    }
 
-  .collections-container {
-    padding: 0 8px * 5;
   }
-
-  .collections-grid {
+  .project-header{
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 16px;
-    padding: 16px;
-  }
-
-  .collection-card-link {
-    text-decoration: none;
-  }
-
-  .collection-card {
-    aspect-ratio: 16 / 9;
-    background-size: cover;
-    background-position: center;
-    border-radius: 8px;
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column-reverse;
-    flex-wrap: wrap;
-    align-content: flex-start;
-
-    gap: 8px;
-    padding: 16px;
-    color: white;
     position: relative;
-    overflow: hidden;
-    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1);
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 50%);
-      border-radius: 8px;
-    }
-
-    .collection-name {
+    background-position: center 30%;
+    background-size: 100%;
+    .banner{
+      align-items: center;
+      max-height: calc(100vh - 8px*12);
+      max-width: calc(100vw);
       position: relative;
+      top: 0;
+      margin: 0 auto;
+      margin-bottom: 8px*5;
+      background:  linear-gradient((180deg,rgba(255, 255, 255, 0) 0%,rgba(255, 255, 255, 0) 20%,rgba(255, 255, 255, 1) 90%,rgba(255, 255, 255, 1) 100%));
       z-index: 1;
-      font-size: 1.5rem;
-      font-weight: bold;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
     }
-    .collection-image-count {
-      font-size: 0.9rem;
-      background-color: rgba(139, 139, 139, 0.3);
-      padding: 2px 8px;
-      border-radius: 10px;
-      color: rgba(255, 255, 255, 0.6);
-      text-shadow: 1px 1px 3px rgba(17, 17, 17, 0.5);
-      z-index: 1;
+    .studio{
+      text-align: center;
+      color: $dark-3;
+      margin-bottom: 8px;
     }
   }
+  .shared-collection{
+      padding: 0 8px*5;
+      .studio-tag-line{
+        display: grid;
+        align-items: center;
+        text-align: center;
+        height: 8px*10;
+        color: $dark-3;
+      }
+  }
 
-  .studio-tag-line {
-    display: grid;
-    align-items: center;
-    text-align: center;
-    height: 8px * 10;
-    color: $dark-3;
+  .gallary{
+
+    margin: 0 auto;
+    margin-top: 8px*2;
+    max-height: 100%;
+    max-width: 8px*140;
+    overflow-y: scroll;
+    .photos{
+      width: 100%;
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      align-items: center;
+      gap:8px*1;
+      .photo{
+        width: 100%;
+        min-height: 8px*19;
+        background-color: $light-0;
+        border-radius: 2px;
+        background-size: cover;
+      }
+    }
+    .loader{
+      height: 8px*10;
+      width: 100%;
+      margin: 8px*2 auto;
+      margin-right: 8px;
+      background-image: url('../../assets/img/gifs/loading-green-loading.gif');
+      background-position: center;
+      background-size: auto 50%;
+      opacity: 0.5;
+  }
+  }
+  .pagination{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px*3;
   }
 }
 
 @media only screen and (max-width: 830px) {
-  .smart-gallery-page {
-    .collections-container {
+  .share-project{
+    .shared-collection{
       padding: 8px;
+    }
+    .gallary{
+      .photos{
+        grid-template-columns: 1fr;
+        .photo{
+        }
+      }
     }
   }
 }
-
 @media only screen and (max-width: 720px) {
-  .smart-gallery-page {
-    .project-header .banner {
-      width: 100vw;
+  .share-project{
+    .project-header{
+      .banner{
+        width: 100vw;
+      }
     }
-    .collections-container {
+    .shared-collection{
       padding: 8px;
+    }
+    .gallary{
+      .photos{
+        grid-template-columns: 1fr;
+        .photo{
+        }
+      }
     }
   }
 }
-
 @media only screen and (max-width: 520px) {
-  .smart-gallery-page {
-    .collections-container {
+  .App .share-project{
+    .shared-collection{
       padding: 8px;
     }
-    .collections-grid {
-      grid-template-columns: 1fr;
-      gap: 8px * 2;
+    .gallary{
+      width: calc(100vw - 8px*2);
+      .photos{
+        grid-template-columns: 1fr;
+        gap: 8px*2;
+        .photo{
+          min-height: 8px*10;
+        }
+      }
     }
   }
 }

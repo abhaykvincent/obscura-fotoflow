@@ -60,6 +60,10 @@ body{
   *{
     color: white;
   }
+
+  &.light-mode-page *{
+    color: black;
+  }
   .app-wrap{
     height: 100%;
   }
