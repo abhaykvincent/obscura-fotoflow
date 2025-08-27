@@ -159,6 +159,16 @@ function ShareGallery({project }) {
 
                 </div>
               </div>
+              <div className="qr-code-preview" onClick={() => handleOpenQRCodeModal(getGalleryURL('share', domain, project?.id))}>
+                  <div className="qr-code-container">
+                    <QRCodeCanvas value={getGalleryURL('share', domain, project?.id)} size={80} imageSettings={{
+                      src: logo,
+                      excavate: true,
+                      height: 20,
+                      width: 20
+                    }} />
+                  </div>
+                </div>
             </div>
 
               <div className="select-galleries">
@@ -271,17 +281,6 @@ function ShareGallery({project }) {
                 <div className="button secondary  transparent-button icon public">Public</div>
               
                 <div className="button primary outline  ">Share</div>
-
-                <div className="qr-code-preview" onClick={() => handleOpenQRCodeModal(getGalleryURL('share', domain, project?.id))}>
-                  <div className="qr-code-container">
-                    <QRCodeCanvas value={getGalleryURL('share', domain, project?.id)} size={80} imageSettings={{
-                      src: logo,
-                      excavate: true,
-                      height: 20,
-                      width: 20
-                    }} />
-                  </div>
-                </div>
 
               </div>
               <div className="gallery-view-status">
