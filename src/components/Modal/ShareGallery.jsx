@@ -150,8 +150,8 @@ function ShareGallery({project }) {
                   <div className='link' >
 
                     <div className="link-container">
-                      <a className='linkToGallery' href={getGalleryURL('share',domain,project?.id)} target='_blank' > ...{getGalleryURL('share',domain,project?.id).slice(-40)}
-                        <div className="button icon icon-only open-in-new"></div>
+                      <a className='linkToGallery' href={getGalleryURL('share',domain,project?.id)} target='_blank' > ...{getGalleryURL('share',domain,project?.id).slice(-18)}
+
                       </a>
                     </div>
                   </div>
