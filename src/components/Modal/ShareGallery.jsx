@@ -172,80 +172,47 @@ function ShareGallery({project }) {
             </div>
 
               <div className="select-galleries">
-
-              <div className="galleries-share-list-selection">
-
-                    <div className='gallery-field'>
-                      
-                      <div className="client-label">Gallery</div>
-                      <div className="client-label">Selection</div>
-                    </div>
                 {project?.collections.map((collection, index) => (
-                  <>
-                    {/* Gallery choose */}
-                    <div key={index} className='gallery-field'>
-                      <div className="form-item">
-                        <div className="input gallery-status">
-                        <FormControlLabel
-                          control={
-                            <IOSSwitch
-                              sx={{ m: 1 }}
-                              checked={collection.status === 'visible'} // Set checked based on collection status
-                              onChange={(event) => {
-                                const newStatus = event.target.checked ? 'visible' : 'hide';
-                                dispatch(updateCollectionStatus({
-                                  domain,
-                                  projectId: project?.id,
-                                  collectionId: collection.id,
-                                  status: newStatus
-                                }));
-                              }}
-                              color="green"
-                            />
-                          }
-                          label={
-                            <>
-                              <div className={`gallery-name ${collection.status !== 'visible' ? 'hide' : ''}`}>{collection.name}</div>
-                              <div className="gallery-images-count">
-                                {collection.filesCount > 1 ? `${collection.filesCount}56 Photos` : ''}
-                              </div>
-                            </>
-                          }
-                        />
+                  <div key={index} className={`gallery-item ${collection.status !== 'visible' ? 'disabled' : ''}`}>
+                    <div className="gallery-info" onClick={() => {
+                        const newStatus = collection.status === 'visible' ? 'hide' : 'visible';
+                        dispatch(updateCollectionStatus({
+                          domain,
+                          projectId: project?.id,
+                          collectionId: collection.id,
+                          status: newStatus
+                        }));
+                      }}>
+                      <div className={`status-dot ${collection.status === 'visible' ? 'active' : ''}`}></div>
+                      <div>
+                        <div className="gallery-name">{collection.name}</div>
+                        <div className="gallery-images-count">
+                          {collection.filesCount > 1 ? `${collection.filesCount} Photos` : ''}
                         </div>
                       </div>
-
-                      <div className={`input selection-status ${collection.status !== 'visible' ? 'hide' : ''}`}>
-                             
-                        <FormControlLabel
-                          control={
-                            <IOSSwitch
-                              sx={{ m: 1 }}
-                              checked={collection.selectionGallery === true} // Set checked based on collection status
-                              disabled={collection.status !== 'visible'} // Disable if not visible
-                              onChange={(event) => {
-                                const newStatus = event.target.checked ? true: false;
-                                dispatch(updateSelectionGalleryStatus({
-                                  domain,
-                                  projectId: project?.id,
-                                  collectionId: collection.id,
-                                  status: newStatus
-                                }));
-                              }}
-                              color="blue"
-                            />
-                          }
-                        />
-                        <div className="selection-icon"></div>   
-                        
-                      </div>
                     </div>
-                  </>
+                    <FormControlLabel
+                      control={
+                        <IOSSwitch
+                          sx={{ m: 1 }}
+                          checked={collection.selectionGallery === true}
+                          disabled={collection.status !== 'visible'}
+                          onChange={(event) => {
+                            const newStatus = event.target.checked ? true: false;
+                            dispatch(updateSelectionGalleryStatus({
+                              domain,
+                              projectId: project?.id,
+                              collectionId: collection.id,
+                              status: newStatus
+                            }));
+                          }}
+                          color="blue"
+                        />
+                      }
+                      label=""
+                    />
+                  </div>
                 ))}
-
-              </div>
-
-
               </div>
 
               

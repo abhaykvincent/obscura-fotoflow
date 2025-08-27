@@ -265,6 +265,60 @@
             }
         }
     }
+    .select-galleries{
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 8px*1;
+        padding-bottom: 8px*2;
+        margin-bottom: 8px*2;
+        margin-top: 8px*2;
+        border-bottom: 1px solid rgba(215, 215, 215, 0.1);
+
+        .gallery-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color:$gray5-default-dark;
+            border-radius: 8px;
+            padding: 8px 12px;
+
+            &.disabled {
+            background-color:$gray5-default-dark;
+                .gallery-name, .gallery-images-count {
+                    color: #8e8e8e;
+                }
+            }
+        }
+
+        .gallery-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #8e8e8e; // Default color for disabled
+
+            &.active {
+                background-color: #0c84ff; // Color for enabled
+            }
+        }
+
+        .gallery-name {
+            font-size: 1rem;
+            color: #ffffff;
+        }
+
+        .gallery-images-count {
+            font-size: 0.8rem;
+            color: #8e8e8e;
+        }
+    }
     .share-project-details{
 
         display: flex;
