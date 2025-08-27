@@ -40,7 +40,7 @@ export const initialPlans = [
   {
     name: 'Company',
     pricing: [
-      { storage: 5120, monthlyPrice: '₹5,150',monthlyPriceWas: '', yearlyPrice: '₹1,00,000', 
+      { storage: 5120, monthlyPrice: '₹5,150',monthlyPriceWas: '', yearlyPrice: '₹1,00,000', yearlyPriceWas: '₹1,20,000', 
         specialOffer: ['Paid annually','Save up to ₹10,400 with annualy','2 yr commitment'],defaultPlan: true},
       
     ],
