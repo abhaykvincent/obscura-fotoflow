@@ -10,6 +10,7 @@ import PlanCard from './PlanCard';
 function Subscription() {
   const [plans, setPlans] = useState(initialPlans);
   const defaultStudio = useSelector(selectUserStudio);
+  const [billingCycle, setBillingCycle] = useState('monthly');
 
   const handleStorageChange = (planName, newDefaultPlan) => {
     const updatedPlans = plans.map(plan => 
@@ -37,10 +38,10 @@ function Subscription() {
 
           <span className="tag white">BATCH 02</span>
           <div className="view-control">
-            <div className="control-wrap">
+            <div className={`control-wrap ${billingCycle}`}>
               <div className="controls">
-                  <div className={`control ctrl-draft active`} >Monthly</div>
-                  <div className={`control ctrl-all `} >Annual</div>
+                  <div className={`control ctrl-draft`} onClick={() => setBillingCycle('monthly')}>Monthly</div>
+                  <div className={`control ctrl-all`} onClick={() => setBillingCycle('annually')}>Annual</div>
               </div>
               <div className={`active`}></div>
             </div>
@@ -55,7 +56,14 @@ function Subscription() {
 
         <div className="plans">
           {plans.map((plan, index) => (
-            <PlanCard key={index} plan={plan} defaultPlan={plan.defaultPlan} defaultStorage={plan.defaultStorage} onStorageChange={handleStorageChange} />
+            <PlanCard 
+              key={index} 
+              plan={plan} 
+              defaultPlan={plan.defaultPlan} 
+              defaultStorage={plan.defaultStorage} 
+              onStorageChange={handleStorageChange}
+              billingCycle={billingCycle}
+            />
           ))}
         </div>
       </div>
