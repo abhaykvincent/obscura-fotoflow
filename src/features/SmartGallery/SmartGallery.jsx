@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { fetchImageUrls } from '../../utils/storageOperations';
 import './SmartGallery.scss';
 import { fetchCollectionStatus, fetchProject, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
-import ShareGallery from '../../components/ImageGallery/ShareGallery';
+import SmartAlbum from '../../components/ImageGallery/SmartAlbum';
 import { useSelector } from 'react-redux';
 import { selectDomain, selectIsAuthenticated, selectUser, selectUserStudio } from '../../app/slices/authSlice';
 import { toTitleCase } from '../../utils/stringUtils';
@@ -84,15 +84,8 @@ export default function SmartGallery() {
     <>
       {loading && <LoadingLight />}
       <div className="share-project">
-        <div className="project-header">
-          <img className='banner' src={project.projectCover} alt="" />
-          <div className="gallery-info">
-            <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
-            <p className='projet-type'>{toTitleCase(project.type)}</p>
-          </div>
-        </div>
         <div className="shared-collection">
-          <ShareGallery images={imageUrls} projectId={projectId} collectionId={collectionId} domain={studioName} />
+          <SmartAlbum domain={studioName} projectId={projectId} collectionId={collectionId} />
           {project.type !== "FUNERAL" && <p className='studio-tag-line'>{`smile with ${studioName}`}</p>}
         </div>
       </div>
