@@ -7,7 +7,7 @@ import { changeSubscriptionPlan } from '../../firebase/functions/subscription';
 import { getDaysFromNow } from '../../utils/dateUtils';
 import RazorpayButton from './RazorpayButton';
 
-export default function PlanCard({plan, defaultPlan,defaultStorage, onStorageChange }) {
+export default function PlanCard({plan, defaultPlan, defaultStorage, onStorageChange, billingCycle }) {
   const defaultStudio = useSelector(selectUserStudio);
   const studio = useSelector(selectStudio);
 
@@ -35,6 +35,12 @@ export default function PlanCard({plan, defaultPlan,defaultStorage, onStorageCha
     return 'Use for Free';
   };
 
+  let price = billingCycle === 'monthly' ? currentPricing?.monthlyPrice : currentPricing?.yearlyPrice;
+  if (price === '₹0') price = 'Free';
+
+  const priceWas = billingCycle === 'monthly' ? currentPricing?.monthlyPriceWas : '';
+  const unit = price === 'Free' ? '*' : (billingCycle === 'monthly' ? '/mo' : '/yr');
+
   return (
     <div className={`plan ${plan.name.toLowerCase()} ${studio?.subscriptionId?.includes(plan.name.toLowerCase())  ? 'active' : ''}`}>
       <h3 className="plan-name">{plan.name}</h3>
@@ -48,12 +54,12 @@ export default function PlanCard({plan, defaultPlan,defaultStorage, onStorageCha
       }>
         {formatStorage(plan.pricing[defaultPlan].storage,"GB")} 
       </p>
-      <div className="plan-pricing amount monthly">
+      <div className={`plan-pricing amount ${billingCycle}`}>
         <h1>
-          <span className="priceWas">{currentPricing?.monthlyPriceWas}</span> 
-          <span className="priceNow">{currentPricing?.monthlyPrice}</span> 
+          <span className="priceWas">{priceWas}</span> 
+          <span className="priceNow">{price}</span> 
         </h1>
-        {currentPricing?.monthlyPrice === 'Free' ? <div className="unit"> * </div> : <div className="unit">/mo</div>}
+        <div className="unit">{unit}</div>
       </div >
       <div className="plan-pricing yearly">
         <div className="first-month contract-period">{currentPricing?.specialOffer[0]}</div>
