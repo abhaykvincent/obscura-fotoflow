@@ -276,7 +276,13 @@ const CollectionImages = ({ id, collectionId, project }) => {
         setDisplayMode('lightMode');
         setGalleryMode('designMode');
         if (projectCollectionRef.current) {
-            projectCollectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start'});
+            projectCollectionRef.current.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start', 
+                offset: {
+                    top: 10
+                }
+            });
         }
     };
 
