@@ -57,15 +57,24 @@ import { getCurrentSubscription } from './firebase/functions/subscription';
 import SmartGallery from './features/SmartGallery/SmartGallery';
 
 console.log(`%c Welcome to Fotoflow!`, `color:rgb(84, 219, 0);`);
+console.log(`%c Welcome to Fotoflow!`, `color:rgb(84, 219, 0);`);
 if (isDeveloper) {
   console.log(`%c Running in Developement Mode`, `color: #ffea00ff;`); // Corrected "is Production"
   console.log(`%c This device is not being tracked by Analytics`, `color: #ff9500;`);
 }
-
+console.log(`
+ ████████  ███████   ██████████  ███████    ████████  ██      ███████   ██         ██
+░██░░░░░  ██░░░░░██ ░░░░███░░░  ██░░░░░██  ░██░░░░░  ░██     ██░░░░░██ ░██        ░██
+░███████ ░██    ░██    ░███    ░██    ░██  ░███████  ░██    ░██    ░██ ░██    █   ░██
+░██░░░░  ░██    ░██    ░███    ░██    ░██  ░██░░░░   ░██    ░██    ░██ ░░██ ░███ ░██
+░██      ░██    ░██    ░███    ░██    ░██  ░██       ░██    ░██    ░██  ░░███░░░███
+░██      ░░███████     ░███    ░░███████   ░██       ░██████░░███████    ░░█   ░░█
+░░        ░░░░░░░      ░░       ░░░░░░░    ░░        ░░░░░░  ░░░░░░░      ░     ░
+`);
 // APP
 export default function App() {
   const dispatch = useDispatch();
-
+ 
   const user = useSelector(selectUser);
 
   const isLoading = useSelector(selectProjectsStatus);
