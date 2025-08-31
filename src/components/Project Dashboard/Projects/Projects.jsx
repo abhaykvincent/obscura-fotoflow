@@ -19,7 +19,6 @@ import { ProjectCover } from '../../ProjectPageCover/ProjectPageCover';
 function DashboardProjects({project}){
   const dispatch =useDispatch()
   const navigate = useNavigate();
-  console.log(project)
   const { studioName } = useParams();
   const [projectDashboardView, setProjectDashboardView] = useState('abstract')
   // Inside your component

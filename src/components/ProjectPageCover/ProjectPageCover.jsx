@@ -109,9 +109,6 @@ export const ProjectCover = ({ project }) => {
         setFocusPoint(project.focusPoint);
     }, [project.focusPoint]);
 
-    useEffect(() => {
-        console.log(project)
-    }, [project]);
 
     
     return (

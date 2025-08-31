@@ -85,9 +85,6 @@ export default function Galleries({}) {
       document.title = `${projectTemp.name}'s ${projectTemp.type } Gallery`
     }, [projects, id, collectionId, navigate]);
 
-    useEffect(()=>{
-      console.log(projects)
-    },[projects])
 
   return (
   <>

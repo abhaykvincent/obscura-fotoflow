@@ -93,9 +93,6 @@ function ShareGallery({project }) {
 
   const modalRef = useModalFocus(visible.shareGallery);
 
-  useEffect(()=>{
-    console.log(project)
-  },[project])
 
   const handleOpenQRCodeModal = (url) => {
     setQrCodeUrl(url);

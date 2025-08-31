@@ -7,6 +7,7 @@ import { deleteCollectionFromStorage, deleteProjectFromStorage } from "../../uti
 import { generateMemorablePIN, generateRandomString, toKebabCase, toTitleCase} from "../../utils/stringUtils";
 import { removeUndefinedFields } from "../../utils/generalUtils";
 import { fetchSmartGalleryFromFirestore, updateSmartGalleryInFirestore } from './smartGalleryFirestore';
+import { isProduction } from "../../analytics/utils";
 
 // Users
 export const createUser = async (userData) => {
@@ -182,13 +183,17 @@ export const fetchProjectsFromFirestore = async (domain) => {
     }
 };
 export const fetchProject = async (domain, projectId) => {
-
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
     const projectDoc = doc(projectsCollectionRef, projectId);
     const projectSnapshot = await getDoc(projectDoc);
 
     const projectData = projectSnapshot.data();
+
+        if(!isProduction){
+            let color = projectData ? '#21ade4ff' : 'gray';
+            console.log(`%c 🔥 Project`, `color: ${color};`,projectData);
+        }
     projectData.collections = await Promise.all(projectData.collections.map(async (collection) => {
         const subCollectionId = collection.id;
         const collectionDoc = doc(projectDoc, 'collections', subCollectionId);
