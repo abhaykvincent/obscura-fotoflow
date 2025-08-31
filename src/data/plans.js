@@ -45,7 +45,7 @@ export const initialPlans = [
       
     ],
     isContactSales:true,
-    defaultStorage: 5000,
+    defaultStorage: 'Unliited',
     defaultPlan: 0,
     coreFeatures: [ 'Multi-studio','Custom Domain','Addon Storage'],
     features: [ 'Unlimited Bandwidth','Original File Size','+Everything in Studio plan'],

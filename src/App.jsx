@@ -55,31 +55,11 @@ import { useShortcutsConfig } from './hooks/shortcutsConfig';
 import { generateReferral } from './app/slices/referralsSlice';
 import { getCurrentSubscription } from './firebase/functions/subscription';
 import SmartGallery from './features/SmartGallery/SmartGallery';
+import { checkDevTools } from './utils/devtools';
 
-// clear all console logs
+import { welcomeConsole } from './utils/welcomeConsole';
 
-const clearConsole = () => {
-  console.clear();
-};
-clearConsole();
-
-console.log(`
-
- ████████  ███████   ██████████  ███████    ████████  ██      ███████   ██         ██
-░██░░░░░  ██░░░░░██ ░░░░███░░░  ██░░░░░██  ░██░░░░░  ░██     ██░░░░░██ ░██        ░██
-░███████ ░██    ░██    ░███    ░██    ░██  ░███████  ░██    ░██    ░██ ░██    █   ░██
-░██░░░░  ░██    ░██    ░███    ░██    ░██  ░██░░░░   ░██    ░██    ░██ ░░██ ░███ ░██
-░██      ░██    ░██    ░███    ░██    ░██  ░██       ░██    ░██    ░██  ░░███░░░███
-░██      ░░███████     ░███    ░░███████   ░██       ░██████░░███████    ░░█   ░░█
-░░        ░░░░░░░      ░░       ░░░░░░░    ░░        ░░░░░░  ░░░░░░░      ░     ░
-
-
-`);
-console.log(`%c Welcome to Fotoflow!`, `color: #70ab17;`);
-if (isDeveloper) {
-  console.log(`%c 💻 Running in Developement Mode`, `color: #00aaffff;`);
-  console.log(`%c This device is not being tracked by Analytics`, `color: #ff95006c;`);
-}
+welcomeConsole();
 // APP
 export default function App() {
   const dispatch = useDispatch();
@@ -134,6 +114,8 @@ export default function App() {
       
     }
 
+    
+
   }, [currentDomain]);
 
   useEffect(() =>{
@@ -153,7 +135,6 @@ export default function App() {
     }
   }, [modals]);
   useEffect(() => {
-    console.log(checkDevTools().devToolWidth)
     getCurrentSubscription(defaultStudio.domain)
           
   }, []);
