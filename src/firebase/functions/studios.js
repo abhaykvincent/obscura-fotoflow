@@ -157,6 +157,9 @@ export const fetchStudioByDomain = async (currentDomain) => {
         ...doc.data(),
     }));
     const studio = studiosData.find((studio) => studio.domain === currentDomain);
-    !isProduction ? console.log(studio):console.log('**** Protected data')
+    if(!isProduction){
+        let color = studio ? '#21ade4ff' : 'gray';
+        console.log(`%c 🔥 Studio`, `color: ${color};`,studio);
+    }
     return studio;
 };

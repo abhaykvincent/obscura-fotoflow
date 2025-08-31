@@ -56,13 +56,15 @@ import { generateReferral } from './app/slices/referralsSlice';
 import { getCurrentSubscription } from './firebase/functions/subscription';
 import SmartGallery from './features/SmartGallery/SmartGallery';
 
-console.log(`%c Welcome to Fotoflow!`, `color:rgb(84, 219, 0);`);
-console.log(`%c Welcome to Fotoflow!`, `color:rgb(84, 219, 0);`);
-if (isDeveloper) {
-  console.log(`%c Running in Developement Mode`, `color: #ffea00ff;`); // Corrected "is Production"
-  console.log(`%c This device is not being tracked by Analytics`, `color: #ff9500;`);
-}
+// clear all console logs
+
+const clearConsole = () => {
+  console.clear();
+};
+clearConsole();
+
 console.log(`
+
  ████████  ███████   ██████████  ███████    ████████  ██      ███████   ██         ██
 ░██░░░░░  ██░░░░░██ ░░░░███░░░  ██░░░░░██  ░██░░░░░  ░██     ██░░░░░██ ░██        ░██
 ░███████ ░██    ░██    ░███    ░██    ░██  ░███████  ░██    ░██    ░██ ░██    █   ░██
@@ -70,7 +72,14 @@ console.log(`
 ░██      ░██    ░██    ░███    ░██    ░██  ░██       ░██    ░██    ░██  ░░███░░░███
 ░██      ░░███████     ░███    ░░███████   ░██       ░██████░░███████    ░░█   ░░█
 ░░        ░░░░░░░      ░░       ░░░░░░░    ░░        ░░░░░░  ░░░░░░░      ░     ░
+
+
 `);
+console.log(`%c Welcome to Fotoflow!`, `color: #70ab17;`);
+if (isDeveloper) {
+  console.log(`%c 💻 Running in Developement Mode`, `color: #00aaffff;`);
+  console.log(`%c This device is not being tracked by Analytics`, `color: #ff95006c;`);
+}
 // APP
 export default function App() {
   const dispatch = useDispatch();
@@ -88,10 +97,10 @@ export default function App() {
 
   useEffect(() => {
     if(isAuthenticated && user!=='no-studio-found'){
+      console.log(`%cUser authenticated as ${user.email} | Studio: ${defaultStudio?.domain}`, `color: green`);
       setUserType('Photographer');
     }
   }, [isAuthenticated]);
- 
   // ON Render
   useEffect(() => {
     // Check authentication status
@@ -129,12 +138,12 @@ export default function App() {
 
   useEffect(() =>{
     if (studio?.trialEndDate) {
-      console.log(studio?.trialEndDate)
+      const trialDaysLeft = Math.ceil((new Date(studio.trialEndDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+      console.log(`Trial ends on ${studio?.trialEndDate}, in ${trialDaysLeft} days`)
     }
   },[studio?.trialEndDate])
   useEffect(() => {
     const modalStates = Object.values(modals);
-    console.log(modalStates)
     if (modalStates.some(state => state)) {
       window.scrollTo(0, 0);
       document.body.style.overflow = 'hidden';
@@ -144,7 +153,7 @@ export default function App() {
     }
   }, [modals]);
   useEffect(() => {
-    
+    console.log(checkDevTools().devToolWidth)
     getCurrentSubscription(defaultStudio.domain)
           
   }, []);
@@ -214,7 +223,6 @@ export default function App() {
               <Route path="/:studioName/selection/:projectId/pin" element={<SelectionPIN/>}/>
               <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>
               <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>
-              <Route path="*" element={<LoginModal />} />
             </Routes>
           )}
 

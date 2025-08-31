@@ -152,7 +152,6 @@ export const acceptInvitationCode = async (invitationCode) => {
 // Projects //
 export const fetchProjectsFromFirestore = async (domain) => {
     try{
-        console.log(domain)
         let color = domain === '' ? 'gray' : '#0099ff';
         const studioDocRef = doc(db, 'studios', domain);
         const projectsCollectionRef = collection(studioDocRef, 'projects');
