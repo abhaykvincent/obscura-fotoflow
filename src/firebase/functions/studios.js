@@ -158,8 +158,10 @@ export const fetchStudioByDomain = async (currentDomain) => {
     }));
     const studio = studiosData.find((studio) => studio.domain === currentDomain);
     if(!isProduction){
-        let color = studio ? '#21ade4ff' : 'gray';
-        console.log(`%c 🔥 Studio`, `color: ${color};`,studio);
+        let color = studio ? '#b3d6e4ff' : 'gray';
+        console.log(`%c 💻 ------- Developer only -------`, `color: ${color};`);
+
+        console.log(`%c 🔥 Studio`, `color: ${color}; font-weight: bold;`,studio);
     }
     return studio;
 };

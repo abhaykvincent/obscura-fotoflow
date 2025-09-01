@@ -50,11 +50,6 @@ function Home() {
               }, 3000);
         }
     }, [projects])
-    useEffect(() => {
-        trackEvent('studio_home_view')
-        setSelectedProjects(selectionCompletedProjects)
-        setRecentProjects(getProjectsByLastUpdated(projects, 8))
-    }, [])
 
     useEffect(() => {
     

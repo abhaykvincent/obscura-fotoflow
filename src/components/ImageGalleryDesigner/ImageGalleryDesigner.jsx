@@ -30,6 +30,9 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
       dispatch(fetchSmartGallery({ domain: domain, projectId: project.id, collectionId }));
     }
   }, [dispatch, project.domain, project.id, collectionId]);
+  useEffect(() => {
+      console.log(project)
+  },[project])
 
   useEffect(() => {
     if (smartGalleryStatus === 'succeeded' && smartGalleryData) {

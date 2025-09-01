@@ -295,7 +295,8 @@ export const updateProjectStatusInFirestore = async (domain, projectId, status) 
 
         if (projectSnapshot.exists()) {
             await updateDoc(projectDocRef, { status });
-            console.log(`%cProject status updated to "${status}" successfully for project: ${projectId}.`, `color: #54a134;`);
+            let statusColor = status === 'active' ? '#54a134' : status === 'selected' ? '#b55ee4ff' : status === 'deleted' ? 'red' : 'gray'
+            console.log(`%cProject status - Updated to "${status}"  %c${projectId}.`, `color: #54a134;`, `color: ${statusColor}; font-weight: bold;`);
         } else {
             console.log(`%cProject ${projectId} does not exist.`, 'color: red;');
             throw new Error('Project does not exist.');
@@ -320,7 +321,7 @@ export const updateProjectLastOpenedInFirestore = async (domain, projectId) => {
         if (projectSnapshot.exists()) {
             // Update the lastOpened field to the current time
             await updateDoc(projectDocRef, { lastOpened: new Date().getTime() });
-            console.log(`%cProject lastOpened updated successfully for project: ${projectId}.`, `color: #54a134;`);
+            console.log(`%c👆🏽Last Opened - Updated! ${projectId} `, `color: #54a134;`);
         } else {
             console.log(`%cProject ${projectId} does not exist.`, 'color: red;');
             throw new Error('Project does not exist.');

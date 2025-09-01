@@ -28,6 +28,7 @@ import SidePanel from '../../components/Project/SidePanel/SidePanel'
 
 import './Project.scss';
 import { ProjectPageCoverImages } from '../../components/ProjectPageCover/ProjectPageCoverImages';
+import { isDeveloper, isProduction } from '../../analytics/utils';
 
 export default function Project() {
   const { id } = useParams();
@@ -64,6 +65,14 @@ export default function Project() {
 
   useEffect(() => {
     if (project) {
+      if(!isProduction){
+        let color = project ? '#21ade4ff' : 'gray';
+        // developer only        
+        console.log(`%c 💻 ------- Developer only -------`, `color: ${color};`);
+
+
+        console.log(`%c 🔥 Project`, `color: ${color}; font-weight: bold;`,project);
+    }
       document.title = `${project.name}'s ${project.type} | ${defaultStudio.name}`;
       setPinText(project.pin);
       
