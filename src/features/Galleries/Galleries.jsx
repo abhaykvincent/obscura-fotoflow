@@ -86,8 +86,8 @@ export default function Galleries({}) {
     }, [projects, id, collectionId, navigate]);
 
     useEffect(()=>{
-      console.log(projects)
-    },[projects])
+      console.log(targetCollectionId)
+    },[targetCollectionId])
 
   return (
   <>

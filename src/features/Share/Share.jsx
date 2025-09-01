@@ -81,7 +81,6 @@ export default function ShareProject() {
     const collection = findCollectionById(project.collections, collectionId);
     document.title = `${project.name} | ${collection?.name} | Gallery`
     const newImages = project?.collections.find((collection)=>collection.id===collectionId)?.uploadedFiles;
-    console.log(project.collections)
     setImageUrls(newImages)
     setPage(1)
   }, [project, collectionId]);

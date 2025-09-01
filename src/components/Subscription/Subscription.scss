@@ -22,7 +22,7 @@ main.subscription{
             span.iconic-gradient{
                 line-height: 1rem;
                 
-    background: radial-gradient(circle, #70ab17, #509135);
+    background: radial-gradient(circle closest-corner at 38.2% 120%, rgb(169, 229, 97), rgb(80, 145, 53));
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 transition-duration: 2s;

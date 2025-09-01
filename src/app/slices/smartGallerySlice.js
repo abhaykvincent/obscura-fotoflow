@@ -12,7 +12,6 @@ export const fetchSmartGallery = createAsyncThunk(
   async ({ domain, projectId, collectionId }) => {
     const smartGallery = await fetchSmartGalleryFromFirestore(domain, projectId, collectionId);
 
-    console.log(smartGallery)
     return smartGallery;
   }
 );

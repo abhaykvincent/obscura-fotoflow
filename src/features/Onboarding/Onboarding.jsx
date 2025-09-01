@@ -27,7 +27,6 @@ function Onboarding() {
   const ref = searchParams.get('ref') || '0000'; // Get the 'ref' parameter
   const user = useSelector(selectUser)
   const currentStudio = useSelector(selectUserStudio);
-  console.log(currentStudio)
   const [timeOfDay, setTimeOfDay] = useState({
     timeOfDay: '',
     timeGreeting: '',
@@ -51,10 +50,8 @@ function Onboarding() {
   });
   // Redirect to dashboard if user is already logged in
   const studioLocal = JSON.parse(localStorage.getItem('studio'))
-  console.log(studioLocal)
   useEffect(() => {
     if (studioLocal) {
-      console.log(studioLocal)
       navigate(`/${studioLocal?.domain}`);
     }
   },[studioLocal])
@@ -284,7 +281,7 @@ function Onboarding() {
       validity: 30,
       createdAt: new Date().toISOString(),
     }))
-    dispatch(checkAuthStatus)
+    dispatch(checkAuthStatus())
     createTimeOFDayObject()
     trackEvent('onboarding_viewed', {
       referral_code: ref

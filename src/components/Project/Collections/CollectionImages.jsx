@@ -70,7 +70,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 const projectCollectionTop = projectCollectionRef.current.getBoundingClientRect().top;
                 const galleryPageTop = galleryPageRef.current.getBoundingClientRect().top;
 
-                if (projectCollectionTop <= galleryPageTop + 2) {
+                if (projectCollectionTop <= galleryPageTop + 8) {
                     projectCollectionRef.current.classList.add('scrolled-top');
                 } else {
                     projectCollectionRef.current.classList.remove('scrolled-top');
@@ -280,7 +280,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 behavior: 'smooth', 
                 block: 'start', 
                 offset: {
-                    top: 10
+                    top: 200
                 }
             });
         }
