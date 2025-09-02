@@ -1023,11 +1023,11 @@ body{
           display: grid;
           align-items: center;
           align-content: center;
-          height: calc(100vh - 8px*52);
+          height: calc(100vh - 8px*80);
           border-radius: 8px*1;
           border: 1px double $dark-0;
           stroke-dashoffset: 20px 10px;
-          margin: 8px*4;
+          margin: 8px*8 8px*16;
           text-align: center;
           opacity: 1;
           background-size: 80%;;
