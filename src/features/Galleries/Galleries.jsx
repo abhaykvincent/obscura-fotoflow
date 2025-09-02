@@ -22,6 +22,7 @@ import { DropdownMenu,
   DropdownMenuSeparator,
   DropdownMenuTrigger, } from '@radix-ui/react-dropdown-menu';
 import { showAlert } from '../../app/slices/alertSlice';
+import { selectGalleryMode } from '../../app/slices/gallerySlice';
 
 export default function Galleries({}) {
   const dispatch= useDispatch();
@@ -31,6 +32,7 @@ export default function Galleries({}) {
   let { studioName, id,collectionId } = useParams();
   // State
   const projects = useSelector(selectProjects)
+  const galleryMode = useSelector(selectGalleryMode);
   const [project, setProject] = useState(undefined)
   const [collection, setCollection] = useState('')
   const [targetCollectionId, setTargetCollectionId] = useState('')
@@ -179,7 +181,7 @@ export default function Galleries({}) {
     <ShareGallery   project={project} />
 
     {/* Page Main */}
-    <main className='gallery-page'>
+    <main className={`gallery-page ${galleryMode === 'designMode' ? 'designMode' : ''}`}>
       {
         project?.collections && project.collections.length !== 0 && (
           <div className="project-collections">

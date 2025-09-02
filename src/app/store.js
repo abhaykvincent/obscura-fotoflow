@@ -13,9 +13,11 @@ import notificationReducer from './slices/notificationSlice';
 import adminPaneReducer from './slices/adminPaneSlice';
 import packagesReducer from './slices/packagesSlice';
 import smartGalleryReducer from './slices/smartGallerySlice';
+import galleryReducer from './slices/gallerySlice';
 
 export const store = configureStore({
   reducer: {
+    gallery: galleryReducer,
     smartGallery: smartGalleryReducer,
     auth: authReducer,
     alert: alertReducer,

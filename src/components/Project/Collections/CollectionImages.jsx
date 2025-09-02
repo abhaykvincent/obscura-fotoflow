@@ -22,16 +22,17 @@ import { handleUpload } from '../../../utils/uploadOperations';
 import { createNotification } from '../../../app/slices/notificationSlice';
 import { updateCollectionStatus } from '../../../app/slices/projectsSlice';
 import ImageGalleryDesigner from '../../ImageGalleryDesigner/ImageGalleryDesigner';
+import { selectGalleryMode, setGalleryMode } from '../../../app/slices/gallerySlice';
 
 const CollectionImages = ({ id, collectionId, project }) => {
     const projectCollectionRef = useRef(null);
     const dispatch = useDispatch();
+    const galleryMode = useSelector(selectGalleryMode);
     const domain = useSelector(selectDomain);
     const storageLimit = useSelector(selectStudioStorageUsage);
     const currentStudio = useSelector(selectUserStudio);
     // dark light mode
     const [displayMode, setDisplayMode] = useState('darkMode');
-    const [galleryMode, setGalleryMode] = useState('workflowMode');
     const [uploadTrigger, setUploadTrigger] = useState(false);
 
     // Files
@@ -274,7 +275,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
 
     const handleDesignClick = () => {
         setDisplayMode('lightMode');
-        setGalleryMode('designMode');
+        dispatch(setGalleryMode('designMode'));
         if (projectCollectionRef.current) {
             projectCollectionRef.current.scrollIntoView({ 
                 behavior: 'smooth', 
@@ -312,7 +313,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 <div className="view-control gallery-mode">
                         <div className="control-wrap">
                             <div className="controls">
-                                <div className={`control ${galleryMode === 'workflowMode' ? 'active' : ''}`} onClick={() => { setDisplayMode('darkMode') ;setGalleryMode('workflowMode')}}>Worklow</div>
+                                <div className={`control ${galleryMode === 'workflowMode' ? 'active' : ''}`} onClick={() => { setDisplayMode('darkMode') ;dispatch(setGalleryMode('workflowMode'))}}>Worklow</div>
                                 <div className={`control ${galleryMode === 'designMode' ? 'active' : ''}`} onClick={handleDesignClick}>Design {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
                             </div>
                             <div className={`active`}></div>
