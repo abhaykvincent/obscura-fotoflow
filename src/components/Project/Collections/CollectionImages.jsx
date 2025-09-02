@@ -23,7 +23,7 @@ import { createNotification } from '../../../app/slices/notificationSlice';
 import { updateCollectionStatus } from '../../../app/slices/projectsSlice';
 import ImageGalleryDesigner from '../../ImageGalleryDesigner/ImageGalleryDesigner';
 
-const CollectionImages = ({ id, collectionId, project }) => {
+const CollectionImages = ({ id, collectionId, project, galleryMode, setGalleryMode }) => {
     const projectCollectionRef = useRef(null);
     const dispatch = useDispatch();
     const domain = useSelector(selectDomain);
@@ -31,7 +31,6 @@ const CollectionImages = ({ id, collectionId, project }) => {
     const currentStudio = useSelector(selectUserStudio);
     // dark light mode
     const [displayMode, setDisplayMode] = useState('darkMode');
-    const [galleryMode, setGalleryMode] = useState('workflowMode');
     const [uploadTrigger, setUploadTrigger] = useState(false);
 
     // Files

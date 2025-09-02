@@ -38,6 +38,7 @@ export default function Galleries({}) {
 
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState("");
+  const [galleryMode, setGalleryMode] = useState('workflowMode');
   // Delete Project Modal
   const onDeleteConfirmClose = () => setConfirmDeleteCollection(false)
   const onDeleteConfirm = () => dispatch(deleteCollection({domain,projectId:id,collectionId:targetCollectionId}))
@@ -179,12 +180,12 @@ export default function Galleries({}) {
     <ShareGallery   project={project} />
 
     {/* Page Main */}
-    <main className='gallery-page'>
+    <main className={`gallery-page ${galleryMode === 'designMode' ? 'designMode' : ''}`}>
       {
         project?.collections && project.collections.length !== 0 && (
           <div className="project-collections">
             <CollectionsPanel {...{project,collectionId:targetCollectionId}}/>
-            <CollectionImages   {...{ id, collectionId:targetCollectionId,project}} />
+            <CollectionImages   {...{ id, collectionId:targetCollectionId,project, galleryMode, setGalleryMode}} />
           </div>
         )
       }
