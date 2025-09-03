@@ -131,6 +131,7 @@
         z-index: 3;
         color: rgba(0, 0, 0, 0.9);
         text-align: center;
+        margin-bottom: 8px*4;
         .project-name {
             font-family: 'Lastri', sans-serif;
             padding: 0 8px;
@@ -166,7 +167,7 @@
       }
 
       .collection-card {
-        aspect-ratio: 1 / 1;
+        aspect-ratio:  1.618/1;
         border-radius: 8px;
         background-size: cover;
         background-position: center;
@@ -176,7 +177,9 @@
         padding: 16px;
         position: relative;
         overflow: hidden;
-        color: white;
+        *{
+          color: white;
+        }
 
         &::before {
           content: '';
@@ -200,6 +203,7 @@
 
         .collection-image-count {
           font-size: 0.9rem;
+          color: rgba(255, 255, 255, 0.6);
         }
       }
     }

@@ -310,31 +310,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
             </div>
             
             <div className="header">
-                <div className="view-control gallery-mode">
-                        <div className="control-wrap">
-                            <div className="controls">
-                                <div className={`control ${galleryMode === 'workflowMode' ? 'active' : ''}`} onClick={() => { setDisplayMode('darkMode') ;dispatch(setGalleryMode('workflowMode'))}}>Worklow</div>
-                                <div className={`control ${galleryMode === 'designMode' ? 'active' : ''}`} onClick={handleDesignClick}>Design {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
-                            </div>
-                            <div className={`active`}></div>
-                        </div>
-                    </div>
-                
-                {collectionImages?.length > 0 || imageUrls.length > 0  ? (
-                    <div className="view-control">
-                        <div className="control-label label-all-photos">{collectionImages?.length ? collectionImages?.length: imageUrls.length} Photos</div>
-                        <div className="control-wrap">
-                            <div className="controls">
-                                <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All photos</div>
-                                <div className={`control ${!showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(false)}>Selected  {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
-                            </div>
-                            <div className={`active`}></div>
-                        </div>
-                        <div className={`control-label label-selected-photos ${selectedImages.length>0&&' active'}`}>{selectedImages.length} Photos</div>
-                    </div>
-                ) : (
-                    <div className="empty-message"></div>
-                )}
+
                 <div className="options">
 
                 <div className="open-buttons ">
@@ -372,6 +348,31 @@ const CollectionImages = ({ id, collectionId, project }) => {
                         dispatch // Added
                     }} />
                 </div>
+                <div className="view-control gallery-mode">
+                        <div className="control-wrap">
+                            <div className="controls">
+                                <div className={`control ${galleryMode === 'workflowMode' ? 'active' : ''}`} onClick={() => { setDisplayMode('darkMode') ;dispatch(setGalleryMode('workflowMode'))}}>Worklow</div>
+                                <div className={`control ${galleryMode === 'designMode' ? 'active' : ''}`} onClick={handleDesignClick}>Design {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
+                            </div>
+                            <div className={`active`}></div>
+                        </div>
+                    </div>
+                
+                {collectionImages?.length > 0 || imageUrls.length > 0  ? (
+                    <div className="view-control">
+                        <div className="control-label label-all-photos">{collectionImages?.length ? collectionImages?.length: imageUrls.length} Photos</div>
+                        <div className="control-wrap">
+                            <div className="controls">
+                                <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All photos</div>
+                                <div className={`control ${!showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(false)}>Selected  {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
+                            </div>
+                            <div className={`active`}></div>
+                        </div>
+                        <div className={`control-label label-selected-photos ${selectedImages.length>0&&' active'}`}>{selectedImages.length} Photos</div>
+                    </div>
+                ) : (
+                    <div className="empty-message"></div>
+                )}
             </div>
 
 

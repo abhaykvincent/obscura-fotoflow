@@ -98,6 +98,9 @@ export default function SmartGallery() {
           <p className='project-type'>{toTitleCase(project.type)}</p>
         </div>
       </div>
+      <div className="collections-container">
+        <CollectionsGrid />
+      </div>
       <div className="action-buttons-container">
         <Link to={`/${studioName}/selection/${project.id}/pin`} className="button secondary icon selected">
           Select Photos
@@ -105,9 +108,6 @@ export default function SmartGallery() {
         <Link to={`/${studioName}/selection/${project.id}/pin`} className="button primary icon download">
           Download
         </Link>
-      </div>
-      <div className="collections-container">
-        <CollectionsGrid />
       </div>
       {project.type !== "FUNERAL" && <p className='studio-tag-line'>{`smile with ${studioName}`}</p>}
     </div>
