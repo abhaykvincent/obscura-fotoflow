@@ -34,9 +34,52 @@ const initialState = {
   },
   isAuthenticated: false,
   createStudio: false,
-  loading: false,
+  loading: true,
   error: null,
 };
+
+export const verifyAuth = createAsyncThunk(
+  'auth/verifyAuth',
+  async () => {
+    return new Promise((resolve) => {
+      const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
+        unsubscribe();
+        if (firebaseUser) {
+          const users = await fetchUsers();
+          const appUser = users.find(u => u.email === firebaseUser.email);
+          if (appUser) {
+            localStorage.setItem('authenticated', 'true');
+            localStorage.setItem('user', JSON.stringify(appUser));
+            if (appUser.studio) {
+              localStorage.setItem('studio', JSON.stringify(appUser.studio));
+            }
+            resolve({ isAuthenticated: true, user: appUser, studio: appUser.studio });
+          } else {
+            localStorage.removeItem('authenticated');
+            localStorage.removeItem('user');
+            localStorage.removeItem('studio');
+            resolve({ isAuthenticated: false, user: null, studio: null });
+          }
+        } else {
+          localStorage.removeItem('authenticated');
+          localStorage.removeItem('user');
+          localStorage.removeItem('studio');
+          resolve({ isAuthenticated: false, user: null, studio: null });
+        }
+      });
+    });
+  }
+);
+
+export const logout = createAsyncThunk(
+  'auth/logout',
+  async () => {
+    await auth.signOut();
+    localStorage.removeItem('authenticated');
+    localStorage.removeItem('studio');
+    localStorage.removeItem('user');
+  }
+);
 
 export const login = createAsyncThunk(
   'user/login',
@@ -92,34 +135,12 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    
-    logout: (state) => {
-      state.isAuthenticated = false;
-      localStorage.removeItem('authenticated');
-      localStorage.removeItem('studio');
-      localStorage.removeItem('user')
-      console.log('%cLogged out...', 'color: orange; font-size: 0.9rem;');
-      state.user = { email: '', access: [] };
-      state.currentStudio = { name: '', domain: '' }; 
-    },
     loginEmailPassword: (state, action) => {
       if (action.payload.userId === 'guest' && action.payload.password.includes('2024')) {
         state.isAuthenticated = true;
         localStorage.setItem('authenticated', 'true');
         state.user = action.payload;
       }
-    },
-    checkAuthStatus: (state) => {
-      const isLocalAuthenticated = localStorage.getItem('authenticated');
-      state.isAuthenticated = isLocalAuthenticated === 'true';
-        let color= '#54a134'
-        state.user = JSON.parse(localStorage.getItem('user'));
-      
-      
-    },
-    checkStudioStatus: (state) => {
-      const studioLocal = localStorage.getItem('studio');
-      state.currentStudio = JSON.parse(studioLocal);
     },
     setUser: (state, action) => {
       state.user = action.payload;
@@ -163,11 +184,34 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(verifyAuth.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(verifyAuth.fulfilled, (state, action) => {
+        state.isAuthenticated = action.payload.isAuthenticated;
+        state.user = action.payload.user;
+        state.currentStudio = action.payload.studio || initialState.currentStudio;
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(verifyAuth.rejected, (state, action) => {
+        state.isAuthenticated = false;
+        state.user = null;
+        state.currentStudio = initialState.currentStudio;
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.isAuthenticated = false;
+        state.user = { email: '', access: [] };
+        state.currentStudio = { name: '', domain: '' };
+        console.log('%cLogged out...', 'color: orange; font-size: 0.9rem;');
       });
   }
 });
 
-export const { logout, loginEmailPassword, checkAuthStatus,checkStudioStatus, setAvailableStortage, setUser, setLoading, setError, resetAuth, setCurrentStudio } = authSlice.actions;
+export const { loginEmailPassword, setAvailableStortage, setUser, setLoading, setError, resetAuth, setCurrentStudio } = authSlice.actions;
 export default authSlice.reducer;
 
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
