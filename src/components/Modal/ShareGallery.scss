@@ -32,7 +32,7 @@
     }
     .gallery-field{
         display: grid;
-        grid-template-columns: auto 8px*28 8px*12 ;
+        grid-template-columns: 8px*24  8px*28 8px ;
         align-items: center;
         gap: 8px*3;
         &.selection-radio{
@@ -116,7 +116,7 @@
     }
     .gallery-view-status{
             display: grid;
-            grid-template-columns: 8px*14   8px*16 8px*10   8px*9 8px*12;
+            grid-template-columns: 8px*14   8px*16 8px*10   8px*9;
             align-items: center;
             gap: 8px*1;
             margin-top: 8px*0;
@@ -226,7 +226,8 @@
 
         padding-top: 8px*1;
         padding-bottom: 8px*2;
-        margin-bottom: 8px*4;
+        margin-bottom: 8px*2;
+        margin-top: 8px*2;
         border-bottom: 1px solid rgba(215, 215, 215, 0.1);
         .selection-icon{
             background: #0C84FF url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="rgba(255, 255, 255, 0)"><path d="M1 7 L5 11 L13 1" stroke-width="2" stroke="white" fill="transparent"/></svg>');
@@ -264,10 +265,82 @@
             }
         }
     }
+    .select-galleries{
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 8px*1;
+        padding-bottom: 8px*2;
+        margin-bottom: 8px*2;
+        margin-top: 8px*2;
+        border-bottom: 1px solid rgba(215, 215, 215, 0.1);
+
+        .gallery-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(4px);
+            border-radius: 8px;
+            border:1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 12px;
+            box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.3);
+
+            &.disabled {
+            background-color: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(4px);
+            border:1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.1);
+            cursor: pointer !important;
+                .gallery-name, .gallery-images-count {
+                    color: #8e8e8e;
+                }
+            }
+        }
+
+        .gallery-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+
+            &:hover .status-dot {
+                transform: scale(1.3);
+            }
+            
+            &:hover .status-dot.active {
+                animation-play-state: paused; // Pause animation on hover for better interaction
+            }
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #8e8e8e; // Default color for disabled
+            transition: all 0.3s ease;
+
+            &.active {
+                background-color: $green-default-dark;; // Color for enabled
+                animation: pulse-active 2s infinite cubic-bezier(0.66, 0, 0, 1);
+                animation-fill-mode:forwards;
+            }
+        }
+
+        .gallery-name {
+            font-size: 1rem;
+            color: #ffffff;
+        }
+
+        .gallery-images-count {
+            font-size: 0.8rem;
+            color: #8e8e8e;
+        }
+    }
     .share-project-details{
 
         display: flex;
-        gap: 8px*4;
+        gap: 8px*2;
             height: 8px*12;
         .project-cover{
                 height: 100%;
@@ -298,7 +371,7 @@
         grid-template-columns: auto 8px*4;
         align-items: center;
         justify-content: start;
-        gap: 8px*1;
+        gap: 8px*0;
         padding: 4px;
         padding-left: 0;
         margin-bottom: 8px*0;
@@ -328,7 +401,7 @@
             backdrop-filter: blur(4px);
             padding: 0px 4px;
             padding-left: 8px;
-            padding-right: 0px;
+            padding-right: 6px;
             height: 8px*3.5;
             border-radius: 4px;
 
@@ -387,4 +460,11 @@
             }
         }
 }
-}
+
+.action-buttons{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;    
+    gap: 8px;
+
+}}

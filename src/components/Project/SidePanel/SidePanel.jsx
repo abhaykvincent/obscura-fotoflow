@@ -4,6 +4,7 @@ import { timelineData } from '../../../data/timeline'
 import ProjectExpiration from '../../ProjectExpiration/ProjectExpiration'
 
 function SidePanel({project}) {
+    return('')
 return (
     <div className="side-panel box">
         <div className="headings">

@@ -109,9 +109,6 @@ export const ProjectCover = ({ project }) => {
         setFocusPoint(project.focusPoint);
     }, [project.focusPoint]);
 
-    useEffect(() => {
-        console.log(project)
-    }, [project]);
 
     
     return (
@@ -155,66 +152,84 @@ export const ProjectCover = ({ project }) => {
                             }
                             <div className="edit-pen" onClick={handleNameDoubleClick} ></div>
                         </div>
+
+
+                        <div className="link-pin">
+                            <div className="link-pin-container">
+                            <div className="link-pin">
+                            <div className='link' >
+                            
+                                <div className="link-container">
+                                    <a className='linkToGallery' href={getGalleryURL('share',currentStudio?.domain,project?.id)} target='_blank' > 
+                                    ...{getGalleryURL('share',currentStudio?.domain,project?.id).slice(-16)}
+                                    </a>
+                                </div>
+                                </div>
+                                <div className="button primary outline text-only  icon copy"></div>
+
+                            </div>
+                                {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
+
+                        </div>
+                        </div> 
+                        </div>
+
+                        <div className="project-tags">
+
                         <div className="tags">
                             {!isEditing &&<div className="tag type">{project?.type}</div>}
                             <div className="tag">Hindu</div>
                         </div>
-
-                        <ProjectStatus project={project} />
-
-                        <div className="link-pin">
-                            <div className="button secondary outline icon archive"> Archive</div>
-                        </div> 
                         </div>
+                        <div className="action-buttons">
 
-                                <div className="link-pin-container">
-                                  <div className="link-pin">
-                                    <div className='link' >
-                                    
-                                        <div className="link-container">
-                                          <a className='linkToGallery' href={getGalleryURL('share',currentStudio?.domain,project?.id)} target='_blank' > 
-                                            ...{getGalleryURL('share',currentStudio?.domain,project?.id).slice(-40)}
-                                            <div className="button icon icon-only open-in-new"></div>
-                                          </a>
-                                        </div>
-                                      </div>
-                                      <div className="button primary outline text-only  icon copy"></div>
+                            <ProjectStatus project={project} />
 
-                                  </div>
-                                        {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
+                            <div className="button secondary outline icon archive"> Archive</div>
+                        
+                            <div className="cover-info project-expiry project-archive">
+                                <div className="icon-show expire"></div>
 
-                                </div>
+                                    <p>Archives 
+                                        <span> in </span> 
+                                        {
+                                            project?.createdAt ? 
+                                            Math.ceil(((new Date(project?.createdAt).getTime() + 90 * 24 * 60 * 60 * 1000) - Date.now()) / (1000 * 60 * 60 * 24))
+                                            : 0
+                                        } Days</p>
+
+                            </div>
+                        
+                        </div>
+                        
                         {
                             project.pin&&
-                    <div className="bottom-right">
-                        <div className="cover-info project-size">
+                            <div className="bottom-right">
+                            <div className="cover-info project-size">
                             <div className="icon-show storage"></div>
                             <p>{ convertMegabytes(project?.totalFileSize)} <span></span> </p>
-                        </div>
-                        <div className="cover-info project-size">
+                            </div>
+                            <div className="cover-info project-size">
                             <div className="icon-show image"></div>
                             <p>
                                 {project?.uploadedFilesCount} <span>Photos  </span>
                             </p>
-                        </div>
-                        <div className="cover-info project-size">
+                            </div>
+                            <div className="cover-info project-size">
                             <div className="icon-show folder"></div>
                             <p>
                                 {project?.collections.length} <span>Galleries</span>
                             </p>
-                        </div>
-                        {project.status === 'selected' && (
+                            </div>
+                            {project.status === 'selected' && (
                             <div className="cover-info project-size">
                                 <div className="icon-show selected"></div>
                                 <p>
                                     {project?.selectedFilesCount} <span>Selected</span>
                                 </p>
                             </div>
-                        )}
-                        <div className="project-metadata">
-                            <p>Project created on Jan 12, 2025</p>
-                        </div>
-                    </div>
+                            )}
+                            </div>
                         }
                     
                 </div>
@@ -222,18 +237,6 @@ export const ProjectCover = ({ project }) => {
             </div>}
             {project.pin&&
             <div className="static-tools top">
-                <div className="cover-info project-expiry project-archive">
-                    <div className="icon-show expire"></div>
-
-                        <p>Archives 
-                            <span> in </span> 
-                            {
-                                project?.createdAt ? 
-                                Math.ceil(((new Date(project?.createdAt).getTime() + 90 * 24 * 60 * 60 * 1000) - Date.now()) / (1000 * 60 * 60 * 24))
-                                : 0
-                            } Days</p>
-
-                </div>
                     <div className="cover-info project-expiry">
                     <div className="icon-show archive"></div>
                         <p>Expires 
@@ -245,6 +248,10 @@ export const ProjectCover = ({ project }) => {
                             } Days</p>
 
                     </div>
+
+                            <div className="project-metadata">
+                            <p>Project created on Jan 12, 2025</p>
+                            </div>
                 </div>
             }
             {

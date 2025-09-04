@@ -466,18 +466,20 @@ animation-timing-function: ease-out;
         }
         &.template-wedding{
           &::before{
+          background-size: 80%;
             background-image: url('https://img.icons8.com/?size=100&id=59805&format=png&color=ffffff');
           }
         }
         &.template-birthday{
           &::before{
+          background-size: 80%;
             background-image: url('https://img.icons8.com/?size=100&id=1VGGbDqqEsoJ&format=png&color=ffffff');
           }
         }
         &.template-baptism{
           &::before{
-          background-size: 105%;
-            background-image: url('https://img.icons8.com/?size=100&id=gZZsLShowwc1&format=png&color=ffffff');
+          background-size: 80%;
+            background-image: url('https://img.icons8.com/?size=100&id=3n7WgrQjIo8m&format=png&color=FFFFFF');
           }
         }
 

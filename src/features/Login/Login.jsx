@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { provider,auth,signInWithPopup } from '../../firebase/app';
 import {GoogleAuthProvider} from 'firebase/auth';
-import { Navigate, useNavigate } from 'react-router';
-import { fullAccess, getOwnerFromTeams, getStudiosOfUser } from '../../data/teams';
+import { useNavigate } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { googleLogin, login, selectUserStudio, setUser } from '../../app/slices/authSlice';
 import { openModal } from '../../app/slices/modalSlice';
 import LoginEmailPassword from './LoginEmailPassword';
 import AddStudio from '../../components/Modal/AddStudio';
 import { fetchStudiosOfUser } from '../../firebase/functions/studios';
-import { trackEvent } from '../../analytics/utils';
+import { isDeveloper, trackEvent } from '../../analytics/utils';
 import { updateProjectsStatus } from '../../app/slices/projectsSlice';
 import { Link } from 'react-router-dom';
 import { isAppleDevice } from '../../utils/generalUtils';
@@ -22,7 +21,10 @@ const LoginModal = () => {
   const [loading, setLoading] = React.useState(false);
   const defaultStudio = useSelector(selectUserStudio)
   const [googleSignInResult, setGoogleSignInResult] = useState({});
- 
+  
+  useEffect(()=>{
+    
+  },[])
   useEffect(()=>{
     if(googleSignInResult.user){
       
@@ -152,7 +154,9 @@ const LoginModal = () => {
         </>
         } 
           <div className="login-helper-options">
-            <Link to="/onboarding" className={`create-studio-link ${loading? 'fade':''}`}>Create your Studio</Link>
+            <Link to={isDeveloper?'/onboarding?ref=2744':`/onboarding`}
+            className={`create-studio-link ${loading? 'fade':''}`}
+            >Create your Studio</Link>
           </div>
           
         </div>

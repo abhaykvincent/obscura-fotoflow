@@ -4,16 +4,6 @@ import { handleUpload } from '../../../utils/uploadOperations';
 import './ImageGrid.scss';
 import { selectDomain } from '../../../app/slices/authSlice';
 import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragOverlay,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
   SortableContext,
   rectSortingStrategy,
   useSortable,
@@ -63,8 +53,15 @@ const computeLayout = (images, containerWidth, targetRowHeight, gap) => {
   return rows;
 };
 
-const SortableImage = ({ image, ...props }) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: image.url });
+const SortableImage = ({ image, sectionId, ...props }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: image.url,
+    data: {
+      type: 'image',
+      image,
+      fromSection: sectionId,
+    },
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -81,7 +78,8 @@ const SortableImage = ({ image, ...props }) => {
 };
 
 // New component for the drag overlay
-const ImageDragOverlay = ({ image }) => {
+export const ImageDragOverlay = ({ image }) => {
+  if (!image) return null;
   return (
     <div style={{ width: image.width, height: image.height, borderRadius: '4px' }}>
       <img
@@ -98,7 +96,18 @@ const ImageDragOverlay = ({ image }) => {
   );
 };
 
-const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate }) => {
+const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, toggleScaleControl, isViewOnly }) => {
+  const [showScaleControl, setShowScaleControl] = useState(false);
+
+  useEffect(() => {
+    if (toggleScaleControl) {
+      toggleScaleControl.current = () => setShowScaleControl(prev => !prev);
+    }
+  }, [toggleScaleControl]);
+  const handleScaleChange = (event) => {
+    const newScale = Number(event.target.value);
+    onSectionUpdate({ ...section, gridSettings: { ...section.gridSettings, scale: newScale } });
+  };
   const dispatch = useDispatch();
   const [images, setImages] = useState(section.images || []);
   const domain = useSelector(selectDomain);
@@ -106,12 +115,18 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate })
   const containerRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [layout, setLayout] = useState([]);
-  const [activeImage, setActiveImage] = useState(null);
 
   useLayoutEffect(() => {
     const observer = new ResizeObserver(entries => {
       for (let entry of entries) {
-        setContainerWidth(entry.contentRect.width);
+        const newContainerWidth = entry.contentRect.width;
+        setContainerWidth(newContainerWidth);
+        if (images && newContainerWidth) {
+          const targetRowHeight = 200;
+          const gap = 10;
+          const computedLayout = computeLayout(images, newContainerWidth, targetRowHeight, gap);
+          setLayout(computedLayout);
+        }
       }
     });
 
@@ -125,16 +140,7 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate })
         observer.unobserve(currentRef);
       }
     };
-  }, []);
-
-  useEffect(() => {
-    if (images && containerWidth) {
-      const targetRowHeight = 200;
-      const gap = 10;
-      const computedLayout = computeLayout(images, containerWidth, targetRowHeight, gap);
-      setLayout(computedLayout);
-    }
-  }, [images, containerWidth]);
+  }, [images]); // Add images to dependency array
 
   const onDrop = useCallback((acceptedFiles) => {
     const importFileSize = 0;
@@ -165,42 +171,9 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate })
     }
   }, [section.images]);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(KeyboardSensor)
-  );
-
-  const handleImageDragStart = (event) => {
-    const { active } = event;
-    const image = images.find((img) => img.url === active.id);
-    if (image) {
-      for (const row of layout) {
-        const layoutImage = row.find(img => img.url === image.url);
-        if (layoutImage) {
-          setActiveImage(layoutImage);
-          break;
-        }
-      }
-    }
-  };
-
-  const handleImageDragEnd = (event) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      const oldIndex = images.findIndex((img) => img.url === active.id);
-      const newIndex = images.findIndex((img) => img.url === over.id);
-      if (oldIndex !== -1 && newIndex !== -1) {
-        const newImages = arrayMove(images, oldIndex, newIndex);
-        setImages(newImages);
-        onSectionUpdate({ ...section, images: newImages });
-      }
-    }
-    setActiveImage(null);
-  };
-
   return (
     <div className="image-grid-section">
-      {images.length === 0 ? (
+      {images.length === 0 && !isViewOnly ? (
         <div
           className="upload-area"
           onDragOver={handleDragOver}
@@ -222,30 +195,28 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate })
             <p className="upload-sub-text">or click to upload</p>
           </div>
         </div>
+      ) : images.length === 0 && isViewOnly ? (
+        <div className="no-images-message">
+          <p>No images to display.</p>
+        </div>
       ) : (
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleImageDragStart} onDragEnd={handleImageDragEnd}>
-          <SortableContext items={images.map(img => img.url)} strategy={rectSortingStrategy}>
-            <div className="image-grid-display" ref={containerRef}>
-              {layout.map((row, rowIndex) => (
-                <div key={rowIndex} className="image-grid-row">
-                  {row.map((image, imgIndex) => (
-                    <SortableImage
-                      key={image.url}
-                      image={image}
-                      alt={`Gallery Image ${imgIndex}`}
-                      style={{ width: image.width, height: image.height }}
-                    />
-                  ))}
-                </div>
-              ))}
-            </div>
-          </SortableContext>
-          <DragOverlay>
-            {activeImage ? (
-              <ImageDragOverlay image={activeImage} />
-            ) : null}
-          </DragOverlay>
-        </DndContext>
+        <SortableContext items={images.map(img => img.url)} strategy={rectSortingStrategy}>
+          <div className="image-grid-display" ref={containerRef} data-section-id={section.id}>
+            {layout.map((row, rowIndex) => (
+              <div key={rowIndex} className="image-grid-row">
+                {row.map((image, imgIndex) => (
+                  <SortableImage
+                    key={image.url}
+                    image={image}
+                    sectionId={section.id}
+                    alt={`Gallery Image ${imgIndex}`}
+                    style={{ width: image.width, height: image.height }}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        </SortableContext>
       )}
     </div>
   );

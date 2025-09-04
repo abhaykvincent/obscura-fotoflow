@@ -1,0 +1,269 @@
+@import '../../style/variables';
+@import '../../style/components';
+
+@font-face {
+  font-family: 'Lastri';
+  src: 
+       url('../../fonts/LastriRegular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.share-project{
+  p{
+    color: black;
+  }
+  .align-center{
+    text-align: center;
+  }
+  .gallery-info{
+    position: relative;
+    z-index: 3;
+    color: rgba(0, 0, 0, 0.9);
+    text-align: center;
+    .projet-name{
+      font-family: 'Lastri', sans-serif;
+        padding: 0 8px;
+        font-size: 2rem;
+        color: rgba(0, 0, 0, 0.9);
+    }
+    .projet-type{
+      color: rgba(0, 0, 0, 0.5);
+      margin-top: 4px;
+    }
+    p{
+      
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+  }
+  .project-header{
+    display: grid;
+    position: relative;
+    background-position: center 30%;
+    background-size: 100%;
+    .banner{
+      align-items: center;
+      max-height: calc(100vh - 8px*12);
+      max-width: calc(100vw);
+      position: relative;
+      top: 0;
+      margin: 0 auto;
+      margin-bottom: 8px*5;
+      background:  linear-gradient((180deg,rgba(255, 255, 255, 0) 0%,rgba(255, 255, 255, 0) 20%,rgba(255, 255, 255, 1) 90%,rgba(255, 255, 255, 1) 100%));
+      z-index: 1;
+    }
+    .studio{
+      text-align: center;
+      color: $dark-3;
+      margin-bottom: 8px;
+    }
+  }
+  .shared-collection{
+      padding: 0 8px*5;
+      .studio-tag-line{
+        display: grid;
+        align-items: center;
+        text-align: center;
+        height: 8px*10;
+        color: $dark-3;
+      }
+  }
+
+  .gallary{
+
+    margin: 0 auto;
+    margin-top: 8px*2;
+    max-height: 100%;
+    max-width: 8px*140;
+    overflow-y: scroll;
+    .photos{
+      width: 100%;
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      align-items: center;
+      gap:8px*1;
+      .photo{
+        width: 100%;
+        min-height: 8px*19;
+        background-color: $light-0;
+        border-radius: 2px;
+        background-size: cover;
+      }
+    }
+    .loader{
+      height: 8px*10;
+      width: 100%;
+      margin: 8px*2 auto;
+      margin-right: 8px;
+      background-image: url('../../assets/img/gifs/loading-green-loading.gif');
+      background-position: center;
+      background-size: auto 50%;
+      opacity: 0.5;
+  }
+  }
+  .pagination{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px*3;
+  }
+}
+
+.smart-gallery-page {
+  .project-header {
+    display: grid;
+    position: relative;
+    background-position: center 30%;
+    background-size: 100%;
+    .banner{
+      align-items: center;
+      max-height: calc(100vh - 8px*12);
+      max-width: calc(100vw);
+      position: relative;
+      top: 0;
+      margin: 0 auto;
+      margin-bottom: 8px*5;
+      background:  linear-gradient((180deg,rgba(255, 255, 255, 0) 0%,rgba(255, 255, 255, 0) 20%,rgba(255, 255, 255, 1) 90%,rgba(255, 255, 255, 1) 100%));
+      z-index: 1;
+    }
+    .gallery-info {
+        position: relative;
+        z-index: 3;
+        color: rgba(0, 0, 0, 0.9);
+        text-align: center;
+        margin-bottom: 8px*4;
+        .project-name {
+            font-family: 'Lastri', sans-serif;
+            padding: 0 8px;
+            font-size: 2rem;
+            color: rgba(0, 0, 0, 0.9);
+        }
+        .project-type {
+            color: rgba(0, 0, 0, 0.5);
+            margin-top: 4px;
+        }
+    }
+  }
+
+  .action-buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .collections-container {
+    padding: 0 40px;
+    .collections-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+
+      .collection-card-link {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .collection-card {
+        aspect-ratio:  1.618/1;
+        border-radius: 8px;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 16px;
+        position: relative;
+        overflow: hidden;
+        *{
+          color: white;
+        }
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 50%);
+        }
+
+        .collection-name, .collection-image-count {
+          position: relative;
+          z-index: 1;
+        }
+
+        .collection-name {
+          font-size: 1.2rem;
+          font-weight: bold;
+        }
+
+        .collection-image-count {
+          font-size: 0.9rem;
+          color: rgba(255, 255, 255, 0.6);
+        }
+      }
+    }
+  }
+  .studio-tag-line{
+    display: grid;
+    align-items: center;
+    text-align: center;
+    height: 8px*10;
+    color: $dark-3;
+  }
+}
+
+@media only screen and (max-width: 830px) {
+  .share-project{
+    .shared-collection{
+      padding: 8px;
+    }
+    .gallary{
+      .photos{
+        grid-template-columns: 1fr;
+        .photo{
+        }
+      }
+    }
+  }
+}
+@media only screen and (max-width: 720px) {
+  .share-project{
+    .project-header{
+      .banner{
+        width: 100vw;
+      }
+    }
+    .shared-collection{
+      padding: 8px;
+    }
+    .gallary{
+      .photos{
+        grid-template-columns: 1fr;
+        .photo{
+        }
+      }
+    }
+  }
+}
+@media only screen and (max-width: 520px) {
+  .App .share-project{
+    .shared-collection{
+      padding: 8px;
+    }
+    .gallary{
+      width: calc(100vw - 8px*2);
+      .photos{
+        grid-template-columns: 1fr;
+        gap: 8px*2;
+        .photo{
+          min-height: 8px*10;
+        }
+      }
+    }
+  }
+}

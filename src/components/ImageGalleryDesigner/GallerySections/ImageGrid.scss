@@ -28,9 +28,13 @@
       display: flex;
       gap: 10px;
       margin-bottom: 10px;
+      
       div[role="button"] {
+
         img{
 
+            transform: scale(1.2);
+            opacity: 0;
           border: 1px solid #007bff00;
         }
         &:hover{
@@ -38,6 +42,15 @@
 
             border: 1px solid #66b346;
           }
+        }
+      }
+
+      // loop for nth child animation delay increments
+      @for $i from 1 through 32 {
+        div:nth-child(#{$i}) img{
+          $delay: 0.2s + 0.1s * ($i - 1);
+          animation: gallery-photo-reveal 0.2s ease-out $delay;
+          animation-fill-mode: forwards;
         }
       }
     }

@@ -52,6 +52,8 @@ export const setUserType = (userType) => {
     // Development Mode Debugging - logs to console
     if (!isProduction) {
         let color = '#ffd426';
+        
+        console.log(`%c 💻 ------- Developer only -------`, `color: ${color};`);
         console.log(`%c GA User Type: ${userType}`, `color: ${color}; `);
     }
 

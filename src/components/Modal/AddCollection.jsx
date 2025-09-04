@@ -30,7 +30,6 @@ function AddCollectionModal({ project }) {
   const visible = useSelector(selectModal);
   const defaultStudio = useSelector(selectUserStudio);
   const studio = useSelector(selectStudio);
-  console.log(studio);
   const collectionsLimit = {
     perProject: defaultStudio.domain === 'monalisa' ? 24 : 
     studio.planName === 'Core' ? 3 : 12,

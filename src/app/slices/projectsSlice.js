@@ -69,7 +69,7 @@ export const addProject = createAsyncThunk(
   'projects/addProject',
   ({domain,projectData}) => {
     const data = addProjectToStudio(domain,projectData)
-    return convertTimestamps(data)}
+    return data}
 );
 export const updateProjectName = createAsyncThunk(
   'projects/updateProjectName',
