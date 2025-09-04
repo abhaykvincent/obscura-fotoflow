@@ -23,7 +23,7 @@ const LoginModal = () => {
   const [googleSignInResult, setGoogleSignInResult] = useState({});
   
   useEffect(()=>{
-    if(isDeveloper)navigate('/onboarding?ref=2744')
+    
   },[])
   useEffect(()=>{
     if(googleSignInResult.user){
@@ -154,7 +154,9 @@ const LoginModal = () => {
         </>
         } 
           <div className="login-helper-options">
-            <Link to="/onboarding" className={`create-studio-link ${loading? 'fade':''}`}>Create your Studio</Link>
+            <Link to={isDeveloper?'/onboarding?ref=2744':`/onboarding`}
+            className={`create-studio-link ${loading? 'fade':''}`}
+            >Create your Studio</Link>
           </div>
           
         </div>

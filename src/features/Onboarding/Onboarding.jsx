@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react'
 import CreateStudio from './CreateStudio.jsx'
 import './Onboarding.scss'
@@ -7,7 +6,7 @@ import { useNavigate } from 'react-router'
 import { acceptInvitationCode,createUser,useInvitationCode, validateInvitationCodeFromFirestore } from '../../firebase/functions/firestore.js'
 import { createStudio } from '../../firebase/functions/studios.js'
 import { useDispatch, useSelector } from 'react-redux'
-import { checkAuthStatus, login, logout, selectUser, selectUserStudio, setCurrentStudio, setUser } from '../../app/slices/authSlice.js'
+import { login, logout, selectUser, selectUserStudio, setCurrentStudio, setUser } from '../../app/slices/authSlice.js'
 import { showAlert } from '../../app/slices/alertSlice.js'
 import { signInWithPopup } from 'firebase/auth'
 import { analytics, auth, provider } from '../../firebase/app.js'
@@ -281,7 +280,6 @@ function Onboarding() {
       validity: 30,
       createdAt: new Date().toISOString(),
     }))
-    dispatch(checkAuthStatus())
     createTimeOFDayObject()
     trackEvent('onboarding_viewed', {
       referral_code: ref
