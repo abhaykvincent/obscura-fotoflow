@@ -16,27 +16,6 @@
   .align-center{
     text-align: center;
   }
-  .gallery-info{
-    position: relative;
-    z-index: 3;
-    color: rgba(0, 0, 0, 0.9);
-    text-align: center;
-    .projet-name{
-      font-family: 'Lastri', sans-serif;
-        padding: 0 8px;
-        font-size: 2rem;
-        color: rgba(0, 0, 0, 0.9);
-    }
-    .projet-type{
-      color: rgba(0, 0, 0, 0.5);
-      margin-top: 4px;
-    }
-    p{
-      
-      color: rgba(0, 0, 0, 0.7);
-    }
-
-  }
   .project-header{
     display: grid;
     position: relative;
@@ -110,6 +89,7 @@
 }
 
 .smart-gallery-page {
+
   .project-header {
     display: grid;
     position: relative;
@@ -125,6 +105,11 @@
       margin-bottom: 8px*5;
       background:  linear-gradient((180deg,rgba(255, 255, 255, 0) 0%,rgba(255, 255, 255, 0) 20%,rgba(255, 255, 255, 1) 90%,rgba(255, 255, 255, 1) 100%));
       z-index: 1;
+
+
+      opacity: 0;
+      transform: scale(0.8);
+      animation: gallery-photo-reveal 0.4s ease 0.05s forwards;
     }
     .gallery-info {
         position: relative;
@@ -132,6 +117,9 @@
         color: rgba(0, 0, 0, 0.9);
         text-align: center;
         margin-bottom: 8px*4;
+      opacity: 0;
+      transform: scale(0.8);
+      animation: gallery-photo-reveal 0.3s ease 0.5s forwards;
         .project-name {
             font-family: 'Lastri', sans-serif;
             padding: 0 8px;
@@ -153,7 +141,7 @@
   }
 
   .collections-container {
-    padding: 0 40px;
+    padding: 0 8px*3;
     .collections-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -176,7 +164,9 @@
         justify-content: flex-end;
         padding: 16px;
         position: relative;
-        overflow: hidden;
+        overflow: hidden; 
+        opacity: 0;
+          transform: translateY(0px);
         *{
           color: white;
         }
@@ -204,6 +194,17 @@
         .collection-image-count {
           font-size: 0.9rem;
           color: rgba(255, 255, 255, 0.6);
+        }
+
+
+      }
+      // for loop
+      @for $i from 1 through 20 {
+        .collection-card-link:nth-child(#{$i}) {
+          .collection-card{
+            $delay: 0.6s + 0.04s * $i ;
+            animation: gallery-photo-reveal 0.2s ease $delay forwards;
+          }
         }
       }
     }
