@@ -31,7 +31,7 @@ const WelcomeModal = () => {
     }
   };
 
-  if (visible.welcome) {
+  if (!visible.welcome) {
     return null;
   }
 

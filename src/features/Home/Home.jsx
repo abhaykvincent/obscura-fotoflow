@@ -16,7 +16,7 @@ import EventCard from '../../components/Project/ProjectCard/EventCard';
 import { getEventTimeAgo } from '../../utils/dateUtils';
 import AddProjectModal from '../../components/Modal/AddProject/AddProject';
 import WelcomeModal from '../../components/Modal/WelcomeModal/WelcomeModal';
-import { fetchUserByEmail, updateUser } from '../../firebase/functions/firestore';
+import { fetchUserByEmail } from '../../firebase/functions/firestore';
 
 function Home() {
     const dispatch = useDispatch()
@@ -24,8 +24,6 @@ function Home() {
     const defaultStudio = useSelector(selectUserStudio)
     const user = useSelector(selectUser);
     const navigate = useNavigate();
-
-    const [showWelcomeModal, setShowWelcomeModal] = useState(true);
 
     document.title = `FotoFlow | ${defaultStudio.name}`;
     const selectionCompletedProjects = getProjectsByStatus(projects, 'selected');
@@ -40,28 +38,13 @@ function Home() {
         const checkWelcomeStatus = async () => {
             if (user && user.email) {
                 const firestoreUser = await fetchUserByEmail(user.email);
-                if (firestoreUser && firestoreUser.hasSeenWelcomeModal === false) {
-                    setShowWelcomeModal(true);
+                if (firestoreUser && firestoreUser.hasSeenWelcomeModal !== true) {
+                    dispatch(openModal('welcome'));
                 }
             }
         };
         checkWelcomeStatus();
-    }, [user]);
-
-    const handlePrimaryAction = async () => {
-        if (user && user.email) {
-            await updateUser(user.email, { hasSeenWelcomeModal: true });
-        }
-        navigate('/projects/new'); // Assuming this is the correct route
-        setShowWelcomeModal(false);
-    };
-
-    const handleModalClose = async () => {
-        if (user && user.email) {
-            await updateUser(user.email, { hasSeenWelcomeModal: true });
-        }
-        setShowWelcomeModal(false);
-    };
+    }, [user, dispatch]);
 
     useEffect(() => {
         trackEvent('studio_home_view')
@@ -98,7 +81,7 @@ function Home() {
     }, [selectedProjects]);
     return (
         <>
-            {showWelcomeModal && <WelcomeModal onPrimaryAction={handlePrimaryAction} onClose={handleModalClose} />}
+            <WelcomeModal />
             <AddProjectModal />
 
             <div className="home-header">
