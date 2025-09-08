@@ -1,5 +1,7 @@
 
 @import '../../../style/_variables.scss';
+.App{
+  
 .welcome-modal-backdrop {
   position: fixed;
   top: 0;
@@ -81,4 +83,49 @@
       background-color: #f0f0f0;
     }
   }
+}
+.welcome-modal{
+  text-align: center;
+  .modal-body {
+    padding: 0 8px*8;
+  h2{
+    margin: 8px*2;
+  }
+    p{
+      color: #444;
+      span{
+      &.highlight{
+        margin-top: 8px*2;
+        color: #999;
+      }
+      &.mid-highlight{
+        margin-top: 8px*2;
+        color: #666;
+      }
+      &.shadow{
+        margin-top: 8px*2;
+        color: #333;
+      }
+
+      }
+    }
+    .visual-placeholder{
+      width: 60%;
+      height: 8px*20;
+
+      margin: 8px*4 20%;
+      background-image: url('../../../assets/img/page\ illustrations/welcome-modal-image.png');
+      background-position: center;
+      background-size: 100% ;
+      background-repeat: no-repeat;
+
+      border-radius: 8px;
+    }
+  }
+    .actions{ 
+      justify-content: center;
+      gap:8px*2;
+      }
+}
+
 }

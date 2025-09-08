@@ -18,6 +18,7 @@ const initialState = {
     trialStatus:false,
     qrCode:false,
     createPackage: false,
+    welcome: false,
 };
 export const closeModalWithAnimation = createAsyncThunk(
   'projects/closeModalWithAnimation',
