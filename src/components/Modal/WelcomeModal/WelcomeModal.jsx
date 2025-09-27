@@ -31,7 +31,7 @@ const WelcomeModal = () => {
     }
   };
 
-  if (!visible.welcome) {
+  if (visible.welcome) {
     return null;
   }
 
@@ -52,13 +52,16 @@ const WelcomeModal = () => {
         <div className="modal-body">
           <h2>Create your <span className='iconic-gradient'>First Project</span> </h2>
             <p>
-                We built Fotoflow to help you streamline your event photography workflow <span className='shadow'> and</span>
-                <span className='mid-highlight'> get back to what you love</span> : <span className='highlight'>capturing incredible moments.</span>
+                <span className='mid-highlight'>Simplify</span> your <span className='highlight'>Workflow.</span> <span className='mid-highlight'>Elevate</span> the <span className='highlight'>Client experience</span>. <br/>
+
             </p>
             {/* Placeholder for a visual element */}
             <div className="visual-placeholder">
                 {/* You can replace this div with an actual image or illustration */}
             </div>
+            <p>
+                <span className='highlight'> Let's  get started . </span> 🎉  
+            </p>
         </div>
 
         <div className="actions">

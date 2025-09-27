@@ -88,8 +88,10 @@
   text-align: center;
   .modal-body {
     padding: 0 8px*8;
+
+    min-width: 8px*80;
   h2{
-    margin: 8px*2;
+    margin: 8px*1;
   }
     p{
       color: #444;
@@ -110,16 +112,16 @@
       }
     }
     .visual-placeholder{
-      width: 60%;
+      width: 80%;
       height: 8px*20;
 
-      margin: 8px*4 20%;
+      margin: 8px*4 10%;
       background-image: url('../../../assets/img/page\ illustrations/welcome-modal-image.png');
       background-position: center;
       background-size: 100% ;
       background-repeat: no-repeat;
 
-      border-radius: 8px;
+      border-radius: 8px*1.5;
     }
   }
     .actions{ 

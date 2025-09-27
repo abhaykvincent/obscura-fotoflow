@@ -6,7 +6,7 @@ import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
 import Refresh from '../../components/Refresh/Refresh';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectProjects } from '../../app/slices/projectsSlice';
-import { openModal, selectModal } from '../../app/slices/modalSlice';
+import { openModal, selectModal, closeModalWithAnimation } from '../../app/slices/modalSlice';
 import { selectUser, selectUserStudio } from '../../app/slices/authSlice';
 import StoragePie from '../../components/StoragePie/StoragePie';
 import { toast } from 'sonner'
@@ -38,13 +38,24 @@ function Home() {
         const checkWelcomeStatus = async () => {
             if (user && user.email) {
                 const firestoreUser = await fetchUserByEmail(user.email);
-                if (firestoreUser && firestoreUser.hasSeenWelcomeModal !== true) {
-                    dispatch(openModal('welcome'));
+                if (firestoreUser && firestoreUser.hasSeenWelcomeModal === true) {
+                    if (projects.length === 0) {
+                        // To avoid opening while another modal is active
+                        const isAnyModalOpen = Object.values(modals).some(modal => modal === true);
+                        if (!isAnyModalOpen) {
+                            dispatch(openModal('welcome'));
+                        }
+                    } else {
+                        // This part is for closing if opened by mistake
+                        if (modals.welcome) {
+                            dispatch(closeModalWithAnimation('welcome'));
+                        }
+                    }
                 }
             }
         };
         checkWelcomeStatus();
-    }, [user, dispatch]);
+    }, [user, projects, modals, dispatch]);
 
     useEffect(() => {
         trackEvent('studio_home_view')
@@ -58,17 +69,6 @@ function Home() {
         });
         setUpcommingShoots(sortedUpcommingShoots)
     }, [])
-    useEffect(() => {
-        if (projects.length === 0) {
-            setTimeout(() => {
-                const isAnyModalOpen = Object.values(modals).some(modal => modal === true);
-
-                if (!isAnyModalOpen) {
-                    dispatch(openModal('createProject'));
-                }
-            }, 3000);
-        }
-    }, [projects])
 
     useEffect(() => {
 

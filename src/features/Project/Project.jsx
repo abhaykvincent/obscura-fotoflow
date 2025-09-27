@@ -81,7 +81,7 @@ export default function Project() {
       if (project.collections.length === 0) {
         setTimeout(() => {
           const isAnyModalOpen = Object.values(modalsRef.current).some(Boolean);
-          if (!isAnyModalOpen) dispatch(openModal('createCollection'));
+          if (!isAnyModalOpen) dispatch(openModal('firstCollection'));
         }, 3000);
       }
     }
@@ -116,6 +116,7 @@ export default function Project() {
       />
 
       <AddCollectionModal project={project} />
+
       <AddPaymentModal project={project} />
       <AddExpenseModal project={project} />
       <AddBudgetModal project={project} />

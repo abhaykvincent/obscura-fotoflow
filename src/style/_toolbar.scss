@@ -18,8 +18,15 @@
     gap: 10px;
     padding: 2px 8px*2;
     border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5)
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-left:1px solid rgba(255, 255, 255, 0.4);
+    border-right:1px solid rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    
   }
   button.button.icon {
     background-color: #fff;
@@ -36,7 +43,7 @@
       opacity: 1 !important;
       transform: scale(1);
       padding: 8px*1.5;
-      filter: drop-shadow(1px 1px 1px #ffffff);
+      filter: drop-shadow(1px 1px 1px #666666);
     }
     &:hover{
     background-color: white ;
@@ -56,8 +63,13 @@
     padding: 8px*1  8px;
     gap:4px;
     border-radius: 8px*1.6;
-    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-left:1px solid rgba(255, 255, 255, 0.4);
+    border-right:1px solid rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.3);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+          -webkit-backdrop-filter: blur(4px);
+          backdrop-filter: blur(4px);
     &:first-of-type{
       
     margin-top: 8px*4;
