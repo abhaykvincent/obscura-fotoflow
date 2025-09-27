@@ -188,26 +188,35 @@ function ShareGallery({project }) {
                         </div>
                       </div>
                     </div>
-                    <FormControlLabel
-                      control={
-                        <IOSSwitch
-                          sx={{ m: 1 }}
-                          checked={collection.selectionGallery === true}
-                          disabled={collection.status !== 'visible'}
-                          onChange={(event) => {
-                            const newStatus = event.target.checked ? true: false;
-                            dispatch(updateSelectionGalleryStatus({
-                              domain,
-                              projectId: project?.id,
-                              collectionId: collection.id,
-                              status: newStatus
-                            }));
-                          }}
-                          color="blue"
-                        />
-                      }
-                      label=""
-                    />
+                    <div className="selection-toggle">
+                      {/* llabel; */}
+                      <p className={`toggle-status-label ${collection.selectionGallery === true ? '' : 'toggle-off'}`}>
+                        {
+                          collection.selectionGallery === true ? 'Waiting for client selection.' : 'Turn on selection'
+                        }
+                      </p>
+                      <div className={`selection-icon ${collection.selectionGallery === true ? 'active' : ''}`}></div>
+                      <FormControlLabel
+                        control={
+                          <IOSSwitch
+                            sx={{ m: 1 }}
+                            checked={collection.selectionGallery === true}
+                            disabled={collection.status !== 'visible'}
+                            onChange={(event) => {
+                              const newStatus = event.target.checked ? true: false;
+                              dispatch(updateSelectionGalleryStatus({
+                                domain,
+                                projectId: project?.id,
+                                collectionId: collection.id,
+                                status: newStatus
+                              }));
+                            }}
+                            color="blue"
+                          />
+                        }
+                        label=""
+                      />
+                    </div>
                   </div>
                 ))}
               </div>

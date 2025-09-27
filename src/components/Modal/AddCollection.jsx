@@ -190,7 +190,7 @@ const handleSuggestedNameChange = (event) => {
               />
 
               <label htmlFor=""></label>
-              <div className="project-validity-options">
+              <div className="field-options project-validity-options ">
                 {projectTypePlaceholders[project.type]
                   ?.filter(
                     (placeholder) =>

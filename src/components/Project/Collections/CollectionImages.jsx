@@ -273,19 +273,21 @@ const CollectionImages = ({ id, collectionId, project }) => {
         });
     };
 
-    const handleDesignClick = () => {
-        setDisplayMode('lightMode');
-        dispatch(setGalleryMode('designMode'));
+   const handleDesignClick = () => {
+    setDisplayMode('lightMode');
+    dispatch(setGalleryMode('designMode'));
+
+    // DEFERRED SCROLL ACTION
+    setTimeout(() => {
         if (projectCollectionRef.current) {
             projectCollectionRef.current.scrollIntoView({ 
                 behavior: 'smooth', 
                 block: 'start', 
-                offset: {
-                    top: 200
-                }
+                // offset is a non-standard property, see notes below
             });
         }
-    };
+    }, 200); // Runs the scroll after the state updates and re-render are committed to the DOM
+};
 
     return (
         <div className={`project-collection ${displayMode}`} ref={projectCollectionRef}>
@@ -408,7 +410,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
             }
 
             {
-                <div className="image-gallery-bottom-panel">
+                <div className={`${galleryMode === 'designMode' && 'bottom-panel-light-mode'} image-gallery-bottom-panel `}>
                     {/* <div className="button secondary">Load All</div> */}
                     
                     {collectionImages?.length !== imageUrls.length && collectionImages?.length >0 && <div className={`button primary`}

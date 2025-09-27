@@ -32,3 +32,4 @@ Maintain code quality, consistency, and readability across the project
 ## Response instructions
 *  After each response, provide a summary of the changes made.
 *  after summary, mention type of change made (e.g., "bug fix", "feature addition", "documentation update").
+* After that, suggest a suitable branch name in proper format and suggest an easy to undestand commit message with description. use emoji and formating to show the context hiearchy.
