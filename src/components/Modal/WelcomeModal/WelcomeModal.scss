@@ -114,20 +114,54 @@
     .visual-placeholder{
       width: 80%;
       height: 8px*20;
-
       margin: 8px*4 10%;
-      background-image: url('../../../assets/img/page\ illustrations/welcome-modal-image.png');
       background-position: center;
-      background-size: 100% ;
+      background-size: contain;
       background-repeat: no-repeat;
-
       border-radius: 8px*1.5;
+
+      &.welcome {
+        background-image: url('../../../assets/img/page illustrations/welcome-modal-image.png');
+      }
+      &.smart-gallery {
+        background-image: url('../../../assets/img/page illustrations/welcome-modal-image.png');
+      }
+      &.create-project {
+        background-image: url('../../../assets/img/page illustrations/welcome-modal-image.png');
+      }
     }
   }
-    .actions{ 
-      justify-content: center;
-      gap:8px*2;
+
+  .modal-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px*2 8px*4;
+    gap: 8px*2;
+
+    .step-indicator {
+      display: flex;
+      gap: 8px;
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #ccc;
+        transition: background-color 0.3s;
+
+        &.active {
+          background-color: $green-default-dark;
+        }
       }
+    }
+  }
+
+  .actions{ 
+    justify-content: center;
+    gap:8px*2;
+    width: 100%;
+  }
 }
 
 }
