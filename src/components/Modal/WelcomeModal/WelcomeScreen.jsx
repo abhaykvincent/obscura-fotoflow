@@ -2,7 +2,7 @@ import React from 'react';
 
 const WelcomeScreen = ({ body }) => {
   return (
-    <div className="modal-body">
+    <div className="welcome-screen-body-wrapper">
       {body}
     </div>
   );

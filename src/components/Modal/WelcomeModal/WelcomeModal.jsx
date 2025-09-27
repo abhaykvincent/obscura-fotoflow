@@ -61,9 +61,15 @@ const WelcomeModal = () => {
           </div>
         </div>
         
-        <WelcomeScreen 
-          body={welcomeScreens[currentStep].body}
-        />
+        <div className="modal-body">
+            <div className="screens-slider" style={{ transform: `translateX(-${currentStep * 100}%)` }}>
+                {welcomeScreens.map((screen, index) => (
+                    <div className="screen-content" key={index}>
+                        <WelcomeScreen body={screen.body} />
+                    </div>
+                ))}
+            </div>
+        </div>
 
         <div className="modal-footer">
             <div className="step-indicator">

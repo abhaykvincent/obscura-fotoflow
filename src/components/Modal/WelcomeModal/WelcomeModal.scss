@@ -86,48 +86,62 @@
 }
 .welcome-modal{
   text-align: center;
-  .modal-body {
-    padding: 0 8px*8;
-
+  .modal-body { // viewport
+    overflow: hidden;
+    padding: 0;
     min-width: 8px*80;
-  h2{
-    margin: 8px*1;
-  }
-    p{
-      color: #444;
-      span{
-      &.highlight{
-        margin-top: 8px*2;
-        color: #999;
-      }
-      &.mid-highlight{
-        margin-top: 8px*2;
-        color: #666;
-      }
-      &.shadow{
-        margin-top: 8px*2;
-        color: #333;
-      }
 
-      }
-    }
-    .visual-placeholder{
-      width: 80%;
-      height: 8px*20;
-      margin: 8px*4 10%;
-      background-position: center;
-      background-size: contain;
-      background-repeat: no-repeat;
-      border-radius: 8px*1.5;
+    .screens-slider {
+      display: flex;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-      &.welcome {
-        background-image: url('../../../assets/img/page illustrations/welcome-modal-image.png');
-      }
-      &.smart-gallery {
-        background-image: url('../../../assets/img/page illustrations/welcome-modal-image.png');
-      }
-      &.create-project {
-        background-image: url('../../../assets/img/page illustrations/welcome-modal-image.png');
+      .screen-content {
+        width: 100%;
+        flex-shrink: 0;
+
+        .welcome-screen-body-wrapper {
+          padding: 0 8px*8;
+          
+          h2{
+            margin: 8px*1;
+          }
+          p{
+            color: #444;
+            span{
+              &.highlight{
+                margin-top: 8px*2;
+                color: #999;
+              }
+              &.mid-highlight{
+                margin-top: 8px*2;
+                color: #666;
+              }
+              &.shadow{
+                margin-top: 8px*2;
+                color: #333;
+              }
+            }
+          }
+          .visual-placeholder{
+            width: 80%;
+            height: 8px*20;
+            margin: 8px*4 10%;
+            background-position: center;
+            background-size: contain;
+            background-repeat: no-repeat;
+            border-radius: 8px*1.5;
+
+            &.welcome {
+              background-image: url('../../../assets/img/page illustrations/welcome-modal-image.png');
+            }
+            &.smart-gallery {
+              background-image: url('../../../assets/img/page illustrations/welcome-modal-image.png');
+            }
+            &.create-project {
+              background-image: url('../../../assets/img/page illustrations/welcome-modal-image.png');
+            }
+          }
+        }
       }
     }
   }
