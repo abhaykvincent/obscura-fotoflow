@@ -56,16 +56,13 @@ const WelcomeModal = () => {
             <div className="control minimize"></div>
             <div className="control maximize"></div>
           </div>
-          <div className="modal-title">
-            {welcomeScreens[currentStep].title}
-          </div>
         </div>
         
         <div className="modal-body">
             <div className="screens-slider" style={{ transform: `translateX(-${currentStep * 100}%)` }}>
                 {welcomeScreens.map((screen, index) => (
                     <div className="screen-content" key={index}>
-                        <WelcomeScreen body={screen.body} />
+                        <WelcomeScreen title={screen.title} body={screen.body} />
                     </div>
                 ))}
             </div>
@@ -78,16 +75,19 @@ const WelcomeModal = () => {
                 ))}
             </div>
             <div className="actions">
-            {currentStep > 0 && (
+            {currentStep > 0 ? (
                 <div className="button secondary" onClick={handleBack}>
                     Back
                 </div>
-            )}
+            )
+            :(
+                <div className="button secondary disabled" onClick={handleBack}>
+                    Back
+                </div>
+            )
+          }
             {isLastStep ? (
                 <>
-                    <div className="button secondary" onClick={() => handleClose(false)}>
-                        Dashboard
-                    </div>
                     <div className="button primary" onClick={() => handleClose(true)}>
                         Create Project
                     </div>
