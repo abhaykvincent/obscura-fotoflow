@@ -40,11 +40,7 @@ function Home() {
                 const firestoreUser = await fetchUserByEmail(user.email);
                 if (firestoreUser && firestoreUser.hasSeenWelcomeModal === true) {
                     if (projects.length === 0) {
-                        // To avoid opening while another modal is active
-                        const isAnyModalOpen = Object.values(modals).some(modal => modal === true);
-                        if (!isAnyModalOpen) {
                             dispatch(openModal('welcome'));
-                        }
                     } else {
                         // This part is for closing if opened by mistake
                         if (modals.welcome) {
