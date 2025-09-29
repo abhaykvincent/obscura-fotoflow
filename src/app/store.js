@@ -14,6 +14,7 @@ import adminPaneReducer from './slices/adminPaneSlice';
 import packagesReducer from './slices/packagesSlice';
 import smartGalleryReducer from './slices/smartGallerySlice';
 import galleryReducer from './slices/gallerySlice';
+import onboardingReducer from '../features/Onboarding/v2/slices/onboardingSlice';
 
 export const store = configureStore({
   reducer: {
@@ -32,5 +33,6 @@ export const store = configureStore({
     notifications: notificationReducer,
     adminPane: adminPaneReducer,
     packages: packagesReducer,
+    onboarding: onboardingReducer,
   },
 });

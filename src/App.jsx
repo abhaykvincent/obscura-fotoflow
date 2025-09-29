@@ -25,7 +25,7 @@ import Galleries from './features/Galleries/Galleries';
 import SelectionPIN from './features/Selection/SelectionPIN';
 import Selection from './features/Selection/Selection';
 import Teams from './features/Teams/Teams';
-import Onboarding from './features/Onboarding/Onboarding';
+import Onboarding from './features/Onboarding/v2/Onboarding';
 import AdminPanel from './features/AdminPanel/AdminPanel';
 import DeveloperTools from './features/AdminPanel/DeveloperTools';
 import Notifications from './features/Notifications/Notifications';
