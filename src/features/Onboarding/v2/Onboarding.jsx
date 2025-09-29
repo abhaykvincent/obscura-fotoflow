@@ -109,14 +109,7 @@ function Onboarding() {
                     </>
                 )}
 
-                {!user?.email && invitation && (
-                    <>
-                        <h3 className='continue-with'>Continue with</h3>
-                        <div className={`button google-login-button`} onClick={handleGoogleSignIn}>
-                            Google <div className="google-logo"></div>
-                        </div>
-                    </>
-                )}
+                
 
                 {!invitation && (
                     <div className='activate-fotoflow-whatsapp'>
@@ -150,6 +143,7 @@ function Onboarding() {
                         updateFormData={updateFormData}
                         onNext={handleCreateAccount}
                         onPrevious={() => setCurrentScreen('create-studio')}
+                        handleGoogleSignIn={handleGoogleSignIn}
                     />
                 )}
             </div>

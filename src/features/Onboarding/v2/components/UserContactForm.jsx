@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../../app/slices/modalSlice';
 
-const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious }) => {
+const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, handleGoogleSignIn }) => {
     const dispatch = useDispatch();
     const [contactNumber, setContactNumber] = useState(formData.studioContact || '');
     const [inputMessage, setInputMessage] = useState({});
@@ -38,6 +38,16 @@ const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious })
         }
     };
 
+    useEffect(() => {
+        if (user?.email && inputMessage.type === 'success' && privacyPolicyAgreed) {
+            onNext();
+        }
+    }, [user?.email, inputMessage.type, privacyPolicyAgreed]);
+
+    const handleGoogleSignInAndProceed = async () => {
+        await handleGoogleSignIn();
+    };
+
     return (
         <div className={`screen user-contact`}>
             <div className="screen-title">
@@ -64,12 +74,18 @@ const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious })
                         I agree to the <span onClick={() => dispatch(openModal('privacyPolicy'))}>Terms of Service</span> and <span onClick={() => dispatch(openModal('privacyPolicy'))}>Privacy Policy</span>
                     </label>
                 </div>
-                <div
-                    className={`button primary large ${!user?.email || inputMessage.type !== 'success' || !privacyPolicyAgreed ? 'disabled' : ''}`}
-                    onClick={handleSubmit}
-                >
-                    Open App
-                </div>
+                {!user?.email ? (
+                    <div className={`button google-login-button large ${inputMessage.type !== 'success' || !privacyPolicyAgreed ? 'disabled' : ''}`} onClick={handleGoogleSignInAndProceed}>
+                        Google <div className="google-logo"></div>
+                    </div>
+                ) : (
+                    <div
+                        className={`button primary large ${inputMessage.type !== 'success' || !privacyPolicyAgreed ? 'disabled' : ''}`}
+                        onClick={handleSubmit}
+                    >
+                        Open App
+                    </div>
+                )}
             </form>
         </div>
     );
