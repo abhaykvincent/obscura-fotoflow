@@ -19,10 +19,17 @@ export const createUser = async (userData) => {
         email : email,
         studio : studio,
         photoURL : photoURL,
+        hasSeenWelcomeModal: false
     }
     await setDoc(doc(usersCollection, userDoc.email), userDoc)
     return userDoc
 }
+export const updateUser = async (email, updateData) => {
+    const usersCollection = collection(db, 'users');
+    const userDocRef = doc(usersCollection, email);
+    await updateDoc(userDocRef, updateData);
+    return true;
+};
 export const fetchUsers = async () => {
     const usersCollection = collection(db, 'users');
     const querySnapshot = await getDocs(usersCollection);

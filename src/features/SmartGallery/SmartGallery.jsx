@@ -61,10 +61,9 @@ export default function SmartGallery() {
   if (collectionId) {
     return (
       <div className="share-project">
-        <div className="shared-collection">
           <SmartAlbum domain={studioName} projectId={projectId} collectionId={collectionId} />
           {project.type !== "FUNERAL" && <p className='studio-tag-line'>{`smile with ${studioName}`}</p>}
-        </div>
+ 
       </div>
     );
   }

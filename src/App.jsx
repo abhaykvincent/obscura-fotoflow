@@ -217,11 +217,11 @@ export default function App() {
             </Routes>
           )}
 
-    <div className="footer">
+{!isLightModePage&&<div className="footer">
             {/* Made in Kochi by Photographers |  */}
             <div className='copyright-symbol'>©</div>  
             <a href="https://www.masanory.com" target="_blank" rel="noopener noreferrer"><span>Fotoflow</span> 2025</a>
-          </div>
+          </div>}
           </HotKeys>
           
     </div>
