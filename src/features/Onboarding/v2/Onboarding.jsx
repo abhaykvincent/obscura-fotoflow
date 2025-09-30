@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithPopup } from 'firebase/auth';
 import { analytics, auth, provider } from '../../../firebase/app';
 import { selectUser, setUser, logout } from '../../../app/slices/authSlice';
 import { trackEvent } from '../../../analytics/utils';
@@ -13,7 +13,6 @@ import { completeOnboarding } from './slices/onboardingSlice';
 import CreateStudioForm from './components/CreateStudioForm';
 import UserContactForm from './components/UserContactForm';
 import '../Onboarding.scss';
-import { generateReferral } from '../../../app/slices/referralsSlice';
 
 function Onboarding() {
     const navigate = useNavigate();
@@ -25,10 +24,9 @@ function Onboarding() {
     const { status: onboardingStatus } = useSelector(state => state.onboarding);
     const greeting = usePersonalizedGreeting();
     const { invitation, isLoading: isInvitationLoading } = useInvitation(ref);
-    const { formData, updateFormData } = useOnboardingForm();
+    const { formData, updateFormData, errors, isDomainAvailable } = useOnboardingForm();
 
     const [currentScreen, setCurrentScreen] = useState('create-studio');
-    const [errors, setErrors] = useState({ studioName: '', email: '' });
 
     useEffect(() => {
         const studioLocal = JSON.parse(localStorage.getItem('studio'));
@@ -40,25 +38,6 @@ function Onboarding() {
     useEffect(() => {
         trackEvent('onboarding_viewed', { referral_code: ref });
     }, [ref]);
-      useEffect(() => {
-        dispatch(generateReferral({
-          name: "Abhay",
-          campainName: "Admin",
-          campainPlatform: "whatsapp",
-          type: "referral",
-          email: "",
-          phoneNumber: "",
-          code: ['2744'],
-          status: "active",
-          quota: 3,
-          used: 0,
-          validity: 30,
-          createdAt: new Date().toISOString(),
-        }))
-        trackEvent('onboarding_viewed', {
-          referral_code: ref
-        });
-      },[])
 
     const handleGoogleSignIn = async () => {
         try {
@@ -148,6 +127,7 @@ function Onboarding() {
                         updateFormData={updateFormData}
                         onNext={() => setCurrentScreen('user-contact')}
                         errors={errors}
+                        isDomainAvailable={isDomainAvailable}
                     />
                 ) : (
                     <UserContactForm
@@ -157,6 +137,7 @@ function Onboarding() {
                         onNext={handleCreateAccount}
                         onPrevious={() => setCurrentScreen('create-studio')}
                         handleGoogleSignIn={handleGoogleSignIn}
+                        errors={errors}
                     />
                 )}
             </div>

@@ -94,6 +94,17 @@ export default function AddReferralModal({ }) {
             onChange={handleInputChange}
             />
           </div>
+          {/* Studio Name */}          
+          <div className="field">
+            <label>Studio Name</label>
+            <input
+            name="studioName"
+            value={referralData.studioName}
+            type="text"
+            onChange={handleInputChange}
+            />
+          </div>
+
 
           {/* Campain Platform */}
           <div className="field">

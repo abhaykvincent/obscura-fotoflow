@@ -1,47 +1,22 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../../app/slices/modalSlice';
 
-const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, handleGoogleSignIn }) => {
+const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, handleGoogleSignIn, errors }) => {
     const dispatch = useDispatch();
-    const [contactNumber, setContactNumber] = useState(formData.studioContact || '');
-    const [inputMessage, setInputMessage] = useState({});
-    const [privacyPolicyAgreed, setPrivacyPolicyAgreed] = useState(true);
-
-    useEffect(() => {
-        const phoneRegex = /^\d{10}$/;
-        if (!contactNumber) {
-            setInputMessage({});
-            return;
-        }
-        if (!phoneRegex.test(contactNumber)) {
-            if (contactNumber.length > 10) {
-                setInputMessage({ message: 'Oops! Looks like your phone number is a bit long', type: 'error', value: 'medium' });
-            } else if (contactNumber.length < 10) {
-                setInputMessage({ message: 'Hmm, your phone number seems a bit short', type: 'error', value: 'low' });
-            }
-        } else {
-            setInputMessage({ message: 'Perfect!', type: 'success', value: 'medium' });
-        }
-        updateFormData({ studioContact: contactNumber });
-    }, [contactNumber]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!contactNumber) {
-            setInputMessage({ message: 'Please enter your phone number', type: 'error', value: 'low' });
-            return;
-        }
-        if (inputMessage.type === 'success' && privacyPolicyAgreed) {
+        if (!errors.studioContact && formData.privacyPolicyAgreed) {
             onNext();
         }
     };
 
-
-
     const handleGoogleSignInAndProceed = async () => {
-        await handleGoogleSignIn();
+        if (!errors.studioContact && formData.privacyPolicyAgreed) {
+            await handleGoogleSignIn();
+        }
     };
 
     return (
@@ -56,27 +31,27 @@ const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, h
                     <input
                         type="tel"
                         id="contactNumber"
-                        value={contactNumber}
-                        onChange={(e) => setContactNumber(e.target.value)}
+                        value={formData.studioContact}
+                        onChange={(e) => updateFormData({ studioContact: e.target.value })}
                         placeholder='0000 000000'
                         required
                     />
-                    {inputMessage.message && <p className={`message ${inputMessage.type} ${inputMessage.value}`}>{inputMessage.message}</p>}
+                    {errors.studioContact && <p className={`message error low`}>{errors.studioContact}</p>}
                 </div>
 
                 <div className="privacy-policy-statment">
-                    <input type="checkbox" checked={privacyPolicyAgreed} id="privacyPolicy" name="privacyPolicy" required onChange={() => setPrivacyPolicyAgreed(!privacyPolicyAgreed)} />
+                    <input type="checkbox" checked={formData.privacyPolicyAgreed} id="privacyPolicy" name="privacyPolicy" required onChange={() => updateFormData({ privacyPolicyAgreed: !formData.privacyPolicyAgreed })} />
                     <label>
                         I agree to the <span onClick={() => dispatch(openModal('privacyPolicy'))}>Terms of Service</span> and <span onClick={() => dispatch(openModal('privacyPolicy'))}>Privacy Policy</span>
                     </label>
                 </div>
                 {!user?.email ? (
-                    <div className={`button google-login-button ${inputMessage.type !== 'success' || !privacyPolicyAgreed ? 'disabled' : ''}`} onClick={handleGoogleSignInAndProceed}>
+                    <div className={`button google-login-button ${errors.studioContact || !formData.privacyPolicyAgreed ? 'disabled' : ''}`} onClick={handleGoogleSignInAndProceed}>
                         Continue with Google <div className="google-logo"></div>
                     </div>
                 ) : (
                     <div
-                        className={`button primary ${inputMessage.type !== 'success' || !privacyPolicyAgreed ? 'disabled' : ''}`}
+                        className={`button primary ${errors.studioContact || !formData.privacyPolicyAgreed ? 'disabled' : ''}`}
                         onClick={handleSubmit}
                     >
                         Open App
