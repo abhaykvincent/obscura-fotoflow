@@ -116,13 +116,28 @@ function Onboarding() {
                     </div>
                 )}
 
-                {user?.email && (
-                    <div className={`logged-user ${currentScreen !== 'create-studio' ? 'minimize-gmail-user' : ''}`}>
-                        <div className='user-image' style={user.photoURL ? { backgroundImage: `url(${user.photoURL})` } : {}}></div>
-                        <div className="logged-user-info"><span>{user.email}</span></div>
-                        <div className="logout-button" onClick={() => dispatch(logout())}>Logout</div>
+                {user?.email &&
+                    <div className={`logged-user 
+                    ${currentScreen!=='create-studio' ? 'minimize-gmail-user' : ''}
+                    ${!invitation && 'unavaillable-referral-code'}
+                    
+                    `}>
+                        <div className='user-image'
+                            style={
+                            user?.photoURL ? {backgroundImage: `url(${user.photoURL})`} : {}
+                            }
+                        >
+                        </div>
+                        <div className="logged-user-info">
+                            
+                        <span> {user.email}</span></div>
+                        <div className="logout-button"
+                            onClick={()=>{
+                            dispatch(logout())
+                            }}
+                        >Logout</div>
                     </div>
-                )}
+                }
             </div>
 
             <div className={`form-wrapper animate-reveal ${!invitation && 'unavaillable-referral-code'}`} style={{ animationDelay: '0.3s' }}>

@@ -75,12 +75,12 @@ const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, h
                     </label>
                 </div>
                 {!user?.email ? (
-                    <div className={`button google-login-button large ${inputMessage.type !== 'success' || !privacyPolicyAgreed ? 'disabled' : ''}`} onClick={handleGoogleSignInAndProceed}>
-                        Google <div className="google-logo"></div>
+                    <div className={`button google-login-button ${inputMessage.type !== 'success' || !privacyPolicyAgreed ? 'disabled' : ''}`} onClick={handleGoogleSignInAndProceed}>
+                        Continue with Google <div className="google-logo"></div>
                     </div>
                 ) : (
                     <div
-                        className={`button primary large ${inputMessage.type !== 'success' || !privacyPolicyAgreed ? 'disabled' : ''}`}
+                        className={`button primary ${inputMessage.type !== 'success' || !privacyPolicyAgreed ? 'disabled' : ''}`}
                         onClick={handleSubmit}
                     >
                         Open App

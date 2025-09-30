@@ -54,7 +54,7 @@ const CreateStudioForm = ({ user, formData, updateFormData, onNext, errors }) =>
 
     return (
         <div className={`screen create-studio ${user?.email && 'active'}`}>
-            <p className={`section-intro small ${user?.email && studioName.length <= 3 ? 'highlight' : ''}`}>
+            <p className={`section-intro small  highlight ${user?.email && studioName.length <= 3 ? 'highlight' : ''}`}>
                 {studioName.length > 3 ? 'Studio name' : 'Let\'s start with Studio\'s name.'}
             </p>
             <form onSubmit={handleSubmit}>
