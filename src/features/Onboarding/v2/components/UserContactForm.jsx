@@ -38,11 +38,7 @@ const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, h
         }
     };
 
-    useEffect(() => {
-        if (user?.email && inputMessage.type === 'success' && privacyPolicyAgreed) {
-            onNext();
-        }
-    }, [user?.email, inputMessage.type, privacyPolicyAgreed]);
+
 
     const handleGoogleSignInAndProceed = async () => {
         await handleGoogleSignIn();
