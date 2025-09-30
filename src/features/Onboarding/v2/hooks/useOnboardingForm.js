@@ -3,10 +3,10 @@ import { useState, useEffect } from 'react';
 import { checkStudioDomainAvailability } from '../../../../firebase/functions/studios';
 import { useDebounce } from '../../../../hooks/useDebounce';
 
-export const useOnboardingForm = () => {
+export const useOnboardingForm = (defaultValues = {}) => {
     const [formData, setFormData] = useState({
-        studioName: '',
-        studioDomain: '',
+        studioName: defaultValues.studioName || '',
+        studioDomain: defaultValues.studioDomain || '',
         studioContact: '',
         privacyPolicyAgreed: true,
     });
@@ -56,6 +56,16 @@ export const useOnboardingForm = () => {
         const errorMessage = validatePhoneNumber(formData.studioContact);
         setErrors(prev => ({ ...prev, studioContact: errorMessage }));
     }, [formData.studioContact]);
+
+    useEffect(() => {
+        if (defaultValues.studioName) {
+            setFormData(prev => ({ 
+                ...prev, 
+                studioName: defaultValues.studioName, 
+                studioDomain: defaultValues.studioName.toLowerCase().replace(/\s+/g, '-') 
+            }));
+        }
+    }, [defaultValues.studioName]);
 
     return { formData, updateFormData, errors, isDomainAvailable };
 };

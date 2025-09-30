@@ -24,7 +24,7 @@ function Onboarding() {
     const { status: onboardingStatus } = useSelector(state => state.onboarding);
     const greeting = usePersonalizedGreeting();
     const { invitation, isLoading: isInvitationLoading } = useInvitation(ref);
-    const { formData, updateFormData, errors, isDomainAvailable } = useOnboardingForm();
+    const { formData, updateFormData, errors, isDomainAvailable } = useOnboardingForm({ studioName: invitation?.name });
 
     const [currentScreen, setCurrentScreen] = useState('create-studio');
 
