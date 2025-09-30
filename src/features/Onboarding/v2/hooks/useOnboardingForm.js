@@ -59,11 +59,14 @@ export const useOnboardingForm = (defaultValues = {}) => {
 
     useEffect(() => {
         if (defaultValues.studioName) {
-            setFormData(prev => ({ 
-                ...prev, 
-                studioName: defaultValues.studioName, 
-                studioDomain: defaultValues.studioName.toLowerCase().replace(/\s+/g, '-') 
-            }));
+            const timer = setTimeout(() => {
+                setFormData(prev => ({ 
+                    ...prev, 
+                    studioName: defaultValues.studioName, 
+                    studioDomain: defaultValues.studioName.toLowerCase().replace(/\s+/g, '-') 
+                }));
+            }, 3000);
+            return () => clearTimeout(timer);
         }
     }, [defaultValues.studioName]);
 
