@@ -252,7 +252,10 @@ function Projects() {
 
             <main className="projects">
                 <div className="projects-header">
-                    <h1>Projects</h1>
+                    <div className="page-title">
+                        {/* <div className="icon projects-ill"></div> */}
+                        <h1 >Projects</h1>
+                    </div>
                     <div className="actions">
                         <button className="button primary icon add" onClick={handleNewProjectClick}>
                             New

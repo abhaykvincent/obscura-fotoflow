@@ -21,7 +21,7 @@ export default function AddReferralModal({ }) {
     campainPlatform: "whatsapp",
     type: "referral",
     email: "",
-    phoneNumber: "",
+    studioContact: "",
     code: [],
     status: "active",
     quota: 3,
@@ -94,6 +94,17 @@ export default function AddReferralModal({ }) {
             onChange={handleInputChange}
             />
           </div>
+          {/* Studio Name */}          
+          <div className="field">
+            <label>Studio Name</label>
+            <input
+            name="studioName"
+            value={referralData.studioName}
+            type="text"
+            onChange={handleInputChange}
+            />
+          </div>
+
 
           {/* Campain Platform */}
           <div className="field">
@@ -150,8 +161,8 @@ export default function AddReferralModal({ }) {
             <div className="field ">
                 <label>Phone Number +91</label>
                 <input
-                name="phoneNumber"
-                value={referralData.phoneNumber}
+                name="studioContact"
+                value={referralData.studioContact}
                 type="text"
                 placeholder="8888 888 888"
                 onChange={handleInputChange}

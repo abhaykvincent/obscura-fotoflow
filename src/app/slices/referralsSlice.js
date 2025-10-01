@@ -12,6 +12,7 @@ const initialState = {
     referrals:[
     {
       campainName:"test",
+      studioName:null,
       campainPlatform: "",
       type: "",
       email: "",

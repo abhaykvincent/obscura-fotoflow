@@ -13,7 +13,7 @@ export const initialPlans = [
   {
     name: 'Freelancer',
     pricing: [
-      { storage: 100, monthlyPrice: '₹930',monthlyPriceWas: '₹1,300', yearlyPrice: '₹10,000', specialOffer: ['for 12 months','₹100 OFF','Core +'],defaultPlan: true   },
+      { storage: 100, monthlyPrice: '₹1,000',monthlyPriceWas: '₹1,300', yearlyPrice: '₹10,000', specialOffer: ['for 12 months','₹100 OFF','Core +'],defaultPlan: true   },
      
     ],
     defaultPlan: 0,
@@ -26,7 +26,7 @@ export const initialPlans = [
     name: 'Studio',
     pricing: [
       { storage: 1024, 
-        monthlyPrice: '₹1,300',monthlyPriceWas: '₹2,800', yearlyPrice: '₹25,000', 
+        monthlyPrice: '₹1,300',monthlyPriceWas: '₹2,800', yearlyPrice: '₹19,000', 
         specialOffer: ['for 2 months.','Offer expires soon!',' ₹2,800/month after'],
         defaultPlan: true},
       
@@ -40,7 +40,7 @@ export const initialPlans = [
   {
     name: 'Company',
     pricing: [
-      { storage: 5120, monthlyPrice: '₹5,150',monthlyPriceWas: '', yearlyPrice: '₹1,00,000', yearlyPriceWas: '₹1,20,000', 
+      { storage: 1024*10, monthlyPrice: '₹5,150',monthlyPriceWas: '', yearlyPrice: '₹1,00,000', yearlyPriceWas: '₹1,20,000', 
         specialOffer: ['Paid annually','Save up to ₹10,400 with annualy','2 yr commitment'],defaultPlan: true},
       
     ],

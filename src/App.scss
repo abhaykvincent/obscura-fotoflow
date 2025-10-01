@@ -229,7 +229,7 @@ body{
     position: relative;
     top: $header-height ;
     left: $sidebar-width - 6px;
-    width: calc(100vw - #{$sidebar-width} - 8px);
+    width: calc(100vw - #{$sidebar-width} - 8px*2);
     height: calc(100vh - #{$header-height} - 8px*3);
     overflow-y: scroll;
     padding: 0 8px*2;

@@ -268,11 +268,12 @@ function Onboarding() {
   useEffect(() => {
     dispatch(generateReferral({
       name: "Abhay",
+      studioName:"Monalisa",
       campainName: "Admin",
       campainPlatform: "whatsapp",
       type: "referral",
       email: "",
-      phoneNumber: "",
+      studioContact: "",
       code: ['2744'],
       status: "active",
       quota: 3,
