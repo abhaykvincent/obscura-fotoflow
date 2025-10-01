@@ -273,7 +273,7 @@ function Onboarding() {
       campainPlatform: "whatsapp",
       type: "referral",
       email: "",
-      phoneNumber: "",
+      studioContact: "",
       code: ['2744'],
       status: "active",
       quota: 3,

@@ -19,7 +19,6 @@ export const useInvitation = (invitationCode) => {
                 setIsLoading(true);
                 const response = await onboardingService.validateInvitation(invitationCode);
                 setInvitation(response);
-                console.log(response)
                 if (response) {
                     trackEvent('referral_code_validated', {
                         referral_code: invitationCode,

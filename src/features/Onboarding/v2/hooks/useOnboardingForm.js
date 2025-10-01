@@ -7,7 +7,7 @@ export const useOnboardingForm = (defaultValues = {}) => {
     const [formData, setFormData] = useState({
         studioName: defaultValues.studioName || '',
         studioDomain: defaultValues.studioDomain || '',
-        studioContact: '',
+        studioContact: defaultValues.studioContact || '',
         privacyPolicyAgreed: true,
     });
 
@@ -56,6 +56,18 @@ export const useOnboardingForm = (defaultValues = {}) => {
         const errorMessage = validatePhoneNumber(formData.studioContact);
         setErrors(prev => ({ ...prev, studioContact: errorMessage }));
     }, [formData.studioContact]);
+
+    useEffect(() => {
+        if (defaultValues.studioContact) {
+            const timer = setTimeout(() => {
+                setFormData(prev => ({ 
+                    ...prev, 
+                    studioContact: defaultValues.studioContact,
+                }));
+            }, 1200);
+            return () => clearTimeout(timer);
+        }
+    }, [defaultValues.studioContact]);
 
     useEffect(() => {
         if (defaultValues.studioName) {
