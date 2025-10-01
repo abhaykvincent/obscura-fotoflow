@@ -52,10 +52,33 @@ export const useOnboardingForm = (defaultValues = {}) => {
         return null;
     };
 
-    useEffect(() => {
-        const errorMessage = validatePhoneNumber(formData.studioContact);
-        setErrors(prev => ({ ...prev, studioContact: errorMessage }));
-    }, [formData.studioContact]);
+    const validateStudioForm = () => {
+        const newErrors = {};
+        if (formData.studioName.length <= 3) {
+            newErrors.studioName = "Studio name must be longer than 3 characters.";
+        }
+        if (formData.studioDomain.length <= 3) {
+            newErrors.studioDomain = "Sub-domain must be longer than 3 characters.";
+        } else if (!isDomainAvailable) {
+            newErrors.studioDomain = errors.studioDomain || 'Sub-domain already taken.';
+        }
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const validateContactForm = () => {
+        const newErrors = {};
+        const phoneError = validatePhoneNumber(formData.studioContact);
+        if (phoneError) {
+            newErrors.studioContact = phoneError;
+        }
+        if (!formData.privacyPolicyAgreed) {
+            newErrors.privacyPolicyAgreed = "You must agree to the terms and privacy policy.";
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     useEffect(() => {
         if (defaultValues.studioContact) {
@@ -82,5 +105,5 @@ export const useOnboardingForm = (defaultValues = {}) => {
         }
     }, [defaultValues.studioName]);
 
-    return { formData, updateFormData, errors, isDomainAvailable };
+    return { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm };
 };

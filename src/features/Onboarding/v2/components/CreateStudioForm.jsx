@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 
-const CreateStudioForm = ({ user, formData, updateFormData, onNext, errors, isDomainAvailable,disabled }) => {
+const CreateStudioForm = ({ user, formData, updateFormData, onNext, errors, isDomainAvailable,disabled, validateStudioForm }) => {
     const [suggestSubDomains, setSuggestSubDomains] = useState(['-studio', '-photography', '-weddings', '-media']);
     const [isSuggestionsAvailable, setIsSuggestionsAvailable] = useState(false);
 
@@ -15,7 +15,7 @@ const CreateStudioForm = ({ user, formData, updateFormData, onNext, errors, isDo
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (isDomainAvailable) {
+        if (validateStudioForm()) {
             onNext();
         }
     };
@@ -35,7 +35,7 @@ const CreateStudioForm = ({ user, formData, updateFormData, onNext, errors, isDo
                         type="text"
                         id="studioName"
                         value={formData.studioName}
-                        placeholder='Lorem Tales'
+                        placeholder={formData.studioName || 'Lorem Tales'}
                         onChange={handleStudioNameChange}
                         autoComplete="off"
                         required
@@ -76,7 +76,7 @@ const CreateStudioForm = ({ user, formData, updateFormData, onNext, errors, isDo
                         )}
                     </div>
                 </div>
-                <div className={`button primary large ${!isDomainAvailable ? 'disabled' : ''}`} onClick={handleSubmit}>
+                <div className={`button primary large ${disabled ? 'disabled' : ''}`} onClick={handleSubmit}>
                     Create Studio
                 </div>
             </form>
