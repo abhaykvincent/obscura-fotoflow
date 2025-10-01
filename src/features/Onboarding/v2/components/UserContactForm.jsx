@@ -25,7 +25,7 @@ const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, h
                 <div className="back-form" onClick={onPrevious}></div>
                 <h2 className=''>Contact Number</h2>
             </div>
-            <p className='section-intro'>What's your WhatsApp Number?</p>
+            <p className='section-intro'>What's your Buisness Number?</p>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <input

@@ -13,7 +13,7 @@ export const useOnboardingForm = (defaultValues = {}) => {
 
     const [errors, setErrors] = useState({});
     const [isDomainAvailable, setIsDomainAvailable] = useState(false);
-    const debouncedStudioDomain = useDebounce(formData.studioDomain, 500);
+    const debouncedStudioDomain = useDebounce(formData.studioDomain, 1000);
 
     useEffect(() => {
         if (debouncedStudioDomain.length > 3) {
@@ -65,7 +65,7 @@ export const useOnboardingForm = (defaultValues = {}) => {
                     studioName: defaultValues.studioName, 
                     studioDomain: defaultValues.studioName.toLowerCase().replace(/\s+/g, '-') 
                 }));
-            }, 3000);
+            }, 1200);
             return () => clearTimeout(timer);
         }
     }, [defaultValues.studioName]);

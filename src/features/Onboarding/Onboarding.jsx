@@ -268,7 +268,7 @@ function Onboarding() {
   useEffect(() => {
     dispatch(generateReferral({
       name: "Abhay",
-      studioName:"Monalisa"
+      studioName:"Monalisa",
       campainName: "Admin",
       campainPlatform: "whatsapp",
       type: "referral",
