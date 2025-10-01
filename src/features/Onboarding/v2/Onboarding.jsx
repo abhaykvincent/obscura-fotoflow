@@ -27,7 +27,7 @@ function Onboarding() {
     const greeting = usePersonalizedGreeting();
     const { invitation, isLoading: isInvitationLoading } = useInvitation(ref);
     console.log('Invitation Data:', invitation);
-    const { formData, updateFormData, errors, isDomainAvailable } = useOnboardingForm({ studioName: invitation?.studioName, studioContact: invitation?.studioContact });
+    const { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm } = useOnboardingForm({ studioName: invitation?.studioName, studioContact: invitation?.studioContact });
 
     const [currentScreen, setCurrentScreen] = useState('create-studio');
 
@@ -158,11 +158,13 @@ function Onboarding() {
                     <CreateStudioForm
                         user={user}
                         formData={formData}
+                        studioName={invitation?.studioName}
                         updateFormData={updateFormData}
                         onNext={() => setCurrentScreen('user-contact')}
                         errors={errors}
                         isDomainAvailable={isDomainAvailable}
                         disabled={isDisabled}
+                        validateStudioForm={validateStudioForm}
                     />
                 ) : (
                     <UserContactForm
@@ -174,6 +176,7 @@ function Onboarding() {
                         handleGoogleSignIn={handleGoogleSignIn}
                         errors={errors}
                         disabled={isDisabled}
+                        validateContactForm={validateContactForm}
                     />
                 )}
             </div>
