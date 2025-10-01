@@ -128,12 +128,6 @@ function Sidebar() {
             <div className="label">Notifications</div>
           </div>
         </Link> */}
-        <Link to={`/${studioName}/subscription`}>
-          <div className={`menu subscription ${location.pathname === `/${studioName}/subscription` ? 'active' : ''}`}>
-            <div className="icon"></div>
-            <div className="label">Pricing </div>
-          </div>
-        </Link>
         <Link to={`/${studioName}/storage`}>
           <div className={`menu storage ${location.pathname === `/${studioName}/storage` ? 'active' : ''}`}>
             <div className="icon"></div>
@@ -144,6 +138,12 @@ function Sidebar() {
           <div className={`menu settings ${location.pathname === `/${studioName}/settings` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Setting</div>
+          </div>
+        </Link>
+        <Link to={`/${studioName}/subscription`}>
+          <div className={`menu subscription ${location.pathname === `/${studioName}/subscription` ? 'active' : ''}`}>
+            <div className="icon"></div>
+            <div className="label">Pricing </div>
           </div>
         </Link>
 

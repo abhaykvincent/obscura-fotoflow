@@ -109,8 +109,8 @@ function Onboarding() {
 
     return (
         <main className="onboarding-container">
-            <div className="logo animate-reveal" style={{ animationDelay: '0.1s' }}></div>
-            <div className={`user-authentication animate-reveal ${currentScreen === 'user-contact' || user?.email ? 'user-contact-screen' : ''}`} style={{ animationDelay: '0.2s' }}>
+            <div className="logo animate-reveal" style={{ animationDelay: '0.2s' }}></div>
+            <div className={`user-authentication animate-reveal ${currentScreen === 'user-contact' || user?.email ? 'user-contact-screen' : ''}`} style={{ animationDelay: '0.4s' }}>
                 {invitation?.name && (
                     <>
                         <p className='onboarding-greeting'>
@@ -153,7 +153,7 @@ function Onboarding() {
                 }
             </div>
 
-            <div className={`form-wrapper animate-reveal ${!invitation && 'unavaillable-referral-code'}`} style={{ animationDelay: '0.3s' }}>
+            <div className={`form-wrapper animate-reveal ${!invitation && 'unavaillable-referral-code'}`} style={{ animationDelay: '0.6s' }}>
                 {currentScreen === 'create-studio' ? (
                     <CreateStudioForm
                         user={user}

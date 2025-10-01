@@ -27,7 +27,7 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
     domain = domain.substring(domain.length - 10);
 
     return (
-        <div className={`screen create-studio ${user?.email && 'active'}`}>
+        <div className={`screen create-studio ${user?.email && 'active'} animate-reveal`}>
             <p className={`section-intro small  highlight ${user?.email && formData.studioName.length <= 3 ? 'highlight' : ''}`}>
                 {formData.studioName.length > 3 ? 'Studio name' : 'Let\'s start with Studio\'s name.'}
             </p>
@@ -78,7 +78,7 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
                         )}
                     </div>
                 </div>
-                <div className={`button primary large ${disabled ? 'disabled' : ''}`} onClick={handleSubmit}>
+                <div className={`button primary large create-studio-button ${disabled ? 'disabled' : ''}`} onClick={handleSubmit}>
                     Create Studio
                 </div>
             </form>

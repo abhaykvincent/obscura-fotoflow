@@ -16,7 +16,8 @@
         opacity: 0.5;
     }
     .menu-list{
-        padding: 8px*1;
+        padding: 8px*1.5;
+        padding-top: 0;
         position: relative;
         height: 100%;
         border-radius: 8px;
@@ -124,26 +125,26 @@
             cursor: not-allowed;
             }
             &.home .icon{
-            background-size: 90%;
-            background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/home.png');
+            background-size: 100%;
+            background-image: url('https://img.icons8.com/?size=100&id=1iF9PyJ2Thzo&format=png&color=FFFFFF');
             }
             &.events .icon{
             background-size: 110%;
             background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/business.png');
             }
             &.projects .icon{
-                background-size: 110%;
-            background-image: url('../../assets/img/icons/projects-icon.jpg');
+                background-size: 100%;
+            background-image: url('https://img.icons8.com/?size=100&id=83172&format=png&color=FFFFFF');
             mix-blend-mode: screen;
 
             }
             &.packages .icon{
-                background-size: 100%;
-                background-image: url('https://img.icons8.com/?size=100&id=KNN4GTDY7Vre&format=png&color=FFFFFF');
+                background-size: 95%;
+                background-image: url('https://img.icons8.com/?size=100&id=100606&format=png&color=FFFFFF');
             }
             &.portfolio .icon{
                 background-size: 100%;
-            background-image: url('https://img.icons8.com/?size=100&id=123437&format=png&color=FFFFFF');
+            background-image: url('https://img.icons8.com/?size=100&id=63438&format=png&color=FFFFFF');
             }
             &.storage .icon{
             background-size: 90%;

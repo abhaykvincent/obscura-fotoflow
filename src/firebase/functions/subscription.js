@@ -16,12 +16,12 @@ function getPlanDetails(planId) {
     'freelancer': {
       name: 'Freelancer',
       type: 'paid',
-      pricing: [{ storage: 100000, monthlyPrice: 980, yearlyPrice: 10000 }],
+      pricing: [{ storage: 100000, monthlyPrice: 980, yearlyPrice: 8000 }],
     },
     'studio': {
       name: 'Studio',
       type: 'paid',
-      pricing: [{ storage: 1000000, monthlyPrice: 1020, yearlyPrice: 25000 }],
+      pricing: [{ storage: 1000000, monthlyPrice: 1020, yearlyPrice: 10200 }],
     },
     'company': {
       name: 'Company',
