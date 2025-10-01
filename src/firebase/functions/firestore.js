@@ -1,7 +1,7 @@
 
 import { db, storage } from "../app";
 import { ref, deleteObject } from "firebase/storage";
-import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, increment} from "firebase/firestore";
+import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, increment, query, where} from "firebase/firestore";
 
 import { deleteCollectionFromStorage, deleteProjectFromStorage } from "../../utils/storageOperations";
 import { generateMemorablePIN, generateRandomString, toKebabCase, toTitleCase} from "../../utils/stringUtils";
@@ -118,16 +118,18 @@ export const generateReferralInFirebase = async (referralData) => {
 
 export const validateInvitationCodeFromFirestore = async (invitationCode) =>{
     const referralsCollection = collection(db, 'referrals');
-    const querySnapshot = await getDocs(referralsCollection);
-    const referalData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-    }));
-    // IF REFERAL STATUS IS active
-    const referal = referalData.find((referal) => {
-        return referal.code.includes(invitationCode) && referal.status === 'active'
-    });
-    return referal;
+    const q = query(referralsCollection, where("code", "array-contains", invitationCode), where("status", "==", "active"));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+        return undefined;
+    }
+
+    const referralDoc = querySnapshot.docs[0];
+    return {
+        id: referralDoc.id,
+        ...referralDoc.data()
+    };
 }
 export const acceptInvitationCode = async (invitationCode) => {
     

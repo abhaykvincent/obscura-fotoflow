@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { signInWithPopup } from 'firebase/auth';
 import { analytics, auth, provider } from '../../../firebase/app';
 import { selectUser, setUser, logout } from '../../../app/slices/authSlice';
+import { showAlert } from '../../../app/slices/alertSlice';
 import { trackEvent } from '../../../analytics/utils';
 import { usePersonalizedGreeting } from './hooks/usePersonalizedGreeting';
 import { useInvitation } from './hooks/useInvitation';
@@ -19,7 +20,7 @@ function Onboarding() {
     const dispatch = useDispatch();
     const [searchParams] = useSearchParams();
     const ref = searchParams.get('ref') || '0000';
-
+    console.log('Referral Code:', ref);
     const user = useSelector(selectUser);
     const { status: onboardingStatus } = useSelector(state => state.onboarding);
     const greeting = usePersonalizedGreeting();
@@ -62,6 +63,11 @@ function Onboarding() {
     };
 
     const handleCreateAccount = () => {
+        if (!invitation) {
+            dispatch(showAlert({ type: 'error', message: 'A valid referral code is required to create an account.' }));
+            trackEvent('onboarding_attempt_invalid_referral', { referral_code: ref });
+            return;
+        }
         dispatch(completeOnboarding({ 
             userData: user, 
             studioData: formData, 
