@@ -100,7 +100,7 @@ export const useOnboardingForm = (defaultValues = {}) => {
                     studioName: defaultValues.studioName, 
                     studioDomain: defaultValues.studioName.toLowerCase().replace(/\s+/g, '-') 
                 }));
-            }, 1200);
+            }, 1800);
             return () => clearTimeout(timer);
         }
     }, [defaultValues.studioName]);

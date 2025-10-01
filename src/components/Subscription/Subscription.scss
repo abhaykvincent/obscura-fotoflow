@@ -662,7 +662,7 @@ span.iconic-gradient{
             .storage-counter{
                 position: relative;
                 text-align: center;
-                color: $green-dark-accessible-light;
+                color: $green-default-light;
                 border: 1px solid $gray3-accessible-dark;
                 z-index: 2;
                 border-radius: 4px;
@@ -697,8 +697,8 @@ span.iconic-gradient{
                 text-align: center;
                 z-index: 2;
                 box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);
-
-                font-size: 0.8rem;
+                padding: 4px 8px;
+                font-size: 0.7rem;
                     &::after{
                         content: "";
                     }

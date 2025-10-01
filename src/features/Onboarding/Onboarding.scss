@@ -478,7 +478,7 @@
             text-shadow: 2px 4px 8px*4 rgba(0, 0, 0, 0.1);
             //autofill
 
-            margin-top: 8px*2;
+            margin-top: 8px*1;
             //placeholder
             &::placeholder{
                 color: $gray6-default-dark !important;
@@ -703,6 +703,9 @@
             opacity: 0.8;
             margin-left: 8px;
         }
+    }
+    .create-studio-button{
+        transition-timing-function: 2s;
     }
     #contactNumber{
         width: 27rem;

@@ -20,7 +20,7 @@ const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, h
     };
 
     return (
-        <div className={`screen user-contact`}>
+        <div className={`screen user-contact animate-reveal`}>
             <div className="screen-title">
                 <div className="back-form" onClick={onPrevious}></div>
                 <h2 className=''>Contact Number</h2>
