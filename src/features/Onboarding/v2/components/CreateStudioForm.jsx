@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 
-const CreateStudioForm = ({ user, formData, updateFormData, onNext, errors, isDomainAvailable }) => {
+const CreateStudioForm = ({ user, formData, updateFormData, onNext, errors, isDomainAvailable,disabled }) => {
     const [suggestSubDomains, setSuggestSubDomains] = useState(['-studio', '-photography', '-weddings', '-media']);
     const [isSuggestionsAvailable, setIsSuggestionsAvailable] = useState(false);
 
@@ -39,6 +39,7 @@ const CreateStudioForm = ({ user, formData, updateFormData, onNext, errors, isDo
                         onChange={handleStudioNameChange}
                         autoComplete="off"
                         required
+                        disabled={disabled}
                     />
                     {errors.studioName && <div className="error-container">{errors.studioName}</div>}
 

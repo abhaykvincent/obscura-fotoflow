@@ -19,10 +19,17 @@ export const useInvitation = (invitationCode) => {
                 setIsLoading(true);
                 const response = await onboardingService.validateInvitation(invitationCode);
                 setInvitation(response);
-                trackEvent('referral_code_validated', {
-                    referral_code: invitationCode,
-                    isReferralValid: !!response,
-                });
+                if (response) {
+                    trackEvent('referral_code_validated', {
+                        referral_code: invitationCode,
+                        isReferralValid: true,
+                    });
+                } else {
+                    trackEvent('onboarding_referral', {
+                        referral_code: invitationCode,
+                        isReferralValid: false,
+                    });
+                }
             } catch (err) {
                 setError(err);
                 trackEvent('onboarding_referral', {

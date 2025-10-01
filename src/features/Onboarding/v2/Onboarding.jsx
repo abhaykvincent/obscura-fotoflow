@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { signInWithPopup } from 'firebase/auth';
 import { analytics, auth, provider } from '../../../firebase/app';
 import { selectUser, setUser, logout } from '../../../app/slices/authSlice';
-import { trackEvent } from '../../../analytics/utils';
+import { showAlert } from '../../../app/slices/alertSlice';
+import { isDeveloper, trackEvent } from '../../../analytics/utils';
 import { usePersonalizedGreeting } from './hooks/usePersonalizedGreeting';
 import { useInvitation } from './hooks/useInvitation';
 import { useOnboardingForm } from './hooks/useOnboardingForm';
@@ -13,18 +14,20 @@ import { completeOnboarding } from './slices/onboardingSlice';
 import CreateStudioForm from './components/CreateStudioForm';
 import UserContactForm from './components/UserContactForm';
 import '../Onboarding.scss';
+import { generateReferral } from '../../../app/slices/referralsSlice';
 
 function Onboarding() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [searchParams] = useSearchParams();
     const ref = searchParams.get('ref') || '0000';
-
+    console.log('Referral Code:', ref);
     const user = useSelector(selectUser);
     const { status: onboardingStatus } = useSelector(state => state.onboarding);
     const greeting = usePersonalizedGreeting();
     const { invitation, isLoading: isInvitationLoading } = useInvitation(ref);
-    const { formData, updateFormData, errors, isDomainAvailable } = useOnboardingForm({ studioName: invitation?.studioName });
+    console.log('Invitation Data:', invitation);
+    const { formData, updateFormData, errors, isDomainAvailable } = useOnboardingForm({ studioName: invitation?.studioName, studioContact: invitation?.studioContact });
 
     const [currentScreen, setCurrentScreen] = useState('create-studio');
 
@@ -38,6 +41,29 @@ function Onboarding() {
     useEffect(() => {
         trackEvent('onboarding_viewed', { referral_code: ref });
     }, [ref]);
+
+
+
+    useEffect(() => {
+        if(isDeveloper) {
+            dispatch(generateReferral({
+            name: "Abhay",
+            studioName:"Monalisa",
+            campainName: "Admin",
+            campainPlatform: "whatsapp",
+            type: "referral",
+            email: "",
+            studioContact: "",
+            code: ['2744'],
+            status: "active",
+            quota: 3,
+            used: 0,
+            validity: 30,
+            createdAt: new Date().toISOString(),
+            }))
+
+        }
+    },[])
 
     const handleGoogleSignIn = async () => {
         try {
@@ -62,6 +88,11 @@ function Onboarding() {
     };
 
     const handleCreateAccount = () => {
+        if (!invitation) {
+            dispatch(showAlert({ type: 'error', message: 'A valid referral code is required to create an account.' }));
+            trackEvent('onboarding_attempt_invalid_referral', { referral_code: ref });
+            return;
+        }
         dispatch(completeOnboarding({ 
             userData: user, 
             studioData: formData, 
@@ -73,6 +104,8 @@ function Onboarding() {
     if (isInvitationLoading) {
         return <div>Loading...</div>; // Or a proper loading spinner
     }
+
+    const isDisabled = !invitation;
 
     return (
         <main className="onboarding-container">
@@ -90,8 +123,9 @@ function Onboarding() {
 
                 {!invitation && (
                     <div className='activate-fotoflow-whatsapp'>
-                        <p>Referral code is not active. You need to</p>
-                        <a href="https://wa.me/+916235099329?text=Activate%20Fotoflow" target="_blank" rel="noopener noreferrer">Activate Fotoflow</a>
+                        <p>{ref!=='0000' ? `Your Referral Code ${ref} is invalid` : ` Fotoflow is currently Invite only. `}<br />
+                        {ref!=='0000' ? `Check link again or ` : 'Ckick to '}<a href="https://wa.me/+916235099329?text=Activate%20Fotoflow" target="_blank" rel="noopener noreferrer">Join Waitlist</a></p>
+                        
                     </div>
                 )}
 
@@ -128,6 +162,7 @@ function Onboarding() {
                         onNext={() => setCurrentScreen('user-contact')}
                         errors={errors}
                         isDomainAvailable={isDomainAvailable}
+                        disabled={isDisabled}
                     />
                 ) : (
                     <UserContactForm
@@ -138,6 +173,7 @@ function Onboarding() {
                         onPrevious={() => setCurrentScreen('create-studio')}
                         handleGoogleSignIn={handleGoogleSignIn}
                         errors={errors}
+                        disabled={isDisabled}
                     />
                 )}
             </div>

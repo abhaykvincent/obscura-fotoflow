@@ -3,18 +3,18 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../../app/slices/modalSlice';
 
-const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, handleGoogleSignIn, errors }) => {
+const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, handleGoogleSignIn, errors, disabled }) => {
     const dispatch = useDispatch();
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!errors.studioContact && formData.privacyPolicyAgreed) {
+        if (!errors.studioContact && formData.privacyPolicyAgreed && !disabled) {
             onNext();
         }
     };
 
     const handleGoogleSignInAndProceed = async () => {
-        if (!errors.studioContact && formData.privacyPolicyAgreed) {
+        if (!errors.studioContact && formData.privacyPolicyAgreed && !disabled) {
             await handleGoogleSignIn();
         }
     };
@@ -25,7 +25,10 @@ const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, h
                 <div className="back-form" onClick={onPrevious}></div>
                 <h2 className=''>Contact Number</h2>
             </div>
-            <p className='section-intro'>What's your Buisness Number?</p>
+            <p className='section-intro'></p>
+            <p className={`section-intro small  highlight ${user?.email && formData.studioContact == '' ? 'highlight' : ''}`}>
+                { formData.studioContact !== '' ? 'Buisness number' : 'What\'s your Buisness Number?'}
+            </p>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <input
@@ -35,23 +38,24 @@ const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, h
                         onChange={(e) => updateFormData({ studioContact: e.target.value })}
                         placeholder='0000 000000'
                         required
+                        disabled={disabled}
                     />
                     {errors.studioContact && <p className={`message error low`}>{errors.studioContact}</p>}
                 </div>
 
                 <div className="privacy-policy-statment">
-                    <input type="checkbox" checked={formData.privacyPolicyAgreed} id="privacyPolicy" name="privacyPolicy" required onChange={() => updateFormData({ privacyPolicyAgreed: !formData.privacyPolicyAgreed })} />
+                    <input type="checkbox" checked={formData.privacyPolicyAgreed} id="privacyPolicy" name="privacyPolicy" required onChange={() => updateFormData({ privacyPolicyAgreed: !formData.privacyPolicyAgreed })} disabled={disabled} />
                     <label>
                         I agree to the <span onClick={() => dispatch(openModal('privacyPolicy'))}>Terms of Service</span> and <span onClick={() => dispatch(openModal('privacyPolicy'))}>Privacy Policy</span>
                     </label>
                 </div>
                 {!user?.email ? (
-                    <div className={`button google-login-button ${errors.studioContact || !formData.privacyPolicyAgreed ? 'disabled' : ''}`} onClick={handleGoogleSignInAndProceed}>
+                    <div className={`button google-login-button ${errors.studioContact || !formData.privacyPolicyAgreed || disabled ? 'disabled' : ''}`} onClick={handleGoogleSignInAndProceed}>
                         Continue with Google <div className="google-logo"></div>
                     </div>
                 ) : (
                     <div
-                        className={`button primary ${errors.studioContact || !formData.privacyPolicyAgreed ? 'disabled' : ''}`}
+                        className={`button primary ${errors.studioContact || !formData.privacyPolicyAgreed || disabled ? 'disabled' : ''}`}
                         onClick={handleSubmit}
                     >
                         Open App
