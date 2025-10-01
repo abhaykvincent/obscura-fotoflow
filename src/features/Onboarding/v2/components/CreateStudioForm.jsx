@@ -1,9 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-const CreateStudioForm = ({ user, formData, updateFormData, onNext, errors, isDomainAvailable,disabled, validateStudioForm }) => {
-    const [suggestSubDomains, setSuggestSubDomains] = useState(['-studio', '-photography', '-weddings', '-media']);
+const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, errors, isDomainAvailable,disabled, validateStudioForm }) => {
+    const [suggestSubDomains, setSuggestSubDomains] = useState(['-studio', '-photography', '-weddings']);
     const [isSuggestionsAvailable, setIsSuggestionsAvailable] = useState(false);
+
+    console.log(studioName)
 
     const handleStudioNameChange = (e) => {
         const name = e.target.value;
@@ -35,7 +37,7 @@ const CreateStudioForm = ({ user, formData, updateFormData, onNext, errors, isDo
                         type="text"
                         id="studioName"
                         value={formData.studioName}
-                        placeholder={formData.studioName || 'Lorem Tales'}
+                        placeholder={studioName ? studioName : 'Lorem Tales'}
                         onChange={handleStudioNameChange}
                         autoComplete="off"
                         required

@@ -147,7 +147,7 @@ const CreateStudio = ({active,next,setCreateAccountData,createAccountData,update
               type="text"
               id="studioName"
               value={studioName}
-              placeholder='Lorem Tales'
+              placeholder={studioName ? studioName : 'Lorem Tales'}
               onChange={handleStudioNameChange}
               autoComplete="off"
               required

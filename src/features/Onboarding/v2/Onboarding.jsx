@@ -158,6 +158,7 @@ function Onboarding() {
                     <CreateStudioForm
                         user={user}
                         formData={formData}
+                        studioName={invitation?.studioName}
                         updateFormData={updateFormData}
                         onNext={() => setCurrentScreen('user-contact')}
                         errors={errors}
