@@ -108,7 +108,7 @@ const CreateStudio = ({active,next,setCreateAccountData,createAccountData,update
   const handleSubmit = (e) => {
     e.preventDefault();
     // Validate form
-    const validationErrors = validateForm();
+    const validationErrors = validateForm(studioName);
 
     // If there are errors, set them and prevent submission
     if (Object.keys(validationErrors).some(key => validationErrors[key])) {
@@ -136,11 +136,11 @@ const CreateStudio = ({active,next,setCreateAccountData,createAccountData,update
   domain = domain.substring(domain.length - 10);
   return (
     <>
-      <div className={`screen create-studio ${user?.email && 'active'}`}>
+      <div className={`screen create-studio active`}>
       {
       studioName.length > 3 ? 
-        <p className={`section-intro small ${user?.email && ' '}`}>Studio name<span className="name-label"></span></p>
-        :<p className={`section-intro small ${user?.email && 'highlight'}`}>Let's start with Studio's name.</p>}
+        <p className={`section-intro small `}>Studio name<span className="name-label"></span></p>
+        :<p className={`section-intro small highlight`}>Let's start with Studio's name.</p>}
       <form onSubmit={handleSubmit}>
           <div className="form-group">
             <input

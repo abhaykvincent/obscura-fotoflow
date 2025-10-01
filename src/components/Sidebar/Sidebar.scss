@@ -132,8 +132,10 @@
             background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/business.png');
             }
             &.projects .icon{
-                background-size: 100%;
-            background-image: url('https://img.icons8.com/?size=192&id=83172&format=png&color=FFFFFF');
+                background-size: 110%;
+            background-image: url('../../assets/img/icons/projects-icon.jpg');
+            mix-blend-mode: screen;
+
             }
             &.packages .icon{
                 background-size: 100%;
