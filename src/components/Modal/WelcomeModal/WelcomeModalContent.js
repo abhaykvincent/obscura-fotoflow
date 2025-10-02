@@ -16,6 +16,20 @@ export const welcomeScreens = [
     ),
   },
   {
+    title: <>Organize with <span className='iconic-gradient'>Projects & Galleries</span></>,
+    body: (
+      <>
+        <p>
+            Keep your work tidy. <span className='mid-highlight'>Projects</span> are your main events, and within them, <span className='highlight'>Galleries</span> help you sort by client, event, or theme.
+        </p>
+        <div className="visual-placeholder organize-galleries"></div>
+        <p>
+            A clear structure means <span className='highlight'>less searching, more creating.</span>
+        </p>
+      </>
+    ),
+  },
+  {
     title: <>Introducing <span className='iconic-gradient'>Smart Galleries</span></>,
     body: (
       <>

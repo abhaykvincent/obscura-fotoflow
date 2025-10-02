@@ -36,9 +36,10 @@ function Home() {
 
     useEffect(() => {
         const checkWelcomeStatus = async () => {
+
             if (user && user.email) {
                 const firestoreUser = await fetchUserByEmail(user.email);
-                if (firestoreUser && firestoreUser.hasSeenWelcomeModal === true) {
+                if (firestoreUser && firestoreUser.hasSeenWelcomeModal === false) {
                     if (projects.length === 0) {
                             dispatch(openModal('welcome'));
                     } else {
