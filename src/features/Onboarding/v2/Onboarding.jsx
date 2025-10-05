@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,6 +12,7 @@ import { useOnboardingForm } from './hooks/useOnboardingForm';
 import { completeOnboarding } from './slices/onboardingSlice';
 import CreateStudioForm from './components/CreateStudioForm';
 import UserContactForm from './components/UserContactForm';
+import AllSetScreen from './components/AllSetScreen';
 import '../Onboarding.scss';
 import { generateReferral } from '../../../app/slices/referralsSlice';
 
@@ -27,7 +27,7 @@ function Onboarding() {
     const greeting = usePersonalizedGreeting();
     const { invitation, isLoading: isInvitationLoading } = useInvitation(ref);
     console.log('Invitation Data:', invitation);
-    const { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm } = useOnboardingForm({ studioName: invitation?.studioName, studioContact: invitation?.studioContact });
+    const { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm, validateAllSetForm } = useOnboardingForm({ studioName: invitation?.studioName, studioContact: invitation?.studioContact });
 
     const [currentScreen, setCurrentScreen] = useState('create-studio');
 
@@ -110,7 +110,7 @@ function Onboarding() {
     return (
         <main className="onboarding-container">
             <div className="logo animate-reveal" style={{ animationDelay: '0.2s' }}></div>
-            <div className={`user-authentication animate-reveal ${currentScreen === 'user-contact' || user?.email ? 'user-contact-screen' : ''}`} style={{ animationDelay: '0.4s' }}>
+            <div className={`user-authentication animate-reveal ${currentScreen === 'user-contact' || currentScreen === 'all-set' || user?.email ? 'user-contact-screen' : ''}`} style={{ animationDelay: '0.4s' }}>
                 {invitation?.name && (
                     <>
                         <p className='onboarding-greeting'>
@@ -145,7 +145,7 @@ function Onboarding() {
                             
                         <span> {user.email}</span></div>
                         <div className="logout-button"
-                            onClick={()=>{
+                            onClick={()=>{ 
                             dispatch(logout())
                             }}
                         >Logout</div>
@@ -166,17 +166,27 @@ function Onboarding() {
                         disabled={isDisabled}
                         validateStudioForm={validateStudioForm}
                     />
-                ) : (
+                ) : currentScreen === 'user-contact' ? (
                     <UserContactForm
                         user={user}
                         formData={formData}
                         updateFormData={updateFormData}
-                        onNext={handleCreateAccount}
+                        onNext={() => setCurrentScreen('all-set')}
                         onPrevious={() => setCurrentScreen('create-studio')}
                         handleGoogleSignIn={handleGoogleSignIn}
                         errors={errors}
                         disabled={isDisabled}
                         validateContactForm={validateContactForm}
+                    />
+                ) : (
+                    <AllSetScreen
+                        formData={formData}
+                        updateFormData={updateFormData}
+                        onNext={handleCreateAccount}
+                        onPrevious={() => setCurrentScreen('user-contact')}
+                        disabled={isDisabled}
+                        errors={errors}
+                        validateAllSetForm={validateAllSetForm}
                     />
                 )}
             </div>
