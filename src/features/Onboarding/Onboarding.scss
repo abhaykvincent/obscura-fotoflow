@@ -291,7 +291,7 @@
         position: relative;
         width: 8px*6;
         height: 8px*6;
-        background-size: 100%;
+        background-size: cover;
         border-radius: 50%;
         border: 1px solid $dark-1;
         box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.4), 2px 2px 2px rgba(0, 0, 0, 1);
@@ -447,8 +447,17 @@
         &.highlight{
 
             animation: section-intro-color 0.5s 0.8s ease;
-
             animation-fill-mode: forwards;
+        }
+        &.selected-field{
+            margin-bottom: 8px*1;
+            transition-duration: 0.2s;
+            transition-timing-function: ease-in;
+            &.studio-name-label{
+            margin-bottom: -8px*1;
+
+            }
+
         }
         @keyframes section-intro-color {
             0% {
@@ -502,8 +511,12 @@
         .message{
             padding: 8px*2 8px*1;
             &.error{
+            &.perfect{
+                color: $green-accessible-dark;
+                opacity: 0.9;
+            }
                 &.low{
-                    color: $yellow-default-light;
+                    color: #9e8b1d;
                     opacity: 0.7;
                 }
                 &.medium{

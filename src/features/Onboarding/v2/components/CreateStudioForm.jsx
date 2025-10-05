@@ -28,8 +28,12 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
 
     return (
         <div className={`screen create-studio ${user?.email && 'active'} animate-reveal`}>
-            <p className={`section-intro small  highlight ${user?.email && formData.studioName.length <= 3 ? 'highlight' : ''}`}>
-                {formData.studioName.length > 3 ? 'Studio name' : 'Let\'s start with Studio\'s name.'}
+
+                
+            <p className={`studio-name-label section-intro small  highlight 
+                ${ formData.studioName.length > 0 ? ' selected-field ' : '  '}
+                ${user?.email && formData.studioName.length <= 3 ? 'highlight' : ''}`}>
+                {formData.studioName.length > 0 ? 'Studio name' : 'Let\'s start with Studio\'s name.'}
             </p>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">

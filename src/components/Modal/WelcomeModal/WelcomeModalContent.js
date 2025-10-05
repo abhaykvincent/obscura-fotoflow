@@ -16,11 +16,25 @@ export const welcomeScreens = [
     ),
   },
   {
-    title: <>Introducing <span className='iconic-gradient'>Smart Galleries</span></>,
+    title: <>Organize with <span className='iconic-gradient'>Projects & Galleries</span></>,
     body: (
       <>
         <p>
-            Let our AI <span className='mid-highlight'>automatically categorize</span> your photos into <span className='highlight'>'Best', 'Good', and 'Other'</span>, saving you hours of manual sorting.
+            Keep your work tidy. <span className='mid-highlight'>Projects</span> are your main events, and within them, <span className='highlight'>Galleries</span> help you sort by client, event, or theme.
+        </p>
+        <div className="visual-placeholder organize-galleries"></div>
+        <p>
+            A clear structure means <span className='highlight'>less searching, more creating.</span>
+        </p>
+      </>
+    ),
+  },
+  {
+    title: <>Your <span className='iconic-gradient'>Galleries, Smarter</span></>,
+    body: (
+      <>
+        <p>
+            Now, let our AI <span className='mid-highlight'>automatically categorize</span> your photos within your galleries into <span className='highlight'>'Best', 'Good', and 'Other'</span>, saving you hours of manual sorting.
         </p>
         <div className="visual-placeholder smart-gallery"></div>
         <p>
