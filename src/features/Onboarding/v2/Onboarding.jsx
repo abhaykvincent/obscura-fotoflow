@@ -11,7 +11,6 @@ import { useInvitation } from './hooks/useInvitation';
 import { useOnboardingForm } from './hooks/useOnboardingForm';
 import { completeOnboarding } from './slices/onboardingSlice';
 import CreateStudioForm from './components/CreateStudioForm';
-import UserContactForm from './components/UserContactForm';
 import AllSetScreen from './components/AllSetScreen';
 import '../Onboarding.scss';
 import { generateReferral } from '../../../app/slices/referralsSlice';
@@ -110,7 +109,7 @@ function Onboarding() {
     return (
         <main className="onboarding-container">
             <div className="logo animate-reveal" style={{ animationDelay: '0.2s' }}></div>
-            <div className={`user-authentication animate-reveal ${currentScreen === 'user-contact' || currentScreen === 'all-set' || user?.email ? 'user-contact-screen' : ''}`} style={{ animationDelay: '0.4s' }}>
+            <div className={`user-authentication animate-reveal ${!user?.email ? 'auth-screen' : ''}`} style={{ animationDelay: '0.4s' }}>
                 {invitation?.name && (
                     <>
                         <p className='onboarding-greeting'>
@@ -129,7 +128,7 @@ function Onboarding() {
                     </div>
                 )}
 
-                {user?.email &&
+                {user?.email ?
                     <div className={`logged-user 
                     ${currentScreen!=='create-studio' ? 'minimize-gmail-user' : ''}
                     ${!invitation && 'unavaillable-referral-code'}
@@ -150,9 +149,14 @@ function Onboarding() {
                             }}
                         >Logout</div>
                     </div>
+                :
+                <div className={`button google-login-button ${isDisabled ? 'disabled' : ''}`} onClick={handleGoogleSignIn}>
+                    Continue with Google <div className="google-logo"></div>
+                </div>
                 }
             </div>
 
+            {user?.email &&
             <div className={`form-wrapper animate-reveal ${!invitation && 'unavaillable-referral-code'}`} style={{ animationDelay: '0.6s' }}>
                 {currentScreen === 'create-studio' ? (
                     <CreateStudioForm
@@ -160,36 +164,25 @@ function Onboarding() {
                         formData={formData}
                         studioName={invitation?.studioName}
                         updateFormData={updateFormData}
-                        onNext={() => setCurrentScreen('user-contact')}
+                        onNext={() => setCurrentScreen('all-set')}
                         errors={errors}
                         isDomainAvailable={isDomainAvailable}
                         disabled={isDisabled}
                         validateStudioForm={validateStudioForm}
-                    />
-                ) : currentScreen === 'user-contact' ? (
-                    <UserContactForm
-                        user={user}
-                        formData={formData}
-                        updateFormData={updateFormData}
-                        onNext={() => setCurrentScreen('all-set')}
-                        onPrevious={() => setCurrentScreen('create-studio')}
-                        handleGoogleSignIn={handleGoogleSignIn}
-                        errors={errors}
-                        disabled={isDisabled}
-                        validateContactForm={validateContactForm}
                     />
                 ) : (
                     <AllSetScreen
                         formData={formData}
                         updateFormData={updateFormData}
                         onNext={handleCreateAccount}
-                        onPrevious={() => setCurrentScreen('user-contact')}
+                        onPrevious={() => setCurrentScreen('create-studio')}
                         disabled={isDisabled}
                         errors={errors}
                         validateAllSetForm={validateAllSetForm}
                     />
                 )}
             </div>
+            }
         </main>
     );
 }

@@ -8,7 +8,7 @@ export const useOnboardingForm = (defaultValues = {}) => {
         studioName: defaultValues.studioName || '',
         studioDomain: defaultValues.studioDomain || '',
         studioContact: defaultValues.studioContact || '',
-        privacyPolicyAgreed: true,
+        privacyPolicyAgreed: false,
     });
 
     const [errors, setErrors] = useState({});
