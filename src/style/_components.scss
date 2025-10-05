@@ -27,6 +27,9 @@
             &::before{
                 opacity: 1;
             }
+        &.icon-right::after{
+                opacity: 1;
+            }
         }
     }
     &:active{
@@ -127,6 +130,10 @@
         &:before{
             opacity: 0.4;
         }
+        .icon-right::after{
+            opacity: 0.4;
+
+        }
         }
     }
     &.warnning{
@@ -156,6 +163,10 @@
                 margin-right: 0;
                 background-position: center;
             }
+            &.icon-right::after{
+                margin-left: 0;
+                background-position: center;
+            }
         }
         &::before{
             content: '.';
@@ -172,15 +183,38 @@
             filter: drop-shadow(1px 1px 1px #ffffff00);
             text-shadow: none;
              background-size: 100%;
-                opacity: 0.7;
+                opacity: 0.8;
              
                
         }
         &.large{
-            &::before{
+            &::before,&::after{
             padding: 8px*2;
             }
            }
+
+        &.icon-right{
+            &::after{
+                content: '.';
+                margin-left: 4px;
+                margin-right: -4px;
+                width: 8px*3;
+                height: 100%;
+                padding: 2px 8px;
+                color: transparent;
+                text-decoration: none;
+                background-size: 100%;
+                background-position: center;
+                background-repeat: no-repeat;
+                filter: drop-shadow(1px 1px 1px #ffffff00);
+                text-shadow: none;
+                background-size: 100%;
+                opacity: 0.9;
+            }
+            &::before{
+                display: none;
+            }
+        }
 
         &.add::before{
             background-image: url('https://img.icons8.com/ios-filled/500/ffffff/plus-math.png');
@@ -278,6 +312,10 @@
         &.new::before{
             background-size: 80%;
             background-image: url('https://img.icons8.com/?size=100&id=Y1Jzb9yc1jLC&format=png&color=FFFFFF');
+        }
+        &.next::after{
+            background-size: 80%;
+            background-image: url('https://img.icons8.com/?size=100&id=7849&format=png&color=FFFFFF');
         }
         &.set-focus.dark-icon::before{
             margin-right: 0;

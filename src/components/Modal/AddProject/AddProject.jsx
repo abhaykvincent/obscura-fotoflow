@@ -178,9 +178,9 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
             <button type="button" className="button secondary" onClick={handlePreviousStep}>Back</button>
           )}
           {currentStep < 2 ? (
-            <button type="button" className="button primary" onClick={handleNextStep}>Next</button>
+            <button type="button" className="button primary icon icon-right next" onClick={handleNextStep}>Next</button>
           ) : (
-            <button type="button" className="button primary" onClick={handleSubmit}>
+            <button type="button" className="button primary icon new" onClick={handleSubmit}>
               {isSubProject ? "Create Sub-Project" : "Create project"}
             </button>
           )}
