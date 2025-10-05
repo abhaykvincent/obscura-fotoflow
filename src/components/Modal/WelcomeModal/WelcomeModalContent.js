@@ -30,11 +30,11 @@ export const welcomeScreens = [
     ),
   },
   {
-    title: <>Introducing <span className='iconic-gradient'>Smart Galleries</span></>,
+    title: <>Your <span className='iconic-gradient'>Galleries, Smarter</span></>,
     body: (
       <>
         <p>
-            Let our AI <span className='mid-highlight'>automatically categorize</span> your photos into <span className='highlight'>'Best', 'Good', and 'Other'</span>, saving you hours of manual sorting.
+            Now, let our AI <span className='mid-highlight'>automatically categorize</span> your photos within your galleries into <span className='highlight'>'Best', 'Good', and 'Other'</span>, saving you hours of manual sorting.
         </p>
         <div className="visual-placeholder smart-gallery"></div>
         <p>

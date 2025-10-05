@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { checkStudioDomainAvailability } from '../../../../firebase/functions/studios';
 import { useDebounce } from '../../../../hooks/useDebounce';
 
@@ -44,6 +44,9 @@ export const useOnboardingForm = (defaultValues = {}) => {
         if (!phoneRegex.test(phoneNumber)) {
             if (phoneNumber.length > 10) {
                 return 'Oops! Looks like your phone number is a bit long';
+            }
+            if (phoneNumber.length < 5) {
+                return 'Hmm, too short for a phone number';
             }
             if (phoneNumber.length < 10) {
                 return 'Hmm, your phone number seems a bit short';
@@ -92,18 +95,50 @@ export const useOnboardingForm = (defaultValues = {}) => {
         }
     }, [defaultValues.studioContact]);
 
-    useEffect(() => {
-        if (defaultValues.studioName) {
-            const timer = setTimeout(() => {
-                setFormData(prev => ({ 
-                    ...prev, 
-                    studioName: defaultValues.studioName, 
-                    studioDomain: defaultValues.studioName.toLowerCase().replace(/\s+/g, '-') 
-                }));
-            }, 1800);
-            return () => clearTimeout(timer);
-        }
-    }, [defaultValues.studioName]);
 
+// Inside your useOnboardingForm hook
+const timerIdRef = useRef(null);
+
+useEffect(() => {
+    // Stop any previous animations when the default value changes
+    if (timerIdRef.current) {
+        clearTimeout(timerIdRef.current);
+    }
+
+    if (defaultValues.studioName) {
+        setFormData(prev => ({
+            ...prev,
+            studioName: '',
+            studioDomain: '',
+        }));
+
+        let currentLength = 0;
+        const fullText = defaultValues.studioName;
+
+        const typeChunk = () => {
+    // Change is on this next line
+    currentLength += Math.floor(Math.random() * 4) + 1; // Randomly adds 1, 2, 3, or 4
+    
+    // Ensure we don't go past the end of the string
+    const displayText = fullText.slice(0, Math.min(currentLength, fullText.length));
+    
+    setFormData(prev => ({
+        ...prev,
+        studioName: displayText,
+        studioDomain: displayText.toLowerCase().replace(/\s+/g, '-')
+    }));
+
+    if (currentLength < fullText.length) {
+        timerIdRef.current = setTimeout(typeChunk, 220);
+    }
+};
+
+        // Schedule the FIRST chunk after the long 1000ms delay
+        timerIdRef.current = setTimeout(typeChunk, 1600);
+    }
+
+    // Cleanup function to clear the scheduled timeout
+    return () => clearTimeout(timerIdRef.current);
+}, [defaultValues.studioName]);
     return { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm };
 };

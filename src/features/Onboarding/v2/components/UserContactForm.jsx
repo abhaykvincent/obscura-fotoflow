@@ -26,7 +26,9 @@ const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, h
                 <h2 className=''>Contact Number</h2>
             </div>
             <p className='section-intro'></p>
-            <p className={`section-intro small  highlight ${user?.email && formData.studioContact == '' ? 'highlight' : ''}`}>
+            <p className={`section-intro small  highlight  
+                ${ formData.studioContact !== '' ? ' selected-field ' : '  '}
+                ${user?.email && formData.studioContact == '' ? 'highlight' : ''}`}>
                 { formData.studioContact !== '' ? 'Buisness number' : 'What\'s your Buisness Number?'}
             </p>
             <form onSubmit={handleSubmit}>
@@ -40,7 +42,9 @@ const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, h
                         required
                         disabled={disabled}
                     />
-                    {errors.studioContact && <p className={`message error low`}>{errors.studioContact}</p>}
+                    {errors.studioContact && <p className={`message error 
+                        ${errors.studioContact.includes('Perfect') ? 'perfect' : 'low'}
+                        `}>{errors.studioContact}</p>}
                 </div>
 
                 <div className="privacy-policy-statment">
