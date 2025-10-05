@@ -76,6 +76,12 @@ export const useOnboardingForm = (defaultValues = {}) => {
         if (phoneError) {
             newErrors.studioContact = phoneError;
         }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const validateAllSetForm = () => {
+        const newErrors = {};
         if (!formData.privacyPolicyAgreed) {
             newErrors.privacyPolicyAgreed = "You must agree to the terms and privacy policy.";
         }
@@ -140,5 +146,5 @@ useEffect(() => {
     // Cleanup function to clear the scheduled timeout
     return () => clearTimeout(timerIdRef.current);
 }, [defaultValues.studioName]);
-    return { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm };
+    return { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm, validateAllSetForm };
 };
