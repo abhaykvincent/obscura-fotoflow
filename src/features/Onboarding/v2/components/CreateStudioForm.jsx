@@ -103,4 +103,3 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
 };
 
 export default CreateStudioForm;
-

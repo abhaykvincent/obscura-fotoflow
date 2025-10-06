@@ -192,7 +192,7 @@
     }
     .onboarding-message{
         
-        color: $gray2-default-dark;
+        color: $gray3-default-dark;
         margin-bottom: 8px*4;
     }
 }
@@ -266,9 +266,9 @@
     display: flex;
     justify-content: start;
     align-items: center;
-    margin-top: 8px*4;
+    margin-top: 8px*-2;
     margin-bottom: 8px*4;
-    margin-left: -8px*3;
+    margin-left: -8px*0;
     gap: 8px*2;
     &.minimize-gmail-user{
         .logout-button{
