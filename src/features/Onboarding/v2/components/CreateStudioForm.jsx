@@ -86,12 +86,13 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
                     </div>
                 </div>
                 <div className="privacy-policy-statment">
-                    <input type="checkbox" checked={formData.privacyPolicyAgreed} id="privacyPolicy" name="privacyPolicy" required onChange={() => updateFormData({ privacyPolicyAgreed: !formData.privacyPolicyAgreed })} disabled={disabled} />
+                    <input type="checkbox" checked={formData.privacyPolicyAgreed} id="privacyPolicy" className={`${errors.privacyPolicyAgreed && 'privacyPolicy-error-input'}`} name="privacyPolicy" required onChange={() => updateFormData({ privacyPolicyAgreed: !formData.privacyPolicyAgreed })} disabled={disabled} />
                     <label>
                         I agree to the <span onClick={() => dispatch(openModal('privacyPolicy'))}>Terms of Service</span> and <span onClick={() => dispatch(openModal('privacyPolicy'))}>Privacy Policy</span>
                     </label>
                 </div>
-                {errors.privacyPolicyAgreed && <p className={`message error low`}>{errors.privacyPolicyAgreed}</p>}
+                {(errors.privacyPolicyAgreed ) && <div className={`error-container privacyPolicy-error ${formData.privacyPolicyAgreed  && 'hide-error'}`}>{errors.privacyPolicyAgreed}</div>}
+                
 
                 <div className={`button primary large create-studio-button ${disabled ? 'disabled' : ''}`} onClick={handleSubmit}>
                     Create Studio
