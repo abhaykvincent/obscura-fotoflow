@@ -11,7 +11,6 @@ import { useInvitation } from './hooks/useInvitation';
 import { useOnboardingForm } from './hooks/useOnboardingForm';
 import { completeOnboarding } from './slices/onboardingSlice';
 import CreateStudioForm from './components/CreateStudioForm';
-import AllSetScreen from './components/AllSetScreen';
 import '../Onboarding.scss';
 import { generateReferral } from '../../../app/slices/referralsSlice';
 
@@ -27,8 +26,6 @@ function Onboarding() {
     const { invitation, isLoading: isInvitationLoading } = useInvitation(ref);
     console.log('Invitation Data:', invitation);
     const { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm, validateAllSetForm } = useOnboardingForm({ studioName: invitation?.studioName, studioContact: invitation?.studioContact });
-
-    const [currentScreen, setCurrentScreen] = useState('create-studio');
 
     useEffect(() => {
         const studioLocal = JSON.parse(localStorage.getItem('studio'));
@@ -130,7 +127,6 @@ function Onboarding() {
 
                 {user?.email ?
                     <div className={`logged-user 
-                    ${currentScreen!=='create-studio' ? 'minimize-gmail-user' : ''}
                     ${!invitation && 'unavaillable-referral-code'}
                     
                     `}>
@@ -158,29 +154,18 @@ function Onboarding() {
 
             {user?.email &&
             <div className={`form-wrapper animate-reveal ${!invitation && 'unavaillable-referral-code'}`} style={{ animationDelay: '0.6s' }}>
-                {currentScreen === 'create-studio' ? (
-                    <CreateStudioForm
-                        user={user}
-                        formData={formData}
-                        studioName={invitation?.studioName}
-                        updateFormData={updateFormData}
-                        onNext={() => setCurrentScreen('all-set')}
-                        errors={errors}
-                        isDomainAvailable={isDomainAvailable}
-                        disabled={isDisabled}
-                        validateStudioForm={validateStudioForm}
-                    />
-                ) : (
-                    <AllSetScreen
-                        formData={formData}
-                        updateFormData={updateFormData}
-                        onNext={handleCreateAccount}
-                        onPrevious={() => setCurrentScreen('create-studio')}
-                        disabled={isDisabled}
-                        errors={errors}
-                        validateAllSetForm={validateAllSetForm}
-                    />
-                )}
+                <CreateStudioForm
+                    user={user}
+                    formData={formData}
+                    studioName={invitation?.studioName}
+                    updateFormData={updateFormData}
+                    onNext={handleCreateAccount}
+                    errors={errors}
+                    isDomainAvailable={isDomainAvailable}
+                    disabled={isDisabled}
+                    validateStudioForm={validateStudioForm}
+                    validateAllSetForm={validateAllSetForm}
+                />
             </div>
             }
         </main>

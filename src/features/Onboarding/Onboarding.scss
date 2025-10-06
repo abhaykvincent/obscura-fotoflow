@@ -23,6 +23,17 @@
         color: $yellow-accessible-light;
         margin-top: 8px;
         font-size: 0.9rem;
+        &.privacyPolicy-error{
+            margin-top: 0;
+            margin-bottom: 8px*2;
+                transition-duration: 0.2s;
+            &.hide-error{
+                opacity: 0  ;
+                transition-duration: 0.5s;
+                transition-delay: 0.1s;
+                transition-timing-function: ease-out;
+            }
+        }
     }
     .logo{
         position: relative;
@@ -804,11 +815,20 @@
     display: flex;
     align-items: center;
     gap: 8px*2;
-    margin-left: 8px;
-    margin-bottom: 8px;
+    margin-left: 0px;
+    margin-bottom: 0px;
     input{
         width: 8px*2;
         padding: 0 8px;
+            border: 1px solid $green-default-dark;
+        border-color: #007bff;
+        &.privacyPolicy-error-input{
+            padding: 8px;
+            transform: scale(1.5);
+            transition-duration: 0.2s;
+            transition-timing-function: ease-in-out;
+            border: 1px solid $green-default-dark;
+        }
     }
     label{
         width: 100%;
