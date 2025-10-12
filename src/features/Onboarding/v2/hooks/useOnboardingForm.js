@@ -18,7 +18,6 @@ export const useOnboardingForm = (defaultValues = {}, user) => {
 
     useEffect(() => {
         if (debouncedStudioDomain.length > 3) {
-            setIsCheckingDomain(true);
             checkStudioDomainAvailability(debouncedStudioDomain)
                 .then((isAvailable) => {
                     setIsDomainAvailable(isAvailable);
@@ -30,6 +29,8 @@ export const useOnboardingForm = (defaultValues = {}, user) => {
                 })
                 .catch((error) => {
                     console.error(' Error checking domain availability:', error);
+                    setIsDomainAvailable(false);
+                    setErrors(prev => ({ ...prev, studioDomain: 'Error checking domain.' }));
                 })
                 .finally(() => {
                     setIsCheckingDomain(false);
@@ -39,6 +40,18 @@ export const useOnboardingForm = (defaultValues = {}, user) => {
 
     const updateFormData = (data) => {
         setFormData(prev => ({ ...prev, ...data }));
+        if (data.studioDomain !== undefined) {
+            if (data.studioDomain.length > 3) {
+                setIsCheckingDomain(true);
+                // Reset previous error/status
+                setIsDomainAvailable(false);
+                setErrors(prev => ({ ...prev, studioDomain: null }));
+            } else {
+                setIsCheckingDomain(false);
+                setIsDomainAvailable(false);
+                setErrors(prev => ({ ...prev, studioDomain: null }));
+            }
+        }
     };
 
     const validatePhoneNumber = (phoneNumber) => {

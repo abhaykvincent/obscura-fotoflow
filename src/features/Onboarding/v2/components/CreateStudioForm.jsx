@@ -85,9 +85,9 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
                                 <p className='input-reaction'>Checking availability...</p>
                             ) : isDomainAvailable ? (
                                 <p className='input-reaction subdomain-available'>Available</p>
-                            ) : (
-                                <p className='input-reaction'>{errors.studioDomain || 'Sub-domain already taken.'}</p>
-                            )
+                            ) : errors.studioDomain ? (
+                                <p className='input-reaction'>{errors.studioDomain}</p>
+                            ) : null
                         )}
                     </div>
                 </div>
