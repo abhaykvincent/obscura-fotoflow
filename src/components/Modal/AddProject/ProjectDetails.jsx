@@ -88,6 +88,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
               
             </span>
           </div>
+          <p>Auto assigned</p>
         </div>
       </div>
       <div className="field live-field">
@@ -96,8 +97,9 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
           className={`advanced-toggle ${showAdvanced ? 'down' : 'up'}`}
           onClick={() => setShowAdvanced(!showAdvanced)}
         >
-          <span className={`arrow`}></span>
           <span>{showAdvanced ? 'Hide Options' : 'Advanced'}</span>
+          <span className={`arrow`}></span>
+
         </div>
       </div>
       <div className={`advanced-options ${showAdvanced ? 'show' : ''}`}>

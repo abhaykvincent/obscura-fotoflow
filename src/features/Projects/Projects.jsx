@@ -344,7 +344,6 @@ function Projects() {
 
                 {filteredProjects.length > 0 || allProjects.length === 0 ? renderProjectGroups() : renderEmptyState()}
 
-                <Refresh />
             </main>
         </>
     );

@@ -31,19 +31,21 @@
       background-size: 110%;
       margin-top:2px;
       background-position: center;
+        background-image: url('https://img.icons8.com/?size=100&id=kHqsQPiFpGjM&format=png&color=336c1b')
       
     }
     &.up{
       .arrow {
         opacity:0.5;
-        background-image: url('https://img.icons8.com/?size=100&id=lCACQM0xDqsw&format=png&color=336c1b')
       }
     }
     &.down{
       margin-top:8px*2;
       margin-bottom:8px;
       .arrow {
-        background-image: url('https://img.icons8.com/?size=100&id=kHqsQPiFpGjM&format=png&color=336c1b')
+
+        background-image: url('https://img.icons8.com/?size=100&id=lCACQM0xDqsw&format=png&color=336c1b')
+
       }
       span{
         color: $gray3-accessible-dark;

@@ -122,12 +122,12 @@ function Sidebar() {
           </div>
         </Link> */}
 
-        {/* <Link to={`/${studioName}/notifications`}>
+        <Link to={`/${studioName}/notifications`}>
           <div className={`menu notifications  ${location.pathname === `/${studioName}/notifications` ? 'active' : ''}`}>
             <div className="icon"></div>
             <div className="label">Notifications</div>
           </div>
-        </Link> */}
+        </Link>
         <Link to={`/${studioName}/storage`}>
           <div className={`menu storage ${location.pathname === `/${studioName}/storage` ? 'active' : ''}`}>
             <div className="icon"></div>

@@ -273,6 +273,7 @@ animation-timing-function: ease-out;
     .team-members{
         display: flex;
         flex-wrap: wrap;
+        align-items: center;
         gap: 8px;
         transition-duration: 0.4s;
         .team-member{
@@ -588,18 +589,18 @@ animation-timing-function: ease-out;
     }
 }
 &.loginModal{
-    min-width: 8px*20;
     left: 50vw;
-    top: 50vh;
+    top: calc(50vh + 8px*8);
     padding: 0;
     transform: translate(-50%, -40%);
     opacity: 0;
+    min-height: 8px*53;
     animation-name: login-popup;
     animation-delay: 0.5s;
     animation-duration: 0.2s;
     animation-fill-mode: forwards;
     border: none;
-    box-shadow: 2px 2px 3px black;
+    overflow: visible;
     background: none;
 
     @keyframes login-popup {
@@ -649,9 +650,10 @@ animation-timing-function: ease-out;
     border-top: 1px solid $gray5-default-dark;
     padding: 8px*5 8px*8;
     padding-bottom: 8px*1;
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
     border-radius: 8px*1.5;
     .login-title{
-    color: $gray2-default-dark;
+    color: $gray-default-dark;
     opacity: 0;
     animation: fadeInUp 0.3s ease-out 0.55s;
     animation-fill-mode: forwards;
@@ -662,7 +664,7 @@ animation-timing-function: ease-out;
     }
     .login-subtitle{
     width: 100%;
-    color: $gray4-default-dark;
+    color: $gray3-default-dark;
     text-align: center;
     margin-top: 8px*1.5;
     margin-bottom: 8px*2;
@@ -671,7 +673,7 @@ animation-timing-function: ease-out;
     line-height: 1rem;
     font-weight: 200;
     opacity: 0;
-    animation: fadeInUp 0.2s ease-out 0.74s;
+    animation: fadeInUp 0.2s ease-in 0.7s;
     animation-fill-mode: forwards;
     .green-label{
         color: $green-default-dark;
@@ -692,12 +694,12 @@ animation-timing-function: ease-out;
     animation-fill-mode: forwards;
     span{
         color: $gray2-default-light;
-        margin-left: 4px;
+        margin-left: -1px;
         span{
         opacity: 0;
         font-size: 2rem;
         color: $green-dark-accessible-light;
-        animation: fadeInUp 0.3s ease-in 0.64s;
+        animation: fadeInUp 0.3s ease-out 0.64s;
         animation-fill-mode: forwards;
         }
     }
@@ -744,7 +746,7 @@ animation-timing-function: ease-out;
         box-shadow: 2px 3px 4px 1px rgba(0, 0, 0, 0.8);
         border: 1px solid $gray-default-light;
         opacity: 0;
-        animation: fadeInUp 0.35s ease-in 0.8s;
+        animation: fadeInUp 0.35s ease-in 1s;
         animation-fill-mode: forwards;
         &:hover{
         border: 1px solid $gray6-accessible-light;
@@ -756,7 +758,7 @@ animation-timing-function: ease-out;
         grid-template-columns: 8px*5 auto;
         opacity: 0;
         transform: scale(0.98);
-        animation: fadeInUp 0.2s ease-in 0.7s;
+        animation: fadeInUp 0.35s ease-in 0.9s;
         animation-fill-mode: forwards;
 
         box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.5);
@@ -816,7 +818,7 @@ animation-timing-function: ease-out;
         margin-top: 8px*3;
         margin-bottom: 8px*2;
         opacity: 0;
-        animation: fadeInUp 0.25s ease-out 1.4s;
+        animation: fadeInLeft 0.25s ease-out 1.7s;
         animation-fill-mode: forwards;
         p{
         }
@@ -858,6 +860,11 @@ animation-timing-function: ease-out;
 p.open-with-login-label{
     margin-bottom: 0px;
 }
+
+            .google-signin-loading{
+              width: 100vw;
+              background-size: 80%;
+            }
 }
 &.create-project{
   .project-details{

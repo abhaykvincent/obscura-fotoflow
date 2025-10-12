@@ -243,8 +243,8 @@ body{
     border-right: 1px solid $dark-1;
     border-bottom: 1px solid $dark-1;
     box-shadow: 
-    inset 1px 1px 3px 2px rgba(30, 30, 30, 0.3), 
-    0px 0px 8px 2px rgb(255 255 255 / 2%);
+    inset 1px 1px 8px 2px rgba(139, 139, 139, 0.05), 
+    4px 2px 2px 1px rgb(0, 0, 0);
     background-color: $dark-2;
     // scrollbar styling
 
@@ -1619,17 +1619,18 @@ body{
     width: 100%;
     opacity: 0.4;
     margin-top: 8px*1;
-    border-top: 1px solid $dark-0;
-    padding-top: 8px*1;
+    border-top: 1px solid $dark-1;
+    padding-top: 8px*0.5;
 
     position: fixed;
-    bottom: 8px*3;
+    bottom: 8px*0.5;
     p{
       text-align: center;
+      font-size: 0.9rem;
       span{
       text-shadow: 1px 1px 0px  black;;
 
-        color: $gray3-accessible-light;
+        color: $gray2-accessible-light;
         span{
           color: $gray6-accessible-light;
         }
@@ -1637,7 +1638,8 @@ body{
     }
   }
   .login-container{
-   
+    
+    box-shadow: none;
     .logo{
       position: absolute;
       left: calc(50% - 8px*7);
@@ -1689,12 +1691,25 @@ body{
   
       
     }
+    .login-mascot{
+      position: relative;
+      left: 50%;;
+      margin-bottom: -8px*8;
+      width: 8px*28;
+      height: 8px*28;
+      background: url('./assets/img/mascots/login-mascot.png');
+      background-size: 100%;
+      // mix blend-mode: screen;
+      background-position: center;
+      animation-duration:12s;
+      transform: translateX(-50%);
+      z-index: 22
+    }
   }
   .login-footer{
     position: absolute;
-    width: calc(100% + 8px*40);
-    bottom: -8px*18;
-    left: -8px*20;;
+    width: calc(100%);
+    bottom: 0;
     .footer-actions{
       display: flex;
       gap: 8px*0;
@@ -1708,9 +1723,9 @@ body{
       .footer-cta-button{
         text-align: center;
         padding: 8px 8px*2; 
-        color: $gray4-default-light;
+        color: $gray-default-light;
           opacity: 0;
-          animation: fadeInLeft 0.1s ease-out 2.4s;
+          animation: fadeInLeft 0.1s ease-out 2.6s;
           animation-fill-mode: forwards;
           span{
         color: $green-default-dark;
@@ -1724,7 +1739,7 @@ body{
         font-weight: 200;
         margin-left: 8px*1;
           opacity: 0;
-          animation: fadeInUp 0.3s ease-out 2.5s;
+          animation: fadeInUp 0.3s ease-in 3s;
           animation-fill-mode: forwards;
       }
 
@@ -1750,6 +1765,10 @@ body{
             $delay: 1.9s + 0.04s * ($i - 1);
             animation: fadeInUp 0.2s ease-out $delay;
             animation-fill-mode: forwards;
+        }
+        &:last-child {
+          animation: fadeInUp 0.2s ease-out 2.5s;
+          animation-fill-mode: forwards;
         }
       }
     }
@@ -2490,20 +2509,26 @@ body{
     }
       
     .login-container{
-    
+      .modal{
+        
       .logo{
         position: absolute;
         left: calc(50% - 8px*5);
-        top: 8px*8;
+        top: 8px*2;
+      }
+      .actions{
+        padding: 8px*5 8px*5;
+        padding-bottom: 8px;
       }
       .login-footer{
-        width: calc(100vw + 8px*40);
+        width: calc(100%);
         position: absolute;
-        bottom: 8px*-11;
+        bottom: 8px*0;
         a{
           font-size: 0.8rem;
           padding: 8px 8px;
         }
+      }
       }
     }
     .welcome-section .storage-pie-wrap{

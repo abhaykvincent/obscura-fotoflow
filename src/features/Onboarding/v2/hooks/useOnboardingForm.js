@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { checkStudioDomainAvailability } from '../../../../firebase/functions/studios';
 import { useDebounce } from '../../../../hooks/useDebounce';
 
-export const useOnboardingForm = (defaultValues = {}) => {
+export const useOnboardingForm = (defaultValues = {}, user) => {
     const [formData, setFormData] = useState({
         studioName: defaultValues.studioName || '',
         studioDomain: defaultValues.studioDomain || '',
@@ -13,7 +13,7 @@ export const useOnboardingForm = (defaultValues = {}) => {
 
     const [errors, setErrors] = useState({});
     const [isDomainAvailable, setIsDomainAvailable] = useState(false);
-    const debouncedStudioDomain = useDebounce(formData.studioDomain, 1000);
+    const debouncedStudioDomain = useDebounce(formData.studioDomain, 800);
 
     useEffect(() => {
         if (debouncedStudioDomain.length > 3) {
@@ -111,7 +111,7 @@ useEffect(() => {
         clearTimeout(timerIdRef.current);
     }
 
-    if (defaultValues.studioName) {
+    if (defaultValues.studioName && user) {
         setFormData(prev => ({
             ...prev,
             studioName: '',
@@ -123,7 +123,7 @@ useEffect(() => {
 
         const typeChunk = () => {
     // Change is on this next line
-    currentLength += Math.floor(Math.random() * 4) + 1; // Randomly adds 1, 2, 3, or 4
+    currentLength += Math.floor(Math.random() *2) + 1; // Randomly adds 1, 2, 3, or 4
     
     // Ensure we don't go past the end of the string
     const displayText = fullText.slice(0, Math.min(currentLength, fullText.length));
@@ -135,7 +135,7 @@ useEffect(() => {
     }));
 
     if (currentLength < fullText.length) {
-        timerIdRef.current = setTimeout(typeChunk, 220);
+        timerIdRef.current = setTimeout(typeChunk, 100);
     }
 };
 
@@ -145,6 +145,6 @@ useEffect(() => {
 
     // Cleanup function to clear the scheduled timeout
     return () => clearTimeout(timerIdRef.current);
-}, [defaultValues.studioName]);
+}, [defaultValues.studioName, user]);
     return { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm, validateAllSetForm };
 };

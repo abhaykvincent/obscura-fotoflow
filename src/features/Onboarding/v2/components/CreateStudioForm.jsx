@@ -9,7 +9,11 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
     const dispatch = useDispatch();
 
     console.log(studioName)
-
+    useEffect(() => {
+        if(formData.studioDomain.length > 3){
+            validateStudioForm()
+        }
+    }, [formData.studioName, formData.studioDomain]) // eslint-disable-line react-hooks/exhaustive-deps
     const handleStudioNameChange = (e) => {
         const name = e.target.value;
         updateFormData({ 
@@ -85,7 +89,7 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
                         )}
                     </div>
                 </div>
-                <div className="privacy-policy-statment">
+                <div className={`privacy-policy-statment ${isDomainAvailable && !errors.studioName ? 'active' : ''} ${formData.studioDomain.length > 3 ? 'active' : ''}`}>
                     <input type="checkbox" checked={formData.privacyPolicyAgreed} id="privacyPolicy" className={`${errors.privacyPolicyAgreed && 'privacyPolicy-error-input'}`} name="privacyPolicy" required onChange={() => updateFormData({ privacyPolicyAgreed: !formData.privacyPolicyAgreed })} disabled={disabled} />
                     <label>
                         I agree to the <span onClick={() => dispatch(openModal('privacyPolicy'))}>Terms of Service</span> and <span onClick={() => dispatch(openModal('privacyPolicy'))}>Privacy Policy</span>
@@ -94,7 +98,7 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
                 {(errors.privacyPolicyAgreed ) && <div className={`error-container privacyPolicy-error ${formData.privacyPolicyAgreed  && 'hide-error'}`}>{errors.privacyPolicyAgreed}</div>}
                 
 
-                <div className={`button primary large create-studio-button ${disabled ? 'disabled' : ''}`} onClick={handleSubmit}>
+                <div className={`button primary large create-studio-button ${disabled ? 'disabled' : ''} ${isDomainAvailable && !errors.studioName  ? 'active' : ''} `} onClick={handleSubmit}>
                     Create Studio
                 </div>
             </form>
@@ -103,4 +107,3 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
 };
 
 export default CreateStudioForm;
-

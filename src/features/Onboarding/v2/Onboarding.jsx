@@ -25,7 +25,7 @@ function Onboarding() {
     const greeting = usePersonalizedGreeting();
     const { invitation, isLoading: isInvitationLoading } = useInvitation(ref);
     console.log('Invitation Data:', invitation);
-    const { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm, validateAllSetForm } = useOnboardingForm({ studioName: invitation?.studioName, studioContact: invitation?.studioContact });
+    const { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm, validateAllSetForm } = useOnboardingForm({ studioName: invitation?.studioName, studioContact: invitation?.studioContact }, user);
 
     useEffect(() => {
         const studioLocal = JSON.parse(localStorage.getItem('studio'));
@@ -107,7 +107,7 @@ function Onboarding() {
         <main className="onboarding-container">
             <div className="logo animate-reveal" style={{ animationDelay: '0.2s' }}></div>
             <div className={`user-authentication animate-reveal ${!user?.email ? 'auth-screen' : ''}`} style={{ animationDelay: '0.4s' }}>
-                {invitation?.name && (
+                {invitation?.name && !user?.email && (
                     <>
                         <p className='onboarding-greeting'>
                             <span className={`timeGreeting icon ${greeting.timeOfDay}`}>{greeting.timeGreeting}</span>
