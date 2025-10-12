@@ -13,6 +13,7 @@ export const useOnboardingForm = (defaultValues = {}, user) => {
 
     const [errors, setErrors] = useState({});
     const [isDomainAvailable, setIsDomainAvailable] = useState(false);
+    const [isCheckingDomain, setIsCheckingDomain] = useState(false);
     const debouncedStudioDomain = useDebounce(formData.studioDomain, 800);
 
     useEffect(() => {
@@ -28,12 +29,29 @@ export const useOnboardingForm = (defaultValues = {}, user) => {
                 })
                 .catch((error) => {
                     console.error(' Error checking domain availability:', error);
+                    setIsDomainAvailable(false);
+                    setErrors(prev => ({ ...prev, studioDomain: 'Error checking domain.' }));
+                })
+                .finally(() => {
+                    setIsCheckingDomain(false);
                 });
         }
     }, [debouncedStudioDomain]);
 
     const updateFormData = (data) => {
         setFormData(prev => ({ ...prev, ...data }));
+        if (data.studioDomain !== undefined) {
+            if (data.studioDomain.length > 3) {
+                setIsCheckingDomain(true);
+                // Reset previous error/status
+                setIsDomainAvailable(false);
+                setErrors(prev => ({ ...prev, studioDomain: null }));
+            } else {
+                setIsCheckingDomain(false);
+                setIsDomainAvailable(false);
+                setErrors(prev => ({ ...prev, studioDomain: null }));
+            }
+        }
     };
 
     const validatePhoneNumber = (phoneNumber) => {
@@ -146,5 +164,5 @@ useEffect(() => {
     // Cleanup function to clear the scheduled timeout
     return () => clearTimeout(timerIdRef.current);
 }, [defaultValues.studioName, user]);
-    return { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm, validateAllSetForm };
+    return { formData, updateFormData, errors, isDomainAvailable, isCheckingDomain, validateStudioForm, validateContactForm, validateAllSetForm };
 };

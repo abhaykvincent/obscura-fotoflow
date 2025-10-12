@@ -25,7 +25,7 @@ function Onboarding() {
     const greeting = usePersonalizedGreeting();
     const { invitation, isLoading: isInvitationLoading } = useInvitation(ref);
     console.log('Invitation Data:', invitation);
-    const { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm, validateAllSetForm } = useOnboardingForm({ studioName: invitation?.studioName, studioContact: invitation?.studioContact }, user);
+    const { formData, updateFormData, errors, isDomainAvailable, isCheckingDomain, validateStudioForm, validateContactForm, validateAllSetForm } = useOnboardingForm({ studioName: invitation?.studioName, studioContact: invitation?.studioContact }, user);
 
     useEffect(() => {
         const studioLocal = JSON.parse(localStorage.getItem('studio'));
@@ -162,6 +162,7 @@ function Onboarding() {
                     onNext={handleCreateAccount}
                     errors={errors}
                     isDomainAvailable={isDomainAvailable}
+                    isCheckingDomain={isCheckingDomain}
                     disabled={isDisabled}
                     validateStudioForm={validateStudioForm}
                     validateAllSetForm={validateAllSetForm}
