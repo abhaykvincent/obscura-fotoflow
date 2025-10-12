@@ -13,10 +13,12 @@ export const useOnboardingForm = (defaultValues = {}, user) => {
 
     const [errors, setErrors] = useState({});
     const [isDomainAvailable, setIsDomainAvailable] = useState(false);
+    const [isCheckingDomain, setIsCheckingDomain] = useState(false);
     const debouncedStudioDomain = useDebounce(formData.studioDomain, 800);
 
     useEffect(() => {
         if (debouncedStudioDomain.length > 3) {
+            setIsCheckingDomain(true);
             checkStudioDomainAvailability(debouncedStudioDomain)
                 .then((isAvailable) => {
                     setIsDomainAvailable(isAvailable);
@@ -28,6 +30,9 @@ export const useOnboardingForm = (defaultValues = {}, user) => {
                 })
                 .catch((error) => {
                     console.error(' Error checking domain availability:', error);
+                })
+                .finally(() => {
+                    setIsCheckingDomain(false);
                 });
         }
     }, [debouncedStudioDomain]);
@@ -146,5 +151,5 @@ useEffect(() => {
     // Cleanup function to clear the scheduled timeout
     return () => clearTimeout(timerIdRef.current);
 }, [defaultValues.studioName, user]);
-    return { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm, validateAllSetForm };
+    return { formData, updateFormData, errors, isDomainAvailable, isCheckingDomain, validateStudioForm, validateContactForm, validateAllSetForm };
 };

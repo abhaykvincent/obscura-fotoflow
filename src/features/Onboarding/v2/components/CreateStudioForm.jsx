@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../../app/slices/modalSlice';
 
-const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, errors, isDomainAvailable,disabled, validateStudioForm, validateAllSetForm }) => {
+const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, errors, isDomainAvailable, isCheckingDomain, disabled, validateStudioForm, validateAllSetForm }) => {
     const [suggestSubDomains, setSuggestSubDomains] = useState(['-studio', '-photography', '-weddings']);
     const [isSuggestionsAvailable, setIsSuggestionsAvailable] = useState(false);
     const dispatch = useDispatch();
@@ -81,7 +81,9 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
                             </div>
                         </div>
                         {formData.studioDomain.length > 3 && (
-                            isDomainAvailable ? (
+                            isCheckingDomain ? (
+                                <p className='input-reaction'>Checking availability...</p>
+                            ) : isDomainAvailable ? (
                                 <p className='input-reaction subdomain-available'>Available</p>
                             ) : (
                                 <p className='input-reaction'>{errors.studioDomain || 'Sub-domain already taken.'}</p>
