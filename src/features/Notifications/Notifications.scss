@@ -6,6 +6,7 @@
 	}
 	.notifications-list{
 		display: grid;
+		max-width: 50%;
 		gap: 8px*1.5;
 		padding: 8px*2 8px*3;
 		.label{

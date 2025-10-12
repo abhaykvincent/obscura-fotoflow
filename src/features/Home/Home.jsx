@@ -85,6 +85,13 @@ function Home() {
                 <div className="search-bar">
                     <SearchInput />
                 </div>
+
+                <Link to={`/${defaultStudio.name}/notifications`}>
+                    <div className="notifications">
+                        <div className="new"></div>
+                    </div>
+                </Link>
+                
             </div>
             <main className="home">
                 {/*  */}
@@ -217,7 +224,6 @@ function Home() {
 
                 }
 
-                <Refresh />
             </main>
 
         </>

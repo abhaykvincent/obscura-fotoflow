@@ -662,6 +662,11 @@
             margin-left: 0px;
             transition-delay: 0.05s;
             transition-duration: 1s;
+            .url-prefix{
+                color: $gray-default-dark;
+                margin-right:2px;
+                user-select: none;
+            }
             .sub-domain-input{
 
                 &::after{
@@ -680,7 +685,7 @@
                 &.available{
                     position: relative;
 
-                    color: $gray5-default-light;
+                    color: $gray6-default-light;
                 }
                 &.taken{
                     position: relative;
@@ -729,7 +734,12 @@
         }
     }
     .create-studio-button{
-        transition-timing-function: 2s;
+        opacity: 0.1 !important;
+        &.active{
+            opacity: 1 !important;
+            transition-duration: 0.3s;
+            transition-delay: 0.5s;
+        }
     }
     #contactNumber{
         width: 27rem;
@@ -817,6 +827,12 @@
     gap: 8px*2;
     margin-left: 0px;
     margin-bottom: 0px;
+    opacity: 0.2;
+    &.active{
+        opacity: 1;
+        transition-duration: 0.2s;
+        transition-delay: 1.6s;
+    }
     input{
         width: 8px*2;
         padding: 0 8px;
