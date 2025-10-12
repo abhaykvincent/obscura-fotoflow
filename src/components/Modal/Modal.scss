@@ -967,101 +967,6 @@ transition-delay: 0.2s;
 }
 
 
-//modal-in 
-@keyframes modal-in {
-  0% {
-    margin-left: 8px*5;
-    transform: translate(200%,0%);
-    opacity: 0;
-  }
-  55% {
-    transform: translate(-8px*5,0%)  ;
-    opacity: 1;
-  }
-  60% {
-    transform: translate(-8px*5,0%) ;
-    opacity: 1;
-  }
-  100% {
-    margin-left: 8px*0;
-    transform: translate(-8px*3,0%) ;
-    opacity: 1;
-  }
-}
-@keyframes modal-out {
-  0% {
-    transform: translate(-50%, calc(-40% - 60px))  scale(1);
-    opacity: 1;
-  } 5% {
-    margin-left: 8px*0;
-    transform: translate(-50%, calc(-40% - 60px))  scale(1.04);
-    opacity: 1;
-  } 
-  80% {
-    margin-left: 8px*5;
-    transform: translate(-55%, calc(-40% - 60px))  scale(0.8);
-    opacity: 0;
-  }
-  100% {
-    margin-left: 8px*5;
-    transform: translate(-55%, calc(-40% - 60px))  scale(0);
-    opacity: 0;
-  }
-}
-@keyframes modal-in-island {
-  0% {
-    transform: translate(-50%,calc(-40% - 60px)) scale(0.8);
-    opacity: 0;
-    backdrop-filter: blur(0px);
-  }
-  60% {
-    transform:translate(-50%,calc(-40% - 60px))  scale(1.04);
-    opacity: 1;
-
-  }
-  100% {
-    margin-left: 8px*0;
-    transform: translate(-50%,calc(-40% - 60px)) ;
-    opacity: 1;
-
-    backdrop-filter: blur(8px);
-  }
-}
-@keyframes modal-in-mobile {
-  // slide from bottom
-  0% {
-    margin-top: 8px*5;
-    transform: translate(0%,100%)  scale(0.9);
-    opacity: 0;
-  }
-  100% {
-    margin-top: 8px*0;
-    transform: translate(0%,0%)  scale(1);
-    opacity: 1;
-  }
-}
-@keyframes modal-out-mobile {
-  0% {
-    margin-left: 8px*0;
-    transform: translate(0%,0%)  scale(1);
-    opacity: 1;
-  } 
-  55% {
-    margin-left: 8px*0;
-    transform: translate(0%,-8px*3)  scale(1);
-    opacity: 1;
-  }
-  60% {
-    margin-left: 8px*0;
-    transform: translate(0%,-8px*3)  scale(1);
-    opacity: 1;
-  }
-  100% {
-    margin-left: 8px*0;
-    transform: translate(0%,100%)  scale(1);
-    opacity: 0;
-  }
-}
 
 
 @media only screen and (max-width: 1080px) {
@@ -1121,7 +1026,7 @@ transition-delay: 0.2s;
   }
   @media only screen and (max-width: 520px) {
     .App{
-        .modal{
+      background-color: red;
     .modal-container{
       width: 100vw;
       height: 100vh;
@@ -1276,7 +1181,6 @@ transition-delay: 0.2s;
         padding: 8px*2 0;
       }
     }
-        }
     }
       
   }
@@ -1289,3 +1193,4 @@ transition-delay: 0.2s;
       }
     } 
 }}
+

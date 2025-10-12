@@ -62,19 +62,32 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
                             <div className={`studio-domain `}>
                                 <div className="url-prefix">..{domain}/</div>
                                 <div>
-                                    <span className={`sub-domain-input ${isDomainAvailable ? `available` : `taken`}`} contentEditable suppressContentEditableWarning={true}>
-                                        {formData.studioDomain}
-                                    </span>
+                                    <input
+                                        type="text"
+                                        className={`sub-domain-input ${isDomainAvailable ? 'available' : 'taken'}`}
+                                        value={formData.studioDomain}
+                                        onChange={(e) => {
+                                        // sanitize to lowercase and replace spaces with hyphens
+                                        const v = e.target.value.toLowerCase().replace(/\s+/g, '-');
+                                        updateFormData({ studioDomain: v });
+                                        }}
+                                        disabled={disabled}
+                                        aria-label="Studio domain"
+                                    />
                                     {!isSuggestionsAvailable && formData.studioDomain.length > 3 && (
                                         <span className={`suggestions ${isDomainAvailable && 'focus-out'}`}>
-                                            {suggestSubDomains.map((subdomain, index) => (
-                                                <span key={index} className='suggestion' onClick={() => {
-                                                    updateFormData({ studioDomain: formData.studioDomain + subdomain });
-                                                    setIsSuggestionsAvailable(true);
-                                                }}>
-                                                    {formData.studioDomain}{subdomain}
-                                                </span>
-                                            ))}
+                                        {suggestSubDomains.map((subdomain, index) => (
+                                            <span
+                                            key={index}
+                                            className="suggestion"
+                                            onClick={() => {
+                                                updateFormData({ studioDomain: formData.studioDomain + subdomain });
+                                                setIsSuggestionsAvailable(true);
+                                            }}
+                                            >
+                                            {formData.studioDomain}{subdomain}
+                                            </span>
+                                        ))}
                                         </span>
                                     )}
                                 </div>
