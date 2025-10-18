@@ -98,7 +98,13 @@ function Onboarding() {
     };
 
     if (isInvitationLoading) {
-        return <div>Loading...</div>; // Or a proper loading spinner
+        return <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <div className="loading-context-container">
+
+            <p className="loading-context">Validating referral code...</p>
+            </div>
+        </div>; // Or a proper loading spinner
     }
 
     const isDisabled = !invitation;
@@ -146,7 +152,7 @@ function Onboarding() {
                         >Logout</div>
                     </div>
                 :
-                <div className={`button google-login-button ${isDisabled ? 'disabled' : ''}`} onClick={handleGoogleSignIn}>
+                <div className={`button google-login-button ${isDisabled ? 'disabled' : ''}`} onClick={() => !isDisabled && handleGoogleSignIn()}>
                     Continue with Google <div className="google-logo"></div>
                 </div>
                 }

@@ -9,6 +9,8 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
     const dispatch = useDispatch();
 
     console.log(studioName)
+    console.log(isCheckingDomain)
+    console.log(isDomainAvailable)
     useEffect(() => {
         if(formData.studioDomain.length > 3){
             validateStudioForm()
@@ -56,7 +58,7 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
                     />
                     {errors.studioName && <div className="error-container">{errors.studioName}</div>}
 
-                    <div className={`studio-domain-selector ${isDomainAvailable ? 'available' : 'taken'} ${formData.studioDomain.length > 3 && 'active'}`}>
+                    <div className={`studio-domain-selector ${isDomainAvailable ? 'available': isCheckingDomain ? 'checking'  : 'taken'} ${formData.studioDomain.length > 3 && 'active'}`}>
                         <div className="domain-input-container">
                             <div className="web-icon"></div>
                             <div className={`studio-domain `}>
@@ -95,11 +97,11 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
                         </div>
                         {formData.studioDomain.length > 3 && (
                             isCheckingDomain ? (
-                                <p className='input-reaction'>Checking availability...</p>
+                                <p className='input-reaction checking'>Checking availability...</p>
                             ) : isDomainAvailable ? (
                                 <p className='input-reaction subdomain-available'>Available</p>
                             ) : errors.studioDomain ? (
-                                <p className='input-reaction'>{errors.studioDomain}</p>
+                                <p className='input-reaction auto-checking'>{errors.studioDomain}</p>
                             ) : null
                         )}
                     </div>

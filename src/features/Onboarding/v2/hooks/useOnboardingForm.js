@@ -22,7 +22,7 @@ export const useOnboardingForm = (defaultValues = {}, user) => {
                 .then((isAvailable) => {
                     setIsDomainAvailable(isAvailable);
                     if (!isAvailable) {
-                        setErrors(prev => ({ ...prev, studioDomain: 'Sub-domain already taken.' }));
+                        setErrors(prev => ({ ...prev, studioDomain: 'Checking ...' }));
                     } else {
                         setErrors(prev => ({ ...prev, studioDomain: null }));
                     }
@@ -80,8 +80,8 @@ export const useOnboardingForm = (defaultValues = {}, user) => {
         }
         if (formData.studioDomain.length <= 3) {
             newErrors.studioDomain = "Sub-domain must be longer than 3 characters.";
-        } else if (!isDomainAvailable) {
-            newErrors.studioDomain = errors.studioDomain || 'Sub-domain already taken.';
+        } else if (!isDomainAvailable ) {
+            newErrors.studioDomain = errors.studioDomain || 'Checking...';
         }
         
         setErrors(newErrors);

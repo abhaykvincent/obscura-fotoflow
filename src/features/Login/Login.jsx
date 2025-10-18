@@ -156,7 +156,7 @@ const LoginModal = () => {
           <div className="login-helper-options">
             <Link to={isDeveloper?'/onboarding?ref=2744':`/onboarding`}
             className={`create-studio-link ${loading? 'fade':''}`}
-            >Create your Studio</Link>
+            >Sign up for Free</Link>
           </div>
           
         </div>

@@ -28,7 +28,6 @@
 
 .modal{
 position: absolute;
-top: calc(8px*2);
 right: calc(0vw );
 height: calc(100vh - $header-height*2);
 background-color: $dark-2;
@@ -967,6 +966,101 @@ transition-delay: 0.2s;
 }
 
 
+//modal-in 
+@keyframes modal-in {
+  0% {
+    margin-left: 8px*5;
+    transform: translate(200%,0%);
+    opacity: 0;
+  }
+  55% {
+    transform: translate(-8px*5,0%)  ;
+    opacity: 1;
+  }
+  60% {
+    transform: translate(-8px*5,0%) ;
+    opacity: 1;
+  }
+  100% {
+    margin-left: 8px*0;
+    transform: translate(-8px*3,0%) ;
+    opacity: 1;
+  }
+}
+@keyframes modal-out {
+  0% {
+    transform: translate(-50%, calc(-40% - 60px))  scale(1);
+    opacity: 1;
+  } 5% {
+    margin-left: 8px*0;
+    transform: translate(-50%, calc(-40% - 60px))  scale(1.04);
+    opacity: 1;
+  } 
+  80% {
+    margin-left: 8px*5;
+    transform: translate(-55%, calc(-40% - 60px))  scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    margin-left: 8px*5;
+    transform: translate(-55%, calc(-40% - 60px))  scale(0);
+    opacity: 0;
+  }
+}
+@keyframes modal-in-island {
+  0% {
+    transform: translate(-50%,calc(-40% - 60px)) scale(0.8);
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  60% {
+    transform:translate(-50%,calc(-40% - 60px))  scale(1.04);
+    opacity: 1;
+
+  }
+  100% {
+    margin-left: 8px*0;
+    transform: translate(-50%,calc(-40% - 60px)) ;
+    opacity: 1;
+
+    backdrop-filter: blur(8px);
+  }
+}
+@keyframes modal-in-mobile {
+  // slide from bottom
+  0% {
+    margin-top: 8px*5;
+    transform: translate(0%,-30%)  scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    margin-top: 8px*0;
+    transform: translate(0%,-50%)  scale(1);
+    opacity: 1;
+  }
+}
+@keyframes modal-out-mobile {
+  0% {
+    margin-left: 8px*0;
+    transform: translate(0%,0%)  scale(1);
+    opacity: 1;
+  } 
+  55% {
+    margin-left: 8px*0;
+    transform: translate(0%,-8px*3)  scale(1);
+    opacity: 1;
+  }
+  60% {
+    margin-left: 8px*0;
+    transform: translate(0%,-8px*3)  scale(1);
+    opacity: 1;
+  }
+  100% {
+    margin-left: 8px*0;
+    transform: translate(0%,100%)  scale(1);
+    opacity: 0;
+  }
+}
 
 
 @media only screen and (max-width: 1080px) {
@@ -1026,7 +1120,6 @@ transition-delay: 0.2s;
   }
   @media only screen and (max-width: 520px) {
     .App{
-      background-color: red;
     .modal-container{
       width: 100vw;
       height: 100vh;
@@ -1067,18 +1160,18 @@ transition-delay: 0.2s;
     }
     .modal{
       width: calc(100vw - 8px*2);
-      height: calc(100vh - $header-height);
-      left: 4px;
-      top: $header-height;
+      height: calc(100% - $header-height*2);
+      left: 2px;
       animation: modal-in-mobile 0.2s;
       animation-fill-mode: forwards;
-    transform: translateX(-50%);
+      transform: translateX(-50%);
     &.island{
-      top: auto;
-      bottom: 8px*8;
+      bottom: 8px*1;
       left: 8px;
-      transform: none;
-      animation: none;
+    transform: translateY(-50%);
+      animation: modal-in-mobile 0.2s;
+      animation-fill-mode: forwards;
+      transform: translateX(-50%);
       opacity: 1;
     }
       &.loginModal{
@@ -1086,6 +1179,8 @@ transition-delay: 0.2s;
         margin-left: 0px;
         left: 8px*2;
       bottom: 8px*18;
+      height: auto;
+        transform: translateY(-50%);
         .actions{
           padding: 8px*3 8px*2;
           max-width: 95vw;
@@ -1175,15 +1270,27 @@ transition-delay: 0.2s;
         }
       }
       .modal-body{
+        min-width: auto;
         max-height: calc(100vh - 8px*21);
         overflow-y: scroll;
         margin-top: 8px*0;
         padding: 8px*2 0;
+    .screens-slider .screen-content .welcome-screen-body-wrapper {
+    padding: 0 8px;
+}
       }
     }
+    .welcome-modal .modal{
+
+      .modal-body{
+    .screens-slider .screen-content .welcome-screen-body-wrapper {
+    padding: 0 8px !important;
+      }
     }
-      
   }
+        }
+    }
+     
 
 @media only screen and (max-width: 430px) {
   .App{
@@ -1193,4 +1300,3 @@ transition-delay: 0.2s;
       }
     } 
 }}
-
