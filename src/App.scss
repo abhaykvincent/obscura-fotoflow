@@ -589,7 +589,7 @@ body{
       .project-cover{
         position: relative;
         width: calc(100vw - 8px*26);
-        margin-top: -8px*16;
+        margin-top: -8px*14;
         display: flex;
         opacity: 01;
         grid-template-columns: auto auto;
@@ -1063,11 +1063,11 @@ body{
           display: grid;
           align-items: center;
           align-content: center;
-          height: calc(100vh - 8px*80);
+          min-height: calc(100vh - 8px*62);
           border-radius: 8px*1;
           border: 1px double $dark-0;
           stroke-dashoffset: 20px 10px;
-          margin: 8px*8 8px*16;
+          margin: 8px*8 8px*8;
           text-align: center;
           opacity: 1;
           background-size: 80%;;
@@ -2491,6 +2491,7 @@ body{
         .drop-upload .drop-area{
           min-height: 8px*30;
           max-height: 80vh;
+          margin: 8px*4 8px*4;
         }
       .header{
         padding-bottom: 8px;
@@ -2544,6 +2545,7 @@ body{
 
       .list{
         margin-top: 8px*0;
+        width: calc(100vw - 8px*2.25);  ;
         .gallery-list{    
           position: relative;
           display: flex;
@@ -2695,14 +2697,48 @@ body{
             }
           }
         }
+         .project-dashboard .client{
+          grid-template-columns: 1fr;
+
+        justify-items: center;
+         }
+        .project-cover-image{
+          width:90vw;
+          .no-cover-image{
+            width: 90vw;
+          }
+        }
+        .project-cover.project-page-cover{
+          padding-top: 8px*4;
+        }
         .project-page-cover{
-          padding-top: 8px*40;
+          display: grid;
+          grid-template-columns: 1fr;
+          width: 100%;
+          padding-top: 8px*12;
+          padding-left: 8px*1;
+          margin-left: 0;
           .cover-footer{
-            height: 8px*7;
+            width: calc(100vw - 8px*2);
+            height: 8px*16;
+            margin-top: 8px;
           }
-          .static-tools .bottom-right {
-            display: none;
-          }
+          .static-tools{
+              display: grid;
+              justify-items: center;
+            &.bottom{
+              display: grid;
+              justify-content: center;
+              align-content: center;
+              gap: 8px*1;
+            }
+            .bottom-right {
+              display: none;
+            }
+            .action-buttons{
+              display: none;
+            }
+          } 
         }
       }
       &.home{

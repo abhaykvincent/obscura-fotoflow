@@ -80,6 +80,7 @@
                 animation-fill-mode: forwards;
                 animation-timing-function: ease-out;
                 .projects{
+                    padding-bottom: 8px*3;
                     .project{
                         opacity: 0;
                         transform: translateY(-8px);
@@ -316,8 +317,8 @@
         position: fixed;
         top:8px*2;
         right:8px*4;
-        width: 8px*4;
-        height: 8px*4;
+        width: 8px*3.5;
+        height: 8px*3.5;
         z-index: 99;
         background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/appointment-reminders--v1.png');
         background-size: 90%;
@@ -330,7 +331,9 @@
             width: 8px*1;
             height: 8px*1;
             border-radius: 50%;
-            border: 1px solid black;
+            border: 1px solid $gray6-default-dark;
+            background-color: $red-default-light;
+            box-shadow: -1px 1px 2px 1px rgba(0, 0, 0, 0.3);
         }
     }
 }

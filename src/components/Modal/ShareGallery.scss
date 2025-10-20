@@ -498,3 +498,20 @@
     gap: 8px;
 
 }}
+
+@media only screen and (max-width: 520px) {
+  .App {
+    .share-gallery {
+        .selection-toggle {
+            .toggle-status-label {
+            display: none;
+            }
+        }
+        .select-galleries {
+            .gallery-item {
+                width: calc(100vw - 8px*6); // Adjust width for padding/margin
+            }
+        }
+    }
+  }
+}

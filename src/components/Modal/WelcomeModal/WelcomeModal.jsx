@@ -92,8 +92,8 @@ const WelcomeModal = () => {
                 </div>
             ) : (
 
-                <div className="button secondary" onClick={() => handleClose(true)}>
-                    Close
+                <div className="button secondary skip" onClick={() => handleClose(true)}>
+                    Skip
                 </div>
             )
           }

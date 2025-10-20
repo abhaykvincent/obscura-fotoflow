@@ -45,3 +45,14 @@
     }
   }
   
+
+@media only screen and (max-width: 520px) {
+  .App {
+    .qr-code-modal {
+      .modal-body {
+        width: 100%;
+        padding: 1rem;
+      }
+    }
+  }
+}

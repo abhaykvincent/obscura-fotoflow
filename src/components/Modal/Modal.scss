@@ -1168,7 +1168,7 @@ transition-delay: 0.2s;
     &.island{
       bottom: 8px*1;
       left: 8px;
-    transform: translateY(-50%);
+      transform: translateY(-50%);
       animation: modal-in-mobile 0.2s;
       animation-fill-mode: forwards;
       transform: translateX(-50%);
@@ -1237,9 +1237,10 @@ transition-delay: 0.2s;
           margin-top: 8px*2;
           &.template-options{
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr ;
             padding: 0 8px*4;
-            gap: 8px*2;
+            gap: 8px*1;
+            margin-bottom: 0;
             .radio-button-group:nth-child(1) label{
               padding: 8px*4 8px*4
             }
@@ -1257,7 +1258,6 @@ transition-delay: 0.2s;
           .template-options .radio-button-group {
             padding: 8px 8px*4;
             font-size: 1.2rem;
-            
           }
         }
       }
@@ -1273,16 +1273,92 @@ transition-delay: 0.2s;
         min-width: auto;
         max-height: calc(100vh - 8px*21);
         overflow-y: scroll;
-        margin-top: 8px*0;
+        margin-top: 8px*0 !important;
         padding: 8px*2 0;
+        .form-section.stared-templates{
+          margin-top: 0;
+          .project-validity-options.template-options{
+            padding: 0 8px;
+            .radio-button-group{
+              label{
+                display: flex;
+                align-items: center;
+              }
+            }
+            .radio-button-group:nth-child(1) label{
+              padding: 8px*2 8px*4
+            }
+            .radio-button-group:nth-child(2) label{
+              padding: 8px*2 8px*4
+            }
+            .radio-button-group:nth-child(3) label{
+              padding: 8px*2 8px*4
+            }
+          }
+          .stared-templates-label{
+            font-size: 1rem;
+            margin-bottom: 0;
+            padding: 0 8px;
+          }
+        }
+        .form-section.other-templates{
+
+          .project-validity-options.template-options{
+            display: grid;
+            padding: 0 8px;
+            grid-template-columns: 1fr 1fr ;
+
+              gap: 8px*1;
+            .radio-button-group{
+              label{
+                display: flex;
+                align-items: center;
+              }
+            }
+            .radio-button-group:nth-child(1) label{
+              padding: 8px*2 8px*4
+            }
+            .radio-button-group:nth-child(2) label{
+              padding: 8px*2 8px*4
+            }
+            .radio-button-group:nth-child(3) label{
+              padding: 8px*2 8px*4
+            }
+          }
+        }
     .screens-slider .screen-content .welcome-screen-body-wrapper {
     padding: 0 8px;
 }
       }
     }
     .welcome-modal .modal{
+      
+      padding-top: 8px*2;
 
+        
+      .modal-header{
+        display: none;
+
+      }
+      
+      .modal-footer{
+        .actions{
+          display: grid;
+          gap: 8px*0;
+          .button{
+            width:  calc(100vw - 8px*4);
+
+            padding: 8px;
+          }.button.skip{
+            opacity: 0.5;
+            text-shadow: none;
+          }
+        }
+      }
+      
       .modal-body{
+
+        
     .screens-slider .screen-content .welcome-screen-body-wrapper {
     padding: 0 8px !important;
       }

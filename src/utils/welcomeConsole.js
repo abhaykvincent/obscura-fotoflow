@@ -40,8 +40,12 @@ export function welcomeConsole() {
     }
 
   console.log(`%c Welcome to Fotoflow!`, `color: #70ab17;`);
+
   if (isDeveloper) {
     console.log(`%c 💻 Running in Developement Mode`, `color: #00aaffff;`);
-    console.log(`%c This device is not being tracked by Analytics`, `color: #ff95006c;`);
+    console.log(`%c 📊🚫 This device is not being tracked by Analytics`, `color: #00aaff6c;`);
+  }
+  else{
+    console.log(`%c 👁️‍🗨️ Observing session activity`, `color: #ffaa00;`);
   }
 }

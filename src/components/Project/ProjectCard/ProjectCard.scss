@@ -25,7 +25,7 @@
         box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 8px 4px #14562413;
         background: linear-gradient(30deg, $dark-2, $dark-3);
         transition-timing-function: ease-out !important;
-        transform: scale(1) translateY(-8px*1.5) !important;
+        transform: scale(1) translateY(-1px) !important;
         transition-duration: 0.2s !important;
 
         .cover-wrap{
@@ -38,13 +38,16 @@
             min-height: 8px*12;
             width: 8px*15;
             border-radius: 8px;
-            border: 1px solid $gray4-accessible-dark;
+        border: 1px solid $gray4-accessible-dark;
+        border-top: 1px solid rgba(176, 176, 176, 0.5);
+        border-left: 1px solid rgba(176, 176, 176, 0.5);
+        border-right: 1px solid rgba(162, 194, 156, 0.302);
             // custome transitio duration for transform: scale
             background-size: 100%;
             transition-timing-function: ease-in;
             opacity: 1;
-            transition-duration: 0.15s;
-            transform: scale(1.1) translateY(0px) translateX(-3px);
+            transition-duration: 0.05s;
+            transform: scale(1.08) translateY(0px) translateX(-3px);
             box-shadow: 4px 4px 4px 1px rgba(0, 0, 0, 0.4) ,inset 1px 1px 2px rgba(0, 0, 0, 0.5);
 
         }

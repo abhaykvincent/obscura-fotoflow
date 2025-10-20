@@ -45,19 +45,19 @@ function Sidebar() {
   if(user==='no-studio-found')
     return null; // Return null if no studio is found to prevent rendering issues
 
-  // FIX: Moved variable calculations here, BEFORE they are used in the JSX below.
   const storageUsedMB = studio?.usage?.storage?.used || 0;
-  const storageQuotaMB = studio?.usage?.storage?.quota || 0;
-  // Following the existing logic from your Sidebar.jsx for archive quota (quota * 2)
+  const storageQuotaMB = studio?.usage?.storage?.quota || 0
   const archiveQuotaMB = (studio?.usage?.storage?.quota || 0) * 2; 
 
+  // DEFERRED
   // Calculate percentages. Handle division by zero for quotas.
   const storageUsedPercentage = (storageQuotaMB > 0) ? (storageUsedMB / storageQuotaMB) * 100 : 0;
   // Assuming archive uses the same 'used' value but a different, larger quota
   const archiveUsedPercentage = (archiveQuotaMB > 0) ? (storageUsedMB / archiveQuotaMB) * 100 : 0; 
 
   return (
-    <div className={`sidebar ${location.pathname === `/${studioName}/home` ? 'sleep-sidebar' : ''}`}>
+    <div className={`sidebar ${location.pathname === `/${studioName}/home` ? 'sleep-sidebar' : 'sleep-sidebar'}`}>
+
       <div className="menu-list">
         <Link to={`/${studioName}/home`}>
           <div className={`menu home ${location.pathname === `/${studioName}/` || location.pathname === `/${studioName}/home` ? 'active' : ''}`}>
@@ -88,30 +88,32 @@ function Sidebar() {
         </Link>
 
         }
-        {/* <Link to={`/${studioName}/bookings`}>
-          <div className={`menu booking ${location.pathname === `/${studioName}/bookings` ? 'active' : ''} disabled`}>
-            <div className="icon"></div>
-            <div className="label">Bookings</div>
+
+        {/* 
+        <Link to={`/${studioName}/bookings`}>
+            <div className={`menu booking ${location.pathname === `/${studioName}/bookings` ? 'active' : ''} disabled`}>
+            <div className="icon"></div> <div className="label">Bookings</div>
           </div>
         </Link>
         <Link to={`/${studioName}/calendar`}>
           <div className={`menu calendar ${location.pathname === `/${studioName}/calendar` ? 'active' : ''} disabled`}>
-            <div className="icon"></div>
-            <div className="label">Calendar</div>
+            <div className="icon"></div> <div className="label">Calendar</div>
           </div>
         </Link>
         <Link to={`/${studioName}/store`}>
           <div className={`menu store ${location.pathname === `/${studioName}/store` ? 'active' : ''} disabled`}>
-            <div className="icon"></div>
-            <div className="label">Store</div>
+            <div className="icon"></div> <div className="label">Store</div>
           </div>
-        </Link> */}
-        {/* <Link to={`/${studioName}/invoices`}>
+        </Link> 
+        <Link to={`/${studioName}/invoices`}>
           <div className={`menu invoices ${location.pathname === `/${studioName}/invoices` ? 'active' : ''} disabled`}>
-            <div className="icon"></div>
-            <div className="label">Financials</div>
+            <div className="icon"></div> <div className="label">Financials</div>
           </div>
-        </Link> */}
+        </Link> 
+        */}
+
+
+
         {/* Admin */}
         
         <p className="label"></p>
@@ -160,7 +162,7 @@ function Sidebar() {
                 </div>
           }
           <Link  to={`/${studioName}/subscription`}>
-          <p className='plan-name'>{`${studio?.planName !== 'Core' ? '':'Upgrade to'} ${studio?.planName} `}
+          <p className='plan-name'>{`${studio?.planName}  `}
             {
               getDaysFromNow(studio?.trialEndDate) <5?
               <span className='tag free pay-now'>Pay now</span>:
@@ -312,6 +314,7 @@ function Sidebar() {
           >Logout</div>
         </div>
       </div>
+
       <div className="corner-tools">
         <NetworkSignal />
         <div className="corner-lock" onClick={() => {
