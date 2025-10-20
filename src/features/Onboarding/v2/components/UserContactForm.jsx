@@ -1,10 +1,6 @@
-
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { openModal } from '../../../../app/slices/modalSlice';
 
 const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, handleGoogleSignIn, errors, disabled, validateContactForm }) => {
-    const dispatch = useDispatch();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -47,13 +43,6 @@ const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, h
                         `}>{errors.studioContact}</p>}
                 </div>
 
-                <div className="privacy-policy-statment">
-                    <input type="checkbox" checked={formData.privacyPolicyAgreed} id="privacyPolicy" name="privacyPolicy" required onChange={() => updateFormData({ privacyPolicyAgreed: !formData.privacyPolicyAgreed })} disabled={disabled} />
-                    <label>
-                        I agree to the <span onClick={() => dispatch(openModal('privacyPolicy'))}>Terms of Service</span> and <span onClick={() => dispatch(openModal('privacyPolicy'))}>Privacy Policy</span>
-                    </label>
-                </div>
-                {errors.privacyPolicyAgreed && <p className={`message error low`}>{errors.privacyPolicyAgreed}</p>}
                 {!user?.email ? (
                     <div className={`button google-login-button ${disabled ? 'disabled' : ''}`} onClick={handleGoogleSignInAndProceed}>
                         Continue with Google <div className="google-logo"></div>
@@ -63,7 +52,7 @@ const UserContactForm = ({ user, formData, updateFormData, onNext, onPrevious, h
                         className={`button primary ${disabled ? 'disabled' : ''}`}
                         onClick={handleSubmit}
                     >
-                        Open App
+                        Next
                     </div>
                 )}
             </form>

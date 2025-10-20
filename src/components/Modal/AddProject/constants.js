@@ -15,9 +15,9 @@ export const PROJECT_TYPES = [
     { id: "validity-12", value: "12", label: "1 Year", disabled: true, className: "upgrade-needed" },
   ];
   export const ARCHIVE_OPTIONS = [
-    { id: "archive-1", value: "3", label: "1 Year" },
-    { id: "archive-2", value: "6", label: "2 Year", className: "free-validity" },
-    { id: "archive-5", value: "12", label: "5 Year", disabled: true, className: "upgrade-needed" },
+    { id: "archive-1", value: "1", label: "1 Year" },
+    { id: "archive-2", value: "2", label: "2 Year", className: "free-validity" },
+    { id: "archive-5", value: "3", label: "3 Year", disabled: true, className: "upgrade-needed" },
   ];
   export const PROJECT_CATEGORIES = [
     {

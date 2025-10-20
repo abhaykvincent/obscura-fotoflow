@@ -56,7 +56,7 @@
         .label{
             position: absolute;
             width:100%;
-            top: -8px*2.2;
+            top: -8px*2.5;
             left: 8px*0.5;
             color: $gray3-default-dark;
             font-size: 0.8rem;
@@ -176,7 +176,7 @@
             display:flex;
             align-items: center;
             gap:8px;
-            padding-left:8px;
+            padding-left:8px*1.2;
           }
                 .status-signal{
                     height: 5px;
@@ -238,11 +238,11 @@
       
       // Add staggered animation to the .month-name
       .month-name {
-        padding: 8px 16px; // Simplified calculation of 8px * 2
+        padding: 8px 8px*3; // Simplified calculation of 8px * 2
         font-weight: 400;
         font-size: 1rem;
-        color: $gray2-default-dark;
-            margin-bottom: 8px*1;
+        color: $gray3-default-dark;
+        margin-bottom: 8px*0.5;
         opacity: 0; // Start as invisible
   
         animation: fadeInUp 0.5s ease-out forwards;

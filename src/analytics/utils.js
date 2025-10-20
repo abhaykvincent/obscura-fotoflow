@@ -19,18 +19,19 @@ export const trackEvent = (eventName, eventParams = {}) => {
     
     // Production Mode - log events to Google Analytics
     if (isProduction) {
+
+        logEvent(analytics, eventName, eventParams);
         if(isDeveloper){
             console.log(`%c This device is not tracked by analytics`, `color: ${colorYellow}; `);
             console.log(`%c GA Event: ${eventName} `, `color: ${colorYellow}; `);
         }
-        else logEvent(analytics, eventName, eventParams);
     }
 
     // Development Mode Debugging - logs to console
     if (!isProduction) {
 
-        console.log(`%c GA Event: ${eventName} 
-${JSON.stringify(eventParams, null, 2)}`, `color: ${colorYellow}; `);
+        console.log(`%c 💻 GA Event: ${eventName} 
+        ${JSON.stringify(eventParams, null, 2)}`, `color: ${colorYellow}; `);
        
     }
 };

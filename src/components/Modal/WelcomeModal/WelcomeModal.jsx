@@ -76,24 +76,35 @@ const WelcomeModal = () => {
             </div>
             <div className="actions">
             {currentStep > 0 ? (
-                <div className="button secondary" onClick={handleBack}>
+                <div className="button secondary icon back" onClick={handleBack}>
                     Back
                 </div>
             )
-            :(
-                <div className="button secondary disabled" onClick={handleBack}>
+            : isLastStep ? (
+                <div className="button secondary" onClick={handleBack}>
                     Back
+                </div>
+            ) : 
+              currentStep === 1 ? (
+
+                <div className="button secondary  icon back disabled" onClick={handleBack}>
+                    Back
+                </div>
+            ) : (
+
+                <div className="button secondary skip" onClick={() => handleClose(true)}>
+                    Skip
                 </div>
             )
           }
             {isLastStep ? (
                 <>
-                    <div className="button primary" onClick={() => handleClose(true)}>
+                    <div className="button primary icon new " onClick={() => handleClose(true)}>
                         Create Project
                     </div>
                 </>
             ) : (
-                <div className="button primary" onClick={handleNext}>
+                <div className="button primary icon icon-right next" onClick={handleNext}>
                     Next
                 </div>
             )}

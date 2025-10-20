@@ -119,6 +119,8 @@ export const createStudio = async (studioData) => {
     }
 };
 export const checkStudioDomainAvailability = async (domain) => {
+
+    console.log("Checking domain availability for:", domain);
     const studiosCollection = collection(db, 'studios');
     const querySnapshot = await getDocs(studiosCollection);
     const studiosData = querySnapshot.docs.map((doc) => ({

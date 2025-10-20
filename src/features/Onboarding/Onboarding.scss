@@ -1,5 +1,37 @@
 @import '../../style/_variables.scss';;
-.App .onboarding-container{
+.App {
+    .loading-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100vw;
+        height: 100vh;
+        background-color: $dark-3;
+        .loading-spinner{
+            width: 8px*10;
+            height: 8px*10;
+    background-image: url('../../assets/img/fotoflow-pro-logo.png');
+    background-size: 100%;
+    background-position: center;
+    animation: logo-spin infinite;
+    animation-duration: 4s;
+        }
+        .loading-context{
+                background: linear-gradient(90deg, #428924c8  30%,#428924 45%,#428924 48%, #428924bc 55%, #42892479 90%);
+                background-size: 200%;
+                background-position: 0%;
+                -webkit-background-clip: text;
+                font-weight: 200;
+                -webkit-text-fill-color: transparent;
+                transition-duration: 1s;
+                font-weight: 400;
+                margin-left: 8px;
+                animation: loadingGradient 1s infinite alternate linear;
+                
+            
+        }
+    }
+    .onboarding-container{
     display: grid;
     grid-template-rows: auto auto auto;
     top: 0px;
@@ -23,6 +55,17 @@
         color: $yellow-accessible-light;
         margin-top: 8px;
         font-size: 0.9rem;
+        &.privacyPolicy-error{
+            margin-top: 0;
+            margin-bottom: 8px*2;
+                transition-duration: 0.2s;
+            &.hide-error{
+                opacity: 0  ;
+                transition-duration: 0.5s;
+                transition-delay: 0.1s;
+                transition-timing-function: ease-out;
+            }
+        }
     }
     .logo{
         position: relative;
@@ -59,6 +102,7 @@
 
         
       }
+    }
 }
 
 @keyframes background-parallax {
@@ -167,7 +211,7 @@
     .activate-fotoflow-whatsapp{
         display: flex;
         gap: 8px*0.5;
-        margin-bottom: 8px;
+        margin-bottom: 8px*3;
         p{
             
             color: $gray6-default-light;
@@ -181,7 +225,7 @@
     }
     .onboarding-message{
         
-        color: $gray2-default-dark;
+        color: $gray3-default-dark;
         margin-bottom: 8px*4;
     }
 }
@@ -255,9 +299,9 @@
     display: flex;
     justify-content: start;
     align-items: center;
-    margin-top: 8px*4;
+    margin-top: 8px*-2;
     margin-bottom: 8px*4;
-    margin-left: -8px*3;
+    margin-left: -8px*0;
     gap: 8px*2;
     &.minimize-gmail-user{
         .logout-button{
@@ -605,13 +649,25 @@
                 .studio-domain{
                     border: 1px solid $orange-default-dark;
                 }
-                .input-reaction{
-                    color: $orange-default-dark;
-                }
+                .auto-checking{
+
+                &.input-reaction{
+                background: linear-gradient(90deg, #ff9f0ac8  30%,#ff9f0a 45%,#ff9f0a 48%, #ff9f0abc 55%, #ff9f0a79 90%);
+                background-size: 200%;
+                background-position: 0%;
+                -webkit-background-clip: text;
+                font-weight: 200;
+                -webkit-text-fill-color: transparent;
+                transition-duration: 1s;
+                font-weight: 400;
+                animation: loadingGradient 1s infinite alternate linear;
+                
+            }
+            }
             }
             &.available{
                 .input-reaction{
-                    color: $gray-accessible-dark;
+                    color: $green-accessible-dark;
                     &::before{
                         content: '✓ ';
                         color: #87d413   ;
@@ -619,6 +675,24 @@
                     }
                 }
             }
+            
+            
+            &.checking{
+
+                .input-reaction{
+                background: linear-gradient(90deg, #ff9f0ac8  30%,#ff9f0a 45%,#ff9f0a 48%, #ff9f0abc 55%, #ff9f0a79 90%);
+                background-size: 200%;
+                background-position: 0%;
+                -webkit-background-clip: text;
+                font-weight: 200;
+                -webkit-text-fill-color: transparent;
+                transition-duration: 1s;
+                font-weight: 400;
+                animation: loadingGradient 1s infinite alternate linear;
+                
+            }
+            }
+            
             &.false{
 
             }
@@ -651,8 +725,22 @@
             margin-left: 0px;
             transition-delay: 0.05s;
             transition-duration: 1s;
+            .url-prefix{
+                color: $gray-default-dark;
+                margin-right:2px;
+                user-select: none;
+            }
             .sub-domain-input{
+                position: relative;
+                top:0;
+                width: 8px*20;
+                height: 8px*2;
+                padding: 4px 0;
+                padding-top: 0;
+                margin: 0;
 
+                margin-top: -8px*4;
+                font-size: 1rem;
                 &::after{
                     content:'';
                     color: transparent;
@@ -669,7 +757,7 @@
                 &.available{
                     position: relative;
 
-                    color: $gray5-default-light;
+                    color: $gray6-default-light;
                 }
                 &.taken{
                     position: relative;
@@ -686,7 +774,7 @@
                     
 
                     &.focus-out{
-                        opacity: 0.2;
+                        opacity: 0;
                         transition-duration: 0.1s;
                         &:hover{
                             transition-duration: 0.1s;
@@ -718,7 +806,12 @@
         }
     }
     .create-studio-button{
-        transition-timing-function: 2s;
+        opacity: 0.1 !important;
+        &.active{
+            opacity: 1 !important;
+            transition-duration: 0.3s;
+            transition-delay: 0.5s;
+        }
     }
     #contactNumber{
         width: 27rem;
@@ -804,11 +897,27 @@
     display: flex;
     align-items: center;
     gap: 8px*2;
-    margin-left: 8px;
+    margin-left: 0px;
+    margin-top: 8px;
     margin-bottom: 8px;
+    opacity: 0.2;
+    &.active{
+        opacity: 1;
+        transition-duration: 0.2s;
+        transition-delay: 1.6s;
+    }
     input{
         width: 8px*2;
         padding: 0 8px;
+            border: 1px solid $green-default-dark;
+        border-color: #007bff;
+        &.privacyPolicy-error-input{
+            padding: 8px;
+            transform: scale(1.5);
+            transition-duration: 0.2s;
+            transition-timing-function: ease-in-out;
+            border: 1px solid $green-default-dark;
+        }
     }
     label{
         width: 100%;
@@ -839,7 +948,7 @@
 }
 @media only screen and (max-width: 520px) {
     .App .onboarding-container{
-        padding-left: 8px*4;
+        padding-left: 8px*3;
         height: 100vh;
         .logo{
             position: relative;
@@ -865,7 +974,12 @@
 
                 input{
                     width: calc(100vw - 8px*8);
-                    font-size: 2rem;
+                    font-size: 3rem;
+
+                &.sub-domain-input{
+                    width: calc(100vw - 8px*26);
+                    font-size: 1rem;
+                }
                 }
             } 
             .section-intro{
@@ -893,8 +1007,12 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px*1;
+            font-size: 0.8rem;
             row-gap: 0px;
             max-width: calc(100vw - 8px*8);
+            span{
+                color: $gray2-accessible-light;
+            }
         }
     }
 }

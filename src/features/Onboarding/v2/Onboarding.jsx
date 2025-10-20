@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +11,6 @@ import { useInvitation } from './hooks/useInvitation';
 import { useOnboardingForm } from './hooks/useOnboardingForm';
 import { completeOnboarding } from './slices/onboardingSlice';
 import CreateStudioForm from './components/CreateStudioForm';
-import UserContactForm from './components/UserContactForm';
 import '../Onboarding.scss';
 import { generateReferral } from '../../../app/slices/referralsSlice';
 
@@ -27,9 +25,7 @@ function Onboarding() {
     const greeting = usePersonalizedGreeting();
     const { invitation, isLoading: isInvitationLoading } = useInvitation(ref);
     console.log('Invitation Data:', invitation);
-    const { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm } = useOnboardingForm({ studioName: invitation?.studioName, studioContact: invitation?.studioContact });
-
-    const [currentScreen, setCurrentScreen] = useState('create-studio');
+    const { formData, updateFormData, errors, isDomainAvailable, isCheckingDomain, validateStudioForm, validateContactForm, validateAllSetForm } = useOnboardingForm({ studioName: invitation?.studioName, studioContact: invitation?.studioContact }, user);
 
     useEffect(() => {
         const studioLocal = JSON.parse(localStorage.getItem('studio'));
@@ -102,7 +98,13 @@ function Onboarding() {
     };
 
     if (isInvitationLoading) {
-        return <div>Loading...</div>; // Or a proper loading spinner
+        return <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <div className="loading-context-container">
+
+            <p className="loading-context">Validating referral code...</p>
+            </div>
+        </div>; // Or a proper loading spinner
     }
 
     const isDisabled = !invitation;
@@ -110,8 +112,8 @@ function Onboarding() {
     return (
         <main className="onboarding-container">
             <div className="logo animate-reveal" style={{ animationDelay: '0.2s' }}></div>
-            <div className={`user-authentication animate-reveal ${currentScreen === 'user-contact' || user?.email ? 'user-contact-screen' : ''}`} style={{ animationDelay: '0.4s' }}>
-                {invitation?.name && (
+            <div className={`user-authentication animate-reveal ${!user?.email ? 'auth-screen' : ''}`} style={{ animationDelay: '0.4s' }}>
+                {invitation?.name && !user?.email && (
                     <>
                         <p className='onboarding-greeting'>
                             <span className={`timeGreeting icon ${greeting.timeOfDay}`}>{greeting.timeGreeting}</span>
@@ -129,9 +131,8 @@ function Onboarding() {
                     </div>
                 )}
 
-                {user?.email &&
+                {user?.email ?
                     <div className={`logged-user 
-                    ${currentScreen!=='create-studio' ? 'minimize-gmail-user' : ''}
                     ${!invitation && 'unavaillable-referral-code'}
                     
                     `}>
@@ -145,41 +146,35 @@ function Onboarding() {
                             
                         <span> {user.email}</span></div>
                         <div className="logout-button"
-                            onClick={()=>{
+                            onClick={()=>{ 
                             dispatch(logout())
                             }}
                         >Logout</div>
                     </div>
+                :
+                <div className={`button google-login-button ${isDisabled ? 'disabled' : ''}`} onClick={() => !isDisabled && handleGoogleSignIn()}>
+                    Continue with Google <div className="google-logo"></div>
+                </div>
                 }
             </div>
 
+            {user?.email &&
             <div className={`form-wrapper animate-reveal ${!invitation && 'unavaillable-referral-code'}`} style={{ animationDelay: '0.6s' }}>
-                {currentScreen === 'create-studio' ? (
-                    <CreateStudioForm
-                        user={user}
-                        formData={formData}
-                        studioName={invitation?.studioName}
-                        updateFormData={updateFormData}
-                        onNext={() => setCurrentScreen('user-contact')}
-                        errors={errors}
-                        isDomainAvailable={isDomainAvailable}
-                        disabled={isDisabled}
-                        validateStudioForm={validateStudioForm}
-                    />
-                ) : (
-                    <UserContactForm
-                        user={user}
-                        formData={formData}
-                        updateFormData={updateFormData}
-                        onNext={handleCreateAccount}
-                        onPrevious={() => setCurrentScreen('create-studio')}
-                        handleGoogleSignIn={handleGoogleSignIn}
-                        errors={errors}
-                        disabled={isDisabled}
-                        validateContactForm={validateContactForm}
-                    />
-                )}
+                <CreateStudioForm
+                    user={user}
+                    formData={formData}
+                    studioName={invitation?.studioName}
+                    updateFormData={updateFormData}
+                    onNext={handleCreateAccount}
+                    errors={errors}
+                    isDomainAvailable={isDomainAvailable}
+                    isCheckingDomain={isCheckingDomain}
+                    disabled={isDisabled}
+                    validateStudioForm={validateStudioForm}
+                    validateAllSetForm={validateAllSetForm}
+                />
             </div>
+            }
         </main>
     );
 }

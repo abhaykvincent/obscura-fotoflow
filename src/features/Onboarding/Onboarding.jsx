@@ -266,6 +266,7 @@ function Onboarding() {
       validateForm()
   },[user, createAccountData])
   useEffect(() => {
+    debugger
     dispatch(generateReferral({
       name: "Abhay",
       studioName:"Monalisa",

@@ -1,12 +1,21 @@
 
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { openModal } from '../../../../app/slices/modalSlice';
 
-const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, errors, isDomainAvailable,disabled, validateStudioForm }) => {
+const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, errors, isDomainAvailable, isCheckingDomain, disabled, validateStudioForm, validateAllSetForm }) => {
     const [suggestSubDomains, setSuggestSubDomains] = useState(['-studio', '-photography', '-weddings']);
     const [isSuggestionsAvailable, setIsSuggestionsAvailable] = useState(false);
+    const dispatch = useDispatch();
 
     console.log(studioName)
-
+    console.log(isCheckingDomain)
+    console.log(isDomainAvailable)
+    useEffect(() => {
+        if(formData.studioDomain.length > 3){
+            validateStudioForm()
+        }
+    }, [formData.studioName, formData.studioDomain]) // eslint-disable-line react-hooks/exhaustive-deps
     const handleStudioNameChange = (e) => {
         const name = e.target.value;
         updateFormData({ 
@@ -17,7 +26,7 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (validateStudioForm()) {
+        if (validateStudioForm() && validateAllSetForm()) {
             onNext();
         }
     };
@@ -49,40 +58,64 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
                     />
                     {errors.studioName && <div className="error-container">{errors.studioName}</div>}
 
-                    <div className={`studio-domain-selector ${isDomainAvailable ? 'available' : 'taken'} ${formData.studioDomain.length > 3 && 'active'}`}>
+                    <div className={`studio-domain-selector ${isDomainAvailable ? 'available': isCheckingDomain ? 'checking'  : 'taken'} ${formData.studioDomain.length > 3 && 'active'}`}>
                         <div className="domain-input-container">
                             <div className="web-icon"></div>
                             <div className={`studio-domain `}>
                                 <div className="url-prefix">..{domain}/</div>
                                 <div>
-                                    <span className={`sub-domain-input ${isDomainAvailable ? `available` : `taken`}`} contentEditable suppressContentEditableWarning={true}>
-                                        {formData.studioDomain}
-                                    </span>
+                                    <input
+                                        type="text"
+                                        className={`sub-domain-input ${isDomainAvailable ? 'available' : 'taken'}`}
+                                        value={formData.studioDomain}
+                                        onChange={(e) => {
+                                        // sanitize to lowercase and replace spaces with hyphens
+                                        const v = e.target.value.toLowerCase().replace(/\s+/g, '-');
+                                        updateFormData({ studioDomain: v });
+                                        }}
+                                        disabled={disabled}
+                                        aria-label="Studio domain"
+                                    />
                                     {!isSuggestionsAvailable && formData.studioDomain.length > 3 && (
                                         <span className={`suggestions ${isDomainAvailable && 'focus-out'}`}>
-                                            {suggestSubDomains.map((subdomain, index) => (
-                                                <span key={index} className='suggestion' onClick={() => {
-                                                    updateFormData({ studioDomain: formData.studioDomain + subdomain });
-                                                    setIsSuggestionsAvailable(true);
-                                                }}>
-                                                    {formData.studioDomain}{subdomain}
-                                                </span>
-                                            ))}
+                                        {suggestSubDomains.map((subdomain, index) => (
+                                            <span
+                                            key={index}
+                                            className="suggestion"
+                                            onClick={() => {
+                                                updateFormData({ studioDomain: formData.studioDomain + subdomain });
+                                                setIsSuggestionsAvailable(true);
+                                            }}
+                                            >
+                                            {formData.studioDomain}{subdomain}
+                                            </span>
+                                        ))}
                                         </span>
                                     )}
                                 </div>
                             </div>
                         </div>
                         {formData.studioDomain.length > 3 && (
-                            isDomainAvailable ? (
+                            isCheckingDomain ? (
+                                <p className='input-reaction checking'>Checking availability...</p>
+                            ) : isDomainAvailable ? (
                                 <p className='input-reaction subdomain-available'>Available</p>
-                            ) : (
-                                <p className='input-reaction'>{errors.studioDomain || 'Sub-domain already taken.'}</p>
-                            )
+                            ) : errors.studioDomain ? (
+                                <p className='input-reaction auto-checking'>{errors.studioDomain}</p>
+                            ) : null
                         )}
                     </div>
                 </div>
-                <div className={`button primary large create-studio-button ${disabled ? 'disabled' : ''}`} onClick={handleSubmit}>
+                <div className={`privacy-policy-statment ${isDomainAvailable && !errors.studioName ? 'active' : ''} ${formData.studioDomain.length > 3 ? 'active' : ''}`}>
+                    <input type="checkbox" checked={formData.privacyPolicyAgreed} id="privacyPolicy" className={`${errors.privacyPolicyAgreed && 'privacyPolicy-error-input'}`} name="privacyPolicy" required onChange={() => updateFormData({ privacyPolicyAgreed: !formData.privacyPolicyAgreed })} disabled={disabled} />
+                    <label>
+                        I agree to the <span onClick={() => dispatch(openModal('privacyPolicy'))}>Terms of Service</span> and <span onClick={() => dispatch(openModal('privacyPolicy'))}>Privacy Policy</span>
+                    </label>
+                </div>
+                {(errors.privacyPolicyAgreed ) && <div className={`error-container privacyPolicy-error ${formData.privacyPolicyAgreed  && 'hide-error'}`}>{errors.privacyPolicyAgreed}</div>}
+                
+
+                <div className={`button primary large create-studio-button ${disabled ? 'disabled' : ''} ${isDomainAvailable && !errors.studioName  ? 'active' : ''} `} onClick={handleSubmit}>
                     Create Studio
                 </div>
             </form>

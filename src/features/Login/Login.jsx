@@ -112,11 +112,11 @@ const LoginModal = () => {
       <div className={`logo ${loading ? 'loading' : ''}`}></div>
       <div className="modal island loginModal">
 
-      <div className="actions">
+        <div className="actions">
 
-        <h3 className='login-title-section'><span>Secure Login<span>.</span></span></h3>
+        <h3 className='login-title-section'><span>FotoFlow<span>.</span></span></h3>
         {/* <h2 className='login-title'>Signup <span>.</span> Signin <span>.</span></h2> */}
-        <h3 className='login-subtitle'>Shoot. Select. Share{/* <a className="green-label" href="">Create your studio</a> */}</h3>
+        <h3 className='login-subtitle'>Sign in or Create an account{/* <a className="green-label" href="">Create your studio</a> */}</h3>
 
         <p className="open-with-login-label">{ loading?'':''}</p>
           {/* <div className='button secondary outline disable'  onClick={openEmailPassordLogin}>Password Login<div className="email-logo"></div></div> */}
@@ -127,7 +127,7 @@ const LoginModal = () => {
         <div className="">
           { googleSignInResult?.user?
             <p>Sign-in as <span>{googleSignInResult?.user?.email}</span></p> :
-            <div className="">
+            <div className="google-signin-loading">
               <p>
                   <span className='opening-loader'>... </span>Opening Google Sign-in 
                   <span className='auth-cancel'
@@ -138,7 +138,7 @@ const LoginModal = () => {
           }
         </div>:
         <>
-          <div className={`button apple ${isAppleDevice() ? '':'disabled'}`}  onClick={handleGoogleSignIn}>
+          <div className={`button apple ${isAppleDevice() ? '':''}`}  onClick={handleGoogleSignIn}>
             <div className="logo-container">
             <div className="apple-logo"></div>
 
@@ -156,11 +156,14 @@ const LoginModal = () => {
           <div className="login-helper-options">
             <Link to={isDeveloper?'/onboarding?ref=2744':`/onboarding`}
             className={`create-studio-link ${loading? 'fade':''}`}
-            >Create your Studio</Link>
+            >Sign up for Free</Link>
           </div>
           
         </div>
           
+
+        </div>
+
         <div className="login-footer">
           <div className="footer-cta">
             <div className="footer-cta-button">Need Help ? <span> Chat with us</span></div>
@@ -169,24 +172,18 @@ const LoginModal = () => {
           <div className="footer-actions">
             <a href="">Demo</a>
             <a href="">Recovery</a>
-            <a href="">Region</a>
             <a href="">Terms of Service </a>
             <p className="ampersand">&</p>
             <a href="">Privacy Policy</a>
           </div>
         
         </div>
-
-        </div>
-
       </div>
 
       <div className="login-branding">
         <p> 
           <span><span> Fotoflow</span> </span>
           <span>| </span>
-            from the  house 
-              <> of </>  
           <span>
             <span> Flow</span>
             OS

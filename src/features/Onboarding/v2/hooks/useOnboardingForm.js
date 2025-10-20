@@ -3,17 +3,18 @@ import { useState, useEffect, useRef } from 'react';
 import { checkStudioDomainAvailability } from '../../../../firebase/functions/studios';
 import { useDebounce } from '../../../../hooks/useDebounce';
 
-export const useOnboardingForm = (defaultValues = {}) => {
+export const useOnboardingForm = (defaultValues = {}, user) => {
     const [formData, setFormData] = useState({
         studioName: defaultValues.studioName || '',
         studioDomain: defaultValues.studioDomain || '',
         studioContact: defaultValues.studioContact || '',
-        privacyPolicyAgreed: true,
+        privacyPolicyAgreed: false,
     });
 
     const [errors, setErrors] = useState({});
     const [isDomainAvailable, setIsDomainAvailable] = useState(false);
-    const debouncedStudioDomain = useDebounce(formData.studioDomain, 1000);
+    const [isCheckingDomain, setIsCheckingDomain] = useState(false);
+    const debouncedStudioDomain = useDebounce(formData.studioDomain, 800);
 
     useEffect(() => {
         if (debouncedStudioDomain.length > 3) {
@@ -21,19 +22,36 @@ export const useOnboardingForm = (defaultValues = {}) => {
                 .then((isAvailable) => {
                     setIsDomainAvailable(isAvailable);
                     if (!isAvailable) {
-                        setErrors(prev => ({ ...prev, studioDomain: 'Sub-domain already taken.' }));
+                        setErrors(prev => ({ ...prev, studioDomain: 'Checking ...' }));
                     } else {
                         setErrors(prev => ({ ...prev, studioDomain: null }));
                     }
                 })
                 .catch((error) => {
                     console.error(' Error checking domain availability:', error);
+                    setIsDomainAvailable(false);
+                    setErrors(prev => ({ ...prev, studioDomain: 'Error checking domain.' }));
+                })
+                .finally(() => {
+                    setIsCheckingDomain(false);
                 });
         }
     }, [debouncedStudioDomain]);
 
     const updateFormData = (data) => {
         setFormData(prev => ({ ...prev, ...data }));
+        if (data.studioDomain !== undefined) {
+            if (data.studioDomain.length > 3) {
+                setIsCheckingDomain(true);
+                // Reset previous error/status
+                setIsDomainAvailable(false);
+                setErrors(prev => ({ ...prev, studioDomain: null }));
+            } else {
+                setIsCheckingDomain(false);
+                setIsDomainAvailable(false);
+                setErrors(prev => ({ ...prev, studioDomain: null }));
+            }
+        }
     };
 
     const validatePhoneNumber = (phoneNumber) => {
@@ -62,8 +80,8 @@ export const useOnboardingForm = (defaultValues = {}) => {
         }
         if (formData.studioDomain.length <= 3) {
             newErrors.studioDomain = "Sub-domain must be longer than 3 characters.";
-        } else if (!isDomainAvailable) {
-            newErrors.studioDomain = errors.studioDomain || 'Sub-domain already taken.';
+        } else if (!isDomainAvailable ) {
+            newErrors.studioDomain = errors.studioDomain || 'Checking...';
         }
         
         setErrors(newErrors);
@@ -76,6 +94,12 @@ export const useOnboardingForm = (defaultValues = {}) => {
         if (phoneError) {
             newErrors.studioContact = phoneError;
         }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const validateAllSetForm = () => {
+        const newErrors = {};
         if (!formData.privacyPolicyAgreed) {
             newErrors.privacyPolicyAgreed = "You must agree to the terms and privacy policy.";
         }
@@ -105,7 +129,7 @@ useEffect(() => {
         clearTimeout(timerIdRef.current);
     }
 
-    if (defaultValues.studioName) {
+    if (defaultValues.studioName && user) {
         setFormData(prev => ({
             ...prev,
             studioName: '',
@@ -117,7 +141,7 @@ useEffect(() => {
 
         const typeChunk = () => {
     // Change is on this next line
-    currentLength += Math.floor(Math.random() * 4) + 1; // Randomly adds 1, 2, 3, or 4
+    currentLength += Math.floor(Math.random() *2) + 1; // Randomly adds 1, 2, 3, or 4
     
     // Ensure we don't go past the end of the string
     const displayText = fullText.slice(0, Math.min(currentLength, fullText.length));
@@ -129,7 +153,7 @@ useEffect(() => {
     }));
 
     if (currentLength < fullText.length) {
-        timerIdRef.current = setTimeout(typeChunk, 220);
+        timerIdRef.current = setTimeout(typeChunk, 100);
     }
 };
 
@@ -139,6 +163,6 @@ useEffect(() => {
 
     // Cleanup function to clear the scheduled timeout
     return () => clearTimeout(timerIdRef.current);
-}, [defaultValues.studioName]);
-    return { formData, updateFormData, errors, isDomainAvailable, validateStudioForm, validateContactForm };
+}, [defaultValues.studioName, user]);
+    return { formData, updateFormData, errors, isDomainAvailable, isCheckingDomain, validateStudioForm, validateContactForm, validateAllSetForm };
 };
