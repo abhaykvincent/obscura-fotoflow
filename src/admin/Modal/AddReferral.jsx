@@ -30,6 +30,7 @@ export default function AddReferralModal({}) {
 
   const [selectedTab, setSelectedTab] = useState("DIRECT");
   const [referralData, setReferralData] = useState(initialReferralData);
+  const [isCodeManuallyEdited, setIsCodeManuallyEdited] = useState(false);
 
   useEffect(() => {
     setReferralData({
@@ -51,9 +52,26 @@ export default function AddReferralModal({}) {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    setReferralData((prevData) => {
+      const newData = { ...prevData, [name]: value };
+      if (name === "name" && selectedTab === "DIRECT" && !isCodeManuallyEdited) {
+        const generatedCode = value
+          .toUpperCase()
+          .replace(/[^A-Z0-9]/g, "")
+          .slice(0, 12);
+        newData.code = generatedCode ? [generatedCode] : [];
+      }
+      return newData;
+    });
+  };
+
+
+  const handleCodeChange = (event) => {
+    setIsCodeManuallyEdited(true);
+    const { value } = event.target;
     setReferralData((prevData) => ({
       ...prevData,
-      [name]: value,
+      code: value ? [value.trim()] : [],
     }));
   };
 
@@ -157,6 +175,16 @@ export default function AddReferralModal({}) {
                   />
                 </div>
                 <div className="field optional">
+                  <label>Custom Code</label>
+                  <input
+                    name="code"
+                    value={referralData.code[0] || ""}
+                    type="text"
+                    placeholder="e.g. SUMMER25"
+                    onChange={handleCodeChange}
+                  />
+                </div>
+                <div className="field optional">
                   <label>Email</label>
                   <input
                     name="email"
@@ -205,7 +233,7 @@ export default function AddReferralModal({}) {
                     value={referralData.code[0] || ""}
                     type="text"
                     placeholder="e.g. SUMMER25"
-                    onChange={handleInputChange}
+                    onChange={handleCodeChange}
                   />
                 </div>
               </>
