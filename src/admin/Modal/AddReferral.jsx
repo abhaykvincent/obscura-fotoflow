@@ -6,6 +6,7 @@ import { closeModalWithAnimation, selectModal } from "../../app/slices/modalSlic
 import { selectUserStudio } from "../../app/slices/authSlice";
 import { useModalFocus } from "../../hooks/modalInputFocus";
 import { generateReferral } from "../../app/slices/referralsSlice";
+import { generateRandomString } from "../../utils/stringUtils";
 
 const initialReferralData = {
   campainName: "",
@@ -30,7 +31,6 @@ export default function AddReferralModal({}) {
 
   const [selectedTab, setSelectedTab] = useState("DIRECT");
   const [referralData, setReferralData] = useState(initialReferralData);
-  const [isCodeManuallyEdited, setIsCodeManuallyEdited] = useState(false);
 
   useEffect(() => {
     setReferralData({
@@ -53,21 +53,33 @@ export default function AddReferralModal({}) {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setReferralData((prevData) => {
-      const newData = { ...prevData, [name]: value };
-      if (name === "name" && selectedTab === "DIRECT" && !isCodeManuallyEdited) {
-        const generatedCode = value
+      const updatedData = { ...prevData, [name]: value };
+
+      const isDirectName = name === "name" && selectedTab === "DIRECT";
+      const isCampaignName =
+        name === "campainName" && selectedTab === "CAMPAIGN";
+
+      if (isDirectName || isCampaignName) {
+        const baseCode = value
           .toUpperCase()
           .replace(/[^A-Z0-9]/g, "")
-          .slice(0, 12);
-        newData.code = generatedCode ? [generatedCode] : [];
+          .slice(0, 8);
+
+        if (baseCode) {
+          const postfix = generateRandomString(4);
+          const generatedCode = `${baseCode}-${postfix}`;
+          return { ...updatedData, code: [generatedCode] };
+        } else {
+          return { ...updatedData, code: [] };
+        }
       }
-      return newData;
+
+      return updatedData;
     });
   };
 
 
   const handleCodeChange = (event) => {
-    setIsCodeManuallyEdited(true);
     const { value } = event.target;
     setReferralData((prevData) => ({
       ...prevData,
@@ -75,6 +87,14 @@ export default function AddReferralModal({}) {
     }));
   };
 
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * Handles the submission of the referral form.
+ * Closes the modal and dispatches an action to create a referral.
+ * On success, displays a success alert.
+ * On failure, displays an error alert.
+ */
+/*******  a65b2c18-ac82-4d9c-b475-8bc3238f4e43  *******/
   const handleSubmit = () => {
     onClose();
     setTimeout(() => {
