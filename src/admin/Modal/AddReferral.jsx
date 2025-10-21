@@ -198,6 +198,16 @@ export default function AddReferralModal({}) {
                     onChange={handleInputChange}
                   />
                 </div>
+                <div className="field optional">
+                  <label>Custom Code</label>
+                  <input
+                    name="code"
+                    value={referralData.code[0] || ""}
+                    type="text"
+                    placeholder="e.g. SUMMER25"
+                    onChange={handleInputChange}
+                  />
+                </div>
               </>
             )}
           </div>
