@@ -1,34 +1,54 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { showAlert } from "../../app/slices/alertSlice";
-import { addProject, createSubProject } from "../../app/slices/projectsSlice";
 import { useNavigate } from "react-router";
 import { closeModalWithAnimation, selectModal } from "../../app/slices/modalSlice";
 import { selectUserStudio } from "../../app/slices/authSlice";
 import { useModalFocus } from "../../hooks/modalInputFocus";
 import { generateReferral } from "../../app/slices/referralsSlice";
 
-export default function AddReferralModal({ }) {
+const initialReferralData = {
+  campainName: "",
+  name: "",
+  studioName: "",
+  type: "direct",
+  email: "",
+  studioContact: "",
+  code: [],
+  status: "active",
+  quota: 3,
+  used: 0,
+  validity: 30,
+  createdAt: new Date().toISOString(),
+};
+
+export default function AddReferralModal({}) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const visible = useSelector(selectModal);
   const currentStudio = useSelector(selectUserStudio);
 
+  const [selectedTab, setSelectedTab] = useState("DIRECT");
+  const [referralData, setReferralData] = useState(initialReferralData);
+
+  useEffect(() => {
+    setReferralData({
+      ...initialReferralData,
+      type: selectedTab.toLowerCase(),
+      campainName: "",
+      name: "",
+      studioName: "",
+      email: "",
+      studioContact: "",
+    });
+  }, [selectedTab]);
+
+  const handleTabClick = (tab) => {
+    setSelectedTab(tab);
+  };
+
   const onClose = () => dispatch(closeModalWithAnimation("addReferral"));
 
-  const [referralData, setReferralData] = useState({
-    campainName: "",
-    campainPlatform: "whatsapp",
-    type: "referral",
-    email: "",
-    studioContact: "",
-    code: [],
-    status: "active",
-    quota: 3,
-    used: 0,
-    validity: 30,
-    createdAt: new Date().toISOString(),
-  });
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setReferralData((prevData) => ({
@@ -38,19 +58,23 @@ export default function AddReferralModal({ }) {
   };
 
   const handleSubmit = () => {
-    const domain = currentStudio.domain;
     onClose();
     setTimeout(() => {
-        // Create Normal Project
-        dispatch(generateReferral(referralData ))
-          .then((response) => {
-            dispatch(showAlert({ type: "success", message: "Referral created successfully!" }));
-            /* navigate(`/${domain}/project/${id}`); */
-          })
-          .catch((error) => {
-            console.error("Error creating Referral:", error);
-            dispatch(showAlert({ type: "error", message: "Failed to create referral." }));
-          });
+      dispatch(generateReferral(referralData))
+        .then(() => {
+          dispatch(
+            showAlert({
+              type: "success",
+              message: "Referral created successfully!",
+            })
+          );
+        })
+        .catch((error) => {
+          console.error("Error creating Referral:", error);
+          dispatch(
+            showAlert({ type: "error", message: "Failed to create referral." })
+          );
+        });
     }, 500);
   };
 
@@ -73,103 +97,109 @@ export default function AddReferralModal({ }) {
         </div>
         <div className="modal-body">
           <div className="form-section">
-
-          {/* Campain Name */}          
-          <div className="field">
-            <label>Campain</label>
-            <input
-            name="campainName"
-            value={referralData.campainName}
-            type="text"
-            onChange={handleInputChange}
-            />
-          </div>
-          {/* Campain Name */}          
-          <div className="field">
-            <label>Name</label>
-            <input
-            name="name"
-            value={referralData.name}
-            type="text"
-            onChange={handleInputChange}
-            />
-          </div>
-          {/* Studio Name */}          
-          <div className="field">
-            <label>Studio</label>
-            <input
-            name="studioName"
-            value={referralData.studioName}
-            type="text"
-            onChange={handleInputChange}
-            />
-          </div>
-
-
-          {/* Campain Platform */}
-          {/* <div className="field">
-              <label>Campain Platform</label>
-              <select
-              name="campainPlatform"
-              value={referralData.campainPlatform}
-              onChange={handleInputChange}
-              >
-                  <option value="">Select a platform</option>
-                  <option value="direct">Direct</option>
-                  <option value="whatsapp">WhatsApp</option>
-                  <option value="instagram">Instagram</option>
-              </select>
-          </div> */}
-
-          {/* Type*/}
-          <div className="field">
-              <label>Type</label>
-              <select
-              name="type"
-              value={referralData.type}
-              onChange={handleInputChange}
-              >
-                  <option value="">Select a type</option>
-                  <option value="referral">Campain</option>
-                  <option value="referral">Referral</option>
-                  <option value="promo">Promo</option>
-                  <option value="discount">Discount</option>
-                  <option value="tester">Tester</option>
-                  <option value="tester">Internal</option>
-              </select>
-          </div>
-                    
-          {/* Campain Name */}          
-          <div className="field">
-            <label>Quota</label>
-            <input
-            name="quota"
-            value={referralData.quota}
-            type="number"
-            onChange={handleInputChange}
-            />
-          </div>
-
-            <div className="field optional">
-                <label>Email</label>
-                <input
-                name="email"
-                value={referralData.email}
-                type="text"
-                onChange={handleInputChange}
-                />
+            <div className="view-control">
+              <div className="filter-controls">
+                <div className="control-wrap">
+                  <div className="controls">
+                    <div
+                      className={`control ${
+                        selectedTab === "DIRECT" ? "active" : ""
+                      }`}
+                      onClick={() => handleTabClick("DIRECT")}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      Direct
+                    </div>
+                    <div
+                      className={`control ${
+                        selectedTab === "CAMPAIGN" ? "active" : ""
+                      }`}
+                      onClick={() => handleTabClick("CAMPAIGN")}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      Campaign
+                    </div>
+                  </div>
+                  <div className="label">Referral Type</div>
+                </div>
+              </div>
             </div>
-            <div className="field ">
-                <label>Phone Number +91</label>
-                <input
-                name="studioContact"
-                value={referralData.studioContact}
-                type="text"
-                placeholder="8888 888 888"
-                onChange={handleInputChange}
-                />
-            </div>
-                
+
+            {selectedTab === "DIRECT" && (
+              <>
+                <div className="field">
+                  <label>Name</label>
+                  <input
+                    name="name"
+                    value={referralData.name}
+                    type="text"
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="field">
+                  <label>Studio</label>
+                  <input
+                    name="studioName"
+                    value={referralData.studioName}
+                    type="text"
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="field">
+                  <label>Quota</label>
+                  <input
+                    name="quota"
+                    value={referralData.quota}
+                    type="number"
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="field optional">
+                  <label>Email</label>
+                  <input
+                    name="email"
+                    value={referralData.email}
+                    type="text"
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="field ">
+                  <label>Phone Number +91</label>
+                  <input
+                    name="studioContact"
+                    value={referralData.studioContact}
+                    type="text"
+                    placeholder="8888 888 888"
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </>
+            )}
+
+            {selectedTab === "CAMPAIGN" && (
+              <>
+                <div className="field">
+                  <label>Campaign</label>
+                  <input
+                    name="campainName"
+                    value={referralData.campainName}
+                    type="text"
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="field">
+                  <label>Quota</label>
+                  <input
+                    name="quota"
+                    value={referralData.quota}
+                    type="number"
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
         <div className="actions">
