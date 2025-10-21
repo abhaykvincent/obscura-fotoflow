@@ -6,7 +6,6 @@
     width: 100vw;
     height: 100vh;
     position: fixed;
-    top: $header-height;
     left: 0px;
     z-index: 20;
     &.closingModal{
@@ -44,7 +43,7 @@ animation-timing-function: ease-out;
 
 &.island{
     grid-template-rows: auto 100%;
-    top: calc(50vh);
+    bottom: calc(50vh);
     right: auto;
     left: calc(50vw );
     height: auto;
@@ -91,6 +90,7 @@ animation-timing-function: ease-out;
     backdrop-filter: blur(8px);
     border-radius: 8px*1.5 8px*1.5 0 0;
     overflow: hidden;
+    border-bottom: 1px solid $dark-1;
     .modal-controls{
     display: flex;
     width: 100%;
@@ -281,6 +281,7 @@ animation-timing-function: ease-out;
         gap: 8px;
         padding: 4px 8px;
         padding-left: 8px*0.5;
+        margin-left: 8px*0.5;
         border: 1px solid #242426;
         border-left: 1px solid #444446;
         border-top: 1px solid #444446;
@@ -455,7 +456,7 @@ animation-timing-function: ease-out;
         label{
         display: grid;
         justify-items:center;
-        gap:8px*1;
+        gap:8px*2;
         &::before{
           content: '.';
           color:rgba(51, 45, 45, 0);
@@ -549,7 +550,7 @@ animation-timing-function: ease-out;
     border-top: 1px solid $dark-1;
     border-radius: 0px 0px 8px*1.5 8px*1.5;
     padding: 8px*1 8px*2 ;
-    background-color: $dark-2-5;
+    background-color: $dark-1-5;
     backdrop-filter: blur(8px);
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.4);
 
@@ -589,7 +590,7 @@ animation-timing-function: ease-out;
 }
 &.loginModal{
     left: 50vw;
-    top: calc(50vh + 8px*8);
+    bottom: calc(50vh + 8px*8);
     padding: 0;
     transform: translate(-50%, -40%);
     opacity: 0;
@@ -604,11 +605,11 @@ animation-timing-function: ease-out;
 
     @keyframes login-popup {
     0%{
-    transform: translate(-50%, -40%) scale(0);
+    transform: translate(-50%, calc(50% + 8px*12)) scale(0);
     opacity: 0;
     }
     100%{
-        transform: translate(-50%, -50%)scale(1);
+        transform: translate(-50%, calc(50% + 8px*12))scale(1);
         opacity: 1;
     }
     }
@@ -711,7 +712,7 @@ animation-timing-function: ease-out;
     }
     }
     .button{
-        height: 8px*6;
+        height: 8px*7;
         display: grid;
         grid-template-columns: 8px*6 auto;
         align-items: center;
@@ -1009,18 +1010,18 @@ transition-delay: 0.2s;
 }
 @keyframes modal-in-island {
   0% {
-    transform: translate(-50%,calc(-40% - 60px)) scale(0.8);
+    transform: translate(-50%,calc(-50%)) scale(0.8);
     opacity: 0;
     backdrop-filter: blur(0px);
   }
   60% {
-    transform:translate(-50%,calc(-40% - 60px))  scale(1.04);
+    transform:translate(-50%,calc(-50%))  scale(1.04);
     opacity: 1;
 
   }
   100% {
     margin-left: 8px*0;
-    transform: translate(-50%,calc(-40% - 60px)) ;
+    transform: translate(-50%,50%) scale(1);
     opacity: 1;
 
     backdrop-filter: blur(8px);
@@ -1030,12 +1031,12 @@ transition-delay: 0.2s;
   // slide from bottom
   0% {
     margin-top: 8px*5;
-    transform: translate(0%,-30%)  scale(0.9);
+    transform: translate(0%,-10%)  scale(0.9);
     opacity: 0;
   }
   100% {
     margin-top: 8px*0;
-    transform: translate(0%,-50%)  scale(1);
+    transform: translate(0%,0%)  scale(1);
     opacity: 1;
   }
 }
@@ -1118,6 +1119,7 @@ transition-delay: 0.2s;
     }
       
   }
+  // Mobile styles
   @media only screen and (max-width: 520px) {
     .App{
     .modal-container{
@@ -1159,31 +1161,37 @@ transition-delay: 0.2s;
       }
     }
     .modal{
+      position: relative;
       width: calc(100vw - 8px*2);
-      height: calc(100% - $header-height*2);
+      height: auto;
       left: 2px;
-      animation: modal-in-mobile 0.2s;
+      padding-bottom: 0;
+      animation: none;
       animation-fill-mode: forwards;
-      transform: translateX(-50%);
+      transition-duration: 0.4s;
     &.island{
-      bottom: 8px*1;
+
+        position: absolute;
+      bottom: 8px*1!important;
       left: 8px;
-      transform: translateY(-50%);
-      animation: modal-in-mobile 0.2s;
+      transform: none !important;
+      animation: none !important;
       animation-fill-mode: forwards;
-      transform: translateX(-50%);
       opacity: 1;
     }
       &.loginModal{
         width: calc(100vw - 8px*4);
         margin-left: 0px;
         left: 8px*2;
-      bottom: 8px*18;
+      bottom: 8px*18 !important;
       height: auto;
         transform: translateY(-50%);
+        //blur
+        backdrop-filter: blur(0px);
         .actions{
           padding: 8px*3 8px*2;
           max-width: 95vw;
+          
           .sign-in-buttons{
             width: calc(100% - 8px*0);
           }
@@ -1263,8 +1271,11 @@ transition-delay: 0.2s;
       }
       .modal-header{
         display: flex;
-        padding: 8px*1;
+        padding: 8px*2;
         padding-left: 8px*3;
+        background-color: $dark-1-5;
+      box-shadow: 0 2px 1px 1px rgba(0, 0, 0, 0.2);
+
         .modal-controls{
           display: none;
         }
@@ -1274,7 +1285,8 @@ transition-delay: 0.2s;
         max-height: calc(100vh - 8px*21);
         overflow-y: scroll;
         margin-top: 8px*0 !important;
-        padding: 8px*2 0;
+        padding: 8px*3 0;
+        padding-bottom: 8px*16;
         .form-section.stared-templates{
           margin-top: 0;
           .project-validity-options.template-options{
@@ -1307,7 +1319,7 @@ transition-delay: 0.2s;
             display: grid;
             padding: 0 8px;
             grid-template-columns: 1fr 1fr ;
-
+            margin-top: 8px*2;
               gap: 8px*1;
             .radio-button-group{
               label{
@@ -1329,6 +1341,29 @@ transition-delay: 0.2s;
     .screens-slider .screen-content .welcome-screen-body-wrapper {
     padding: 0 8px;
 }
+      }
+      .actions{
+        position: absolute;
+        display: grid;
+        justify-content: center;
+        justify-items: center;
+        gap: 4px;
+        padding-top: 8px*2;
+      box-shadow: 0 -4px 4px 2px rgba(0, 0, 0, 0.2);
+
+        .button{
+          width: calc(100vw - 8px*4.75);
+          padding: 8px*2;
+          border-radius: 6px;
+          font-size: 1.1rem;
+          &.secondary{
+            width: calc(100vw - 8px*6);
+            padding: 8px*1.5;
+            background-color: $gray6-default-dark;
+            color: $gray2-accessible-light;
+          }
+        }
+
       }
     }
     .welcome-modal .modal{

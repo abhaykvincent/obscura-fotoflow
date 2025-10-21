@@ -209,6 +209,15 @@
         gap: 8px*3;
       }
   }
+
+.separator {
+    &.horizontal{
+        width: 100%;
+        height: 1px;
+        background-color: $gray4-accessible-dark;
+        margin: 8px 0;
+    }
+}
   .projects {
     .section-heading{
         
