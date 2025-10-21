@@ -76,6 +76,16 @@ export default function AddReferralModal({ }) {
 
           {/* Campain Name */}          
           <div className="field">
+            <label>Campain</label>
+            <input
+            name="campainName"
+            value={referralData.campainName}
+            type="text"
+            onChange={handleInputChange}
+            />
+          </div>
+          {/* Campain Name */}          
+          <div className="field">
             <label>Name</label>
             <input
             name="name"
@@ -84,19 +94,9 @@ export default function AddReferralModal({ }) {
             onChange={handleInputChange}
             />
           </div>
-          {/* Campain Name */}          
-          <div className="field">
-            <label>Campain name</label>
-            <input
-            name="campainName"
-            value={referralData.campainName}
-            type="text"
-            onChange={handleInputChange}
-            />
-          </div>
           {/* Studio Name */}          
           <div className="field">
-            <label>Studio Name</label>
+            <label>Studio</label>
             <input
             name="studioName"
             value={referralData.studioName}
@@ -107,7 +107,7 @@ export default function AddReferralModal({ }) {
 
 
           {/* Campain Platform */}
-          <div className="field">
+          {/* <div className="field">
               <label>Campain Platform</label>
               <select
               name="campainPlatform"
@@ -119,7 +119,7 @@ export default function AddReferralModal({ }) {
                   <option value="whatsapp">WhatsApp</option>
                   <option value="instagram">Instagram</option>
               </select>
-          </div>
+          </div> */}
 
           {/* Type*/}
           <div className="field">
@@ -130,6 +130,7 @@ export default function AddReferralModal({ }) {
               onChange={handleInputChange}
               >
                   <option value="">Select a type</option>
+                  <option value="referral">Campain</option>
                   <option value="referral">Referral</option>
                   <option value="promo">Promo</option>
                   <option value="discount">Discount</option>
