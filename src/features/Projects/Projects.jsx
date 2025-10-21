@@ -341,7 +341,7 @@ function Projects() {
                         </div>
                     </div>
                 )}
-
+                <div className="separator horizontal"></div>
                 {filteredProjects.length > 0 || allProjects.length === 0 ? renderProjectGroups() : renderEmptyState()}
 
             </main>

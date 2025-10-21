@@ -245,7 +245,7 @@ body{
     border-right: 1px solid $dark-1;
     border-bottom: 1px solid $dark-1;
     box-shadow: 
-    inset 1px 1px 8px 2px rgba(139, 139, 139, 0.05), 
+    inset 8px 8px 8px*4 8px rgba(86, 86, 86, 0.05), 
     4px 2px 2px 1px rgb(0, 0, 0);
     background-color: $dark-2;
     // scrollbar styling
@@ -2525,7 +2525,7 @@ body{
       .login-footer{
         width: calc(100%);
         position: absolute;
-        bottom: 8px*0;
+        bottom: 8px*-12;
         a{
           font-size: 0.8rem;
           padding: 8px 8px;
