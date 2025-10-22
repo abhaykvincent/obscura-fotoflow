@@ -1,6 +1,19 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateGalleryTaglineAsync } from '../../app/slices/adminSettingsSlice';
+import { selectStudio } from '../../app/slices/studioSlice';
 
 function GallerySettings({ formData, handleChange }) {
+  const dispatch = useDispatch();
+  const studio = useSelector(selectStudio);
+  const studioId = studio?.domain; // Assuming studioId is the domain
+
+  const handleSaveTagline = () => {
+    if (studioId && formData.galleryTagline) {
+      dispatch(updateGalleryTaglineAsync({ studioId, tagline: formData.galleryTagline }));
+    }
+  };
+
   return (
     <div className="gallery-privacy-settings">
       <form className="settings-form">
@@ -110,6 +123,7 @@ function GallerySettings({ formData, handleChange }) {
             value={formData.galleryTagline}
             onChange={handleChange}
           ></input>
+          <button type="button" onClick={handleSaveTagline}>Save Tagline</button>
         </div>
       </form>
     </div>
