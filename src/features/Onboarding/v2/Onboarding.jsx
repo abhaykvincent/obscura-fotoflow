@@ -40,14 +40,6 @@ function Onboarding() {
     }, [ref]);
 
     useEffect(() => {
-        if (onboardingStatus === 'succeeded' || onboardingStatus === 'failed') {
-            dispatch(hideLoading());
-        }
-    }, [onboardingStatus, dispatch]);
-
-
-
-    useEffect(() => {
         if(isDeveloper) {
             dispatch(generateReferral({
             name: "Abhay",
@@ -90,18 +82,21 @@ function Onboarding() {
         }
     };
 
-    const handleCreateAccount = () => {
+    const handleCreateAccount = async () => {
         if (!invitation) {
             dispatch(showAlert({ type: 'error', message: 'A valid referral code is required to create an account.' }));
             trackEvent('onboarding_attempt_invalid_referral', { referral_code: ref });
             return;
         }
-        dispatch(completeOnboarding({ 
+        const result = await dispatch(completeOnboarding({ 
             userData: user, 
             studioData: formData, 
             invitationCode: ref, 
             navigate 
         }));
+        if (completeOnboarding.fulfilled.match(result)) {
+            dispatch(hideLoading());
+        }
     };
 
     if (isInvitationLoading) {
