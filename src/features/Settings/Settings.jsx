@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 // Selectors and actions
 import { selectUser, selectUserStudio } from '../../app/slices/authSlice';
 // Components
-import AddProjectModal from '../../components/Modal/AddProject/AddProject';
+
 // Styles
 import './Settings.scss';
 import SettingsDashboard from './SettingsDashboard';
@@ -23,12 +23,11 @@ function Settings() {
     
     const [isSaving, setIsSaving] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
-    const hasChanges = Object.values(formData).some((value, idx) => value !== Object.values(defaultStudio)[idx]);
+    const hasChanges = 
+        formData.studioName !== (defaultStudio?.name || '') ||
+        formData.studioEmail !== (userData?.email || '') ||
+        formData.studioPhone !== (userData?.phone || '');
 
-
-    useEffect(() => {
-        console.log(formData.studioName)
-    }, [formData]);
 
     // Handle form field changes dynamically
     const handleChange = (e) => {
@@ -62,7 +61,6 @@ function Settings() {
     return (
         <>
             {/* Modals */}
-            <AddProjectModal />
 
             {/* Main - settings */}
             <main className="settings">
