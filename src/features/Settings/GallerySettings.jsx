@@ -102,12 +102,12 @@ function GallerySettings({ formData, handleChange }) {
 
         <h2>Footer</h2>
         <div className="form-group">
-          <label htmlFor="studioName">Tagline</label>
+          <label htmlFor="galleryTagline">Tagline</label>
           <input
             type="text"
-            id="studioName"
-            name="studioName"
-            value={`smile with ${formData.studioName}`}
+            id="galleryTagline"
+            name="galleryTagline"
+            value={formData.galleryTagline}
             onChange={handleChange}
           ></input>
         </div>
