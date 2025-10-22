@@ -13,6 +13,7 @@ import { completeOnboarding } from './slices/onboardingSlice';
 import CreateStudioForm from './components/CreateStudioForm';
 import '../Onboarding.scss';
 import { generateReferral } from '../../../app/slices/referralsSlice';
+import { hideLoading } from '../../../app/slices/loadingSlice';
 
 function Onboarding() {
     const navigate = useNavigate();
@@ -37,6 +38,12 @@ function Onboarding() {
     useEffect(() => {
         trackEvent('onboarding_viewed', { referral_code: ref });
     }, [ref]);
+
+    useEffect(() => {
+        if (onboardingStatus === 'succeeded' || onboardingStatus === 'failed') {
+            dispatch(hideLoading());
+        }
+    }, [onboardingStatus, dispatch]);
 
 
 

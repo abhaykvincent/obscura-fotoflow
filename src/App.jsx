@@ -44,6 +44,7 @@ import SearchResults from './components/Search/SearchResults';
 import Subscription from './components/Subscription/Subscription';
 import UploadProgress from './components/UploadProgress/UploadProgress';
 import Loading, { LoadingLight } from './components/Loading/Loading';
+import LoadingScreen from './components/Loading/LoadingScreen';
 import CommingSoon from './components/CommingSoon/CommingSoon';
 import NotFound from './components/NotFound/NotFound';
 import SupportIcon from './components/Modal/SupportIcon/FlowPilot';
@@ -156,6 +157,7 @@ export default function App() {
   // RENDER
   return (
     <div className={`App ${isLightModePage() && 'light-mode-page'}`}>
+      <LoadingScreen />
       <HotKeys keyMap={keyMap} handlers={handlers} className='app-wrap'>
       {/* <SupportIcon userId={defaultStudio?.domain}/> */}
       {isAuthenticated && (!isPublicPage()) && (
