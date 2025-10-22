@@ -298,7 +298,7 @@ body{
           animation: fadeInUp 0.2s ease-in 0.1s;
           animation-fill-mode: forwards;
           .cover-footer{
-            height: 8px*10;
+            height: 8px*16;
           }
         }
         .cover-tools{
@@ -2536,11 +2536,18 @@ body{
     .welcome-section .storage-pie-wrap{
       display: none;
     }
-    .client h1 {
-      position: relative;
-      display: flex;
-      font-size: 1.2rem;
-    }
+    main.project-page .project-dashboard .client{
+      .link-pin {
+        display: none;
+        align-items: start;
+        justify-content: start;
+      }
+      h1 {
+        position: relative;
+        display: flex;
+        font-size: 1.8rem;
+      }
+    } 
     .galleries{
 
       .list{
@@ -2703,24 +2710,28 @@ body{
         justify-items: center;
          }
         .project-cover-image{
-          width:90vw;
+          &.no-cover-image {
+            width: calc(100vw - 8px*8);
+          }
           .no-cover-image{
             width: 90vw;
           }
         }
         .project-cover.project-page-cover{
           padding-top: 8px*4;
+          gap: 8px*2;
         }
         .project-page-cover{
           display: grid;
+          justify-items: center;
           grid-template-columns: 1fr;
           width: 100%;
           padding-top: 8px*12;
-          padding-left: 8px*1;
+          padding-left: 8px*0;
           margin-left: 0;
           .cover-footer{
-            width: calc(100vw - 8px*2);
-            height: 8px*16;
+            width: calc(100vw - 8px*4);
+            height: 8px*12 !important;
             margin-top: 8px;
           }
           .static-tools{
@@ -2728,8 +2739,9 @@ body{
               justify-items: center;
             &.bottom{
               display: grid;
-              justify-content: center;
-              align-content: center;
+              justify-content: start;
+              align-content: start;
+              justify-items: start;
               gap: 8px*1;
             }
             .bottom-right {

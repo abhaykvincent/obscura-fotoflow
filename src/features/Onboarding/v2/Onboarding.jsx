@@ -13,6 +13,7 @@ import { completeOnboarding } from './slices/onboardingSlice';
 import CreateStudioForm from './components/CreateStudioForm';
 import '../Onboarding.scss';
 import { generateReferral } from '../../../app/slices/referralsSlice';
+import { hideLoading } from '../../../app/slices/loadingSlice';
 
 function Onboarding() {
     const navigate = useNavigate();
@@ -37,8 +38,6 @@ function Onboarding() {
     useEffect(() => {
         trackEvent('onboarding_viewed', { referral_code: ref });
     }, [ref]);
-
-
 
     useEffect(() => {
         if(isDeveloper) {
@@ -83,18 +82,21 @@ function Onboarding() {
         }
     };
 
-    const handleCreateAccount = () => {
+    const handleCreateAccount = async () => {
         if (!invitation) {
             dispatch(showAlert({ type: 'error', message: 'A valid referral code is required to create an account.' }));
             trackEvent('onboarding_attempt_invalid_referral', { referral_code: ref });
             return;
         }
-        dispatch(completeOnboarding({ 
+        const result = await dispatch(completeOnboarding({ 
             userData: user, 
             studioData: formData, 
             invitationCode: ref, 
             navigate 
         }));
+        if (completeOnboarding.fulfilled.match(result)) {
+            dispatch(hideLoading());
+        }
     };
 
     if (isInvitationLoading) {

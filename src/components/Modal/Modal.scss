@@ -546,7 +546,7 @@ animation-timing-function: ease-out;
     justify-content: flex-end;
     width: 100%;
     position: absolute;
-    bottom: 1px;
+    bottom: 0px;
     border-top: 1px solid $dark-1;
     border-radius: 0px 0px 8px*1.5 8px*1.5;
     padding: 8px*1 8px*2 ;
@@ -990,32 +990,29 @@ transition-delay: 0.2s;
 }
 @keyframes modal-out {
   0% {
-    transform: translate(-50%, calc(-40% - 60px))  scale(1);
+    transform: translate(-50%,50%)  scale(1);
     opacity: 1;
   } 5% {
-    margin-left: 8px*0;
-    transform: translate(-50%, calc(-40% - 60px))  scale(1.04);
+    transform: translate(-50%,50%)  scale(1.04);
     opacity: 1;
   } 
   80% {
-    margin-left: 8px*5;
-    transform: translate(-55%, calc(-40% - 60px))  scale(0.8);
+    transform: translate(-50%,50%)  scale(0.8);
     opacity: 0;
   }
   100% {
-    margin-left: 8px*5;
-    transform: translate(-55%, calc(-40% - 60px))  scale(0);
+    transform: translate(-50%,50%)  scale(0);
     opacity: 0;
   }
 }
 @keyframes modal-in-island {
   0% {
-    transform: translate(-50%,calc(-50%)) scale(0.8);
+    transform: translate(-50%,calc(50%)) scale(0.8);
     opacity: 0;
     backdrop-filter: blur(0px);
   }
   60% {
-    transform:translate(-50%,calc(-50%))  scale(1.04);
+    transform:translate(-50%,calc(50%))  scale(1.04);
     opacity: 1;
 
   }

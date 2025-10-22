@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../../app/slices/modalSlice';
+import { showLoading } from '../../../../app/slices/loadingSlice';
 
 const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, errors, isDomainAvailable, isCheckingDomain, disabled, validateStudioForm, validateAllSetForm }) => {
     const [suggestSubDomains, setSuggestSubDomains] = useState(['-studio', '-photography', '-weddings']);
@@ -27,6 +28,7 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateStudioForm() && validateAllSetForm()) {
+            dispatch(showLoading('Creating your studio...'));
             onNext();
         }
     };
