@@ -87,14 +87,6 @@ export default function AddReferralModal({}) {
     }));
   };
 
-/*************  ✨ Windsurf Command ⭐  *************/
-/**
- * Handles the submission of the referral form.
- * Closes the modal and dispatches an action to create a referral.
- * On success, displays a success alert.
- * On failure, displays an error alert.
- */
-/*******  a65b2c18-ac82-4d9c-b475-8bc3238f4e43  *******/
   const handleSubmit = () => {
     onClose();
     setTimeout(() => {
