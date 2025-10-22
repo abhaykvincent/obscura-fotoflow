@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateGalleryTaglineAsync } from '../../app/slices/adminSettingsSlice';
 import { selectStudio } from '../../app/slices/studioSlice';
@@ -8,11 +8,24 @@ function GallerySettings({ formData, handleChange }) {
   const studio = useSelector(selectStudio);
   const studioId = studio?.domain; // Assuming studioId is the domain
 
+  const [initialTagline, setInitialTagline] = useState(formData.galleryTagline);
+
+  useEffect(() => {
+    setInitialTagline(formData.galleryTagline);
+  }, [formData.galleryTagline]);
+
   const handleSaveTagline = () => {
-    if (studioId && formData.galleryTagline) {
+    if (studioId && formData.galleryTagline !== initialTagline) {
       dispatch(updateGalleryTaglineAsync({ studioId, tagline: formData.galleryTagline }));
+      setInitialTagline(formData.galleryTagline); // Update initial tagline after successful save
     }
   };
+
+  const handleCancelTagline = () => {
+    handleChange({ target: { name: 'galleryTagline', value: initialTagline } });
+  };
+
+  const isTaglineUnchanged = formData.galleryTagline === initialTagline;
 
   return (
     <div className="gallery-privacy-settings">
@@ -123,7 +136,14 @@ function GallerySettings({ formData, handleChange }) {
             value={formData.galleryTagline}
             onChange={handleChange}
           ></input>
-          <button type="button" onClick={handleSaveTagline}>Save Tagline</button>
+          <div className="input-edit-actions">
+            <button
+              className={`${isTaglineUnchanged ? '' : 'disabled'} button primary icon icon-only check`}
+              onClick={handleSaveTagline}
+              disabled={isTaglineUnchanged}
+            ></button>
+            <button className="button secondary  icon icon-only close" onClick={handleCancelTagline}></button>
+          </div>
         </div>
       </form>
     </div>
