@@ -162,8 +162,22 @@ export const fetchStudioByDomain = async (currentDomain) => {
     if(!isProduction){
         let color = studio ? '#b3d6e4ff' : 'gray';
         console.log(`%c 💻 ------- Developer only -------`, `color: ${color};`);
-
         console.log(`%c 🔥 Studio`, `color: ${color}; font-weight: bold;`,studio);
+
+
     }
-    return studio;
+    return studio;}
+export const updateGalleryTagline = async (studioId, galleryTagline) => {
+    try {
+        const studioRef = doc(db, 'studios', studioId);
+        await updateDoc(studioRef, {
+            galleryTagline: galleryTagline,
+            'metadata.updatedAt': new Date().toISOString(),
+        });
+        console.log(`Gallery tagline for studio ${studioId} updated successfully.`);
+        return true;
+    } catch (error) {
+        console.error(`Error updating gallery tagline for studio ${studioId}:`, error.message);
+        throw error;
+    }
 };
