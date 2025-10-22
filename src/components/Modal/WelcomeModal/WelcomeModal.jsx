@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModalWithAnimation, openModal, selectModal } from '../../../app/slices/modalSlice';
+import { showLoading, hideLoading } from '../../../app/slices/loadingSlice';
 import { useModalFocus } from '../../../hooks/modalInputFocus';
 import './WelcomeModal.scss';
 import { selectUser } from '../../../app/slices/authSlice';
@@ -16,6 +17,8 @@ const WelcomeModal = () => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const handleClose = async (openCreateProject = false) => {
+
+        dispatch(showLoading('Preparing your first project...'));
     if (user && user.email) {
         try {
             await updateUser(user.email, { hasSeenWelcomeModal: true });
@@ -23,6 +26,7 @@ const WelcomeModal = () => {
             console.error("Failed to update user's hasSeenWelcomeModal status:", error);
         }
     }
+    dispatch(hideLoading());
     dispatch(closeModalWithAnimation('welcome'));
     if (openCreateProject) {
         dispatch(openModal('createProject'));
