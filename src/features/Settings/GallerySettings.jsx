@@ -1,6 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateGalleryTaglineAsync } from '../../app/slices/adminSettingsSlice';
+import { selectStudio } from '../../app/slices/studioSlice';
 
 function GallerySettings({ formData, handleChange }) {
+  const dispatch = useDispatch();
+  const studio = useSelector(selectStudio);
+  const studioId = studio?.domain; // Assuming studioId is the domain
+
+  const [initialTagline, setInitialTagline] = useState(formData.galleryTagline);
+  const [isTaglineUnchanged, setIsTaglineUnchanged] = useState(false);
+  useEffect(() => {
+    console.log(formData.galleryTagline)
+    setInitialTagline(formData.galleryTagline);
+  }, [formData.galleryTagline]);
+
+  const handleSaveTagline = () => {
+    console.log(studioId)
+    console.log(formData.galleryTagline)
+    console.log(initialTagline)
+    if (studioId) {
+      dispatch(updateGalleryTaglineAsync({ studioId, tagline: formData.galleryTagline }));
+      setInitialTagline(formData.galleryTagline); // Update initial tagline after successful save
+    }
+  };
+
+  const handleCancelTagline = () => {
+    handleChange({ target: { name: 'galleryTagline', value: initialTagline } });
+  };
+  useEffect(() => {
+    setIsTaglineUnchanged(formData.galleryTagline === initialTagline);
+  }, [formData.galleryTagline, initialTagline]);
+
   return (
     <div className="gallery-privacy-settings">
       <form className="settings-form">
@@ -102,14 +133,22 @@ function GallerySettings({ formData, handleChange }) {
 
         <h2>Footer</h2>
         <div className="form-group">
-          <label htmlFor="studioName">Tagline</label>
+          <label htmlFor="galleryTagline">Tagline</label>
           <input
             type="text"
-            id="studioName"
-            name="studioName"
-            value={`smile with ${formData.studioName}`}
+            id="galleryTagline"
+            name="galleryTagline"
+            value={formData.galleryTagline}
             onChange={handleChange}
           ></input>
+          <div className="input-edit-actions">
+            <button
+              className={`${isTaglineUnchanged ? '' : 'disabled'} button primary icon icon-only check`}
+              onClick={handleSaveTagline}
+              disabled={!isTaglineUnchanged}
+            ></button>
+            <button className="button secondary  icon icon-only close" onClick={handleCancelTagline}></button>
+          </div>
         </div>
       </form>
     </div>

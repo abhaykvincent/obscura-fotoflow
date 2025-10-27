@@ -85,8 +85,8 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
       else if (errors.name2) name2InputRef.current?.focus();
       return;
     }
-const domain = currentStudio.domain;
-    dispatch(showLoading('Creating project..'));
+    const domain = currentStudio.domain;
+    dispatch(showLoading(`Creating ${projectData.type} project ${projectData.name} ..`));
     onClose();
 
     await new Promise(resolve => setTimeout(resolve, 500)); // Wait for animation
