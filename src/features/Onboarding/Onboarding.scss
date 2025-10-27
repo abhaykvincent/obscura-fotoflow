@@ -231,6 +231,30 @@
         margin-bottom: 8px*4;
     }
 }
+.activate-fotoflow-whatsapp{
+    color: $gray-default-light;
+}
+.contact-whatsapp{
+    margin-top: 8px*2;
+    color: $gray6-default-light;
+    p{
+        display: inline;
+        color: $gray-default-light;
+        padding: 8px*2 8px*3;
+        border: 1px solid $dark-1;
+        border-radius: 4px;
+        cursor: pointer;
+        &:hover{
+            background-color: $dark-2;
+            transition-duration: 0.2s;
+        }
+        a{
+            margin-left: 8px;
+            color: $gray4-default-light;
+        }
+    }
+
+}
 
     .App .button.google-login-button{
         margin: 0;
