@@ -9,19 +9,21 @@ function GallerySettings({ formData, handleChange }) {
   const studioId = studio?.domain; // Assuming studioId is the domain
 
   const [initialTagline, setInitialTagline] = useState(formData.galleryTagline);
-  const [isTaglineUnchanged, setIsTaglineUnchanged] = useState(false);
+  const [isTaglineDirty, setIsTaglineDirty] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    console.log(formData.galleryTagline)
     setInitialTagline(formData.galleryTagline);
   }, [formData.galleryTagline]);
 
-  const handleSaveTagline = () => {
-    console.log(studioId)
-    console.log(formData.galleryTagline)
-    console.log(initialTagline)
+  const handleSaveTagline = async () => {
     if (studioId) {
-      dispatch(updateGalleryTaglineAsync({ studioId, tagline: formData.galleryTagline }));
-      setInitialTagline(formData.galleryTagline); // Update initial tagline after successful save
+      setIsLoading(true);
+      try {
+        await dispatch(updateGalleryTaglineAsync({ studioId, tagline: formData.galleryTagline }));
+        setInitialTagline(formData.galleryTagline); // Update initial tagline after successful save
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -29,7 +31,7 @@ function GallerySettings({ formData, handleChange }) {
     handleChange({ target: { name: 'galleryTagline', value: initialTagline } });
   };
   useEffect(() => {
-    setIsTaglineUnchanged(formData.galleryTagline === initialTagline);
+    setIsTaglineDirty(formData.galleryTagline !== initialTagline);
   }, [formData.galleryTagline, initialTagline]);
 
   return (
@@ -48,11 +50,12 @@ function GallerySettings({ formData, handleChange }) {
           ></input>
           <div className="input-edit-actions">
             <button
-              className={`${isTaglineUnchanged ? '' : 'disabled'} button primary icon icon-only check`}
+              type="button"
+              className={`${isTaglineDirty ? '' : 'disabled'} button primary icon icon-only check`}
               onClick={handleSaveTagline}
-              disabled={!isTaglineUnchanged}
+              disabled={!isTaglineDirty || isLoading}
             ></button>
-            <button className="button secondary  icon icon-only close" onClick={handleCancelTagline}></button>
+            <button type="button" className="button secondary  icon icon-only close" onClick={handleCancelTagline}></button>
           </div>
         </div>
 
