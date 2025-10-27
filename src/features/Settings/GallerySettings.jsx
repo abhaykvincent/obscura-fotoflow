@@ -35,6 +35,27 @@ function GallerySettings({ formData, handleChange }) {
   return (
     <div className="gallery-privacy-settings">
       <form className="settings-form">
+
+        <h2>Tagline</h2>
+        <div className="form-group">
+          <label htmlFor="galleryTagline">Footer Tagline</label>
+          <input
+            type="text"
+            id="galleryTagline"
+            name="galleryTagline"
+            value={formData.galleryTagline}
+            onChange={handleChange}
+          ></input>
+          <div className="input-edit-actions">
+            <button
+              className={`${isTaglineUnchanged ? '' : 'disabled'} button primary icon icon-only check`}
+              onClick={handleSaveTagline}
+              disabled={!isTaglineUnchanged}
+            ></button>
+            <button className="button secondary  icon icon-only close" onClick={handleCancelTagline}></button>
+          </div>
+        </div>
+
         <h2>
           {' '}
           <span className="privacy"></span>Privacy
@@ -131,25 +152,6 @@ function GallerySettings({ formData, handleChange }) {
           </div>
         </div>
 
-        <h2>Footer</h2>
-        <div className="form-group">
-          <label htmlFor="galleryTagline">Tagline</label>
-          <input
-            type="text"
-            id="galleryTagline"
-            name="galleryTagline"
-            value={formData.galleryTagline}
-            onChange={handleChange}
-          ></input>
-          <div className="input-edit-actions">
-            <button
-              className={`${isTaglineUnchanged ? '' : 'disabled'} button primary icon icon-only check`}
-              onClick={handleSaveTagline}
-              disabled={!isTaglineUnchanged}
-            ></button>
-            <button className="button secondary  icon icon-only close" onClick={handleCancelTagline}></button>
-          </div>
-        </div>
       </form>
     </div>
   );
