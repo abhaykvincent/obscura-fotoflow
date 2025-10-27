@@ -9,13 +9,17 @@ function GallerySettings({ formData, handleChange }) {
   const studioId = studio?.domain; // Assuming studioId is the domain
 
   const [initialTagline, setInitialTagline] = useState(formData.galleryTagline);
-
+  const [isTaglineUnchanged, setIsTaglineUnchanged] = useState(false);
   useEffect(() => {
+    console.log(formData.galleryTagline)
     setInitialTagline(formData.galleryTagline);
   }, [formData.galleryTagline]);
 
   const handleSaveTagline = () => {
-    if (studioId && formData.galleryTagline !== initialTagline) {
+    console.log(studioId)
+    console.log(formData.galleryTagline)
+    console.log(initialTagline)
+    if (studioId) {
       dispatch(updateGalleryTaglineAsync({ studioId, tagline: formData.galleryTagline }));
       setInitialTagline(formData.galleryTagline); // Update initial tagline after successful save
     }
@@ -24,8 +28,9 @@ function GallerySettings({ formData, handleChange }) {
   const handleCancelTagline = () => {
     handleChange({ target: { name: 'galleryTagline', value: initialTagline } });
   };
-
-  const isTaglineUnchanged = formData.galleryTagline === initialTagline;
+  useEffect(() => {
+    setIsTaglineUnchanged(formData.galleryTagline === initialTagline);
+  }, [formData.galleryTagline, initialTagline]);
 
   return (
     <div className="gallery-privacy-settings">
@@ -140,7 +145,7 @@ function GallerySettings({ formData, handleChange }) {
             <button
               className={`${isTaglineUnchanged ? '' : 'disabled'} button primary icon icon-only check`}
               onClick={handleSaveTagline}
-              disabled={isTaglineUnchanged}
+              disabled={!isTaglineUnchanged}
             ></button>
             <button className="button secondary  icon icon-only close" onClick={handleCancelTagline}></button>
           </div>

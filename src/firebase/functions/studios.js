@@ -151,6 +151,7 @@ export const fetchStudios = async () => {
     }));
     return studiosData;
 }
+
 export const fetchStudioByDomain = async (currentDomain) => {
     const studiosCollection = collection(db, 'studios');
     const querySnapshot = await getDocs(studiosCollection);
@@ -166,7 +167,8 @@ export const fetchStudioByDomain = async (currentDomain) => {
 
 
     }
-    return studio;}
+    return studio;
+}
 export const updateGalleryTagline = async (studioId, galleryTagline) => {
     try {
         const studioRef = doc(db, 'studios', studioId);

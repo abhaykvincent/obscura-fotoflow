@@ -5,6 +5,7 @@ export const updateGalleryTaglineAsync = createAsyncThunk(
   'adminSettings/updateGalleryTagline',
   async ({ studioId, tagline }, { rejectWithValue }) => {
     try {
+      debugger
       await updateGalleryTagline(studioId, tagline);
       return tagline;
     } catch (error) {

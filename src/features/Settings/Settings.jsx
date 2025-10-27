@@ -8,23 +8,27 @@ import { selectUser, selectUserStudio } from '../../app/slices/authSlice';
 // Styles
 import './Settings.scss';
 import SettingsDashboard from './SettingsDashboard';
+import { selectStudio } from '../../app/slices/studioSlice';
 
 function Settings() {
     const dispatch = useDispatch();
     const defaultStudio = useSelector(selectUserStudio);
+    const studio = useSelector(selectStudio);
     const userData = useSelector(selectUser);
     // Initial state for all fields in the settings form
     const [formData, setFormData] = useState({
         studioName: defaultStudio?.name || '',
+        galleryTagline: studio?.galleryTagline || '',
         studioEmail: userData?.email || '',
         studioPhone: userData?.phone || '',
         // Add other fields here as they are added (e.g., studio address, phone number)
     });
-    
+    console.log('Default Studio:', studio);
     const [isSaving, setIsSaving] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const hasChanges = 
         formData.studioName !== (defaultStudio?.name || '') ||
+        formData.galleryTagline !== (studio?.galleryTagline || '') ||
         formData.studioEmail !== (userData?.email || '') ||
         formData.studioPhone !== (userData?.phone || '');
 
