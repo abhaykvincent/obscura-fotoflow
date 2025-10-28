@@ -240,14 +240,14 @@ body{
     margin-bottom: 8px*5;
     padding-bottom: 8px*3;
     z-index: 10;
-    border: 1px solid $gray4-default-dark;
+    border: 1px solid rgba(82, 82, 82, 0.2);
     border-radius: 8px;
-    border-right: 1px solid $dark-1;
-    border-bottom: 1px solid $dark-1;
+    border-right: 1px solid rgba(82, 82, 82, 0.01);
+    border-bottom: 1px solid rgba(82, 82, 82, 0.01);
     box-shadow: 
-    inset 8px 8px 8px*4 8px rgba(86, 86, 86, 0.05), 
-    4px 2px 2px 1px rgb(0, 0, 0);
-    background-color: $dark-2;
+    inset 8px 8px 8px*4 4px rgba(129, 129, 129, 0.05), 
+    4px 2px 2px 1px rgba(0, 0, 0,0.5);
+    background-color: rgba(0, 0, 0, 0.2);
     // scrollbar styling
 
     
@@ -641,6 +641,7 @@ body{
         }
         img{
           height: 8px*32;
+          max-width: 100%;
         border: 3px solid $gray5-accessible-dark;
         border-radius: 8px;
         box-shadow: 

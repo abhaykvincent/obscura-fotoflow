@@ -61,10 +61,43 @@
             display: flex;
             justify-content: flex-end;
             z-index: 10;
-            
+            .button{
+                margin-top: -8px*2;
+            }
         }
         
 
+    }
+
+    .mobile-actions{
+        position: fixed;
+        bottom: 8px*8;
+        right: 8px*2;
+        z-index: 99;
+        .button{
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        width: 8px*6;
+        height: 8px*6;
+        &.icon.add-mobile{
+        border-radius: 8px*1;
+
+            padding-top: 8px*1.75;
+            padding-left: 8px*1.55;
+            background: linear-gradient(140deg, #489b24 10%, #2b6113 100%);
+            border: 1px solid #448926;
+            border-left: 1px solid #4fa929;
+            border-top: 1px solid #78d551;
+            box-shadow: inset 1px 1px 2px 0px rgba(3, 3, 112, 0.342), 0px 1px 2px 1px black, 1px 1px 6px 2px #83e85830;
+
+            &::before{
+                width: 8px*5;
+                height: 8px*5;
+                margin-top: 8px*3;
+                background-size: 150%;
+                filter: drop-shadow(1px 1px 1px rgba(41, 4, 58, 0.5));
+                }
+            }
+        }
     }
     .section{
         padding: 8px;
@@ -316,18 +349,18 @@
     .notifications{
         position: fixed;
         top:8px*2;
-        right:8px*4;
+        right:8px*2;
         width: 8px*3.5;
         height: 8px*3.5;
         z-index: 99;
         background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/appointment-reminders--v1.png');
-        background-size: 90%;
+        background-size: 80%;
         transform: rotate(0deg);
         .new{
 
             position: absolute;
-            top:8px*1.1;
-            right:8px*0.2;
+            top:8px*0.1;
+            right:8px*0.6;
             width: 8px*1;
             height: 8px*1;
             border-radius: 50%;
