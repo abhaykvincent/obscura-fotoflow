@@ -4,7 +4,7 @@
     top: $header-height - 4px*0 ;
     left: 0%;
     width: $sidebar-width;
-    height: 100vh;
+    height: 100dvh;
     background: $dark-3;
         
     @include boxed;

@@ -1,8 +1,8 @@
 @import './variables';
 .App .button{
     display: inline-block;
-    padding: 5px 8px*1.8;
-    padding-bottom: 8px*1;
+    padding: 5px 8px*1.4;
+    padding-bottom: 8px*0.8;
     border-radius: 5px;
     font-size: 0.95rem;
     line-height: 1.1rem;
@@ -33,6 +33,11 @@
             }
         }
     }
+
+        &.small{
+            padding: 4px 8px*0.6;
+            font-size: 0.85rem;
+        }
     &:active{
         opacity: 1;
         transition-duration: 0.1s;
@@ -110,6 +115,7 @@
 
             }
         }
+
         &.transparent-button{
             border: 1px solid rgba(255, 255, 255, 0.0)!important;
             background-color: rgba(128, 128, 128, 0.005) !important;
@@ -220,6 +226,9 @@
         &.add::before{
             background-image: url('https://img.icons8.com/ios-filled/500/ffffff/plus-math.png');
         }
+        &.add-mobile::before{
+            background-image: url('https://img.icons8.com/?size=100&id=QADawoQS3Rcg&format=png&color=FFFFFF');
+        }
         &.search::before{
             background-size: 100%;
 
@@ -261,6 +270,14 @@
             background-image: url('https://img.icons8.com/?size=100&id=85799&format=png&color=FFFFFF');
             padding-top: 4px;
             margin-right: 4px;
+            opacity: 0.7;
+        }
+        &.hand-pointer::before{
+            text-decoration: none;
+            background-size: 80%;
+            background-image: url('https://img.icons8.com/?size=100&id=7pFVTRfCUO3C&format=png&color=FFFFFF');
+            padding-top: 4px;
+            margin-right: 0px;
             opacity: 0.7;
         }
         &.private::before{
@@ -840,7 +857,7 @@ border: 0px solid #535353;
         top: 8px*0;
         left: 8px*0;
         width: 100vw;
-        height: 100vh;
+        height: 100dvh;
         z-index: 100;
         margin: 0;
         background-color: $light-2;

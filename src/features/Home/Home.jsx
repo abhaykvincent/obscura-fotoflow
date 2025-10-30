@@ -95,6 +95,11 @@ function Home() {
             </div>
             <main className="home">
                 {/*  */}
+                <div className="mobile-actions">
+                        <div className="button primary icon icon-only add-mobile"
+                            onClick={() => dispatch(openModal('createProject'))}
+                        ></div>
+                </div>
                 <div className="welcome-section">
                     <div className="welcome-content">
                         <div className='welcome-message-top user-name'>
@@ -173,7 +178,16 @@ function Home() {
                         </>
                     ) :
                         (<>
-                            <div className="projects-list">
+                        <div className="mascot-empty-projects">
+                            <div className="mascot-image"></div>
+                            <p className="mascot-label">
+                                <span className='highlight'>Create your first     Project</span>
+                                <span>Click the <span className='highlight button primary small icon add'
+                            onClick={() => dispatch(openModal('createProject'))}
+                                >  New </span> button to create your project</span>
+                                </p>
+                        </div>
+                            {/* <div className="projects-list">
                                 <div className="project new" onClick={() => dispatch(openModal('createProject'))}>
                                     <div className="project-cover"></div>
                                     <div className="project-details">
@@ -184,7 +198,7 @@ function Home() {
                                     </div>
                                     <div className="project-options"></div>
                                 </div >
-                            </div>
+                            </div> */}
                         </>)
                 }
 

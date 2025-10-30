@@ -178,7 +178,7 @@ export const ProjectCover = ({ project }) => {
 
                         <div className="tags">
                             {!isEditing &&<div className="tag type">{project?.type}</div>}
-                            <div className="tag">Hindu</div>
+                            {/* <div className="tag">Hindu</div> */}
                         </div>
                         </div>
                         <div className="action-buttons">

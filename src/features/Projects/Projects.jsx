@@ -263,10 +263,14 @@ function Projects() {
                     </div>
                 </div>
 
-                {allProjects.length > 0 && (
+                {allProjects.length > 0 ? (
+                <>
+                    <div className="separator horizontal"></div>
                     <div className="view-control">
                         <div className="filter-controls">
                             <div className="control-wrap">
+
+                                <div className="label">Storage</div>
                                 <div className="controls">
                                     <div
                                         className={`control status-control control-live  ${selectedTab === FILTER_TABS.ALL ? 'active' : ''}`}
@@ -285,9 +289,9 @@ function Projects() {
                                         Archive
                                     </div>
                                 </div>
-                                <div className="label">Storage</div>
                             </div>
                             <div className="control-wrap">
+                                <div className="label">Filter</div>
                                 <div className="controls">
                                     <div
                                         className={`control ctrl-all ${selectedTab === FILTER_TABS.ALL ? 'active' : ''}`}
@@ -318,7 +322,6 @@ function Projects() {
                                         Completed
                                     </div>
                                 </div>
-                                <div className="label">Filter</div>
                             </div>
                         </div>
 
@@ -340,8 +343,20 @@ function Projects() {
                             <div className="label mini-icons view">View</div>
                         </div>
                     </div>
-                )}
-                <div className="separator horizontal"></div>
+                    <div className="separator horizontal"></div>
+                </>
+                ):
+                <div className="mascot-empty-projects">
+                    <div className="mascot-image"></div>
+                    <p className="mascot-label">
+                        <span className='highlight'>Create your first     Project</span>
+                        <span>Click the <span className='highlight button primary small icon add'
+                    onClick={() => dispatch(openModal('createProject'))}
+                        >  New </span> button to create your project</span>
+                        </p>
+                </div>
+            
+            }
                 {filteredProjects.length > 0 || allProjects.length === 0 ? renderProjectGroups() : renderEmptyState()}
 
             </main>
