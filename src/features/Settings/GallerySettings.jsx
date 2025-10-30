@@ -8,31 +8,61 @@ function GallerySettings({ formData, handleChange }) {
   const studio = useSelector(selectStudio);
   const studioId = studio?.domain; // Assuming studioId is the domain
 
-  const [initialTagline, setInitialTagline] = useState(formData.galleryTagline);
+  const galleryTagline = studio?.settings?.gallery?.galleryTagline ?? '';
+
+  const [initialTagline, setInitialTagline] = useState(galleryTagline);
   const [isTaglineDirty, setIsTaglineDirty] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  
   useEffect(() => {
-    setInitialTagline(formData.galleryTagline);
-  }, [formData.galleryTagline]);
+    setInitialTagline(galleryTagline);
+  }, [galleryTagline]);
 
   const handleSaveTagline = async () => {
     if (studioId) {
       setIsLoading(true);
       try {
-        await dispatch(updateGalleryTaglineAsync({ studioId, tagline: formData.galleryTagline }));
-        setInitialTagline(formData.galleryTagline); // Update initial tagline after successful save
+        await dispatch(updateGalleryTaglineAsync({ studioId, tagline: galleryTagline }));
+        setInitialTagline(galleryTagline); // Update initial tagline after successful save
       } finally {
         setIsLoading(false);
       }
     }
   };
 
-  const handleCancelTagline = () => {
-    handleChange({ target: { name: 'galleryTagline', value: initialTagline } });
+  const handleTaglineChange = (e) => {
+    handleChange({
+      target: {
+        name: 'settings',
+        value: {
+          ...formData.settings,
+          gallery: {
+            ...formData.settings?.gallery,
+            galleryTagline: e.target.value,
+          },
+        },
+      },
+    });
   };
+
+  const handleCancelTagline = () => {
+    handleChange({
+      target: {
+        name: 'settings',
+        value: {
+          ...formData.settings,
+          gallery: {
+            ...formData.settings?.gallery,
+            galleryTagline: initialTagline,
+          },
+        },
+      },
+    });
+  };
+
   useEffect(() => {
-    setIsTaglineDirty(formData.galleryTagline !== initialTagline);
-  }, [formData.galleryTagline, initialTagline]);
+    setIsTaglineDirty(galleryTagline !== initialTagline);
+  }, [galleryTagline, initialTagline]);
 
   return (
     <div className="gallery-privacy-settings">
@@ -45,8 +75,8 @@ function GallerySettings({ formData, handleChange }) {
             type="text"
             id="galleryTagline"
             name="galleryTagline"
-            value={formData.galleryTagline}
-            onChange={handleChange}
+            value={galleryTagline}
+            onChange={handleTaglineChange}
           ></input>
           <div className="input-edit-actions">
             <button

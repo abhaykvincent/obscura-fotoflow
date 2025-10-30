@@ -173,7 +173,7 @@ export const updateGalleryTagline = async (studioId, galleryTagline) => {
     try {
         const studioRef = doc(db, 'studios', studioId);
         await updateDoc(studioRef, {
-            galleryTagline: galleryTagline,
+            'settings.gallery.galleryTagline': galleryTagline,
             'metadata.updatedAt': new Date().toISOString(),
         });
         console.log(`Gallery tagline for studio ${studioId} updated successfully.`);
