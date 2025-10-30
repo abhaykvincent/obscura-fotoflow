@@ -47,7 +47,7 @@ animation-timing-function: ease-out;
     right: auto;
     left: calc(50vw );
     height: auto;
-    max-height: 90vh;
+    max-height: 90dvh;
     max-width: 8px*80;
     overflow: scroll;
     transform: translate(-50%,calc(-50% - $header-height)) scale(1);

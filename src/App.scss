@@ -57,7 +57,7 @@ body{
 }
 .App{
  width: 100vw;
- min-height: 100vh;
+ min-height: 100dvh;
  position: relative;
   *{
     color: white;
@@ -256,7 +256,7 @@ body{
       grid-template-rows: auto auto auto;
       gap: 8px*1;
       align-items: start;
-      min-height: 50vh;
+      min-height: 50dvh;
       padding-right: 8px;
       padding-top: 0;
       .project-page-cover{
@@ -2491,7 +2491,7 @@ body{
         margin: 0;
         .drop-upload .drop-area{
           min-height: 8px*30;
-          max-height: 80vh;
+          max-height: 80dvh;
           margin: 8px*4 8px*4;
         }
       .header{
@@ -2669,14 +2669,14 @@ body{
       padding: 8px*1.5 0px;
       padding-right: 8px;
       width: calc(100vw - 8px*6);
-      &::after{
+      /* &::after{
         position: absolute;
         right: 8px*1;
         top: 2px;
         content: 'Swipe for more → ';
         color: $gray4-accessible-dark;
         font-size: 0.6rem;
-      }
+      } */
       .back{
         padding-left: 8px*3;
         padding-right: 8px*1;
@@ -2692,6 +2692,7 @@ body{
     main {
       margin:0;
       padding-bottom:8px;
+      padding-right: 0;
       &.project-page {
         padding:0px;
         .project-collections{
