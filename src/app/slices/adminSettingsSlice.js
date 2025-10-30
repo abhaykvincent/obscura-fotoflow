@@ -17,13 +17,17 @@ export const updateGalleryTaglineAsync = createAsyncThunk(
 const adminSettingsSlice = createSlice({
   name: 'adminSettings',
   initialState: {
-    galleryTagline: '',
+    settings: {
+      gallery: {
+        galleryTagline: '',
+      },
+    },
     loading: false,
     error: null,
   },
   reducers: {
     setGalleryTagline: (state, action) => {
-      state.galleryTagline = action.payload;
+      state.settings.gallery.galleryTagline = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -34,7 +38,7 @@ const adminSettingsSlice = createSlice({
       })
       .addCase(updateGalleryTaglineAsync.fulfilled, (state, action) => {
         state.loading = false;
-        state.galleryTagline = action.payload;
+        state.settings.gallery.galleryTagline = action.payload;
       })
       .addCase(updateGalleryTaglineAsync.rejected, (state, action) => {
         state.loading = false;
