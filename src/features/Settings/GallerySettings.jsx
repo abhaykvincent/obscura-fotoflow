@@ -53,7 +53,7 @@ function GallerySettings({ formData, handleChange }) {
               type="button"
               className={`${isTaglineDirty ? '' : 'disabled'} button primary icon icon-only check`}
               onClick={handleSaveTagline}
-              disabled={!isTaglineDirty || isLoading}
+              /* disabled={!isTaglineDirty || isLoading} */
             ></button>
             <button type="button" className="button secondary  icon icon-only close" onClick={handleCancelTagline}></button>
           </div>
