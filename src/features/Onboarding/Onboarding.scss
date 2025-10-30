@@ -274,6 +274,10 @@
         font-weight: 200;
         transition-duration: 0.1s;
         box-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+
+        opacity: 0;
+        animation: fadeInLeft 0.3s ease-out 0.7s;
+        animation-fill-mode: forwards;
         &:hover{
             transition-delay: 0.2s;
             border: 1px solid $gray5-accessible-light;

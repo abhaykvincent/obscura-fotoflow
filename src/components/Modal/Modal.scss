@@ -603,7 +603,7 @@ animation-timing-function: ease-out;
     border: none;
     overflow: visible;
     background: none;
-
+    box-shadow: none;
     @keyframes login-popup {
     0%{
     transform: translate(-50%, calc(50% + 8px*12)) scale(0);
@@ -758,6 +758,7 @@ animation-timing-function: ease-out;
         color: $gray3-default-dark;
         grid-template-columns: 8px*5 auto;
         opacity: 0;
+        border: 1px solid $gray5-accessible-dark;
         transform: scale(0.98);
         animation: fadeInUp 0.35s ease-in 0.9s;
         animation-fill-mode: forwards;
@@ -790,7 +791,7 @@ animation-timing-function: ease-out;
         background-image: url('https://upload.wikimedia.org/wikipedia/commons/1/1b/Apple_logo_grey.svg');
         background-position: center center;
         background-size: 80%;
-        opacity: 0.4;
+        opacity: 0.2;
         }
         .lock{
         width: 8px*4;

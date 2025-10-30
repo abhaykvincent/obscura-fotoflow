@@ -170,8 +170,6 @@ const LoginModal = () => {
             <p className="cta-postlabel"></p>
           </div>
           <div className="footer-actions">
-            <a href="">Demo</a>
-            <a href="">Recovery</a>
             <a href="">Terms of Service </a>
             <p className="ampersand">&</p>
             <a href="">Privacy Policy</a>

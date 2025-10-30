@@ -61,7 +61,7 @@ import { setUserType } from './analytics/utils';
 import { isPublicPage, isLightModePage } from './utils/publicPages';
 import { getCurrentSubscription } from './firebase/functions/subscription';
 import { welcomeConsole } from './utils/welcomeConsole';
-import { hideLoading } from './app/slices/loadingSlice';
+import { hideLoading, showLoading } from './app/slices/loadingSlice';
 
 
 welcomeConsole();
@@ -79,7 +79,6 @@ const AuthWrapper = ({ isAuthenticated }) => {
 // APP
 export default function App() {
   const dispatch = useDispatch();
- 
   const user = useSelector(selectUser);
   const authLoading = useSelector(selectAuthLoading);
 
@@ -95,6 +94,7 @@ export default function App() {
   useEffect(() => {
     dispatch(verifyAuth());
   }, [dispatch]);
+  
 
   useEffect(() => {
     if(isAuthenticated && user!=='no-studio-found'){
@@ -106,6 +106,8 @@ export default function App() {
   // ON Render
   useEffect(() => {
     if (isAuthenticated && currentDomain !== 'guest') {
+
+  dispatch(showLoading('Loading App ..'))
       // Fetching data for studio
       console.log(`%cFetching data for ${currentDomain}...`,`color: gray`)
       dispatch(fetchProjects({currentDomain}))
@@ -118,11 +120,17 @@ export default function App() {
         dispatch(fetchCurrentSubscription({currentDomain}))
         .catch((err)=>{
           console.error(err)
+
+            dispatch(hideLoading())
         })
 
       })
+      .then(()=>{
+          dispatch(hideLoading())
+        })
       .catch((err)=>{
         console.error(err)
+          dispatch(hideLoading())
       })
     }
   }, [dispatch, currentDomain, isAuthenticated]);
@@ -154,7 +162,6 @@ export default function App() {
   if (authLoading) {
     return <LoadingLight />;
   }
-  dispatch(hideLoading())
   // RENDER
   return (
     <div className={`App ${isLightModePage() && 'light-mode-page'}`}>

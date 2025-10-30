@@ -1779,7 +1779,7 @@ body{
       font-weight: 200;
       transform: scale(1.3);
       opacity: 0;
-      $delay: 2s + 0.05s * 6;
+      $delay: 2s + 0.05s * 2;
       animation: fadeInUp 0.5s ease-out $delay;
       animation-fill-mode: forwards;
     }
