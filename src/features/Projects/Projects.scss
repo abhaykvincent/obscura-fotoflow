@@ -342,11 +342,11 @@
     .mascot-label{
         width: 100%;
         max-width: 8px*48;
-        margin-top: 8px*2;
+        margin-top: 8px*5;
         text-align: center;
         display: grid;
-        gap: 8px;
-        margin: 0 auto;
+        gap: 8px*2;
+        margin: 8px*2 auto;
         span{
 
         color: $gray3-default-dark;

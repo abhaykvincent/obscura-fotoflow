@@ -34,6 +34,7 @@ border-radius: 8px*1.5;
 border: 2px solid $gray4-accessible-dark;
 padding-bottom: 8px*9;
 transform: translate(100%,0%) scale(0.9);
+box-shadow: 1px 1px 4px black;
 opacity: 0;
 animation-name: modal-in;
 animation-duration: 0.5s;
@@ -550,7 +551,7 @@ animation-timing-function: ease-out;
     border-top: 1px solid $dark-1;
     border-radius: 0px 0px 8px*1.5 8px*1.5;
     padding: 8px*1 8px*2 ;
-    background-color: $dark-1-5;
+    background: linear-gradient(0deg, rgba(0,0,0,0) 70%, rgba(98, 98, 98, 0.1) 100%);
     backdrop-filter: blur(8px);
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.4);
 
@@ -1358,8 +1359,10 @@ transition-delay: 0.2s;
           &.secondary{
             width: calc(100vw - 8px*7);
             padding: 8px*1.5;
-            background-color: $gray6-default-dark;
+            background-color: transparent;
             color: $gray2-accessible-light;
+            box-shadow: none;
+            border: none;
           }
         }
 

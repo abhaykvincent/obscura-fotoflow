@@ -61,6 +61,7 @@ import { setUserType } from './analytics/utils';
 import { isPublicPage, isLightModePage } from './utils/publicPages';
 import { getCurrentSubscription } from './firebase/functions/subscription';
 import { welcomeConsole } from './utils/welcomeConsole';
+import { hideLoading } from './app/slices/loadingSlice';
 
 
 welcomeConsole();
@@ -153,7 +154,7 @@ export default function App() {
   if (authLoading) {
     return <LoadingLight />;
   }
-
+  dispatch(hideLoading())
   // RENDER
   return (
     <div className={`App ${isLightModePage() && 'light-mode-page'}`}>
