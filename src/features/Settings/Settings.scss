@@ -291,7 +291,20 @@ main.settings{
 }
 @media only screen and (max-width: 640px) {
 }
-@media only screen and (max-width: 580px) {
+@media only screen and (max-width: 520px) {
+    .settings-form .form-group .radio-tabs {
+        flex-direction: column;
+            width: 100% !important;
+            .tab{
+                width: 100% !important;
+            }
+            &:hover{
+                width: 100% !important;
+            }
+            &.active{
+                width: 100% !important;
+            }
+    }
 }
 @media only screen and (max-width: 480px) {
 }
