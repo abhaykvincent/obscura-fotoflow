@@ -18,7 +18,11 @@ function Settings() {
     // Initial state for all fields in the settings form
     const [formData, setFormData] = useState({
         studioName: defaultStudio?.name || '',
-        galleryTagline: studio?.galleryTagline || '',
+        settings:{
+            gallery:{
+                galleryTagline: studio?.settings?.gallery?.galleryTagline || ''
+            }
+        },
         studioEmail: userData?.email || '',
         studioPhone: userData?.phone || '',
         // Add other fields here as they are added (e.g., studio address, phone number)
@@ -28,7 +32,7 @@ function Settings() {
     const [successMessage, setSuccessMessage] = useState('');
     const hasChanges = 
         formData.studioName !== (defaultStudio?.name || '') ||
-        formData.galleryTagline !== (studio?.galleryTagline || '') ||
+        formData.settings?.gallery?.galleryTagline !== (studio?.settings?.gallery?.galleryTagline || '') ||
         formData.studioEmail !== (userData?.email || '') ||
         formData.studioPhone !== (userData?.phone || '');
 

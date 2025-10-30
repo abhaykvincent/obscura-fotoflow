@@ -8,12 +8,10 @@ function GallerySettings({ formData, handleChange }) {
   const studio = useSelector(selectStudio);
   const studioId = studio?.domain; // Assuming studioId is the domain
 
-  const galleryTagline = studio?.settings?.gallery?.galleryTagline ?? '';
-
+  const galleryTagline = formData?.settings?.gallery?.galleryTagline ?? '';
   const [initialTagline, setInitialTagline] = useState(galleryTagline);
   const [isTaglineDirty, setIsTaglineDirty] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
   useEffect(() => {
     setInitialTagline(galleryTagline);
   }, [galleryTagline]);
