@@ -12,10 +12,10 @@ function GallerySettings({ formData, handleChange }) {
   const [initialTagline, setInitialTagline] = useState(galleryTagline);
   const [isTaglineDirty, setIsTaglineDirty] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  useEffect(() => {
-    setInitialTagline(galleryTagline);
-  }, [galleryTagline]);
 
+  useEffect(() => {
+    
+  })
   const handleSaveTagline = async () => {
     if (studioId) {
       setIsLoading(true);
