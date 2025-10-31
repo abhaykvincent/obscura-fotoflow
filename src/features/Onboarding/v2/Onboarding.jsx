@@ -13,6 +13,7 @@ import { completeOnboarding } from './slices/onboardingSlice';
 import CreateStudioForm from './components/CreateStudioForm';
 import '../Onboarding.scss';
 import { generateReferral } from '../../../app/slices/referralsSlice';
+import { hideLoading } from '../../../app/slices/loadingSlice';
 
 function Onboarding() {
     const navigate = useNavigate();
@@ -37,8 +38,6 @@ function Onboarding() {
     useEffect(() => {
         trackEvent('onboarding_viewed', { referral_code: ref });
     }, [ref]);
-
-
 
     useEffect(() => {
         if(isDeveloper) {
@@ -83,18 +82,21 @@ function Onboarding() {
         }
     };
 
-    const handleCreateAccount = () => {
+    const handleCreateAccount = async () => {
         if (!invitation) {
             dispatch(showAlert({ type: 'error', message: 'A valid referral code is required to create an account.' }));
             trackEvent('onboarding_attempt_invalid_referral', { referral_code: ref });
             return;
         }
-        dispatch(completeOnboarding({ 
+        const result = await dispatch(completeOnboarding({ 
             userData: user, 
             studioData: formData, 
             invitationCode: ref, 
             navigate 
         }));
+        if (completeOnboarding.fulfilled.match(result)) {
+            dispatch(hideLoading());
+        }
     };
 
     if (isInvitationLoading) {
@@ -123,18 +125,17 @@ function Onboarding() {
                     </>
                 )}
 
-                {!invitation && (
+                {!invitation && !invitation && (
                     <div className='activate-fotoflow-whatsapp'>
-                        <p>{ref!=='0000' ? `Your Referral Code ${ref} is invalid` : ` Fotoflow is currently Invite only. `}<br />
+                        <p>{ref!=='0000' ? `Your Referral Code ${ref} is invalid or expired` : ` Fotoflow is currently Invite only. `}<br />
                         {ref!=='0000' ? `Check link again or ` : 'Ckick to '}<a href="https://wa.me/+916235099329?text=Activate%20Fotoflow" target="_blank" rel="noopener noreferrer">Join Waitlist</a></p>
                         
                     </div>
                 )}
 
-                {user?.email ?
+                {user?.email?
                     <div className={`logged-user 
                     ${!invitation && 'unavaillable-referral-code'}
-                    
                     `}>
                         <div className='user-image'
                             style={
@@ -152,12 +153,19 @@ function Onboarding() {
                         >Logout</div>
                     </div>
                 :
-                <div className={`button google-login-button ${isDisabled ? 'disabled' : ''}`} onClick={() => !isDisabled && handleGoogleSignIn()}>
+                !isDisabled && <div className={`button google-login-button ${isDisabled ? 'disabled' : ''}`} onClick={() => !isDisabled && handleGoogleSignIn()}>
                     Continue with Google <div className="google-logo"></div>
                 </div>
                 }
             </div>
-
+            {!invitation && (
+                    <div className='contact-whatsapp animate-reveal' style={{ animationDelay: '1.2s' }}>
+                        <p> Contact Support 
+                            <a href="https://wa.me/+916235099329?text=Activate%20Fotoflow" target="_blank" rel="noopener noreferrer"> Whatsapp</a>
+                            </p>
+                        
+                    </div>
+                )}
             {user?.email &&
             <div className={`form-wrapper animate-reveal ${!invitation && 'unavaillable-referral-code'}`} style={{ animationDelay: '0.6s' }}>
                 <CreateStudioForm

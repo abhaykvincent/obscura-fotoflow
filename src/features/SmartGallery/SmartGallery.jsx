@@ -8,6 +8,7 @@ import { selectIsAuthenticated, selectUser } from '../../app/slices/authSlice';
 import { toTitleCase } from '../../utils/stringUtils';
 import { setUserType } from '../../analytics/utils';
 import { LoadingLight } from '../../components/Loading/Loading';
+import { fetchCollectionStatus } from '../../firebase/functions/firestore';
 
 export default function SmartGallery() {
   const { studioName, projectId, collectionId } = useParams();
@@ -69,10 +70,36 @@ export default function SmartGallery() {
   }
 
   const CollectionsGrid = () => {
+    const [visibleCollections, setVisibleCollections] = useState([]);
+    const [collectionsLoading, setCollectionsLoading] = useState(true);
+
+    useEffect(() => {
+      const checkCollectionVisibility = async () => {
+        const newVisibleCollections = [];
+        for (const collection of project.collections) {
+          if (collection.uploadedFiles?.length > 0) {
+            const status = await fetchCollectionStatus(studioName, projectId, collection.id);
+            if (status === 'visible') {
+              newVisibleCollections.push(collection);
+            }
+          }
+        }
+        setVisibleCollections(newVisibleCollections);
+        setCollectionsLoading(false);
+      };
+
+      if (project?.collections) {
+        checkCollectionVisibility();
+      }
+    }, [project, studioName, projectId]);
+
+    if (collectionsLoading) {
+      return <LoadingLight />;
+    }
+
     return (
       <div className="collections-grid">
-        {project.collections.map((collection) => (
-          collection.uploadedFiles?.length > 0 && (
+        {visibleCollections.map((collection) => (
             <Link key={collection.id} to={`/${studioName}/smart-gallery/${project.id}/${collection.id}`} className="collection-card-link">
               <div
                 className="collection-card"
@@ -82,7 +109,6 @@ export default function SmartGallery() {
                 <div className="collection-image-count">{collection.uploadedFiles.length} images</div>
               </div>
             </Link>
-          )
         ))}
       </div>
     );

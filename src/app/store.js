@@ -15,6 +15,8 @@ import packagesReducer from './slices/packagesSlice';
 import smartGalleryReducer from './slices/smartGallerySlice';
 import galleryReducer from './slices/gallerySlice';
 import onboardingReducer from '../features/Onboarding/v2/slices/onboardingSlice';
+import loadingReducer from './slices/loadingSlice';
+import adminSettingsReducer from './slices/adminSettingsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -34,5 +36,7 @@ export const store = configureStore({
     adminPane: adminPaneReducer,
     packages: packagesReducer,
     onboarding: onboardingReducer,
+    loading: loadingReducer,
+    adminSettings: adminSettingsReducer,
   },
 });

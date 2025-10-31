@@ -3,6 +3,7 @@ import './ProjectCard.scss'
 import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../../app/slices/authSlice';
 import { getThumbnailUrl1 } from '../../../utils/urlUtils';
+import { convertMegabytes } from '../../../utils/stringUtils';
 
 function ProjectCard({project,type}) {   
   const defaultStudio = useSelector(selectUserStudio)
@@ -27,13 +28,13 @@ function ProjectCard({project,type}) {
         <div className="project-details">
             <div className="details-top">
                 <div className="left">
-                    <h4 className="project-title">{project.name}</h4>
                     <p className="project-type">{project.type}</p>
+                    <h4 className="project-title">{project.name}</h4>
                     <div className="info-bar">
                         <div className="tags">
                         {project?.events?.length > 0 && (
                         <div className="event-dates">
-                            {project.events.slice(0, 2).map((event, index) => (
+                            {project.events.slice(0, 1).map((event, index) => (
                             event?.date && (
                                 <p key={index} className="project-dates tag">
                                 {new Date(event.date).toLocaleString('default', {
@@ -45,7 +46,7 @@ function ProjectCard({project,type}) {
                             ))}
                             {project.events.length > 2 && (
                             <p className="project-dates tag extra"> 
-                                 +{project.events.length - 2}
+                                 +{project.events.length - 1}
                             </p>
                             )}
                         </div>
@@ -64,6 +65,10 @@ function ProjectCard({project,type}) {
                 <div className="empty-message">Upload your snaps</div> :
                 <div className="project-summary">
                     <div className="summary-left">
+                        <div className="pin">
+                            <p className="disk-label"></p>
+                            <p className="pin-number">{convertMegabytes(project.totalFileSize)}</p>
+                        </div>
                         <div className={`summary-item collection-count ${project.collections.length>0?'active':''}`}>
                             <div className="icon"></div>
                             <p>{project.collections.length}</p>
@@ -74,15 +79,7 @@ function ProjectCard({project,type}) {
                         </div>
                     </div>
                     <div className="summary-right">     
-                    {
-                        // if pin available, show pin number  
-                        project.pin ?
-                        <div className="pin">
-                            <p className="pin-label"></p>
-                            <p className="pin-number">{project.pin}</p>
-                        </div>
-                        : ''
-                    }
+                    
                     </div>
                 </div>
             }
