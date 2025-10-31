@@ -4,7 +4,7 @@
     top: $header-height - 4px*0 ;
     left: 0%;
     width: $sidebar-width;
-    height: 100vh;
+    height: 100dvh;
     background: $dark-3;
         
     @include boxed;
@@ -16,7 +16,8 @@
         opacity: 0.5;
     }
     .menu-list{
-        padding: 8px*1;
+        padding: 8px*1.5;
+        padding-top: 0;
         position: relative;
         height: 100%;
         border-radius: 8px;
@@ -66,7 +67,7 @@
             align-items: center;
             font-size: 0.95rem;
             gap:8px*1;
-            padding: 6px 8px;
+            padding: 4px 8px;
             margin-bottom: 2px;
             border-radius: 8px*0.75;
             border: 1px solid transparent;
@@ -124,8 +125,8 @@
             cursor: not-allowed;
             }
             &.home .icon{
-            background-size: 90%;
-            background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/home.png');
+            background-size: 100%;
+            background-image: url('https://img.icons8.com/?size=100&id=1iF9PyJ2Thzo&format=png&color=FFFFFF');
             }
             &.events .icon{
             background-size: 110%;
@@ -133,15 +134,17 @@
             }
             &.projects .icon{
                 background-size: 100%;
-            background-image: url('https://img.icons8.com/?size=192&id=83172&format=png&color=FFFFFF');
+            background-image: url('https://img.icons8.com/?size=100&id=83172&format=png&color=FFFFFF');
+            mix-blend-mode: screen;
+
             }
             &.packages .icon{
-                background-size: 100%;
-                background-image: url('https://img.icons8.com/?size=100&id=KNN4GTDY7Vre&format=png&color=FFFFFF');
+                background-size: 95%;
+                background-image: url('https://img.icons8.com/?size=100&id=100606&format=png&color=FFFFFF');
             }
             &.portfolio .icon{
                 background-size: 100%;
-            background-image: url('https://img.icons8.com/?size=100&id=123437&format=png&color=FFFFFF');
+            background-image: url('https://img.icons8.com/?size=100&id=63438&format=png&color=FFFFFF');
             }
             &.storage .icon{
             background-size: 90%;
@@ -782,7 +785,7 @@
         align-items: start;
         gap: 0;
         position: absolute;
-        top: calc(100vh - 8px*7.5);
+        top: calc(100vh - 8px*14);
         padding: 8px*0.75 8px*0.5;
         padding-right: 0;
         margin-left: 2px;

@@ -68,7 +68,7 @@ function QRCodeModal({ project, url }) {
             
                 <div className="link-container">
                   <a className='linkToGallery' href={getGalleryURL('share',studio?.domain,project?.id)} target='_blank' > 
-                    ...{getGalleryURL('share',studio?.domain,project?.id).slice(-40)}
+                    ...{getGalleryURL('share',studio?.domain,project?.id).slice(-24)}
                     <div className="button icon icon-only open-in-new"></div>
                   </a>
                 </div>

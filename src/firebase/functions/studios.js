@@ -119,6 +119,8 @@ export const createStudio = async (studioData) => {
     }
 };
 export const checkStudioDomainAvailability = async (domain) => {
+
+    console.log("Checking domain availability for:", domain);
     const studiosCollection = collection(db, 'studios');
     const querySnapshot = await getDocs(studiosCollection);
     const studiosData = querySnapshot.docs.map((doc) => ({
@@ -149,6 +151,7 @@ export const fetchStudios = async () => {
     }));
     return studiosData;
 }
+
 export const fetchStudioByDomain = async (currentDomain) => {
     const studiosCollection = collection(db, 'studios');
     const querySnapshot = await getDocs(studiosCollection);
@@ -157,6 +160,26 @@ export const fetchStudioByDomain = async (currentDomain) => {
         ...doc.data(),
     }));
     const studio = studiosData.find((studio) => studio.domain === currentDomain);
-    !isProduction ? console.log(studio):console.log('**** Protected data')
+    if(!isProduction){
+        let color = studio ? '#b3d6e4ff' : 'gray';
+        console.log(`%c 💻 ------- Developer only -------`, `color: ${color};`);
+        console.log(`%c 🔥 Studio`, `color: ${color}; font-weight: bold;`,studio);
+
+
+    }
     return studio;
+}
+export const updateGalleryTagline = async (studioId, galleryTagline) => {
+    try {
+        const studioRef = doc(db, 'studios', studioId);
+        await updateDoc(studioRef, {
+            'settings.gallery.galleryTagline': galleryTagline,
+            'metadata.updatedAt': new Date().toISOString(),
+        });
+        console.log(`Gallery tagline for studio ${studioId} updated successfully.`);
+        return true;
+    } catch (error) {
+        console.error(`Error updating gallery tagline for studio ${studioId}:`, error.message);
+        throw error;
+    }
 };

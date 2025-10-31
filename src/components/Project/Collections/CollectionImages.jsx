@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+
 import ImageGallery from '../../ImageGallery/ImageGallery';
 import { fetchImages } from '../../../firebase/functions/firestore';
 import { addAllFileSizesToMB, validateFileTypes } from '../../../utils/fileUtils';
@@ -20,9 +21,13 @@ import { selectStudioStorageUsage } from '../../../app/slices/studioSlice';
 import { handleUpload } from '../../../utils/uploadOperations';
 import { createNotification } from '../../../app/slices/notificationSlice';
 import { updateCollectionStatus } from '../../../app/slices/projectsSlice';
+import ImageGalleryDesigner from '../../ImageGalleryDesigner/ImageGalleryDesigner';
+import { selectGalleryMode, setGalleryMode } from '../../../app/slices/gallerySlice';
 
 const CollectionImages = ({ id, collectionId, project }) => {
+    const projectCollectionRef = useRef(null);
     const dispatch = useDispatch();
+    const galleryMode = useSelector(selectGalleryMode);
     const domain = useSelector(selectDomain);
     const storageLimit = useSelector(selectStudioStorageUsage);
     const currentStudio = useSelector(selectUserStudio);
@@ -55,6 +60,35 @@ const CollectionImages = ({ id, collectionId, project }) => {
             preserveAspectRatio: 'xMidYMid slice',
         },
     };
+
+    const galleryPageRef = useRef(null);
+
+    useEffect(() => {
+        galleryPageRef.current = document.querySelector('.gallery-page');
+
+        const handleScroll = () => {
+            if (projectCollectionRef.current && galleryPageRef.current) {
+                const projectCollectionTop = projectCollectionRef.current.getBoundingClientRect().top;
+                const galleryPageTop = galleryPageRef.current.getBoundingClientRect().top;
+
+                if (projectCollectionTop <= galleryPageTop + 8) {
+                    projectCollectionRef.current.classList.add('scrolled-top');
+                } else {
+                    projectCollectionRef.current.classList.remove('scrolled-top');
+                }
+            }
+        };
+
+        if (galleryPageRef.current) {
+            galleryPageRef.current.addEventListener('scroll', handleScroll);
+        }
+
+        return () => {
+            if (galleryPageRef.current) {
+                galleryPageRef.current.removeEventListener('scroll', handleScroll);
+            }
+        };
+    }, []);
 
     // Global upload status from Redux
     const globalUploadStatus = useSelector(selectUploadStatus);
@@ -110,7 +144,6 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 })
               );
               };
-              dispatchNotification()
               dispatch(updateCollectionStatus
                 ({
                   domain,
@@ -240,8 +273,24 @@ const CollectionImages = ({ id, collectionId, project }) => {
         });
     };
 
+   const handleDesignClick = () => {
+    setDisplayMode('lightMode');
+    dispatch(setGalleryMode('designMode'));
+
+    // DEFERRED SCROLL ACTION
+    setTimeout(() => {
+        if (projectCollectionRef.current) {
+            projectCollectionRef.current.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start', 
+                // offset is a non-standard property, see notes below
+            });
+        }
+    }, 200); // Runs the scroll after the state updates and re-render are committed to the DOM
+};
+
     return (
-        <div className={`project-collection ${displayMode}`}>
+        <div className={`project-collection ${displayMode}`} ref={projectCollectionRef}>
             <div className="dark-light-mode">
                 <div className="view-control">
                     <div className="control-wrap">
@@ -263,37 +312,9 @@ const CollectionImages = ({ id, collectionId, project }) => {
             </div>
             
             <div className="header">
+
                 <div className="options">
-                    {/* Updated UploadButton props: removed setUploadStatus, setUploadLists; added dispatch */}
-                    <UploadButton {...{ 
-                        isPhotosImported, 
-                        setIsPhotosImported, 
-                        imageUrls, 
-                        setImageUrls, 
-                        // setUploadStatus, // Removed
-                        id, 
-                        collectionId, 
-                        collectionName: findCollectionById(project, collectionId)?.name,
-                        // setUploadLists, // Removed
-                        dispatch // Added
-                    }} />
-                </div>
-                {collectionImages?.length > 0 || imageUrls.length > 0  ? (
-                    <div className="view-control">
-                        <div className="control-label label-all-photos">{collectionImages?.length ? collectionImages?.length: imageUrls.length} Photos</div>
-                        <div className="control-wrap">
-                            <div className="controls">
-                                <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All photos</div>
-                                <div className={`control ${!showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(false)}>Selected  {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
-                            </div>
-                            <div className={`active`}></div>
-                        </div>
-                        <div className={`control-label label-selected-photos ${selectedImages.length>0&&' active'}`}>{selectedImages.length} Photos</div>
-                    </div>
-                ) : (
-                    <div className="empty-message"></div>
-                )}
-                
+
                 <div className="open-buttons ">
                     { !showAllPhotos ?
                     <><div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
@@ -315,39 +336,91 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 </div>
                 </>}
                 </div>
+                    {/* Updated UploadButton props: removed setUploadStatus, setUploadLists; added dispatch */}
+                    <UploadButton {...{ 
+                        isPhotosImported, 
+                        setIsPhotosImported, 
+                        imageUrls, 
+                        setImageUrls, 
+                        // setUploadStatus, // Removed
+                        id, 
+                        collectionId, 
+                        collectionName: findCollectionById(project, collectionId)?.name,
+                        // setUploadLists, // Removed
+                        dispatch // Added
+                    }} />
+                </div>
+                <div className="view-control gallery-mode">
+                        <div className="control-wrap">
+                            <div className="controls">
+                                <div className={`control ${galleryMode === 'workflowMode' ? 'active' : ''}`} onClick={() => { setDisplayMode('darkMode') ;dispatch(setGalleryMode('workflowMode'))}}>Worklow</div>
+                                <div className={`control ${galleryMode === 'designMode' ? 'active' : ''}`} onClick={handleDesignClick}>Design {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
+                            </div>
+                            <div className={`active`}></div>
+                        </div>
+                    </div>
+                
+                {collectionImages?.length > 0 || imageUrls.length > 0  ? (
+                    <div className="view-control">
+                        <div className="control-label label-all-photos">{collectionImages?.length ? collectionImages?.length: imageUrls.length} Photos</div>
+                        <div className="control-wrap">
+                            <div className="controls">
+                                <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All photos</div>
+                                <div className={`control ${!showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(false)}>Selected  {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
+                            </div>
+                            <div className={`active`}></div>
+                        </div>
+                        <div className={`control-label label-selected-photos ${selectedImages.length>0&&' active'}`}>{selectedImages.length} Photos</div>
+                    </div>
+                ) : (
+                    <div className="empty-message"></div>
+                )}
             </div>
 
 
             
-            {imageUrls.length > 0 ? (
-                galleryView === 'grid' ?
-                <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id,collectionId }} />:
-                <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId }} />
-            ) : (
-                <label 
-                    htmlFor="fileInput" 
-                    className={`drop-upload ${isPhotosImported ? 'active' : ''}`}
-                    onDrop={handleDrop}
-                    onDragOver={handleDragOver}
-                >
-                    <div className="drop-area">
-                        <Lottie options={defaultOptions} height={150} width={150} />
-                        <h2>Drop files here</h2>
-                        <p>or use the "Upload" Button</p>
-                    </div>
-                </label>
-            )}
-            {<div className="image-gallery-bottom-panel">
-                {/* <div className="button secondary">Load All</div> */}
+            {
+                galleryMode === 'workflowMode' && (
+                    
                 
-                {collectionImages?.length !== imageUrls.length && collectionImages?.length >0 && <div className={`button primary`}
-                    onClick={() => setPage(page + 1)}
-                >Load More</div>}
+                imageUrls.length > 0 ? (
+                    galleryView === 'grid' ?
+                    <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id,collectionId }} />:
+                    <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId }} />
+                ) : (
+                    <label 
+                        htmlFor="fileInput" 
+                        className={`drop-upload ${isPhotosImported ? 'active' : ''}`}
+                        onDrop={handleDrop}
+                        onDragOver={handleDragOver}
+                    >
+                        <div className="drop-area">
+                            <Lottie options={defaultOptions} height={150} width={150} />
+                            <h2>Drop files here</h2>
+                            <p>or use the "Upload" Button</p>
+                        </div>
+                    </label>
+                )
+                )
+            }
+            {
+                galleryMode === 'designMode' &&(
+                <ImageGalleryDesigner {...{project, collectionId }} />
+            )
+            }
 
-                {(imageUrls.length !==0 && collectionImages?.length === imageUrls.length)  && <p className='caughtup-label label'>You are all caught up!</p>}
+            {
+                <div className={`${galleryMode === 'designMode' && 'bottom-panel-light-mode'} image-gallery-bottom-panel `}>
+                    {/* <div className="button secondary">Load All</div> */}
+                    
+                    {collectionImages?.length !== imageUrls.length && collectionImages?.length >0 && <div className={`button primary`}
+                        onClick={() => setPage(page + 1)}
+                    >Load More</div>}
 
-            </div>
-}
+                    {(imageUrls.length !==0 && collectionImages?.length === imageUrls.length)  && <p className='caughtup-label label'>You are all caught up!</p>}
+
+                </div>
+            }
             
         </div>
     );

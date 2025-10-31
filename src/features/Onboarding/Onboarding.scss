@@ -1,5 +1,39 @@
 @import '../../style/_variables.scss';;
-.App .onboarding-container{
+.App {
+    .loading-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100vw;
+        height: 100dvh;
+    background-color: rgba(12, 12, 12, 0.9);
+    backdrop-filter: blur(4px);
+        .loading-spinner{
+            width: 8px*6;
+            height: 8px*6;
+            background-image: url('../../assets/img/fotoflow-pro-logo.png');
+            background-size: 100%;
+            background-position: center;
+            animation: logo-spin infinite;
+            animation-duration: 4s;
+            opacity: 0.8;
+        }
+        .loading-context{
+                background: linear-gradient(90deg, #428924c8  30%,#5da140 45%,#428924 48%, #428924bc 55%, #42892479 90%);
+                background-size: 200%;
+                background-position: 0%;
+                -webkit-background-clip: text;
+                font-weight: 200;
+                -webkit-text-fill-color: transparent;
+                transition-duration: 1s;
+                font-weight: 400;
+                margin-left: 8px*3;
+                animation: loadingGradient 1s infinite alternate linear;
+                
+            
+        }
+    }
+    .onboarding-container{
     display: grid;
     grid-template-rows: auto auto auto;
     top: 0px;
@@ -7,7 +41,7 @@
     padding-left: 8px*20;
     margin-left: -8px*0;
     width: 100vw ;
-    height: 100vh;
+    height: 100dvh;
     align-items: center;
     justify-content: start;
     align-content: center;
@@ -23,6 +57,17 @@
         color: $yellow-accessible-light;
         margin-top: 8px;
         font-size: 0.9rem;
+        &.privacyPolicy-error{
+            margin-top: 0;
+            margin-bottom: 8px*2;
+                transition-duration: 0.2s;
+            &.hide-error{
+                opacity: 0  ;
+                transition-duration: 0.5s;
+                transition-delay: 0.1s;
+                transition-timing-function: ease-out;
+            }
+        }
     }
     .logo{
         position: relative;
@@ -59,6 +104,7 @@
 
         
       }
+    }
 }
 
 @keyframes background-parallax {
@@ -91,67 +137,6 @@
         .logged-user{
         opacity: 1;
         }
-    }
-    .button.google-login-button{
-        margin: 0;
-        margin-right: 8px*2;
-        height: 8px*6;
-        width: 8px*6*1.618*1.618*1.618;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 8px*3 8px*3;
-        padding-right: 8px*2;
-        gap: 8px*2;
-        background: $dark-2;
-        border: 1px solid $gray-accessible-dark;
-        color: $gray4-default-light;
-        font-size: 1.1rem;
-        font-weight: 200;
-        transition-duration: 0.1s;
-        box-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
-        &:hover{
-            transition-delay: 0.2s;
-            border: 1px solid $gray5-accessible-light;
-          } 
-        &.error-shake{
-            animation: shake-button 0.4s;
-            animation-iteration-count: 2;
-            animation-timing-function: ease-in-out;
-            @keyframes shake-button {
-                0% {
-                    transform: translateX(0);
-                }
-                25% {
-                    transform: translateX(10px);
-                }
-                75% {
-                    transform: translateX(-12px);
-                }
-                100%{
-                    transform: translateX(0);
-                }
-
-            }
-        }
-          
-          &.google{
-            background-color: $dark-3;
-            border: 1px solid $gray2-default-light;
-            &:hover{
-            border: 1px solid $gray6-accessible-light;
-          } 
-
-          }
-
-          .google-logo{
-            width: 8px*3;
-            height: 8px*3;
-            border: none;
-            background-image: url('../../assets/img/google-logo.png');
-            background-position: center center;
-            background-size: 110%;
-          }
     }
     .onboarding-greeting{
         display: flex;
@@ -228,10 +213,10 @@
     .activate-fotoflow-whatsapp{
         display: flex;
         gap: 8px*0.5;
-        margin-bottom: 8px;
+        margin-bottom: 8px*3;
         p{
             
-            color: $dark-0;
+            color: $gray6-default-light;
         }
         a{
             color: $green-accessible-dark;
@@ -242,10 +227,100 @@
     }
     .onboarding-message{
         
-        color: $gray2-default-dark;
+        color: $gray3-default-dark;
         margin-bottom: 8px*4;
     }
 }
+.activate-fotoflow-whatsapp{
+    color: $gray-default-light;
+}
+.contact-whatsapp{
+    margin-top: 8px*2;
+    color: $gray6-default-light;
+    p{
+        display: inline;
+        color: $gray-default-light;
+        padding: 8px*2 8px*3;
+        border: 1px solid $dark-1;
+        border-radius: 4px;
+        cursor: pointer;
+        &:hover{
+            background-color: $dark-2;
+            transition-duration: 0.2s;
+        }
+        a{
+            margin-left: 8px;
+            color: $gray4-default-light;
+        }
+    }
+
+}
+
+    .App .button.google-login-button{
+        margin: 0;
+        margin-right: 8px*2;
+        height: 8px*6;
+        width: 8px*34;;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px*3 8px*3;
+        padding-right: 8px*2;
+        gap: 8px*2;
+        background: $dark-2;
+        border: 1px solid $gray-accessible-dark;
+        color: $gray4-default-light;
+        font-size: 1.1rem;
+        font-weight: 200;
+        transition-duration: 0.1s;
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+
+        opacity: 0;
+        animation: fadeInLeft 0.3s ease-out 0.7s;
+        animation-fill-mode: forwards;
+        &:hover{
+            transition-delay: 0.2s;
+            border: 1px solid $gray5-accessible-light;
+          } 
+        &.error-shake{
+            animation: shake-button 0.4s;
+            animation-iteration-count: 2;
+            animation-timing-function: ease-in-out;
+            @keyframes shake-button {
+                0% {
+                    transform: translateX(0);
+                }
+                25% {
+                    transform: translateX(10px);
+                }
+                75% {
+                    transform: translateX(-12px);
+                }
+                100%{
+                    transform: translateX(0);
+                }
+
+            }
+        }
+          
+          &.google{
+            background-color: $dark-3;
+            border: 1px solid $gray2-default-light;
+            &:hover{
+            border: 1px solid $gray6-accessible-light;
+          } 
+
+          }
+
+          .google-logo{
+            width: 8px*3;
+            height: 8px*3;
+            border: none;
+            background-image: url('../../assets/img/google-logo.png');
+            background-position: center center;
+            background-size: 110%;
+          }
+    }
 
 .unavaillable-referral-code{
     opacity: 0.2;
@@ -254,9 +329,9 @@
     display: flex;
     justify-content: start;
     align-items: center;
-    margin-top: 8px*4;
+    margin-top: 8px*-2;
     margin-bottom: 8px*4;
-    margin-left: -8px*3;
+    margin-left: -8px*0;
     gap: 8px*2;
     &.minimize-gmail-user{
         .logout-button{
@@ -266,7 +341,7 @@
         }
         .logged-user-info{
 
-            margin-left: -8px*2;
+            margin-left: -8px*1;
             opacity: 0;
             transition-delay: 0.2s;
         }
@@ -290,7 +365,7 @@
         position: relative;
         width: 8px*6;
         height: 8px*6;
-        background-size: 100%;
+        background-size: cover;
         border-radius: 50%;
         border: 1px solid $dark-1;
         box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.4), 2px 2px 2px rgba(0, 0, 0, 1);
@@ -444,16 +519,34 @@
             margin-bottom: 8px*-2;
         }
         &.highlight{
-            color: $gray-default-dark;
-            transition-duration: 0.5s;
-            transition-delay: 0.8s;
+
+            animation: section-intro-color 0.5s 0.8s ease;
+            animation-fill-mode: forwards;
+        }
+        &.selected-field{
+            margin-bottom: 8px*1;
+            transition-duration: 0.2s;
+            transition-timing-function: ease-in;
+            &.studio-name-label{
+            margin-bottom: -8px*1;
+
+            }
+
+        }
+        @keyframes section-intro-color {
+            0% {
+                color: $gray5-default-dark;
+            }
+            100% {
+                color: $gray5-default-dark;
+            }
         }
 
     }
     .form-group{
         display: grid;
         justify-items: start;
-        margin-bottom: 8px*18;
+        margin-bottom: 8px*14;
         margin-top: 8px*0;
         input{
             height: 4rem;
@@ -492,8 +585,12 @@
         .message{
             padding: 8px*2 8px*1;
             &.error{
+            &.perfect{
+                color: $green-accessible-dark;
+                opacity: 0.9;
+            }
                 &.low{
-                    color: $yellow-default-light;
+                    color: #9e8b1d;
                     opacity: 0.7;
                 }
                 &.medium{
@@ -559,7 +656,7 @@
             display: flex;
             align-items: center;
             margin-top: 8px*3;
-            margin-left: -8px;
+            margin-left: -4px;
             gap: 8px*0.5;
             opacity: 0;
             &.active{
@@ -569,12 +666,12 @@
                     width: 8px*4;
                     height: 8px*4;
                     background-image: url('https://img.icons8.com/?size=100&id=K6FkUVH0GtOD&format=png&color=777777');
-                    background-size: 100%;
+                    background-size: 80%;
                     background-repeat: no-repeat;
                     background-position: center;
                 }
                 .studio-domain{
-                    margin-left: 8px;
+                    margin-left: 0px;
                     opacity: 0.5;
                 }
             }
@@ -582,13 +679,25 @@
                 .studio-domain{
                     border: 1px solid $orange-default-dark;
                 }
-                .input-reaction{
-                    color: $orange-default-dark;
-                }
+                .auto-checking{
+
+                &.input-reaction{
+                background: linear-gradient(90deg, #ff9f0ac8  30%,#ff9f0a 45%,#ff9f0a 48%, #ff9f0abc 55%, #ff9f0a79 90%);
+                background-size: 200%;
+                background-position: 0%;
+                -webkit-background-clip: text;
+                font-weight: 200;
+                -webkit-text-fill-color: transparent;
+                transition-duration: 1s;
+                font-weight: 400;
+                animation: loadingGradient 1s infinite alternate linear;
+                
+            }
+            }
             }
             &.available{
                 .input-reaction{
-                    color: $gray-accessible-dark;
+                    color: $green-accessible-dark;
                     &::before{
                         content: '✓ ';
                         color: #87d413   ;
@@ -596,6 +705,24 @@
                     }
                 }
             }
+            
+            
+            &.checking{
+
+                .input-reaction{
+                background: linear-gradient(90deg, #ff9f0ac8  30%,#ff9f0a 45%,#ff9f0a 48%, #ff9f0abc 55%, #ff9f0a79 90%);
+                background-size: 200%;
+                background-position: 0%;
+                -webkit-background-clip: text;
+                font-weight: 200;
+                -webkit-text-fill-color: transparent;
+                transition-duration: 1s;
+                font-weight: 400;
+                animation: loadingGradient 1s infinite alternate linear;
+                
+            }
+            }
+            
             &.false{
 
             }
@@ -628,8 +755,22 @@
             margin-left: 0px;
             transition-delay: 0.05s;
             transition-duration: 1s;
+            .url-prefix{
+                color: $gray-default-dark;
+                margin-right:2px;
+                user-select: none;
+            }
             .sub-domain-input{
+                position: relative;
+                top:0;
+                width: 8px*20;
+                height: 8px*2;
+                padding: 4px 0;
+                padding-top: 0;
+                margin: 0;
 
+                margin-top: -8px*4;
+                font-size: 1rem;
                 &::after{
                     content:'';
                     color: transparent;
@@ -646,7 +787,7 @@
                 &.available{
                     position: relative;
 
-                    color: $gray5-default-light;
+                    color: $gray6-default-light;
                 }
                 &.taken{
                     position: relative;
@@ -663,7 +804,7 @@
                     
 
                     &.focus-out{
-                        opacity: 0.2;
+                        opacity: 0;
                         transition-duration: 0.1s;
                         &:hover{
                             transition-duration: 0.1s;
@@ -692,6 +833,14 @@
             color: $gray-default-dark;
             opacity: 0.8;
             margin-left: 8px;
+        }
+    }
+    .create-studio-button{
+        opacity: 0.1 !important;
+        &.active{
+            opacity: 1 !important;
+            transition-duration: 0.3s;
+            transition-delay: 0.5s;
         }
     }
     #contactNumber{
@@ -778,11 +927,27 @@
     display: flex;
     align-items: center;
     gap: 8px*2;
-    margin-left: 8px;
+    margin-left: 0px;
+    margin-top: 8px;
     margin-bottom: 8px;
+    opacity: 0.2;
+    &.active{
+        opacity: 1;
+        transition-duration: 0.2s;
+        transition-delay: 1.6s;
+    }
     input{
         width: 8px*2;
         padding: 0 8px;
+            border: 1px solid $green-default-dark;
+        border-color: #007bff;
+        &.privacyPolicy-error-input{
+            padding: 8px;
+            transform: scale(1.5);
+            transition-duration: 0.2s;
+            transition-timing-function: ease-in-out;
+            border: 1px solid $green-default-dark;
+        }
     }
     label{
         width: 100%;
@@ -796,7 +961,7 @@
     .App .onboarding-container{
         padding-left: 8px*8;
         width: 100vw;
-        height: 100vh;
+        height: 100dvh;
         .screen{
             width: 100%;
             .section-intro{
@@ -813,8 +978,8 @@
 }
 @media only screen and (max-width: 520px) {
     .App .onboarding-container{
-        padding-left: 8px*4;
-        height: 100vh;
+        padding-left: 8px*3;
+        height: 100dvh;
         .logo{
             position: relative;
             top: -8px*4;
@@ -839,7 +1004,12 @@
 
                 input{
                     width: calc(100vw - 8px*8);
-                    font-size: 2rem;
+                    font-size: 3rem;
+
+                &.sub-domain-input{
+                    width: calc(100vw - 8px*26);
+                    font-size: 1rem;
+                }
                 }
             } 
             .section-intro{
@@ -867,8 +1037,31 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px*1;
+            font-size: 0.8rem;
             row-gap: 0px;
             max-width: calc(100vw - 8px*8);
+            span{
+                color: $gray2-accessible-light;
+            }
         }
     }
+}
+
+@keyframes fade-in-up {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-reveal {
+    opacity: 0;
+    animation-name: fade-in-up;
+    animation-duration: 0.6s;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-out;
 }

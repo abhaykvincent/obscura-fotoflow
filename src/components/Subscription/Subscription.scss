@@ -2,6 +2,16 @@
 main.subscription{
     z-index: 99;
 }
+
+span.iconic-gradient{
+                line-height: 1rem;
+                
+                background: radial-gradient(circle closest-corner at 38.2% 120%, rgb(169, 229, 97), rgb(80, 145, 53));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                transition-duration: 2s;
+                font-weight: 600;
+            }
 .welcome-section{
     padding: 8px*2;    
     display: grid;
@@ -19,15 +29,7 @@ main.subscription{
             animation: fadeInLeft 0.5s ease-out 0.1s;
             animation-fill-mode: forwards;
             animation-timing-function: ease-out;
-            span.iconic-gradient{
-                line-height: 1rem;
-                
-    background: radial-gradient(circle, #70ab17, #509135);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                transition-duration: 2s;
-                font-weight: 600;
-            }
+            
         
         }
         h2{
@@ -394,7 +396,7 @@ main.subscription{
                     transform: translateX(8px*3);
                     animation-name: green-storage-text-upsell;
                     animation-duration: 0.1s;
-                    animation-delay: 0.9s;
+                    animation-delay: 0.2s;
                     animation-fill-mode: forwards;
                     .priceWas{
                         margin-right: 8px*1;
@@ -660,7 +662,7 @@ main.subscription{
             .storage-counter{
                 position: relative;
                 text-align: center;
-                color: $green-dark-accessible-light;
+                color: $green-default-light;
                 border: 1px solid $gray3-accessible-dark;
                 z-index: 2;
                 border-radius: 4px;
@@ -695,8 +697,8 @@ main.subscription{
                 text-align: center;
                 z-index: 2;
                 box-shadow: 2px 2px 4px  rgba(0, 0, 0, 0.48);
-
-                font-size: 0.8rem;
+                padding: 4px 8px;
+                font-size: 0.7rem;
                     &::after{
                         content: "";
                     }
@@ -988,7 +990,7 @@ main.subscription{
         .section .projects{
             .project{
                 .project-cover{
-                    width: 8px*13;
+                    width: 8px*10;
                 }
                 .project-details{
                     margin-left: -24px;

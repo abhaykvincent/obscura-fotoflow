@@ -6,7 +6,8 @@ import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slic
 import { formatDecimal } from '../../utils/stringUtils';
 import { selectDomain } from '../../app/slices/authSlice';
 import { useModalFocus } from '../../hooks/modalInputFocus';
-import { initialPlans, PlanCard } from './Subscription'; // Import the initialPlans data
+import { initialPlans } from '../../data/plans';
+import PlanCard from './PlanCard';
 import { retrieveLimitContext, storeLimitContext } from '../../utils/localStorageUtills';
 
 export default function UpgradeModal({ project, context }) {

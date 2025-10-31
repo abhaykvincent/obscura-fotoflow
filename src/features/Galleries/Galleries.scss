@@ -1606,6 +1606,11 @@
 				display: none;
 			}
 		}
+
+		.dashboard-overview{
+			width: calc(100vw - 8px*4);
+
+			}
 		grid-template-columns: 1fr ;
 		.templates{
 			display:grid;

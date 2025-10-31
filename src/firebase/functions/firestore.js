@@ -1,13 +1,13 @@
 
 import { db, storage } from "../app";
 import { ref, deleteObject } from "firebase/storage";
-import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, increment} from "firebase/firestore";
+import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, increment, query, where} from "firebase/firestore";
 
 import { deleteCollectionFromStorage, deleteProjectFromStorage } from "../../utils/storageOperations";
 import { generateMemorablePIN, generateRandomString, toKebabCase, toTitleCase} from "../../utils/stringUtils";
 import { removeUndefinedFields } from "../../utils/generalUtils";
-
-
+import { fetchSmartGalleryFromFirestore, updateSmartGalleryInFirestore } from './smartGalleryFirestore';
+import { isProduction } from "../../analytics/utils";
 
 // Users
 export const createUser = async (userData) => {
@@ -19,10 +19,17 @@ export const createUser = async (userData) => {
         email : email,
         studio : studio,
         photoURL : photoURL,
+        hasSeenWelcomeModal: false
     }
     await setDoc(doc(usersCollection, userDoc.email), userDoc)
     return userDoc
 }
+export const updateUser = async (email, updateData) => {
+    const usersCollection = collection(db, 'users');
+    const userDocRef = doc(usersCollection, email);
+    await updateDoc(userDocRef, updateData);
+    return true;
+};
 export const fetchUsers = async () => {
     const usersCollection = collection(db, 'users');
     const querySnapshot = await getDocs(usersCollection);
@@ -111,16 +118,18 @@ export const generateReferralInFirebase = async (referralData) => {
 
 export const validateInvitationCodeFromFirestore = async (invitationCode) =>{
     const referralsCollection = collection(db, 'referrals');
-    const querySnapshot = await getDocs(referralsCollection);
-    const referalData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-    }));
-    // IF REFERAL STATUS IS active
-    const referal = referalData.find((referal) => {
-        return referal.code.includes(invitationCode) && referal.status === 'active'
-    });
-    return referal;
+    const q = query(referralsCollection, where("code", "array-contains", invitationCode), where("status", "==", "active"));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+        return undefined;
+    }
+
+    const referralDoc = querySnapshot.docs[0];
+    return {
+        id: referralDoc.id,
+        ...referralDoc.data()
+    };
 }
 export const acceptInvitationCode = async (invitationCode) => {
     
@@ -153,7 +162,6 @@ export const acceptInvitationCode = async (invitationCode) => {
 // Projects //
 export const fetchProjectsFromFirestore = async (domain) => {
     try{
-        console.log(domain)
         let color = domain === '' ? 'gray' : '#0099ff';
         const studioDocRef = doc(db, 'studios', domain);
         const projectsCollectionRef = collection(studioDocRef, 'projects');
@@ -184,13 +192,17 @@ export const fetchProjectsFromFirestore = async (domain) => {
     }
 };
 export const fetchProject = async (domain, projectId) => {
-
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
     const projectDoc = doc(projectsCollectionRef, projectId);
     const projectSnapshot = await getDoc(projectDoc);
 
     const projectData = projectSnapshot.data();
+
+        if(!isProduction){
+            let color = projectData ? '#21ade4ff' : 'gray';
+            console.log(`%c 🔥 Project`, `color: ${color};`,projectData);
+        }
     projectData.collections = await Promise.all(projectData.collections.map(async (collection) => {
         const subCollectionId = collection.id;
         const collectionDoc = doc(projectDoc, 'collections', subCollectionId);
@@ -292,7 +304,8 @@ export const updateProjectStatusInFirestore = async (domain, projectId, status) 
 
         if (projectSnapshot.exists()) {
             await updateDoc(projectDocRef, { status });
-            console.log(`%cProject status updated to "${status}" successfully for project: ${projectId}.`, `color: #54a134;`);
+            let statusColor = status === 'active' ? '#54a134' : status === 'selected' ? '#b55ee4ff' : status === 'deleted' ? 'red' : 'gray'
+            console.log(`%cProject status - Updated to "${status}"  %c${projectId}.`, `color: #54a134;`, `color: ${statusColor}; font-weight: bold;`);
         } else {
             console.log(`%cProject ${projectId} does not exist.`, 'color: red;');
             throw new Error('Project does not exist.');
@@ -317,7 +330,7 @@ export const updateProjectLastOpenedInFirestore = async (domain, projectId) => {
         if (projectSnapshot.exists()) {
             // Update the lastOpened field to the current time
             await updateDoc(projectDocRef, { lastOpened: new Date().getTime() });
-            console.log(`%cProject lastOpened updated successfully for project: ${projectId}.`, `color: #54a134;`);
+            console.log(`%c👆🏽Last Opened - Updated! ${projectId} `, `color: #54a134;`);
         } else {
             console.log(`%cProject ${projectId} does not exist.`, 'color: red;');
             throw new Error('Project does not exist.');
@@ -374,6 +387,22 @@ export const addCollectionToStudioProject = async (domain, projectId, collection
         id: `${id}`,
         name,
         status,
+        smartGallery: {
+            id: `${id}`,
+            name: name,
+            description: "",
+            projectCover: "",
+            focusPoint: {
+                x: 0.5,
+                y: 0.5
+            },
+            coverSize: "medium",
+            textPosition: "center",
+            overlayColor: "rgba(0, 0, 0, 0.5)",
+            sections: [],
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+        },
     };
 
     try {
@@ -501,7 +530,7 @@ export const fetchImages = async (domain, projectId, collectionId) => {
         return []
     }
 };
-export const addUploadedFilesToFirestore = async (domain, projectId, collectionId, importFileSize, uploadedFiles) => {
+export const addUploadedFilesToFirestore = async (domain, projectId, collectionId, importFileSize, uploadedFiles, sectionId) => {
     let color = domain === '' ? 'gray' : 'green';
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
@@ -519,6 +548,8 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
             throw new Error('Collection does not exist.');
         }
         // Update collection with new data, including filesCount
+        // Update collection with new data, including filesCount
+        // Update collection with new data, including filesCount
         updateDoc(collectionDocRef, {
             uploadedFiles: arrayUnion(...uploadedFiles.map(file => ({...file, dateTimeOriginal: file.dateTimeOriginal}))),
         })
@@ -527,14 +558,70 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
             throw error;
         });
 
+        // Fetch current smart gallery
+        const currentSmartGallery = await fetchSmartGalleryFromFirestore(domain, projectId, collectionId);
+
+        // Find the section to update or create a new one if sectionId is not provided or not found
+        let updatedSections = [];
+        let sectionFound = false;
+        console.log(sectionId)
+        if (sectionId) {
+            updatedSections = currentSmartGallery.sections.map(section => {
+                if (section.id === sectionId) {
+                    sectionFound = true;
+    
+                    return {
+                        ...section,
+                        images: [...section.images,
+                             ...uploadedFiles], // Append new images
+                    };
+                }
+                return section;
+            });
+        }
+
+        if (!sectionFound) {
+            // If sectionId was not provided or not found, create a new image-grid section
+            updatedSections = [
+                ...currentSmartGallery.sections,
+                {
+                    id: `image-grid-${collectionId}-${new Date().getTime()}`, // Generate a new ID
+                    type: 'image-grid',
+                    order: currentSmartGallery.sections.length + 1, // Place at the end
+                    images: uploadedFiles,
+                }
+            ];
+        }
+
+        const updatedSmartGallery = {
+            ...currentSmartGallery,
+            sections: updatedSections,
+            projectCover: projectData.data().projectCover === '' ? uploadedFiles[0]?.url : projectData.data().projectCover
+        };
+        // Call updateSmartGalleryInFirestore
+        await updateSmartGalleryInFirestore(domain, projectId, collectionId, updatedSmartGallery);
+
         const pin = generateMemorablePIN(4)
+        const imageGridEvent = {
+            type: 'image-grid',
+            id: `image-grid-${collectionId}-${new Date().getTime()}`,
+            images: uploadedFiles,
+            collectionId: collectionId,
+            date: new Date().getTime(),
+        };
         updateDoc(projectDocRef, {
+            events: arrayUnion(imageGridEvent),
             collections: projectData.data().collections.map(collection => {
                 if (collection.id === collectionId) {
                     return {
                         ...collection,
                         galleryCover : collection?.galleryCover? collection.galleryCover : uploadedFiles[0]?.url,
-                        favoriteImages: collection?.favoriteImages && collection?.favoriteImages[0] !==''  ? collection.favoriteImages :[uploadedFiles.length>=2 ? uploadedFiles[1]?.url:'',uploadedFiles.length>=3 ? uploadedFiles[2]?.url:''],
+                        favoriteImages: collection?.favoriteImages && collection?.favoriteImages[0] !== ''
+                            ? collection.favoriteImages
+                            : [
+                                uploadedFiles.length >= 2 ? uploadedFiles[1]?.url || '' : '',
+                                uploadedFiles.length >= 3 ? uploadedFiles[2]?.url || '' : ''
+                              ],
                         filesCount: (collection.filesCount || 0) + uploadedFiles.length,
                     };
                 }
@@ -905,6 +992,8 @@ export const addUploadCompletionEventToFirestore = async (domain, projectId, col
         const projectData = projectSnapshot.data();
         const existingEvents = projectData.events || [];
 
+        const eventDate = uploadedFiles[0]?.dateTimeOriginal ? new Date(uploadedFiles[0].dateTimeOriginal).getTime() : new Date().getTime();
+
         // Check if an event with the same type and date already exists
         const eventAlreadyExists = existingEvents.some(event => 
             event.type === collectionName && event.date === eventDate
@@ -916,7 +1005,6 @@ export const addUploadCompletionEventToFirestore = async (domain, projectId, col
         }
 
         const eventId = `upload-completion-${collectionId}-${new Date().getTime()}`;
-        const eventDate = uploadedFiles[0]?.dateTimeOriginal ? new Date(uploadedFiles[0].dateTimeOriginal).getTime() : new Date().getTime();
         const uploadCompletionEvent = {
             id: eventId,
             type: collectionName,

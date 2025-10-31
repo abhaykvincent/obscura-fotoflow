@@ -93,9 +93,6 @@ function ShareGallery({project }) {
 
   const modalRef = useModalFocus(visible.shareGallery);
 
-  useEffect(()=>{
-    console.log(project)
-  },[project])
 
   const handleOpenQRCodeModal = (url) => {
     setQrCodeUrl(url);
@@ -150,8 +147,8 @@ function ShareGallery({project }) {
                   <div className='link' >
 
                     <div className="link-container">
-                      <a className='linkToGallery' href={getGalleryURL('share',domain,project?.id)} target='_blank' > ...{getGalleryURL('share',domain,project?.id).slice(-40)}
-                        <div className="button icon icon-only open-in-new"></div>
+                      <a className='linkToGallery' href={getGalleryURL('share',domain,project?.id)} target='_blank' > ...{getGalleryURL('share',domain,project?.id).slice(-18)}
+
                       </a>
                     </div>
                   </div>
@@ -159,87 +156,84 @@ function ShareGallery({project }) {
 
                 </div>
               </div>
+              <div className="qr-code-preview" onClick={() => handleOpenQRCodeModal(getGalleryURL('share', domain, project?.id))}>
+                  <div className="qr-code-container">
+                    <QRCodeCanvas value={getGalleryURL('share', domain, project?.id)} size={80} imageSettings={{
+                      src: logo,
+                      excavate: true,
+                      height: 20,
+                      width: 20
+                    }} />
+                  </div>
+                </div>
             </div>
 
               <div className="select-galleries">
-
-              <div className="galleries-share-list-selection">
-
-                    <div className='gallery-field'>
-                      
-                      <div className="client-label">Gallery</div>
-                      <div className="client-label">Selection</div>
-                    </div>
                 {project?.collections.map((collection, index) => (
-                  <>
-                    {/* Gallery choose */}
-                    <div key={index} className='gallery-field'>
-                      <div className="form-item">
-                        <div className="input gallery-status">
-                        <FormControlLabel
-                          control={
-                            <IOSSwitch
-                              sx={{ m: 1 }}
-                              checked={collection.status === 'visible'} // Set checked based on collection status
-                              onChange={(event) => {
-                                const newStatus = event.target.checked ? 'visible' : 'hide';
-                                dispatch(updateCollectionStatus({
-                                  domain,
-                                  projectId: project?.id,
-                                  collectionId: collection.id,
-                                  status: newStatus
-                                }));
-                              }}
-                              color="green"
-                            />
-                          }
-                          label={
-                            <>
-                              <div className={`gallery-name ${collection.status !== 'visible' ? 'hide' : ''}`}>{collection.name}</div>
-                              <div className="gallery-images-count">
-                                {collection.filesCount > 1 ? `${collection.filesCount}56 Photos` : ''}
-                              </div>
-                            </>
-                          }
-                        />
+                  <div key={index} className={`gallery-item ${collection.status !== 'visible' ? 'disabled' : ''}`}>
+                    <div className="gallery-info" onClick={() => {
+                        const newStatus = collection.status === 'visible' ? 'hide' : 'visible';
+                        dispatch(updateCollectionStatus({
+                          domain,
+                          projectId: project?.id,
+                          collectionId: collection.id,
+                          status: newStatus
+                        }));
+                      }}>
+                      <div className={`status-dot ${collection.status === 'visible' ? 'active' : ''}`}></div>
+                      <div>
+                        <div className="gallery-name">{collection.name}</div>
+                        <div className="gallery-images-count">
+                          {collection.filesCount > 1 ? `${collection.filesCount} Photos` : ''}
                         </div>
                       </div>
-
-                      <div className={`input selection-status ${collection.status !== 'visible' ? 'hide' : ''}`}>
-                             
-                        <FormControlLabel
-                          control={
-                            <IOSSwitch
-                              sx={{ m: 1 }}
-                              checked={collection.selectionGallery === true} // Set checked based on collection status
-                              disabled={collection.status !== 'visible'} // Disable if not visible
-                              onChange={(event) => {
-                                const newStatus = event.target.checked ? true: false;
-                                dispatch(updateSelectionGalleryStatus({
-                                  domain,
-                                  projectId: project?.id,
-                                  collectionId: collection.id,
-                                  status: newStatus
-                                }));
-                              }}
-                              color="blue"
-                            />
-                          }
-                        />
-                        <div className="selection-icon"></div>   
-                        
-                      </div>
                     </div>
-                  </>
+                    <div className="selection-toggle">
+                      {/* llabel; */}
+                      <p className={`toggle-status-label ${collection.selectionGallery === true ? '' : 'toggle-off'}`}>
+                        {
+                          collection.selectionGallery === true ? 'Waiting for client selection.' : 'Turn on selection'
+                        }
+                      </p>
+                      <div className={`selection-icon ${collection.selectionGallery === true ? 'active' : ''}`}></div>
+                      <FormControlLabel
+                        control={
+                          <IOSSwitch
+                            sx={{ m: 1 }}
+                            checked={collection.selectionGallery === true}
+                            disabled={collection.status !== 'visible'}
+                            onChange={(event) => {
+                              const newStatus = event.target.checked ? true: false;
+                              dispatch(updateSelectionGalleryStatus({
+                                domain,
+                                projectId: project?.id,
+                                collectionId: collection.id,
+                                status: newStatus
+                              }));
+                            }}
+                            color="blue"
+                          />
+                        }
+                        label=""
+                      />
+                    </div>
+                  </div>
                 ))}
-
-              </div>
-
-
               </div>
 
               
 
+              <div className="gallery-view-status">
+
+                <div className="link-group">
+                  <div className="button primary outline text-only  icon link"
+                    onClick={() => {
+                      // open link in new tab
+                      window.open(getGalleryURL('smart-gallery', domain, project?.id), '_blank');
+                    }}
+                  >Smart Gallery</div>
+                  </div>
+                </div>
               <div className="gallery-view-status">
                 <div className="link-group">
                   <div className="button primary outline text-only  icon link"
@@ -260,17 +254,6 @@ function ShareGallery({project }) {
                 <div className="button secondary  transparent-button icon public">Public</div>
               
                 <div className="button primary outline  ">Share</div>
-
-                <div className="qr-code-preview" onClick={() => handleOpenQRCodeModal(getGalleryURL('share', domain, project?.id))}>
-                  <div className="qr-code-container">
-                    <QRCodeCanvas value={getGalleryURL('share', domain, project?.id)} size={80} imageSettings={{
-                      src: logo,
-                      excavate: true,
-                      height: 20,
-                      width: 20
-                    }} />
-                  </div>
-                </div>
 
               </div>
               <div className="gallery-view-status">

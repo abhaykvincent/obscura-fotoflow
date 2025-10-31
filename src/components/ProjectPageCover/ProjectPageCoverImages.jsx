@@ -107,9 +107,6 @@ export const ProjectPageCoverImages = ({ project }) => {
         setFocusPoint(project.focusPoint);
     }, [project.focusPoint]);
 
-    useEffect(() => {
-        console.log(project)
-    }, [project]);
 
     const getAllImages = () => {
         let images = [];

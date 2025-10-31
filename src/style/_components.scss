@@ -1,7 +1,8 @@
 @import './variables';
 .App .button{
     display: inline-block;
-    padding: 5px 8px*1.8;
+    padding: 5px 8px*1.4;
+    padding-bottom: 8px*0.8;
     border-radius: 5px;
     font-size: 0.95rem;
     line-height: 1.1rem;
@@ -27,8 +28,16 @@
             &::before{
                 opacity: 1;
             }
+        &.icon-right::after{
+                opacity: 1;
+            }
         }
     }
+
+        &.small{
+            padding: 4px 8px*0.6;
+            font-size: 0.85rem;
+        }
     &:active{
         opacity: 1;
         transition-duration: 0.1s;
@@ -41,7 +50,7 @@
         border: 1px solid $green-default-dark;
         border-left: 1px solid rgb(132, 193, 40);
         border-top: 1px solid rgb(115, 166, 39);
-
+        color: white;
         &.outline {
             background: none;
             border: 1px solid $green-dark-accessible-light;
@@ -106,6 +115,7 @@
 
             }
         }
+
         &.transparent-button{
             border: 1px solid rgba(255, 255, 255, 0.0)!important;
             background-color: rgba(128, 128, 128, 0.005) !important;
@@ -126,6 +136,10 @@
         box-shadow: 1px 1px 1px rgba(15, 15, 15, 0.2);
         &:before{
             opacity: 0.4;
+        }
+        .icon-right::after{
+            opacity: 0.4;
+
         }
         }
     }
@@ -156,6 +170,10 @@
                 margin-right: 0;
                 background-position: center;
             }
+            &.icon-right::after{
+                margin-left: 0;
+                background-position: center;
+            }
         }
         &::before{
             content: '.';
@@ -169,20 +187,47 @@
             background-size: 100%;
             background-position: center;
             background-repeat: no-repeat;
-            filter: drop-shadow(1px 1px 1px #222);
+            filter: drop-shadow(1px 1px 1px #ffffff00);
+            text-shadow: none;
              background-size: 100%;
-                opacity: 0.7;
+                opacity: 0.8;
              
                
         }
         &.large{
-            &::before{
+            &::before,&::after{
             padding: 8px*2;
             }
            }
 
+        &.icon-right{
+            &::after{
+                content: '.';
+                margin-left: 4px;
+                margin-right: -4px;
+                width: 8px*3;
+                height: 100%;
+                padding: 2px 8px;
+                color: transparent;
+                text-decoration: none;
+                background-size: 100%;
+                background-position: center;
+                background-repeat: no-repeat;
+                filter: drop-shadow(1px 1px 1px #ffffff00);
+                text-shadow: none;
+                background-size: 100%;
+                opacity: 0.9;
+            }
+            &::before{
+                display: none;
+            }
+        }
+
         &.add::before{
             background-image: url('https://img.icons8.com/ios-filled/500/ffffff/plus-math.png');
+        }
+        &.add-mobile::before{
+            background-image: url('https://img.icons8.com/?size=100&id=QADawoQS3Rcg&format=png&color=FFFFFF');
         }
         &.search::before{
             background-size: 100%;
@@ -225,6 +270,14 @@
             background-image: url('https://img.icons8.com/?size=100&id=85799&format=png&color=FFFFFF');
             padding-top: 4px;
             margin-right: 4px;
+            opacity: 0.7;
+        }
+        &.hand-pointer::before{
+            text-decoration: none;
+            background-size: 80%;
+            background-image: url('https://img.icons8.com/?size=100&id=7pFVTRfCUO3C&format=png&color=FFFFFF');
+            padding-top: 4px;
+            margin-right: 0px;
             opacity: 0.7;
         }
         &.private::before{
@@ -278,20 +331,94 @@
             background-size: 80%;
             background-image: url('https://img.icons8.com/?size=100&id=Y1Jzb9yc1jLC&format=png&color=FFFFFF');
         }
-        &.set-focus::before{
+        &.next::after{
+            background-size: 70%;
+            background-image: url('https://img.icons8.com/?size=100&id=7849&format=png&color=FFFFFF');
+        }
+        &.back::before{
+            background-size: 70%;
+            background-image: url('https://img.icons8.com/?size=100&id=40217&format=png&color=FFFFFF');
+        }
+        &.set-focus.dark-icon::before{
+            margin-right: 0;
+            margin-left: 0;
             background-size: 80%;
-            background-image: url('https://img.icons8.com/?size=100&id=123951&format=png&color=FFFFFF');
+            background-position: center;
+            background-image: url('https://img.icons8.com/?size=100&id=123951&format=png&color=000000');
+        }
+        &.title-position.dark-icon::before{
+            margin-right: 0;
+            margin-left: 0;
+            background-size: 100%;
+            background-position: center;
+            background-image: url('https://img.icons8.com/?size=100&id=N1vYa7LVzeKx&format=png&color=000000');
+        }
+        &.section-settings.dark-icon::before{
+            margin-right: 0;
+            margin-left: 0;
+            background-size: 90%;
+            background-position: center;
+            background-image: url('https://img.icons8.com/?size=100&id=69913&format=png&color=000000');
+        }
+        &.title-font.dark-icon::before{
+            margin-right: 0;
+            margin-left: 0;
+            background-size: 80%;
+            background-position: center;
+            background-image: url('https://img.icons8.com/?size=100&id=24758&format=png&color=1A1A1A');
+        }
+        &.move-up.dark-icon::before{
+            margin-right: 0;
+            margin-left: 0;
+            background-size: 80%;
+            background-position: center;
+            background-image: url('https://img.icons8.com/?size=100&id=39787&format=png&color=000000');
+        }
+        &.move-down.dark-icon::before{
+            margin-right: 0;
+            margin-left: 0;
+            background-size: 80%;
+            background-position: center;
+            background-image: url('https://img.icons8.com/?size=100&id=39786&format=png&color=000000');
+        }
+        &.cover-size.dark-icon::before{
+            margin-right: 0;
+            margin-left: 0;
+            background-size: 60%;
+            background-position: center;
+            background-image: url('https://img.icons8.com/?size=100&id=7790&format=png&color=000000');
+        }
+        &.delete-red.dark-icon::before{
+            margin-right: 0;
+            margin-left: 0;
+            background-size: 90%;
+            background-position: center;
+            background-image: url('https://img.icons8.com/?size=100&id=67884&format=png&color=ff2d55');
+        }
+        &.colour-wheel.dark-icon::before{
+            margin-right: 0;
+            margin-left: 0;
+            background-size: 85%;
+            background-position: center;
+            background-image: url('https://img.icons8.com/?size=100&id=EDu09r33OBsd&format=png&color=000000');
         }
         &.image::before{
             background-size: 80%;
             background-image: url('https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=FFFFFF');
         }
         &.download::before{
-            margin-right: -6px;
-            margin-left: -6px;
-            background-size: 90%;
-            background-position: top 4px center;
-            background-image: url('https://img.icons8.com/?size=100&id=366&format=png&color=FFFFFF');
+            margin-right: 0px;
+            margin-left:-6px;
+            background-size: 80%;
+            background-position:  center;
+            background-image: url('https://img.icons8.com/?size=100&id=CoWjc6xXzIS8&format=png&color=FFFFFF');
+        }
+        &.selected::before{
+            margin-right: 0px;
+            margin-left:-6px;
+            background-size: 100%;
+            background-position:  center;
+            background-image: url('https://img.icons8.com/?size=100&id=qjWObCa2AkgR&format=png&color=000000');
         }
         &.upload::before{
             margin-right: 6px;
@@ -392,6 +519,33 @@
             background-position: center center;
             background-image: url('https://img.icons8.com/?size=100&id=vu5kHwGC4PNb&format=png&color=FFFFFF');
         }
+        }
+    }
+}
+.App.light-mode-page{
+    .button{
+        padding: 8px 8px*2;;
+        padding-left: 8px*1.5;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        box-shadow:  0px 0px 4px 4px rgba(0, 0, 0, 0.05),1px 1px 2px 0px rgba(0, 0, 0, 0.1);
+        &.secondary{
+            background-color: white;
+            border: 1px solid $gray4-accessible-light;
+            color: $gray6-default-dark;
+        }
+
+        &.icon{
+            &::before{
+                content: '.';
+                margin-right: 4px;
+                margin-left: -4px;
+                width: 8px*5;
+                height: 8px*5;
+                padding: 8px*1 8px*1.5;
+                    opacity: 0.8;
+                
+                
+            }
         }
     }
 }
@@ -703,7 +857,7 @@ border: 0px solid #535353;
         top: 8px*0;
         left: 8px*0;
         width: 100vw;
-        height: 100vh;
+        height: 100dvh;
         z-index: 100;
         margin: 0;
         background-color: $light-2;

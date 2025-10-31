@@ -88,6 +88,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
               
             </span>
           </div>
+          <p>Auto assigned</p>
         </div>
       </div>
       <div className="field live-field">
@@ -98,31 +99,11 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
         >
           <span>{showAdvanced ? 'Hide Options' : 'Advanced'}</span>
           <span className={`arrow`}></span>
+
         </div>
       </div>
       <div className={`advanced-options ${showAdvanced ? 'show' : ''}`}>
         <div className="advanced-options-inner">
-          <div className="field live-field">
-            <label>Live</label>
-            <div className="project-validity-wrap">
-              <div className="project-validity-options">
-                {VALIDITY_OPTIONS.map(({ id, value, label, disabled, className }) => (
-                  <div className={`radio-button-group ${className}`} key={id}>
-                    <input
-                      type="radio"
-                      id={id}
-                      name="projectValidityMonths"
-                      value={value}
-                      checked={projectData.projectValidityMonths === value}
-                      onChange={handleInputChange}
-                      disabled={disabled}
-                    />
-                    <label htmlFor={id}>{label}</label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
           <div className="field validity-field">
             <label>Validity</label>
             <div className="project-validity-wrap">

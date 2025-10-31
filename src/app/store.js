@@ -12,9 +12,16 @@ import referralsReducer from './slices/referralsSlice'
 import notificationReducer from './slices/notificationSlice';
 import adminPaneReducer from './slices/adminPaneSlice';
 import packagesReducer from './slices/packagesSlice';
+import smartGalleryReducer from './slices/smartGallerySlice';
+import galleryReducer from './slices/gallerySlice';
+import onboardingReducer from '../features/Onboarding/v2/slices/onboardingSlice';
+import loadingReducer from './slices/loadingSlice';
+import adminSettingsReducer from './slices/adminSettingsSlice';
 
 export const store = configureStore({
   reducer: {
+    gallery: galleryReducer,
+    smartGallery: smartGalleryReducer,
     auth: authReducer,
     alert: alertReducer,
     projects: projectsReducer,
@@ -28,5 +35,8 @@ export const store = configureStore({
     notifications: notificationReducer,
     adminPane: adminPaneReducer,
     packages: packagesReducer,
+    onboarding: onboardingReducer,
+    loading: loadingReducer,
+    adminSettings: adminSettingsReducer,
   },
 });

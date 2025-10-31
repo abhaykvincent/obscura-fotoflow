@@ -343,7 +343,7 @@ function AdminPanel() {
                                                 <td>{referral?.email}</td>
                                                 <td><span className={ `campainPlatform ${referral?.campainPlatform}`}> </span></td>
                                                 <td>{referral?.type}</td>
-                                                <td>{referral?.phoneNumber}</td>
+                                                <td>{referral?.studioContact}</td>
                                                 <td>{referral?.used}/{referral?.quota}</td>
                                                 <td><span className='button icon copy'
                                                     onClick={() => {

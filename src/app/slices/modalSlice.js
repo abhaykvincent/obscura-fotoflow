@@ -18,6 +18,7 @@ const initialState = {
     trialStatus:false,
     qrCode:false,
     createPackage: false,
+    welcome: false
 };
 export const closeModalWithAnimation = createAsyncThunk(
   'projects/closeModalWithAnimation',
@@ -37,14 +38,12 @@ const modalSlice = createSlice({
   reducers: {
     openModal: (state, action) => {
       state[action.payload] = true;
-      console.log('Opening '+action.payload +' Modal ...')
       window.scrollTo(0, 0);
       document.body.style.overflow = 'hidden';
       //
     },
     closeModal: (state, action) => {
       state[action.payload] = false;
-      console.log('Closing '+action.payload +' Modal ...')
       document.body.style.overflow = 'auto';
 
     }

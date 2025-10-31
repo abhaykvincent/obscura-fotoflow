@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react'
 import CreateStudio from './CreateStudio.jsx'
 import './Onboarding.scss'
@@ -7,7 +6,7 @@ import { useNavigate } from 'react-router'
 import { acceptInvitationCode,createUser,useInvitationCode, validateInvitationCodeFromFirestore } from '../../firebase/functions/firestore.js'
 import { createStudio } from '../../firebase/functions/studios.js'
 import { useDispatch, useSelector } from 'react-redux'
-import { checkAuthStatus, login, logout, selectUser, selectUserStudio, setCurrentStudio, setUser } from '../../app/slices/authSlice.js'
+import { login, logout, selectUser, selectUserStudio, setCurrentStudio, setUser } from '../../app/slices/authSlice.js'
 import { showAlert } from '../../app/slices/alertSlice.js'
 import { signInWithPopup } from 'firebase/auth'
 import { analytics, auth, provider } from '../../firebase/app.js'
@@ -27,7 +26,6 @@ function Onboarding() {
   const ref = searchParams.get('ref') || '0000'; // Get the 'ref' parameter
   const user = useSelector(selectUser)
   const currentStudio = useSelector(selectUserStudio);
-  console.log(currentStudio)
   const [timeOfDay, setTimeOfDay] = useState({
     timeOfDay: '',
     timeGreeting: '',
@@ -51,10 +49,8 @@ function Onboarding() {
   });
   // Redirect to dashboard if user is already logged in
   const studioLocal = JSON.parse(localStorage.getItem('studio'))
-  console.log(studioLocal)
   useEffect(() => {
     if (studioLocal) {
-      console.log(studioLocal)
       navigate(`/${studioLocal?.domain}`);
     }
   },[studioLocal])
@@ -270,13 +266,15 @@ function Onboarding() {
       validateForm()
   },[user, createAccountData])
   useEffect(() => {
+    debugger
     dispatch(generateReferral({
       name: "Abhay",
+      studioName:"Monalisa",
       campainName: "Admin",
       campainPlatform: "whatsapp",
       type: "referral",
       email: "",
-      phoneNumber: "",
+      studioContact: "",
       code: ['2744'],
       status: "active",
       quota: 3,
@@ -284,7 +282,6 @@ function Onboarding() {
       validity: 30,
       createdAt: new Date().toISOString(),
     }))
-    dispatch(checkAuthStatus)
     createTimeOFDayObject()
     trackEvent('onboarding_viewed', {
       referral_code: ref

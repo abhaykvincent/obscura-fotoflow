@@ -7,6 +7,7 @@ import { addProject, createSubProject } from '../../../app/slices/projectsSlice'
 import { closeModalWithAnimation, selectModal } from '../../../app/slices/modalSlice';
 import { selectUser, selectUserStudio } from '../../../app/slices/authSlice';
 import { createNotification } from '../../../app/slices/notificationSlice';
+import { showLoading, hideLoading } from '../../../app/slices/loadingSlice';
 // Hooks
 import { useModalFocus } from '../../../hooks/modalInputFocus';
 // Components
@@ -27,6 +28,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   const [projectData, setProjectData] = useState({ ...initialProjectData });
   const [errors, setErrors] = useState({});
   const [currentStep, setCurrentStep] = useState(1);
+  const { show: isLoading } = useSelector((state) => state.loading);
 
   const nameInputRef = useRef(null);
   const name2InputRef = useRef(null);
@@ -83,8 +85,8 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
       else if (errors.name2) name2InputRef.current?.focus();
       return;
     }
-
     const domain = currentStudio.domain;
+    dispatch(showLoading(`Creating ${projectData.type} project ${projectData.name} ..`));
     onClose();
 
     await new Promise(resolve => setTimeout(resolve, 500)); // Wait for animation
@@ -95,17 +97,21 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
       : addProject({ domain, projectData });
 
     try {
-      const payload = await dispatch(action).unwrap();
-      
+      const response = await dispatch(action);
+      const payload = response.payload;
       dispatchNotification(payload, user);
       dispatch(showAlert({ type: "success", message: `${projectType} created successfully!` }));
 
       const { id, subProjectId } = payload;
       const navigateTo = isSubProject ? `${parentProjectId}/sub-project/${subProjectId}` : id;
+      console.log(`/${domain}/project/${navigateTo}`)
+
+      dispatch(hideLoading());
       navigate(`/${domain}/project/${navigateTo}`);
     } catch (error) {
       console.error(`Error creating ${projectType.toLowerCase()}:`, error);
       dispatch(showAlert({ type: "error", message: `Failed to create ${projectType.toLowerCase()}.` }));
+      dispatch(hideLoading());
     }
   };
 
@@ -176,9 +182,9 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
             <button type="button" className="button secondary" onClick={handlePreviousStep}>Back</button>
           )}
           {currentStep < 2 ? (
-            <button type="button" className="button primary" onClick={handleNextStep}>Next</button>
+            <button type="button" className="button primary icon icon-right next" onClick={handleNextStep}>Next</button>
           ) : (
-            <button type="button" className="button primary" onClick={handleSubmit}>
+            <button type="button" className="button primary icon new" onClick={handleSubmit}>
               {isSubProject ? "Create Sub-Project" : "Create project"}
             </button>
           )}

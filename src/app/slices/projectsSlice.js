@@ -1,10 +1,10 @@
-// slices/authSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
 import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateCollectionSelectionStatusByCollectionIdInFirestore, updateSelectionGalleryStatusByCollectionIdInFirestore, updateCollectionStatusByCollectionIdInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore, updateProjectStorageToArchive } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/app';
+import { convertTimestamps } from '../../utils/firestoreUtils';
 
 
 const initialState = {
@@ -54,7 +54,7 @@ export const fetchProjects = createAsyncThunk(
       return project;
     }));
 
-    return processedProjects;
+    return convertTimestamps(processedProjects);
   }
 );
 
@@ -68,7 +68,8 @@ export const checkFirestoreConnection = createAsyncThunk(
 export const addProject = createAsyncThunk(
   'projects/addProject',
   ({domain,projectData}) => {
-    return addProjectToStudio(domain,projectData)}
+    const data = addProjectToStudio(domain,projectData)
+    return data}
 );
 export const updateProjectName = createAsyncThunk(
   'projects/updateProjectName',
@@ -132,7 +133,7 @@ export const addCollection = createAsyncThunk(
   'projects/addCollection',
   async ({ domain, projectId, newCollection }, { dispatch }) => {
     const id = await addCollectionToStudioProject(domain,projectId, newCollection);
-    return {projectId, collection: {id,...newCollection}}
+    return convertTimestamps({projectId, collection: {id,...newCollection}})
   }
 );
 
@@ -148,7 +149,7 @@ export const addEvent = createAsyncThunk(
   'projects/addEvent',
   async ({ domain, projectId, newEvent }, { dispatch }) => {
     const id = await addEventToFirestore(domain,projectId, newEvent);
-    return ({projectId:projectId, newEvent:{id, ...newEvent}})
+    return convertTimestamps({projectId:projectId, newEvent:{id, ...newEvent}})
   }
 );
 // Crew
@@ -156,7 +157,7 @@ export const addCrew = createAsyncThunk(
   'projects/addCrew',
   async ({ domain, projectId, eventId, crewData }, { dispatch }) => {
     await addCrewToFirestore(domain, projectId, eventId, crewData);
-    return { projectId, eventId, crewData };
+    return convertTimestamps({ projectId, eventId, crewData });
   }
 );
 // Financials
@@ -165,7 +166,7 @@ export const addPayment =  createAsyncThunk(
   'projects/addPayment',
   async ({ domain,projectId, paymentData }, { dispatch }) => {
     await addPaymentToFirestore(domain, projectId, paymentData);
-    return { projectId, paymentData };
+    return convertTimestamps({ projectId, paymentData });
   }
 );
 // Expenses
@@ -173,14 +174,14 @@ export const addExpense =  createAsyncThunk(
   'projects/addExpense',
   async ({ domain,projectId, paymentData }, { dispatch }) => {
     await addExpenseToFirestore(domain,projectId, paymentData);
-    return { projectId, expenseData:paymentData };
+    return convertTimestamps({ projectId, expenseData:paymentData });
   }
 );
 export const addBudget =  createAsyncThunk(
   'projects/addBudget',
   async ({ domain,projectId, budgetData }, { dispatch }) => {
     budgetData = await addBudgetToFirestore(domain, projectId, budgetData);
-    return {projectId,budgetData};
+    return convertTimestamps({projectId,budgetData});
   }
 );export const deleteFile = createAsyncThunk(
   'projects/deleteFile',
@@ -195,14 +196,14 @@ export const updateInvitation = createAsyncThunk(
   'projects/updateInvitation',
   async ({ domain, projectId, invitationData }, { dispatch }) => {
     const updatedInvitationId = await updateInvitationInFirebase(domain, projectId, invitationData);
-    return { projectId, invitationData, updatedInvitationId };
+    return convertTimestamps({ projectId, invitationData, updatedInvitationId });
   }
 );
 export const fetchInvitation = createAsyncThunk(
   'invitations/fetchInvitation',
   async ({ domain, projectId }) => {
     const invitation = await fetchInvitationFromFirebase(domain, projectId);
-    return invitation;
+    return convertTimestamps(invitation);
   }
 );
 // Upload Cover
@@ -490,7 +491,7 @@ const projectsSlice = createSlice({
         const { projectId, newEvent } = action.payload;
         state.data = state.data.map((project) => {
           if (project.id === projectId) {
-            const updatedEvents = [...project.events, newEvent];
+            const updatedEvents = [...project.events, convertTimestamps(newEvent)];
             return { ...project, events: updatedEvents };
           }
           return project;

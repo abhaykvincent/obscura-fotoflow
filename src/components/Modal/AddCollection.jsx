@@ -9,6 +9,7 @@ import { trackEvent } from '../../analytics/utils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import { storeLimitContext } from '../../utils/localStorageUtills';
 import { selectStudio } from '../../app/slices/studioSlice';
+import { showLoading, hideLoading } from '../../app/slices/loadingSlice';
 
 // Mapping of placeholders based on project type
 const projectTypePlaceholders = {
@@ -30,7 +31,7 @@ function AddCollectionModal({ project }) {
   const visible = useSelector(selectModal);
   const defaultStudio = useSelector(selectUserStudio);
   const studio = useSelector(selectStudio);
-  console.log(studio);
+  const { show: isLoading } = useSelector((state) => state.loading);
   const collectionsLimit = {
     perProject: defaultStudio.domain === 'monalisa' ? 24 : 
     studio.planName === 'Core' ? 3 : 12,
@@ -67,7 +68,6 @@ const handleSuggestedNameChange = (event) => {
 };
 
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const nameInputRef = useRef(null);
 
@@ -91,12 +91,12 @@ const handleSuggestedNameChange = (event) => {
 
  const handleSubmit = () => {
   let data = CollectionData;
-  if (isSubmitting) return;
+  if (isLoading) return; // Use Redux isLoading
 
   const isValid = validateForm(data); // validate passed data
   if (!isValid) return;
 
-  setIsSubmitting(true);
+  dispatch(showLoading(`Adding ${CollectionData.name} to ${project.name}..`)); // Dispatch showLoading
   const domain = defaultStudio.domain;
   onClose();
 
@@ -126,10 +126,10 @@ const handleSuggestedNameChange = (event) => {
             `/${defaultStudio.domain}/gallery/${project.id}/${id.payload.collection.id}`
           );
         })
-        .finally(() => setIsSubmitting(false));
+        .finally(() => dispatch(hideLoading())); // Dispatch hideLoading in finally
     }, 500);
   } else {
-    setIsSubmitting(false);
+    dispatch(hideLoading()); // Dispatch hideLoading
 
     dispatch(
       showAlert({
@@ -156,81 +156,81 @@ const handleSuggestedNameChange = (event) => {
 
   return (
     <div className="modal-container" ref={modalRef}>
-      <div className="modal create-project island">
+        <div className="modal create-project island">
 
-        <div className="modal-header">
-          <div className="modal-controls">
-            <div className="control close" onClick={onClose}></div>
-            <div className="control minimize"></div>
-            <div className="control maximize"></div>
-          </div>
-          <div className="modal-title">
-            Create Gallery
-            <p className="modal-subtitle">- {project.name}'s {project.type}</p>
-          </div>
-        </div>
-        
-        <div className="modal-body">
-          <div className="form-section">
-            <div className="field">
-
-              <label htmlFor="">Gallery name</label>
-              <input
-                name="name"
-                ref={nameInputRef}
-                value={CollectionData.name}
-                type="text"
-                onChange={handleInputChange}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleSubmit();
-                  }
-                }}
-                placeholder={placeholders[0]} // Dynamically set placeholder
-              />
-
-              <label htmlFor=""></label>
-              <div className="project-validity-options">
-                {projectTypePlaceholders[project.type]
-                  ?.filter(
-                    (placeholder) =>
-                      !CollectionData.name.includes(placeholder) &&
-                      !project.collections?.some((collection) => collection.name === placeholder)
-                  )
-                  .map((placeholder, index) => (
-                    <div className="radio-button-group" key={index}>
-                      <input
-                        type="radio"
-                        id={`template-${placeholder.toLowerCase().replace(/\s+/g, '-')}`}
-                        name="name"
-                        value={placeholder}
-                        checked={CollectionData.name === placeholder}
-                        onChange={handleSuggestedNameChange}
-                      />
-                      <label htmlFor={`template-${placeholder.toLowerCase().replace(/\s+/g, '-')}`}>
-                        {placeholder}
-                      </label>
-                    </div>
-                  ))}
-              </div>
-
-            <span></span>
-              {errors.name && <div className="error">{errors.name}</div>}
+          <div className="modal-header">
+            <div className="modal-controls">
+              <div className="control close" onClick={onClose}></div>
+              <div className="control minimize"></div>
+              <div className="control maximize"></div>
+            </div>
+            <div className="modal-title">
+              Create Gallery
+              <p className="modal-subtitle">- {project.name}'s {project.type}</p>
             </div>
           </div>
-        </div>
+          
+          <div className="modal-body">
+            <div className="form-section">
+              <div className="field">
 
-        <div className="actions">
-          <div className="button secondary" onClick={onClose}>
-            Cancel
-          </div>
-          <div className="button primary" onClick={handleSubmit}>
-            Create
-          </div>
-        </div>
+                <label htmlFor="">Gallery name</label>
+                <input
+                  name="name"
+                  ref={nameInputRef}
+                  value={CollectionData.name}
+                  type="text"
+                  onChange={handleInputChange}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleSubmit();
+                    }
+                  }}
+                  placeholder={placeholders[0]} // Dynamically set placeholder
+                />
 
-      </div>
+                <label htmlFor=""></label>
+                <div className="field-options project-validity-options ">
+                  {projectTypePlaceholders[project.type]
+                    ?.filter(
+                      (placeholder) =>
+                        !CollectionData.name.includes(placeholder) &&
+                        !project.collections?.some((collection) => collection.name === placeholder)
+                    )
+                    .map((placeholder, index) => (
+                      <div className="radio-button-group" key={index}>
+                        <input
+                          type="radio"
+                          id={`template-${placeholder.toLowerCase().replace(/\s+/g, '-')}`}
+                          name="name"
+                          value={placeholder}
+                          checked={CollectionData.name === placeholder}
+                          onChange={handleSuggestedNameChange}
+                        />
+                        <label htmlFor={`template-${placeholder.toLowerCase().replace(/\s+/g, '-')}`}>
+                          {placeholder}
+                        </label>
+                      </div>
+                    ))}
+                </div>
+
+              <span></span>
+                {errors.name && <div className="error">{errors.name}</div>}
+              </div>
+            </div>
+          </div>
+
+          <div className="actions">
+            <div className="button secondary" onClick={onClose}>
+              Cancel
+            </div>
+            <div className="button primary" onClick={handleSubmit}>
+              Create
+            </div>
+          </div>
+
+        </div>
       <div className="modal-backdrop" onClick={onClose}></div>
     </div>
   );

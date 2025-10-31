@@ -51,9 +51,6 @@ const Header = () => {
         <div className="logo"></div>
         <div className="studio-name-logo">{defaultStudio?.name}</div>
       </div>
-      <div className="search-bar">
-
-      </div>
       
     </header>
   );
