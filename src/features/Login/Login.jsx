@@ -114,7 +114,8 @@ const LoginModal = () => {
 
         <div className="actions">
 
-        <h3 className='login-title-section'><span>FotoFlow<span>.</span></span></h3>
+        <h3 className='login-title-section'>
+          <span>FotoFlow<span>.</span></span></h3>
         {/* <h2 className='login-title'>Signup <span>.</span> Signin <span>.</span></h2> */}
         <h3 className='login-subtitle'>Sign in or Create an account{/* <a className="green-label" href="">Create your studio</a> */}</h3>
 
