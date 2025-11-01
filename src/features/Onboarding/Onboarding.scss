@@ -148,7 +148,7 @@
         margin-bottom: 8px*1;
         span{
             &.timeGreeting{
-                color: $gray-default-dark;
+                color: $gray2-default-light;
                 &.icon{
                         margin-right: 8px;
                         content: '';
@@ -205,6 +205,12 @@
     -webkit-text-fill-color: transparent;
         }
     }
+    .onboarding-invitation-message{
+        font-size: 1.2rem;
+        color: $gray2-default-light;
+        margin-bottom: 8px*0.5;
+        margin-top: 8px*1;
+    }
     .continue-with{
         margin-bottom: 8px;
         margin-left: 4px;
@@ -227,7 +233,7 @@
     }
     .onboarding-message{
         
-        color: $gray3-default-dark;
+        color: $gray2-default-dark;
         margin-bottom: 8px*4;
     }
 }

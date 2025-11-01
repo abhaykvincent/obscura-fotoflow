@@ -121,6 +121,7 @@ function Onboarding() {
                             <span className={`timeGreeting icon ${greeting.timeOfDay}`}>{greeting.timeGreeting}</span>
                             <span className='iconic-gradient-white'>{invitation.name}</span>
                         </p>
+                        <p className='onboarding-invitation-message'> You are invited to join private beta.</p>
                         <p className='onboarding-message'>Access your workspace, collaborate on albums, and deliver photos.</p>
                     </>
                 )}
