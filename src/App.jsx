@@ -176,6 +176,8 @@ export default function App() {
           <UploadProgress/>
           <UpgradeModal/>
           <TrialStatusModal/>
+
+          {/* <SupportIcon/> */}
         </>
       )}
       {

@@ -2,9 +2,9 @@
 .advanced-toggle {
     cursor: pointer;
     text-align: left;
-    margin-top: 8px;
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 0.5rem;
     opacity: 0.5;
     span{
@@ -24,7 +24,6 @@
         transition-delay: 0.05s;
       }
     }
-
     .arrow {
       width: 8px*2.5;
       height: 8px*2.5;
@@ -65,6 +64,12 @@
     grid-template-rows: 0fr;
     transition: grid-template-rows 0.2s ease-in-out;
 
+.advanced-label{
+      position: absolute;
+      left: 0;
+      font-size: 0.875rem;
+      color: $gray3-accessible-dark;
+}
     .advanced-options-inner {
         overflow: hidden;
     }

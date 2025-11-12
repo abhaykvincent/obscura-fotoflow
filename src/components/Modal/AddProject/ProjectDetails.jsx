@@ -79,6 +79,8 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
       <div className="field team-field">
         <label>Team</label>
         <div className="team-members">
+          <div className="team-member-wrap">
+
           <div className="team-member">
             <div
               className="profile-image"
@@ -88,11 +90,12 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
               
             </span>
           </div>
-          <p>Auto assigned</p>
+          <p className='auto-asigned-label'>Auto assigned</p>
+          </div>
+          <div className="button disabled add-crew icon add">Crew</div>
         </div>
       </div>
       <div className="field live-field">
-        <label></label>
         <div
           className={`advanced-toggle ${showAdvanced ? 'down' : 'up'}`}
           onClick={() => setShowAdvanced(!showAdvanced)}
@@ -101,6 +104,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
           <span className={`arrow`}></span>
 
         </div>
+        <div className="advanced-label">Validity 1 yr</div>
       </div>
       <div className={`advanced-options ${showAdvanced ? 'show' : ''}`}>
         <div className="advanced-options-inner">

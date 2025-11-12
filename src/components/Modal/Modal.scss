@@ -62,7 +62,7 @@ animation-timing-function: ease-out;
     border-left: 1px solid rgba(255, 255, 255, 0.3);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     border-right: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 1px 1px 4 px 2px rgba(253, 253, 253, 0.01), 
+    box-shadow: 1px 1px 4px 2px rgba(253, 253, 253, 0.01),
                 0px 0px 16px 6px rgba(0, 0, 0, 0.3);
 
     -webkit-backdrop-filter: blur(3px);
@@ -236,9 +236,9 @@ animation-timing-function: ease-out;
         position: relative;
         top:0;
         left:0;
-        height: 8PX*2;
-        width: 8PX*2;
-        color: red
+        height: 8px * 2;
+        width: 8px * 2;
+        color: red;
         }
     }
     .bigger{
@@ -269,12 +269,21 @@ animation-timing-function: ease-out;
         border-right: 1px solid $gray2-accessible-dark;
         }
     }
-
+.auto-asigned-label{
+  text-align: center;
+  color: $gray5-default-dark;
+  margin-top: 4px;
+}.advanced-label{
+  color: $gray4-default-dark;
+  margin-top: 4px;
+  margin-left: 6px;
+}
     .team-members{
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: 8px;
+        align-items: flex-start;
+        gap: 8px*2;
         transition-duration: 0.4s;
         .team-member{
         display: flex;
@@ -645,7 +654,7 @@ animation-timing-function: ease-out;
     display: grid;
     position: relative;
     justify-content: center;
-    background-color: $dark-2-5;
+    background-color: rgba(0, 0, 0, 0.1);
     border: 1px solid $gray6-default-dark;
     border-left: 1px solid $gray5-default-dark;
     border-top: 1px solid $gray5-default-dark;
@@ -737,12 +746,20 @@ animation-timing-function: ease-out;
         justify-content: end;
         }
         &.google{
-        background-color: $dark-3;
-        box-shadow: 2px 3px 4px 1px rgba(0, 0, 0, 0.8);
-        border: 1px solid $gray-default-light;
+        background: linear-gradient(345deg, black 30%,#1b25133c 85%, #27352270 100%);
+        box-shadow:
+         2px 4px 4px rgba(0, 0, 0, 0.8),
+         inset 2px 2px 2px #20151f9d,
+         inset 4px 4px 8px #3a493542;
+padding-top: 11px;
+        border-top: 1px solid #5b884eec;
+        border-left: 1px solid #629254db;
+        border-right: 1px solid #32422eec;
+        border-bottom: 1px solid #212c1eec;
         opacity: 0;
         animation: fadeInUp 0.35s ease-in 1s;
         animation-fill-mode: forwards;
+        text-shadow: 1px 1px 3px black;
         &:hover{
         border: 1px solid $gray6-accessible-light;
         } 

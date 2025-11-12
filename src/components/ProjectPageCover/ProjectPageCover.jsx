@@ -185,7 +185,7 @@ export const ProjectCover = ({ project }) => {
 
                             <ProjectStatus project={project} />
 
-                            <div className="button secondary outline icon archive"> Archive</div>
+                            {/* <div className="button secondary outline icon archive"> Archive</div>
                         
                             <div className="cover-info project-expiry project-archive">
                                 <div className="icon-show expire"></div>
@@ -198,7 +198,7 @@ export const ProjectCover = ({ project }) => {
                                             : 0
                                         } Days</p>
 
-                            </div>
+                            </div> */}
                         
                         </div>
                         

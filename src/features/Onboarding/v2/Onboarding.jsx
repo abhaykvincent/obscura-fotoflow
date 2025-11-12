@@ -122,14 +122,15 @@ function Onboarding() {
                             <span className='iconic-gradient-white'>{invitation.name}</span>
                         </p>
                         <p className='onboarding-invitation-message'> You are invited to join private beta.</p>
-                        <p className='onboarding-message'>Access your workspace, collaborate on albums, and deliver photos.</p>
+                        <p className='onboarding-message'>Access your workspace, collaborate with clients, and deliver photo gallery.</p>
                     </>
                 )}
 
                 {!invitation && !invitation && (
                     <div className='activate-fotoflow-whatsapp'>
                         <p>{ref!=='0000' ? `Your Referral Code ${ref} is invalid or expired` : ` Fotoflow is currently Invite only. `}<br />
-                        {ref!=='0000' ? `Check link again or ` : 'Ckick to '}<a href="https://wa.me/+916235099329?text=Activate%20Fotoflow" target="_blank" rel="noopener noreferrer">Join Waitlist</a></p>
+                        {ref!=='0000' ? `Check link again ` : 'Click to '}
+                        </p>
                         
                     </div>
                 )}
@@ -159,6 +160,14 @@ function Onboarding() {
                 </div>
                 }
             </div>
+            {!invitation && (
+                    <div className='wishlist-whatsapp animate-reveal' style={{ animationDelay: '1.2s' }}>
+                        <p> 
+                            <a href="https://wa.me/+916235099329?text=Activate%20Fotoflow" target="_blank" rel="noopener noreferrer"> Join Waitlist</a>
+                            </p>
+                        
+                    </div>
+                )}
             {!invitation && (
                     <div className='contact-whatsapp animate-reveal' style={{ animationDelay: '1.2s' }}>
                         <p> Contact Support 

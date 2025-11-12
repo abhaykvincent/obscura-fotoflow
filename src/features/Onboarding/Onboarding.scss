@@ -241,7 +241,7 @@
     color: $gray-default-light;
 }
 .contact-whatsapp{
-    margin-top: 8px*2;
+    margin-top: 8px*6;
     color: $gray6-default-light;
     p{
         display: inline;
@@ -257,6 +257,27 @@
         a{
             margin-left: 8px;
             color: $gray4-default-light;
+        }
+    }
+
+}
+.wishlist-whatsapp{
+    margin-top: 8px*2;
+    color: $green-default-light;
+    p{
+        display: inline;
+        color: $green-default-light;
+        padding: 8px*2 8px*3;
+        border: 1px solid $green-dark-accessible-light;
+        border-radius: 4px;
+        cursor: pointer;
+        &:hover{
+            background-color: $dark-2;
+            transition-duration: 0.2s;
+        }
+        a{
+            margin-left: 0px;
+            color: $green-default-light;
         }
     }
 
@@ -544,7 +565,7 @@
                 color: $gray5-default-dark;
             }
             100% {
-                color: $gray5-default-dark;
+                color: $gray2-default-dark;
             }
         }
 
