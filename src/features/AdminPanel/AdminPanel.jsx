@@ -200,7 +200,7 @@ function AdminPanel() {
                 <button
                     className={`tab-button icon referal ${selectedTab === 'referal-codes' ? 'active' : ''}`}
                     onClick={() => handleTabChange('referal-codes')}
-                >Referral & Codes</button>
+                >Invitations</button>
                 <button
                     className={`tab-button icon ai ${selectedTab === 'ai-ticket' ? 'active' : ''}`}
                     onClick={() => handleTabChange('ai-ticket')}
@@ -218,47 +218,49 @@ function AdminPanel() {
             {/* Tab content */}
             { selectedTab === 'users' && (
                 <div className="users-tab-window">
-                    <div className="actions">
-                        <div className="left-actions">
-                            <div className="button secondary outline icon filter" onClick={() => console.log('Filter button clicked')}>Filter</div>
-                        </div>
-                        <div className="right-actions">
-                            <div className="button primary">New</div>
-                        </div>
-                    </div>
-                    <section className="users-list">
-                        <h2 className="section-title">Users</h2>
-                        <table className="invoice-table">
-                            <thead>
-                                <tr>
-                                    <th>NAME</th>
-                                    <th>EMAIL</th>
-                                    <th>STUDIOS</th>
-                                    <th>ROLES</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {users.map(user => (
-                                    <tr key={user.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', user))}>
-                                        <td>{user.displayName}</td>
-                                        <td>{user.email}</td>
-                                        <td>{user.studio.name}</td>
-                                        <td>{user.studio.roles[0]}</td>
-                                        <td className="actions">
-                                            {/* Drawer trigger */}
-                                        </td>
+                    
+                    <div className="list-display">
+                        <section className="users-list">
+                            <div className="actions">
+                                <div className="left-actions">
+                                    <div className="button secondary outline icon active-users" onClick={() => console.log('Filter button clicked')}>Active Users</div>
+                                    <div className="button secondary outline icon leads" onClick={() => console.log('Filter button clicked')}>Leads</div>
+                                </div>
+                                <div className="right-actions">
+                                    <div className="button primary">New</div>
+                                </div>
+                            </div>
+                            <table className="invoice-table">
+                                <thead>
+                                    <tr>
+                                        <th>NAME</th>
+                                        <th>EMAIL</th>
+                                        <th>STUDIOS</th>
+                                        <th>ROLES</th>
+                                        <th>Actions</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </section>
+                                </thead>
+                                <tbody>
+                                    {users.map(user => (
+                                        <tr key={user.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', user))}>
+                                            <td>{user.displayName}</td>
+                                            <td>{user.email}</td>
+                                            <td>{user.studio.name}</td>
+                                            <td>{user.studio.roles[0]}</td>
+                                            <td className="actions">
+                                                {/* Drawer trigger */}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </section>
+                    </div>
                 </div>
             )}
             { selectedTab === 'studios' && (
                 <div className="invoice-history">
                     <section className="studios-list">
-                        <h2 className="section-title">Studios</h2>
                         <table className="invoice-table">
                             <thead>
                                 <tr>
@@ -322,11 +324,16 @@ function AdminPanel() {
                 <div className="invoice-history">
                     <section className="referal-codes-list">
                         <div className="actions">
-                            <div className="button primary  icon referal"
-                                onClick={()=>{dispatch(openModal('addReferral'))}}
-                            >New</div>
-                        </div>
-                        <h2 className="section-title">Referral & Codes</h2>
+                                <div className="left-actions">
+                                    <div className="button secondary outline icon campaign" onClick={() => console.log('Filter button clicked')}>Campaingns</div>
+                                    <div className="button secondary outline icon leads" onClick={() => console.log('Filter button clicked')}>Leads</div>
+                                </div>
+                                <div className="right-actions">
+                                <div className="button primary  icon referal"
+                                    onClick={()=>{dispatch(openModal('addReferral'))}}
+                                >New</div>
+                                </div>
+                            </div>
                         <table className="invoice-table">
                             <thead>
                                 <tr>
@@ -379,7 +386,6 @@ function AdminPanel() {
             { selectedTab === 'ai-ticket' && (
                 <div className="invoice-history">
                     <section className="support-list">
-                        <h2 className="section-title">AI Tickets</h2>
                         <table className="invoice-table">
                             <thead>
                                 <tr>
@@ -420,7 +426,6 @@ function AdminPanel() {
             { selectedTab === 'support' && (
                 <div className="invoice-history">
                     <section className="support-list">
-                        <h2 className="section-title">Support Tickets</h2>
                         <table className="invoice-table">
                             <thead>
                                 <tr>

@@ -420,6 +420,27 @@
             background-position:  center;
             background-image: url('https://img.icons8.com/?size=100&id=21637&format=png&color=FFFFFF');
         }
+        &.leads::before{
+            margin-right: 4px;
+            margin-left:-6px;
+            background-size: 100%;
+            background-position:  center;
+            background-image: url('https://img.icons8.com/?size=100&id=NsSZTVqoT8ie&format=png&color=FFFFFF');
+        }
+        &.active-users::before{
+            margin-right: 4px;
+            margin-left:-6px;
+            background-size: 100%;
+            background-position:  center;
+            background-image: url('https://img.icons8.com/?size=100&id=15802&format=png&color=54a134');
+        }
+        &.campaign::before{
+            margin-right: 6px;
+            margin-left:-6px;
+            background-size: 95%;
+            background-position:  center;
+            background-image: url('https://img.icons8.com/?size=100&id=11149&format=png&color=FFFFFF');
+        }
         &.selected::before{
             margin-right: 0px;
             margin-left:-6px;

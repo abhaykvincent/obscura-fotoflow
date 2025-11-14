@@ -104,8 +104,8 @@
 
     .tabs {
         display: flex;
-        margin-bottom: 8px*2; // Add margin below tabs
-        gap: 8px;
+        margin-bottom: 8px*5; // Add margin below tabs
+        gap: 0px;
         .tab-button {            
             background-color: $dark-2 ;// Adjust with your primary color
             font-size: 1.2rem;
@@ -123,29 +123,39 @@
                 background-color: $dark-2 ;// Adjust with your primary color
 
             }
+            &:first-child{
+                border-radius: 6px 0px 0px 6px;
+            }
+            &:last-child{
+                border-radius:   0px 6px 6px 0px;
+            }
         }
 
         .tab-button.active {
-            background-color: none ;// Adjust with your primary color
+            background-color: rgba(255, 255, 255, 0.1);// Adjust with your primary color
             color: #fff;
+            border: 1px solid $gray4-default-dark;
             border-bottom: 2px solid $green-default-dark;
-            border-radius: 0;
+            border-radius: 4px 4px 4px 4px;
+            margin-top: -2px;
+            box-shadow: 0px 0px 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 10;
         }
     }
-    .users-tab-window{
         .actions{
             display: grid;
             grid-template-columns: auto auto;
+            justify-content:none;
             .left-actions{
-                display: grid;
+                display: flex;
                 justify-content: start;
+                gap:8px;
             }
             .right-actions{
                 display: grid;
                 justify-content: end;
             }
         }
-    }
 
     .section-title {
         margin-bottom: 8px; // 8px*1
@@ -210,17 +220,7 @@
             }
         }
 
-        .actions {
-            text-align: right;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 10px;
-
-            .button {
-                margin-left: 8px;
-            }
-        }
+        
         .campainPlatform{
             width: auto;
             height: 8px*3;
