@@ -153,6 +153,7 @@
             .left-actions{
                 display: flex;
                 justify-content: start;
+                align-items: center;
                 gap:8px;
             }
             .right-actions{
@@ -178,12 +179,25 @@
         padding: 0px; // Space around the section
         
     }
+    .search-input {
+            height: 2.2rem;
+            width: 8px*20; // Adjust as needed
+            padding: 8px 12px;
+            margin-right: 8px;
+            border: 1px solid $dark-1;
+            border-radius: 6px;
+            background-color: $dark-3;
+            color: $light-0;
+            font-size: 1rem;
+            &:focus {
+                outline: none;
+                border-color: $blue-accessible-dark;
+            }
+        }
     .referal-codes-list {
         display: grid;
         position: relative;
         gap: 8px; // Space between support cards
-        padding: 8px; // Space around the section
-        margin-top: -8px*2;
         .clickable-row {
             cursor: pointer;
 

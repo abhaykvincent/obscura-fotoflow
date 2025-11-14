@@ -50,6 +50,9 @@ function AdminPanel() {
     const [users, setUsers] = useState([]);
     const [referallsList, setReferallsList] = useState([])
     const [expandedStudioId, setExpandedStudioId] = useState(null); // State for expanded studio row
+    const [searchQuery, setSearchQuery] = useState(''); // State for search query
+    const [referralSearchQuery, setReferralSearchQuery] = useState(''); // State for referral search query
+    const [studioSearchQuery, setStudioSearchQuery] = useState(''); // State for studio search query
 
     const handleRowClick = (studioId) => {
         setExpandedStudioId(expandedStudioId === studioId ? null : studioId);
@@ -104,6 +107,23 @@ function AdminPanel() {
         getReferrals();
         getStudios();
     }, []);
+
+    const filteredUsers = users.filter(user =>
+        user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.studio.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const filteredReferrals = referallsList.filter(referral =>
+        referral?.name.toLowerCase().includes(referralSearchQuery.toLowerCase()) ||
+        referral?.email.toLowerCase().includes(referralSearchQuery.toLowerCase()) ||
+        referral?.code[0].toLowerCase().includes(referralSearchQuery.toLowerCase())
+    );
+
+    const filteredStudios = studios.filter(studio =>
+        studio.name.toLowerCase().includes(studioSearchQuery.toLowerCase()) ||
+        studio.domain.toLowerCase().includes(studioSearchQuery.toLowerCase())
+    );
 
     const handleTabChange = (tab) => {
         // update react router url
@@ -221,13 +241,13 @@ function AdminPanel() {
                     onClick={() => handleTabChange('studios')}
                 >Studios</button>
                 <button
-                    className={`tab-button icon ticket ${selectedTab === 'support' ? 'active' : ''}`}
-                    onClick={() => handleTabChange('support')}
-                >Support</button>
-                <button
                     className={`tab-button icon referal ${selectedTab === 'referal-codes' ? 'active' : ''}`}
                     onClick={() => handleTabChange('referal-codes')}
                 >Invitations</button>
+                <button
+                    className={`tab-button icon ticket ${selectedTab === 'support' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('support')}
+                >Support</button>
                 <button
                     className={`tab-button icon ai ${selectedTab === 'ai-ticket' ? 'active' : ''}`}
                     onClick={() => handleTabChange('ai-ticket')}
@@ -250,7 +270,13 @@ function AdminPanel() {
                         <section className="users-list">
                             <div className="actions">
                                 <div className="left-actions">
-
+                                    <input
+                                        type="text"
+                                        placeholder="Search users..."
+                                        className="search-input"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                    />
                                     <div className="pill secondary  icon active-users" onClick={() => console.log('Filter button clicked')}>Active Users</div>
                                     <div className="pill secondary icon leads idle" onClick={() => console.log('Filter button clicked')}>Leads</div>
                                 </div>
@@ -269,7 +295,7 @@ function AdminPanel() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {users.map(user => (
+                                    {filteredUsers.map(user => (
                                         <tr key={user.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', user))}>
                                             <td>{user.displayName}</td>
                                             <td>{user.email}</td>
@@ -289,6 +315,20 @@ function AdminPanel() {
             { selectedTab === 'studios' && (
                 <div className="invoice-history">
                     <section className="studios-list">
+                        <div className="actions">
+                            <div className="left-actions">
+                                <input
+                                    type="text"
+                                    placeholder="Search studios..."
+                                    className="search-input"
+                                    value={studioSearchQuery}
+                                    onChange={(e) => setStudioSearchQuery(e.target.value)}
+                                />
+                            </div>
+                            <div className="right-actions">
+                                {/* Add any right-actions here if needed */}
+                            </div>
+                        </div>
                         <table className="invoice-table">
                             <thead>
                                 <tr>
@@ -300,7 +340,7 @@ function AdminPanel() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {studios.map(studio => (
+                                {filteredStudios.map(studio => (
                                     <React.Fragment key={studio.id}>
                                         <tr className={`clickable-row ${expandedStudioId === studio.id ? 'selected' : ''}`} onClick={() => handleRowClick(studio.id)}>
                                             <td>{studio.name}</td>
@@ -357,6 +397,13 @@ function AdminPanel() {
                     <section className="referal-codes-list">
                         <div className="actions">
                                 <div className="left-actions">
+                                    <input
+                                        type="text"
+                                        placeholder="Search referrals..."
+                                        className="search-input"
+                                        value={referralSearchQuery}
+                                        onChange={(e) => setReferralSearchQuery(e.target.value)}
+                                    />
                                     <div className="button secondary outline icon campaign" onClick={() => console.log('Filter button clicked')}>Campaingns</div>
                                     <div className="button secondary outline icon leads" onClick={() => console.log('Filter button clicked')}>Leads</div>
                                 </div>
@@ -380,10 +427,9 @@ function AdminPanel() {
                                     <th>Send Code</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {
-                                    referallsList.map((referral,index)=>{
-                                        return(
+                                                            <tbody>
+                                                            {
+                                                                filteredReferrals.map((referral,index)=>{                                        return(
                                             <tr className={`${referral?.status}`} key={index}>
                                                 <td>{referral?.id.slice(0,4)}</td>
                                                 <td>{referral?.name}</td>
