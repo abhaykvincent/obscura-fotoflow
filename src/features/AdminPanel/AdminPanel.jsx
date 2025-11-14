@@ -219,11 +219,13 @@ function AdminPanel() {
             { selectedTab === 'users' && (
                 <div className="users-tab-window">
                     <div className="actions">
-                        <div className="left-actions"></div>
+                        <div className="left-actions">
+                            <div className="button secondary outline icon filter" onClick={() => console.log('Filter button clicked')}>Filter</div>
+                        </div>
                         <div className="right-actions">
                             <div className="button primary">New</div>
                         </div>
-                        </div>
+                    </div>
                     <section className="users-list">
                         <h2 className="section-title">Users</h2>
                         <table className="invoice-table">

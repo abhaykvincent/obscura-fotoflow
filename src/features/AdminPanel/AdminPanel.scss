@@ -132,6 +132,20 @@
             border-radius: 0;
         }
     }
+    .users-tab-window{
+        .actions{
+            display: grid;
+            grid-template-columns: auto auto;
+            .left-actions{
+                display: grid;
+                justify-content: start;
+            }
+            .right-actions{
+                display: grid;
+                justify-content: end;
+            }
+        }
+    }
 
     .section-title {
         margin-bottom: 8px; // 8px*1
