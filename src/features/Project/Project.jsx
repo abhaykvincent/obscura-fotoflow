@@ -55,6 +55,13 @@ export default function Project() {
   useEffect(() => {
     modalsRef.current = modals;
   }, [modals]);
+  useEffect(() => {
+    // popup collecion modal if no collections exist
+    console.log(project)
+    if(project?.collections.length === 0){
+dispatch(openModal('createCollection'));
+    }
+  }, [project]);
 
   useEffect(() => {
     if (projectsStatus === 'succeeded' && !selectedProject) {

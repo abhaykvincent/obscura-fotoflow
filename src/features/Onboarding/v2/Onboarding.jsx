@@ -115,13 +115,16 @@ function Onboarding() {
         <main className="onboarding-container">
             <div className="logo animate-reveal" style={{ animationDelay: '0.2s' }}></div>
             <div className={`user-authentication animate-reveal ${!user?.email ? 'auth-screen' : ''}`} style={{ animationDelay: '0.4s' }}>
-                {invitation?.name && !user?.email && (
+                {invitation && !user?.email && (
                     <>
                         <p className='onboarding-greeting'>
                             <span className={`timeGreeting icon ${greeting.timeOfDay}`}>{greeting.timeGreeting}</span>
                             <span className='iconic-gradient-white'>{invitation.name}</span>
                         </p>
-                        <p className='onboarding-invitation-message'> You are invited to join private beta.</p>
+                        {invitation?.studioName ? 
+                            <p className='onboarding-invitation-message'> {`Private beta unlocked for `} <span className="iconic-gradient-green">{invitation?.studioName}</span></p>:
+                            <p className='onboarding-invitation-message'> You are invited to join private beta.</p>
+                        }   
                         <p className='onboarding-message'>Access your workspace, collaborate with clients, and deliver photo gallery.</p>
                     </>
                 )}
@@ -129,7 +132,7 @@ function Onboarding() {
                 {!invitation && !invitation && (
                     <div className='activate-fotoflow-whatsapp'>
                         <p>{ref!=='0000' ? `Your Referral Code ${ref} is invalid or expired` : ` Fotoflow is currently Invite only. `}<br />
-                        {ref!=='0000' ? `Check link again ` : 'Click to '}
+                        {ref!=='0000' ? `Check link again ` : ''}
                         </p>
                         
                     </div>

@@ -143,11 +143,12 @@
         flex-wrap: wrap;
         align-items: center;
         gap: 8px;
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         color: $gray-default-light;
         margin-bottom: 8px*1;
         span{
             &.timeGreeting{
+                font-weight: 200;
                 color: $gray2-default-light;
                 &.icon{
                         margin-right: 8px;
@@ -198,16 +199,24 @@
 
         }
         .iconic-gradient-white{
-            
-                font-size: 1.75rem;   
+                font-weight: 500;
+                font-size: 1.9rem;   
     background: linear-gradient(90deg,#ffffff 0%,#ffffff 40%, #909090 95%,#b4b4b4 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
         }
     }
+
+        .iconic-gradient-green{
+                font-weight: 500;
+                font-size: 1.5rem;   
+    background: linear-gradient(90deg,#428924 0%,#71af33 40%, #5f9c45 95%,#3c5a2f 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+        }
     .onboarding-invitation-message{
-        font-size: 1.2rem;
-        color: $gray2-default-light;
+        font-size: 1.4rem;
+        color: $gray-default-light;
         margin-bottom: 8px*0.5;
         margin-top: 8px*1;
     }
@@ -233,7 +242,7 @@
     }
     .onboarding-message{
         
-        color: $gray2-default-dark;
+        color: $gray3-default-dark;
         margin-bottom: 8px*4;
     }
 }

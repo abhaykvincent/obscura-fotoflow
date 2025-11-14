@@ -217,7 +217,13 @@ function AdminPanel() {
 
             {/* Tab content */}
             { selectedTab === 'users' && (
-                <div className="invoice-history">
+                <div className="users-tab-window">
+                    <div className="actions">
+                        <div className="left-actions"></div>
+                        <div className="right-actions">
+                            <div className="button primary">New</div>
+                        </div>
+                        </div>
                     <section className="users-list">
                         <h2 className="section-title">Users</h2>
                         <table className="invoice-table">
