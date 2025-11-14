@@ -1,0 +1,130 @@
+@import '../../style/variables';
+
+.admin-controls-header {
+    .view-control {
+        display: flex;
+        margin: 8px 8px*1.5;
+        margin-bottom: 0;
+        font-size: 0.9rem;
+        justify-content: space-between;
+        height: 8px*5;
+
+        .control-wrap {
+            position: relative;
+
+            .label {
+                position: absolute;
+                width: 100%;
+                top: -8px*2.5;
+                left: 8px*0.5;
+                color: $gray3-default-dark;
+                font-size: 0.8rem;
+                opacity: 0;
+                animation: fadeInLeft 0.5s ease-out 0.04s;
+                animation-fill-mode: forwards;
+                animation-timing-function: ease-out;
+            }
+        }
+
+        .controls {
+            border-radius: $border-radius-1+1;
+            transition-duration: 0.15s;
+            background: linear-gradient(120deg, $dark-1 -80%, $dark-2 20%,$dark-2 60%, $dark-3 100%);
+            border: 1px solid $gray6-accessible-dark;
+            border-top: 1px solid $gray5-accessible-dark;
+            border-bottom: 1px solid $gray6-accessible-dark;;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);;
+            opacity: 0;
+
+            animation: fadeInLeft 0.5s ease-out 0.05s;
+            animation-fill-mode: forwards;
+            animation-timing-function: ease-out;
+            &:hover {
+                transition-duration: 0.1s;
+            }
+            display: flex;
+
+            .control {
+                padding: 4px 8px*1.4;
+                font-weight: 400;
+                font-size: 0.8rem;
+                line-height: 1.1rem;
+                border-radius: $border-radius-1;
+                border: 1px solid rgba(255, 255, 255, 0.02);
+                color: $gray2-accessible-dark;
+                white-space: nowrap;
+                gap: 4px;
+                transition-duration: 0.1s;
+                transition-timing-function: ease-out;
+                cursor: pointer;
+                transform: scale(1);
+
+                &:hover {
+                    background-color: $dark-2;
+                    color: $gray-accessible-dark;
+                    transition-duration: 0.1s;
+                    &:last-child {
+                        border-radius: 8px;
+                    }
+                }
+
+                &.active {
+                    color: $light-0;
+                    background-color: $dark-4;
+                    border: 1px solid $gray5-accessible-dark;
+                    border-top: 1px solid $gray3-accessible-dark;
+                    border-left: 1px solid $gray3-accessible-dark;
+                    border-bottom: 1px solid $gray5-accessible-dark;
+                    border-radius: 8px !important;
+                    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);;
+                    transform: scale(1.1);
+                    transition-duration: 0.05s;
+                    transition-timing-function: ease-in;
+                    z-index: 10;
+
+                    &:hover {
+                        transition-duration: 0.1s;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .admin-controls-header .view-control {
+        flex-direction: column;
+        height: auto;
+        margin: 8px 8px*1.5;
+        margin-bottom: 0;
+        padding-bottom: 8px;
+        align-items: flex-start;
+        gap: 8px*2;
+    }
+
+    .admin-controls-header .view-control .filter-controls {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px*2;
+    }
+
+    .admin-controls-header .view-control .filter-controls .control-wrap {
+        width: 100%;
+        .label {
+            position: relative;
+            top: 0;
+            left: 0;
+            margin-bottom: 8px;
+        }
+        .controls {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            .control {
+                flex-grow: 1;
+                text-align: center;
+            }
+        }
+    }
+}

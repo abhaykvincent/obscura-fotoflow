@@ -12,6 +12,7 @@ import { fetchStudios } from '../../firebase/functions/studios';
 import { migrateStudios } from '../../firebase/functions/subscription';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 import { showAlert } from '../../app/slices/alertSlice';
+import AdminControls from './AdminControls'; // Import AdminControls
 
 function AdminPanel() {
     const dispatch = useDispatch();
@@ -29,6 +30,9 @@ function AdminPanel() {
         }
         return 'users'; // Default tab if neither URL nor localStorage has a value
     });
+
+    // State for selected role
+    const [selectedRole, setSelectedRole] = useState('admin'); // Default role
 
     // Effect to update URL if initial tab came from localStorage or default
     useEffect(() => {
@@ -96,11 +100,20 @@ function AdminPanel() {
         }
     };
 
+    const handleRoleChange = (role) => {
+        setSelectedRole(role);
+        // You can add logic here to filter data based on the selected role
+        console.log('Selected role:', role);
+    };
+
     return (
         <>
         <AddReferralModal/>
         <main className="admin-panel billing-container">
             <h1 className="admin-title">Admin Panel</h1>
+
+            <AdminControls selectedRole={selectedRole} onRoleChange={handleRoleChange} /> {/* New AdminControls component */}
+
             <div className="admin-dashboard">
 
                 <div className="cards">
@@ -265,10 +278,10 @@ function AdminPanel() {
                         <table className="invoice-table">
                             <thead>
                                 <tr>
-                                    <th>NAME</th>
+                                    <th>STUDIO</th>
                                     <th>DOMAIN</th>
-                                    <th>STUDIOS</th>
-                                    <th>ROLES</th>
+                                    <th>PLAN</th>
+                                    <th>SCORE</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -277,8 +290,8 @@ function AdminPanel() {
                                     <React.Fragment key={studio.id}>
                                         <tr className={`clickable-row ${expandedStudioId === studio.id ? 'selected' : ''}`} onClick={() => handleRowClick(studio.id)}>
                                             <td>{studio.name}</td>
-                                            <td>fotoflow.in/{studio.domain}</td>
-                                            <td>{studio.domain}</td>
+                                            <td>/{studio.domain}</td>
+                                            <td>{studio.planName} <span className='paid-status'>{studio.planName === "Core"? 'Free' :'Paid' }</span></td>
                                             <td></td>
                                             <td className="actions">
                                                 <span className={`expand-icon ${expandedStudioId === studio.id ? 'expanded' : ''}`}>&#9660;</span>

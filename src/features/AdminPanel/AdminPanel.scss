@@ -1,4 +1,5 @@
 @import '../../style/variables';
+@import './AdminControls.scss'; // Import the new SCSS file
 @import '../BillingHistory/BillingHistory.scss';
 
 .App .admin-panel {
@@ -10,7 +11,10 @@
         margin-top: 8px; // 8px*2
         margin-bottom: 8px; // 8px*2
     }
-
+    .admin-controls-header{
+        margin-top: 8px*4;
+        margin-left: -8px;
+    }
     .admin-dashboard {
         margin: 8px 0; // 8px*2 0
         margin-bottom: 8px*2;
@@ -104,7 +108,7 @@
 
     .tabs {
         display: flex;
-        margin-bottom: 8px*5; // Add margin below tabs
+        margin-bottom: 8px*3; // Add margin below tabs
         gap: 0px;
         .tab-button {            
             background-color: $dark-2 ;// Adjust with your primary color
