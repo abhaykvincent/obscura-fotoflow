@@ -176,7 +176,19 @@
         display: grid;
         gap: 8px; // Space between support cards
         padding: 0px; // Space around the section
-        
+        .search-input {
+            padding: 8px 12px;
+            border: 1px solid $dark-1;
+            border-radius: 4px;
+            background-color: $dark-3;
+            color: $light-0;
+            font-size: 1rem;
+            width: 200px; // Adjust as needed
+            &:focus {
+                outline: none;
+                border-color: $blue-accessible-dark;
+            }
+        }
     }
     .referal-codes-list {
         display: grid;

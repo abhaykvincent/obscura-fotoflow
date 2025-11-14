@@ -50,6 +50,7 @@ function AdminPanel() {
     const [users, setUsers] = useState([]);
     const [referallsList, setReferallsList] = useState([])
     const [expandedStudioId, setExpandedStudioId] = useState(null); // State for expanded studio row
+    const [searchQuery, setSearchQuery] = useState(''); // State for search query
 
     const handleRowClick = (studioId) => {
         setExpandedStudioId(expandedStudioId === studioId ? null : studioId);
@@ -104,6 +105,12 @@ function AdminPanel() {
         getReferrals();
         getStudios();
     }, []);
+
+    const filteredUsers = users.filter(user =>
+        user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.studio.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const handleTabChange = (tab) => {
         // update react router url
@@ -250,7 +257,13 @@ function AdminPanel() {
                         <section className="users-list">
                             <div className="actions">
                                 <div className="left-actions">
-
+                                    <input
+                                        type="text"
+                                        placeholder="Search users..."
+                                        className="search-input"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                    />
                                     <div className="pill secondary  icon active-users" onClick={() => console.log('Filter button clicked')}>Active Users</div>
                                     <div className="pill secondary icon leads idle" onClick={() => console.log('Filter button clicked')}>Leads</div>
                                 </div>
@@ -269,7 +282,7 @@ function AdminPanel() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {users.map(user => (
+                                    {filteredUsers.map(user => (
                                         <tr key={user.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', user))}>
                                             <td>{user.displayName}</td>
                                             <td>{user.email}</td>
