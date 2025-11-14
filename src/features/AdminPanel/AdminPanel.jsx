@@ -278,10 +278,10 @@ function AdminPanel() {
                         <table className="invoice-table">
                             <thead>
                                 <tr>
-                                    <th>NAME</th>
+                                    <th>STUDIO</th>
                                     <th>DOMAIN</th>
-                                    <th>STUDIOS</th>
-                                    <th>ROLES</th>
+                                    <th>PLAN</th>
+                                    <th>SCORE</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -290,8 +290,8 @@ function AdminPanel() {
                                     <React.Fragment key={studio.id}>
                                         <tr className={`clickable-row ${expandedStudioId === studio.id ? 'selected' : ''}`} onClick={() => handleRowClick(studio.id)}>
                                             <td>{studio.name}</td>
-                                            <td>fotoflow.in/{studio.domain}</td>
-                                            <td>{studio.domain}</td>
+                                            <td>/{studio.domain}</td>
+                                            <td>{studio.planName} <span className='paid-status'>{studio.planName === "Core"? 'Free' :'Paid' }</span></td>
                                             <td></td>
                                             <td className="actions">
                                                 <span className={`expand-icon ${expandedStudioId === studio.id ? 'expanded' : ''}`}>&#9660;</span>

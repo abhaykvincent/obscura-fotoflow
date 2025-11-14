@@ -178,7 +178,27 @@
           text-align: right;
         }
       }
-  
+      .paid-status{
+        margin-left: 8px*0.5;
+        font-size: 0.8rem;
+        padding: 1px 4px;
+        color: $gray3-default-dark;
+        border-radius: 8px*2;
+        border: 1px solid $gray4-default-dark;
+
+      }
+      .invoice-table tr:nth-child(even) {
+
+      .paid-status{
+        margin-left: 8px*0.5;
+        font-size: 0.8rem;
+        padding: 1px 4px;
+        color: $gray2-default-dark;
+        border-radius: 8px*2;
+        border: 1px solid $gray3-default-dark;
+
+      }
+      }
       .summary {
         margin-top: 15px;
         padding: 10px;
