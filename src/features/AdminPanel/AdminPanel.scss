@@ -1,4 +1,5 @@
 @import '../../style/variables';
+@import './AdminControls.scss'; // Import the new SCSS file
 @import '../BillingHistory/BillingHistory.scss';
 
 .App .admin-panel {
