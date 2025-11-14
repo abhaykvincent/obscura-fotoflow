@@ -54,6 +54,20 @@ function AdminPanel() {
     const handleRowClick = (studioId) => {
         setExpandedStudioId(expandedStudioId === studioId ? null : studioId);
     };
+    const isTrialActive = (trialEndDateString) => {
+    // Split the DD-MM-YYYY string
+    const [year, month, day] = trialEndDateString.split('-');
+        console.log(trialEndDateString)
+
+    // Create a Date object in YYYY-MM-DD format (Note: Month in JS Date is 0-indexed)
+    // We use the greater-than-today logic, so setting the time to end of the day (23:59:59)
+    // for the trial end date ensures trials expiring today are still considered active for the whole day.
+    const trialDate = new Date(`${year}-${month}-${day}T23:59:59`);
+    const today = new Date();
+        console.log(trialDate > today)
+    // Check if the trial end date is greater than the current date
+    return trialDate > today;
+};
     useEffect(()=>{
         console.log(domain)
     },[domain])
@@ -291,8 +305,12 @@ function AdminPanel() {
                                         <tr className={`clickable-row ${expandedStudioId === studio.id ? 'selected' : ''}`} onClick={() => handleRowClick(studio.id)}>
                                             <td>{studio.name}</td>
                                             <td>/{studio.domain}</td>
-                                            <td>{studio.planName} <span className='paid-status'>{studio.planName === "Core"? 'Free' :'Paid' }</span></td>
-                                            <td></td>
+                                            <td> <span className='plan-name-label'>{studio.planName} </span>
+                                                <span className={`${studio.planName === "Core"? 'free' : (isTrialActive(studio.trialEndDate)?'paid pending':'paid')} paid-status`}>{studio.planName === "Core"? 'Free' :'Paid' }</span>
+                                                {isTrialActive(studio.trialEndDate) && studio.planName !== "Core" && <span className={` paid-status trial`}>Trial</span>}
+                                                
+                                                </td>
+                                            <td>{(studio.usage.storage.used*10).toFixed(2)}</td>
                                             <td className="actions">
                                                 <span className={`expand-icon ${expandedStudioId === studio.id ? 'expanded' : ''}`}>&#9660;</span>
                                             </td>
