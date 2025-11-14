@@ -223,8 +223,9 @@ function AdminPanel() {
                         <section className="users-list">
                             <div className="actions">
                                 <div className="left-actions">
-                                    <div className="button secondary outline icon active-users" onClick={() => console.log('Filter button clicked')}>Active Users</div>
-                                    <div className="button secondary outline icon leads" onClick={() => console.log('Filter button clicked')}>Leads</div>
+
+                                    <div className="pill secondary  icon active-users" onClick={() => console.log('Filter button clicked')}>Active Users</div>
+                                    <div className="pill secondary icon leads idle" onClick={() => console.log('Filter button clicked')}>Leads</div>
                                 </div>
                                 <div className="right-actions">
                                     <div className="button primary">New</div>
