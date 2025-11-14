@@ -51,6 +51,7 @@ function AdminPanel() {
     const [referallsList, setReferallsList] = useState([])
     const [expandedStudioId, setExpandedStudioId] = useState(null); // State for expanded studio row
     const [searchQuery, setSearchQuery] = useState(''); // State for search query
+    const [referralSearchQuery, setReferralSearchQuery] = useState(''); // State for referral search query
 
     const handleRowClick = (studioId) => {
         setExpandedStudioId(expandedStudioId === studioId ? null : studioId);
@@ -110,6 +111,12 @@ function AdminPanel() {
         user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.studio.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const filteredReferrals = referallsList.filter(referral =>
+        referral?.name.toLowerCase().includes(referralSearchQuery.toLowerCase()) ||
+        referral?.email.toLowerCase().includes(referralSearchQuery.toLowerCase()) ||
+        referral?.code[0].toLowerCase().includes(referralSearchQuery.toLowerCase())
     );
 
     const handleTabChange = (tab) => {
@@ -370,6 +377,13 @@ function AdminPanel() {
                     <section className="referal-codes-list">
                         <div className="actions">
                                 <div className="left-actions">
+                                    <input
+                                        type="text"
+                                        placeholder="Search referrals..."
+                                        className="search-input"
+                                        value={referralSearchQuery}
+                                        onChange={(e) => setReferralSearchQuery(e.target.value)}
+                                    />
                                     <div className="button secondary outline icon campaign" onClick={() => console.log('Filter button clicked')}>Campaingns</div>
                                     <div className="button secondary outline icon leads" onClick={() => console.log('Filter button clicked')}>Leads</div>
                                 </div>
@@ -393,10 +407,9 @@ function AdminPanel() {
                                     <th>Send Code</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {
-                                    referallsList.map((referral,index)=>{
-                                        return(
+                                                            <tbody>
+                                                            {
+                                                                filteredReferrals.map((referral,index)=>{                                        return(
                                             <tr className={`${referral?.status}`} key={index}>
                                                 <td>{referral?.id.slice(0,4)}</td>
                                                 <td>{referral?.name}</td>
