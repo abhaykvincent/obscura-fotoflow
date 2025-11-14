@@ -93,6 +93,13 @@
         background: $dark-2;
         border: 1px solid $gray3-default-dark;;
         border-radius: 8px;
+        thead tr th{
+          color: $gray2-default-dark;
+          background-color:rgba(0, 0, 0, 0.2);
+          padding: 8px 8px*2;
+          text-shadow: 1px 1px 2px black;
+          box-shadow: inset 0px -2px 1px rgba(0, 0, 0, 0.406);
+        }
         .clickable-row{
           cursor: pointer;
           &:hover {

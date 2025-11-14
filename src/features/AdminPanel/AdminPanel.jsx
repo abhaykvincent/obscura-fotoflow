@@ -52,6 +52,7 @@ function AdminPanel() {
     const [expandedStudioId, setExpandedStudioId] = useState(null); // State for expanded studio row
     const [searchQuery, setSearchQuery] = useState(''); // State for search query
     const [referralSearchQuery, setReferralSearchQuery] = useState(''); // State for referral search query
+    const [studioSearchQuery, setStudioSearchQuery] = useState(''); // State for studio search query
 
     const handleRowClick = (studioId) => {
         setExpandedStudioId(expandedStudioId === studioId ? null : studioId);
@@ -117,6 +118,11 @@ function AdminPanel() {
         referral?.name.toLowerCase().includes(referralSearchQuery.toLowerCase()) ||
         referral?.email.toLowerCase().includes(referralSearchQuery.toLowerCase()) ||
         referral?.code[0].toLowerCase().includes(referralSearchQuery.toLowerCase())
+    );
+
+    const filteredStudios = studios.filter(studio =>
+        studio.name.toLowerCase().includes(studioSearchQuery.toLowerCase()) ||
+        studio.domain.toLowerCase().includes(studioSearchQuery.toLowerCase())
     );
 
     const handleTabChange = (tab) => {
@@ -235,13 +241,13 @@ function AdminPanel() {
                     onClick={() => handleTabChange('studios')}
                 >Studios</button>
                 <button
-                    className={`tab-button icon ticket ${selectedTab === 'support' ? 'active' : ''}`}
-                    onClick={() => handleTabChange('support')}
-                >Support</button>
-                <button
                     className={`tab-button icon referal ${selectedTab === 'referal-codes' ? 'active' : ''}`}
                     onClick={() => handleTabChange('referal-codes')}
                 >Invitations</button>
+                <button
+                    className={`tab-button icon ticket ${selectedTab === 'support' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('support')}
+                >Support</button>
                 <button
                     className={`tab-button icon ai ${selectedTab === 'ai-ticket' ? 'active' : ''}`}
                     onClick={() => handleTabChange('ai-ticket')}
@@ -309,6 +315,20 @@ function AdminPanel() {
             { selectedTab === 'studios' && (
                 <div className="invoice-history">
                     <section className="studios-list">
+                        <div className="actions">
+                            <div className="left-actions">
+                                <input
+                                    type="text"
+                                    placeholder="Search studios..."
+                                    className="search-input"
+                                    value={studioSearchQuery}
+                                    onChange={(e) => setStudioSearchQuery(e.target.value)}
+                                />
+                            </div>
+                            <div className="right-actions">
+                                {/* Add any right-actions here if needed */}
+                            </div>
+                        </div>
                         <table className="invoice-table">
                             <thead>
                                 <tr>
@@ -320,7 +340,7 @@ function AdminPanel() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {studios.map(studio => (
+                                {filteredStudios.map(studio => (
                                     <React.Fragment key={studio.id}>
                                         <tr className={`clickable-row ${expandedStudioId === studio.id ? 'selected' : ''}`} onClick={() => handleRowClick(studio.id)}>
                                             <td>{studio.name}</td>
