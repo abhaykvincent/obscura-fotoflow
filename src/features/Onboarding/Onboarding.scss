@@ -139,22 +139,25 @@
         }
     }
     .onboarding-greeting{
-        display: flex;
+        display: grid;
         flex-wrap: wrap;
         align-items: center;
-        gap: 8px;
+        justify-items: start;
+        gap: 0px;
         font-size: 1.8rem;
         color: $gray-default-light;
         margin-bottom: 8px*1;
         span{
             &.timeGreeting{
                 font-weight: 200;
-                color: $gray2-default-light;
+                color: $gray6-default-light;
+                margin-left: -8px*6;
                 &.icon{
                         margin-right: 8px;
                         content: '';
                         &::before{
                             margin-right: 8px;
+                            color: white;
                         }
                         &.late-night{
                             &::before{
@@ -199,9 +202,9 @@
 
         }
         .iconic-gradient-white{
-                font-weight: 500;
+                font-weight: 600;
                 font-size: 1.9rem;   
-    background: linear-gradient(90deg,#ffffff 0%,#ffffff 40%, #909090 95%,#b4b4b4 100%);
+    background: linear-gradient(140deg,#a3de8a 0%,#a9c38b 40%, #c1c1c1 95%,#e3e3e3 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
         }
@@ -215,10 +218,21 @@
     -webkit-text-fill-color: transparent;
         }
     .onboarding-invitation-message{
+        display: flex;
+        gap: 8px;
+        align-items: center;
         font-size: 1.4rem;
         color: $gray-default-light;
         margin-bottom: 8px*0.5;
         margin-top: 8px*1;
+        .icon-unlock{
+            width: 8px*5;
+            height: 8px*5;
+            margin-right: 0px;
+            background-image: url('https://img.icons8.com/?size=100&id=nhWxQog3KCvk&format=png&color=FFFFFF');
+            background-size: 70%;
+            background-position: 50% 30%;
+        }
     }
     .continue-with{
         margin-bottom: 8px;

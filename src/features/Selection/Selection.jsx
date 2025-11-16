@@ -189,51 +189,52 @@ export default function Selection() {
         </div>
       </div>
       {!selectionCompleted ? 
-      (<>
-        <CollectionsPanel/>
-        <div className="shared-collection">
-          <div className="view-control">
-              <div className="control-label label-all-photos">{project.uploadedFilesCount} Photos</div>
-              <div className="control-wrap">
-                  <div className="controls">
-                      <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All</div>
-                      <div className={`control ${!showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(false)}>Selected  {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
-                  </div>
-                  <div className={`active`}></div>
-              </div>
-              <div className={`control-label label-selected-photos ${selectedImages.length>0&&' active'}`}>{selectedImages.length} Photos</div>
-          </div>
-          {
-            project.status === 'selected'?
-            <div className="selection-completed-label">Selection Completed</div>:
-            <div className="selection-completed-label">Click photos to select</div>
-          }
-          {
-            paginatedImages.length>0?
-            (<SelectionGallery project={project} images={showAllPhotos ? paginatedImages:selectedImages} {...{selectedImages,setSelectedImages,setUnselectedImages,setSelectedImagesInCollection}} />)
-            :
-            <div className="no-images-message">
-              <p>There are no photos in this collection</p>
+        (<>
+          <CollectionsPanel/>
+          <div className="shared-collection">
+            <div className="view-control">
+                <div className="control-label label-all-photos">{project.uploadedFilesCount} Photos</div>
+                <div className="control-wrap">
+                    <div className="controls">
+                        <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All</div>
+                        <div className={`control ${!showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(false)}>Selected  {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
+                    </div>
+                    <div className={`active`}></div>
+                </div>
+                <div className={`control-label label-selected-photos ${selectedImages.length>0&&' active'}`}>{selectedImages.length} Photos</div>
             </div>
-          }
-          {showAllPhotos && <PaginationControl
-            images={paginatedImages}
-            currentCollectionIndex={currentCollectionIndex+1}
-            totalCollections={totalCollections}
-            currentPage={page}
-            totalPages={totalPages}
-            completeSelection={completeSelection}
-            handlePageChange={async (newPage) => {
-              handleAddOrRemoveSelectedImages()
+            {
+              project.status === 'selected'?
+              <div className="selection-completed-label">Selection Completed</div>:
+              <div className="selection-completed-label">Click photos to select</div>
+            }
+            {
+              paginatedImages.length>0?
+              (<SelectionGallery project={project} images={showAllPhotos ? paginatedImages:selectedImages} {...{selectedImages,setSelectedImages,setUnselectedImages,setSelectedImagesInCollection}} />)
+              :
+              <div className="no-images-message">
+                <p>There are no photos in this collection</p>
+              </div>
+            }
+            {showAllPhotos &&
+            <PaginationControl
+              images={paginatedImages}
+              currentCollectionIndex={currentCollectionIndex+1}
+              totalCollections={totalCollections}
+              currentPage={page}
+              totalPages={totalPages}
+              completeSelection={completeSelection}
+              handlePageChange={async (newPage) => {
+                handleAddOrRemoveSelectedImages()
 
-              setPage(newPage)
-            }}
-            saveSelection={saveSelection}
-            project={project}
-          />
-}
-        </div> 
-      </>)
+                setPage(newPage)
+              }}
+              saveSelection={saveSelection}
+              project={project}
+            />
+  }
+          </div> 
+        </>)
       :
         <div className="selected-completed">
           <div className="completed-animation">
@@ -246,7 +247,7 @@ export default function Selection() {
 
             <h4>Congratulations!<br/> Your selections are complete</h4>
             <p className='selected-files-count'>You've chosen <b>{selectedImages.length}</b> beautiful moments out of <b>{project.uploadedFilesCount} </b>photos</p>
-          <Link to={`/${studioName}/share/${project.id}`} className="button large primary ">
+          <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button large primary ">
             Go to gallery
           </Link>
           <p className='button-label'>Need to make changes? </p>
