@@ -44,28 +44,22 @@ const getStorageForDomain = async (domain) => {
         }
     }
 
-    if (!bucketUrl) {
-        if (domain === 'monallisa') {
-            // The default storage instance is already connected to the emulator in app.js
-            return defaultStorage;
-        } else {
-            bucketUrl = 'gs://fotoflow-india-2';
+    // If a bucketUrl is found, create and connect a new storage instance.
+    if (bucketUrl) {
+        const newStorage = getStorage(app, bucketUrl);
+
+        if (process.env.NODE_ENV === 'development') {
+            const EMULATOR_HOST = process.env.REACT_APP_EMULATOR_HOST;
+            const EMULATOR_PORT = parseInt(process.env.REACT_APP_EMULATOR_PORT, 10);
+            connectStorageEmulator(newStorage, EMULATOR_HOST, EMULATOR_PORT);
         }
+
+        storageInstances[domain] = newStorage;
+        return newStorage;
     }
 
-    // For any non-default bucket, create a new storage instance.
-    const newStorage = getStorage(app, bucketUrl);
-
-    // If in development, connect this new instance to the emulator.
-    if (process.env.NODE_ENV === 'development') {
-        const EMULATOR_HOST = process.env.REACT_APP_EMULATOR_HOST;
-        const EMULATOR_PORT = parseInt(process.env.REACT_APP_EMULATOR_PORT, 10);
-        connectStorageEmulator(newStorage, EMULATOR_HOST, EMULATOR_PORT);
-    }
-
-    // Cache the new instance.
-    storageInstances[domain] = newStorage;
-    return newStorage;
+    // If no bucketUrl is found for the domain, fall back to the default storage.
+    return defaultStorage;
 }
 
 // Image Compression
