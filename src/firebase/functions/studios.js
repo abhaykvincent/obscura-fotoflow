@@ -1,4 +1,4 @@
-import { db, storage } from "../app";
+import { db } from "../app";
 import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, increment} from "firebase/firestore";
 
 import { generateMemorablePIN, generateRandomString, toKebabCase, toTitleCase} from "../../utils/stringUtils";

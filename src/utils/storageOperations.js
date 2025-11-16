@@ -5,12 +5,14 @@ import {
     ref,
     deleteObject
 } from "firebase/storage";
-import { db, storage } from '../firebase/app';
+import { db } from '../firebase/app';
+import { getStorageForDomain } from "./uploadOperations";
 
 // Fetch Images
 export const fetchImageUrls = async (domain, projectId, collectionId, setImageUrls, page, pageSize) => {
     console.log(`Fetching images for page ${page}`);
     
+    const storage = await getStorageForDomain(domain);
     // Reference to the images folder within the specific studio, project, and collection
     const storageRef = ref(storage, `${domain}/${projectId}/${collectionId}`);
 
@@ -43,6 +45,7 @@ export const fetchImageUrls = async (domain, projectId, collectionId, setImageUr
 };
 
 export const fetchImageInfo = async (domain, projectId, collectionId) => {
+    const storage = await getStorageForDomain(domain);
     // Reference to the images folder within the specific studio, project, and collection
     const storageRef = ref(storage, `${domain}/${projectId}/${collectionId}`);
     const imageInfoList = [];
@@ -69,41 +72,43 @@ export const fetchImageInfo = async (domain, projectId, collectionId) => {
 
 
 export const deleteCollectionFromStorage = async (domain,id, collectionId) => {
-const storageRef = ref(storage, `${domain}/${id}/${collectionId}`);
-const listResult = await list(storageRef);
+    const storage = await getStorageForDomain(domain);
+    const storageRef = ref(storage, `${domain}/${id}/${collectionId}`);
+    const listResult = await list(storageRef);
 
-for (const item of listResult.items) {
-    await deleteObject(item);
-}
+    for (const item of listResult.items) {
+        await deleteObject(item);
+    }
 }
 
 // stoage is in format project/collection/image
-export const deleteProjectFromStorage = async (projectId) => {
-try {
-    const projectRef = ref(storage, projectId);
-    const projectList = await list(projectRef);
+export const deleteProjectFromStorage = async (domain, projectId) => {
+    try {
+        const storage = await getStorageForDomain(domain);
+        const projectRef = ref(storage, projectId);
+        const projectList = await list(projectRef);
 
-    // Iterate through projectList prefixes (collections)
-    for (const collectionRef of projectList.prefixes) {
-        const collectionList = await list(collectionRef);
+        // Iterate through projectList prefixes (collections)
+        for (const collectionRef of projectList.prefixes) {
+            const collectionList = await list(collectionRef);
 
-        // Iterate through images in each collection
-        for (const imageRef of collectionList.items) {
-            await deleteObject(imageRef);
-            console.log('Image deleted successfully.');
+            // Iterate through images in each collection
+            for (const imageRef of collectionList.items) {
+                await deleteObject(imageRef);
+                console.log('Image deleted successfully.');
+            }
+
+            // Delete the collection directory after deleting its contents
+            await deleteObject(collectionRef);
+            console.log('Collection directory deleted successfully.');
         }
 
-        // Delete the collection directory after deleting its contents
-        await deleteObject(collectionRef);
-        console.log('Collection directory deleted successfully.');
+        // Delete the project directory after deleting its contents
+        await deleteObject(projectRef);
+        console.log('Project directory deleted successfully.');
+    } catch (error) {
+        console.error('Error deleting images:', error);
     }
-
-    // Delete the project directory after deleting its contents
-    await deleteObject(projectRef);
-    console.log('Project directory deleted successfully.');
-} catch (error) {
-    console.error('Error deleting images:', error);
-}
 };
   
 // Line Complexity -> 3.5 -> 1.0
