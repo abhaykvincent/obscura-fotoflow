@@ -9,7 +9,7 @@
       }
 // get website url at https://www.website.com/domain
 export function getWebsiteURL(domain) {
-    return `${window.location.protocol}//${window.location.host}/${domain}/share/portfolio`;
+    return `${window.location.protocol}//${window.location.host}/${domain}/smart-gallerys/portfolio`;
   }
   export function isDomainOnlyURL(url) {
     const host = `${window.location.protocol}//${window.location.host}`;

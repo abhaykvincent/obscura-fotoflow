@@ -76,9 +76,11 @@ export default function PaginationControl({
   project
 }) {
   const isLastPage = currentPage === totalPages || totalPages === 0;
-  const isLastCollection = currentCollectionIndex === totalCollections;
+  const isLastCollection = currentCollectionIndex === project.collections.length;
   
   const { studioName } = useParams();
+  console.log(totalCollections, isLastCollection,currentCollectionIndex)
+  console.log(project.collections)
   return (
     <nav className="pagination" aria-label="Pagination">
 
