@@ -17,7 +17,7 @@ import { findCollectionById } from '../../../utils/CollectionQuery';
 import { openModal } from '../../../app/slices/modalSlice';
 import ImageGalleryGrid from '../../ImageGallery/ImageGalleryGrid';
 import { showAlert } from '../../../app/slices/alertSlice';
-import { selectStudioStorageUsage } from '../../../app/slices/studioSlice';
+import { selectStudio, selectStudioStorageUsage } from '../../../app/slices/studioSlice';
 import { handleUpload } from '../../../utils/uploadOperations';
 import { createNotification } from '../../../app/slices/notificationSlice';
 import { updateCollectionStatus } from '../../../app/slices/projectsSlice';
@@ -31,6 +31,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
     const domain = useSelector(selectDomain);
     const storageLimit = useSelector(selectStudioStorageUsage);
     const currentStudio = useSelector(selectUserStudio);
+    const studio = useSelector(selectStudio);
     // dark light mode
     const [displayMode, setDisplayMode] = useState('darkMode');
     const [uploadTrigger, setUploadTrigger] = useState(false);
@@ -112,7 +113,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
             const startTime = Date.now();  // Record the start time
     
             // Handle upload Operation - Updated call
-            const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch, findCollectionById(project, collectionId)?.name);
+            const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch, findCollectionById(project, collectionId)?.name, undefined, undefined, studio.bucketUrl);
     
             const endTime = Date.now();  // Record the end time
             const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds

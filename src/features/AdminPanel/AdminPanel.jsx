@@ -111,7 +111,7 @@ function AdminPanel() {
     const filteredUsers = users.filter(user =>
         user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.studio.name.toLowerCase().includes(searchQuery.toLowerCase())
+        (user.studio && user.studio.name ? user.studio.name.toLowerCase().includes(searchQuery.toLowerCase()) : false)
     );
 
     const filteredReferrals = referallsList.filter(referral =>
