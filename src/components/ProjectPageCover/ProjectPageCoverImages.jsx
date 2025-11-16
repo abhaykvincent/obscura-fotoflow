@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { db, storage } from "../../firebase/app";
+import { db } from "../../firebase/app";
 import { doc, updateDoc } from "firebase/firestore";
 import { selectDomain, selectUserStudio } from "../../app/slices/authSlice";
 import { showAlert } from "../../app/slices/alertSlice";
@@ -8,11 +8,14 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { setCoverPhotoInFirestore } from "../../firebase/functions/firestore";
 import { updateProjectCover, updateProjectName } from "../../app/slices/projectsSlice";
 import { convertMegabytes } from "../../utils/stringUtils";
+import { getStorageForDomain } from "../../utils/uploadOperations";
+import { selectStudio } from "../../app/slices/studioSlice";
 
 export const ProjectPageCoverImages = ({ project }) => {
     const dispatch = useDispatch();
     const currentStudio = useSelector(selectUserStudio);
     const domain = useSelector(selectDomain);
+    const studio = useSelector(selectStudio);
 
     const [focusPoint, setFocusPoint] = useState( project?.focusPoint);
     const [focusPointLocal, setFocusPointLocal] = useState(project?.focusPoint);
@@ -56,8 +59,9 @@ export const ProjectPageCoverImages = ({ project }) => {
         if (!file) return;
     
         try {
+            const customStorage = await getStorageForDomain(domain, studio.bucketUrl);
             // Define the storage path
-            const storageRef = ref(storage, `studios/${currentStudio.domain}/projects/${project.id}/cover.jpg`);
+            const storageRef = ref(customStorage, `studios/${currentStudio.domain}/projects/${project.id}/cover.jpg`);
     
             // Upload the file to Firebase Storage
             await uploadBytes(storageRef, file);

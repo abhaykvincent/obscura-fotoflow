@@ -28,44 +28,40 @@ import { set } from "date-fns";
 
 const storageInstances = {};
 
-const getStorageForDomain = async (domain) => {
+export const getStorageForDomain = async (domain, bucketUrl) => {
     if (storageInstances[domain]) {
         return storageInstances[domain];
     }
+    let finalBucketUrl = bucketUrl;
 
-    const studioRef = doc(db, "studios", domain);
-    const studioSnap = await getDoc(studioRef);
-    let bucketUrl;
+    if (!finalBucketUrl) {
+        const studioRef = doc(db, "studios", domain);
+        const studioSnap = await getDoc(studioRef);
 
-    if (studioSnap.exists()) {
-        const studioData = studioSnap.data();
-        if (studioData.bucketUrl) {
-            bucketUrl = studioData.bucketUrl;
+        if (studioSnap.exists()) {
+            const studioData = studioSnap.data();
+            if (studioData.bucketUrl) {
+                finalBucketUrl = studioData.bucketUrl;
+            }
         }
     }
 
-    if (!bucketUrl) {
-        if (domain === 'monallisa') {
-            // The default storage instance is already connected to the emulator in app.js
-            return defaultStorage;
-        } else {
-            bucketUrl = 'gs://fotoflow-india-2';
+    // If a bucketUrl is found, create and connect a new storage instance.
+    if (finalBucketUrl) {
+        const newStorage = getStorage(app, finalBucketUrl);
+
+        if (process.env.NODE_ENV === 'development') {
+            const EMULATOR_HOST = process.env.REACT_APP_EMULATOR_HOST;
+            const EMULATOR_PORT = parseInt(process.env.REACT_APP_EMULATOR_PORT, 10);
+            connectStorageEmulator(newStorage, EMULATOR_HOST, EMULATOR_PORT);
         }
+
+        storageInstances[domain] = newStorage;
+        return newStorage;
     }
 
-    // For any non-default bucket, create a new storage instance.
-    const newStorage = getStorage(app, bucketUrl);
-
-    // If in development, connect this new instance to the emulator.
-    if (process.env.NODE_ENV === 'development') {
-        const EMULATOR_HOST = process.env.REACT_APP_EMULATOR_HOST;
-        const EMULATOR_PORT = parseInt(process.env.REACT_APP_EMULATOR_PORT, 10);
-        connectStorageEmulator(newStorage, EMULATOR_HOST, EMULATOR_PORT);
-    }
-
-    // Cache the new instance.
-    storageInstances[domain] = newStorage;
-    return newStorage;
+    // If no bucketUrl is found for the domain, fall back to the default storage.
+    return defaultStorage;
 }
 
 // Image Compression
@@ -266,8 +262,11 @@ const sliceUpload = async (storage, domain, slice, id, collectionId, dispatch, o
 
 // Upload ENTRY POINT
 // Remove setUploadLists, setUploadStatus (local setters), add dispatch
-export const handleUpload = async (domain, files, id, collectionId, importFileSize, dispatch, collectionName, sectionId, retries = 2, sliceSize = 32 ) => {
-    const storage = await getStorageForDomain(domain);
+export const handleUpload = async (domain, files, id, collectionId, importFileSize, dispatch, collectionName, sectionId, retries = 2, sliceSize = 32, bucketUrl ) => {
+    
+    console.log(bucketUrl)
+    debugger
+    const storage = await getStorageForDomain(domain, bucketUrl);
     console.log(domain, files, id, collectionId, importFileSize, dispatch, collectionName, retries, sliceSize)
     // 1. Generate initialFileObjects with unique IDs for Redux state
     // Using file.name as fileId here, acknowledge potential uniqueness issues.
