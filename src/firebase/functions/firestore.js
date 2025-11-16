@@ -1,5 +1,5 @@
 
-import { db, storage } from "../app";
+import { db } from "../app";
 import { ref, deleteObject } from "firebase/storage";
 import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, increment, query, where} from "firebase/firestore";
 
@@ -8,6 +8,7 @@ import { generateMemorablePIN, generateRandomString, toKebabCase, toTitleCase} f
 import { removeUndefinedFields } from "../../utils/generalUtils";
 import { fetchSmartGalleryFromFirestore, updateSmartGalleryInFirestore } from './smartGalleryFirestore';
 import { isProduction } from "../../analytics/utils";
+import { getStorageForDomain } from "../../utils/uploadOperations";
 
 // Users
 export const createUser = async (userData) => {
@@ -249,7 +250,7 @@ export const addProjectToStudio = async (domain, project) => {
       throw error;
     }
 };
-export const deleteProjectFromFirestore = async (domain, projectId) => {
+export const deleteProjectFromFirestore = async (domain, bucketUrl, projectId) => {
     if (!domain || !projectId) {
         throw new Error('Domain and Project ID are required for deletion.');
     }
@@ -267,7 +268,7 @@ export const deleteProjectFromFirestore = async (domain, projectId) => {
             await deleteDoc(projectDocRef);
             color = '#54a134';
             console.log(`%cProject ${projectId} deleted successfully from ${domain}`, `color: ${color};`);
-            deleteProjectFromStorage(domain, projectId); // Assuming you also pass the domain to this function
+            deleteProjectFromStorage(domain,bucketUrl, projectId); // Assuming you also pass the domain to this function
         } else {
             color = 'red';
             console.error(`%cProject ${projectId} does not exist in ${domain}`, `color: ${color};`);
@@ -668,6 +669,7 @@ export const deleteFileFromFirestoreAndStorage = async (domain, projectId, colle
 
     try {
         // 1. Delete from Firebase Storage
+        const storage = await getStorageForDomain(domain);
         const storageRef = ref(storage, `${domain}/${projectId}/${collectionId}/${fileName}`);
         await deleteObject(storageRef);
         console.log(`File ${fileName} deleted from Firebase Storage`);

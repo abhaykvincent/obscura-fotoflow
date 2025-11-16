@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { getStorage, ref, listAll, getDownloadURL } from 'firebase/storage';
+import { ref, listAll, getDownloadURL } from 'firebase/storage';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { trackEvent } from '../../analytics/utils';
+import { getStorageForDomain } from '../../utils/uploadOperations';
 
 const DownloadFiles = ({ folderPath ,className, project,collection}) => {
   const [loading, setLoading] = useState(false);
-  const storage = getStorage();
 
   const downloadAllFiles = async () => {
     setLoading(true);
+    const storage = await getStorageForDomain(project.domain);
     const folderRef = ref(storage, folderPath);
     const zip = new JSZip();
 

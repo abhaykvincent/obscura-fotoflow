@@ -1,17 +1,18 @@
-import { storage } from '../app';
 import { v4 as uuidv4 } from 'uuid';
 import {
     getDownloadURL,
     ref,
     uploadBytesResumable
 } from "firebase/storage";
+import { getStorageForDomain } from '../../utils/uploadOperations';
 
 // Function to upload a single file to Firebase Storage
-function uploadSingleFile(folder, file) {
+async function uploadSingleFile(folder, file) {
 
     const MAX_RETRIES = 2;
     const INITIAL_RETRY_DELAY = 1000; // 1 second initial delay
     let retries = 0;
+    const storage = await getStorageForDomain('test-domain');
     return new Promise((resolve, reject) => {
         const storageRef = ref(storage, `test2/${file.name}`);
         
