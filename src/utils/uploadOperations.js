@@ -28,7 +28,7 @@ import { set } from "date-fns";
 
 const storageInstances = {};
 
-const getStorageForDomain = async (domain, bucketUrl) => {
+export const getStorageForDomain = async (domain, bucketUrl) => {
     if (storageInstances[domain]) {
         return storageInstances[domain];
     }
