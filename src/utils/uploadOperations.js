@@ -5,6 +5,7 @@ import {
     list,
     uploadBytes,
     getStorage,
+    connectStorageEmulator,
 } from "firebase/storage";
 import { db, storage as defaultStorage, app } from '../firebase/app';
 import { delay } from "./generalUtils";
@@ -25,7 +26,13 @@ import { addAllFileSizesToMB, extractExifData } from "./fileUtils";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { set } from "date-fns";
 
+const storageInstances = {};
+
 const getStorageForDomain = async (domain) => {
+    if (storageInstances[domain]) {
+        return storageInstances[domain];
+    }
+
     const studioRef = doc(db, "studios", domain);
     const studioSnap = await getDoc(studioRef);
     let bucketUrl;
@@ -38,14 +45,27 @@ const getStorageForDomain = async (domain) => {
     }
 
     if (!bucketUrl) {
-        if (domain === 'jumbo') {
-            return defaultStorage; // Use the default initialized storage
+        if (domain === 'monallisa') {
+            // The default storage instance is already connected to the emulator in app.js
+            return defaultStorage;
         } else {
-            // For other studios without a specific bucketUrl
             bucketUrl = 'gs://fotoflow-india-2';
         }
     }
-    return getStorage(app, bucketUrl);
+
+    // For any non-default bucket, create a new storage instance.
+    const newStorage = getStorage(app, bucketUrl);
+
+    // If in development, connect this new instance to the emulator.
+    if (process.env.NODE_ENV === 'development') {
+        const EMULATOR_HOST = process.env.REACT_APP_EMULATOR_HOST;
+        const EMULATOR_PORT = parseInt(process.env.REACT_APP_EMULATOR_PORT, 10);
+        connectStorageEmulator(newStorage, EMULATOR_HOST, EMULATOR_PORT);
+    }
+
+    // Cache the new instance.
+    storageInstances[domain] = newStorage;
+    return newStorage;
 }
 
 // Image Compression
