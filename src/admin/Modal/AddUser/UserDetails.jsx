@@ -4,6 +4,7 @@ const UserDetails = ({
   userData,
   errors,
   handleInputChange,
+  handleBlur,
   nameInputRef,
   emailInputRef,
   passwordInputRef,
@@ -41,6 +42,7 @@ const UserDetails = ({
           placeholder="e.g. john.doe@example.com"
           type="email"
           onChange={handleInputChange}
+          onBlur={handleBlur}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && userData.email.trim()) {
               e.preventDefault();
@@ -86,6 +88,7 @@ const UserDetails = ({
           placeholder="phone"
           type="text"
           onChange={handleInputChange}
+          onBlur={handleBlur}
         />
         <span></span>
         {errors.phone && <div className="error">{errors.phone}</div>}
