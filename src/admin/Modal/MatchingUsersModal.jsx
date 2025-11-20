@@ -12,7 +12,7 @@ const MatchingUsersModal = ({ matchingUsers, matchingLeads }) => {
 
   return (
     <div className="modal-container matching-users-modal">
-      <div className="modal matching-users-modal-content">
+      <div className="modal matching-users-modal-content island">
         <div className="modal-header matching-users-modal-header">
           <h2>Matching Users or Leads Found</h2>
           <button onClick={handleClose}>&times;</button>
@@ -21,13 +21,14 @@ const MatchingUsersModal = ({ matchingUsers, matchingLeads }) => {
           {matchingUsers.length > 0 && (
             <div>
               <h3>Matching Users</h3>
-              <ul>
+              <div>
                 {matchingUsers.map((user) => (
-                  <li key={user.id}>
-                    {user.name} ({user.email})
-                  </li>
+                  <div key={user.id}>
+                    <span className="matching-user-name">kkk{user.displayName}</span>
+                     ({user.email})
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           )}
           {matchingLeads.length > 0 && (
