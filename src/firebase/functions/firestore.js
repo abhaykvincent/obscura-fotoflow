@@ -40,6 +40,15 @@ export const fetchUsers = async () => {
     }));
     return usersData;
 };
+export const fetchLeads = async () => {
+    const leadsCollection = collection(db, 'leads');
+    const querySnapshot = await getDocs(leadsCollection);
+    const leadsData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    return leadsData;
+};
 export const fetchUserByEmail = async (email) => {
     const usersCollection = collection(db, 'users');
     const querySnapshot = await getDocs(usersCollection);

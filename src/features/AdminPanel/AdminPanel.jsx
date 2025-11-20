@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchAllReferalsFromFirestore, fetchUsers, migrateCollectionsByStudio } from '../../firebase/functions/firestore';
+import { fetchAllReferalsFromFirestore, fetchUsers, migrateCollectionsByStudio, fetchLeads } from '../../firebase/functions/firestore';
 import './AdminPanel.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../app/slices/modalSlice';
@@ -50,10 +50,12 @@ function AdminPanel() {
     const [studios, setStudios] = useState([]);
     const [users, setUsers] = useState([]);
     const [referallsList, setReferallsList] = useState([])
+    const [leads, setLeads] = useState([]); // New state for leads
     const [expandedStudioId, setExpandedStudioId] = useState(null); // State for expanded studio row
     const [searchQuery, setSearchQuery] = useState(''); // State for search query
     const [referralSearchQuery, setReferralSearchQuery] = useState(''); // State for referral search query
     const [studioSearchQuery, setStudioSearchQuery] = useState(''); // State for studio search query
+    const [leadSearchQuery, setLeadSearchQuery] = useState(''); // State for lead search query
 
     const handleRowClick = (studioId) => {
         setExpandedStudioId(expandedStudioId === studioId ? null : studioId);
@@ -103,10 +105,20 @@ function AdminPanel() {
                 console.error('Error fetching referrals:', error);
             }
         };
+        const getLeads = async () => {
+            try {
+                let serverLeads = await fetchLeads();
+                console.log("Server leads:", serverLeads);
+                setLeads(serverLeads);
+            } catch (error) {
+                console.error('Error fetching leads:', error);
+            }
+        };
 
         getUsers();
         getReferrals();
         getStudios();
+        getLeads();
     }, []);
 
     const filteredUsers = users.filter(user =>
@@ -124,6 +136,12 @@ function AdminPanel() {
     const filteredStudios = studios.filter(studio =>
         studio.name.toLowerCase().includes(studioSearchQuery.toLowerCase()) ||
         studio.domain.toLowerCase().includes(studioSearchQuery.toLowerCase())
+    );
+
+    const filteredLeads = leads.filter(lead =>
+        lead.name.toLowerCase().includes(leadSearchQuery.toLowerCase()) ||
+        lead.email.toLowerCase().includes(leadSearchQuery.toLowerCase()) ||
+        (lead.studio && lead.studio.name ? lead.studio.name.toLowerCase().includes(leadSearchQuery.toLowerCase()) : false)
     );
 
     const handleTabChange = (tab) => {
@@ -239,6 +257,12 @@ function AdminPanel() {
                     Users
                 </button>
                 <button
+                    className={`tab-button icon leads ${selectedTab === 'leads' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('leads')}
+                >
+                    Leads
+                </button>
+                <button
                     className={`tab-button icon studio ${selectedTab === 'studios' ? 'active' : ''}`}
                     onClick={() => handleTabChange('studios')}
                 >Studios</button>
@@ -303,6 +327,51 @@ function AdminPanel() {
                                             <td>{user.email}</td>
                                             <td>{user.studio.name}</td>
                                             <td>{user.studio.roles[0]}</td>
+                                            <td className="actions">
+                                                {/* Drawer trigger */}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </section>
+                    </div>
+                </div>
+            )}
+            { selectedTab === 'leads' && (
+                <div className="leads-tab-window">
+                    
+                    <div className="list-display">
+                        <section className="leads-list">
+                            <div className="actions">
+                                <div className="left-actions">
+                                    <input
+                                        type="text"
+                                        placeholder="Search leads..."
+                                        className="search-input"
+                                        value={leadSearchQuery}
+                                        onChange={(e) => setLeadSearchQuery(e.target.value)}
+                                    />
+                                </div>
+                                <div className="right-actions">
+                                    {/* Add any right-actions here if needed */}
+                                </div>
+                            </div>
+                            <table className="invoice-table">
+                                <thead>
+                                    <tr>
+                                        <th>NAME</th>
+                                        <th>EMAIL</th>
+                                        <th>STUDIOS</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredLeads.map(lead => (
+                                        <tr key={lead.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', lead))}>
+                                            <td>{lead.name}</td>
+                                            <td>{lead.email}</td>
+                                            <td>{lead.studio ? lead.studio.name : 'N/A'}</td>
                                             <td className="actions">
                                                 {/* Drawer trigger */}
                                             </td>
