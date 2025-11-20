@@ -4,6 +4,7 @@ import './AdminPanel.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../app/slices/modalSlice';
 import AddReferralModal from '../../admin/Modal/AddReferral';
+import AddUserModal from '../../admin/Modal/AddUser/AddUser.jsx';
 import ViewDetailsDrawer from '../../admin/Modal/ViewDetailsDrawer';
 import { fetchReferrals, generateReferral, selectReferrals } from '../../app/slices/referralsSlice';
 import { useNavigate, useParams } from 'react-router';
@@ -143,6 +144,7 @@ function AdminPanel() {
     return (
         <>
         <AddReferralModal/>
+        <AddUserModal />
         <main className="admin-panel billing-container">
             <h1 className="admin-title">Admin Panel</h1>
 
@@ -281,7 +283,7 @@ function AdminPanel() {
                                     <div className="pill secondary icon leads idle" onClick={() => console.log('Filter button clicked')}>Leads</div>
                                 </div>
                                 <div className="right-actions">
-                                    <div className="button primary">New</div>
+                                    <div className="button primary" onClick={() => dispatch(openModal('addUser'))}>New</div>
                                 </div>
                             </div>
                             <table className="invoice-table">
