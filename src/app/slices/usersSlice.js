@@ -2,28 +2,31 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { auth, db } from '../../firebase/app'; // Adjust this path if needed
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { generateRandomString } from '../../utils/stringUtils';
 
 // Thunk to add a new user
 export const addUser = createAsyncThunk(
   'users/addUser',
   async (userData, { rejectWithValue }) => {
-    const { email, password, displayName, role } = userData;
+    const { email,phone,  displayName, studioName, domain, role } = userData;
     try {
-      // 1. Create user in Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
       // 2. Add user details to Firestore
-      const userDocRef = doc(db, 'users', user.uid);
+      const uid= `${studioName.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`
+      const userDocRef = doc(db, 'leads', uid)
       await setDoc(userDocRef, {
-        uid: user.uid,
+        uid: uid,
         displayName,
         email,
+        phone,
+        studio:{
+          name:studioName,
+          domain:domain,
+        },
         role,
         createdAt: new Date().toISOString(),
       });
 
-      return { uid: user.uid, ...userData };
+      return { uid:uid, ...userData };
     } catch (error) {
       return rejectWithValue(error.message);
     }
