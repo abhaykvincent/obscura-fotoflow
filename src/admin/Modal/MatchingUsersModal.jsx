@@ -37,15 +37,25 @@ const MatchingUsersModal = ({ matchingUsers, matchingLeads }) => {
               <ul>
                 {matchingLeads.map((lead) => (
                   <li key={lead.id}>
-                    {lead.name} ({lead.email})
+                    {lead.name}{' '}
+                    {lead.email && lead.phone ? (
+                      <>
+                        (<span className="iconic-gradient">{lead.email}</span>) / (
+                        <span className="iconic-gradient">{lead.phone}</span>)
+                      </>
+                    ) : lead.email ? (
+                      <>(<span className="iconic-gradient">{lead.email}</span>)</>
+                    ) : lead.phone ? (
+                      <>(<span className="iconic-gradient">{lead.phone}</span>)</>
+                    ) : null}
                   </li>
                 ))}
               </ul>
             </div>
           )}
         </div>
-        <div className="modal-footer matching-users-modal-footer">
-          <button onClick={handleClose}>Close</button>
+        <div className=" actions modal-footer matching-users-modal-footer">
+          <button className='button primary ' onClick={handleClose}>Close</button>
         </div>
       </div>
     </div>
