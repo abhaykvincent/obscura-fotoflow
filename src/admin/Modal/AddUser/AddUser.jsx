@@ -15,7 +15,9 @@ function AddUserModal() {
   const initialUserData = {
     displayName: '',
     email: '',
-    password: '',
+    studioName: '',
+    phone:'',
+    domain:'',
     role: 'user', // Default role
   };
 
@@ -24,7 +26,9 @@ function AddUserModal() {
 
   const nameInputRef = useRef(null);
   const emailInputRef = useRef(null);
-  const passwordInputRef = useRef(null);
+  const studioNameInputRef = useRef(null);
+  const phoneInputRef = useRef(null);
+  const domainInputRef = useRef(null);
   const modalRef = useModalFocus(isVisible);
 
   const onClose = () => dispatch(closeModalWithAnimation('addUser'));
@@ -42,18 +46,24 @@ function AddUserModal() {
     const newErrors = {};
     if (!userData.displayName.trim()) newErrors.displayName = 'Name is required';
     if (!userData.email.trim()) newErrors.email = 'Email is required';
-    if (!userData.password.trim()) newErrors.password = 'Password is required';
+    if (!userData.phone.trim()) newErrors.phone = 'Phone is required';
+    if (!userData.domain.trim()) newErrors.domain = 'Domain is required';
+    if (!userData.studioName.trim()) newErrors.studioName = 'Studio Name is required';
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
       if (newErrors.displayName) nameInputRef.current?.focus();
       else if (newErrors.email) emailInputRef.current?.focus();
-      else if (newErrors.password) passwordInputRef.current?.focus();
+      else if (newErrors.phone) phoneInputRef.current?.focus();
+      else if (newErrors.domain) domainInputRef.current?.focus();
+      else if (newErrors.studioName) studioNameInputRef.current?.focus();
       return;
     }
 
     dispatch(showLoading(`Creating user ${userData.displayName}...`));
     onClose();
+
+    await new Promise(resolve => setTimeout(resolve, 500)); // Wait for animation
 
     try {
       await dispatch(addUser(userData));
@@ -95,7 +105,9 @@ function AddUserModal() {
               handleInputChange={handleInputChange}
               nameInputRef={nameInputRef}
               emailInputRef={emailInputRef}
-              passwordInputRef={passwordInputRef}
+              studioNameInputRef={studioNameInputRef}
+              domainInputRef={domainInputRef}
+              phoneInputRef={phoneInputRef}
             />
           </form>
         </div>

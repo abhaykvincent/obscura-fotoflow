@@ -7,6 +7,9 @@ const UserDetails = ({
   nameInputRef,
   emailInputRef,
   passwordInputRef,
+  studioNameInputRef,
+  domainInputRef,
+  phoneInputRef
 }) => {
   return (
     <div className="form-section user-details">
@@ -49,17 +52,43 @@ const UserDetails = ({
         {errors.email && <div className="error">{errors.email}</div>}
       </div>
       <div className="field">
-        <label>Password</label>
+        <label>Studio Name</label>
         <input
-          name="password"
-          ref={passwordInputRef}
-          value={userData.password}
+          name="studioName"
+          ref={studioNameInputRef}
+          value={userData.studioName}
           placeholder="Enter a strong password"
-          type="password"
+          type="text"
           onChange={handleInputChange}
         />
         <span></span>
-        {errors.password && <div className="error">{errors.password}</div>}
+        {errors.studioName && <div className="error">{errors.studioName}</div>}
+      </div>
+      <div className="field">
+        <label>Domain</label>
+        <input
+          name="domain"
+          ref={domainInputRef}
+          value={userData.domain}
+          placeholder="domain"
+          type="text"
+          onChange={handleInputChange}
+        />
+        <span></span>
+        {errors.domain && <div className="error">{errors.domain}</div>}
+      </div>
+      <div className="field">
+        <label>Phone</label>
+        <input
+          name="phone"
+          ref={phoneInputRef}
+          value={userData.phone}
+          placeholder="phone"
+          type="text"
+          onChange={handleInputChange}
+        />
+        <span></span>
+        {errors.phone && <div className="error">{errors.phone}</div>}
       </div>
       <div className="field">
         <label>Role</label>
