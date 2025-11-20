@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
-import { addDummyProjects } from '../../app/slices/adminPaneSlice';
+import { addDummyProjects, addDummyUsers } from '../../app/slices/adminPaneSlice'; // Import addDummyUsers
 import { selectDomain } from '../../app/slices/authSlice';
 import './AdminPanel.scss';
 
@@ -22,6 +22,15 @@ function DeveloperTools() {
         }
     };
 
+    const handleAddDummyUsers = async () => {
+        try {
+            await dispatch(addDummyUsers()).unwrap();
+            dispatch(showAlert({ type: 'success', message: '20 Dummy users added successfully!' }));
+        } catch (error) {
+            dispatch(showAlert({ type: 'error', message: `Error adding dummy users: ${error.message}` }));
+        }
+    };
+
     return (
         <main className="admin-panel billing-container">
             <h1 className="admin-title">Developer Tools</h1>
@@ -29,6 +38,9 @@ function DeveloperTools() {
                 <div className="admin-actions">
                     <div className="button secondary outline" onClick={handleAddDummyProjects}>
                         Add Dummy Projects
+                    </div>
+                    <div className="button secondary outline" onClick={handleAddDummyUsers}>
+                        Add Dummy Users
                     </div>
                 </div>
             </div>
