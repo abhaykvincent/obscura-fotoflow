@@ -1,28 +1,32 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeModalWithAnimation, selectModal } from '../../../app/slices/modalSlice';
+import { closeModalWithAnimation, openModal, selectModal, closeModal } from '../../../app/slices/modalSlice';
 import { showLoading, hideLoading } from '../../../app/slices/loadingSlice';
 import { useModalFocus } from '../../../hooks/modalInputFocus';
 import UserDetails from './UserDetails';
 import { addUser } from '../../../app/slices/usersSlice'; // This will be created
 import { showAlert } from '../../../app/slices/alertSlice';
+import { findMatchingUsersOrLeads } from '../../../utils/firestoreUtils';
+import MatchingUsersModal from '../MatchingUsersModal';
 import './AddUser.scss';
 
 function AddUserModal() {
   const dispatch = useDispatch();
-  const { addUser: isVisible } = useSelector(selectModal);
+  const { addUser: isVisible, matchingUsers: isMatchingUsersModalVisible } = useSelector(selectModal);
 
   const initialUserData = {
     displayName: '',
     email: '',
     studioName: '',
-    phone:'',
-    domain:'',
+    phone: '',
+    domain: '',
     role: 'user', // Default role
   };
 
   const [userData, setUserData] = useState(initialUserData);
   const [errors, setErrors] = useState({});
+  const [matchingUsers, setMatchingUsers] = useState([]);
+  const [matchingLeads, setMatchingLeads] = useState([]);
 
   const nameInputRef = useRef(null);
   const emailInputRef = useRef(null);
@@ -41,6 +45,19 @@ function AddUserModal() {
     }));
   };
 
+  const handleBlur = async (event) => {
+    debugger
+    const { name, value } = event.target;
+    if ((name === 'email' && value) || (name === 'phone' && value)) {
+      const { matchingUsers, matchingLeads } = await findMatchingUsersOrLeads(userData.email, userData.phone);
+      setMatchingUsers(matchingUsers);
+      setMatchingLeads(matchingLeads);
+      if (matchingUsers.length > 0 || matchingLeads.length > 0) {
+        dispatch(openModal('matchingUsers'));
+      }
+    }
+  };
+
   const handleSubmit = async () => {
     // Basic validation
     const newErrors = {};
@@ -57,6 +74,11 @@ function AddUserModal() {
       else if (newErrors.phone) phoneInputRef.current?.focus();
       else if (newErrors.domain) domainInputRef.current?.focus();
       else if (newErrors.studioName) studioNameInputRef.current?.focus();
+      return;
+    }
+
+    if (matchingUsers.length > 0 || matchingLeads.length > 0) {
+      dispatch(openModal('matchingUsers'));
       return;
     }
 
@@ -79,47 +101,51 @@ function AddUserModal() {
   if (!isVisible) return null;
 
   return (
-    <div className="modal-container" ref={modalRef}>
-      <div className="modal create-user-modal island">
-        <div className="modal-header">
-          <div className="modal-controls">
-            <div className="control close" onClick={onClose}></div>
-            <div className="control minimize"></div>
-            <div className="control maximize"></div>
+    <>
+      <div className="modal-container" ref={modalRef}>
+        <div className="modal create-user-modal island">
+          <div className="modal-header">
+            <div className="modal-controls">
+              <div className="control close" onClick={onClose}></div>
+              <div className="control minimize"></div>
+              <div className="control maximize"></div>
+            </div>
+            <div className="modal-title">
+              New User
+              <p className="modal-subtitle">Create a new user account</p>
+            </div>
           </div>
-          <div className="modal-title">
-            New User
-            <p className="modal-subtitle">Create a new user account</p>
+          <div className="modal-body">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit();
+              }}
+            >
+              <UserDetails
+                userData={userData}
+                errors={errors}
+                handleInputChange={handleInputChange}
+                handleBlur={handleBlur}
+                nameInputRef={nameInputRef}
+                emailInputRef={emailInputRef}
+                studioNameInputRef={studioNameInputRef}
+                domainInputRef={domainInputRef}
+                phoneInputRef={phoneInputRef}
+              />
+            </form>
+          </div>
+          <div className="actions">
+            <button type="button" className="button secondary" onClick={onClose}>Cancel</button>
+            <button type="button" className="button primary icon new" onClick={handleSubmit}>
+              Create User
+            </button>
           </div>
         </div>
-        <div className="modal-body">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSubmit();
-            }}
-          >
-            <UserDetails
-              userData={userData}
-              errors={errors}
-              handleInputChange={handleInputChange}
-              nameInputRef={nameInputRef}
-              emailInputRef={emailInputRef}
-              studioNameInputRef={studioNameInputRef}
-              domainInputRef={domainInputRef}
-              phoneInputRef={phoneInputRef}
-            />
-          </form>
-        </div>
-        <div className="actions">
-          <button type="button" className="button secondary" onClick={onClose}>Cancel</button>
-          <button type="button" className="button primary icon new" onClick={handleSubmit}>
-            Create User
-          </button>
-        </div>
+        <div className="modal-backdrop" onClick={onClose}></div>
       </div>
-      <div className="modal-backdrop" onClick={onClose}></div>
-    </div>
+      {isMatchingUsersModalVisible && <MatchingUsersModal matchingUsers={matchingUsers} matchingLeads={matchingLeads} />}
+    </>
   );
 }
 
