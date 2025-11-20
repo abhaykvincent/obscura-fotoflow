@@ -1,23 +1,23 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import './MatchingUsersModal.scss';
 import { closeModal } from '../../app/slices/modalSlice';
+import './MatchingUsersModal.scss';
 
 const MatchingUsersModal = ({ matchingUsers, matchingLeads }) => {
   const dispatch = useDispatch();
 
   const handleClose = () => {
-    dispatch(closeModal());
+    dispatch(closeModal('matchingUsers'));
   };
 
   return (
-    <div className="matching-users-modal">
-      <div className="matching-users-modal-content">
-        <div className="matching-users-modal-header">
+    <div className="modal-container matching-users-modal">
+      <div className="modal matching-users-modal-content">
+        <div className="modal-header matching-users-modal-header">
           <h2>Matching Users or Leads Found</h2>
           <button onClick={handleClose}>&times;</button>
         </div>
-        <div className="matching-users-modal-body">
+        <div className="modal-body matching-users-modal-body">
           {matchingUsers.length > 0 && (
             <div>
               <h3>Matching Users</h3>
@@ -43,7 +43,7 @@ const MatchingUsersModal = ({ matchingUsers, matchingLeads }) => {
             </div>
           )}
         </div>
-        <div className="matching-users-modal-footer">
+        <div className="modal-footer matching-users-modal-footer">
           <button onClick={handleClose}>Close</button>
         </div>
       </div>

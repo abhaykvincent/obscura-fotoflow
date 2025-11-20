@@ -27,6 +27,7 @@ function AddUserModal() {
   const [errors, setErrors] = useState({});
   const [matchingUsers, setMatchingUsers] = useState([]);
   const [matchingLeads, setMatchingLeads] = useState([]);
+  const [isChecking, setIsChecking] = useState(false);
 
   const nameInputRef = useRef(null);
   const emailInputRef = useRef(null);
@@ -35,7 +36,10 @@ function AddUserModal() {
   const domainInputRef = useRef(null);
   const modalRef = useModalFocus(isVisible);
 
-  const onClose = () => dispatch(closeModalWithAnimation('addUser'));
+  const onClose = () => { 
+    debugger
+    dispatch(closeModalWithAnimation('addUser'))
+  }
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -46,14 +50,33 @@ function AddUserModal() {
   };
 
   const handleBlur = async (event) => {
-    debugger
     const { name, value } = event.target;
+    // Only proceed if the field has a value AND it's one we want to check
     if ((name === 'email' && value) || (name === 'phone' && value)) {
-      const { matchingUsers, matchingLeads } = await findMatchingUsersOrLeads(userData.email, userData.phone);
-      setMatchingUsers(matchingUsers);
-      setMatchingLeads(matchingLeads);
-      if (matchingUsers.length > 0 || matchingLeads.length > 0) {
-        dispatch(openModal('matchingUsers'));
+      // 1. Give React a moment to complete the state update from handleInputChange
+      await new Promise(resolve => setTimeout(resolve, 50)); 
+      
+      // The state (userData) should now be up-to-date with the value from the blurred input.
+      const email = userData.email; 
+      const phone = userData.phone;
+
+      // 2. Add an extra check for safety (e.g., if the user cleared the field)
+      if (!email && !phone) return;
+
+      setIsChecking(true);
+      
+      try {
+        const { matchingUsers, matchingLeads } = await findMatchingUsersOrLeads(email, phone);
+        setMatchingUsers(matchingUsers);
+        setMatchingLeads(matchingLeads);
+        
+        if (matchingUsers.length > 0 || matchingLeads.length > 0) {
+          dispatch(openModal('matchingUsers'));
+        }
+      } catch (error) {
+        console.error("Error during matching user check:", error);
+      } finally {
+        setIsChecking(false);
       }
     }
   };
@@ -77,16 +100,10 @@ function AddUserModal() {
       return;
     }
 
-    if (matchingUsers.length > 0 || matchingLeads.length > 0) {
-      dispatch(openModal('matchingUsers'));
-      return;
-    }
-
-    dispatch(showLoading(`Creating user ${userData.displayName}...`));
-    onClose();
 
     await new Promise(resolve => setTimeout(resolve, 500)); // Wait for animation
 
+    
     try {
       await dispatch(addUser(userData));
       dispatch(showAlert({ type: 'success', message: 'User created successfully!' }));
@@ -95,6 +112,7 @@ function AddUserModal() {
       dispatch(showAlert({ type: 'error', message: `Failed to create user: ${error.message}` }));
     } finally {
       dispatch(hideLoading());
+      onClose();
     }
   };
 
@@ -137,8 +155,8 @@ function AddUserModal() {
           </div>
           <div className="actions">
             <button type="button" className="button secondary" onClick={onClose}>Cancel</button>
-            <button type="button" className="button primary icon new" onClick={handleSubmit}>
-              Create User
+            <button type="button" className="button primary icon new" onClick={handleSubmit} disabled={isChecking}>
+              {isChecking ? 'Checking...' : 'Create User'}
             </button>
           </div>
         </div>
