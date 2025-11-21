@@ -9,7 +9,6 @@ const UserDetails = ({
   emailInputRef,
   passwordInputRef,
   studioNameInputRef,
-  domainInputRef,
   phoneInputRef
 }) => {
   return (
@@ -33,6 +32,21 @@ const UserDetails = ({
         <span></span>
         {errors.displayName && <div className="error">{errors.displayName}</div>}
       </div>
+      
+      <div className="field">
+        <label>Studio Name</label>
+        <input
+          name="studioName"
+          ref={studioNameInputRef}
+          value={userData.studioName}
+          placeholder="Enter a strong password"
+          type="text"
+          onChange={handleInputChange}
+        />
+        <span></span>
+        {errors.studioName && <div className="error">{errors.studioName}</div>}
+      </div>
+      
       <div className="field">
         <label>Email</label>
         <input
@@ -53,32 +67,7 @@ const UserDetails = ({
         <span></span>
         {errors.email && <div className="error">{errors.email}</div>}
       </div>
-      <div className="field">
-        <label>Studio Name</label>
-        <input
-          name="studioName"
-          ref={studioNameInputRef}
-          value={userData.studioName}
-          placeholder="Enter a strong password"
-          type="text"
-          onChange={handleInputChange}
-        />
-        <span></span>
-        {errors.studioName && <div className="error">{errors.studioName}</div>}
-      </div>
-      <div className="field">
-        <label>Domain</label>
-        <input
-          name="domain"
-          ref={domainInputRef}
-          value={userData.domain}
-          placeholder="domain"
-          type="text"
-          onChange={handleInputChange}
-        />
-        <span></span>
-        {errors.domain && <div className="error">{errors.domain}</div>}
-      </div>
+
       <div className="field">
         <label>Phone</label>
         <input

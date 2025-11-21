@@ -19,7 +19,6 @@ function AddUserModal() {
     email: '',
     studioName: '',
     phone: '',
-    domain: '',
     role: 'user', // Default role
   };
 
@@ -32,7 +31,6 @@ function AddUserModal() {
   const emailInputRef = useRef(null);
   const studioNameInputRef = useRef(null);
   const phoneInputRef = useRef(null);
-  const domainInputRef = useRef(null);
   const modalRef = useModalFocus(isVisible);
 
   const onClose = () => {
@@ -136,7 +134,6 @@ function AddUserModal() {
                 nameInputRef={nameInputRef}
                 emailInputRef={emailInputRef}
                 studioNameInputRef={studioNameInputRef}
-                domainInputRef={domainInputRef}
                 phoneInputRef={phoneInputRef}
               />
             </form>
