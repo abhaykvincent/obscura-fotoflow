@@ -52,21 +52,28 @@ function AddUserModal() {
   };
 
   const handleSubmit = async () => {
-    // Basic validation
+    // Enhanced validation: Either Name or Studio Name, and Either Email or Phone are required.
     const newErrors = {};
-    if (!userData.displayName.trim()) newErrors.displayName = 'Name is required';
-    if (!userData.email.trim()) newErrors.email = 'Email is required';
-    if (!userData.phone.trim()) newErrors.phone = 'Phone is required';
-    if (!userData.domain.trim()) newErrors.domain = 'Domain is required';
-    if (!userData.studioName.trim()) newErrors.studioName = 'Studio Name is required';
+    const { displayName, studioName, email, phone } = userData;
+
+    if (!displayName.trim() && !studioName.trim()) {
+      newErrors.displayName = 'Either Name or Studio Name is required';
+      newErrors.studioName = 'Either Name or Studio Name is required';
+    }
+
+    if (!email.trim() && !phone.trim()) {
+      newErrors.email = 'Either Email or Phone is required';
+      newErrors.phone = 'Either Email or Phone is required';
+    }
+    
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
-      if (newErrors.displayName) nameInputRef.current?.focus();
-      else if (newErrors.email) emailInputRef.current?.focus();
-      else if (newErrors.phone) phoneInputRef.current?.focus();
-      else if (newErrors.domain) domainInputRef.current?.focus();
-      else if (newErrors.studioName) studioNameInputRef.current?.focus();
+      if (newErrors.displayName || newErrors.studioName) {
+        nameInputRef.current?.focus();
+      } else if (newErrors.email || newErrors.phone) {
+        emailInputRef.current?.focus();
+      }
       return;
     }
 
