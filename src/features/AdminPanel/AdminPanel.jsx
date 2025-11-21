@@ -123,7 +123,7 @@ function AdminPanel() {
         getLeads();
     }, []);
 
-    const filteredUsers = users.filter(user =>
+    const filteredUsersList = users.filter(user =>
         user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (user.studio && user.studio.name ? user.studio.name.toLowerCase().includes(searchQuery.toLowerCase()) : false)
@@ -140,7 +140,13 @@ function AdminPanel() {
         studio.domain.toLowerCase().includes(studioSearchQuery.toLowerCase())
     );
 
-    const filteredLeads = leads.filter(lead =>
+    const filteredLeadsForUsersTab = leads.filter(lead =>
+    lead.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    lead.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (lead.studio && lead.studio.name ? lead.studio.name.toLowerCase().includes(searchQuery.toLowerCase()) : false)
+);
+
+    const filteredLeadsList = leads.filter(lead =>
     lead.name?.toLowerCase().includes(leadSearchQuery.toLowerCase()) ||
     lead.email?.toLowerCase().includes(leadSearchQuery.toLowerCase()) ||
     (lead.studio && lead.studio.name ? lead.studio.name.toLowerCase().includes(leadSearchQuery.toLowerCase()) : false)
@@ -324,7 +330,7 @@ function AdminPanel() {
                                 </thead>
                                 <tbody>
                                     {userViewType === 'users'
-                                        ? filteredUsers.map(user => (
+                                        ? filteredUsersList.map(user => (
                                             <tr key={user.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', user))}>
                                                 <td>{user.displayName}</td>
                                                 <td>{user.email}</td>
@@ -335,7 +341,7 @@ function AdminPanel() {
                                                 </td>
                                             </tr>
                                         ))
-                                        : filteredLeads.map(lead => (
+                                        : filteredLeadsForUsersTab.map(lead => (
                                             <tr key={lead.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', lead))}>
                                                 <td>{lead.name}</td>
                                                 <td>{lead.email}</td>
@@ -381,7 +387,7 @@ function AdminPanel() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredLeads.map(lead => (
+                                    {filteredLeadsList.map(lead => (
                                         <tr key={lead.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', lead))}>
                                             <td>{lead.name}</td>
                                             <td>{lead.email}</td>

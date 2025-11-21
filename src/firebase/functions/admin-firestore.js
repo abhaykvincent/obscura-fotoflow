@@ -61,7 +61,7 @@ export const migrateCollectionsByStudio = async (domain) => {
  * @returns {Promise<string>} The UID of the newly created lead.
  */
 export const addUserAsLead = async (userData) => {
-    const { email, phone, displayName, studioName, domain, role } = userData;
+    const { email, phone, displayName, studioName, role } = userData;
     const uid = `${(studioName || displayName).toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
     const userDocRef = doc(db, 'leads', uid);
 
@@ -72,7 +72,7 @@ export const addUserAsLead = async (userData) => {
         phone,
         studio: {
             name: studioName,
-            domain: domain,
+            domain: '',
         },
         role,
         createdAt: new Date().toISOString(),
