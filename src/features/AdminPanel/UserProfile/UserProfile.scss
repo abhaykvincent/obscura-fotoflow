@@ -1,0 +1,74 @@
+@import '../../../style/variables';
+
+.user-profile-page {
+    padding: $spacing-unit * 2;
+    background-color: $dark-2;
+    min-height: calc(100vh - #{$header-height} - 8px*4); // Adjust based on your header/footer height
+
+    .breadcrumbs {
+        margin-bottom: $spacing-unit * 2;
+
+        .back {
+            color: $green-accessible-dark;
+            text-decoration: none;
+            font-size: 0.9rem;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .admin-title {
+        color: $light-0;
+        margin-bottom: $spacing-unit * 3;
+        font-size: 2rem;
+    }
+
+    .user-details-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: $spacing-unit * 2;
+        margin-bottom: $spacing-unit * 4;
+
+        .card {
+            background-color: $dark-2;
+            border-radius: 8px;
+            padding: $spacing-unit * 2;
+        box-shadow: 1px 1px 1px 1px black;
+
+            h2 {
+                color: $green-accessible-dark;
+                font-size: 1.3rem;
+                margin-bottom: $spacing-unit;
+            }
+
+            p {
+                color: $gray-accessible-dark;
+                margin-bottom: $spacing-unit / 2;
+
+                strong {
+                    color: $light-0;
+                }
+            }
+        }
+    }
+
+    section {
+        background-color: $dark-2;
+        border-radius: 8px;
+        padding: $spacing-unit * 2;
+        margin-bottom: $spacing-unit * 2;
+        box-shadow: 1px 1px 1px 1px black;
+
+        h2 {
+            color: $light-0;
+            font-size: 1.5rem;
+            margin-bottom: $spacing-unit;
+        }
+
+        p {
+            color: $gray-accessible-dark;
+        }
+    }
+}

@@ -35,6 +35,7 @@ import PortfolioWebsite from './features/Website/Website';
 import Settings from './features/Settings/Settings';
 import BillingHistory from './features/BillingHistory/BillingHistory';
 import SmartGallery from './features/SmartGallery/SmartGallery';
+import UserProfile from './features/AdminPanel/UserProfile/UserProfile';
 
 // Components
 import Alert from './components/Alert/Alert';
@@ -222,6 +223,7 @@ export default function App() {
 
                 <Route path="/admin" element={<AdminPanel />} />
                 <Route path="/admin/:page" element={<AdminPanel />} />
+                <Route path="/admin/user/:userId" element={<UserProfile />} />
                 <Route path="/tools" element={<DeveloperTools />} />
               </Route>
 

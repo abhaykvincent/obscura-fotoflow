@@ -126,6 +126,12 @@ $light-3:#FFFFFF;
 // Dimentions
 $header-height: 8px*7.5;
 $sidebar-width: 8px*20;
+
+//Spacing
+$spacing-unit : 8px;
+
+
+
 @media only screen and (max-width: 1080px) {
   $sidebar-width: 8px*4;
 }
