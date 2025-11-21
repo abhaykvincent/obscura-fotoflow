@@ -304,6 +304,7 @@ function AdminPanel() {
                         <section className="users-list">
                             <div className="actions">
                                 <div className="left-actions">
+                                <div className="search-input-wrapper">
                                     <input
                                         type="text"
                                         placeholder="Search users..."
@@ -311,6 +312,12 @@ function AdminPanel() {
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
+                                    {searchQuery && (
+                                        <button className="clear-search-button" onClick={() => setSearchQuery('')}>
+                                            &times;
+                                        </button>
+                                    )}
+                                </div>
                                     <div className={`pill secondary icon active-users ${userViewType === 'users' ? '' : 'idle'}`} onClick={() => setUserViewType('users')}>Active Users</div>
                                     <div className={`pill secondary icon leads ${userViewType === 'leads' ? '' : 'idle'}`} onClick={() => setUserViewType('leads')}>Leads</div>
                                 </div>
@@ -365,6 +372,7 @@ function AdminPanel() {
                         <section className="leads-list">
                             <div className="actions">
                                 <div className="left-actions">
+                                <div className="search-input-wrapper">
                                     <input
                                         type="text"
                                         placeholder="Search leads..."
@@ -372,6 +380,12 @@ function AdminPanel() {
                                         value={leadSearchQuery}
                                         onChange={(e) => setLeadSearchQuery(e.target.value)}
                                     />
+                                    {leadSearchQuery && (
+                                        <button className="clear-search-button" onClick={() => setLeadSearchQuery('')}>
+                                            &times;
+                                        </button>
+                                    )}
+                                </div>
                                 </div>
                                 <div className="right-actions">
                                     {/* Add any right-actions here if needed */}
@@ -408,13 +422,20 @@ function AdminPanel() {
                     <section className="studios-list">
                         <div className="actions">
                             <div className="left-actions">
-                                <input
-                                    type="text"
-                                    placeholder="Search studios..."
-                                    className="search-input"
-                                    value={studioSearchQuery}
-                                    onChange={(e) => setStudioSearchQuery(e.target.value)}
-                                />
+                                <div className="search-input-wrapper">
+                                    <input
+                                        type="text"
+                                        placeholder="Search studios..."
+                                        className="search-input"
+                                        value={studioSearchQuery}
+                                        onChange={(e) => setStudioSearchQuery(e.target.value)}
+                                    />
+                                    {studioSearchQuery && (
+                                        <button className="clear-search-button" onClick={() => setStudioSearchQuery('')}>
+                                            &times;
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                             <div className="right-actions">
                                 {/* Add any right-actions here if needed */}
@@ -488,6 +509,7 @@ function AdminPanel() {
                     <section className="referal-codes-list">
                         <div className="actions">
                                 <div className="left-actions">
+                                <div className="search-input-wrapper">
                                     <input
                                         type="text"
                                         placeholder="Search referrals..."
@@ -495,6 +517,12 @@ function AdminPanel() {
                                         value={referralSearchQuery}
                                         onChange={(e) => setReferralSearchQuery(e.target.value)}
                                     />
+                                    {referralSearchQuery && (
+                                        <button className="clear-search-button" onClick={() => setReferralSearchQuery('')}>
+                                            &times;
+                                        </button>
+                                    )}
+                                </div>
                                     <div className="button secondary outline icon campaign" onClick={() => console.log('Filter button clicked')}>Campaingns</div>
                                     <div className="button secondary outline icon leads" onClick={() => console.log('Filter button clicked')}>Leads</div>
                                 </div>
