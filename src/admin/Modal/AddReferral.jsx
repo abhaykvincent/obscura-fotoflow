@@ -7,6 +7,8 @@ import { selectUserStudio } from "../../app/slices/authSlice";
 import { useModalFocus } from "../../hooks/modalInputFocus";
 import { generateReferral } from "../../app/slices/referralsSlice";
 import { generateRandomString } from "../../utils/stringUtils";
+import { findMatchingUsersOrLeads } from "../../utils/firestoreUtils";
+import { addUser } from "../../app/slices/usersSlice";
 
 const initialReferralData = {
   campainName: "",
@@ -17,7 +19,7 @@ const initialReferralData = {
   studioContact: "",
   code: [],
   status: "active",
-  quota: 3,
+  quota: 1,
   used: 0,
   validity: 30,
   createdAt: new Date().toISOString(),
@@ -91,13 +93,54 @@ export default function AddReferralModal({}) {
     onClose();
     setTimeout(() => {
       dispatch(generateReferral(referralData))
-        .then(() => {
-          dispatch(
-            showAlert({
-              type: "success",
-              message: "Referral created successfully!",
-            })
-          );
+        .then(async (action) => {
+          if (action.meta.requestStatus === 'fulfilled') {
+            dispatch(
+              showAlert({
+                type: "success",
+                message: "Referral created successfully!",
+              })
+            );
+
+            const { email, name, studioName, studioContact, campainName, type } = referralData;
+            const displayName = type === "direct" ? name : campainName;
+            const phone = studioContact;
+
+            if (email || phone) {
+              try {
+                const { matchingUsers, matchingLeads } = await findMatchingUsersOrLeads(email, phone);
+
+                if (matchingUsers.length === 0 && matchingLeads.length === 0) {
+                  const newLeadData = {
+                    displayName: displayName || 'Unnamed Lead',
+                    email,
+                    phone,
+                    studioName,
+                    role: 'lead',
+                  };
+                  await dispatch(addUser(newLeadData));
+                  dispatch(
+                    showAlert({
+                      type: "info",
+                      message: "No matching user/lead found. A new lead has been created.",
+                    })
+                  );
+                } else {
+                  dispatch(
+                    showAlert({
+                      type: "info",
+                      message: "Matching user(s) or lead(s) found. No new lead created.",
+                    })
+                  );
+                }
+              } catch (userCheckError) {
+                console.error("Error checking for matching users/leads or adding new user:", userCheckError);
+                dispatch(
+                  showAlert({ type: "error", message: "Failed to check/create user/lead." })
+                );
+              }
+            }
+          }
         })
         .catch((error) => {
           console.error("Error creating Referral:", error);
@@ -177,6 +220,25 @@ export default function AddReferralModal({}) {
                     onChange={handleInputChange}
                   />
                 </div>
+                <div className="field ">
+                  <label>Phone Number +91</label>
+                  <input
+                    name="studioContact"
+                    value={referralData.studioContact}
+                    type="text"
+                    placeholder="8888 888 888"
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="field optional">
+                  <label>Email</label>
+                  <input
+                    name="email"
+                    value={referralData.email}
+                    type="text"
+                    onChange={handleInputChange}
+                  />
+                </div>
                 <div className="field">
                   <label>Quota</label>
                   <input
@@ -194,25 +256,6 @@ export default function AddReferralModal({}) {
                     type="text"
                     placeholder="e.g. SUMMER25"
                     onChange={handleCodeChange}
-                  />
-                </div>
-                <div className="field optional">
-                  <label>Email</label>
-                  <input
-                    name="email"
-                    value={referralData.email}
-                    type="text"
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="field ">
-                  <label>Phone Number +91</label>
-                  <input
-                    name="studioContact"
-                    value={referralData.studioContact}
-                    type="text"
-                    placeholder="8888 888 888"
-                    onChange={handleInputChange}
                   />
                 </div>
               </>
