@@ -11,6 +11,26 @@ import { isProduction } from "../../analytics/utils";
 import { getStorageForDomain } from "../../utils/uploadOperations";
 
 // Users
+export const fetchUserOrLeadById = async (userId) => {
+    // Try fetching from 'users' collection first
+    const userDocRef = doc(db, 'users', userId);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (userDocSnap.exists()) {
+        return { id: userDocSnap.id, ...userDocSnap.data() };
+    }
+
+    // If not found in 'users', try fetching from 'leads' collection
+    const leadDocRef = doc(db, 'leads', userId);
+    const leadDocSnap = await getDoc(leadDocRef);
+
+    if (leadDocSnap.exists()) {
+        return { id: leadDocSnap.id, ...leadDocSnap.data() };
+    }
+
+    return null; // Not found in either collection
+};
+
 export const createUser = async (userData) => {
     const {email,studio,displayName,photoURL} = userData;
     console.log(displayName)

@@ -1,19 +1,34 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserProfile, selectUserProfile, selectUserProfileLoading, selectUserProfileError } from '../../../app/slices/userProfileSlice';
+import { LoadingLight } from '../../../components/Loading/Loading';
 import './UserProfile.scss';
 
 function UserProfile() {
     const { userId } = useParams();
+    const dispatch = useDispatch();
+    const user = useSelector(selectUserProfile);
+    const loading = useSelector(selectUserProfileLoading);
+    const error = useSelector(selectUserProfileError);
 
-    // In a real application, you would fetch user data here using the userId
-    // For now, we'll use a placeholder
-    const user = {
-        id: userId,
-        displayName: `User ${userId}`,
-        email: `user${userId}@example.com`,
-        studioName: `Studio ${userId}`,
-        roles: ['admin']
-    };
+    useEffect(() => {
+        if (userId) {
+            dispatch(fetchUserProfile(userId));
+        }
+    }, [dispatch, userId]);
+
+    if (loading) {
+        return <LoadingLight />;
+    }
+
+    if (error) {
+        return <div className="user-profile-page billing-container error-message">Error: {error}</div>;
+    }
+
+    if (!user) {
+        return <div className="user-profile-page billing-container no-user-found">No user found for ID: {userId}</div>;
+    }
 
     return (
         <main className="user-profile-page billing-container">
@@ -27,14 +42,14 @@ function UserProfile() {
             <div className="user-details-cards">
                 <div className="card">
                     <h2>User Information</h2>
-                    <p><strong>Name:</strong> {user.displayName}</p>
+                    <p><strong>Name:</strong> {user.displayName || user.name}</p>
                     <p><strong>Email:</strong> {user.email}</p>
                     <p><strong>ID:</strong> {user.id}</p>
                 </div>
                 <div className="card">
                     <h2>Studio Information</h2>
-                    <p><strong>Studio Name:</strong> {user.studioName}</p>
-                    <p><strong>Roles:</strong> {user.roles.join(', ')}</p>
+                    <p><strong>Studio Name:</strong> {user.studio?.name || 'N/A'}</p>
+                    <p><strong>Roles:</strong> {user.roles?.join(', ') || 'N/A'}</p>
                 </div>
                 {/* Add more cards for other details like projects, activity, etc. */}
             </div>
