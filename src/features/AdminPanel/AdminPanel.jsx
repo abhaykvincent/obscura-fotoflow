@@ -123,7 +123,7 @@ function AdminPanel() {
         getLeads();
     }, []);
 
-    const filteredUsers = users.filter(user =>
+    const filteredUsersList = users.filter(user =>
         user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (user.studio && user.studio.name ? user.studio.name.toLowerCase().includes(searchQuery.toLowerCase()) : false)
@@ -140,7 +140,13 @@ function AdminPanel() {
         studio.domain.toLowerCase().includes(studioSearchQuery.toLowerCase())
     );
 
-    const filteredLeads = leads.filter(lead =>
+    const filteredLeadsForUsersTab = leads.filter(lead =>
+    lead.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    lead.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (lead.studio && lead.studio.name ? lead.studio.name.toLowerCase().includes(searchQuery.toLowerCase()) : false)
+);
+
+    const filteredLeadsList = leads.filter(lead =>
     lead.name?.toLowerCase().includes(leadSearchQuery.toLowerCase()) ||
     lead.email?.toLowerCase().includes(leadSearchQuery.toLowerCase()) ||
     (lead.studio && lead.studio.name ? lead.studio.name.toLowerCase().includes(leadSearchQuery.toLowerCase()) : false)
@@ -298,6 +304,7 @@ function AdminPanel() {
                         <section className="users-list">
                             <div className="actions">
                                 <div className="left-actions">
+                                <div className="search-input-wrapper">
                                     <input
                                         type="text"
                                         placeholder="Search users..."
@@ -305,6 +312,12 @@ function AdminPanel() {
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
+                                    {searchQuery && (
+                                        <button className="clear-search-button" onClick={() => setSearchQuery('')}>
+                                            &times;
+                                        </button>
+                                    )}
+                                </div>
                                     <div className={`pill secondary icon active-users ${userViewType === 'users' ? '' : 'idle'}`} onClick={() => setUserViewType('users')}>Active Users</div>
                                     <div className={`pill secondary icon leads ${userViewType === 'leads' ? '' : 'idle'}`} onClick={() => setUserViewType('leads')}>Leads</div>
                                 </div>
@@ -324,7 +337,7 @@ function AdminPanel() {
                                 </thead>
                                 <tbody>
                                     {userViewType === 'users'
-                                        ? filteredUsers.map(user => (
+                                        ? filteredUsersList.map(user => (
                                             <tr key={user.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', user))}>
                                                 <td>{user.displayName}</td>
                                                 <td>{user.email}</td>
@@ -335,7 +348,7 @@ function AdminPanel() {
                                                 </td>
                                             </tr>
                                         ))
-                                        : filteredLeads.map(lead => (
+                                        : filteredLeadsForUsersTab.map(lead => (
                                             <tr key={lead.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', lead))}>
                                                 <td>{lead.name}</td>
                                                 <td>{lead.email}</td>
@@ -359,6 +372,7 @@ function AdminPanel() {
                         <section className="leads-list">
                             <div className="actions">
                                 <div className="left-actions">
+                                <div className="search-input-wrapper">
                                     <input
                                         type="text"
                                         placeholder="Search leads..."
@@ -366,6 +380,12 @@ function AdminPanel() {
                                         value={leadSearchQuery}
                                         onChange={(e) => setLeadSearchQuery(e.target.value)}
                                     />
+                                    {leadSearchQuery && (
+                                        <button className="clear-search-button" onClick={() => setLeadSearchQuery('')}>
+                                            &times;
+                                        </button>
+                                    )}
+                                </div>
                                 </div>
                                 <div className="right-actions">
                                     {/* Add any right-actions here if needed */}
@@ -381,7 +401,7 @@ function AdminPanel() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredLeads.map(lead => (
+                                    {filteredLeadsList.map(lead => (
                                         <tr key={lead.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', lead))}>
                                             <td>{lead.name}</td>
                                             <td>{lead.email}</td>
@@ -402,13 +422,20 @@ function AdminPanel() {
                     <section className="studios-list">
                         <div className="actions">
                             <div className="left-actions">
-                                <input
-                                    type="text"
-                                    placeholder="Search studios..."
-                                    className="search-input"
-                                    value={studioSearchQuery}
-                                    onChange={(e) => setStudioSearchQuery(e.target.value)}
-                                />
+                                <div className="search-input-wrapper">
+                                    <input
+                                        type="text"
+                                        placeholder="Search studios..."
+                                        className="search-input"
+                                        value={studioSearchQuery}
+                                        onChange={(e) => setStudioSearchQuery(e.target.value)}
+                                    />
+                                    {studioSearchQuery && (
+                                        <button className="clear-search-button" onClick={() => setStudioSearchQuery('')}>
+                                            &times;
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                             <div className="right-actions">
                                 {/* Add any right-actions here if needed */}
@@ -482,6 +509,7 @@ function AdminPanel() {
                     <section className="referal-codes-list">
                         <div className="actions">
                                 <div className="left-actions">
+                                <div className="search-input-wrapper">
                                     <input
                                         type="text"
                                         placeholder="Search referrals..."
@@ -489,6 +517,12 @@ function AdminPanel() {
                                         value={referralSearchQuery}
                                         onChange={(e) => setReferralSearchQuery(e.target.value)}
                                     />
+                                    {referralSearchQuery && (
+                                        <button className="clear-search-button" onClick={() => setReferralSearchQuery('')}>
+                                            &times;
+                                        </button>
+                                    )}
+                                </div>
                                     <div className="button secondary outline icon campaign" onClick={() => console.log('Filter button clicked')}>Campaingns</div>
                                     <div className="button secondary outline icon leads" onClick={() => console.log('Filter button clicked')}>Leads</div>
                                 </div>
