@@ -146,11 +146,11 @@
         gap: 0px;
         font-size: 1.8rem;
         color: $gray-default-light;
-        margin-bottom: 8px*1;
+        margin-bottom: 8px*0;
         span{
             &.timeGreeting{
-                font-weight: 200;
-                color: $gray6-default-light;
+                font-weight: 600;
+                color: $gray2-default-light;
                 margin-left: -8px*6;
                 &.icon{
                         margin-right: 8px;
@@ -203,7 +203,7 @@
         }
         .iconic-gradient-white{
                 font-weight: 600;
-                font-size: 1.9rem;   
+                font-size: 1.8rem;   
     background: linear-gradient(140deg,#a3de8a 0%,#a9c38b 40%, #c1c1c1 95%,#e3e3e3 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -222,6 +222,7 @@
         gap: 8px;
         align-items: center;
         font-size: 1.4rem;
+        white-space: nowrap;
         color: $gray-default-light;
         margin-bottom: 8px*0.5;
         margin-top: 8px*1;
@@ -255,9 +256,10 @@
 
     }
     .onboarding-message{
-        
-        color: $gray3-default-dark;
-        margin-bottom: 8px*4;
+        max-width: 18rem;
+        font-size: 0.9rem;
+        color: $gray2-default-dark;
+        margin-bottom: 8px*1;
     }
 }
 .activate-fotoflow-whatsapp{
@@ -1029,6 +1031,7 @@
 @media only screen and (max-width: 520px) {
     .App .onboarding-container{
         padding-left: 8px*3;
+        padding-right: 8px*3;
         height: 100dvh;
         .logo{
             position: relative;
@@ -1037,9 +1040,17 @@
         }
         .screen{
             width: 100% !important;
+            .create-studio-button{
+                width: 100%;
+            }
+            .url-prefix{
+                display: none;
+            }
             .studio-domain-selector{
 
                 display: grid;
+
+                width: 100%;
                 .input-reaction{
                     margin-left: 8px*5;
                 }
@@ -1047,17 +1058,20 @@
             span.suggestions{
                 width: calc(100vw - 8px*12);
                 flex-wrap: wrap;
-                left: -8px*14;
+                left: -8px*0;
                 top: 8px*8;
             }
             .form-group{
 
                 input{
-                    width: calc(100vw - 8px*8);
+                    width: calc(100vw - 8px*4);
                     font-size: 3rem;
+                    &:focus{
+                        margin-left: -8px*2;
+                    }
 
                 &.sub-domain-input{
-                    width: calc(100vw - 8px*26);
+                    width: calc(100vw - 8px*14);
                     font-size: 1rem;
                 }
                 }
@@ -1080,9 +1094,22 @@
         .logged-user .logged-user-info {
             display: none;
         }
-        .user-authentication .onboarding-message{
-            max-width: calc(100vw - 8px*3);
-        }
+        .user-authentication{
+            .onboarding-greeting{
+                span{
+                    &.timeGreeting{
+
+                        display: grid;
+                        font-weight: 600;
+                        color: #aeaeae;
+                        margin-left: 0px;
+                    }
+                }
+            }
+            .onboarding-message{
+                max-width: calc(100vw - 8px*3);
+            }
+        } 
         .privacy-policy-statment label{
             display: flex;
             flex-wrap: wrap;
