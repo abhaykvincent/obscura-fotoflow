@@ -96,7 +96,7 @@ const handleSuggestedNameChange = (event) => {
   const isValid = validateForm(data); // validate passed data
   if (!isValid) return;
 
-  dispatch(showLoading(`Adding ${CollectionData.name} to ${project.name}..`)); // Dispatch showLoading
+  dispatch(showLoading({context:`Adding ${CollectionData.name} to ${project.name}..`, subcontext:``})); // Dispatch showLoading
   const domain = defaultStudio.domain;
   onClose();
 

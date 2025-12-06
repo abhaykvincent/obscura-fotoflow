@@ -28,7 +28,7 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateStudioForm() && validateAllSetForm()) {
-            dispatch(showLoading('Creating your studio...'));
+            dispatch(showLoading({context:'Creating your studio...', subcontext:''}));
             onNext();
         }
     };

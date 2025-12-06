@@ -18,7 +18,7 @@ const WelcomeModal = () => {
 
   const handleClose = async (openCreateProject = false) => {
 
-        dispatch(showLoading('Preparing your first project...'));
+        dispatch(showLoading({context:'Preparing your first project...', subcontext:''}));
     if (user && user.email) {
         try {
             await updateUser(user.email, { hasSeenWelcomeModal: true });
