@@ -11,6 +11,7 @@ function Subscription() {
   const [plans, setPlans] = useState(initialPlans);
   const defaultStudio = useSelector(selectUserStudio);
   const [billingCycle, setBillingCycle] = useState('monthly');
+  const [showPaidFeatures, setShowPaidFeatures] = useState(false);
 
   const handleStorageChange = (planName, newDefaultPlan) => {
     const updatedPlans = plans.map(plan => 
@@ -66,6 +67,8 @@ function Subscription() {
               defaultStorage={plan.defaultStorage} 
               onStorageChange={handleStorageChange}
               billingCycle={billingCycle}
+              showPaidFeatures={showPaidFeatures}
+              setShowPaidFeatures={setShowPaidFeatures}
             />
           ))}
         </div>

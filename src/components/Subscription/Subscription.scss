@@ -243,7 +243,7 @@ span.iconic-gradient{
             grid-template-columns: 8px*12 auto 8px*12;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px*2;
+            margin-bottom: 8px*6;
             margin-top: -8px*1;
             padding: 8px*0 8px*2;
             .subscriptions-heading{
@@ -414,6 +414,8 @@ span.iconic-gradient{
                 h1{
                     font-size: 1.5rem;
                     opacity: 0;
+                        margin-bottom: 8px*2;
+
                     transform: translateX(8px*3);
                     animation-name: green-storage-text-upsell;
                     animation-duration: 0.1s;
@@ -749,12 +751,14 @@ span.iconic-gradient{
             z-index: 10;
             position: relative;
 
+    margin-top: -8px;
             .plan-name{
                 position: relative;
                 text-align: center;
                 z-index: 2;
                 color: $green-accessible-dark;
                 font-weight: 700;
+                margin-top: 8px;
             }
             .cover{
                 
@@ -778,6 +782,9 @@ span.iconic-gradient{
                     &::after{
                         content: "";
                     }
+            }
+            .plan-features p{
+                color: $gray3-default-light;
             }
             .button.primary {
                 background: linear-gradient(135deg, #54a134 0%, #3e7a25 100%);

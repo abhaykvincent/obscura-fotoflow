@@ -7,10 +7,23 @@ import { changeSubscriptionPlan } from '../../firebase/functions/subscription';
 import { getDaysFromNow } from '../../utils/dateUtils';
 import RazorpayButton from './RazorpayButton';
 
-export default function PlanCard({plan, defaultPlan, defaultStorage, onStorageChange, billingCycle }) {
+export default function PlanCard({plan, defaultPlan, defaultStorage, onStorageChange, billingCycle, showPaidFeatures, setShowPaidFeatures }) {
   const defaultStudio = useSelector(selectUserStudio);
   const studio = useSelector(selectStudio);
-  const [showAllFeatures, setShowAllFeatures] = useState(false);
+  const [localShowAllFeatures, setLocalShowAllFeatures] = useState(false);
+
+  const isPaidPlan = ['freelancer', 'studio'].includes(plan.name.toLowerCase());
+  const shouldUseShared = isPaidPlan && showPaidFeatures !== undefined && setShowPaidFeatures !== undefined;
+
+  const showAllFeatures = shouldUseShared ? showPaidFeatures : localShowAllFeatures;
+
+  const toggleFeatures = () => {
+    if (shouldUseShared) {
+      setShowPaidFeatures(!showPaidFeatures);
+    } else {
+      setLocalShowAllFeatures(!localShowAllFeatures);
+    }
+  };
 
   let selectedStorage = plan.pricing[defaultPlan]?.storage;
   const currentPricing = plan.pricing.find(p => p.storage === selectedStorage) || plan.pricing[0];
@@ -56,7 +69,7 @@ export default function PlanCard({plan, defaultPlan, defaultStorage, onStorageCh
   const priceWas = billingCycle === 'monthly' ? currentPricing?.monthlyPriceWas : '';
   const unit = price === 'Free' || price === 'Custom' ? '' : (billingCycle === 'monthly' ? '/mo' : '/yr');
 
-  const visibleFeatures = showAllFeatures ? plan.features : plan.features.slice(0, 2);
+  const visibleFeatures = showAllFeatures ? plan.features : plan.features.slice(0, 3);
 
   return (
     <div className={`plan ${plan.name.toLowerCase()} ${isActive ? 'active' : ''}`}>
@@ -93,12 +106,12 @@ export default function PlanCard({plan, defaultPlan, defaultStorage, onStorageCh
             
           showAllFeatures ?
               <div  className="see-more-features icon icon-only arrow-up" 
-              onClick={() => setShowAllFeatures(!showAllFeatures)}
+              onClick={toggleFeatures}
             > Show less </div>
               :
               <div 
               className="see-more-features icon icon-only arrow" 
-              onClick={() => setShowAllFeatures(!showAllFeatures)}
+              onClick={toggleFeatures}
             >
               See full features
             </div>
@@ -108,9 +121,16 @@ export default function PlanCard({plan, defaultPlan, defaultStorage, onStorageCh
       </div>
       
       { 
-        <div className={`validity ${plan.expiry && plan.expiry !== 'Forever' ? '' : 'hide'}`}>
-          <p className='label'>Free plan will expries on</p>
-          <p>{plan.expiry}</p>
+        <div className={`validity `}>
+          <p className='label'>
+
+            {plan.name==="Free" ? ''
+                :
+                plan.name==="Freelancer" ? " Everything on Core free plan":
+                plan.name==="Studio" ? " Everything on Freelancer plan":
+                "+ Everything on Studio plan"
+            }
+          </p>
         </div>
       }
       <p className='waitlist-label'>{
