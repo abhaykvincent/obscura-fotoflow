@@ -334,6 +334,22 @@ span.iconic-gradient{
                 color: $green-dark-accessible-light;
             }
         }
+        
+        .badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: $green-default-light;
+            color: $dark-2;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-bottom-left-radius: 8px;
+            border-top-right-radius: 8px;
+            z-index: 10;
+            box-shadow: -1px 1px 4px rgba(0,0,0,0.3);
+        }
+
         .plan-name{
             font-size: 1.4rem;
             color: $gray5-accessible-light;
@@ -480,6 +496,16 @@ span.iconic-gradient{
                     color: $gray5-accessible-light;
                 }
             }
+            .see-more-features {
+                color: $green-default-light;
+                font-size: 0.8rem;
+                cursor: pointer;
+                margin-top: 8px;
+                text-decoration: underline;
+                &:hover {
+                    color: $green-accessible-light;
+                }
+            }
         }
         .core-features{
             margin-bottom: 8px*2;
@@ -601,7 +627,7 @@ span.iconic-gradient{
                 box-shadow: 1px 2px 1px 1px #000000,1px -1px 16px 2px #537f2835;
             }
         }
-        &.company{
+        &.enterprise{
             background-color: $dark-3;
             overflow: hidden;
             opacity: 1;
@@ -746,7 +772,7 @@ span.iconic-gradient{
                     }
             }
         }
-        &.core{
+        &.free{
             opacity: 0.8;
             .plan-name{
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { formatStorage } from '../../utils/stringUtils';
 import { selectUserStudio } from '../../app/slices/authSlice';
@@ -10,14 +10,29 @@ import RazorpayButton from './RazorpayButton';
 export default function PlanCard({plan, defaultPlan, defaultStorage, onStorageChange, billingCycle }) {
   const defaultStudio = useSelector(selectUserStudio);
   const studio = useSelector(selectStudio);
+  const [showAllFeatures, setShowAllFeatures] = useState(false);
 
-  let selectedStorage = plan.pricing[plan.defaultPlan].storage;
-  const currentPricing = plan.pricing.find(p => p.storage === selectedStorage);
+  let selectedStorage = plan.pricing[defaultPlan]?.storage;
+  const currentPricing = plan.pricing.find(p => p.storage === selectedStorage) || plan.pricing[0];
+
+  const isCurrentPlan = () => {
+    if (!studio?.subscriptionId) return false;
+    const lowerName = plan.name.toLowerCase();
+    if (studio.subscriptionId.includes(lowerName)) return true;
+    if (lowerName === 'free' && studio.subscriptionId.includes('core')) return true;
+    if (lowerName === 'enterprise' && studio.subscriptionId.includes('company')) return true;
+    return false;
+  };
+
+  const isActive = isCurrentPlan();
 
   const handlePlanChange = async () => {
     if (!plan.isWaitlist && !plan.isAddStorage && !plan.isContactSales) {
       try {
-        await changeSubscriptionPlan(defaultStudio.domain,  plan.name.toLowerCase());
+        let planId = plan.name.toLowerCase();
+        if (planId === 'free') planId = 'core'; 
+        
+        await changeSubscriptionPlan(defaultStudio.domain, planId);
         console.log('Subscription changed successfully');
         window.location.reload();
       } catch (error) {
@@ -39,10 +54,13 @@ export default function PlanCard({plan, defaultPlan, defaultStorage, onStorageCh
   if (price === '₹0') price = 'Free';
 
   const priceWas = billingCycle === 'monthly' ? currentPricing?.monthlyPriceWas : '';
-  const unit = price === 'Free' ? '*' : (billingCycle === 'monthly' ? '/mo' : '/yr');
+  const unit = price === 'Free' || price === 'Custom' ? '' : (billingCycle === 'monthly' ? '/mo' : '/yr');
+
+  const visibleFeatures = showAllFeatures ? plan.features : plan.features.slice(0, 2);
 
   return (
-    <div className={`plan ${plan.name.toLowerCase()} ${studio?.subscriptionId?.includes(plan.name.toLowerCase())  ? 'active' : ''}`}>
+    <div className={`plan ${plan.name.toLowerCase()} ${isActive ? 'active' : ''}`}>
+       {plan.extraFeatures?.badge && <div className="badge">{plan.extraFeatures.badge}</div>}
       <h3 className="plan-name">{plan.name}</h3>
       
       <div className="cover"></div>
@@ -52,7 +70,7 @@ export default function PlanCard({plan, defaultPlan, defaultStorage, onStorageCh
           ? 'green'
           : 'white'}`
       }>
-        {formatStorage(plan.pricing[defaultPlan].storage,"GB")} 
+        {typeof plan.pricing[defaultPlan].storage === 'number' ? formatStorage(plan.pricing[defaultPlan].storage,"GB") : plan.pricing[defaultPlan].storage} 
       </p>
       <div className={`plan-pricing amount ${billingCycle}`}>
         <h1>
@@ -62,41 +80,55 @@ export default function PlanCard({plan, defaultPlan, defaultStorage, onStorageCh
         <div className="unit">{unit}</div>
       </div >
       <div className="plan-pricing yearly">
-        <div className="first-month contract-period">{currentPricing?.specialOffer[0]}</div>
-        <div className="first-month iconic">{currentPricing?.specialOffer[1]}</div>
-        <div className="first-month">{currentPricing?.specialOffer[2]}</div>
+        {currentPricing?.specialOffer && currentPricing.specialOffer.map((offer, index) => (
+             <div key={index} className={`first-month ${index === 0 ? 'contract-period' : index === 1 ? 'iconic' : ''}`}>{offer}</div>
+        ))}
+      </div>
+
+      <div className="plan-features">
+          {visibleFeatures && visibleFeatures.map((feature, index) => (
+              <p key={index}>{feature}</p>
+          ))}
+          {plan.features && plan.features.length > 2 && (
+            <div 
+              className="see-more-features" 
+              onClick={() => setShowAllFeatures(!showAllFeatures)}
+            >
+              {showAllFeatures ? 'Show less' : 'See full features'}
+            </div>
+          )}
       </div>
       
       { 
-        <div className={`validity ${plan.expiry ? '' : 'hide'}`}>
+        <div className={`validity ${plan.expiry && plan.expiry !== 'Forever' ? '' : 'hide'}`}>
           <p className='label'>Free plan will expries on</p>
           <p>{plan.expiry}</p>
         </div>
       }
       <p className='waitlist-label'>{
-        studio?.subscriptionId?.includes(plan.name.toLowerCase()) ? 
+        isActive ? 
         <span className="expiry-label">{`Trial ends in ${ getDaysFromNow(studio?.trialEndDate)} days`}</span> :
-        plan.name.toLowerCase() !== 'core' && <span className="expiry-label">{`Pay later in ${ getDaysFromNow(studio?.trialEndDate)} days`}</span>}
+        plan.name.toLowerCase() !== 'free' && plan.name.toLowerCase() !== 'core' && <span className="expiry-label">{`Pay later in ${ getDaysFromNow(studio?.trialEndDate)} days`}</span>}
       </p>
-      {studio?.subscriptionId?.includes(plan.name.toLowerCase()) && <div className="current-plan button primary outline">Current Plan</div>}
-      { !studio?.subscriptionId?.includes(plan.name.toLowerCase()) && 
+      {isActive && <div className="current-plan button primary outline">Current Plan</div>}
+      { !isActive && 
         <div 
           className={`button ${plan.isWaitlist || plan.isAddStorage ? ' primary outline' : plan.isContactSales ? 'primary outline' : 'primary outline'}`}
           onClick={handlePlanChange}
         >
           {getButtonText()}
         </div>}
-      { studio?.subscriptionId?.includes(plan.name.toLowerCase()) &&
+      { isActive &&
         (plan.name === "Studio" ?
         <RazorpayButton payment_button_id='pl_PmVGqJ2gzI0OLI' planame={plan.name}/>
         : plan.name === "Freelancer" ?
           <RazorpayButton payment_button_id='pl_Pmcdje8Dbj3cYR'  planame={plan.name}/>
           :
-          plan.name === "Company" ?
+          plan.name === "Enterprise" ?
             <RazorpayButton payment_button_id='pl_PmcfmE5GTfrnNY'  planame={plan.name}/>
             : <></>)
       }
-      <p className='waitlist-label'>{plan.name==='Core' ? ' ' : plan.isContactSales ? 'Talk to a sales. Book Demo' : ' Pay with UPI . Lock the price.'}</p>
+      <p className='waitlist-label'>{plan.name==='Free' || plan.name==='Core' ? ' ' : plan.isContactSales ? 'Talk to a sales. Book Demo' : ' Pay with UPI . Lock the price.'}</p>
     </div>
   )
 }
