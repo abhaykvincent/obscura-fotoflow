@@ -75,7 +75,7 @@ function AddUserModal() {
       return;
     }
 
-    dispatch(showLoading(`Checking for existing users...`));
+    dispatch(showLoading({context:`Checking for existing users...`, subcontext:''}));
     const { matchingUsers, matchingLeads } = await findMatchingUsersOrLeads(userData.email, userData.phone);
     setMatchingUsers(matchingUsers);
     setMatchingLeads(matchingLeads);
@@ -86,7 +86,7 @@ function AddUserModal() {
       return;
     }
 
-    dispatch(showLoading(`Creating user ${userData.displayName}...`));
+    dispatch(showLoading({context:`Creating user ${userData.displayName}...`, subcontext:''}));
     onClose();
 
     await new Promise(resolve => setTimeout(resolve, 500)); // Wait for animation
