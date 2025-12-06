@@ -336,10 +336,9 @@ function AdminPanel() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {userViewType === 'users'
-                                        ? filteredUsersList.map(user => (
-                                            <tr key={user.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', user))}>
-                                                <td>{user.displayName}</td>
+                                                                         {userViewType === 'users'
+                                                                            ? filteredUsersList.map(user => (
+                                                                                <tr key={user.id} className="clickable-row" onClick={() => navigate(`/admin/user/${user.id}`)}>                                                <td>{user.displayName}</td>
                                                 <td>{user.email}</td>
                                                 <td>{user.studio.name}</td>
                                                 <td>{user.studio.roles[0]}</td>
@@ -348,9 +347,8 @@ function AdminPanel() {
                                                 </td>
                                             </tr>
                                         ))
-                                        : filteredLeadsForUsersTab.map(lead => (
-                                            <tr key={lead.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', lead))}>
-                                                <td>{lead.name}</td>
+                                                                                 : filteredLeadsForUsersTab.map(lead => (
+                                                                                    <tr key={lead.id} className="clickable-row" onClick={() => navigate(`/admin/user/${lead.id}`)}>                                                <td>{lead.name}</td>
                                                 <td>{lead.email}</td>
                                                 <td>{lead.studio ? lead.studio.name : 'N/A'}</td>
                                                 <td>Lead</td>

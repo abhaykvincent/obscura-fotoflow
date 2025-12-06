@@ -100,11 +100,11 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
           className={`advanced-toggle ${showAdvanced ? 'down' : 'up'}`}
           onClick={() => setShowAdvanced(!showAdvanced)}
         >
-          <span>{showAdvanced ? 'Hide Options' : 'Advanced'}</span>
+          <span>{showAdvanced ? 'Hide' : 'Advanced'}</span>
           <span className={`arrow`}></span>
 
         </div>
-        <div className="advanced-label">Validity 1 yr</div>
+        <div className="advanced-label">Validity {projectData.projectValidityMonths} { projectData.projectValidityMonths > 1 ? `years`:`year`}</div>
       </div>
       <div className={`advanced-options ${showAdvanced ? 'show' : ''}`}>
         <div className="advanced-options-inner">
@@ -128,7 +128,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
                 ))}
               </div>
               <div className="info">
-                Files will be deleted after <span> <b className={animateValidity ? 'validity-change-animation' : ''}>{projectData.projectValidityMonths} years</b>.</span>
+                Files will be deleted after <span> <b className={animateValidity ? 'validity-change-animation' : ''}>{projectData.projectValidityMonths} { projectData.projectValidityMonths > 1 ? `years`:`year`}</b>.</span>
               </div>
             </div>
           </div>

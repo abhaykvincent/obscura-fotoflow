@@ -6,11 +6,11 @@ export const welcomeScreens = [
     body: (
       <>
         <p>
-            <span className='mid-highlight'>Photography Workflow, Unlocked</span>. <br/>
+            <span className='mid-highlight'>Streamline Event photography Workflow</span>. <br/>
         </p>
         <div className="visual-placeholder welcome"></div>
         <p>
-            <span className='highlight'> Let's walk you through the basics. </span> 🚀
+            <span className='highlight'> Let's walk you through core features. </span> 🚀
         </p>
       </>
     ),
@@ -23,7 +23,7 @@ export const welcomeScreens = [
             A clear structure means <span className='highlight'>less searching, more creating.</span>
             
         </p>
-        <div className="visual-placeholder organize-galleries"></div>
+        <div className="visual-placeholder organize-projects"></div>
         <p>
           Keep your work tidy. <span className='mid-highlight'>Projects</span> are your main events, and within them, <span className='highlight'>Galleries</span> help you sort by client, event, or theme.
         </p>
@@ -55,7 +55,7 @@ export const welcomeScreens = [
         </p>
         <div className="visual-placeholder create-project"></div>
         <p>
-            <span className='highlight'> Let's get started. </span> 🎉
+            🎉 <span className='highlight'> Let's get started. </span> 
         </p>
       </>
     ),

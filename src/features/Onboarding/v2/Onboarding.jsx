@@ -122,10 +122,9 @@ function Onboarding() {
                             <span className='iconic-gradient-white'>{invitation.name}</span>
                         </p>
                         {invitation?.studioName ? 
-                            <p className='onboarding-invitation-message'> {`Private beta unlocked for `} <span className="iconic-gradient-green">{invitation?.studioName}</span> <div className="icon-unlock"></div> </p>:
+                            <p className='onboarding-invitation-message'> {`Private Beta --`} <span className="iconic-gradient-green">{invitation?.studioName}</span> <div className="icon-unlock"></div> </p>:
                             <p className='onboarding-invitation-message'> You are invited to join private beta.</p>
                         }   
-                        <p className='onboarding-message'> Streamline photography workflow <br/>Deliver photo gallery <br/>& Collaborate with clients.</p>
                     </>
                 )}
 
@@ -158,9 +157,15 @@ function Onboarding() {
                         >Logout</div>
                     </div>
                 :
-                !isDisabled && <div className={`button google-login-button ${isDisabled ? 'disabled' : ''}`} onClick={() => !isDisabled && handleGoogleSignIn()}>
-                    Continue with Google <div className="google-logo"></div>
-                </div>
+                !isDisabled && 
+                <>
+
+                    <div className={`button google-login-button ${isDisabled ? 'disabled' : ''}`} onClick={() => !isDisabled && handleGoogleSignIn()}>
+                        Continue with Google <div className="google-logo"></div>
+                    </div>
+                     <p className='onboarding-message'> Start Streamline your wedding photography workflow.</p>
+                
+                </>
                 }
             </div>
             {!invitation && (

@@ -384,6 +384,7 @@ animation-timing-function: ease-out;
           border-left: 1px solid $green-accessible-light;
           border-top: 1px solid $green-accessible-light;
           background-color: $dark-3;
+            margin-top: 4px;
           }
           // hide radio buttons
           input[type="radio"] {
@@ -436,6 +437,8 @@ animation-timing-function: ease-out;
       
     }
     .project-validity-wrap{
+
+      margin-left: 8px;
       label{
         margin:0;
       }
@@ -445,7 +448,8 @@ animation-timing-function: ease-out;
       gap:8px*2;
       .project-validity-options{
         .radio-button-group{
-        margin: 8px*0.5;
+        margin: 8px*0.5  ;
+margin-top: 0!important;
         margin-left: 0px;
               border: 1px solid $dark-0;
               border-radius: 6px;
@@ -743,27 +747,41 @@ animation-timing-function: ease-out;
         } 
         .logo-container{
         display: grid;
-        justify-content: end;
+        justify-content: center;
         }
         &.google{
         background: linear-gradient(345deg, black 30%,#1b25133c 85%, #27352270 100%);
         box-shadow:
-         2px 4px 4px rgba(0, 0, 0, 0.8),
-         inset 2px 2px 2px #20151f9d,
-         inset 4px 4px 8px #3a493542;
-padding-top: 11px;
-        border-top: 1px solid #5b884eec;
-        border-left: 1px solid #629254db;
-        border-right: 1px solid #32422eec;
+         2px 4px 4px rgba(0, 0, 0, 0.1);
+        padding-top: 11px;
+        border-top: 1px solid #212c1eec;
+        border-left: 1px solid #212c1eec;
+        border-right: 1px solid #49723fec;
         border-bottom: 1px solid #212c1eec;
         opacity: 0;
-        animation: fadeInUp 0.35s ease-in 1s;
+        animation: primary-action-signin  0.35s ease-in 1s;
         animation-fill-mode: forwards;
         text-shadow: 1px 1px 3px black;
         &:hover{
         border: 1px solid $gray6-accessible-light;
         } 
-
+        @keyframes primary-action-signin {
+            0% {
+              opacity: 0;
+              transform: translateY(2px);
+              box-shadow:
+                
+                  2px 4px 4px rgba(0, 0, 0, 0.1);  
+            }
+            100% {
+              opacity: 1;
+              transform: translateY(0);
+              box-shadow:
+              2px 4px 4px rgba(0, 0, 0, 0.8),
+              inset 2px 2px 2px #20151f9d,
+              inset 4px 4px 8px #3a493542;
+            }
+          }
         }
         &.apple{
         color: $gray3-default-dark;
@@ -887,7 +905,7 @@ p.open-with-login-label{
   .project-details{
     .field{
 
-      grid-template-columns: 8px*10 8px*36;
+      grid-template-columns: 8px*14 8px*36;
     }
   }
 }
@@ -1241,6 +1259,19 @@ transition-delay: 0.2s;
             margin-left: 8px;
             margin-bottom: 4px;
           }
+          .advanced-label{
+            text-align: left;
+            margin-top: 0;
+          }
+          &.live-field{
+            display: flex;
+            flex-flow: row-reverse;
+            justify-content: space-between;
+            margin-bottom: -8px;
+            z-index: 1;
+
+
+          }
           .radio-button-group{
             label{
               text-align: left;
@@ -1256,7 +1287,7 @@ transition-delay: 0.2s;
           }
         }
         .project-validity-options{
-          margin-top: 8px*2;
+          margin-top: 8px*1;
           &.template-options{
             display: grid;
             grid-template-columns: 1fr ;
