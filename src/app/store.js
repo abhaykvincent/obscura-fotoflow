@@ -17,6 +17,8 @@ import galleryReducer from './slices/gallerySlice';
 import onboardingReducer from '../features/Onboarding/v2/slices/onboardingSlice';
 import loadingReducer from './slices/loadingSlice';
 import adminSettingsReducer from './slices/adminSettingsSlice';
+import usersReducer from './slices/usersSlice';
+import userProfileReducer from './slices/userProfileSlice';
 
 export const store = configureStore({
   reducer: {
@@ -38,5 +40,7 @@ export const store = configureStore({
     onboarding: onboardingReducer,
     loading: loadingReducer,
     adminSettings: adminSettingsReducer,
+    users: usersReducer,
+    userProfile: userProfileReducer,
   },
 });

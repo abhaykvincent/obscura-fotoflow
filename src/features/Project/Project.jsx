@@ -29,6 +29,7 @@ import SidePanel from '../../components/Project/SidePanel/SidePanel'
 import './Project.scss';
 import { ProjectPageCoverImages } from '../../components/ProjectPageCover/ProjectPageCoverImages';
 import { isDeveloper, isProduction } from '../../analytics/utils';
+import { selectStudio } from '../../app/slices/studioSlice';
 
 export default function Project() {
   const { id } = useParams();
@@ -41,7 +42,7 @@ export default function Project() {
   const modals = useSelector(selectModal);
   const modalsRef = useRef(modals);
   const projectsStatus = useSelector(selectProjectsStatus);
-
+  const studio = useSelector(selectStudio);
   const [project, setProject] = useState(null);
   const [pinText, setPinText] = useState('');
   const [pinIconClass, setPinIconClass] = useState('hide');
@@ -55,6 +56,14 @@ export default function Project() {
   useEffect(() => {
     modalsRef.current = modals;
   }, [modals]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+        dispatch(openModal('createCollection'));
+      }, 300); // Using 500ms for a noticeable yet quick delay
+
+      // Cleanup the timeout if the component unmounts or dependencies change
+      return () => clearTimeout(timer);
+  }, [project]);
 
   useEffect(() => {
     if (projectsStatus === 'succeeded' && !selectedProject) {
@@ -101,8 +110,12 @@ export default function Project() {
 
   
 
-  const handleDeleteProject = () => 
-    dispatch(deleteProject({ domain, projectId: id }));
+  const handleDeleteProject = () => {
+    const bucketUrl= studio.bucketUrl
+    console.log(bucketUrl)
+    debugger
+    dispatch(deleteProject({ domain,bucketUrl, projectId: id }));
+  }
 
   if (!project) return null;
 

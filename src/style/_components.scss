@@ -160,7 +160,9 @@
         padding: 8px*1 8px*2.5;
         font-size: 1rem;
     }
-    &.icon{
+
+}
+.icon{
         &.icon-only{
             padding: 2px 8px;
             background-color: transparent;
@@ -182,7 +184,7 @@
             width: 8px*3;
             height: 100%;
             padding: 2px 8px;
-            color: transparent;
+            color: rgba(255, 255, 255, 0);
             text-decoration: none;
             background-size: 100%;
             background-position: center;
@@ -413,6 +415,34 @@
             background-position:  center;
             background-image: url('https://img.icons8.com/?size=100&id=CoWjc6xXzIS8&format=png&color=FFFFFF');
         }
+        &.filter::before{
+            margin-right: 4px;
+            margin-left:-6px;
+            background-size: 80%;
+            background-position:  center;
+            background-image: url('https://img.icons8.com/?size=100&id=21637&format=png&color=FFFFFF');
+        }
+        &.leads::before{
+            margin-right: 4px;
+            margin-left:-6px;
+            background-size: 100%;
+            background-position:  center;
+            background-image: url('https://img.icons8.com/?size=100&id=NsSZTVqoT8ie&format=png&color=FFFFFF');
+        }
+        &.active-users::before{
+            margin-right: 4px;
+            margin-left:-6px;
+            background-size: 100%;
+            background-position:  center;
+            background-image: url('https://img.icons8.com/?size=100&id=15802&format=png&color=54a134');
+        }
+        &.campaign::before{
+            margin-right: 6px;
+            margin-left:-6px;
+            background-size: 95%;
+            background-position:  center;
+            background-image: url('https://img.icons8.com/?size=100&id=11149&format=png&color=FFFFFF');
+        }
         &.selected::before{
             margin-right: 0px;
             margin-left:-6px;
@@ -468,7 +498,7 @@
             background-size: 90%;
             background-position: center center;
             background-image: url('https://img.icons8.com/?size=100&id=114054&format=png&color=228BE6');
-            
+        
         }
         &.share::before{
             margin-right: 6px;
@@ -519,6 +549,38 @@
             background-position: center center;
             background-image: url('https://img.icons8.com/?size=100&id=vu5kHwGC4PNb&format=png&color=FFFFFF');
         }
+        }
+    }
+.App .pill{
+    display: inline-block;
+    padding: 8px 8px*1.8;
+    padding-bottom: 8px*1;
+    border-radius: 8px*2;
+    font-size: 0.95rem;
+    line-height: 1.1rem;
+	letter-spacing: 0.5px;
+    white-space: nowrap;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+    box-shadow: inset -1px -1px 0px rgba(166, 255, 0, 0.05),inset 1px 1px 1px rgba(0, 0, 0, 0.2), 2px 2px 2px  rgba(0, 0, 0, 0.2);
+    background-color: rgba(119, 119, 119, 0.226);
+    margin: 4px 0px;
+    font-weight: 600;
+    opacity: 0.9;
+    text-align: center;
+    transition-timing-function: ease-in;
+    cursor: pointer;
+    transition-duration: 0.1s;
+    transform:  scale(1);
+    &.secondary{
+        border: 1px solid $gray2-default-dark;
+        background-color: rgba(119, 119, 119, 0.30);
+        &.idle{
+            border: 1px solid $gray5-default-dark;
+            background-color: rgba(119, 119, 119, 0.01);
+            &:hover{
+                border: 1px solid $gray3-default-dark;
+                background-color: rgba(119, 119, 119, 0.2);
+            }
         }
     }
 }

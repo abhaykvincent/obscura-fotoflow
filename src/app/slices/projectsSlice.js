@@ -122,8 +122,8 @@ export const updateCollectionSelectionStatus = createAsyncThunk(
 
 export const deleteProject = createAsyncThunk(
   'projects/deleteProject',
-  ({domain,projectId}) => { 
-    deleteProjectFromFirestore(domain, projectId);
+  ({domain,bucketUrl,projectId}) => { 
+    deleteProjectFromFirestore(domain,bucketUrl, projectId);
     return projectId;
   }
 );

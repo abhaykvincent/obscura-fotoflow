@@ -57,7 +57,7 @@
   
    
     // Invoice Historyf
-    .invoice-history {
+    .invoice-history,.users-tab-window {
       margin-bottom: 18px*2;
       .section-title {
         font-size: 20px;
@@ -93,6 +93,13 @@
         background: $dark-2;
         border: 1px solid $gray3-default-dark;;
         border-radius: 8px;
+        thead tr th{
+          color: $gray2-default-dark;
+          background-color:rgba(0, 0, 0, 0.2);
+          padding: 8px 8px*2;
+          text-shadow: 1px 1px 2px black;
+          box-shadow: inset 0px -2px 1px rgba(0, 0, 0, 0.406);
+        }
         .clickable-row{
           cursor: pointer;
           &:hover {
@@ -178,7 +185,32 @@
           text-align: right;
         }
       }
-  
+      .plan-name-label{
+        margin-right: 4px;
+      }
+      .paid-status{
+        margin-left: 8px*0.5;
+        font-size: 0.8rem;
+        padding: 1px 4px;
+        color: $gray3-default-dark;
+        border-radius: 8px*2;
+        border: 1px solid $gray3-default-dark;
+        &.paid{
+          padding: 1px 8px;
+          border: 1px solid $green-dark-accessible-light;
+          color: $green-default-dark;
+          &.pending{
+            opacity: 0.5;
+            color: #1d571f;
+          } 
+        }
+        &.trial{
+          padding: 1px 8px;
+          border: 1px solid #707b3a;
+          color: #a5a338;
+        }
+
+      }
       .summary {
         margin-top: 15px;
         padding: 10px;

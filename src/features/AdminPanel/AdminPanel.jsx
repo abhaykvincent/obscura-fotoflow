@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { fetchAllReferalsFromFirestore, fetchUsers, migrateCollectionsByStudio } from '../../firebase/functions/firestore';
+import { fetchAllReferalsFromFirestore, fetchUsers, migrateCollectionsByStudio, fetchLeads } from '../../firebase/functions/firestore';
 import './AdminPanel.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../app/slices/modalSlice';
 import AddReferralModal from '../../admin/Modal/AddReferral';
+import AddUserModal from '../../admin/Modal/AddUser/AddUser.jsx';
 import ViewDetailsDrawer from '../../admin/Modal/ViewDetailsDrawer';
 import { fetchReferrals, generateReferral, selectReferrals } from '../../app/slices/referralsSlice';
 import { useNavigate, useParams } from 'react-router';
@@ -12,6 +13,7 @@ import { fetchStudios } from '../../firebase/functions/studios';
 import { migrateStudios } from '../../firebase/functions/subscription';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 import { showAlert } from '../../app/slices/alertSlice';
+import AdminControls from './AdminControls'; // Import AdminControls
 
 function AdminPanel() {
     const dispatch = useDispatch();
@@ -30,6 +32,9 @@ function AdminPanel() {
         return 'users'; // Default tab if neither URL nor localStorage has a value
     });
 
+    // State for selected role
+    const [selectedRole, setSelectedRole] = useState('admin'); // Default role
+
     // Effect to update URL if initial tab came from localStorage or default
     useEffect(() => {
         if (!page && selectedTab) { // If no page in URL, but we have a selectedTab
@@ -45,11 +50,32 @@ function AdminPanel() {
     const [studios, setStudios] = useState([]);
     const [users, setUsers] = useState([]);
     const [referallsList, setReferallsList] = useState([])
+    const [leads, setLeads] = useState([]); // New state for leads
     const [expandedStudioId, setExpandedStudioId] = useState(null); // State for expanded studio row
+    const [searchQuery, setSearchQuery] = useState(''); // State for search query
+    const [referralSearchQuery, setReferralSearchQuery] = useState(''); // State for referral search query
+    const [studioSearchQuery, setStudioSearchQuery] = useState(''); // State for studio search query
+    const [leadSearchQuery, setLeadSearchQuery] = useState(''); // State for lead search query
+    const [userViewType, setUserViewType] = useState('users'); // 'users' or 'leads'
+
 
     const handleRowClick = (studioId) => {
         setExpandedStudioId(expandedStudioId === studioId ? null : studioId);
     };
+    const isTrialActive = (trialEndDateString) => {
+    // Split the DD-MM-YYYY string
+    const [year, month, day] = trialEndDateString.split('-');
+        console.log(trialEndDateString)
+
+    // Create a Date object in YYYY-MM-DD format (Note: Month in JS Date is 0-indexed)
+    // We use the greater-than-today logic, so setting the time to end of the day (23:59:59)
+    // for the trial end date ensures trials expiring today are still considered active for the whole day.
+    const trialDate = new Date(`${year}-${month}-${day}T23:59:59`);
+    const today = new Date();
+        console.log(trialDate > today)
+    // Check if the trial end date is greater than the current date
+    return trialDate > today;
+};
     useEffect(()=>{
         console.log(domain)
     },[domain])
@@ -81,11 +107,50 @@ function AdminPanel() {
                 console.error('Error fetching referrals:', error);
             }
         };
+        const getLeads = async () => {
+            try {
+                let serverLeads = await fetchLeads();
+                console.log("Server leads:", serverLeads);
+                setLeads(serverLeads);
+            } catch (error) {
+                console.error('Error fetching leads:', error);
+            }
+        };
 
         getUsers();
         getReferrals();
         getStudios();
+        getLeads();
     }, []);
+
+    const filteredUsersList = users.filter(user =>
+        user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (user.studio && user.studio.name ? user.studio.name.toLowerCase().includes(searchQuery.toLowerCase()) : false)
+    );
+
+    const filteredReferrals = referallsList.filter(referral =>
+        referral?.name.toLowerCase().includes(referralSearchQuery.toLowerCase()) ||
+        referral?.email.toLowerCase().includes(referralSearchQuery.toLowerCase()) ||
+        referral?.code[0].toLowerCase().includes(referralSearchQuery.toLowerCase())
+    );
+
+    const filteredStudios = studios.filter(studio =>
+        studio.name.toLowerCase().includes(studioSearchQuery.toLowerCase()) ||
+        studio.domain.toLowerCase().includes(studioSearchQuery.toLowerCase())
+    );
+
+    const filteredLeadsForUsersTab = leads.filter(lead =>
+    lead.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    lead.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (lead.studio && lead.studio.name ? lead.studio.name.toLowerCase().includes(searchQuery.toLowerCase()) : false)
+);
+
+    const filteredLeadsList = leads.filter(lead =>
+    lead.name?.toLowerCase().includes(leadSearchQuery.toLowerCase()) ||
+    lead.email?.toLowerCase().includes(leadSearchQuery.toLowerCase()) ||
+    (lead.studio && lead.studio.name ? lead.studio.name.toLowerCase().includes(leadSearchQuery.toLowerCase()) : false)
+);
 
     const handleTabChange = (tab) => {
         // update react router url
@@ -96,11 +161,21 @@ function AdminPanel() {
         }
     };
 
+    const handleRoleChange = (role) => {
+        setSelectedRole(role);
+        // You can add logic here to filter data based on the selected role
+        console.log('Selected role:', role);
+    };
+
     return (
         <>
         <AddReferralModal/>
+        <AddUserModal />
         <main className="admin-panel billing-container">
             <h1 className="admin-title">Admin Panel</h1>
+
+            <AdminControls selectedRole={selectedRole} onRoleChange={handleRoleChange} /> {/* New AdminControls component */}
+
             <div className="admin-dashboard">
 
                 <div className="cards">
@@ -190,17 +265,23 @@ function AdminPanel() {
                     Users
                 </button>
                 <button
+                    className={`tab-button icon leads ${selectedTab === 'leads' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('leads')}
+                >
+                    Leads
+                </button>
+                <button
                     className={`tab-button icon studio ${selectedTab === 'studios' ? 'active' : ''}`}
                     onClick={() => handleTabChange('studios')}
                 >Studios</button>
                 <button
+                    className={`tab-button icon referal ${selectedTab === 'referal-codes' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('referal-codes')}
+                >Invitations</button>
+                <button
                     className={`tab-button icon ticket ${selectedTab === 'support' ? 'active' : ''}`}
                     onClick={() => handleTabChange('support')}
                 >Support</button>
-                <button
-                    className={`tab-button icon referal ${selectedTab === 'referal-codes' ? 'active' : ''}`}
-                    onClick={() => handleTabChange('referal-codes')}
-                >Referral & Codes</button>
                 <button
                     className={`tab-button icon ai ${selectedTab === 'ai-ticket' ? 'active' : ''}`}
                     onClick={() => handleTabChange('ai-ticket')}
@@ -217,58 +298,169 @@ function AdminPanel() {
 
             {/* Tab content */}
             { selectedTab === 'users' && (
-                <div className="invoice-history">
-                    <section className="users-list">
-                        <h2 className="section-title">Users</h2>
-                        <table className="invoice-table">
-                            <thead>
-                                <tr>
-                                    <th>NAME</th>
-                                    <th>EMAIL</th>
-                                    <th>STUDIOS</th>
-                                    <th>ROLES</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {users.map(user => (
-                                    <tr key={user.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', user))}>
-                                        <td>{user.displayName}</td>
-                                        <td>{user.email}</td>
-                                        <td>{user.studio.name}</td>
-                                        <td>{user.studio.roles[0]}</td>
-                                        <td className="actions">
-                                            {/* Drawer trigger */}
-                                        </td>
+                <div className="users-tab-window">
+                    
+                    <div className="list-display">
+                        <section className="users-list">
+                            <div className="actions">
+                                <div className="left-actions">
+                                <div className="search-input-wrapper">
+                                    <input
+                                        type="text"
+                                        placeholder="Search users..."
+                                        className="search-input"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                    />
+                                    {searchQuery && (
+                                        <button className="clear-search-button" onClick={() => setSearchQuery('')}>
+                                            &times;
+                                        </button>
+                                    )}
+                                </div>
+                                    <div className={`pill secondary icon active-users ${userViewType === 'users' ? '' : 'idle'}`} onClick={() => setUserViewType('users')}>Active Users</div>
+                                    <div className={`pill secondary icon leads ${userViewType === 'leads' ? '' : 'idle'}`} onClick={() => setUserViewType('leads')}>Leads</div>
+                                </div>
+                                <div className="right-actions">
+                                    <div className="button primary" onClick={() => dispatch(openModal('addUser'))}>New</div>
+                                </div>
+                            </div>
+                            <table className="invoice-table">
+                                <thead>
+                                    <tr>
+                                        <th>NAME</th>
+                                        <th>EMAIL</th>
+                                        <th>STUDIOS</th>
+                                        <th>ROLES</th>
+                                        <th>Actions</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </section>
+                                </thead>
+                                <tbody>
+                                                                         {userViewType === 'users'
+                                                                            ? filteredUsersList.map(user => (
+                                                                                <tr key={user.id} className="clickable-row" onClick={() => navigate(`/admin/user/${user.id}`)}>                                                <td>{user.displayName}</td>
+                                                <td>{user.email}</td>
+                                                <td>{user.studio.name}</td>
+                                                <td>{user.studio.roles[0]}</td>
+                                                <td className="actions">
+                                                    {/* Drawer trigger */}
+                                                </td>
+                                            </tr>
+                                        ))
+                                                                                 : filteredLeadsForUsersTab.map(lead => (
+                                                                                    <tr key={lead.id} className="clickable-row" onClick={() => navigate(`/admin/user/${lead.id}`)}>                                                <td>{lead.name}</td>
+                                                <td>{lead.email}</td>
+                                                <td>{lead.studio ? lead.studio.name : 'N/A'}</td>
+                                                <td>Lead</td>
+                                                <td className="actions">
+                                                    {/* Drawer trigger */}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                </tbody>
+                            </table>
+                        </section>
+                    </div>
+                </div>
+            )}
+            { selectedTab === 'leads' && (
+                <div className="leads-tab-window">
+                    
+                    <div className="list-display">
+                        <section className="leads-list">
+                            <div className="actions">
+                                <div className="left-actions">
+                                <div className="search-input-wrapper">
+                                    <input
+                                        type="text"
+                                        placeholder="Search leads..."
+                                        className="search-input"
+                                        value={leadSearchQuery}
+                                        onChange={(e) => setLeadSearchQuery(e.target.value)}
+                                    />
+                                    {leadSearchQuery && (
+                                        <button className="clear-search-button" onClick={() => setLeadSearchQuery('')}>
+                                            &times;
+                                        </button>
+                                    )}
+                                </div>
+                                </div>
+                                <div className="right-actions">
+                                    {/* Add any right-actions here if needed */}
+                                </div>
+                            </div>
+                            <table className="invoice-table">
+                                <thead>
+                                    <tr>
+                                        <th>NAME</th>
+                                        <th>EMAIL</th>
+                                        <th>STUDIOS</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredLeadsList.map(lead => (
+                                        <tr key={lead.id} className="clickable-row" onClick={() => dispatch(openModal('viewDetailsDrawer', lead))}>
+                                            <td>{lead.name}</td>
+                                            <td>{lead.email}</td>
+                                            <td>{lead.studio ? lead.studio.name : 'N/A'}</td>
+                                            <td className="actions">
+                                                {/* Drawer trigger */}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </section>
+                    </div>
                 </div>
             )}
             { selectedTab === 'studios' && (
                 <div className="invoice-history">
                     <section className="studios-list">
-                        <h2 className="section-title">Studios</h2>
+                        <div className="actions">
+                            <div className="left-actions">
+                                <div className="search-input-wrapper">
+                                    <input
+                                        type="text"
+                                        placeholder="Search studios..."
+                                        className="search-input"
+                                        value={studioSearchQuery}
+                                        onChange={(e) => setStudioSearchQuery(e.target.value)}
+                                    />
+                                    {studioSearchQuery && (
+                                        <button className="clear-search-button" onClick={() => setStudioSearchQuery('')}>
+                                            &times;
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="right-actions">
+                                {/* Add any right-actions here if needed */}
+                            </div>
+                        </div>
                         <table className="invoice-table">
                             <thead>
                                 <tr>
-                                    <th>NAME</th>
+                                    <th>STUDIO</th>
                                     <th>DOMAIN</th>
-                                    <th>STUDIOS</th>
-                                    <th>ROLES</th>
+                                    <th>PLAN</th>
+                                    <th>SCORE</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {studios.map(studio => (
+                                {filteredStudios.map(studio => (
                                     <React.Fragment key={studio.id}>
                                         <tr className={`clickable-row ${expandedStudioId === studio.id ? 'selected' : ''}`} onClick={() => handleRowClick(studio.id)}>
                                             <td>{studio.name}</td>
-                                            <td>fotoflow.in/{studio.domain}</td>
-                                            <td>{studio.domain}</td>
-                                            <td></td>
+                                            <td>/{studio.domain}</td>
+                                            <td> <span className='plan-name-label'>{studio.planName} </span>
+                                                <span className={`${studio.planName === "Core"? 'free' : (isTrialActive(studio.trialEndDate)?'paid pending':'paid')} paid-status`}>{studio.planName === "Core"? 'Free' :'Paid' }</span>
+                                                {isTrialActive(studio.trialEndDate) && studio.planName !== "Core" && <span className={` paid-status trial`}>Trial</span>}
+                                                
+                                                </td>
+                                            <td>{(studio.usage.storage.used*10).toFixed(2)}</td>
                                             <td className="actions">
                                                 <span className={`expand-icon ${expandedStudioId === studio.id ? 'expanded' : ''}`}>&#9660;</span>
                                             </td>
@@ -314,11 +506,30 @@ function AdminPanel() {
                 <div className="invoice-history">
                     <section className="referal-codes-list">
                         <div className="actions">
-                            <div className="button primary  icon referal"
-                                onClick={()=>{dispatch(openModal('addReferral'))}}
-                            >New</div>
-                        </div>
-                        <h2 className="section-title">Referral & Codes</h2>
+                                <div className="left-actions">
+                                <div className="search-input-wrapper">
+                                    <input
+                                        type="text"
+                                        placeholder="Search referrals..."
+                                        className="search-input"
+                                        value={referralSearchQuery}
+                                        onChange={(e) => setReferralSearchQuery(e.target.value)}
+                                    />
+                                    {referralSearchQuery && (
+                                        <button className="clear-search-button" onClick={() => setReferralSearchQuery('')}>
+                                            &times;
+                                        </button>
+                                    )}
+                                </div>
+                                    <div className="button secondary outline icon campaign" onClick={() => console.log('Filter button clicked')}>Campaingns</div>
+                                    <div className="button secondary outline icon leads" onClick={() => console.log('Filter button clicked')}>Leads</div>
+                                </div>
+                                <div className="right-actions">
+                                <div className="button primary  icon referal"
+                                    onClick={()=>{dispatch(openModal('addReferral'))}}
+                                >New</div>
+                                </div>
+                            </div>
                         <table className="invoice-table">
                             <thead>
                                 <tr>
@@ -333,10 +544,9 @@ function AdminPanel() {
                                     <th>Send Code</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {
-                                    referallsList.map((referral,index)=>{
-                                        return(
+                                                            <tbody>
+                                                            {
+                                                                filteredReferrals.map((referral,index)=>{                                        return(
                                             <tr className={`${referral?.status}`} key={index}>
                                                 <td>{referral?.id.slice(0,4)}</td>
                                                 <td>{referral?.name}</td>
@@ -371,7 +581,6 @@ function AdminPanel() {
             { selectedTab === 'ai-ticket' && (
                 <div className="invoice-history">
                     <section className="support-list">
-                        <h2 className="section-title">AI Tickets</h2>
                         <table className="invoice-table">
                             <thead>
                                 <tr>
@@ -412,7 +621,6 @@ function AdminPanel() {
             { selectedTab === 'support' && (
                 <div className="invoice-history">
                     <section className="support-list">
-                        <h2 className="section-title">Support Tickets</h2>
                         <table className="invoice-table">
                             <thead>
                                 <tr>

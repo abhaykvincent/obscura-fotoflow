@@ -67,7 +67,7 @@ function UploadButton({
         // setUploadStatus('open'); // This was local, Redux state will be set by handleUpload via dispatch
 
         // Handle upload Operation - Updated call
-        const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch, collectionName);
+        const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch, collectionName, studiodata.bucketUrl);
 
         const endTime = Date.now();  // Record the end time
         const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds

@@ -2,9 +2,9 @@
 .advanced-toggle {
     cursor: pointer;
     text-align: left;
-    margin-top: 8px;
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 0.5rem;
     opacity: 0.5;
     span{
@@ -24,7 +24,6 @@
         transition-delay: 0.05s;
       }
     }
-
     .arrow {
       width: 8px*2.5;
       height: 8px*2.5;
@@ -38,10 +37,17 @@
       .arrow {
         opacity:0.5;
       }
+      + .advanced-label{
+        opacity: 1;
+        transition-duration: 0.1s;
+        transition-delay: 0.1s;
+        height: 8px*2;
+        margin-top: 0;
+      }
     }
     &.down{
-      margin-top:8px*2;
-      margin-bottom:8px;
+      margin-top:8px*0;
+      margin-bottom:0px;
       .arrow {
 
         background-image: url('https://img.icons8.com/?size=100&id=lCACQM0xDqsw&format=png&color=336c1b')
@@ -50,6 +56,12 @@
       span{
         color: $gray3-accessible-dark;
         font-size: 1rem;
+      }
+      + .advanced-label{
+        height: 8px*0;
+        opacity: 0;
+        transition-duration: 0.1s;
+        margin-top: 0;
       }
       &:hover{
         span{
@@ -65,6 +77,14 @@
     grid-template-rows: 0fr;
     transition: grid-template-rows 0.2s ease-in-out;
 
+.advanced-label{
+      position: absolute;
+      left: 0;
+      font-size: 0.875rem;
+      color: $gray3-accessible-dark;
+        opacity: 0;
+        transition-duration: 0.1s;
+}
     .advanced-options-inner {
         overflow: hidden;
     }

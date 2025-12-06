@@ -1,4 +1,4 @@
-import { db, storage } from "../app";
+import { db } from "../app";
 import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, increment} from "firebase/firestore";
 
 import { generateMemorablePIN, generateRandomString, toKebabCase, toTitleCase} from "../../utils/stringUtils";
@@ -19,11 +19,18 @@ export const createStudio = async (studioData) => {
 
     const studiosCollection = collection(db, 'studios');
 
+    // Determine bucket for 50-50 split
+    const snapshot = await getDocs(studiosCollection);
+    const studioCount = snapshot.size;
+    const buckets = ['gs://fotoflow-india-1', 'gs://fotoflow-india-2'];
+    const bucketUrl = buckets[studioCount % 2];
+
     // Studio document
     const studioDoc = {
         id: id,
         name: name,
         domain: domain,
+        bucketUrl: bucketUrl,
         planName: 'Core',
         status: 'active',
         batch: '002',

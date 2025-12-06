@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { handleUpload } from '../../../utils/uploadOperations';
 import './ImageGrid.scss';
 import { selectDomain } from '../../../app/slices/authSlice';
+import { selectStudio } from '../../../app/slices/studioSlice';
 import {
   SortableContext,
   rectSortingStrategy,
@@ -111,6 +112,7 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
   const dispatch = useDispatch();
   const [images, setImages] = useState(section.images || []);
   const domain = useSelector(selectDomain);
+  const studio = useSelector(selectStudio);
 
   const containerRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -144,8 +146,8 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
 
   const onDrop = useCallback((acceptedFiles) => {
     const importFileSize = 0;
-    handleUpload(domain, acceptedFiles, id, collectionId, importFileSize, dispatch, collectionName, section.id);
-  }, [section.id, dispatch, domain, id, collectionId, collectionName]);
+    handleUpload(domain, acceptedFiles, id, collectionId, importFileSize, dispatch, collectionName, section.id, undefined, studio.bucketUrl);
+  }, [section.id, dispatch, domain, id, collectionId, collectionName, studio.bucketUrl]);
 
   const handleFileSelect = (event) => {
     const files = Array.from(event.target.files);

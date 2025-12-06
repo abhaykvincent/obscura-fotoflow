@@ -1,6 +1,6 @@
 // Assume Firestore is initialized as 'db'
 import { addMonths, addYears } from "../../utils/dateUtils";
-import { db, storage } from "../app";
+import { db } from "../app";
 import { doc, getDoc, setDoc, updateDoc, writeBatch, collection, arrayUnion, query, where, getDocs, orderBy} from 'firebase/firestore';
 
 // Placeholder function to get plan details by planId

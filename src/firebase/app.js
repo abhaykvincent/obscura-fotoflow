@@ -104,4 +104,4 @@ else {
 const provider = new GoogleAuthProvider();
 
 // Export Firebase services
-export { storage, db, auth, provider, analytics, model, signInWithPopup };
+export { storage, db, auth, provider, analytics, model, signInWithPopup, app };
