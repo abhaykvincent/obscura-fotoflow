@@ -496,6 +496,16 @@ span.iconic-gradient{
                     color: $gray5-accessible-light;
                 }
             }
+            .see-more-features {
+                color: $green-default-light;
+                font-size: 0.8rem;
+                cursor: pointer;
+                margin-top: 8px;
+                text-decoration: underline;
+                &:hover {
+                    color: $green-accessible-light;
+                }
+            }
         }
         .core-features{
             margin-bottom: 8px*2;

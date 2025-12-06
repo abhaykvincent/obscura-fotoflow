@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { formatStorage } from '../../utils/stringUtils';
 import { selectUserStudio } from '../../app/slices/authSlice';
@@ -10,6 +10,7 @@ import RazorpayButton from './RazorpayButton';
 export default function PlanCard({plan, defaultPlan, defaultStorage, onStorageChange, billingCycle }) {
   const defaultStudio = useSelector(selectUserStudio);
   const studio = useSelector(selectStudio);
+  const [showAllFeatures, setShowAllFeatures] = useState(false);
 
   let selectedStorage = plan.pricing[defaultPlan]?.storage;
   const currentPricing = plan.pricing.find(p => p.storage === selectedStorage) || plan.pricing[0];
@@ -55,6 +56,8 @@ export default function PlanCard({plan, defaultPlan, defaultStorage, onStorageCh
   const priceWas = billingCycle === 'monthly' ? currentPricing?.monthlyPriceWas : '';
   const unit = price === 'Free' || price === 'Custom' ? '' : (billingCycle === 'monthly' ? '/mo' : '/yr');
 
+  const visibleFeatures = showAllFeatures ? plan.features : plan.features.slice(0, 2);
+
   return (
     <div className={`plan ${plan.name.toLowerCase()} ${isActive ? 'active' : ''}`}>
        {plan.extraFeatures?.badge && <div className="badge">{plan.extraFeatures.badge}</div>}
@@ -83,9 +86,17 @@ export default function PlanCard({plan, defaultPlan, defaultStorage, onStorageCh
       </div>
 
       <div className="plan-features">
-          {plan.features && plan.features.map((feature, index) => (
+          {visibleFeatures && visibleFeatures.map((feature, index) => (
               <p key={index}>{feature}</p>
           ))}
+          {plan.features && plan.features.length > 2 && (
+            <div 
+              className="see-more-features" 
+              onClick={() => setShowAllFeatures(!showAllFeatures)}
+            >
+              {showAllFeatures ? 'Show less' : 'See full features'}
+            </div>
+          )}
       </div>
       
       { 
