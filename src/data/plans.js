@@ -3,15 +3,16 @@ export const initialPlans = [
     name: 'Free',
     isCurrentPlan: true,
     pricing: [
-      { storage: 15, monthlyPrice: 'Free', yearlyPrice: '–', specialOffer: []},
+      { storage: 15, monthlyPrice: 'Free', yearlyPrice: '–', specialOffer: ['Forever']},
     ],
     features: [
-      '3 Active Projects',
-      '5 Collections',
-      '500 Photos per Project',
-      'Web only Resolution + Watermark',
-      'Fotoflow watermark',
-      'Community Support'
+      'Gallery',
+      'Selection',
+      '3 Projects / month',
+
+      '3 Collections / project',
+      '500 Photos / gallery',
+      'Whatsapp Support'
     ],
     defaultPlan:0 ,
     expiry: 'Forever',
@@ -19,17 +20,19 @@ export const initialPlans = [
   {
     name: 'Freelancer',
     pricing: [
-      { storage: 500, monthlyPrice: '₹899', yearlyPrice: '₹7,990', specialOffer: ['Save 26%','₹665/mo equivalent'], defaultPlan: true },
+      { storage: 500, monthlyPrice: '₹899', yearlyPrice: '₹7,990', specialOffer: ['for 3 months','₹999 afterwards'], defaultPlan: true },
     ],
     defaultPlan: 0,
     defaultStorage: 500,
     features: [
-      '30 Active Projects',
-      'Unlimited Collections',
-      'Unlimited Photos',
-      'Original files Resolution',
-      'Removable Watermark',
-      'Email Support'
+      'Unlimited Gallery',
+      'Unlimited Selection',
+      '30 Projects/ month',
+      'High Resolution',
+      'Financials',
+      'Archive',
+      'Client proofing galleries',
+      'Chat Support +  Whatsapp'
     ],
     extraFeatures: {},
   },
@@ -37,21 +40,22 @@ export const initialPlans = [
     name: 'Studio',
     pricing: [
       { storage: 3072, 
-        monthlyPrice: '₹1,799', yearlyPrice: '₹15,990', 
-        specialOffer: ['Save 26%', '₹1,332/mo equivalent', 'Most studios pick this'],
+        monthlyPriceWas: '₹2400', monthlyPrice: '₹1,799', yearlyPrice: '₹15,990', 
+        specialOffer: ['6x Value for money', 'Most wedding studios pick this'],
         defaultPlan: true},
     ],
     defaultStorage: 3072,
     defaultPlan: 0,
     features: [
-      'Unlimited Active Projects',
-      'Unlimited Collections',
-      'Unlimited Photos',
+      'Website',
+      'Unlimited ',
+      'Desktop Studio App ',
+      'Custom gallery access',
+      'Wedding/Event Invitation',
+      'Priority + Whatsapp + Chat Support ',
       'Original files Resolution',
-      'Custom or none Watermark',
-      'Priority + Slack/Chat Support',
       'Client proofing galleries', 
-      'Team seats (up to 5)',
+      'Team seats (up to 12)',
       'White-label'
     ],
     extraFeatures: { badge: 'Most Popular' },
@@ -59,21 +63,16 @@ export const initialPlans = [
   {
     name: 'Enterprise',
     pricing: [
-      { storage: 10240, monthlyPrice: 'Custom', yearlyPrice: 'Custom', 
-        specialOffer: [],defaultPlan: true},
+      { storage: 10240, monthlyPrice: '₹5,000+ ', yearlyPrice: '₹51,110 +', specialOffer: ['For Wedding Companies and Agencies ']
+       ,defaultPlan: true},
     ],
     isContactSales:true,
     defaultStorage: 'Unlimited',
     defaultPlan: 0,
     features: [
-      'Unlimited Active Projects',
-      'Unlimited Collections',
-      'Unlimited Photos',
+      'AI Face search',
+      'Advanced AI Workflow',
       'Original + RAW backup Resolution',
-      'None Watermark',
-      'Dedicated manager Support',
-      'Everything + API',
-      'SSO, on-premise option'
     ],
     extraFeatures: {},
   },
