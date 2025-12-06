@@ -225,6 +225,11 @@ span.iconic-gradient{
             }
         }
     }
+    .billing-history{
+        position: fixed;
+        right: 8px*4;
+        top: 8px*3;
+    }
 
     .plans-container{
         margin-left: 8px*2;
@@ -737,16 +742,19 @@ span.iconic-gradient{
             }
         }
         &.studio{
-            border: 1px solid #1b3204 !important;
-            border-top: 1px solid #65a222!important;
-            border-left: 1px solid #2f510b!important;
-            box-shadow: 0px 2px 8px black!important;
+            border: 2px solid #54a134 !important;
+            border-top: 2px solid #65a222 !important;
+            //box-shadow: 0px 8px 24px rgba(0,0,0,0.6), 0 0 20px rgba(84, 161, 52, 0.3) !important;
+            transform: scale(1.05);
+            z-index: 10;
+            position: relative;
+
             .plan-name{
                 position: relative;
                 text-align: center;
                 z-index: 2;
                 color: $green-accessible-dark;
-
+                font-weight: 700;
             }
             .cover{
                 
@@ -770,6 +778,17 @@ span.iconic-gradient{
                     &::after{
                         content: "";
                     }
+            }
+            .button.primary {
+                background: linear-gradient(135deg, #54a134 0%, #3e7a25 100%);
+                color: white;
+                border: none;
+                font-weight: 600;
+                box-shadow: 0 4px 15px rgba(84, 161, 52, 0.4);
+                &:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 20px rgba(84, 161, 52, 0.6);
+                }
             }
         }
         &.free{
@@ -929,6 +948,11 @@ span.iconic-gradient{
     .plans{
         grid-template-columns: minmax(100px, 240px) minmax(100px, 240px) minmax(100px, 240px);
         column-gap: 8px*4;
+        
+        .plan.studio {
+            transform: scale(1);
+            margin-top: 0;
+        }
     }
     .home .section .projects{
         .project{
@@ -1004,6 +1028,8 @@ span.iconic-gradient{
             padding: 8px*2;
             height: 8px*6.8;
             font-size: 1.4rem;
+            line-height: 2.4rem !important;
+
         }
         
         

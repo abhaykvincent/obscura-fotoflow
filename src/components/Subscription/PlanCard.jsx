@@ -90,13 +90,21 @@ export default function PlanCard({plan, defaultPlan, defaultStorage, onStorageCh
               <p key={index}>{feature}</p>
           ))}
           {plan.features && plan.features.length > 2 && (
-            <div 
-              className="see-more-features" 
+            
+          showAllFeatures ?
+              <div  className="see-more-features icon icon-only arrow-up" 
+              onClick={() => setShowAllFeatures(!showAllFeatures)}
+            > Show less </div>
+              :
+              <div 
+              className="see-more-features icon icon-only arrow" 
               onClick={() => setShowAllFeatures(!showAllFeatures)}
             >
-              {showAllFeatures ? 'Show less' : 'See full features'}
+              See full features
             </div>
-          )}
+            
+          )
+          }
       </div>
       
       { 
@@ -110,10 +118,10 @@ export default function PlanCard({plan, defaultPlan, defaultStorage, onStorageCh
         <span className="expiry-label">{`Trial ends in ${ getDaysFromNow(studio?.trialEndDate)} days`}</span> :
         plan.name.toLowerCase() !== 'free' && plan.name.toLowerCase() !== 'core' && <span className="expiry-label">{`Pay later in ${ getDaysFromNow(studio?.trialEndDate)} days`}</span>}
       </p>
-      {isActive && <div className="current-plan button primary outline">Current Plan</div>}
+      {isActive && <div className="current-plan button secondary ">Current Plan</div>}
       { !isActive && 
         <div 
-          className={`button ${plan.isWaitlist || plan.isAddStorage ? ' primary outline' : plan.isContactSales ? 'primary outline' : 'primary outline'}`}
+          className={`button ${plan.name === 'Studio' ? 'primary' : 'primary outline'}`}
           onClick={handlePlanChange}
         >
           {getButtonText()}

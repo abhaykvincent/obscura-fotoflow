@@ -21,6 +21,10 @@ function Subscription() {
 
   return (
     <main className="subscription">
+      <div className="billing-history icon icon-only">
+          {defaultStudio?.domain && <Link to={`/${defaultStudio.domain}/subscription/history`}>Billing History</Link>}
+      </div>
+      
       <div className="welcome-section">
         <div className="welcome-content">
           <div className='welcome-message-top user-name'>
@@ -49,7 +53,6 @@ function Subscription() {
           <span className="tag green">Limited Time</span>
         </div>
         <div className="right-section">
-          {defaultStudio?.domain && <Link to={`/${defaultStudio.domain}/subscription/history`}>Billing History</Link>}
         </div>
 
       </div>
