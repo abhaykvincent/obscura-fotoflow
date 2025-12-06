@@ -384,6 +384,7 @@ animation-timing-function: ease-out;
           border-left: 1px solid $green-accessible-light;
           border-top: 1px solid $green-accessible-light;
           background-color: $dark-3;
+            margin-top: 4px;
           }
           // hide radio buttons
           input[type="radio"] {
@@ -436,6 +437,8 @@ animation-timing-function: ease-out;
       
     }
     .project-validity-wrap{
+
+      margin-left: 8px;
       label{
         margin:0;
       }
@@ -445,7 +448,8 @@ animation-timing-function: ease-out;
       gap:8px*2;
       .project-validity-options{
         .radio-button-group{
-        margin: 8px*0.5;
+        margin: 8px*0.5  ;
+margin-top: 0!important;
         margin-left: 0px;
               border: 1px solid $dark-0;
               border-radius: 6px;
@@ -901,7 +905,7 @@ p.open-with-login-label{
   .project-details{
     .field{
 
-      grid-template-columns: 8px*10 8px*36;
+      grid-template-columns: 8px*14 8px*36;
     }
   }
 }
@@ -1255,6 +1259,19 @@ transition-delay: 0.2s;
             margin-left: 8px;
             margin-bottom: 4px;
           }
+          .advanced-label{
+            text-align: left;
+            margin-top: 0;
+          }
+          &.live-field{
+            display: flex;
+            flex-flow: row-reverse;
+            justify-content: space-between;
+            margin-bottom: -8px;
+            z-index: 1;
+
+
+          }
           .radio-button-group{
             label{
               text-align: left;
@@ -1270,7 +1287,7 @@ transition-delay: 0.2s;
           }
         }
         .project-validity-options{
-          margin-top: 8px*2;
+          margin-top: 8px*1;
           &.template-options{
             display: grid;
             grid-template-columns: 1fr ;

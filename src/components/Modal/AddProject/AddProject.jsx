@@ -86,7 +86,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
       return;
     }
     const domain = currentStudio.domain;
-    dispatch(showLoading(`Creating ${projectData.type} project ${projectData.name} ..`));
+    dispatch(showLoading({context:`Creating project - ${projectData.type} `,subcontext:`${projectData.name} `}));
     onClose();
 
     await new Promise(resolve => setTimeout(resolve, 500)); // Wait for animation
@@ -120,12 +120,12 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   };
 
   const getModalTitle = () => {
-    if (currentStep === 1) return "Choose template";
+    if (currentStep === 1) return "New project";
     return isSubProject ? "New Sub-Project" : "Project Details";
   };
 
   const getModalSubtitle = () => {
-    if (currentStep === 1) return "New project";
+    if (currentStep === 1) return "Choose template";
     return projectData.type || (isSubProject ? "New Sub-Project" : "New Project");
   };
 

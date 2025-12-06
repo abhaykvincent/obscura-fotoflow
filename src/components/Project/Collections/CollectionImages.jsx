@@ -411,7 +411,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
             }
 
             {
-                <div className={`${galleryMode === 'designMode' && 'bottom-panel-light-mode'} image-gallery-bottom-panel `}>
+                collectionImages?.length >0 && <div className={`${galleryMode === 'designMode' && 'bottom-panel-light-mode'} image-gallery-bottom-panel `}>
                     {/* <div className="button secondary">Load All</div> */}
                     
                     {collectionImages?.length !== imageUrls.length && collectionImages?.length >0 && <div className={`button primary`}

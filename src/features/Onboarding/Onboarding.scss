@@ -18,7 +18,7 @@
             animation-duration: 4s;
             opacity: 0.8;
         }
-        .loading-context{
+        .loading-subcontext{
                 background: linear-gradient(90deg, #428924c8  30%,#5da140 45%,#428924 48%, #428924bc 55%, #42892479 90%);
                 background-size: 200%;
                 background-position: 0%;
@@ -27,10 +27,15 @@
                 -webkit-text-fill-color: transparent;
                 transition-duration: 1s;
                 font-weight: 400;
-                margin-left: 8px*3;
+            text-align: center;
+                margin-left: 8px*0;
+                margin-top: 8px;
                 animation: loadingGradient 1s infinite alternate linear;
-                
-            
+
+        }
+        .loading-context{
+            color: $gray-accessible-dark;
+            text-align: center;
         }
     }
     .onboarding-container{
@@ -151,7 +156,9 @@
             &.timeGreeting{
                 font-weight: 600;
                 color: $gray2-default-light;
-                margin-left: -8px*6;
+                transform: translate(-8px*6,0px);
+                
+                animation: fadeInLeft 0.3s ease-out 0.3s forwards;
                 &.icon{
                         margin-right: 8px;
                         content: '';
@@ -207,6 +214,8 @@
     background: linear-gradient(140deg,#a3de8a 0%,#a9c38b 40%, #c1c1c1 95%,#e3e3e3 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+                animation: fadeInLeft 0.3s ease-in 0.3s forwards;
+
         }
     }
 
@@ -224,8 +233,12 @@
         font-size: 1.4rem;
         white-space: nowrap;
         color: $gray-default-light;
-        margin-bottom: 8px*0.5;
+        margin-bottom: 8px*6;
         margin-top: 8px*1;
+        transform: translateY(2px);
+        opacity: 0;
+        animation: fadeInUp 0.4s ease-out 0.8s forwards;
+
         .icon-unlock{
             width: 8px*5;
             height: 8px*5;
@@ -260,6 +273,11 @@
         font-size: 0.9rem;
         color: $gray2-default-dark;
         margin-bottom: 8px*1;
+        margin-top: 8px*2;
+        margin-left: 0;
+        opacity: 0;
+        transform: translateY(2px);
+        animation: fadeInUp 0.3s ease-out 1s forwards;
     }
 }
 .activate-fotoflow-whatsapp{
@@ -326,9 +344,10 @@
         font-weight: 200;
         transition-duration: 0.1s;
         box-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
-
+        transform: translateY(0px);
         opacity: 0;
-        animation: fadeInLeft 0.3s ease-out 0.7s;
+        margin-left: 0;
+        animation: fadeInUp 0.3s ease-out 1.05s;
         animation-fill-mode: forwards;
         &:hover{
             transition-delay: 0.2s;
@@ -1103,6 +1122,7 @@
                         font-weight: 600;
                         color: #aeaeae;
                         margin-left: 0px;
+                        transform: translateY(0px);
                     }
                 }
             }

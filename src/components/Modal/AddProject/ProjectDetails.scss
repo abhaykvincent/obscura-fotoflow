@@ -37,10 +37,17 @@
       .arrow {
         opacity:0.5;
       }
+      + .advanced-label{
+        opacity: 1;
+        transition-duration: 0.1s;
+        transition-delay: 0.1s;
+        height: 8px*2;
+        margin-top: 0;
+      }
     }
     &.down{
-      margin-top:8px*2;
-      margin-bottom:8px;
+      margin-top:8px*0;
+      margin-bottom:0px;
       .arrow {
 
         background-image: url('https://img.icons8.com/?size=100&id=lCACQM0xDqsw&format=png&color=336c1b')
@@ -49,6 +56,12 @@
       span{
         color: $gray3-accessible-dark;
         font-size: 1rem;
+      }
+      + .advanced-label{
+        height: 8px*0;
+        opacity: 0;
+        transition-duration: 0.1s;
+        margin-top: 0;
       }
       &:hover{
         span{
@@ -69,6 +82,8 @@
       left: 0;
       font-size: 0.875rem;
       color: $gray3-accessible-dark;
+        opacity: 0;
+        transition-duration: 0.1s;
 }
     .advanced-options-inner {
         overflow: hidden;

@@ -108,7 +108,7 @@ export default function App() {
   useEffect(() => {
     if (isAuthenticated && currentDomain !== 'guest') {
 
-  dispatch(showLoading('Loading App ..'))
+  dispatch(showLoading({context:` Loading App ..`,subcontext:` `}))
       // Fetching data for studio
       console.log(`%cFetching data for ${currentDomain}...`,`color: gray`)
       dispatch(fetchProjects({currentDomain}))

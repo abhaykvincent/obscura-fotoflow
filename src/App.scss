@@ -2856,6 +2856,9 @@ body{
       }
       .project-collection .header 
       {
+        .gallery-mode{
+          display: none;
+        }
         .view-control 
         {
           justify-content: center;
