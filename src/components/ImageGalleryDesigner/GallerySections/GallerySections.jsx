@@ -224,6 +224,40 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
     }
   };
 
+  const handleDragOver = (event) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    const { id: activeId } = active;
+    const { id: overId } = over;
+
+    if (activeId === overId) return;
+
+    const activeType = active.data.current?.type;
+    const overType = over.data.current?.type;
+
+    if (activeType === 'image' && overType === 'image') {
+      const activeSectionId = active.data.current.fromSection;
+      const overSectionId = over.data.current.fromSection;
+
+      if (activeSectionId && overSectionId && activeSectionId === overSectionId) {
+        const sectionIndex = sections.findIndex((s) => s.id === activeSectionId);
+        if (sectionIndex === -1) return;
+
+        const section = sections[sectionIndex];
+        const oldIndex = section.images.findIndex((img) => img.url === activeId);
+        const newIndex = section.images.findIndex((img) => img.url === overId);
+
+        if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
+          const newSections = [...sections];
+          const newImages = arrayMove(section.images, oldIndex, newIndex);
+          newSections[sectionIndex] = { ...section, images: newImages };
+          onSectionsUpdate(newSections);
+        }
+      }
+    }
+  };
+
   const handleDragEnd = (event) => {
     const { active, over } = event;
     setActiveItem(null);
@@ -308,6 +342,7 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
         autoScroll={false}
       >
