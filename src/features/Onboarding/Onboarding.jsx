@@ -177,7 +177,7 @@ function Onboarding() {
     })
     .then((response) => {
       console.log(response)
-      createStudio(response.studio)
+      createStudio(response.studio,user)
           .then((response) => {
             acceptInvitationCode(ref)
             trackEvent('studio_created',{
