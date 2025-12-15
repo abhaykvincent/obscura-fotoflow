@@ -63,16 +63,25 @@ const SortableImage = ({ image, sectionId, ...props }) => {
       fromSection: sectionId,
     },
   });
-
   const combinedTransition = [
     transition,
     'width 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
     'height 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
     'opacity 0.2s ease'
   ].filter(Boolean).join(', ');
+let newTransform;
+  if(transform !== null){
+    newTransform={
+      x: 0,
+      y: transform.y,
+      scaleX: transform.scaleX,
+      scaleY: transform.scaleY,
+    }
+    console.log(transform)
 
+  }
   const style = {
-    transform: CSS.Translate.toString(transform),
+    transform: CSS.Translate.toString(newTransform),
     transition: combinedTransition,
     opacity: isDragging ? 0 : 1, // Hide original when dragging
     ...props.style,
@@ -97,7 +106,8 @@ export const ImageDragOverlay = ({ image }) => {
           height: '100%',
           display: 'block',
           borderRadius: '4px',
-          objectFit: 'cover'
+          objectFit: 'cover',
+          opacity:0.9
         }}
         alt="dragged image"
       />
