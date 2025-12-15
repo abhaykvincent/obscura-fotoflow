@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
+import { closeModalWithAnimation, selectModal, openModal } from '../../app/slices/modalSlice';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 
 function PrivacyPolicyModal() {
@@ -8,6 +8,11 @@ function PrivacyPolicyModal() {
   const visible = useSelector(selectModal);
   
   const onClose = () => dispatch(closeModalWithAnimation('privacyPolicy'));
+  const onNext = () => {
+    dispatch(closeModalWithAnimation('privacyPolicy')).then(() => {
+       dispatch(openModal('termsOfService'));
+    });
+  };
   
   const modalRef = useModalFocus(visible.privacyPolicy);
   
@@ -100,8 +105,8 @@ function PrivacyPolicyModal() {
           </div>
 
           <div className="actions">
-            <div className="button primary" onClick={onClose}>
-              Close
+            <div className="button primary" onClick={onNext}>
+              Next
             </div>
           </div>
 
