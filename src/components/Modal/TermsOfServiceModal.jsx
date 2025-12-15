@@ -8,6 +8,13 @@ function TermsOfServiceModal() {
   const visible = useSelector(selectModal);
   
   const onClose = () => dispatch(closeModalWithAnimation('termsOfService'));
+  const onAgree = () => {
+    const checkbox = document.getElementById('privacyPolicy');
+    if (checkbox && !checkbox.checked) {
+        checkbox.click();
+    }
+    dispatch(closeModalWithAnimation('termsOfService'));
+  };
   
   const modalRef = useModalFocus(visible.termsOfService);
   
@@ -95,7 +102,7 @@ function TermsOfServiceModal() {
           </div>
 
           <div className="actions">
-            <div className="button primary" onClick={onClose}>
+            <div className="button primary" onClick={onAgree}>
               I Agree
             </div>
           </div>

@@ -14,6 +14,8 @@ import CreateStudioForm from './components/CreateStudioForm';
 import '../Onboarding.scss';
 import { generateReferral } from '../../../app/slices/referralsSlice';
 import { hideLoading } from '../../../app/slices/loadingSlice';
+import PrivacyPolicyModal from '../../../components/Modal/PrivacyPolicyModal';
+import TermsOfServiceModal from '../../../components/Modal/TermsOfServiceModal';
 
 function Onboarding() {
     const navigate = useNavigate();
@@ -115,6 +117,8 @@ function Onboarding() {
 
     return (
         <main className="onboarding-container">
+            <PrivacyPolicyModal/>
+            <TermsOfServiceModal/>
             <div className="logo animate-reveal" style={{ animationDelay: '0.2s' }}></div>
             <div className={`user-authentication animate-reveal ${!user?.email ? 'auth-screen' : ''}`} style={{ animationDelay: '0.4s' }}>
                 {invitation && !user?.email && (

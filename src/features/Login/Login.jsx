@@ -173,9 +173,9 @@ const LoginModal = () => {
             <p className="cta-postlabel"></p>
           </div>
           <div className="footer-actions">
-            <a onClick={() => dispatch(openModal('termsOfService'))}>Terms of Service </a>
-            <p className="ampersand">&</p>
             <a onClick={() => dispatch(openModal('privacyPolicy'))}>Privacy Policy</a>
+            <p className="ampersand">&</p>
+            <a onClick={() => dispatch(openModal('termsOfService'))}>Terms of Service </a>
           </div>
         
         </div>
