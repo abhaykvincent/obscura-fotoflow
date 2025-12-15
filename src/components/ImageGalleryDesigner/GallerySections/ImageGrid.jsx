@@ -64,15 +64,22 @@ const SortableImage = ({ image, sectionId, ...props }) => {
     },
   });
 
+  const combinedTransition = [
+    transition,
+    'width 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
+    'height 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
+    'opacity 0.2s ease'
+  ].filter(Boolean).join(', ');
+
   const style = {
     transform: CSS.Translate.toString(transform),
-    transition,
+    transition: combinedTransition,
     opacity: isDragging ? 0 : 1, // Hide original when dragging
     ...props.style,
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} onMouseDown={(e) => e.stopPropagation()}>
+    <div className="image-grid-item" ref={setNodeRef} style={style} {...attributes} {...listeners} onMouseDown={(e) => e.stopPropagation()}>
       <img src={image.url} alt={props.alt} style={{ width: '100%', height: '100%', display: 'block', borderRadius: '4px', objectFit: 'cover' }} />
     </div>
   );
