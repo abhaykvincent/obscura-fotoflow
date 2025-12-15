@@ -30,8 +30,8 @@
       margin-bottom: 10px;
       user-select: none;
       
-      div[role="button"] {
-
+      .image-grid-item {
+        transition: transform 0.2s ease;
         img{
 
             transform: scale(1.2);

@@ -9,6 +9,7 @@ import './GallerySections.scss';
 import {
   DndContext,
   closestCenter,
+  pointerWithin,
   rectIntersection,
   closestCorners,
   KeyboardSensor,
@@ -350,7 +351,7 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
     <div className="gallery-sections">
       <DndContext
         sensors={sensors}
-        collisionDetection={rectIntersection}
+        collisionDetection={pointerWithin}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
