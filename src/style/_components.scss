@@ -266,6 +266,31 @@
             margin-right: 4px;
             opacity: 0.6;
         }
+        &.billing-history::before{
+            background-size: 120%;
+            background-image: url('https://img.icons8.com/?size=100&id=gMLvI9ldT6LR&format=png&color=FFFFFF');
+
+            padding-top: 4px;
+            margin-right: 8px;
+            opacity: 0.6;
+            text-decoration: none;
+        }
+        &.arrow::before{
+            background-size: 100%;
+            background-image: url('https://img.icons8.com/?size=100&id=kHqsQPiFpGjM&format=png&color=FFFFFF');
+
+            padding-top: 4px;
+            margin-right: 8px;
+            opacity: 0.6;
+        }
+        &.arrow-up::before{
+            background-size: 100%;
+            background-image: url('https://img.icons8.com/?size=100&id=lCACQM0xDqsw&format=png&color=FFFFFF');
+
+            padding-top: 4px;
+            margin-right: 8px;
+            opacity: 0.6;
+        }
         &.link::before{
             text-decoration: none;
             background-size: 80%;

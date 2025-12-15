@@ -11,6 +11,7 @@ function Subscription() {
   const [plans, setPlans] = useState(initialPlans);
   const defaultStudio = useSelector(selectUserStudio);
   const [billingCycle, setBillingCycle] = useState('monthly');
+  const [showPaidFeatures, setShowPaidFeatures] = useState(false);
 
   const handleStorageChange = (planName, newDefaultPlan) => {
     const updatedPlans = plans.map(plan => 
@@ -21,6 +22,10 @@ function Subscription() {
 
   return (
     <main className="subscription">
+      <div className="billing-history icon icon-only">
+          {defaultStudio?.domain && <Link to={`/${defaultStudio.domain}/subscription/history`}>Billing History</Link>}
+      </div>
+      
       <div className="welcome-section">
         <div className="welcome-content">
           <div className='welcome-message-top user-name'>
@@ -49,7 +54,6 @@ function Subscription() {
           <span className="tag green">Limited Time</span>
         </div>
         <div className="right-section">
-          {defaultStudio?.domain && <Link to={`/${defaultStudio.domain}/subscription/history`}>Billing History</Link>}
         </div>
 
       </div>
@@ -63,6 +67,8 @@ function Subscription() {
               defaultStorage={plan.defaultStorage} 
               onStorageChange={handleStorageChange}
               billingCycle={billingCycle}
+              showPaidFeatures={showPaidFeatures}
+              setShowPaidFeatures={setShowPaidFeatures}
             />
           ))}
         </div>

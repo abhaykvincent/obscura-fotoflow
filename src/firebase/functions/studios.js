@@ -11,7 +11,7 @@ import { version } from "jszip";
 
 
 // Studio
-export const createStudio = async (studioData) => {
+export const createStudio = async (studioData,user) => {
     const { name, domain } = studioData; // Assuming domain is provided
     const id = `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
     const currentDate = new Date().toISOString().split('T')[0];
@@ -24,12 +24,14 @@ export const createStudio = async (studioData) => {
     const studioCount = snapshot.size;
     const buckets = ['gs://fotoflow-india-1', 'gs://fotoflow-india-2'];
     const bucketUrl = buckets[studioCount % 2];
-
+    console.log(user)
+    debugger
     // Studio document
     const studioDoc = {
         id: id,
         name: name,
         domain: domain,
+        ownerId:user.email,     //v2.2 +
         bucketUrl: bucketUrl,
         planName: 'Core',
         status: 'active',
@@ -40,12 +42,28 @@ export const createStudio = async (studioData) => {
                 used: 0,         // 0 GB
             },
             projects: {
-                weeklyUsed: 0,
+                monthlyQuota: 3,
                 monthlyUsed: 0,
             },
+            collections:{
+                quota: 3
+            }
+        
         },
-        subscriptionId: subscriptionId,
-        subscriptionHistory: [subscriptionId],
+        billing: {              //v2.2 +
+            razorpayCustomerId: null,
+            razorpaySubscriptionId: null,
+            planId: "plan_core_free_yearly",
+            status: "trialing",
+            currentPeriodEnd:  new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            trialEnd: new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            cancelAtPeriodEnd: true,
+            quantity: 1,                      // seats or events
+            subscriptionHistory: [subscriptionId],
+
+        },
+        subscriptionId: subscriptionId, //v2.2 -
+        subscriptionHistory: [subscriptionId], //v2.2 -
         metadata: {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
@@ -90,6 +108,7 @@ export const createStudio = async (studioData) => {
             createdBy: id,
             updatedBy: id,
         },
+        
     };
 
     // Create invoice for the free plan

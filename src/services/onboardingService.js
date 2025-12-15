@@ -23,7 +23,7 @@ export const onboardingService = {
             },
         });
 
-        const studioResponse = await createStudio(userResponse.studio);
+        const studioResponse = await createStudio(userResponse.studio,userData);
         
         if (invitationCode) {
             await acceptInvitationCode(invitationCode);

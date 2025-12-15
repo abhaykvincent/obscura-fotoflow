@@ -63,17 +63,33 @@ const SortableImage = ({ image, sectionId, ...props }) => {
       fromSection: sectionId,
     },
   });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
+  const combinedTransition = [
     transition,
+    'width 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
+    'height 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
+    'opacity 0.2s ease'
+  ].filter(Boolean).join(', ');
+let newTransform;
+  if(transform !== null){
+    newTransform={
+      x: 0,
+      y: transform.y,
+      scaleX: transform.scaleX,
+      scaleY: transform.scaleY,
+    }
+    console.log(transform)
+
+  }
+  const style = {
+    transform: CSS.Translate.toString(newTransform),
+    transition: combinedTransition,
     opacity: isDragging ? 0 : 1, // Hide original when dragging
     ...props.style,
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} onMouseDown={(e) => e.stopPropagation()}>
-      <img src={image.url} alt={props.alt} style={{ width: '100%', height: '100%', display: 'block', borderRadius: '4px' }} />
+    <div className="image-grid-item" ref={setNodeRef} style={style} {...attributes} {...listeners} onMouseDown={(e) => e.stopPropagation()}>
+      <img src={image.url} alt={props.alt} style={{ width: '100%', height: '100%', display: 'block', borderRadius: '4px', objectFit: 'cover' }} />
     </div>
   );
 };
@@ -90,6 +106,8 @@ export const ImageDragOverlay = ({ image }) => {
           height: '100%',
           display: 'block',
           borderRadius: '4px',
+          objectFit: 'cover',
+          opacity:0.9
         }}
         alt="dragged image"
       />
@@ -110,7 +128,7 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
     onSectionUpdate({ ...section, gridSettings: { ...section.gridSettings, scale: newScale } });
   };
   const dispatch = useDispatch();
-  const [images, setImages] = useState(section.images || []);
+  const images = section.images || [];
   const domain = useSelector(selectDomain);
   const studio = useSelector(selectStudio);
 
@@ -123,12 +141,6 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
       for (let entry of entries) {
         const newContainerWidth = entry.contentRect.width;
         setContainerWidth(newContainerWidth);
-        if (images && newContainerWidth) {
-          const targetRowHeight = 200;
-          const gap = 10;
-          const computedLayout = computeLayout(images, newContainerWidth, targetRowHeight, gap);
-          setLayout(computedLayout);
-        }
       }
     });
 
@@ -142,7 +154,16 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
         observer.unobserve(currentRef);
       }
     };
-  }, [images]); // Add images to dependency array
+  }, []);
+
+  useLayoutEffect(() => {
+    if (images && containerWidth) {
+      const targetRowHeight = 200;
+      const gap = 10;
+      const computedLayout = computeLayout(images, containerWidth, targetRowHeight, gap);
+      setLayout(computedLayout);
+    }
+  }, [images, containerWidth]);
 
   const onDrop = useCallback((acceptedFiles) => {
     const importFileSize = 0;
@@ -166,12 +187,6 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
     const files = Array.from(event.dataTransfer.files);
     onDrop(files);
   };
-
-  React.useEffect(() => {
-    if (section.images) {
-      setImages(section.images);
-    }
-  }, [section.images]);
 
   return (
     <div className="image-grid-section">

@@ -28,7 +28,7 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateStudioForm() && validateAllSetForm()) {
-            dispatch(showLoading('Creating your studio...'));
+            dispatch(showLoading({context:'Creating your studio...', subcontext:''}));
             onNext();
         }
     };
@@ -111,7 +111,7 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
                 <div className={`privacy-policy-statment ${isDomainAvailable && !errors.studioName ? 'active' : ''} ${formData.studioDomain.length > 3 ? 'active' : ''}`}>
                     <input type="checkbox" checked={formData.privacyPolicyAgreed} id="privacyPolicy" className={`${errors.privacyPolicyAgreed && 'privacyPolicy-error-input'}`} name="privacyPolicy" required onChange={() => updateFormData({ privacyPolicyAgreed: !formData.privacyPolicyAgreed })} disabled={disabled} />
                     <label>
-                        I agree to the <span onClick={() => dispatch(openModal('privacyPolicy'))}>Terms of Service</span> and <span onClick={() => dispatch(openModal('privacyPolicy'))}>Privacy Policy</span>
+                        I agree to the   <span onClick={() => dispatch(openModal('privacyPolicy'))}>Privacy Policy</span> and <span onClick={() => dispatch(openModal('termsOfService'))}>Terms of Service</span>
                     </label>
                 </div>
                 {(errors.privacyPolicyAgreed ) && <div className={`error-container privacyPolicy-error ${formData.privacyPolicyAgreed  && 'hide-error'}`}>{errors.privacyPolicyAgreed}</div>}

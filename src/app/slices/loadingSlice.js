@@ -14,13 +14,11 @@ const loadingSlice = createSlice({
             state.show = true;
             if (action.payload) {
                 console.log(action.payload)
-                debugger
                 state.context = action.payload.context;
                 state.subcontext = action.payload.subcontext;
             }
         },
         hideLoading: (state) => {
-            debugger
             state.show = false;
             state.context = 'Loading...';
             state.subcontext = '';

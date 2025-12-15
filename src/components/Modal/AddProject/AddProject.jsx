@@ -86,10 +86,10 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
       return;
     }
     const domain = currentStudio.domain;
-    dispatch(showLoading({context:`Creating project - ${projectData.type} `,subcontext:`${projectData.name} `}));
+    dispatch(showLoading({context:`Creating ${projectData.type} project`,subcontext:`${projectData.name} `}));
     onClose();
 
-    await new Promise(resolve => setTimeout(resolve, 500)); // Wait for animation
+    await new Promise(resolve => setTimeout(resolve, 1100)); // Wait for animation
 
     const projectType = isSubProject ? "Sub-Project" : "Project";
     const action = isSubProject && parentProjectId

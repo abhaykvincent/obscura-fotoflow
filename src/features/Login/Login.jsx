@@ -7,6 +7,8 @@ import { googleLogin, login, selectUserStudio, setUser } from '../../app/slices/
 import { openModal } from '../../app/slices/modalSlice';
 import LoginEmailPassword from './LoginEmailPassword';
 import AddStudio from '../../components/Modal/AddStudio';
+import TermsOfServiceModal from '../../components/Modal/TermsOfServiceModal';
+import PrivacyPolicyModal from '../../components/Modal/PrivacyPolicyModal';
 import { fetchStudiosOfUser } from '../../firebase/functions/studios';
 import { isDeveloper, trackEvent } from '../../analytics/utils';
 import { updateProjectsStatus } from '../../app/slices/projectsSlice';
@@ -171,9 +173,9 @@ const LoginModal = () => {
             <p className="cta-postlabel"></p>
           </div>
           <div className="footer-actions">
-            <a href="">Terms of Service </a>
+            <a onClick={() => dispatch(openModal('privacyPolicy'))}>Privacy Policy</a>
             <p className="ampersand">&</p>
-            <a href="">Privacy Policy</a>
+            <a onClick={() => dispatch(openModal('termsOfService'))}>Terms of Service </a>
           </div>
         
         </div>
@@ -192,6 +194,8 @@ const LoginModal = () => {
     </div>
     <AddStudio/>
     <LoginEmailPassword/>
+    <TermsOfServiceModal/>
+    <PrivacyPolicyModal/>
     </>
   );
   

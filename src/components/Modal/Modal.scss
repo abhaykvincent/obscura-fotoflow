@@ -384,7 +384,8 @@ animation-timing-function: ease-out;
           border-left: 1px solid $green-accessible-light;
           border-top: 1px solid $green-accessible-light;
           background-color: $dark-3;
-            margin-top: 4px;
+                   transform: translateY(2px);
+
           }
           // hide radio buttons
           input[type="radio"] {
@@ -448,11 +449,16 @@ animation-timing-function: ease-out;
       gap:8px*2;
       .project-validity-options{
         .radio-button-group{
-        margin: 8px*0.5  ;
-margin-top: 0!important;
+        margin: 8px*0.5;
         margin-left: 0px;
+        transform: translateY(0px);
               border: 1px solid $dark-0;
               border-radius: 6px;
+              &:active{
+
+    transform: translateY(2px);
+    transition-duration: 0.2s;
+              }
           label{
               padding: 8px*1.6 *1.2  8px*1.6 *3;
             font-size: 1.3rem;
