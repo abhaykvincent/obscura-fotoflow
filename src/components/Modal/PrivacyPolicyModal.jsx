@@ -43,51 +43,58 @@ function PrivacyPolicyModal() {
                     <p style={{ fontSize: '0.9em', marginBottom: '20px' }}>Last Updated: December 15, 2025</p>
 
                     <h3>1. Introduction</h3>
-                    <p>FotoFlow ("we," "us," or "our") respects your privacy and is committed to protecting it through our compliance with this policy. This Privacy Policy describes the types of information we may collect from you or that you may provide when you visit the FotoFlow application (our "Service") and our practices for collecting, using, maintaining, protecting, and disclosing that information.</p>
+                    <p>FotoFlow ("we," "us," or "our") respects your privacy and is committed to protecting it. This Privacy Policy outlines how we collect, use, and protect your information when you use our B2B SaaS application for event photographers. We adhere to applicable Indian laws, including the Information Technology Act, 2000 and the Digital Personal Data Protection Act, 2023 (as applicable).</p>
                     
                     <br/>
                     <h3>2. Information We Collect</h3>
-                    <p>We collect several types of information from and about users of our Service, including:</p>
+                    <p>We collect several types of information:</p>
                     <ul style={{ paddingLeft: '20px', margin: '10px 0' }}>
-                        <li><strong>Personal Information:</strong> Name, email address, and profile picture provided during account creation (including via Google/Apple Sign-In).</li>
-                        <li><strong>User Content:</strong> Photos, images, and metadata (e.g., EXIF data) that you upload to the Service.</li>
-                        <li><strong>Usage Data:</strong> Information about how you access and use the Service, such as your IP address, browser type, device information, and pages visited.</li>
+                        <li><strong>Account Information:</strong> Name, email address, phone number, and business details provided during registration.</li>
+                        <li><strong>User Content:</strong> Photos, videos, and metadata uploaded to the platform.</li>
+                        <li><strong>Client Data (CRM):</strong> Information you enter about your clients (end-users) for project management and invoicing (e.g., Names, Event Dates, Contact Info). You are the Data Fiduciary for this data.</li>
+                        <li><strong>Financial Information:</strong> Bank account details, UPI IDs, or GST numbers you provide for invoicing or subscription payments.</li>
+                        <li><strong>Usage Data:</strong> IP address, browser type, device info, and interaction logs.</li>
                     </ul>
 
                     <br/>
                     <h3>3. How We Use Your Information</h3>
-                    <p>We use information that we collect about you or that you provide to us, including any personal information:</p>
+                    <p>We use the collected data to:</p>
                     <ul style={{ paddingLeft: '20px', margin: '10px 0' }}>
-                        <li>To provide and maintain our Service.</li>
-                        <li>To allow you to participate in interactive features of our Service (e.g., sharing galleries).</li>
-                        <li>To notify you about changes to our Service or any products or services we offer or provide through it.</li>
-                        <li>To monitor the usage of the Service and detect, prevent, and address technical issues.</li>
+                        <li>Provide, operate, and maintain the FotoFlow platform (Storage, Gallery, Website).</li>
+                        <li>Process transactions and manage your subscription.</li>
+                        <li>Enable CRM features (generating invoices, managing client timelines).</li>
+                        <li>Send service updates, security alerts, and administrative messages.</li>
                     </ul>
 
                     <br/>
                     <h3>4. Data Storage and Security</h3>
-                    <p>We use industry-standard cloud providers (such as Google Cloud Platform and Firebase) to store and process your data. We implement appropriate technical and organizational measures to secure your personal information from accidental loss and from unauthorized access, use, alteration, and disclosure. However, the transmission of information via the internet is not completely secure, and we cannot guarantee the absolute security of your personal information transmitted to our Service.</p>
+                    <p>Your data is stored on secure cloud servers. We use industry-standard providers (such as Google Cloud Platform and Firebase). While we implement robust security measures, no method of transmission over the internet is 100% secure.</p>
 
                     <br/>
-                    <h3>5. Data Sharing and Disclosure</h3>
-                    <p>We do not sell your personal information. We may disclose aggregated information about our users without restriction. We may disclose personal information that we collect or you provide as described in this privacy policy:</p>
+                    <h3>5. Sharing and Disclosure</h3>
+                    <p>We do not sell your personal data. We may share information with:</p>
                     <ul style={{ paddingLeft: '20px', margin: '10px 0' }}>
-                        <li>To our subsidiaries and affiliates.</li>
-                        <li>To contractors, service providers, and other third parties we use to support our business (e.g., analytics providers, payment processors).</li>
-                        <li>To comply with any court order, law, or legal process, including to respond to any government or regulatory request.</li>
+                        <li><strong>Service Providers:</strong> Third-party vendors who help us operate (e.g., Payment Gateways like Razorpay/Stripe, Cloud Storage).</li>
+                        <li><strong>Legal Compliance:</strong> To comply with Indian laws, court orders, or government requests.</li>
                     </ul>
 
                     <br/>
-                    <h3>6. Your Data Rights</h3>
-                    <p>Depending on your location, you may have rights to access, correct, delete, or restrict use of your personal information. You can access and update most of your personal data directly through your account settings. To request deletion of your account and data, please contact us.</p>
+                    <h3>6. Your Rights & Grievance Redressal</h3>
+                    <p>As a user in India, you have rights to access, correct, or erase your personal data. You may also withdraw consent for future processing.</p>
+                    <p><strong>Grievance Officer:</strong> In accordance with the IT Act, 2000, if you have any complaints or concerns regarding your data, please contact our Grievance Officer:</p>
+                    <p style={{ marginLeft: '20px', borderLeft: '3px solid #ddd', paddingLeft: '10px' }}>
+                        Name: [Insert Name]<br/>
+                        Email: grievance@fotoflow.app<br/>
+                        Address: [Insert Registered Office Address]
+                    </p>
 
                     <br/>
-                    <h3>7. Changes to Our Privacy Policy</h3>
-                    <p>It is our policy to post any changes we make to our privacy policy on this page. If we make material changes to how we treat our users' personal information, we will notify you through the Service or by email.</p>
+                    <h3>7. Changes to Policy</h3>
+                    <p>We may update this policy to reflect changes in our practices or laws. We will notify you of significant changes.</p>
 
                     <br/>
-                    <h3>8. Contact Information</h3>
-                    <p>To ask questions or comment about this privacy policy and our privacy practices, contact us at: privacy@fotoflow.app</p>
+                    <h3>8. Contact Us</h3>
+                    <p>For general privacy inquiries, contact us at: privacy@fotoflow.app</p>
                 </div>
             </div>
           </div>
