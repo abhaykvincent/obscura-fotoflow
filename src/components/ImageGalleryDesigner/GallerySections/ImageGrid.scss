@@ -31,7 +31,7 @@
       user-select: none;
       
       div[role="button"] {
-
+        transition: transform 0.2s ease;
         img{
 
             transform: scale(1.2);
