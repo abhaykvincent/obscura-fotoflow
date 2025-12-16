@@ -243,7 +243,7 @@ const PricingPlanModal = () => {
 
         let updatedPlans;
         if (planData.id) {
-            updatedPlans = group.plans.map(p => p.id === planData.id ? planData : p);
+            updatedPlans = group.plans.map(p => p.id === planData.id ? planData : { ...p });
         } else {
             const newPlan = { ...planData, id: `plan_${Date.now()}` };
             updatedPlans = [...group.plans, newPlan];
