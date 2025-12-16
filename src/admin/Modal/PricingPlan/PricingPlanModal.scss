@@ -1,16 +1,17 @@
 @import '../../../style/variables';
 @import '../../../style/components';
-$primary-color: #2c3e50;
+$primary-color: $green-default-light;
 .pricing-plan-modal {
     width: 900px; // Wider modal for multi-column layout
     max-width: 95vw;
-    height: 80vh;
     display: flex;
+padding-bottom: 0;
     flex-direction: column;
 
     .modal-body {
         padding: 0; // Reset padding for split layout
         display: flex;
+    margin: 0 !important;
         flex: 1;
         overflow: hidden;
         height: 100%;
@@ -57,7 +58,7 @@ $primary-color: #2c3e50;
     // -- Main Content Area --
     .modal-content-area {
         flex: 1;
-        padding: 30px;
+        padding: 8px*2;
         overflow-y: auto;
         
         h3 {
@@ -80,6 +81,11 @@ $primary-color: #2c3e50;
             
             .field {
                 flex: 1;
+            }
+            &.slug-sort-order{
+                display: grid;
+
+                grid-template-columns: auto 8px*12;
             }
         }
 
