@@ -149,6 +149,7 @@
             display: grid;
             grid-template-columns: auto auto;
             justify-content:none;
+            margin-bottom: 8px*2;
             .left-actions{
                 display: flex;
                 justify-content: start;
@@ -161,6 +162,14 @@
                 align-items: center;
             }
         }
+
+                span.selected-group-name{
+                    color: $gray-default-dark;
+                    &::before{
+                        width: 8px*2;
+                        margin-right: 0;
+                    }
+                }
 
     .section-title {
         margin-bottom: 8px; // 8px*1
