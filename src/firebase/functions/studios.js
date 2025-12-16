@@ -33,6 +33,7 @@ export const createStudio = async (studioData,user) => {
         domain: domain,
         ownerId:user.email,     //v2.2 +
         bucketUrl: bucketUrl,
+        userBatch: (studioCount % 2)+1,
         planName: 'Core',
         status: 'active',
         batch: '002',
