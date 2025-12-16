@@ -1,11 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../../app/slices/modalSlice';
 import { 
     selectPricingGroups, 
-    deletePricingGroup, 
+    deletePricingGroupAsync, 
     setEditingPricingGroup, 
-    updatePricingGroup 
+    updatePricingGroupAsync,
+    fetchPricingGroupsAsync
 } from '../../../app/slices/adminSettingsSlice';
 
 export const PricingTab = () => {
@@ -17,6 +18,11 @@ export const PricingTab = () => {
     
     // Editing States (Plan editing remains local/inline for now)
     const [editingPlan, setEditingPlan] = useState(null);   
+
+    // Fetch data on mount
+    useEffect(() => {
+        dispatch(fetchPricingGroupsAsync());
+    }, [dispatch]);
 
     // -- Derived State --
     const selectedGroup = useMemo(() => 
@@ -36,7 +42,7 @@ export const PricingTab = () => {
 
     const handleDeleteGroup = (groupId) => {
         if (window.confirm('Are you sure you want to delete this pricing group?')) {
-            dispatch(deletePricingGroup(groupId));
+            dispatch(deletePricingGroupAsync(groupId));
         }
     };
 
@@ -59,7 +65,7 @@ export const PricingTab = () => {
          if (window.confirm('Are you sure you want to delete this plan?')) {
              if (selectedGroup) {
                  const updatedPlans = selectedGroup.plans.filter(p => p.id !== planId);
-                 dispatch(updatePricingGroup({ id: selectedGroupId, plans: updatedPlans }));
+                 dispatch(updatePricingGroupAsync({ id: selectedGroupId, updates: { plans: updatedPlans } }));
              }
         }
     };
@@ -77,7 +83,7 @@ export const PricingTab = () => {
             updatedPlans = [...selectedGroup.plans, newPlan];
         }
         
-        dispatch(updatePricingGroup({ id: selectedGroupId, plans: updatedPlans }));
+        dispatch(updatePricingGroupAsync({ id: selectedGroupId, updates: { plans: updatedPlans } }));
         setEditingPlan(null);
     };
 

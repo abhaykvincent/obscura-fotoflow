@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { closeModalWithAnimation, selectModal } from '../../../app/slices/modalSlice';
 import { 
     selectEditingPricingGroup, 
-    addPricingGroup, 
-    updatePricingGroup 
+    addPricingGroupAsync, 
+    updatePricingGroupAsync 
 } from '../../../app/slices/adminSettingsSlice';
 import { useModalFocus } from '../../../hooks/modalInputFocus';
 import './PricingGroupModal.scss';
@@ -49,14 +49,14 @@ const PricingGroupModal = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.name.trim()) return;
         
         if (formData.id) {
-            dispatch(updatePricingGroup(formData));
+            await dispatch(updatePricingGroupAsync({ id: formData.id, updates: formData }));
         } else {
-            dispatch(addPricingGroup(formData));
+            await dispatch(addPricingGroupAsync(formData));
         }
         
         onClose();
