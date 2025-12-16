@@ -16,9 +16,9 @@ export const LeadsTab = ({ leads }) => {
     }, [leads, searchQuery]);
 
     return (
-        <div className="leads-tab-window">
+        <div className="users-tab-window">
             <div className="list-display">
-                <section className="leads-list">
+                <section className="users-list">
                     <div className="actions">
                         <div className="left-actions">
                             <div className="search-input-wrapper">
