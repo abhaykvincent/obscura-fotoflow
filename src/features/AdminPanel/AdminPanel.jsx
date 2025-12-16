@@ -46,8 +46,10 @@ const ADMIN_TABS = [
 
 const SALES_TABS = [
     { id: 'sales-overview', icon: 'history', label: 'Overview' },
+    { id: 'leads', icon: 'leads', label: 'Leads' },
     { id: 'pricing', icon: 'studio', label: 'Pricing Plans' },
     { id: 'subscriptions', icon: 'leads', label: 'Subscriptions' },
+    { id: 'referal-codes', icon: 'referal', label: 'Invitations' },
     { id: 'trials', icon: 'user', label: 'Active Trials' },
 ];
 
