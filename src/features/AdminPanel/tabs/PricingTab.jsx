@@ -1,38 +1,28 @@
-import React, { useState, useMemo } from 'react';
-
-const DEFAULT_PLANS_TEMPLATE = [
-    { id: 'core', name: 'Core', price: 0, features: ['20GB Storage', 'Basic Support'], active: true },
-    { id: 'freelancer', name: 'Freelancer', price: 29, features: ['1TB Storage', 'Priority Support', 'Custom Branding'], active: true },
-    { id: 'studio', name: 'Studio', price: 99, features: ['Unlimited Storage', '24/7 Support', 'API Access', 'White Label'], active: true }
-];
-
-const MOCK_PRICING_GROUPS = [
-    {
-        id: 'default_2024',
-        name: 'Standard Pricing 2024',
-        description: 'The main public pricing tier',
-        plans: JSON.parse(JSON.stringify(DEFAULT_PLANS_TEMPLATE))
-    },
-    {
-        id: 'holiday_special',
-        name: 'Holiday Special',
-        description: 'Discounted rates for Q4',
-        plans: [
-            { id: 'core', name: 'Core', price: 0, features: ['20GB Storage'], active: true },
-            { id: 'freelancer', name: 'Freelancer', price: 19, features: ['1TB Storage', 'Priority Support'], active: true },
-            { id: 'studio', name: 'Studio', price: 79, features: ['Unlimited Storage', 'White Label'], active: true }
-        ]
-    }
-];
+import React, { useState, useMemo, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { openModal } from '../../../app/slices/modalSlice';
+import { 
+    selectPricingGroups, 
+    deletePricingGroupAsync, 
+    setEditingPricingGroup, 
+    updatePricingGroupAsync,
+    fetchPricingGroupsAsync
+} from '../../../app/slices/adminSettingsSlice';
 
 export const PricingTab = () => {
+    const dispatch = useDispatch();
+    
     // -- State --
-    const [pricingGroups, setPricingGroups] = useState(MOCK_PRICING_GROUPS);
+    const pricingGroups = useSelector(selectPricingGroups);
     const [selectedGroupId, setSelectedGroupId] = useState(null); // If null, viewing list of groups
     
-    // Editing States
-    const [editingGroup, setEditingGroup] = useState(null); // For creating/editing a Pricing Group
-    const [editingPlan, setEditingPlan] = useState(null);   // For creating/editing a Plan within a group
+    // Editing States (Plan editing remains local/inline for now)
+    const [editingPlan, setEditingPlan] = useState(null);   
+
+    // Fetch data on mount
+    useEffect(() => {
+        dispatch(fetchPricingGroupsAsync());
+    }, [dispatch]);
 
     // -- Derived State --
     const selectedGroup = useMemo(() => 
@@ -41,41 +31,19 @@ export const PricingTab = () => {
 
     // -- Group Handlers --
     const handleCreateGroup = () => {
-        setEditingGroup({ 
-            id: null, 
-            name: '', 
-            description: '' 
-        });
+        dispatch(setEditingPricingGroup(null));
+        dispatch(openModal('managePricingGroup'));
     };
 
     const handleEditGroup = (group) => {
-        setEditingGroup({ ...group });
+        dispatch(setEditingPricingGroup(group));
+        dispatch(openModal('managePricingGroup'));
     };
 
     const handleDeleteGroup = (groupId) => {
         if (window.confirm('Are you sure you want to delete this pricing group?')) {
-            setPricingGroups(prev => prev.filter(g => g.id !== groupId));
+            dispatch(deletePricingGroupAsync(groupId));
         }
-    };
-
-    const handleSaveGroup = () => {
-        if (!editingGroup.name) return;
-
-        setPricingGroups(prev => {
-            if (editingGroup.id) {
-                // Update existing
-                return prev.map(g => g.id === editingGroup.id ? { ...g, ...editingGroup } : g);
-            } else {
-                // Create new
-                const newGroup = {
-                    ...editingGroup,
-                    id: `group_${Date.now()}`,
-                    plans: JSON.parse(JSON.stringify(DEFAULT_PLANS_TEMPLATE)) // Pre-fill with default plans
-                };
-                return [...prev, newGroup];
-            }
-        });
-        setEditingGroup(null);
     };
 
     // -- Plan Handlers --
@@ -95,36 +63,27 @@ export const PricingTab = () => {
 
     const handleDeletePlan = (planId) => {
          if (window.confirm('Are you sure you want to delete this plan?')) {
-            setPricingGroups(prev => prev.map(group => {
-                if (group.id === selectedGroupId) {
-                    return {
-                        ...group,
-                        plans: group.plans.filter(p => p.id !== planId)
-                    };
-                }
-                return group;
-            }));
+             if (selectedGroup) {
+                 const updatedPlans = selectedGroup.plans.filter(p => p.id !== planId);
+                 dispatch(updatePricingGroupAsync({ id: selectedGroupId, updates: { plans: updatedPlans } }));
+             }
         }
     };
 
     const handleSavePlan = () => {
-        if (!editingPlan.name) return;
+        if (!editingPlan.name || !selectedGroup) return;
 
-        setPricingGroups(prev => prev.map(group => {
-            if (group.id === selectedGroupId) {
-                let updatedPlans;
-                if (editingPlan.id) {
-                    // Update existing plan
-                    updatedPlans = group.plans.map(p => p.id === editingPlan.id ? editingPlan : p);
-                } else {
-                    // Create new plan
-                    const newPlan = { ...editingPlan, id: `plan_${Date.now()}` };
-                    updatedPlans = [...group.plans, newPlan];
-                }
-                return { ...group, plans: updatedPlans };
-            }
-            return group;
-        }));
+        let updatedPlans;
+        if (editingPlan.id) {
+            // Update existing plan
+            updatedPlans = selectedGroup.plans.map(p => p.id === editingPlan.id ? editingPlan : p);
+        } else {
+            // Create new plan
+            const newPlan = { ...editingPlan, id: `plan_${Date.now()}` };
+            updatedPlans = [...selectedGroup.plans, newPlan];
+        }
+        
+        dispatch(updatePricingGroupAsync({ id: selectedGroupId, updates: { plans: updatedPlans } }));
         setEditingPlan(null);
     };
 
@@ -146,41 +105,6 @@ export const PricingTab = () => {
                             <div className="button primary" onClick={handleCreateGroup}>Create Custom Pricing</div>
                         </div>
                     </div>
-
-                    {/* Group Editor Form */}
-                    {editingGroup && (
-                        <div className="edit-plan-form" style={{ padding: '20px', background: '#2a2a2a', borderRadius: '8px', marginBottom: '20px', border: '1px solid #444' }}>
-                            <h4 style={{ marginBottom: '15px' }}>{editingGroup.id ? 'Edit Pricing Group' : 'New Pricing Group'}</h4>
-                            <div style={{ display: 'grid', gap: '15px', maxWidth: '500px' }}>
-                                <label>
-                                    Group Name
-                                    <input 
-                                        type="text" 
-                                        value={editingGroup.name} 
-                                        onChange={(e) => setEditingGroup({...editingGroup, name: e.target.value})}
-                                        className="search-input"
-                                        placeholder="e.g. Corporate Pricing 2024"
-                                        style={{ width: '100%', marginTop: '5px' }}
-                                    />
-                                </label>
-                                <label>
-                                    Description
-                                    <input 
-                                        type="text" 
-                                        value={editingGroup.description || ''} 
-                                        onChange={(e) => setEditingGroup({...editingGroup, description: e.target.value})}
-                                        className="search-input"
-                                        placeholder="Optional description"
-                                        style={{ width: '100%', marginTop: '5px' }}
-                                    />
-                                </label>
-                                <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                                    <button className="button primary" onClick={handleSaveGroup}>Save Group</button>
-                                    <button className="button secondary outline" onClick={() => setEditingGroup(null)}>Cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
 
                     <table className="invoice-table">
                         <thead>
@@ -323,3 +247,5 @@ export const PricingTab = () => {
         </div>
     );
 };
+
+
