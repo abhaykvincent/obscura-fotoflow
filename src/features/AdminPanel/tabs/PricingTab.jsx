@@ -112,7 +112,6 @@ export const PricingTab = () => {
                                         {group.plans.length} Plans
                                     </td>
                                     <td className="actions">
-                                        <button className="button secondary outline small" onClick={() => setSelectedGroupId(group.id)}>Manage Plans</button>
                                         <button className="button secondary outline small" style={{ marginLeft: '10px' }} onClick={() => handleEditGroup(group)}>Edit</button>
                                         <button className="button secondary outline small" style={{ marginLeft: '10px', color: '#ff6b6b', borderColor: '#ff6b6b' }} onClick={() => handleDeleteGroup(group.id)}>Delete</button>
                                     </td>
@@ -134,12 +133,12 @@ export const PricingTab = () => {
                     <span 
                         onClick={() => { setSelectedGroupId(null); }} 
                         style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}
-                        className="hover-text-white"
+                        className="hover-text-white icon  back "
                     >
-                        &larr; Back to Custom Pricings
+                         Custom Pricings
                     </span>
                     <span>/</span>
-                    <span style={{ color: '#fff' }}>{selectedGroup?.name}</span>
+                    <span className="selected-group-name" >{selectedGroup?.name}</span>
                 </div>
 
                 <div className="actions">
