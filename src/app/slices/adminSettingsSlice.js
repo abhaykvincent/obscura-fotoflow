@@ -91,6 +91,7 @@ const adminSettingsSlice = createSlice({
     },
     pricingGroups: [],
     editingPricingGroup: null,
+    editingPricingPlan: null,
     loading: false,
     error: null,
   },
@@ -100,6 +101,9 @@ const adminSettingsSlice = createSlice({
     },
     setEditingPricingGroup: (state, action) => {
       state.editingPricingGroup = action.payload;
+    },
+    setEditingPricingPlan: (state, action) => {
+      state.editingPricingPlan = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -182,10 +186,12 @@ const adminSettingsSlice = createSlice({
 
 export const { 
     setGalleryTagline, 
-    setEditingPricingGroup
+    setEditingPricingGroup,
+    setEditingPricingPlan
 } = adminSettingsSlice.actions;
 
 export const selectPricingGroups = (state) => state.adminSettings.pricingGroups;
 export const selectEditingPricingGroup = (state) => state.adminSettings.editingPricingGroup;
+export const selectEditingPricingPlan = (state) => state.adminSettings.editingPricingPlan;
 
 export default adminSettingsSlice.reducer;
