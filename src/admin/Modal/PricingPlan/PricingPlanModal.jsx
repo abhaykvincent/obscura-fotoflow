@@ -504,6 +504,36 @@ const PricingPlanModal = () => {
         </div>
     );
 
+    const renderOverviewCard = () => {
+        const monthlyTier = formData.pricing.tiers.find(t => t.interval === 'month');
+        const monthlyPrice = monthlyTier ? `${formData.pricing.currency} ${monthlyTier.price}` : 'N/A';
+        const storageLimit = formData.limits.storageGb === -1 ? 'Unlimited' : `${formData.limits.storageGb} GB`;
+
+        return (
+            <div className="overview-card">
+                <h4>Plan Overview</h4>
+                <div className="overview-item">
+                    <span>Name:</span> <strong>{formData.name || 'Untitled'}</strong>
+                </div>
+                <div className="overview-item">
+                    <span>Type:</span> {formData.type}
+                </div>
+                <div className="overview-item">
+                    <span>Status:</span> {formData.status}
+                </div>
+                <div className="overview-item">
+                    <span>Monthly Price:</span> {monthlyPrice}
+                </div>
+                <div className="overview-item">
+                    <span>Storage:</span> {storageLimit}
+                </div>
+                <div className="overview-item">
+                    <span>Highlight:</span> {formData.ui.highlight ? 'Yes' : 'No'}
+                </div>
+            </div>
+        );
+    };
+
     if (!isVisible) return null;
 
     return (
@@ -533,6 +563,9 @@ const PricingPlanModal = () => {
                                 {step.label}
                             </div>
                         ))}
+
+                        {/* Overview Card */}
+                        {renderOverviewCard()}
                     </div>
 
                     <div className="modal-content-area">

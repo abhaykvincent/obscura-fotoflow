@@ -53,6 +53,38 @@ padding-bottom: 0;
                 width: 15px;
             }
         }
+
+        .overview-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            margin-top: auto; // Pushes it to the bottom of the sidebar
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.9em;
+            color: #ccc;
+
+            h4 {
+                color: white;
+                margin-top: 0;
+                margin-bottom: 10px;
+                font-size: 1.1em;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+                padding-bottom: 8px;
+            }
+
+            .overview-item {
+                display: flex;
+                justify-content: space-between;
+                span {
+                    color: #aaa;
+                }
+                strong {
+                    color: white;
+                }
+            }
+        }
     }
 
     // -- Main Content Area --
