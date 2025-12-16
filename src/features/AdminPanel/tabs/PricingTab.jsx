@@ -6,7 +6,8 @@ import {
     deletePricingGroupAsync, 
     setEditingPricingGroup, 
     updatePricingGroupAsync,
-    fetchPricingGroupsAsync
+    fetchPricingGroupsAsync,
+    setEditingPricingPlan
 } from '../../../app/slices/adminSettingsSlice';
 
 export const PricingTab = () => {
@@ -16,9 +17,6 @@ export const PricingTab = () => {
     const pricingGroups = useSelector(selectPricingGroups);
     const [selectedGroupId, setSelectedGroupId] = useState(null); // If null, viewing list of groups
     
-    // Editing States (Plan editing remains local/inline for now)
-    const [editingPlan, setEditingPlan] = useState(null);   
-
     // Fetch data on mount
     useEffect(() => {
         dispatch(fetchPricingGroupsAsync());
@@ -48,17 +46,20 @@ export const PricingTab = () => {
 
     // -- Plan Handlers --
     const handleCreatePlan = () => {
-        setEditingPlan({
+        dispatch(setEditingPricingPlan({
             id: null,
             name: '',
             price: 0,
             features: [],
-            active: true
-        });
+            active: true,
+            groupId: selectedGroupId
+        }));
+        dispatch(openModal('managePricingPlan'));
     };
 
     const handleEditPlan = (plan) => {
-        setEditingPlan({ ...plan });
+        dispatch(setEditingPricingPlan({ ...plan, groupId: selectedGroupId }));
+        dispatch(openModal('managePricingPlan'));
     };
 
     const handleDeletePlan = (planId) => {
@@ -68,23 +69,6 @@ export const PricingTab = () => {
                  dispatch(updatePricingGroupAsync({ id: selectedGroupId, updates: { plans: updatedPlans } }));
              }
         }
-    };
-
-    const handleSavePlan = () => {
-        if (!editingPlan.name || !selectedGroup) return;
-
-        let updatedPlans;
-        if (editingPlan.id) {
-            // Update existing plan
-            updatedPlans = selectedGroup.plans.map(p => p.id === editingPlan.id ? editingPlan : p);
-        } else {
-            // Create new plan
-            const newPlan = { ...editingPlan, id: `plan_${Date.now()}` };
-            updatedPlans = [...selectedGroup.plans, newPlan];
-        }
-        
-        dispatch(updatePricingGroupAsync({ id: selectedGroupId, updates: { plans: updatedPlans } }));
-        setEditingPlan(null);
     };
 
     // -- Render Views --
@@ -128,7 +112,6 @@ export const PricingTab = () => {
                                         {group.plans.length} Plans
                                     </td>
                                     <td className="actions">
-                                        <button className="button secondary outline small" onClick={() => setSelectedGroupId(group.id)}>Manage Plans</button>
                                         <button className="button secondary outline small" style={{ marginLeft: '10px' }} onClick={() => handleEditGroup(group)}>Edit</button>
                                         <button className="button secondary outline small" style={{ marginLeft: '10px', color: '#ff6b6b', borderColor: '#ff6b6b' }} onClick={() => handleDeleteGroup(group.id)}>Delete</button>
                                     </td>
@@ -148,14 +131,14 @@ export const PricingTab = () => {
                 {/* Navigation Header */}
                 <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px', color: '#888' }}>
                     <span 
-                        onClick={() => { setSelectedGroupId(null); setEditingPlan(null); }} 
+                        onClick={() => { setSelectedGroupId(null); }} 
                         style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}
-                        className="hover-text-white"
+                        className="hover-text-white icon  back "
                     >
-                        &larr; Back to Custom Pricings
+                         Custom Pricings
                     </span>
                     <span>/</span>
-                    <span style={{ color: '#fff' }}>{selectedGroup?.name}</span>
+                    <span className="selected-group-name" >{selectedGroup?.name}</span>
                 </div>
 
                 <div className="actions">
@@ -167,48 +150,6 @@ export const PricingTab = () => {
                     </div>
                 </div>
                 
-                {/* Plan Editor Form */}
-                {editingPlan ? (
-                    <div className="edit-plan-form" style={{ padding: '20px', background: '#2a2a2a', borderRadius: '8px', marginBottom: '20px', border: '1px solid #444' }}>
-                        <h4 style={{ marginBottom: '15px' }}>{editingPlan.id ? `Edit ${editingPlan.name}` : 'New Plan'}</h4>
-                        <div style={{ display: 'grid', gap: '15px', maxWidth: '400px' }}>
-                            <label>
-                                Plan Name
-                                <input 
-                                    type="text" 
-                                    value={editingPlan.name} 
-                                    onChange={(e) => setEditingPlan({...editingPlan, name: e.target.value})}
-                                    className="search-input"
-                                    placeholder="e.g. Freelancer"
-                                    style={{ width: '100%', marginTop: '5px' }}
-                                />
-                            </label>
-                            <label>
-                                Price ($ Monthly)
-                                <input 
-                                    type="number" 
-                                    value={editingPlan.price} 
-                                    onChange={(e) => setEditingPlan({...editingPlan, price: Number(e.target.value)})}
-                                    className="search-input"
-                                    style={{ width: '100%', marginTop: '5px' }}
-                                />
-                            </label>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <input 
-                                    type="checkbox" 
-                                    checked={editingPlan.active} 
-                                    onChange={(e) => setEditingPlan({...editingPlan, active: e.target.checked})}
-                                />
-                                Active Status
-                            </label>
-                            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                                <button className="button primary" onClick={handleSavePlan}>Save Plan</button>
-                                <button className="button secondary outline" onClick={() => setEditingPlan(null)}>Cancel</button>
-                            </div>
-                        </div>
-                    </div>
-                ) : null}
-
                 <table className="invoice-table">
                     <thead>
                         <tr>
@@ -247,5 +188,3 @@ export const PricingTab = () => {
         </div>
     );
 };
-
-
