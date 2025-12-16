@@ -1,12 +1,18 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModalWithAnimation, selectModal } from '../../../app/slices/modalSlice';
+import { 
+    selectEditingPricingGroup, 
+    addPricingGroup, 
+    updatePricingGroup 
+} from '../../../app/slices/adminSettingsSlice';
 import { useModalFocus } from '../../../hooks/modalInputFocus';
 import './PricingGroupModal.scss';
 
-const PricingGroupModal = ({ initialData, onSave }) => {
+const PricingGroupModal = () => {
     const dispatch = useDispatch();
     const { managePricingGroup: isVisible } = useSelector(selectModal);
+    const editingGroup = useSelector(selectEditingPricingGroup);
     const modalRef = useModalFocus(isVisible);
 
     const [formData, setFormData] = useState({
@@ -15,19 +21,21 @@ const PricingGroupModal = ({ initialData, onSave }) => {
         description: ''
     });
     
-    // Update form data when initialData changes or modal opens
+    // Update form data when editingGroup changes or modal opens
     useEffect(() => {
-        if (isVisible && initialData) {
-            setFormData(initialData);
-        } else if (isVisible && !initialData) {
-            // Reset for new entry if no initial data provided (though parent usually handles this)
-            setFormData({
-                id: null,
-                name: '',
-                description: ''
-            });
+        if (isVisible) {
+            if (editingGroup) {
+                setFormData(editingGroup);
+            } else {
+                // Reset for new entry
+                setFormData({
+                    id: null,
+                    name: '',
+                    description: ''
+                });
+            }
         }
-    }, [isVisible, initialData]);
+    }, [isVisible, editingGroup]);
 
     const onClose = () => {
         dispatch(closeModalWithAnimation('managePricingGroup'));
@@ -44,7 +52,13 @@ const PricingGroupModal = ({ initialData, onSave }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!formData.name.trim()) return;
-        onSave(formData);
+        
+        if (formData.id) {
+            dispatch(updatePricingGroup(formData));
+        } else {
+            dispatch(addPricingGroup(formData));
+        }
+        
         onClose();
     };
 
