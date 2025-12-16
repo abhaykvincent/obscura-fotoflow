@@ -8,6 +8,7 @@ import './AdminPanel.scss';
 // Components
 import AddReferralModal from '../../admin/Modal/AddReferral';
 import AddUserModal from '../../admin/Modal/AddUser/AddUser.jsx';
+import PricingGroupModal from '../../admin/Modal/PricingGroup/PricingGroupModal.jsx';
 import AdminControls from './AdminControls';
 import { StatCards } from './components/StatCards';
 import { SalesStatCards } from './components/SalesStatCards'; // Import Sales Stats
@@ -166,6 +167,7 @@ function AdminPanel() {
             <AddUserModal />
             
             <main className="admin-panel billing-container">
+                <PricingGroupModal />
                 <h1 className="admin-title">Admin Panel</h1>
 
                 <AdminControls selectedRole={selectedRole} onRoleChange={handleRoleChange} />
