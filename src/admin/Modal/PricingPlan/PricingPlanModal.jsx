@@ -17,19 +17,21 @@ const STEPS = [
     { id: 'ui', label: 'Presentation' }
 ];
 
+const PLAN_SUGGESTIONS = ['Core', 'Freelancer', 'Studio', 'Agency', 'Enterprise', 'Starter', 'Professional', 'Business'];
+
 const DEFAULT_PLAN = {
     id: null,
     name: '',
     slug: '',
     description: '',
     type: 'public',
-    status: 'draft',
+    status: 'active',
     sortOrder: 0,
     pricing: {
-        currency: 'USD',
+        currency: 'INR',
         tiers: [
-             { interval: 'month', price: 0, stripePriceId: '' },
-             { interval: 'year', price: 0, stripePriceId: '', discountLabel: '2 Months Free' }
+             { interval: 'month', price: 0, razorpayPlanId: '' },
+             { interval: 'year', price: 0, razorpayPlanId: '', discountLabel: '2 Months Free' }
         ],
         trialPeriodDays: 14,
         setupFee: 0
@@ -62,6 +64,17 @@ const DEFAULT_PLAN = {
     active: true 
 };
 
+// Simple slugify function
+const slugify = (text) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')     // Replace spaces with -
+    .replace(/[^\w-]+/g, '')  // Remove all non-word chars
+    .replace(/--+/g, '-');    // Replace multiple - with single -
+};
+
 const PricingPlanModal = () => {
     const dispatch = useDispatch();
     const { managePricingPlan: isVisible } = useSelector(selectModal);
@@ -71,11 +84,13 @@ const PricingPlanModal = () => {
 
     const [activeStep, setActiveStep] = useState('general');
     const [formData, setFormData] = useState(JSON.parse(JSON.stringify(DEFAULT_PLAN)));
+    const [isSlugEdited, setIsSlugEdited] = useState(false);
 
     // Initialize state when modal opens
     useEffect(() => {
         if (isVisible) {
             setActiveStep('general');
+            setIsSlugEdited(false); // Reset on open
             if (editingPlan) {
                 // Merge default plan with editing plan to ensure new fields exist
                 const mergedPlan = {
@@ -103,6 +118,7 @@ const PricingPlanModal = () => {
                 }
 
                 setFormData(mergedPlan);
+                if (editingPlan.slug) setIsSlugEdited(true); // If editing existing, assume slug is set
             } else {
                 setFormData(JSON.parse(JSON.stringify(DEFAULT_PLAN)));
             }
@@ -121,6 +137,28 @@ const PricingPlanModal = () => {
                 [field]: value
             }
         }));
+    };
+
+    const handleNameChange = (e) => {
+        const newName = e.target.value;
+        const group = pricingGroups.find(g => g.id === formData.groupId);
+        const groupName = group ? group.name : '';
+        
+        setFormData(prev => {
+            const newState = { ...prev, name: newName };
+            if (!isSlugEdited) {
+                // Auto generate slug if not manually edited
+                // Format: groupname-planname
+                const combined = groupName ? `${groupName} ${newName}` : newName;
+                newState.slug = slugify(combined);
+            }
+            return newState;
+        });
+    };
+
+    const handleSlugChange = (e) => {
+        setFormData(prev => ({ ...prev, slug: e.target.value }));
+        setIsSlugEdited(true);
     };
 
     const handleLimitChange = (key, value) => {
@@ -205,7 +243,7 @@ const PricingPlanModal = () => {
 
         let updatedPlans;
         if (planData.id) {
-            updatedPlans = group.plans.map(p => p.id === planData.id ? planData : p);
+            updatedPlans = group.plans.map(p => p.id === planData.id ? planData : { ...p });
         } else {
             const newPlan = { ...planData, id: `plan_${Date.now()}` };
             updatedPlans = [...group.plans, newPlan];
@@ -224,22 +262,29 @@ const PricingPlanModal = () => {
                 <input 
                     type="text" 
                     value={formData.name} 
-                    onChange={e => setFormData({...formData, name: e.target.value})}
+                    onChange={handleNameChange}
                     placeholder="e.g. Pro Studio"
+                    list="plan-name-suggestions"
                     autoFocus
                 />
+                <datalist id="plan-name-suggestions">
+                    {PLAN_SUGGESTIONS.map(s => <option key={s} value={s} />)}
+                </datalist>
             </div>
-            <div className="form-row">
-                <div className="field">
+            <div className="form-row slug-sort-order">
+                <div className="field ">
                     <label>Slug (URL Friendly)</label>
                     <input 
                         type="text" 
                         value={formData.slug} 
-                        onChange={e => setFormData({...formData, slug: e.target.value})}
-                        placeholder="e.g. pro-studio"
+                        onChange={handleSlugChange}
+                        placeholder="e.g. corporate-pro-studio"
                     />
+                    <p style={{fontSize: '0.75rem', color: '#666', marginTop: '4px'}}>
+                        Auto-generated from Group Name + Plan Name unless manually edited.
+                    </p>
                 </div>
-                <div className="field">
+                <div className="field sort-order">
                     <label>Sort Order</label>
                     <input 
                         type="number" 
@@ -260,8 +305,8 @@ const PricingPlanModal = () => {
                 <div className="field">
                     <label>Status</label>
                     <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})}>
-                        <option value="draft">Draft</option>
                         <option value="active">Active</option>
+                        <option value="draft">Draft</option>
                         <option value="archived">Archived</option>
                     </select>
                 </div>
@@ -286,10 +331,10 @@ const PricingPlanModal = () => {
                         value={formData.pricing.currency} 
                         onChange={e => handleNestedChange('pricing', 'currency', e.target.value)}
                     >
+                        <option value="INR">INR (₹)</option>
                         <option value="USD">USD ($)</option>
                         <option value="EUR">EUR (€)</option>
                         <option value="GBP">GBP (£)</option>
-                        <option value="INR">INR (₹)</option>
                     </select>
                 </div>
                 <div className="field">
@@ -326,12 +371,12 @@ const PricingPlanModal = () => {
                                 />
                             </div>
                             <div>
-                                <span className="sub-label">Stripe Price ID</span>
+                                <span className="sub-label">Razorpay Plan ID</span>
                                 <input 
                                     type="text" 
-                                    value={tier.stripePriceId} 
-                                    onChange={e => handleTierChange(idx, 'stripePriceId', e.target.value)}
-                                    placeholder="price_..."
+                                    value={tier.razorpayPlanId} 
+                                    onChange={e => handleTierChange(idx, 'razorpayPlanId', e.target.value)}
+                                    placeholder="plan_..."
                                 />
                             </div>
                         </div>
@@ -459,6 +504,36 @@ const PricingPlanModal = () => {
         </div>
     );
 
+    const renderOverviewCard = () => {
+        const monthlyTier = formData.pricing.tiers.find(t => t.interval === 'month');
+        const monthlyPrice = monthlyTier ? `${formData.pricing.currency} ${monthlyTier.price}` : 'N/A';
+        const storageLimit = formData.limits.storageGb === -1 ? 'Unlimited' : `${formData.limits.storageGb} GB`;
+
+        return (
+            <div className="overview-card">
+                <h4>Plan Overview</h4>
+                <div className="overview-item">
+                    <span>Name:</span> <strong>{formData.name || 'Untitled'}</strong>
+                </div>
+                <div className="overview-item">
+                    <span>Type:</span> {formData.type}
+                </div>
+                <div className="overview-item">
+                    <span>Status:</span> {formData.status}
+                </div>
+                <div className="overview-item">
+                    <span>Monthly Price:</span> {monthlyPrice}
+                </div>
+                <div className="overview-item">
+                    <span>Storage:</span> {storageLimit}
+                </div>
+                <div className="overview-item">
+                    <span>Highlight:</span> {formData.ui.highlight ? 'Yes' : 'No'}
+                </div>
+            </div>
+        );
+    };
+
     if (!isVisible) return null;
 
     return (
@@ -488,6 +563,9 @@ const PricingPlanModal = () => {
                                 {step.label}
                             </div>
                         ))}
+
+                        {/* Overview Card */}
+                        {renderOverviewCard()}
                     </div>
 
                     <div className="modal-content-area">

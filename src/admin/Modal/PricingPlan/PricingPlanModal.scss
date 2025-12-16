@@ -1,16 +1,17 @@
 @import '../../../style/variables';
 @import '../../../style/components';
-$primary-color: #2c3e50;
+$primary-color: $green-default-light;
 .pricing-plan-modal {
     width: 900px; // Wider modal for multi-column layout
     max-width: 95vw;
-    height: 80vh;
     display: flex;
+padding-bottom: 0;
     flex-direction: column;
 
     .modal-body {
         padding: 0; // Reset padding for split layout
         display: flex;
+    margin: 0 !important;
         flex: 1;
         overflow: hidden;
         height: 100%;
@@ -52,12 +53,44 @@ $primary-color: #2c3e50;
                 width: 15px;
             }
         }
+
+        .overview-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            margin-top: auto; // Pushes it to the bottom of the sidebar
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.9em;
+            color: #ccc;
+
+            h4 {
+                color: white;
+                margin-top: 0;
+                margin-bottom: 10px;
+                font-size: 1.1em;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+                padding-bottom: 8px;
+            }
+
+            .overview-item {
+                display: flex;
+                justify-content: space-between;
+                span {
+                    color: #aaa;
+                }
+                strong {
+                    color: white;
+                }
+            }
+        }
     }
 
     // -- Main Content Area --
     .modal-content-area {
         flex: 1;
-        padding: 30px;
+        padding: 8px*2;
         overflow-y: auto;
         
         h3 {
@@ -80,6 +113,11 @@ $primary-color: #2c3e50;
             
             .field {
                 flex: 1;
+            }
+            &.slug-sort-order{
+                display: grid;
+
+                grid-template-columns: auto 8px*12;
             }
         }
 
