@@ -36,7 +36,6 @@ const AI_TICKETS = [
 // Configuration for tabs by role
 const ADMIN_TABS = [
     { id: 'users', icon: 'user', label: 'Users' },
-    { id: 'leads', icon: 'leads', label: 'Leads' },
     { id: 'studios', icon: 'studio', label: 'Studios' },
     { id: 'referal-codes', icon: 'referal', label: 'Invitations' },
     { id: 'support', icon: 'ticket', label: 'Support' },
