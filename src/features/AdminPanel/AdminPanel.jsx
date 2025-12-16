@@ -8,6 +8,7 @@ import './AdminPanel.scss';
 // Components
 import AddReferralModal from '../../admin/Modal/AddReferral';
 import AddUserModal from '../../admin/Modal/AddUser/AddUser.jsx';
+import PricingGroupModal from '../../admin/Modal/PricingGroup/PricingGroupModal.jsx';
 import AdminControls from './AdminControls';
 import { StatCards } from './components/StatCards';
 import { SalesStatCards } from './components/SalesStatCards'; // Import Sales Stats
@@ -36,7 +37,6 @@ const AI_TICKETS = [
 // Configuration for tabs by role
 const ADMIN_TABS = [
     { id: 'users', icon: 'user', label: 'Users' },
-    { id: 'leads', icon: 'leads', label: 'Leads' },
     { id: 'studios', icon: 'studio', label: 'Studios' },
     { id: 'referal-codes', icon: 'referal', label: 'Invitations' },
     { id: 'support', icon: 'ticket', label: 'Support' },
@@ -167,6 +167,7 @@ function AdminPanel() {
             <AddUserModal />
             
             <main className="admin-panel billing-container">
+                <PricingGroupModal />
                 <h1 className="admin-title">Admin Panel</h1>
 
                 <AdminControls selectedRole={selectedRole} onRoleChange={handleRoleChange} />
