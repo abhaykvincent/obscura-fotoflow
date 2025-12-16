@@ -506,29 +506,24 @@ const PricingPlanModal = () => {
 
     const renderOverviewCard = () => {
         const monthlyTier = formData.pricing.tiers.find(t => t.interval === 'month');
-        const monthlyPrice = monthlyTier ? `${formData.pricing.currency} ${monthlyTier.price}` : 'N/A';
-        const storageLimit = formData.limits.storageGb === -1 ? 'Unlimited' : `${formData.limits.storageGb} GB`;
+        const yearlyTier = formData.pricing.tiers.find(t => t.interval === 'year');
+
+        const planName = formData.name || 'Untitled Plan';
+        const storageLimit = formData.limits.storageGb === -1 ? 'Unlimited Storage' : `${formData.limits.storageGb} GB Storage`;
+        const monthlyPrice = monthlyTier ? `${formData.pricing.currency} ${monthlyTier.price}/mo` : 'N/A';
+        const yearlyPrice = yearlyTier ? `${formData.pricing.currency} ${yearlyTier.price}/year` : 'N/A';
 
         return (
             <div className="overview-card">
-                <h4>Plan Overview</h4>
+                <h4>{planName}</h4>
                 <div className="overview-item">
-                    <span>Name:</span> <strong>{formData.name || 'Untitled'}</strong>
+                    {storageLimit}
                 </div>
                 <div className="overview-item">
-                    <span>Type:</span> {formData.type}
+                    {monthlyPrice}
                 </div>
                 <div className="overview-item">
-                    <span>Status:</span> {formData.status}
-                </div>
-                <div className="overview-item">
-                    <span>Monthly Price:</span> {monthlyPrice}
-                </div>
-                <div className="overview-item">
-                    <span>Storage:</span> {storageLimit}
-                </div>
-                <div className="overview-item">
-                    <span>Highlight:</span> {formData.ui.highlight ? 'Yes' : 'No'}
+                    {yearlyPrice}
                 </div>
             </div>
         );
