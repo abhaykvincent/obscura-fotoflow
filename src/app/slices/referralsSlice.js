@@ -57,7 +57,6 @@ export const generateReferral = createAsyncThunk(
   async (referralData) => {
     try {
       const referral = await generateReferralInFirebase(referralData) 
-      debugger
       return referral;
     } catch (error) {
       throw error;
