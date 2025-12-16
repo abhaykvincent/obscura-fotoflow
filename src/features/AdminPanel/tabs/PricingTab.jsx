@@ -1,4 +1,7 @@
 import React, { useState, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
+import { openModal } from '../../../app/slices/modalSlice';
+import PricingGroupModal from '../../../admin/Modal/PricingGroup/PricingGroupModal';
 
 const DEFAULT_PLANS_TEMPLATE = [
     { id: 'core', name: 'Core', price: 0, features: ['20GB Storage', 'Basic Support'], active: true },
@@ -26,6 +29,7 @@ const MOCK_PRICING_GROUPS = [
 ];
 
 export const PricingTab = () => {
+    const dispatch = useDispatch();
     // -- State --
     const [pricingGroups, setPricingGroups] = useState(MOCK_PRICING_GROUPS);
     const [selectedGroupId, setSelectedGroupId] = useState(null); // If null, viewing list of groups
@@ -46,10 +50,12 @@ export const PricingTab = () => {
             name: '', 
             description: '' 
         });
+        dispatch(openModal('managePricingGroup'));
     };
 
     const handleEditGroup = (group) => {
         setEditingGroup({ ...group });
+        dispatch(openModal('managePricingGroup'));
     };
 
     const handleDeleteGroup = (groupId) => {
@@ -58,17 +64,17 @@ export const PricingTab = () => {
         }
     };
 
-    const handleSaveGroup = () => {
-        if (!editingGroup.name) return;
+    const handleSaveGroup = (groupData) => {
+        if (!groupData.name) return;
 
         setPricingGroups(prev => {
-            if (editingGroup.id) {
+            if (groupData.id) {
                 // Update existing
-                return prev.map(g => g.id === editingGroup.id ? { ...g, ...editingGroup } : g);
+                return prev.map(g => g.id === groupData.id ? { ...g, ...groupData } : g);
             } else {
                 // Create new
                 const newGroup = {
-                    ...editingGroup,
+                    ...groupData,
                     id: `group_${Date.now()}`,
                     plans: JSON.parse(JSON.stringify(DEFAULT_PLANS_TEMPLATE)) // Pre-fill with default plans
                 };
@@ -147,41 +153,6 @@ export const PricingTab = () => {
                         </div>
                     </div>
 
-                    {/* Group Editor Form */}
-                    {editingGroup && (
-                        <div className="edit-plan-form" style={{ padding: '20px', background: '#2a2a2a', borderRadius: '8px', marginBottom: '20px', border: '1px solid #444' }}>
-                            <h4 style={{ marginBottom: '15px' }}>{editingGroup.id ? 'Edit Pricing Group' : 'New Pricing Group'}</h4>
-                            <div style={{ display: 'grid', gap: '15px', maxWidth: '500px' }}>
-                                <label>
-                                    Group Name
-                                    <input 
-                                        type="text" 
-                                        value={editingGroup.name} 
-                                        onChange={(e) => setEditingGroup({...editingGroup, name: e.target.value})}
-                                        className="search-input"
-                                        placeholder="e.g. Corporate Pricing 2024"
-                                        style={{ width: '100%', marginTop: '5px' }}
-                                    />
-                                </label>
-                                <label>
-                                    Description
-                                    <input 
-                                        type="text" 
-                                        value={editingGroup.description || ''} 
-                                        onChange={(e) => setEditingGroup({...editingGroup, description: e.target.value})}
-                                        className="search-input"
-                                        placeholder="Optional description"
-                                        style={{ width: '100%', marginTop: '5px' }}
-                                    />
-                                </label>
-                                <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                                    <button className="button primary" onClick={handleSaveGroup}>Save Group</button>
-                                    <button className="button secondary outline" onClick={() => setEditingGroup(null)}>Cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
                     <table className="invoice-table">
                         <thead>
                             <tr>
@@ -213,6 +184,12 @@ export const PricingTab = () => {
                         </tbody>
                     </table>
                 </section>
+                
+                {/* Modal for Creating/Editing Pricing Groups */}
+                <PricingGroupModal 
+                    initialData={editingGroup} 
+                    onSave={handleSaveGroup} 
+                />
             </div>
         );
     }
@@ -323,3 +300,4 @@ export const PricingTab = () => {
         </div>
     );
 };
+
