@@ -512,24 +512,36 @@ const PricingPlanModal = () => {
         return (
             <div className="overview-card">
                 <h4>Plan Overview</h4>
-                <div className="overview-item">
-                    <span>Name:</span> <strong>{formData.name || 'Untitled'}</strong>
-                </div>
-                <div className="overview-item">
-                    <span>Type:</span> {formData.type}
-                </div>
-                <div className="overview-item">
-                    <span>Status:</span> {formData.status}
-                </div>
-                <div className="overview-item">
-                    <span>Monthly Price:</span> {monthlyPrice}
-                </div>
-                <div className="overview-item">
-                    <span>Storage:</span> {storageLimit}
-                </div>
-                <div className="overview-item">
-                    <span>Highlight:</span> {formData.ui.highlight ? 'Yes' : 'No'}
-                </div>
+                {(formData.name || formData.name === '') && (
+                    <div className="overview-item">
+                        <span>Name:</span> <strong>{formData.name || 'Untitled'}</strong>
+                    </div>
+                )}
+                {formData.type && (
+                    <div className="overview-item">
+                        <span>Type:</span> {formData.type}
+                    </div>
+                )}
+                {formData.status && (
+                    <div className="overview-item">
+                        <span>Status:</span> {formData.status}
+                    </div>
+                )}
+                {monthlyTier && (
+                    <div className="overview-item">
+                        <span>Monthly Price:</span> {monthlyPrice}
+                    </div>
+                )}
+                {formData.limits.storageGb !== undefined && (
+                    <div className="overview-item">
+                        <span>Storage:</span> {storageLimit}
+                    </div>
+                )}
+                {formData.ui.highlight !== undefined && (
+                    <div className="overview-item">
+                        <span>Highlight:</span> {formData.ui.highlight ? 'Yes' : 'No'}
+                    </div>
+                )}
             </div>
         );
     };
