@@ -8,9 +8,102 @@ import {
 } from '../../firebase/functions/pricing';
 
 const DEFAULT_PLANS_TEMPLATE = [
-    { id: 'core', name: 'Core', price: 0, features: ['20GB Storage', 'Basic Support'], active: true },
-    { id: 'freelancer', name: 'Freelancer', price: 29, features: ['1TB Storage', 'Priority Support', 'Custom Branding'], active: true },
-    { id: 'studio', name: 'Studio', price: 99, features: ['Unlimited Storage', '24/7 Support', 'API Access', 'White Label'], active: true }
+    { 
+        id: 'core', 
+        name: 'Core', 
+        slug: 'core',
+        description: 'Essential tools for hobbyists.',
+        type: 'public',
+        status: 'active',
+        sortOrder: 0,
+        pricing: {
+            currency: 'USD',
+            tiers: [
+                { interval: 'month', price: 0, stripePriceId: '' },
+                { interval: 'year', price: 0, stripePriceId: '' }
+            ],
+            trialPeriodDays: 0,
+            setupFee: 0
+        },
+        limits: {
+            storageGb: 20,
+            maxProjects: 3,
+            maxGalleries: -1,
+            maxTeamMembers: 1,
+            fileUploadSizeMb: 100,
+            bandwidthGb: 10
+        },
+        features: {
+            permissions: { canRemoveBranding: false, canUseCustomDomain: false },
+            displayList: [{ text: '20GB Storage' }, { text: 'Basic Support' }]
+        },
+        ui: { colorTheme: '#4f46e5', highlight: false, ctaText: 'Get Started' },
+        active: true 
+    },
+    { 
+        id: 'freelancer', 
+        name: 'Freelancer',
+        slug: 'freelancer', 
+        description: 'For growing photography businesses.',
+        type: 'public',
+        status: 'active',
+        sortOrder: 1,
+        pricing: {
+            currency: 'USD',
+            tiers: [
+                { interval: 'month', price: 29, stripePriceId: '' },
+                { interval: 'year', price: 290, stripePriceId: '', discountLabel: '2 Months Free' }
+            ],
+            trialPeriodDays: 14,
+            setupFee: 0
+        },
+        limits: {
+            storageGb: 1000,
+            maxProjects: 50,
+            maxGalleries: -1,
+            maxTeamMembers: 1,
+            fileUploadSizeMb: 2000,
+            bandwidthGb: 500
+        },
+        features: {
+            permissions: { canRemoveBranding: true, canUseCustomDomain: true },
+            displayList: [{ text: '1TB Storage' }, { text: 'Priority Support' }, { text: 'Custom Branding' }]
+        },
+        ui: { colorTheme: '#10b981', highlight: true, badgeText: 'Most Popular', ctaText: 'Start Free Trial' },
+        active: true 
+    },
+    { 
+        id: 'studio', 
+        name: 'Studio',
+        slug: 'studio', 
+        description: 'Powerhouse features for agencies.',
+        type: 'public',
+        status: 'active',
+        sortOrder: 2,
+        pricing: {
+            currency: 'USD',
+            tiers: [
+                { interval: 'month', price: 99, stripePriceId: '' },
+                { interval: 'year', price: 990, stripePriceId: '' }
+            ],
+            trialPeriodDays: 14,
+            setupFee: 0
+        },
+        limits: {
+            storageGb: -1,
+            maxProjects: -1,
+            maxGalleries: -1,
+            maxTeamMembers: 5,
+            fileUploadSizeMb: 5000,
+            bandwidthGb: 2000
+        },
+        features: {
+            permissions: { canRemoveBranding: true, canUseCustomDomain: true, hasApiAccess: true },
+            displayList: [{ text: 'Unlimited Storage' }, { text: '24/7 Support' }, { text: 'API Access' }, { text: 'White Label' }]
+        },
+        ui: { colorTheme: '#f59e0b', highlight: false, ctaText: 'Contact Sales' },
+        active: true 
+    }
 ];
 
 export const updateGalleryTaglineAsync = createAsyncThunk(
