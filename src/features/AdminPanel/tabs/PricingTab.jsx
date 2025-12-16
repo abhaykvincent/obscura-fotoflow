@@ -164,13 +164,13 @@ export const PricingTab = () => {
                         {selectedGroup?.plans.map(plan => (
                             <tr key={plan.id} className="clickable-row">
                                 <td><strong>{plan.name}</strong></td>
-                                <td>${plan.price}</td>
-                                {/* <td>
+                                <td>₹{plan.price}</td>
+                                <td>
                                     <span style={{ fontSize: '0.85em', color: '#ccc' }}>
                                         {plan.features.slice(0, 2).join(', ')}
                                         {plan.features.length > 2 && ` +${plan.features.length - 2} more`}
                                     </span>
-                                </td> */}
+                                </td>
                                 <td>
                                     <span className={`paid-status ${plan.active ? 'paid' : 'trial'}`}>
                                         {plan.active ? 'Active' : 'Inactive'}

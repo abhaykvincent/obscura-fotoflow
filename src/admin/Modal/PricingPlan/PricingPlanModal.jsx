@@ -271,8 +271,8 @@ const PricingPlanModal = () => {
                     {PLAN_SUGGESTIONS.map(s => <option key={s} value={s} />)}
                 </datalist>
             </div>
-            <div className="form-row">
-                <div className="field">
+            <div className="form-row slug-sort-order">
+                <div className="field ">
                     <label>Slug (URL Friendly)</label>
                     <input 
                         type="text" 
@@ -284,7 +284,7 @@ const PricingPlanModal = () => {
                         Auto-generated from Group Name + Plan Name unless manually edited.
                     </p>
                 </div>
-                <div className="field">
+                <div className="field sort-order">
                     <label>Sort Order</label>
                     <input 
                         type="number" 

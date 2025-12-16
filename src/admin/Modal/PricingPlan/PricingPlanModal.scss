@@ -82,6 +82,11 @@ padding-bottom: 0;
             .field {
                 flex: 1;
             }
+            &.slug-sort-order{
+                display: grid;
+
+                grid-template-columns: auto 8px*12;
+            }
         }
 
         .field {
