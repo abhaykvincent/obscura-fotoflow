@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModalWithAnimation, selectModal, openModal } from '../../app/slices/modalSlice';
 import { useModalFocus } from '../../hooks/modalInputFocus';
@@ -6,12 +6,32 @@ import { useModalFocus } from '../../hooks/modalInputFocus';
 function PrivacyPolicyModal() {
   const dispatch = useDispatch();
   const visible = useSelector(selectModal);
+  const [hasReadBottom, setHasReadBottom] = useState(false);
+  const contentRef = useRef(null);
   
   const onClose = () => dispatch(closeModalWithAnimation('privacyPolicy'));
   const onNext = () => {
+    if (!hasReadBottom) return;
     dispatch(closeModalWithAnimation('privacyPolicy')).then(() => {
        dispatch(openModal('termsOfService'));
     });
+  };
+
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    // Check if scrolled to bottom with a small buffer
+    if (scrollHeight - scrollTop <= clientHeight + 20) {
+      setHasReadBottom(true);
+    }
+  };
+
+  const scrollToBottom = () => {
+    if (contentRef.current) {
+      contentRef.current.scrollTo({
+        top: contentRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   };
   
   const modalRef = useModalFocus(visible.privacyPolicy);
@@ -37,14 +57,18 @@ function PrivacyPolicyModal() {
           </div>
           
           <div className="modal-body">
-            <div className="form-section">
-                <div style={{
-                    padding: '0 5px', 
-                    lineHeight: '1.6', 
-                    color: 'var(--secondary-text-color)',
-                    maxHeight: '60vh',
-                    overflowY: 'auto'
-                }}>
+            <div className="form-section" style={{ position: 'relative' }}>
+                <div 
+                    ref={contentRef}
+                    onScroll={handleScroll}
+                    style={{
+                        padding: '0 5px', 
+                        lineHeight: '1.6', 
+                        color: 'var(--secondary-text-color)',
+                        maxHeight: '60vh',
+                        overflowY: 'auto'
+                    }}
+                >
                     <p style={{ fontSize: '0.9em', marginBottom: '20px' }}>Last Updated: December 15, 2025</p>
 
                     <h3>1. Introduction</h3>
@@ -101,11 +125,38 @@ function PrivacyPolicyModal() {
                     <h3>8. Contact Us</h3>
                     <p>For general privacy inquiries, contact us at: privacy@fotoflow.app</p>
                 </div>
+                {!hasReadBottom && (
+                  <div 
+                    onClick={scrollToBottom}
+                    style={{
+                      position: 'absolute',
+                      bottom: '10px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      cursor: 'pointer',
+                      background: 'rgba(0, 0, 0, 0.6)',
+                      borderRadius: '50%',
+                      width: '32px',
+                      height: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      zIndex: 10,
+                      backdropFilter: 'blur(4px)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)'
+                    }}
+                    title="Scroll to bottom"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M7 10L12 15L17 10" stroke="#54a134" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                )}
             </div>
           </div>
 
           <div className="actions">
-            <div className="button primary" onClick={onNext}>
+            <div className={`button primary ${!hasReadBottom ? 'disabled' : ''}`} onClick={onNext}>
               Next
             </div>
           </div>
