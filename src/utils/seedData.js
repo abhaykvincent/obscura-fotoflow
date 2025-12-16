@@ -9,7 +9,7 @@ const seedPricingData = async () => {
 
     console.log("Attempting to seed pricing data...");
 
-    const pricingGroupsRef = collection(db, "pricing");
+    const pricingGroupsRef = collection(db, "pricingGroups");
 
     const customPricingGroups = [
         {
@@ -167,7 +167,6 @@ const seedPricingData = async () => {
     }
 
     console.log("Pricing data seeding process completed.");
-    debugger
 };
 
 export { seedPricingData };

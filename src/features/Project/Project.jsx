@@ -113,7 +113,6 @@ export default function Project() {
   const handleDeleteProject = () => {
     const bucketUrl= studio.bucketUrl
     console.log(bucketUrl)
-    debugger
     dispatch(deleteProject({ domain,bucketUrl, projectId: id }));
   }
 

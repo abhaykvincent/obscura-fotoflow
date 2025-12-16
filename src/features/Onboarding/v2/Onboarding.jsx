@@ -67,7 +67,6 @@ function Onboarding() {
             const result = await signInWithPopup(auth, provider);
             const loginUser = result.user;
             console.log(loginUser)
-            debugger
             trackEvent('google_auth_completed', { email: loginUser.email });
 
             const serializedUser = {

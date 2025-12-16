@@ -14,7 +14,7 @@ const root = createRoot(container);
 
 // Seed data in development
 if (process.env.NODE_ENV === 'development') {
-  seedPricingData();
+  await seedPricingData();
 }
 
 root.render(
