@@ -167,6 +167,7 @@ const seedPricingData = async () => {
     }
 
     console.log("Pricing data seeding process completed.");
+    debugger
 };
 
 export { seedPricingData };

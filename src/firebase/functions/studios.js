@@ -1,5 +1,8 @@
+
+
+// Studio
 import { db } from "../app";
-import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, increment} from "firebase/firestore";
+import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, increment, query, where } from "firebase/firestore";
 
 import { generateMemorablePIN, generateRandomString, toKebabCase, toTitleCase} from "../../utils/stringUtils";
 import { isProduction } from "../../analytics/utils";
@@ -14,112 +17,137 @@ import { version } from "jszip";
 export const createStudio = async (studioData,user) => {
     const { name, domain } = studioData; // Assuming domain is provided
     const id = `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
-    const currentDate = new Date().toISOString().split('T')[0];
-    const subscriptionId = `${id}-core-free-${currentDate}`;
+    const currentDate = new Date();
+    const currentDateISO = currentDate.toISOString().split('T')[0];
 
     const studiosCollection = collection(db, 'studios');
+    const pricingGroupsCollection = collection(db, 'pricingGroups');
 
     // Determine bucket for 50-50 split
     const snapshot = await getDocs(studiosCollection);
     const studioCount = snapshot.size;
     const buckets = ['gs://fotoflow-india-1', 'gs://fotoflow-india-2'];
     const bucketUrl = buckets[studioCount % 2];
-    console.log(user)
-    debugger
+    
+    // Determine which pricing group to use
+    const targetGroupTag = (studioCount % 2) + 1 === 1 ? 'BP001' : 'BP002';
+    
+    // Fetch pricing groups
+    const pricingGroupsQuery = query(pricingGroupsCollection, where("id", "in", ["BP001", "BP002"]));
+    const pricingGroupsSnapshot = await getDocs(pricingGroupsQuery);
+    const pricingGroups = pricingGroupsSnapshot.docs.map(doc => doc.data());
+
+    const targetGroup = pricingGroups.find(group => group.id === targetGroupTag);
+
+    if (!targetGroup || targetGroup.plans.length === 0) {
+        console.error(`Pricing group ${targetGroupTag} not found or has no plans.`);
+        throw new Error(`Pricing group ${targetGroupTag} not found or has no plans.`);
+    }
+
+    // Select the first plan from the target group
+    const selectedPlan = targetGroup.plans[0];
+    const monthlyTier = selectedPlan.pricing.tiers.find(tier => tier.interval === 'month');
+    const yearlyTier = selectedPlan.pricing.tiers.find(tier => tier.interval === 'year');
+
+    const trialPeriodDays = selectedPlan.pricing.trialPeriodDays || 0;
+
+    const trialEndDate = new Date(currentDate.getTime() + trialPeriodDays * 24 * 60 * 60 * 1000);
+    const subscriptionEndDate = new Date(currentDate.getTime() + (monthlyTier ? 30 : 365) * 24 * 60 * 60 * 1000); // Assuming monthly if available, else yearly
+
     // Studio document
     const studioDoc = {
         id: id,
         name: name,
         domain: domain,
-        ownerId:user.email,     //v2.2 +
+        ownerId:user.email,
         bucketUrl: bucketUrl,
         userBatch: (studioCount % 2)+1,
-        planName: 'Core',
-        status: 'active',
-        batch: '002',
+        planName: selectedPlan.name,
+        status: 'active', // Can be 'trialing' if trial period is active
+        batch: targetGroupTag, // Use the BP tag as the batch
         usage: {
             storage: {
-                quota: 5 * 1000, // 5 GB
-                used: 0,         // 0 GB
+                quota: selectedPlan.limits.storageGb * 1000, // Convert GB to MB
+                used: 0,
             },
             projects: {
-                monthlyQuota: 3,
+                monthlyQuota: selectedPlan.limits.maxProjects,
                 monthlyUsed: 0,
             },
             collections:{
-                quota: 3
+                quota: selectedPlan.limits.maxGalleries
             }
-        
         },
-        billing: {              //v2.2 +
+        billing: {
             razorpayCustomerId: null,
             razorpaySubscriptionId: null,
-            planId: "plan_core_free_yearly",
-            status: "trialing",
-            currentPeriodEnd:  new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            trialEnd: new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            cancelAtPeriodEnd: true,
-            quantity: 1,                      // seats or events
-            subscriptionHistory: [subscriptionId],
-
+            planId: monthlyTier?.razorpayPlanId || yearlyTier?.razorpayPlanId || null,
+            status: trialPeriodDays > 0 ? 'trialing' : 'active',
+            currentPeriodEnd: subscriptionEndDate.toISOString().split('T')[0],
+            trialEnd: trialEndDate.toISOString().split('T')[0],
+            cancelAtPeriodEnd: false, // Default to not cancelling at period end
+            quantity: 1,
+            subscriptionHistory: [], // Will be populated below
         },
-        subscriptionId: subscriptionId, //v2.2 -
-        subscriptionHistory: [subscriptionId], //v2.2 -
+        subscriptionId: '', // Will be populated below
         metadata: {
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            createdAt: currentDateISO,
+            updatedAt: currentDateISO,
             createdBy: id,
             updatedBy: id,
             version: 2
         },
-        trialEndDate: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        trialEndDate: trialEndDate.toISOString().split('T')[0],
     };
+
+    const newSubscriptionId = `${id}-${selectedPlan.slug}-${currentDateISO}`;
+    studioDoc.subscriptionId = newSubscriptionId;
+    studioDoc.billing.subscriptionHistory.push(newSubscriptionId);
 
     // Subscription document
     const subscriptionDoc = {
-        id: subscriptionId,
+        id: newSubscriptionId,
         studioId: domain,
         plan: {
-            planId: 'core-free',
-            name: 'Core',
-            type: 'free',
+            planId: selectedPlan.id,
+            name: selectedPlan.name,
+            type: selectedPlan.type,
         },
         billing: {
-            billingCycle: 'yearly',
+            billingCycle: monthlyTier ? 'monthly' : (yearlyTier ? 'yearly' : 'one-time'),
             autoRenew: true,
             paymentRecived: false,
             paymentPlatform: null,
             paymentMethod: null,
         },
         dates: {
-            startDate: currentDate,
-            endDate: new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            startDate: currentDateISO,
+            endDate: subscriptionEndDate.toISOString().split('T')[0],
         },
         pricing: {
-            basePrice: 0,
+            basePrice: monthlyTier?.price || yearlyTier?.price || 0,
             discount: 0,
             tax: 0,
-            currency: 'INR',
-            totalPrice: 0,
+            currency: selectedPlan.pricing.currency,
+            totalPrice: monthlyTier?.price || yearlyTier?.price || 0,
         },
-        status: 'active',
+        status: trialPeriodDays > 0 ? 'trialing' : 'active',
         metadata: {
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            createdAt: currentDateISO,
+            updatedAt: currentDateISO,
             createdBy: id,
             updatedBy: id,
         },
-        
     };
 
-    // Create invoice for the free plan
+    // Create invoice for the selected plan
     const invoiceId = await createInvoice(
         id,
-        { name: 'Core', type: 'free' }, // Simplified plan object for invoice
-        subscriptionId,
-        0, // Amount is 0 for free plan
-        'yearly',
-        'paid' // Marked as paid since it's free
+        { name: selectedPlan.name, type: selectedPlan.type },
+        newSubscriptionId,
+        subscriptionDoc.pricing.totalPrice,
+        subscriptionDoc.billing.billingCycle,
+        trialPeriodDays > 0 ? 'pending' : 'paid' // Invoice pending during trial, paid otherwise
     );
 
     // Add invoiceId to subscription document
@@ -129,12 +157,11 @@ export const createStudio = async (studioData,user) => {
     // Save documents
     const studioRef = doc(studiosCollection, studioDoc.domain);
     const subscriptionRef = doc(collection(db, 'subscriptions'), subscriptionDoc.id);
-    const invoiceRef = doc(collection(db, 'invoices'), invoiceId);
 
     try {
         await setDoc(studioRef, studioDoc);
         await setDoc(subscriptionRef, subscriptionDoc);
-        console.log('Studio, subscription, and invoice created successfully.');
+        console.log(`Studio '${studioDoc.name}', subscription '${subscriptionDoc.id}', and invoice '${invoiceId}' created successfully.`);
         return { 
             studio: studioDoc, 
             subscription: subscriptionDoc,
@@ -145,6 +172,7 @@ export const createStudio = async (studioData,user) => {
         throw error;
     }
 };
+
 export const checkStudioDomainAvailability = async (domain) => {
 
     console.log("Checking domain availability for:", domain);
