@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateStudioLogoAsync } from '../../app/slices/adminSettingsSlice';
 import { selectStudio } from '../../app/slices/studioSlice';
 import { setStudioLogo } from '../../app/slices/authSlice';
+import { showAlert } from '../../app/slices/alertSlice';
 import defaultLogo from '../../assets/img/fotoflow-pro-logo.svg';
 
 function StudioSettings({ formData, handleChange }) {
@@ -18,6 +19,11 @@ function StudioSettings({ formData, handleChange }) {
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file && studio?.domain) {
+      if (file.type !== 'image/png') {
+        dispatch(showAlert({ type: 'error', message: 'Please upload only PNG images for the studio logo.' }));
+        e.target.value = null; // Clear input
+        return;
+      }
       setIsUploading(true);
       try {
         const resultAction = await dispatch(updateStudioLogoAsync({ file, studioDomain: studio.domain }));
@@ -57,15 +63,18 @@ function StudioSettings({ formData, handleChange }) {
             >
                 {isUploading && <div className="upload-overlay">...</div>}
             </div>
-            <div className="button primary outline" onClick={handleLogoClick} disabled={isUploading}>
-                {isUploading ? 'Uploading...' : 'Change logo'}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div className="button primary outline" onClick={handleLogoClick} disabled={isUploading}>
+                    {isUploading ? 'Uploading...' : 'Change logo'}
+                </div>
+                <span style={{ opacity: 0.6, fontSize: '0.8em' }}>(Only .png is supported)</span>
             </div>
             <input
               type="file"
               ref={fileInputRef}
               style={{ display: 'none' }}
               onChange={handleFileChange}
-              accept="image/*"
+              accept=".png"
             />
           </div>
         </div>
