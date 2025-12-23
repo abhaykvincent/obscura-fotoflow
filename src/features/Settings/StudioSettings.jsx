@@ -50,7 +50,7 @@ function StudioSettings({ formData, handleChange }) {
       <form className="settings-form">
         <h2>Branding</h2>
         <div className="form-group">
-          <label htmlFor="logo-input">Studio Logo <span style={{ opacity: 0.6, fontSize: '0.8em', marginLeft: '5px' }}>(Only .png is supported)</span></label>
+          <label htmlFor="logo-input">Studio Logo</label>
           <div className="logo-input">
             <div 
                 className="logo-image" 
@@ -63,8 +63,11 @@ function StudioSettings({ formData, handleChange }) {
             >
                 {isUploading && <div className="upload-overlay">...</div>}
             </div>
-            <div className="button primary outline" onClick={handleLogoClick} disabled={isUploading}>
-                {isUploading ? 'Uploading...' : 'Change logo'}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div className="button primary outline" onClick={handleLogoClick} disabled={isUploading}>
+                    {isUploading ? 'Uploading...' : 'Change logo'}
+                </div>
+                <span style={{ opacity: 0.6, fontSize: '0.8em' }}>(Only .png is supported)</span>
             </div>
             <input
               type="file"
