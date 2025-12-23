@@ -50,7 +50,7 @@ function StudioSettings({ formData, handleChange }) {
       <form className="settings-form">
         <h2>Branding</h2>
         <div className="form-group">
-          <label htmlFor="logo-input">Studio Logo</label>
+          <label htmlFor="logo-input">Studio Logo <span style={{ opacity: 0.6, fontSize: '0.8em', marginLeft: '5px' }}>(Only .png is supported)</span></label>
           <div className="logo-input">
             <div 
                 className="logo-image" 
