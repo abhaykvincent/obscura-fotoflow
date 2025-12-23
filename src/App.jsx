@@ -93,8 +93,6 @@ export default function App() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const { keyMap, handlers } = useShortcutsConfig();
 
-  const isSettingsPage = location.pathname.includes('/settings');
-
   useEffect(() => {
     dispatch(verifyAuth());
   }, [dispatch]);
@@ -168,7 +166,7 @@ export default function App() {
   }
   // RENDER
   return (
-    <div className={`App ${isLightModePage() ? 'light-mode-page' : ''} ${isSettingsPage ? 'settings-route' : ''}`}>
+    <div className={`App ${isLightModePage() ? 'light-mode-page' : ''}`}>
       <LoadingScreen />
       <HotKeys keyMap={keyMap} handlers={handlers} className='app-wrap'>
       {/* <SupportIcon userId={defaultStudio?.domain}/> */}
