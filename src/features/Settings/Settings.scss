@@ -61,14 +61,25 @@ main.settings{
     .form-group{
         display: grid;
         gap: 8px*1;
+        padding: 8px;
         padding-left: 8px*2;
-        padding-top: 8px;
         align-items: center;
         justify-items: start;
+        border-radius: 6px;
+        transition-duration: 0.1s;
+        transition-timing-function: ease-out;
         &:hover{
             background-color: $dark-2-5;
+        transition-duration: 0.05s;
+        transition-timing-function: ease-in;
+        label{
+            color: $gray5-default-light;
+        }
+
         }
         label{
+                font-size: 1.1rem;
+                font-weight: 400;
             color: $gray-default-light;
             &.note-bene{
                 max-width: 8px*24;
@@ -93,7 +104,15 @@ main.settings{
         input{
             width: 8px*24*1.6;
             margin-bottom: 8px;
+                border: 1px solid $gray5-accessible-dark;
             &#studioEmail{
+            }
+        }
+        &:hover{
+            input{
+                border: 1px solid $gray4-accessible-dark;
+                border-bottom: 1px solid $gray2-accessible-dark;
+                border-right: 1px solid $gray2-accessible-dark;
             }
         }
         .input-with-icon{
@@ -251,8 +270,9 @@ main.settings{
             }
         }
         .logo-input{
-            display: grid;
+            display: flex;
             gap: 8px;
+            align-items: center;
             width: auto;
             .logo-image{
                 position: relative;

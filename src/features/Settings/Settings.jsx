@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 // Selectors and actions
 import { selectUser, selectUserStudio } from '../../app/slices/authSlice';
+import { updateStudioAsync } from '../../app/slices/adminSettingsSlice';
 // Components
 
 // Styles
@@ -17,29 +18,38 @@ function Settings() {
     const userData = useSelector(selectUser);
     // Initial state for all fields in the settings form
     const [formData, setFormData] = useState({
-        studioName: defaultStudio?.name || '',
+        studioName: studio?.name || defaultStudio?.name || '',
         studioLogo: studio?.studioLogo || '',
         settings:{
             gallery:{
                 galleryTagline: studio?.settings?.gallery?.galleryTagline || ''
             }
         },
-        studioEmail: userData?.email || '',
-        studioPhone: userData?.phone || '',
-        // Add other fields here as they are added (e.g., studio address, phone number)
+        studioEmail: studio?.studioEmail || userData?.email || '',
+        studioPhone: studio?.studioPhone || userData?.phone || '',
+        studioWebsite: studio?.website || '',
+        studioAddress: studio?.address || '',
+        studioInstagram: studio?.social?.instagram || '',
+        studioFacebook: studio?.social?.facebook || '',
     });
 
     useEffect(() => {
         if (studio || defaultStudio) {
             setFormData(prev => ({
                 ...prev,
-                studioName: prev.studioName || defaultStudio?.name || '',
-                studioLogo: prev.studioLogo || studio?.studioLogo || '',
+                studioName: studio?.name || defaultStudio?.name || '',
+                studioLogo: studio?.studioLogo || '',
                 settings: {
                     gallery: {
-                        galleryTagline: prev.settings?.gallery?.galleryTagline || studio?.settings?.gallery?.galleryTagline || ''
+                        galleryTagline: studio?.settings?.gallery?.galleryTagline || ''
                     }
-                }
+                },
+                studioEmail: studio?.studioEmail || userData?.email || '',
+                studioPhone: studio?.studioPhone || userData?.phone || '',
+                studioWebsite: studio?.website || '',
+                studioAddress: studio?.address || '',
+                studioInstagram: studio?.social?.instagram || '',
+                studioFacebook: studio?.social?.facebook || '',
             }));
         }
     }, [studio, defaultStudio]);
@@ -48,11 +58,15 @@ function Settings() {
     const [isSaving, setIsSaving] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const hasChanges = 
-        formData.studioName !== (defaultStudio?.name || '') ||
+        formData.studioName !== (studio?.name || defaultStudio?.name || '') ||
         formData.studioLogo !== (studio?.studioLogo || '') ||
         formData.settings?.gallery?.galleryTagline !== (studio?.settings?.gallery?.galleryTagline || '') ||
-        formData.studioEmail !== (userData?.email || '') ||
-        formData.studioPhone !== (userData?.phone || '');
+        formData.studioEmail !== (studio?.studioEmail || userData?.email || '') ||
+        formData.studioPhone !== (studio?.studioPhone || userData?.phone || '') ||
+        formData.studioWebsite !== (studio?.website || '') ||
+        formData.studioAddress !== (studio?.address || '') ||
+        formData.studioInstagram !== (studio?.social?.instagram || '') ||
+        formData.studioFacebook !== (studio?.social?.facebook || '');
 
 
     // Handle form field changes dynamically
@@ -69,11 +83,24 @@ function Settings() {
         setIsSaving(true);
         setSuccessMessage('');
 
+        const updates = {
+            name: formData.studioName,
+            studioEmail: formData.studioEmail,
+            studioPhone: formData.studioPhone,
+            website: formData.studioWebsite,
+            address: formData.studioAddress,
+            social: {
+                instagram: formData.studioInstagram,
+                facebook: formData.studioFacebook,
+            },
+            'settings.gallery.galleryTagline': formData.settings.gallery.galleryTagline
+        };
+
         // Your API logic for saving settings here
         try {
-            // Assuming `updateStudioAsync` is your async action for saving data
-            // await dispatch(updateStudioAsync(formData));
+            await dispatch(updateStudioAsync({ studioId: studio.domain, updates }));
             setSuccessMessage('Settings updated successfully!');
+            setTimeout(() => setSuccessMessage(''), 3000);
         } catch (error) {
             console.error('Error saving settings:', error);
             setSuccessMessage('Failed to update settings. Please try again.');

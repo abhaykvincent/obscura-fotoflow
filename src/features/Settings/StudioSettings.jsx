@@ -89,7 +89,17 @@ function StudioSettings({ formData, handleChange }) {
             onChange={handleChange}
           ></input>
         </div>
-...
+        <div className="form-group">
+          <label htmlFor="studioWebsite">Website</label>
+          <input
+            type="text"
+            id="studioWebsite"
+            name="studioWebsite"
+            placeholder="https://yourstudio.com"
+            value={formData.studioWebsite || ''}
+            onChange={handleChange}
+          ></input>
+        </div>
 
         <h2>Contact</h2>
         <div className="form-group rows-2">
@@ -104,7 +114,7 @@ function StudioSettings({ formData, handleChange }) {
             />
             <div className="google-logo" alt="Google"></div>
           </div>
-          <label htmlFor="studioName">Phone</label>
+          <label htmlFor="studioPhone">Phone</label>
           <input
             type="text"
             id="studioPhone"
@@ -112,6 +122,43 @@ function StudioSettings({ formData, handleChange }) {
             value={formData.studioPhone}
             onChange={handleChange}
           ></input>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="studioAddress">Address</label>
+          <textarea
+            id="studioAddress"
+            name="studioAddress"
+            rows="3"
+            value={formData.studioAddress || ''}
+            onChange={handleChange}
+          ></textarea>
+        </div>
+
+        <h2>Social Media</h2>
+        <div className="form-group rows-2">
+          <label htmlFor="studioInstagram">Instagram</label>
+          <div className="input-with-prefix">
+            <span className="prefix">instagram.com/</span>
+            <input
+              type="text"
+              id="studioInstagram"
+              name="studioInstagram"
+              value={formData.studioInstagram || ''}
+              onChange={handleChange}
+            />
+          </div>
+          <label htmlFor="studioFacebook">Facebook</label>
+          <div className="input-with-prefix">
+            <span className="prefix">facebook.com/</span>
+            <input
+              type="text"
+              id="studioFacebook"
+              name="studioFacebook"
+              value={formData.studioFacebook || ''}
+              onChange={handleChange}
+            />
+          </div>
         </div>
       </form>
     </div>
