@@ -80,6 +80,7 @@ const AuthWrapper = ({ isAuthenticated }) => {
 // APP
 export default function App() {
   const dispatch = useDispatch();
+  const location = useLocation();
   const user = useSelector(selectUser);
   const authLoading = useSelector(selectAuthLoading);
 
@@ -91,6 +92,8 @@ export default function App() {
   const currentDomain = defaultStudio?.domain ?? 'guest'; 
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const { keyMap, handlers } = useShortcutsConfig();
+
+  const isSettingsPage = location.pathname.includes('/settings');
 
   useEffect(() => {
     dispatch(verifyAuth());
@@ -165,7 +168,7 @@ export default function App() {
   }
   // RENDER
   return (
-    <div className={`App ${isLightModePage() && 'light-mode-page'}`}>
+    <div className={`App ${isLightModePage() ? 'light-mode-page' : ''} ${isSettingsPage ? 'settings-route' : ''}`}>
       <LoadingScreen />
       <HotKeys keyMap={keyMap} handlers={handlers} className='app-wrap'>
       {/* <SupportIcon userId={defaultStudio?.domain}/> */}
