@@ -253,3 +253,19 @@ export const updateStudioLogo = async (studioId, logoUrl) => {
         throw error;
     }
 };
+
+export const updateStudio = async (studioId, updates) => {
+    try {
+        const studioRef = doc(db, 'studios', studioId);
+        const updateData = {
+            ...updates,
+            'metadata.updatedAt': new Date().toISOString(),
+        };
+        await updateDoc(studioRef, updateData);
+        console.log(`Studio ${studioId} updated successfully with:`, updates);
+        return true;
+    } catch (error) {
+        console.error(`Error updating studio ${studioId}:`, error.message);
+        throw error;
+    }
+};

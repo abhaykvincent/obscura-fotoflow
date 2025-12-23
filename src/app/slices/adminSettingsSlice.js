@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { updateGalleryTagline, updateStudioLogo } from '../../firebase/functions/studios';
+import { updateGalleryTagline, updateStudioLogo, updateStudio } from '../../firebase/functions/studios';
 import { uploadStudioLogo } from '../../utils/uploadOperations';
 import { 
     fetchPricingGroups, 
@@ -119,6 +119,18 @@ export const updateGalleryTaglineAsync = createAsyncThunk(
   }
 );
 
+export const updateStudioAsync = createAsyncThunk(
+  'adminSettings/updateStudio',
+  async ({ studioId, updates }, { rejectWithValue }) => {
+    try {
+      await updateStudio(studioId, updates);
+      return updates;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const updateStudioLogoAsync = createAsyncThunk(
   'adminSettings/updateStudioLogo',
   async ({ file, studioDomain }, { rejectWithValue }) => {
@@ -227,6 +239,23 @@ const adminSettingsSlice = createSlice({
         state.settings.gallery.galleryTagline = action.payload;
       })
       .addCase(updateGalleryTaglineAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Update Studio
+      .addCase(updateStudioAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateStudioAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        // Merge updates into settings if applicable, or just clear loading
+        // Since settings structure in slice might differ from Firestore, 
+        // we might not want to overcomplicate state sync here if it's 
+        // already handled by re-fetching or other slices.
+      })
+      .addCase(updateStudioAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
