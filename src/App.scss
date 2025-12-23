@@ -62,13 +62,6 @@ body{
   *{
     color: white;
   }
-
-  &.settings-route {
-    main {
-      left: 8px*8 + 8px*1;
-      width: calc(100vw - 8px*8 - 8px*4);
-    }
-  }
   .app-wrap{
     height: 100%;
   }
@@ -234,8 +227,8 @@ body{
   main{
     position: relative;
     top: $header-height ;
-    left: $sidebar-width - 6px;
-    width: calc(100vw - #{$sidebar-width} - 8px*2);
+    left: 8px*8 + 8px*1;
+    width: calc(100vw - 8px*8 - 8px*4);
     height: calc(100vh - #{$header-height} - 8px*3);
     overflow-y: scroll;
     padding: 0 8px*2;
