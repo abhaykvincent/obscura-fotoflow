@@ -59,7 +59,7 @@ export default function Project() {
   useEffect(() => {
     const timer = setTimeout(() => {
         dispatch(openModal('createCollection'));
-      }, 300); // Using 500ms for a noticeable yet quick delay
+      }, 1000); // Using 500ms for a noticeable yet quick delay
 
       // Cleanup the timeout if the component unmounts or dependencies change
       return () => clearTimeout(timer);
