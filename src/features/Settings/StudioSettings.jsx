@@ -75,11 +75,10 @@ function StudioSettings({ formData, handleChange }) {
       }
 
       await dispatch(updateStudioAsync({ studioId: studio.domain, updates })).unwrap();
-      // Sync parent state
       handleChange({ target: { name: fieldName, value: localData[fieldName] } });
-      dispatch(showAlert({ type: 'success', message: 'Updated successfully' }));
+      dispatch(showAlert({ type: 'success', message: 'Setting saved successfully' }));
     } catch (error) {
-      dispatch(showAlert({ type: 'error', message: 'Failed to update' }));
+      dispatch(showAlert({ type: 'error', message: 'Failed to save setting' }));
     } finally {
       setSavingField(null);
     }
@@ -113,27 +112,22 @@ function StudioSettings({ formData, handleChange }) {
   return (
     <div className="studio-settings">
       <form className="settings-form" onSubmit={(e) => e.preventDefault()}>
-        <h2>Branding</h2>
+        <h2><span className="photos"></span>Branding</h2>
         <div className="form-group">
           <label htmlFor="logo-input">Studio Logo</label>
           <div className="logo-input">
-            <div className="logo-image" style={{ backgroundColor: 'transparent', padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="logo-image">
                 <img 
                     src={formData.studioLogo || defaultLogo} 
                     alt="Studio Logo" 
-                    style={{ 
-                        maxWidth: '100%', 
-                        maxHeight: '100%', 
-                        objectFit: 'contain' 
-                    }} 
                 />
                 {isUploading && <div className="upload-overlay">...</div>}
             </div>
-            <div  className="button-wrapper" style={{ display: 'grid', alignItems: 'center', gap: '10px' }}>
+            <div className="button-wrapper">
                 <div className="button primary outline" onClick={handleLogoClick} disabled={isUploading}>
                     {isUploading ? 'Uploading...' : 'Change logo'}
                 </div>
-                <span style={{ opacity: 0.6, fontSize: '0.8em' }}>(Only .png is supported)</span>
+                <span>Only .png images are supported. Recommended 512x512px.</span>
             </div>
             <input
               type="file"
@@ -144,6 +138,7 @@ function StudioSettings({ formData, handleChange }) {
             />
           </div>
         </div>
+
         <div className="form-group">
           <label htmlFor="studioName">Studio Name</label>
           <div className="editable-data">
@@ -151,12 +146,14 @@ function StudioSettings({ formData, handleChange }) {
               type="text"
               id="studioName"
               name="studioName"
+              placeholder="e.g. My Awesome Studio"
               value={localData.studioName || ''}
               onChange={handleInputChange}
             />
             {renderEditActions('studioName', 'name')}
           </div>
         </div>
+
         <div className="form-group">
           <label htmlFor="studioWebsite">Website</label>
           <div className="editable-data">
@@ -172,10 +169,10 @@ function StudioSettings({ formData, handleChange }) {
           </div>
         </div>
 
-        <h2>Contact</h2>
+        <h2><span className="privacy"></span>Contact Information</h2>
         <div className="form-group rows-2">
           <div className="field-wrap">
-            <label htmlFor="studioEmail">Email</label>
+            <label htmlFor="studioEmail">Business Email</label>
             <div className="input-with-icon disabled">
               <input
                 type="text"
@@ -188,12 +185,13 @@ function StudioSettings({ formData, handleChange }) {
             </div>
           </div>
           <div className="field-wrap">
-            <label htmlFor="studioPhone">Phone</label>
+            <label htmlFor="studioPhone">Phone Number</label>
             <div className="editable-data">
               <input
                 type="text"
                 id="studioPhone"
                 name="studioPhone"
+                placeholder="+1 (555) 000-0000"
                 value={localData.studioPhone || ''}
                 onChange={handleInputChange}
               />
@@ -203,13 +201,13 @@ function StudioSettings({ formData, handleChange }) {
         </div>
 
         <div className="form-group">
-          <label htmlFor="studioAddress">Address</label>
+          <label htmlFor="studioAddress">Studio Address</label>
           <div className="editable-data">
             <textarea
               id="studioAddress"
               name="studioAddress"
               rows="3"
-              style={{ width: '100%', minWidth: '8px*24*1.6' }}
+              placeholder="Enter your physical studio address..."
               value={localData.studioAddress || ''}
               onChange={handleInputChange}
             ></textarea>
@@ -217,10 +215,10 @@ function StudioSettings({ formData, handleChange }) {
           </div>
         </div>
 
-        <h2>Social Media</h2>
+        <h2><span className="privacy"></span>Social Presence</h2>
         <div className="form-group rows-2">
           <div className="field-wrap">
-            <label htmlFor="studioInstagram">Instagram</label>
+            <label htmlFor="studioInstagram">Instagram Profile</label>
             <div className="editable-data">
               <div className="input-with-prefix">
                 <span className="prefix">instagram.com/</span>
@@ -228,6 +226,7 @@ function StudioSettings({ formData, handleChange }) {
                   type="text"
                   id="studioInstagram"
                   name="studioInstagram"
+                  placeholder="username"
                   value={localData.studioInstagram || ''}
                   onChange={handleInputChange}
                 />
@@ -236,7 +235,7 @@ function StudioSettings({ formData, handleChange }) {
             </div>
           </div>
           <div className="field-wrap">
-            <label htmlFor="studioFacebook">Facebook</label>
+            <label htmlFor="studioFacebook">Facebook Page</label>
             <div className="editable-data">
               <div className="input-with-prefix">
                 <span className="prefix">facebook.com/</span>
@@ -244,6 +243,7 @@ function StudioSettings({ formData, handleChange }) {
                   type="text"
                   id="studioFacebook"
                   name="studioFacebook"
+                  placeholder="pagename"
                   value={localData.studioFacebook || ''}
                   onChange={handleInputChange}
                 />

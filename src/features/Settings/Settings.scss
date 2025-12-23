@@ -3,392 +3,451 @@
 main.settings{
     padding: 8px*3;
     padding-left: 8px*4;
-
     padding-bottom: 0;
+
     .dashboard-tabs{
         margin-top: 8px*4;
-        .tab-content{
+        display: flex;
+        gap: 8px*4;
+        align-items: flex-start;
 
-        height: calc(100vh - 8px*29);
-        overflow-y: scroll;
+        .tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 8px*22;
+            flex-shrink: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+            position: sticky;
+            top: 0;
+
+            .tab-button {
+                justify-content: flex-start;
+                width: 100%;
+                text-align: left;
+                padding: 10px 16px;
+                border-radius: 8px;
+                background-color: transparent;
+                border: 1px solid transparent;
+                box-shadow: none;
+                transition: all 0.2s ease;
+                font-weight: 500;
+                color: $gray3-default-dark;
+
+                &::before {
+                    margin-right: 12px;
+                    opacity: 0.6;
+                }
+
+                &:hover {
+                    background-color: rgba(255, 255, 255, 0.05);
+                    color: $gray-default-light;
+                    &::before {
+                        opacity: 0.9;
+                    }
+                }
+
+                &.active {
+                    background-color: rgba($green-default-dark, 0.1);
+                    border: 1px solid rgba($green-default-dark, 0.3);
+                    color: $green-default-light;
+                    &::before {
+                        opacity: 1;
+                        filter: drop-shadow(0 0 4px rgba($green-default-dark, 0.4));
+                    }
+                }
+
+                &.disabled {
+                    opacity: 0.3;
+                    cursor: not-allowed;
+                    &:hover {
+                        background-color: transparent;
+                    }
+                }
+            }
+        }
+
+        .tab-content{
+            flex-grow: 1;
+            height: calc(100vh - 8px*20);
+            overflow-y: scroll;
+            padding-right: 16px;
+            
+            // Custom scrollbar for tab content
+            &::-webkit-scrollbar {
+                width: 4px;
+            }
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: $dark-1-5;
+                border-radius: 10px;
+            }
+            &::-webkit-scrollbar-thumb:hover {
+                background: $dark-1;
+            }
         }
     }
 }
+
 .settings-header{
     display: flex;
     gap: 8px*2;
     align-items: center;
-    button{
-        opacity: 0.1;
-        &.active{
-            opacity: 1;
-        }
+    h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+    .success-message {
+        font-size: 0.9rem;
+        color: $green-default-light;
+        animation: fadeInUp 0.3s ease-out;
     }
 }
+
 .settings-form{
     display: grid;
-    gap: 8px*3;
-    margin-top: 8px*4;
-    margin-bottom: 8px*2;
+    gap: 8px*4;
+    margin-top: 8px*1; // Reduced margin since header is cleaner
+    margin-bottom: 8px*4;
+    max-width: 900px;
 
     h2{
         display: flex;
         align-items: center;
-        gap: 4px;
-            color: $gray3-default-dark;
-            margin-bottom: -8px*1;
-            padding-bottom: 4px;
-            border-bottom: 1px solid $dark-1-5;
-            font-size: 1.2rem;
-            span{
-                
-                right: 0px;
-                top: 0px;
-                width: 8px*4;
-                height: 8px*4;
-                
-                background-size: auto 80%;
-                background-position: center;
-                opacity: 0.2;
-                &.privacy{
-                    background-image: url('https://img.icons8.com/?size=100&id=59825&format=png&color=FFFFFF');
-                }
-                &.photos{
-                    background-image: url('https://img.icons8.com/?size=100&id=78741&format=png&color=FFFFFF');
-                }
+        gap: 12px;
+        color: $gray-default-light;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid $dark-1-5;
+        font-size: 1.4rem;
+        font-weight: 600;
+        
+        span{
+            width: 24px;
+            height: 24px;
+            display: inline-block;
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.6;
+            
+            &.privacy{
+                background-image: url('https://img.icons8.com/?size=100&id=59825&format=png&color=FFFFFF');
             }
+            &.photos{
+                background-image: url('https://img.icons8.com/?size=100&id=78741&format=png&color=FFFFFF');
+            }
+        }
     }
+
     .form-group{
         display: grid;
-        gap: 8px*1;
-        padding: 8px;
-        padding-left: 8px*2;
-        align-items: center;
-        justify-items: start;
-        border-radius: 6px;
-        transition-duration: 0.1s;
-        transition-timing-function: ease-out;
+        gap: 8px;
+        padding: 16px;
+        border-radius: 12px;
+        background-color: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.2s ease;
+
         &:hover{
-            background-color: $dark-2-5;
-        transition-duration: 0.05s;
-        transition-timing-function: ease-in;
-        label{
-            color: $gray5-default-light;
+            background-color: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.1);
+            
+            label {
+                color: $gray5-default-light;
+            }
         }
 
-        }
         label{
-                font-size: 1.1rem;
-                font-weight: 400;
-            color: $gray-default-light;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: $gray2-default-dark;
+            margin-bottom: 4px;
+
             &.note-bene{
-                max-width: 8px*24;
-                font-size: 0.9rem;
-                color: $gray4-default-dark;
-                margin-top: -8px;
-            }
-            &.secondery{
-                font-size: 0.7rem;
+                max-width: 100%;
+                font-size: 0.85rem;
                 color: $gray4-default-dark;
                 margin-top: 4px;
-                margin-bottom: -4px;
+                line-height: 1.4;
+                font-style: italic;
+            }
+            &.secondery{
+                font-size: 0.8rem;
+                color: $gray4-default-dark;
+                margin-top: 0;
             }
         }
+
         .group-title{
-            margin-bottom: 8px*0.5;
-            margin-left: 4px;
+            margin-bottom: 12px;
             color: $gray-default-light;
-            font-weight: 400;
+            font-weight: 600;
             font-size: 1.1rem;
-        }
-        input{
-            width: 8px*24*1.6;
-            margin-bottom: 8px;
-                border: 1px solid $gray5-accessible-dark;
-            &#studioEmail{
-            }
-        }
-        .editable-data {
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+
+        .editable-data {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
             width: 100%;
+
+            input, textarea {
+                flex-grow: 1;
+                max-width: 600px;
+                background-color: $dark-3;
+                border: 1px solid $dark-1-5;
+                transition: border-color 0.2s;
+                
+                &:focus {
+                    border-color: $green-default-dark;
+                    outline: none;
+                }
+            }
 
             .input-edit-actions {
                 display: flex;
-                gap: 4px;
-                animation: fadeInRight 0.2s ease-out;
+                gap: 6px;
+                margin-top: 4px;
+                animation: fadeInRight 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             }
         }
+
         .input-with-prefix {
             display: flex;
-            align-items: center;
+            align-items: stretch;
             background-color: $dark-3;
-            border: 1px solid $gray4-accessible-dark;
-            border-radius: 4px;
+            border: 1px solid $dark-1-5;
+            border-radius: 6px;
             overflow: hidden;
-            height: 8px*5.4;
-            margin-bottom: 8px;
+            height: 42px;
+            width: 100%;
+            max-width: 600px;
 
             .prefix {
                 padding: 0 12px;
                 color: $gray4-default-dark;
                 background-color: $dark-1;
-                height: 100%;
                 display: flex;
                 align-items: center;
-                font-size: 0.9rem;
+                font-size: 0.85rem;
+                border-right: 1px solid $dark-1-5;
             }
 
             input {
                 border: none;
-                margin-bottom: 0;
+                background: none;
                 height: 100%;
                 width: 100%;
+                font-size: 1rem;
+                padding: 0 12px;
+                border-radius: 0;
             }
         }
-        .field-wrap {
-            display: grid;
-            gap: 4px;
-        }
-        &:hover{
-            input{
-                border: 1px solid $gray4-accessible-dark;
-                border-bottom: 1px solid $gray2-accessible-dark;
-                border-right: 1px solid $gray2-accessible-dark;
-            }
-        }
-        .input-with-icon{
+
+        .input-with-icon {
             position: relative;
+            width: 100%;
+            max-width: 600px;
+            
+            input {
+                width: 100%;
+                padding-right: 48px;
+            }
+            
+            .google-logo {
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 20px;
+                height: 20px;
+                background-size: contain;
+                opacity: 0.8;
+            }
         }
-        .google-logo{
-            position: absolute;
-            right: 0px;
-            top: 0px;
-            width: 8px*5;
-            height: 8px*5;
-            background-image: url('../../assets/img/google-logo.png');
-            background-size: auto 60%;
-            background-position: center;
+
+        &.rows-2 {
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            
+            .field-wrap {
+                display: grid;
+                gap: 8px;
+            }
         }
-        .radio-tabs{
-            display:flex;
+
+        .logo-input {
+            display: flex;
+            gap: 24px;
             align-items: center;
-            gap: 8px*1.6;
-            margin-bottom: 8px*2;
-            .tab{
-                position: relative;
+            
+            .logo-image {
+                width: 120px;
+                height: 120px;
+                background-color: rgba(255, 255, 255, 0.02);
+                border: 1px dashed rgba(255, 255, 255, 0.1);
+                border-radius: 12px;
                 display: flex;
                 align-items: center;
-                align-content: center;
-                width: 8px*10*1.6;
-                height: 8px*8;
-                border: 1px solid $dark-1;
-                border-radius: 6px;
-                box-shadow: 1px 1px 1px 0px $dark-3;
+                justify-content: center;
+                padding: 12px;
+                position: relative;
+                
+                img {
+                    max-width: 100%;
+                    max-height: 100%;
+                    object-fit: contain;
+                }
+            }
+            
+            .button-wrapper {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                
+                span {
+                    font-size: 0.8rem;
+                    color: $gray4-default-dark;
+                }
+            }
+        }
+
+        .radio-tabs {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            width: 100%;
+            margin-bottom: 12px;
+
+            .tab {
+                display: flex;
+                flex-direction: column;
+                background-color: $dark-2-5;
+                border: 1px solid $dark-1-5;
+                border-radius: 10px;
                 overflow: hidden;
-                transition-duration: 0.15s;
-                    cursor: pointer;
-                &:hover{
-                    width: 8px*20*1.6;
-                    background-color: $dark-2-5;
-                    transition-duration: 0.2s;
-                    .tab-content{
-                        width: 100%;
-                        opacity: 1;
-                    }
-                    .tab-image{
-                    transition-duration: 0.3s;
-                    opacity: 0.8;
-                    }
-                    label{
-                        color: $gray3-default-light;
-                        transition-delay: 0.1s;
-                        transition-duration: 0.3s;
-                        &.secondery{
-                            color: $gray3-default-dark;
-                            transition-delay: 0.1s;
-                            transition-duration: 0.5s;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                height: auto;
+                width: 100%;
+                box-shadow: none;
+
+                &::after {
+                    display: none; // Removing the old icon
+                }
+
+                .tab-image {
+                    height: 100px;
+                    width: 100%;
+                    background-color: $dark-1;
+                    background-size: 32px;
+                    background-position: center;
+                    opacity: 0.3;
+                    transition: opacity 0.2s;
+                    border-right: none;
+                    border-bottom: 1px solid $dark-1-5;
+                }
+
+                .tab-content {
+                    padding: 12px;
+                    width: 100% !important;
+                    opacity: 1 !important;
+                    display: grid !important;
+                    gap: 4px;
+                    
+                    label {
+                        margin: 0;
+                        font-weight: 600;
+                        color: $gray-default-light;
+                        font-size: 0.95rem;
+                        
+                        &.secondery {
+                            font-weight: 400;
+                            color: $gray4-default-dark;
+                            font-size: 0.8rem;
+                            white-space: normal;
+                            line-height: 1.3;
                         }
                     }
                 }
-                &.active{
-                    width: 8px*20*1.6;
-                    color: $gray4-default-light;
-                    border: 1px solid $dark-1;
-                    border-top: 1px solid $dark-0;
-                    border-left: 1px solid $dark-0;
-                    box-shadow: 2px 2px 4px 0px $dark-3;
-                    background-color: $dark-2-5;
-                    label{
+
+                &:hover {
+                    border-color: rgba(255, 255, 255, 0.2);
+                    background-color: rgba(255, 255, 255, 0.05);
+                    transform: translateY(-2px);
+                    
+                    .tab-image {
+                        opacity: 0.6;
+                    }
+                }
+
+                &.active {
+                    border-color: $green-default-dark;
+                    background-color: rgba($green-default-dark, 0.05);
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+
+                    .tab-image {
+                        opacity: 1;
+                        background-color: rgba($green-default-dark, 0.1);
+                    }
+                    
+                    label {
+                        color: $green-default-light;
+                        text-shadow: none;
                         
-                        color: $gray4-default-light;
-                        text-shadow: 0px 1px 2px  black;
-                        &.secondery{
-                            text-shadow: 0px 0px 0px $dark-0;
+                        &.secondery {
                             color: $gray2-default-dark;
                         }
                     }
-                    .tab-image{
-                        opacity: 1;
-                    }
-                    .tab-content{
-                        width: 100%;
-                        opacity: 1;
-                    }
                 }
-                .tab-image{
-                    width: 8px*10;
-                    height: 100%;
-                    background-size: auto 60%;
-                    background-position: center;
-                    background-color: $dark-3;
-                    border-right: 1px solid $dark-1;
-                    transition-duration: 0.2s;
-                    opacity: 0.2;
-                    &.public{
-                        background-image: url('https://img.icons8.com/?size=100&id=11168&format=png&color=FFFFFF');
-                    }
-                    &.passcode{
-                        background-image: url('https://img.icons8.com/?size=100&id=2985&format=png&color=FFFFFF');
-                    }
-                    &.invite-only{
-                        background-image: url('https://img.icons8.com/?size=100&id=124133&format=png&color=FFFFFF');
-                    }
-                    &.original-resolution{
-                        background-image: url('https://img.icons8.com/?size=100&id=16644&format=png&color=FFFFFF');
-                    }
-                    &.optimized-resolution{
-                        background-image: url('https://img.icons8.com/?size=100&id=40415&format=png&color=FFFFFF');
-                    }
-                }
-                .tab-content{
-                    display: grid;
-                    justify-items: start;
-                    padding: 8px 8px;
-                    width: 0%;
-                    overflow-x: hidden;
-                    opacity: 0;
-                }
-                label{
-                    width: 100%;
-                    line-height: 0.8rem;
-                    white-space: nowrap;
-                    cursor: pointer;
-                }
-            }
-                .tab{
-                    &::after{
-                        position: absolute;
-                        top: 0;
-                        right: 0;
-                        content: '';
-                        width: 8px*6;
-                        height: 8px*7;
-                        background-image: url('https://img.icons8.com/?size=100&id=60022&format=png&color=FFFFFF');
-                        background-size: 50%;
-                        background-position: center;
-                        background-repeat: no-repeat;
-                        opacity: 0.05;
+                
+                &.disabled {
+                    opacity: 0.4;
+                    cursor: not-allowed;
+                    filter: grayscale(1);
                     
-                    }
-                }
-            &.share-view{
-                .tab{
-                    &::after{
-                        background-image: url('https://img.icons8.com/?size=100&id=4y6r43dyjbzw&format=png&color=FFFFFF');
-                        
+                    &:hover {
+                        transform: none;
                     }
                 }
             }
-            &.selection-view{
-                .tab{
-                    &::after{
-                        background-image: url('https://img.icons8.com/?size=100&id=11695&format=png&color=FFFFFF');
-                        background-size: 45%;
-                        
-                        opacity: 0.1;
-                    }
-                }
-            }
-        }
-        .logo-input{
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            width: auto;
-            .logo-image{
-                position: relative;
-                width: 100%;
-                height: 8px*16;
-                margin-top: 8px;
-                border: 1px solid $dark-2;
-                border-radius: 4px;
-                overflow: hidden;
-                .button-wrapper{
-                    display: grid;
-                }
-                .upload-overlay {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.5);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: white;
-                    font-size: 1.2rem;
-                }
-            }
-            .button{
-                width: fit-content;
-            }
-        }
-        &.rows-2{
-            display: grid;
-            justify-content: start;
-            gap:8px;
-            grid-auto-flow: column;
-            grid-template-columns: auto auto;
-            grid-template-rows: auto auto;
         }
     }
-
 }
 
-//write a media quer for divces less than 1200px
-@media only screen and (max-width: 1800px) {
-}
-@media only screen and (max-width: 1600px) {
-}
-@media only screen and (max-width: 1300px) {
-}
-@media only screen and (max-width: 1200px) {
-}
-@media only screen and (max-width: 1080px) {
-}
-@media only screen and (max-width: 960px) {
-}
+// Media Queries
 @media only screen and (max-width: 860px) {
-}
-@media only screen and (max-width: 640px) {
-}
-@media only screen and (max-width: 520px) {
-    .settings-form .form-group .radio-tabs {
+    main.settings .dashboard-tabs {
         flex-direction: column;
-            width: 100% !important;
-            .tab{
-                width: 100% !important;
-            }
-            &:hover{
-                width: 100% !important;
-            }
-            &.active{
-                width: 100% !important;
-            }
+        .tabs {
+            width: 100%;
+            flex-direction: row;
+            overflow-x: auto;
+            padding-bottom: 12px;
+        }
+    }
+    .settings-form .form-group.rows-2 {
+        grid-template-columns: 1fr;
     }
 }
-@media only screen and (max-width: 480px) {
+
+@media only screen and (max-width: 520px) {
+    main.settings {
+        padding: 16px;
+    }
+    
+    .settings-form {
+        .form-group {
+            .radio-tabs {
+                grid-template-columns: 1fr;
+            }
+        }
+    }
 }

@@ -55,7 +55,7 @@ function GallerySettings({ formData, handleChange }) {
     <div className="gallery-privacy-settings">
       <form className="settings-form" onSubmit={(e) => e.preventDefault()}>
 
-        <h2>Tagline</h2>
+        <h2><span className="photos"></span>Tagline</h2>
         <div className="form-group">
           <label htmlFor="galleryTagline">Footer Tagline</label>
           <div className="editable-data">
@@ -63,6 +63,7 @@ function GallerySettings({ formData, handleChange }) {
               type="text"
               id="galleryTagline"
               name="galleryTagline"
+              placeholder="e.g. Captured with love"
               value={localTagline}
               onChange={(e) => setLocalTagline(e.target.value)}
             />
@@ -82,102 +83,80 @@ function GallerySettings({ formData, handleChange }) {
               </div>
             )}
           </div>
+          <label className="note-bene">This text appears at the bottom of all your galleries.</label>
         </div>
 
-        <h2>
-          {' '}
-          <span className="privacy"></span>Privacy
-        </h2>
+        <h2><span className="privacy"></span>Privacy Default</h2>
         <div className="form-group">
-          <h4 className="group-title">Share gallery </h4>
+          <h4 className="group-title">Share gallery</h4>
           <div className="radio-tabs share-view">
             <div className="tab active">
               <div className="tab-image public"></div>
               <div className="tab-content">
-                <label htmlFor="">Public</label>
-                <label className="secondery" htmlFor="">
-                  Accessible via shared link
-                </label>
+                <label>Public</label>
+                <label className="secondery">Accessible via shared link</label>
               </div>
             </div>
-            <div className="tab ">
+            <div className="tab">
               <div className="tab-image passcode"></div>
               <div className="tab-content">
-                <label htmlFor="">Passcode Protected</label>
-                <label className="secondery" htmlFor="">
-                  Unlock with a secure passcode
-                </label>
+                <label>Passcode Protected</label>
+                <label className="secondery">Unlock with a secure passcode</label>
               </div>
             </div>
             <div className="tab">
               <div className="tab-image invite-only"></div>
               <div className="tab-content">
-                <label htmlFor="">Invitation Only</label>
-                <label className="secondery" htmlFor="">
-                  Exclusive access for invited users
-                </label>
+                <label>Invitation Only</label>
+                <label className="secondery">Exclusive access for invited users</label>
               </div>
             </div>
-            <label className="note-bene" htmlFor="">
-              You can change privacy for each gallery later individualy.
-            </label>
           </div>
 
-          <h4 className="group-title"> Selection gallery</h4>
+          <h4 className="group-title">Selection gallery</h4>
           <div className="radio-tabs selection-view">
             <div className="tab active">
               <div className="tab-image passcode "></div>
               <div className="tab-content">
-                <label htmlFor="">Passcode Protected</label>
-                <label className="secondery" htmlFor="">
-                  Unlock with a secure passcode
-                </label>
+                <label>Passcode Protected</label>
+                <label className="secondery">Unlock with a secure passcode</label>
               </div>
             </div>
             <div className="tab">
               <div className="tab-image invite-only"></div>
               <div className="tab-content">
-                <label htmlFor="">Invitation Only</label>
-                <label className="secondery" htmlFor="">
-                  Exclusive access for invited users
-                </label>
+                <label>Invitation Only</label>
+                <label className="secondery">Exclusive access for invited users</label>
               </div>
             </div>
-            <label className="note-bene" htmlFor="">
-              You can change privacy for each gallery later individualy.
-            </label>
           </div>
+          <label className="note-bene">
+            These are default settings. You can override privacy for each gallery individually.
+          </label>
         </div>
 
-        <h2>
-          {' '}
-          <span className="photos"></span>Photos
-        </h2>
+        <h2><span className="photos"></span>Photo Delivery</h2>
         <div className="form-group">
-          <h4 className="group-title">Resolution</h4>
+          <h4 className="group-title">Display Resolution</h4>
           <div className="radio-tabs">
             <div className="tab active">
               <div className="tab-image optimized-resolution "></div>
               <div className="tab-content">
-                <label htmlFor="">Optimized</label>
-                <label className="secondery" htmlFor="">
-                  Faster loading
-                </label>
+                <label>Optimized</label>
+                <label className="secondery">Balanced for faster loading and quality</label>
               </div>
             </div>
             <div className="tab disabled">
               <div className="tab-image original-resolution "></div>
               <div className="tab-content">
-                <label htmlFor="">Original</label>
-                <label className="secondery" htmlFor="">
-                  Full resolution.
-                </label>
+                <label>Original</label>
+                <label className="secondery">Full resolution (High Bandwidth)</label>
               </div>
             </div>
-            <label className="note-bene" htmlFor="">
-              Changes are applied for all new uploads.
-            </label>
           </div>
+          <label className="note-bene">
+            Optimized resolution is recommended for the best viewer experience.
+          </label>
         </div>
 
       </form>
