@@ -7,19 +7,76 @@ main.settings{
 
     .dashboard-tabs{
         margin-top: 8px*4;
+        display: flex;
+        gap: 8px*4;
+        align-items: flex-start;
+
         .tabs {
-            border-bottom: 1px solid $dark-1-5;
-            padding-bottom: 8px;
             display: flex;
+            flex-direction: column;
             gap: 8px;
+            width: 8px*22;
+            flex-shrink: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+            position: sticky;
+            top: 0;
+
+            .tab-button {
+                justify-content: flex-start;
+                width: 100%;
+                text-align: left;
+                padding: 10px 16px;
+                border-radius: 8px;
+                background-color: transparent;
+                border: 1px solid transparent;
+                box-shadow: none;
+                transition: all 0.2s ease;
+                font-weight: 500;
+                color: $gray3-default-dark;
+
+                &::before {
+                    margin-right: 12px;
+                    opacity: 0.6;
+                }
+
+                &:hover {
+                    background-color: rgba(255, 255, 255, 0.05);
+                    color: $gray-default-light;
+                    &::before {
+                        opacity: 0.9;
+                    }
+                }
+
+                &.active {
+                    background-color: rgba($green-default-dark, 0.1);
+                    border: 1px solid rgba($green-default-dark, 0.3);
+                    color: $green-default-light;
+                    &::before {
+                        opacity: 1;
+                        filter: drop-shadow(0 0 4px rgba($green-default-dark, 0.4));
+                    }
+                }
+
+                &.disabled {
+                    opacity: 0.3;
+                    cursor: not-allowed;
+                    &:hover {
+                        background-color: transparent;
+                    }
+                }
+            }
         }
+
         .tab-content{
+            flex-grow: 1;
+            height: calc(100vh - 8px*20);
             overflow-y: scroll;
-            padding-right: 8px;
+            padding-right: 16px;
             
             // Custom scrollbar for tab content
             &::-webkit-scrollbar {
-                width: 6px;
+                width: 4px;
             }
             &::-webkit-scrollbar-track {
                 background: transparent;
@@ -54,7 +111,7 @@ main.settings{
 .settings-form{
     display: grid;
     gap: 8px*4;
-    margin-top: 8px*4;
+    margin-top: 8px*1; // Reduced margin since header is cleaner
     margin-bottom: 8px*4;
     max-width: 900px;
 
@@ -367,6 +424,15 @@ main.settings{
 
 // Media Queries
 @media only screen and (max-width: 860px) {
+    main.settings .dashboard-tabs {
+        flex-direction: column;
+        .tabs {
+            width: 100%;
+            flex-direction: row;
+            overflow-x: auto;
+            padding-bottom: 12px;
+        }
+    }
     .settings-form .form-group.rows-2 {
         grid-template-columns: 1fr;
     }
