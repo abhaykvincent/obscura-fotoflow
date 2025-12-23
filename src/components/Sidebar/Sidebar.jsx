@@ -55,8 +55,10 @@ function Sidebar() {
   // Assuming archive uses the same 'used' value but a different, larger quota
   const archiveUsedPercentage = (archiveQuotaMB > 0) ? (storageUsedMB / archiveQuotaMB) * 100 : 0; 
 
+  const isSettingsPage = location.pathname.includes('/settings');
+
   return (
-    <div className={`sidebar ${location.pathname === `/${studioName}/home` ? 'sleep-sidebar' : 'sleep-sidebar'}`}>
+    <div className={`sidebar ${isSettingsPage ? 'sleep-sidebar' : ''}`}>
 
       <div className="menu-list">
         <Link to={`/${studioName}/home`}>

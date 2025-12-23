@@ -63,8 +63,11 @@ body{
     color: white;
   }
 
-  &.light-mode-page *{
-    color: black;
+  &.settings-route {
+    main {
+      left: 8px*8 + 8px*1;
+      width: calc(100vw - 8px*8 - 8px*4);
+    }
   }
   .app-wrap{
     height: 100%;
@@ -249,9 +252,8 @@ body{
     inset 8px 8px 8px*4 4px rgba(129, 129, 129, 0.05), 
     4px 2px 2px 1px rgba(0, 0, 0,0.5);
     background-color: rgba(0, 0, 0, 0.2);
-    // scrollbar styling
+    transition: all 0.2s ease;
 
-    
     &.project-page{
       display: grid;
       grid-template-rows: auto auto auto;

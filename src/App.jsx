@@ -163,9 +163,12 @@ export default function App() {
   if (authLoading) {
     return <LoadingLight />;
   }
+  const location = useLocation();
+  const isSettingsPage = location.pathname.includes('/settings');
+
   // RENDER
   return (
-    <div className={`App ${isLightModePage() && 'light-mode-page'}`}>
+    <div className={`App ${isLightModePage() ? 'light-mode-page' : ''} ${isSettingsPage ? 'settings-route' : ''}`}>
       <LoadingScreen />
       <HotKeys keyMap={keyMap} handlers={handlers} className='app-wrap'>
       {/* <SupportIcon userId={defaultStudio?.domain}/> */}

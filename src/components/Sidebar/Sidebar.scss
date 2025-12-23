@@ -15,6 +15,28 @@
     &.sleep{
         opacity: 0.5;
     }
+    &.sleep-sidebar {
+        width: 8px*8;
+        border-right: 1px solid $dark-1-5;
+        background-color: rgba(0,0,0,0.2);
+        
+        .menu-list, .profile-settings, .storage-bars, .plan-labels, .expiry-label, .corner-tools {
+            opacity: 0 !important;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        &:hover {
+            width: $sidebar-width;
+            opacity: 1;
+            background-color: $dark-3;
+            pointer-events: all;
+            .menu-list, .profile-settings, .storage-bars, .plan-labels, .expiry-label, .corner-tools {
+                opacity: 1 !important;
+                pointer-events: all;
+            }
+        }
+    }
     .menu-list{
         padding: 8px*1.5;
         padding-top: 0;
