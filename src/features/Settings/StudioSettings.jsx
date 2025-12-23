@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateStudioLogoAsync } from '../../app/slices/adminSettingsSlice';
+import { updateStudioLogoAsync, updateStudioAsync } from '../../app/slices/adminSettingsSlice';
 import { selectStudio } from '../../app/slices/studioSlice';
 import { setStudioLogo } from '../../app/slices/authSlice';
 import { showAlert } from '../../app/slices/alertSlice';
@@ -11,6 +11,14 @@ function StudioSettings({ formData, handleChange }) {
   const studio = useSelector(selectStudio);
   const fileInputRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [savingField, setSavingField] = useState(null);
+
+  // State to track local changes before saving
+  const [localData, setLocalData] = useState({});
+
+  useEffect(() => {
+    setLocalData(formData);
+  }, [formData]);
 
   const handleLogoClick = () => {
     fileInputRef.current.click();
@@ -29,7 +37,6 @@ function StudioSettings({ formData, handleChange }) {
         const resultAction = await dispatch(updateStudioLogoAsync({ file, studioDomain: studio.domain }));
         if (updateStudioLogoAsync.fulfilled.match(resultAction)) {
             dispatch(setStudioLogo(resultAction.payload));
-            // Update formData in parent if needed, although it should sync from studio data
             handleChange({
                 target: {
                     name: 'studioLogo',
@@ -45,9 +52,67 @@ function StudioSettings({ formData, handleChange }) {
     }
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setLocalData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveField = async (fieldName, dbField) => {
+    setSavingField(fieldName);
+    try {
+      let updates = {};
+      if (dbField.includes('.')) {
+        updates[dbField] = localData[fieldName];
+      } else if (dbField === 'social') {
+        updates = {
+          social: {
+            instagram: localData.studioInstagram,
+            facebook: localData.studioFacebook,
+          }
+        };
+      } else {
+        updates[dbField] = localData[fieldName];
+      }
+
+      await dispatch(updateStudioAsync({ studioId: studio.domain, updates })).unwrap();
+      // Sync parent state
+      handleChange({ target: { name: fieldName, value: localData[fieldName] } });
+      dispatch(showAlert({ type: 'success', message: 'Updated successfully' }));
+    } catch (error) {
+      dispatch(showAlert({ type: 'error', message: 'Failed to update' }));
+    } finally {
+      setSavingField(null);
+    }
+  };
+
+  const handleCancelField = (fieldName) => {
+    setLocalData(prev => ({ ...prev, [fieldName]: formData[fieldName] }));
+  };
+
+  const isDirty = (fieldName) => localData[fieldName] !== formData[fieldName];
+
+  const renderEditActions = (fieldName, dbField) => {
+    if (!isDirty(fieldName)) return null;
+    return (
+      <div className="input-edit-actions">
+        <button
+          type="button"
+          className={`button primary icon icon-only check ${savingField === fieldName ? 'disabled' : ''}`}
+          onClick={() => handleSaveField(fieldName, dbField)}
+          disabled={savingField === fieldName}
+        ></button>
+        <button
+          type="button"
+          className="button secondary icon icon-only close"
+          onClick={() => handleCancelField(fieldName)}
+        ></button>
+      </div>
+    );
+  };
+
   return (
     <div className="studio-settings">
-      <form className="settings-form">
+      <form className="settings-form" onSubmit={(e) => e.preventDefault()}>
         <h2>Branding</h2>
         <div className="form-group">
           <label htmlFor="logo-input">Studio Logo</label>
@@ -81,83 +146,110 @@ function StudioSettings({ formData, handleChange }) {
         </div>
         <div className="form-group">
           <label htmlFor="studioName">Studio Name</label>
-          <input
-            type="text"
-            id="studioName"
-            name="studioName"
-            value={formData.studioName}
-            onChange={handleChange}
-          ></input>
+          <div className="editable-data">
+            <input
+              type="text"
+              id="studioName"
+              name="studioName"
+              value={localData.studioName || ''}
+              onChange={handleInputChange}
+            />
+            {renderEditActions('studioName', 'name')}
+          </div>
         </div>
         <div className="form-group">
           <label htmlFor="studioWebsite">Website</label>
-          <input
-            type="text"
-            id="studioWebsite"
-            name="studioWebsite"
-            placeholder="https://yourstudio.com"
-            value={formData.studioWebsite || ''}
-            onChange={handleChange}
-          ></input>
+          <div className="editable-data">
+            <input
+              type="text"
+              id="studioWebsite"
+              name="studioWebsite"
+              placeholder="https://yourstudio.com"
+              value={localData.studioWebsite || ''}
+              onChange={handleInputChange}
+            />
+            {renderEditActions('studioWebsite', 'website')}
+          </div>
         </div>
 
         <h2>Contact</h2>
         <div className="form-group rows-2">
-          <label htmlFor="studioEmail">Email</label>
-          <div className="input-with-icon disabled">
-            <input
-              type="text"
-              id="studioEmail"
-              name="studioEmail"
-              value={formData.studioEmail}
-              onChange={handleChange}
-            />
-            <div className="google-logo" alt="Google"></div>
+          <div className="field-wrap">
+            <label htmlFor="studioEmail">Email</label>
+            <div className="input-with-icon disabled">
+              <input
+                type="text"
+                id="studioEmail"
+                name="studioEmail"
+                value={localData.studioEmail || ''}
+                readOnly
+              />
+              <div className="google-logo" alt="Google"></div>
+            </div>
           </div>
-          <label htmlFor="studioPhone">Phone</label>
-          <input
-            type="text"
-            id="studioPhone"
-            name="studioPhone"
-            value={formData.studioPhone}
-            onChange={handleChange}
-          ></input>
+          <div className="field-wrap">
+            <label htmlFor="studioPhone">Phone</label>
+            <div className="editable-data">
+              <input
+                type="text"
+                id="studioPhone"
+                name="studioPhone"
+                value={localData.studioPhone || ''}
+                onChange={handleInputChange}
+              />
+              {renderEditActions('studioPhone', 'studioPhone')}
+            </div>
+          </div>
         </div>
 
         <div className="form-group">
           <label htmlFor="studioAddress">Address</label>
-          <textarea
-            id="studioAddress"
-            name="studioAddress"
-            rows="3"
-            value={formData.studioAddress || ''}
-            onChange={handleChange}
-          ></textarea>
+          <div className="editable-data">
+            <textarea
+              id="studioAddress"
+              name="studioAddress"
+              rows="3"
+              style={{ width: '100%', minWidth: '8px*24*1.6' }}
+              value={localData.studioAddress || ''}
+              onChange={handleInputChange}
+            ></textarea>
+            {renderEditActions('studioAddress', 'address')}
+          </div>
         </div>
 
         <h2>Social Media</h2>
         <div className="form-group rows-2">
-          <label htmlFor="studioInstagram">Instagram</label>
-          <div className="input-with-prefix">
-            <span className="prefix">instagram.com/</span>
-            <input
-              type="text"
-              id="studioInstagram"
-              name="studioInstagram"
-              value={formData.studioInstagram || ''}
-              onChange={handleChange}
-            />
+          <div className="field-wrap">
+            <label htmlFor="studioInstagram">Instagram</label>
+            <div className="editable-data">
+              <div className="input-with-prefix">
+                <span className="prefix">instagram.com/</span>
+                <input
+                  type="text"
+                  id="studioInstagram"
+                  name="studioInstagram"
+                  value={localData.studioInstagram || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              {renderEditActions('studioInstagram', 'social')}
+            </div>
           </div>
-          <label htmlFor="studioFacebook">Facebook</label>
-          <div className="input-with-prefix">
-            <span className="prefix">facebook.com/</span>
-            <input
-              type="text"
-              id="studioFacebook"
-              name="studioFacebook"
-              value={formData.studioFacebook || ''}
-              onChange={handleChange}
-            />
+          <div className="field-wrap">
+            <label htmlFor="studioFacebook">Facebook</label>
+            <div className="editable-data">
+              <div className="input-with-prefix">
+                <span className="prefix">facebook.com/</span>
+                <input
+                  type="text"
+                  id="studioFacebook"
+                  name="studioFacebook"
+                  value={localData.studioFacebook || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              {renderEditActions('studioFacebook', 'social')}
+            </div>
           </div>
         </div>
       </form>

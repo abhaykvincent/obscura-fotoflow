@@ -1,89 +1,86 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateGalleryTaglineAsync } from '../../app/slices/adminSettingsSlice';
+import { updateStudioAsync } from '../../app/slices/adminSettingsSlice';
 import { selectStudio } from '../../app/slices/studioSlice';
+import { showAlert } from '../../app/slices/alertSlice';
 
 function GallerySettings({ formData, handleChange }) {
   const dispatch = useDispatch();
   const studio = useSelector(selectStudio);
-  const studioId = studio?.domain; // Assuming studioId is the domain
+  const studioId = studio?.domain;
 
-  const galleryTagline = formData?.settings?.gallery?.galleryTagline ?? '';
-  const [initialTagline, setInitialTagline] = useState(galleryTagline);
-  const [isTaglineDirty, setIsTaglineDirty] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [localTagline, setLocalTagline] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    
-  })
+    setLocalTagline(formData?.settings?.gallery?.galleryTagline || '');
+  }, [formData]);
+
   const handleSaveTagline = async () => {
     if (studioId) {
-      setIsLoading(true);
+      setIsSaving(true);
       try {
-        await dispatch(updateGalleryTaglineAsync({ studioId, tagline: galleryTagline }));
-        setInitialTagline(galleryTagline); // Update initial tagline after successful save
+        await dispatch(updateStudioAsync({ 
+          studioId, 
+          updates: { 'settings.gallery.galleryTagline': localTagline } 
+        })).unwrap();
+        handleChange({
+          target: {
+            name: 'settings',
+            value: {
+              ...formData.settings,
+              gallery: {
+                ...formData.settings?.gallery,
+                galleryTagline: localTagline,
+              },
+            },
+          },
+        });
+        dispatch(showAlert({ type: 'success', message: 'Tagline updated' }));
+      } catch (error) {
+        dispatch(showAlert({ type: 'error', message: 'Failed to update tagline' }));
       } finally {
-        setIsLoading(false);
+        setIsSaving(false);
       }
     }
   };
 
-  const handleTaglineChange = (e) => {
-    handleChange({
-      target: {
-        name: 'settings',
-        value: {
-          ...formData.settings,
-          gallery: {
-            ...formData.settings?.gallery,
-            galleryTagline: e.target.value,
-          },
-        },
-      },
-    });
-  };
-
   const handleCancelTagline = () => {
-    handleChange({
-      target: {
-        name: 'settings',
-        value: {
-          ...formData.settings,
-          gallery: {
-            ...formData.settings?.gallery,
-            galleryTagline: initialTagline,
-          },
-        },
-      },
-    });
+    setLocalTagline(formData?.settings?.gallery?.galleryTagline || '');
   };
 
-  useEffect(() => {
-    setIsTaglineDirty(galleryTagline !== initialTagline);
-  }, [galleryTagline, initialTagline]);
+  const isTaglineDirty = localTagline !== (formData?.settings?.gallery?.galleryTagline || '');
 
   return (
     <div className="gallery-privacy-settings">
-      <form className="settings-form">
+      <form className="settings-form" onSubmit={(e) => e.preventDefault()}>
 
         <h2>Tagline</h2>
         <div className="form-group">
           <label htmlFor="galleryTagline">Footer Tagline</label>
-          <input
-            type="text"
-            id="galleryTagline"
-            name="galleryTagline"
-            value={galleryTagline}
-            onChange={handleTaglineChange}
-          ></input>
-          <div className="input-edit-actions">
-            <button
-              type="button"
-              className={`${isTaglineDirty ? '' : 'disabled'} button primary icon icon-only check`}
-              onClick={handleSaveTagline}
-              /* disabled={!isTaglineDirty || isLoading} */
-            ></button>
-            <button type="button" className="button secondary  icon icon-only close" onClick={handleCancelTagline}></button>
+          <div className="editable-data">
+            <input
+              type="text"
+              id="galleryTagline"
+              name="galleryTagline"
+              value={localTagline}
+              onChange={(e) => setLocalTagline(e.target.value)}
+            />
+            {isTaglineDirty && (
+              <div className="input-edit-actions">
+                <button
+                  type="button"
+                  className={`button primary icon icon-only check ${isSaving ? 'disabled' : ''}`}
+                  onClick={handleSaveTagline}
+                  disabled={isSaving}
+                ></button>
+                <button 
+                  type="button" 
+                  className="button secondary icon icon-only close" 
+                  onClick={handleCancelTagline}
+                ></button>
+              </div>
+            )}
           </div>
         </div>
 

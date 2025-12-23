@@ -108,6 +108,49 @@ main.settings{
             &#studioEmail{
             }
         }
+        .editable-data {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+
+            .input-edit-actions {
+                display: flex;
+                gap: 4px;
+                animation: fadeInRight 0.2s ease-out;
+            }
+        }
+        .input-with-prefix {
+            display: flex;
+            align-items: center;
+            background-color: $dark-3;
+            border: 1px solid $gray4-accessible-dark;
+            border-radius: 4px;
+            overflow: hidden;
+            height: 8px*5.4;
+            margin-bottom: 8px;
+
+            .prefix {
+                padding: 0 12px;
+                color: $gray4-default-dark;
+                background-color: $dark-1;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                font-size: 0.9rem;
+            }
+
+            input {
+                border: none;
+                margin-bottom: 0;
+                height: 100%;
+                width: 100%;
+            }
+        }
+        .field-wrap {
+            display: grid;
+            gap: 4px;
+        }
         &:hover{
             input{
                 border: 1px solid $gray4-accessible-dark;
