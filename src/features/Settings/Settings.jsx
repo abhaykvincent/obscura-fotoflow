@@ -18,6 +18,7 @@ function Settings() {
     // Initial state for all fields in the settings form
     const [formData, setFormData] = useState({
         studioName: defaultStudio?.name || '',
+        studioLogo: studio?.studioLogo || '',
         settings:{
             gallery:{
                 galleryTagline: studio?.settings?.gallery?.galleryTagline || ''
@@ -32,6 +33,7 @@ function Settings() {
     const [successMessage, setSuccessMessage] = useState('');
     const hasChanges = 
         formData.studioName !== (defaultStudio?.name || '') ||
+        formData.studioLogo !== (studio?.studioLogo || '') ||
         formData.settings?.gallery?.galleryTagline !== (studio?.settings?.gallery?.galleryTagline || '') ||
         formData.studioEmail !== (userData?.email || '') ||
         formData.studioPhone !== (userData?.phone || '');

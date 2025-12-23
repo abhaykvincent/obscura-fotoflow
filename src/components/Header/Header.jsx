@@ -48,7 +48,7 @@ const Header = () => {
 
       </div>
       <div className="logo-wrapper">
-        <div className="logo"></div>
+        <div className="logo" style={defaultStudio?.studioLogo ? { backgroundImage: `url(${defaultStudio.studioLogo})`, backgroundSize: 'contain', backgroundPosition: 'center' } : {}}></div>
         <div className="studio-name-logo">{defaultStudio?.name}</div>
       </div>
       
