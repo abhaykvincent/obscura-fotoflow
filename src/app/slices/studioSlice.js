@@ -8,6 +8,7 @@ import { useRevalidator } from 'react-router';
 import { setUserType } from '../../analytics/utils';
 import { fetchStudioByDomain } from '../../firebase/functions/studios';
 import { getCurrentSubscription, getStudioInvoices, getStudioSubscriptions } from '../../firebase/functions/subscription';
+import { updateStudioLogoAsync } from './adminSettingsSlice';
 
 const initialState = {
   data: {
@@ -128,6 +129,13 @@ const studioSlice = createSlice({
       .addCase(fetchStudio.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      // Update Studio Logo (from adminSettingsSlice)
+      .addCase(updateStudioLogoAsync.fulfilled, (state, action) => {
+        if (state.data) {
+          state.data.studioLogo = action.payload;
+        }
       })
 
       // New fetchCurrentSubscription cases

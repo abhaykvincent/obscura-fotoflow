@@ -6,6 +6,7 @@ import { auth } from '../../firebase/app';
 import { fetchUsers } from '../../firebase/functions/firestore';
 import { useRevalidator } from 'react-router';
 import { setUserType } from '../../analytics/utils';
+import { updateStudioLogoAsync } from './adminSettingsSlice';
 
 const initialState = {
   user: {
@@ -16,7 +17,8 @@ const initialState = {
   },
   currentStudio: {
     name: 'Guest 2024',
-    domain:'guest'
+    domain:'guest',
+    studioLogo:''
   },
   limits:{
     storage: {
@@ -155,6 +157,12 @@ const authSlice = createSlice({
       state.currentStudio = action.payload;
       localStorage.setItem('studio',JSON.parse(action.payload))
     },
+    setStudioLogo: (state, action) => {
+      if (state.currentStudio) {
+        state.currentStudio.studioLogo = action.payload;
+        localStorage.setItem('studio', JSON.stringify(state.currentStudio));
+      }
+    },
     setAvailableStortage: (state, action) => {
       const available = state.limits.storage.total-getUsedSpace(action.payload)
       state.limits.storage.available=available
@@ -207,11 +215,17 @@ const authSlice = createSlice({
         state.user = { email: '', access: [] };
         state.currentStudio = { name: '', domain: '' };
         console.log('%cLogged out...', 'color: orange; font-size: 0.9rem;');
+      })
+      .addCase(updateStudioLogoAsync.fulfilled, (state, action) => {
+        if (state.currentStudio) {
+          state.currentStudio.studioLogo = action.payload;
+          localStorage.setItem('studio', JSON.stringify(state.currentStudio));
+        }
       });
   }
 });
 
-export const { loginEmailPassword, setAvailableStortage, setUser, setLoading, setError, resetAuth, setCurrentStudio } = authSlice.actions;
+export const { loginEmailPassword, setAvailableStortage, setUser, setLoading, setError, resetAuth, setCurrentStudio, setStudioLogo } = authSlice.actions;
 export default authSlice.reducer;
 
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;

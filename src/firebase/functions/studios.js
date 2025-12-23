@@ -238,3 +238,18 @@ export const updateGalleryTagline = async (studioId, galleryTagline) => {
         throw error;
     }
 };
+
+export const updateStudioLogo = async (studioId, logoUrl) => {
+    try {
+        const studioRef = doc(db, 'studios', studioId);
+        await updateDoc(studioRef, {
+            'studioLogo': logoUrl,
+            'metadata.updatedAt': new Date().toISOString(),
+        });
+        console.log(`Logo for studio ${studioId} updated successfully.`);
+        return true;
+    } catch (error) {
+        console.error(`Error updating logo for studio ${studioId}:`, error.message);
+        throw error;
+    }
+};

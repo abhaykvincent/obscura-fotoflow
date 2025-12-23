@@ -503,5 +503,17 @@ export const uploadCover = async (file, project) => {
     return newCoverUrl;
 };
 
+// Upload Studio Logo
+export const uploadStudioLogo = async (file, studioDomain) => {
+    const storage = await getStorageForDomain(studioDomain);
+    const storageRef = ref(storage, `${studioDomain}/branding/logo/${file.name}`);
+    await uploadBytes(storageRef, file);
+    const newLogoUrl = await getDownloadURL(storageRef);
+
+    const studioDocRef = doc(db, "studios", studioDomain);
+    await updateDoc(studioDocRef, { studioLogo: newLogoUrl });
+
+    return newLogoUrl;
+};
 
 // Firestore Database

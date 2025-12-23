@@ -109,8 +109,9 @@ body{
         width: 8px*7;
         height: 8px*8;
         background-image: url('./assets/img/fotoflow-pro-logo.svg');
-        background-position: 8px*0.75 center;
-        background-size: auto 80%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
 
       }
       .studio-name-logo{

@@ -5,10 +5,15 @@ import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import { selectUserStudio } from '../../app/slices/authSlice';
 import SearchInput from '../Search/SearchInput';
+import { selectStudioAdminSettings } from '../../app/slices/adminSettingsSlice';
+import { selectStudio } from '../../app/slices/studioSlice';
 const Header = () => {
 
   const defaultStudio = useSelector(selectUserStudio)
+      const studio = useSelector(selectStudio);
+  console.log(studio)
 
+  debugger
   const [searchQuery, setSearchQuery] = useState('');
   const [hamburgerActive, setHamburgerActive] = useState(false);
   //handle hamburger active
@@ -48,8 +53,8 @@ const Header = () => {
 
       </div>
       <div className="logo-wrapper">
-        <div className="logo"></div>
-        <div className="studio-name-logo">{defaultStudio?.name}</div>
+        <div className="logo" style={studio?.studioLogo ? { backgroundImage: `url(${studio.studioLogo})`, backgroundSize: 'contain', backgroundPosition: 'center' } : {}}></div>
+        <div className="studio-name-logo">{studio?.name}</div>
       </div>
       
     </header>

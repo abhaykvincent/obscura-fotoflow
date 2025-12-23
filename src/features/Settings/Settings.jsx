@@ -18,6 +18,7 @@ function Settings() {
     // Initial state for all fields in the settings form
     const [formData, setFormData] = useState({
         studioName: defaultStudio?.name || '',
+        studioLogo: studio?.studioLogo || '',
         settings:{
             gallery:{
                 galleryTagline: studio?.settings?.gallery?.galleryTagline || ''
@@ -27,11 +28,28 @@ function Settings() {
         studioPhone: userData?.phone || '',
         // Add other fields here as they are added (e.g., studio address, phone number)
     });
+
+    useEffect(() => {
+        if (studio || defaultStudio) {
+            setFormData(prev => ({
+                ...prev,
+                studioName: prev.studioName || defaultStudio?.name || '',
+                studioLogo: prev.studioLogo || studio?.studioLogo || '',
+                settings: {
+                    gallery: {
+                        galleryTagline: prev.settings?.gallery?.galleryTagline || studio?.settings?.gallery?.galleryTagline || ''
+                    }
+                }
+            }));
+        }
+    }, [studio, defaultStudio]);
+
     console.log('Default Studio:', studio);
     const [isSaving, setIsSaving] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const hasChanges = 
         formData.studioName !== (defaultStudio?.name || '') ||
+        formData.studioLogo !== (studio?.studioLogo || '') ||
         formData.settings?.gallery?.galleryTagline !== (studio?.settings?.gallery?.galleryTagline || '') ||
         formData.studioEmail !== (userData?.email || '') ||
         formData.studioPhone !== (userData?.phone || '');

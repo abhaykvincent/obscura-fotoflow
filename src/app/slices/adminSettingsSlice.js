@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { updateGalleryTagline } from '../../firebase/functions/studios';
+import { updateGalleryTagline, updateStudioLogo } from '../../firebase/functions/studios';
+import { uploadStudioLogo } from '../../utils/uploadOperations';
 import { 
     fetchPricingGroups, 
     createPricingGroup, 
@@ -118,6 +119,18 @@ export const updateGalleryTaglineAsync = createAsyncThunk(
   }
 );
 
+export const updateStudioLogoAsync = createAsyncThunk(
+  'adminSettings/updateStudioLogo',
+  async ({ file, studioDomain }, { rejectWithValue }) => {
+    try {
+      const logoUrl = await uploadStudioLogo(file, studioDomain);
+      return logoUrl;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 // -- Pricing Thunks --
 
 export const fetchPricingGroupsAsync = createAsyncThunk(
@@ -181,6 +194,9 @@ const adminSettingsSlice = createSlice({
       gallery: {
         galleryTagline: '',
       },
+      studio: {
+        studioLogo: '',
+      },
     },
     pricingGroups: [],
     editingPricingGroup: null,
@@ -211,6 +227,20 @@ const adminSettingsSlice = createSlice({
         state.settings.gallery.galleryTagline = action.payload;
       })
       .addCase(updateGalleryTaglineAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Update Studio Logo
+      .addCase(updateStudioLogoAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateStudioLogoAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.settings.studio.studioLogo = action.payload;
+      })
+      .addCase(updateStudioLogoAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -286,5 +316,5 @@ export const {
 export const selectPricingGroups = (state) => state.adminSettings.pricingGroups;
 export const selectEditingPricingGroup = (state) => state.adminSettings.editingPricingGroup;
 export const selectEditingPricingPlan = (state) => state.adminSettings.editingPricingPlan;
-
+export const selectStudioAdminSettings  = (state) => state.adminSettings;
 export default adminSettingsSlice.reducer;
