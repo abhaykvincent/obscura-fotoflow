@@ -11,9 +11,6 @@ const Header = () => {
 
   const defaultStudio = useSelector(selectUserStudio)
       const studio = useSelector(selectStudio);
-  console.log(studio)
-
-  debugger
   const [searchQuery, setSearchQuery] = useState('');
   const [hamburgerActive, setHamburgerActive] = useState(false);
   //handle hamburger active
