@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateStudioLogoAsync } from '../../app/slices/adminSettingsSlice';
 import { selectStudio } from '../../app/slices/studioSlice';
+import { setStudioLogo } from '../../app/slices/authSlice';
 import defaultLogo from '../../assets/img/fotoflow-pro-logo.svg';
 
 function StudioSettings({ formData, handleChange }) {
@@ -21,6 +22,7 @@ function StudioSettings({ formData, handleChange }) {
       try {
         const resultAction = await dispatch(updateStudioLogoAsync({ file, studioDomain: studio.domain }));
         if (updateStudioLogoAsync.fulfilled.match(resultAction)) {
+            dispatch(setStudioLogo(resultAction.payload));
             // Update formData in parent if needed, although it should sync from studio data
             handleChange({
                 target: {

@@ -316,5 +316,5 @@ export const {
 export const selectPricingGroups = (state) => state.adminSettings.pricingGroups;
 export const selectEditingPricingGroup = (state) => state.adminSettings.editingPricingGroup;
 export const selectEditingPricingPlan = (state) => state.adminSettings.editingPricingPlan;
-
+export const selectStudioAdminSettings  = (state) => state.adminSettings;
 export default adminSettingsSlice.reducer;
