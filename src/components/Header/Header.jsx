@@ -8,7 +8,9 @@ import SearchInput from '../Search/SearchInput';
 const Header = () => {
 
   const defaultStudio = useSelector(selectUserStudio)
+  console.log(defaultStudio)
 
+  debugger
   const [searchQuery, setSearchQuery] = useState('');
   const [hamburgerActive, setHamburgerActive] = useState(false);
   //handle hamburger active

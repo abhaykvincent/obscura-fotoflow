@@ -17,7 +17,8 @@ const initialState = {
   },
   currentStudio: {
     name: 'Guest 2024',
-    domain:'guest'
+    domain:'guest',
+    studioLogo:''
   },
   limits:{
     storage: {
