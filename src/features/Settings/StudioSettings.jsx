@@ -52,18 +52,19 @@ function StudioSettings({ formData, handleChange }) {
         <div className="form-group">
           <label htmlFor="logo-input">Studio Logo</label>
           <div className="logo-input">
-            <div 
-                className="logo-image" 
-                style={{ 
-                    backgroundImage: `url(${formData.studioLogo || defaultLogo})`, 
-                    backgroundSize: 'contain', 
-                    backgroundRepeat: 'no-repeat', 
-                    backgroundPosition: 'center' 
-                }}
-            >
+            <div className="logo-image" style={{ backgroundColor: 'transparent', padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img 
+                    src={formData.studioLogo || defaultLogo} 
+                    alt="Studio Logo" 
+                    style={{ 
+                        maxWidth: '100%', 
+                        maxHeight: '100%', 
+                        objectFit: 'contain' 
+                    }} 
+                />
                 {isUploading && <div className="upload-overlay">...</div>}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div  className="button-wrapper" style={{ display: 'grid', alignItems: 'center', gap: '10px' }}>
                 <div className="button primary outline" onClick={handleLogoClick} disabled={isUploading}>
                     {isUploading ? 'Uploading...' : 'Change logo'}
                 </div>
