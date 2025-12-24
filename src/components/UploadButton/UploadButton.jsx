@@ -10,6 +10,7 @@ import { handleUpload } from '../../utils/uploadOperations';
 import { addAllFileSizesToMB, validateFileTypes, extractExifData } from '../../utils/fileUtils';
 import { createNotification } from '../../app/slices/notificationSlice';
 import { fetchProjects, updateCollectionStatus } from '../../app/slices/projectsSlice';
+import { addUploadedFilesToFirestore, addUploadCompletionEventToFirestore } from '../../firebase/functions/firestore';
 
 // import { fetchProject } from '../../firebase/functions/firestore'; // fetchProject seems unused in this component
 
@@ -35,6 +36,36 @@ function UploadButton({
   const storageLimit = useSelector(selectStudioStorageUsage);
   const studiodata = useSelector(selectStudio);
   const currentStudio = useSelector(selectUserStudio);
+
+  const handleDummyUpload = async () => {
+    setIsPhotosImported(true);
+    const dummyFiles = [];
+    for (let i = 0; i < 534; i++) {
+        dummyFiles.push({
+            name: `dummy-image-${i}.jpg`,
+            url: `https://picsum.photos/seed/${i + Math.random()}/1200/800`,
+            lastModified: Date.now(),
+            dateTimeOriginal: new Date().toISOString(),
+            dimensions: { width: 1200, height: 800 },
+            thumbAvailable: true,
+        });
+    }
+
+    try {
+        await addUploadedFilesToFirestore(domain, id, collectionId, 0, dummyFiles);
+        await addUploadCompletionEventToFirestore(domain, id, collectionId, dummyFiles, 0, collectionName);
+        
+        setImageUrls(prevUrls => [...prevUrls, ...dummyFiles]);
+        localDispatch(showAlert({ type: 'success', message: '534 Dummy files added successfully!' }));
+        localDispatch(fetchProjects({ currentDomain: domain }));
+    } catch (error) {
+        console.error('Dummy upload failed:', error);
+        localDispatch(showAlert({ type: 'error', message: 'Dummy upload failed, check console for details.' }));
+    } finally {
+        setIsPhotosImported(false);
+    }
+  };
+
   const handleFileInputChange = useCallback(async (event) => {
     const selectedFiles = Array.from(event.target.files);
     const importFileSize = addAllFileSizesToMB(selectedFiles);
@@ -137,6 +168,15 @@ function UploadButton({
         Upload
       </label>
       <input id="fileInput" type="file" multiple onChange={handleFileInputChange} />
+      {process.env.NODE_ENV === 'development' && (
+        <button 
+          onClick={handleDummyUpload}
+          className="button secondary"
+          style={{ marginLeft: '10px', height: 'fit-content' }}
+        >
+          Dummy Upload (534)
+        </button>
+      )}
     </>
   );
 }

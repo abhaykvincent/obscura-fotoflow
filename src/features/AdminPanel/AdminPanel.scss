@@ -63,6 +63,10 @@
                         background-size: 90%;
                         background-image:url('https://img.icons8.com/?size=30&id=61029&format=png&color=555555');
                         }
+                        &.analytics{
+                            background-size: 90%;
+                            background-image:url('https://img.icons8.com/?size=100&id=108771&format=png&color=555555');
+                        }
                     }
 
                 }
@@ -149,6 +153,7 @@
             display: grid;
             grid-template-columns: auto auto;
             justify-content:none;
+            margin-bottom: 8px*2;
             .left-actions{
                 display: flex;
                 justify-content: start;
@@ -161,6 +166,14 @@
                 align-items: center;
             }
         }
+
+                span.selected-group-name{
+                    color: $gray-default-dark;
+                    &::before{
+                        width: 8px*2;
+                        margin-right: 0;
+                    }
+                }
 
     .section-title {
         margin-bottom: 8px; // 8px*1

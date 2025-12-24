@@ -3,6 +3,7 @@ import './AdminControls.scss';
 
 const ROLES_TABS = {
     ADMIN: 'admin',
+    ANALYTICS: 'analytics',
     DEVELOPER: 'developer',
     SALES: 'sales',
     SUPPORT: 'support',

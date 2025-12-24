@@ -2,7 +2,7 @@ import React from 'react';
 
 export const welcomeScreens = [
   {
-    title: <>Welcome to <span className='iconic-gradient'>Fotoflow!</span></>,
+    title: <>Welcome to <span className='iconic-gradient'>Fotoflow</span>!</>,
     body: (
       <>
         <p>
@@ -16,7 +16,7 @@ export const welcomeScreens = [
     ),
   },
   {
-    title: <>Manage your <span className='iconic-gradient'>Projects</span></>,
+    title: <>Manage your <span className='iconic-gradient'>Projects</span>.</>,
     body: (
       <>
         <p>
@@ -31,7 +31,7 @@ export const welcomeScreens = [
     ),
   },
   {
-    title: <>Your <span className='iconic-gradient'>Galleries, Smarter</span></>,
+    title: <>Design your <span className='iconic-gradient'>Galleries</span>.</>,
     body: (
       <>
         <p>

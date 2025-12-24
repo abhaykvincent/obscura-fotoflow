@@ -30,27 +30,27 @@ function SettingsDashboard({ formData,handleChange }) {
     <div className="dashboard-tabs">
       <div className="tabs">
         <button
-          className={`button secondary tab-button ${activeTab === 'studio' ? 'active' : ''}`}
+          className={`button secondary icon tab-button studio ${activeTab === 'studio' ? 'active' : ''}`}
           onClick={() => setActiveTab('studio')}
         >
           Studio
         </button>
         <button
-          className={`button secondary tab-button ${activeTab === 'gallery' ? 'active' : ''}`}
+          className={`button secondary icon tab-button ai ${activeTab === 'gallery' ? 'active' : ''}`}
           onClick={() => setActiveTab('gallery')}
         >
           Gallery
         </button>
         <button
-          className={` button secondary tab-button ${activeTab === 'billing' ? 'active' : ''}`}
+          className={` button secondary icon tab-button history ${activeTab === 'billing' ? 'active' : ''}`}
           onClick={() => setActiveTab('billing')}
         >Billing</button>
         <button
-          className={`disabled button secondary tab-button ${activeTab === 'team' ? 'active' : ''}`}
+          className={`disabled button secondary icon tab-button user ${activeTab === 'team' ? 'active' : ''}`}
           onClick={() => setActiveTab('team')}
         >Team</button>
         <button
-          className={`disabled button secondary tab-button ${activeTab === 'security' ? 'active' : ''}`}
+          className={`disabled button secondary icon tab-button security ${activeTab === 'security' ? 'active' : ''}`}
           onClick={() => setActiveTab('security')}
         >Security</button>
       </div>

@@ -22,6 +22,8 @@ const initialState = {
     matchingUsers: false,
     termsOfService: false,
     privacyPolicy: false,
+    managePricingGroup: false,
+    managePricingPlan: false,
 };
 export const closeModalWithAnimation = createAsyncThunk(
   'projects/closeModalWithAnimation',

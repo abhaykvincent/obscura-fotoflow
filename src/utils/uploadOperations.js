@@ -265,7 +265,6 @@ const sliceUpload = async (storage, domain, slice, id, collectionId, dispatch, o
 export const handleUpload = async (domain, files, id, collectionId, importFileSize, dispatch, collectionName, sectionId, retries = 2, sliceSize = 32, bucketUrl ) => {
     
     console.log(bucketUrl)
-    debugger
     const storage = await getStorageForDomain(domain, bucketUrl);
     console.log(domain, files, id, collectionId, importFileSize, dispatch, collectionName, retries, sliceSize)
     // 1. Generate initialFileObjects with unique IDs for Redux state
@@ -504,5 +503,17 @@ export const uploadCover = async (file, project) => {
     return newCoverUrl;
 };
 
+// Upload Studio Logo
+export const uploadStudioLogo = async (file, studioDomain) => {
+    const storage = await getStorageForDomain(studioDomain);
+    const storageRef = ref(storage, `${studioDomain}/branding/logo/${file.name}`);
+    await uploadBytes(storageRef, file);
+    const newLogoUrl = await getDownloadURL(storageRef);
+
+    const studioDocRef = doc(db, "studios", studioDomain);
+    await updateDoc(studioDocRef, { studioLogo: newLogoUrl });
+
+    return newLogoUrl;
+};
 
 // Firestore Database
