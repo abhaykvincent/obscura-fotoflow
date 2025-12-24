@@ -370,6 +370,9 @@ export const fetchAnalyticsData = async () => {
         const avgProjectsPerStudio = studios.length ? totalProjects / studios.length : 0;
         const avgTTFU = ttfuCount ? totalTTFU / ttfuCount : 0;
         const projectCompletionRate = totalProjects ? (completedProjects / totalProjects) * 100 : 0;
+        const avgCollectionsPerProject = totalProjects ? totalCollections / totalProjects : 0;
+        const avgPhotosPerCollection = totalCollections ? totalPhotos / totalCollections : 0;
+        const avgPhotosPerProject = totalProjects ? totalPhotos / totalProjects : 0;
 
         return {
             summary: {
@@ -384,6 +387,9 @@ export const fetchAnalyticsData = async () => {
                 avgTTFU,
                 projectCompletionRate,
                 estimatedMonthlyBurn,
+                avgCollectionsPerProject,
+                avgPhotosPerCollection,
+                avgPhotosPerProject,
                 storageEfficiency: totalPhotos ? (totalFileSize / totalPhotos) : 0, // MB per photo
             },
             leaderboard: [...studioPerformance].sort((a, b) => b.storageUsed - a.storageUsed).slice(0, 10),
