@@ -13,6 +13,7 @@ import PricingPlanModal from '../../admin/Modal/PricingPlan/PricingPlanModal.jsx
 import AdminControls from './AdminControls';
 import { StatCards } from './components/StatCards';
 import { SalesStatCards } from './components/SalesStatCards'; // Import Sales Stats
+import { AnalyticsStatCards } from './components/AnalyticsStatCards'; // Import Analytics Stats
 import { UsersTab } from './tabs/UsersTab';
 import { LeadsTab } from './tabs/LeadsTab';
 import { StudiosTab } from './tabs/StudiosTab';
@@ -205,6 +206,8 @@ function AdminPanel() {
                             churnRate="2.4%"
                             newTrials={24}
                         />
+                    ) : selectedRole === 'analytics' ? (
+                        <AnalyticsStatCards summary={analytics?.summary} />
                     ) : (
                         <StatCards 
                             usersCount={users.length} 
