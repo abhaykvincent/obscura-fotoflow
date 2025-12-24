@@ -1314,65 +1314,132 @@ export const createDummyProjectsInFirestore = async (domain, n = 5) => {
     const firstNames = ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'Grace', 'Heidi', 'Ivan', 'Judy', 'Kevin', 'Liam', 'Mia', 'Noah', 'Olivia', 'Peter', 'Quinn', 'Rachel', 'Sam', 'Tina', 'Uma', 'Victor', 'Wendy', 'Xavier', 'Yara', 'Zoe'];
     const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Lee', 'Perez', 'Thompson', 'Moore', 'Wright', 'King'];
     const businessNames = ['Elite Events', 'Pixel Perfect Studio', 'Moment Makers', 'Timeless Captures', 'Dream Lens Photography', 'The Artful Shutter', 'Infinite Frames'];
+    const locations = ['New York, NY', 'Los Angeles, CA', 'Chicago, IL', 'Houston, TX', 'Phoenix, AZ', 'Philadelphia, PA', 'San Antonio, TX', 'San Diego, CA', 'Dallas, TX', 'San Jose, CA'];
 
     const projectTypes = ['Wedding', 'Baptism', 'Birthday', 'Maternity', 'Newborn', 'Headshot', 'Anniversary', 'Family'];
-    const projectStatuses = ['draft', ' ','active', 'selected', 'completed', 'archived'];
+    const projectStatuses = ['draft', 'active', 'selected', 'completed', 'archived'];
+    const collectionNames = ['Originals', 'High Res', 'Web Quality', 'Selections', 'Highlights', 'Ceremony', 'Reception'];
 
     // Helper to get a random timestamp in the past 13 months
     const now = Date.now();
-    // Using a more precise calculation for 13 months ago
     const thirteenMonthsAgo = new Date();
     thirteenMonthsAgo.setMonth(thirteenMonthsAgo.getMonth() - 13);
-    const thirteenMonthsMs = now - thirteenMonthsAgo.getTime(); // Get the precise difference in ms
+    const thirteenMonthsMs = now - thirteenMonthsAgo.getTime();
 
     for (let i = 1; i <= n; i++) {
-        // Generate random project name (e.g., "Smith & Johnson Wedding" or "Alice's Birthday")
         let projectName;
         let clientName;
         const nameType = Math.random();
 
-        if (nameType < 0.4) { // 40% chance of a couple's name for weddings/anniversaries
+        if (nameType < 0.4) {
             const name1 = `${firstNames[Math.floor(Math.random() * firstNames.length)]}`;
             const name2 = `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
             projectName = `${name1} & ${name2}`;
             clientName = `${lastNames[Math.floor(Math.random() * lastNames.length)]} Family`;
-        } else if (nameType < 0.8) { // 40% chance of a single person's name
+        } else if (nameType < 0.8) {
             const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
             const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
             projectName = `${firstName} ${lastName}`;
             clientName = `${firstName} ${lastName}`;
-        } else { // 20% chance of a business name
+        } else {
             projectName = businessNames[Math.floor(Math.random() * businessNames.length)];
-            clientName = `Client ${Math.floor(100 + Math.random() * 900)}`; // Simple client ID for business projects
+            clientName = `Client ${Math.floor(100 + Math.random() * 900)}`;
         }
 
-
-        // Make name2 optional (e.g., 50% chance it's present)
         const optionalName2 = Math.random() < 0.5 ?
             `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}` :
-            ''; // Empty string if not present
+            '';
 
         const randomOffset = Math.floor(Math.random() * thirteenMonthsMs);
+        const createdAt = now - randomOffset;
+
+        // Dummy Events
+        const dummyEvents = Array.from({ length: Math.floor(Math.random() * 3) + 1 }, (_, idx) => ({
+            id: `event-${generateRandomString(5)}`,
+            type: projectTypes[Math.floor(Math.random() * projectTypes.length)],
+            date: createdAt + (idx * 86400000), // Day by day
+            location: locations[Math.floor(Math.random() * locations.length)],
+            crews: Array.from({ length: Math.floor(Math.random() * 2) + 1 }, () => ({
+                name: `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`,
+                role: ['Photographer', 'Assistant', 'Editor'][Math.floor(Math.random() * 3)]
+            }))
+        }));
+
+        // Dummy Payments
+        const dummyPayments = Array.from({ length: Math.floor(Math.random() * 2) + 1 }, () => ({
+            id: `payment-${generateRandomString(5)}`,
+            amount: Math.floor(Math.random() * 1000) + 500,
+            date: createdAt + Math.floor(Math.random() * 1000000),
+            description: 'Installment Payment',
+            status: ['paid', 'pending'][Math.floor(Math.random() * 2)]
+        }));
+
+        // Dummy Expenses
+        const dummyExpenses = Array.from({ length: Math.floor(Math.random() * 3) + 1 }, () => ({
+            id: `expense-${generateRandomString(5)}`,
+            amount: Math.floor(Math.random() * 200) + 50,
+            date: createdAt + Math.floor(Math.random() * 1000000),
+            category: ['Travel', 'Equipment', 'Props'][Math.floor(Math.random() * 3)],
+            description: 'Project related expense'
+        }));
+
+        // Dummy Budgets
+        const totalBudget = Math.floor(Math.random() * 5000) + 2000;
+        const dummyBudgets = {
+            totalBudget: totalBudget,
+            allocatedFunds: Math.floor(totalBudget * 0.8),
+            remainingFunds: Math.floor(totalBudget * 0.2)
+        };
+
+        // Dummy Collections IDs (metadata)
+        const dummyCollections = Array.from({ length: Math.floor(Math.random() * 2) + 1 }, () => ({
+            id: `${collectionNames[Math.floor(Math.random() * collectionNames.length)].toLowerCase()}-${generateRandomString(5)}`,
+            name: collectionNames[Math.floor(Math.random() * collectionNames.length)],
+            status: 'visible',
+            filesCount: 0
+        }));
 
         const dummyProject = {
             name: projectName,
-            name2: optionalName2, // Now optional
-            type: projectTypes[Math.floor(Math.random() * projectTypes.length)], // Random project type
+            name2: optionalName2,
+            type: projectTypes[Math.floor(Math.random() * projectTypes.length)],
             projectValidityMonths: [3, 6, 12][i % 3],
-            createdAt: now - randomOffset,
-            status: projectStatuses[Math.floor(Math.random() * projectStatuses.length)], // Random status
-            collections: [],
-            events: [],
-            payments: [],
-            expenses: [],
-            budgets: [],
-            projectCover: '',
+            createdAt: createdAt,
+            status: projectStatuses[Math.floor(Math.random() * projectStatuses.length)],
+            collections: dummyCollections,
+            events: dummyEvents,
+            payments: dummyPayments,
+            expenses: dummyExpenses,
+            budgets: dummyBudgets,
+            projectCover: `https://picsum.photos/seed/${i + Math.random()}/1200/800`,
             pin: Math.floor(1000 + Math.random() * 9000).toString(),
             description: `This is a dummy project for development and testing. #${i} - Client: ${clientName || projectName}`,
+            totalFileSize: 0,
+            uploadedFilesCount: 0
         };
-        await addProjectToStudio(domain, dummyProject);
+
+        const addedProject = await addProjectToStudio(domain, dummyProject);
+
+        // For each dummy collection, we should also create the collection document in the subcollection
+        for (const coll of dummyCollections) {
+            const collectionDoc = {
+                id: coll.id,
+                name: coll.name,
+                status: coll.status,
+                uploadedFiles: [],
+                smartGallery: {
+                    id: coll.id,
+                    name: coll.name,
+                    sections: [],
+                    createdAt: Date.now(),
+                    updatedAt: Date.now(),
+                }
+            };
+            const collectionRef = doc(db, 'studios', domain, 'projects', addedProject.id, 'collections', coll.id);
+            await setDoc(collectionRef, collectionDoc);
+        }
     }
-    console.log(`Created ${n} dummy projects in studio: ${domain}`);
+    console.log(`Created ${n} enhanced dummy projects in studio: ${domain}`);
 };
 
 export * from './admin-firestore';
