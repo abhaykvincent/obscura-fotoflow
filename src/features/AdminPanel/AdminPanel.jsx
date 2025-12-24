@@ -56,9 +56,10 @@ const SALES_TABS = [
 ];
 
 const ANALYTICS_TABS = [
-    { id: 'analytics-overview', icon: 'analytics', label: 'Overview' },
-    { id: 'studios-performance', icon: 'studio', label: 'Studios' },
-    { id: 'projects-performance', icon: 'history', label: 'Projects' },
+    { id: 'analytics-growth', icon: 'analytics', label: 'Growth' },
+    { id: 'analytics-costs', icon: 'studio', label: 'Infrastructure' },
+    { id: 'analytics-retention', icon: 'history', label: 'Retention' },
+    { id: 'analytics-leaderboard', icon: 'leads', label: 'Leaderboard' },
 ];
 
 function AdminPanel() {
@@ -161,30 +162,18 @@ function AdminPanel() {
                 );
 
             // ANALYTICS TABS
-            case 'analytics-overview':
+            case 'analytics-growth':
+            case 'analytics-costs':
+            case 'analytics-retention':
+            case 'analytics-leaderboard':
                 return (
                     <AnalyticsTab 
+                        type={selectedTab}
                         analytics={analytics} 
                         loading={analyticsLoading} 
                         lastUpdated={analyticsLastUpdated}
                         onRefresh={refreshAnalytics}
                     />
-                );
-            case 'studios-performance':
-                return (
-                    <div className="invoice-history">
-                        <div className="support-list" style={{ padding: '20px', color: '#fff' }}>
-                            Studios Performance Coming Soon
-                        </div>
-                    </div>
-                );
-            case 'projects-performance':
-                return (
-                    <div className="invoice-history">
-                        <div className="support-list" style={{ padding: '20px', color: '#fff' }}>
-                            Projects Performance Coming Soon
-                        </div>
-                    </div>
                 );
 
             default:

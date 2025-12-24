@@ -276,11 +276,20 @@ export const fetchAnalyticsData = async () => {
         const studiosSnapshot = await getDocs(studiosCollection);
         const studios = studiosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
+        const usersCollection = collection(db, 'users');
+        const usersSnapshot = await getDocs(usersCollection);
+        const users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
         let totalProjects = 0;
         let totalCollections = 0;
         let totalPhotos = 0;
         let totalFileSize = 0;
+        let completedProjects = 0;
+        let activeStudiosCount = 0;
+        let totalTTFU = 0;
+        let ttfuCount = 0;
 
+        const fourteenDaysAgo = Date.now() - (14 * 24 * 60 * 60 * 1000);
         const studioPerformance = [];
 
         for (const studio of studios) {
@@ -292,15 +301,44 @@ export const fetchAnalyticsData = async () => {
             let studioCollections = 0;
             let studioPhotos = 0;
             let studioSize = 0;
+            let studioIsActive = false;
+            let firstProjectDate = null;
 
             for (const projectDoc of projectsSnapshot.docs) {
                 const projectData = projectDoc.data();
                 studioSize += projectData.totalFileSize || 0;
                 studioPhotos += projectData.uploadedFilesCount || 0;
 
+                // Track activity (upload or open in last 14 days)
+                if ((projectData.lastOpened || 0) > fourteenDaysAgo || (projectData.createdAt || 0) > fourteenDaysAgo) {
+                    studioIsActive = true;
+                }
+
+                // Track completion (selected or completed status)
+                if (['selected', 'completed'].includes(projectData.status)) {
+                    completedProjects++;
+                }
+
+                // Track first project for TTFU
+                if (!firstProjectDate || projectData.createdAt < firstProjectDate) {
+                    firstProjectDate = projectData.createdAt;
+                }
+
                 const collectionsCollection = collection(projectDoc.ref, 'collections');
                 const collectionsSnapshot = await getDocs(collectionsCollection);
                 studioCollections += collectionsSnapshot.size;
+            }
+
+            if (studioIsActive) activeStudiosCount++;
+
+            // Calculate TTFU for this studio owner
+            const owner = users.find(u => u.email === studio.ownerId);
+            if (owner && owner.createdAt && firstProjectDate) {
+                const diff = (firstProjectDate - owner.createdAt) / (1000 * 60 * 60); // Hours
+                if (diff > 0) {
+                    totalTTFU += diff;
+                    ttfuCount++;
+                }
             }
 
             totalCollections += studioCollections;
@@ -314,15 +352,24 @@ export const fetchAnalyticsData = async () => {
                 projectsCount,
                 collectionsCount: studioCollections,
                 photosCount: studioPhotos,
-                storageUsed: studioSize
+                storageUsed: studioSize,
+                isActive: studioIsActive,
+                // Per-studio metrics
+                avgPhotosPerProject: projectsCount ? studioPhotos / projectsCount : 0,
+                avgStoragePerProject: projectsCount ? studioSize / projectsCount : 0,
+                avgPhotosPerCollection: studioCollections ? studioPhotos / studioCollections : 0,
+                avgSizePerPhoto: studioPhotos ? studioSize / studioPhotos : 0
             });
         }
 
+        // Infrastructure Cost Constants (Firebase Estimates)
+        const STORAGE_COST_PER_GB = 0.026;
+        const totalGB = totalFileSize / 1024;
+        const estimatedMonthlyBurn = totalGB * STORAGE_COST_PER_GB;
+
         const avgProjectsPerStudio = studios.length ? totalProjects / studios.length : 0;
-        const avgCollectionsPerProject = totalProjects ? totalCollections / totalProjects : 0;
-        const avgPhotosPerCollection = totalCollections ? totalPhotos / totalCollections : 0;
-        const avgPhotosPerProject = totalProjects ? totalPhotos / totalProjects : 0;
-        const avgFileSize = totalPhotos ? (totalFileSize / totalPhotos) : 0; // Average photo size in MB
+        const avgTTFU = ttfuCount ? totalTTFU / ttfuCount : 0;
+        const projectCompletionRate = totalProjects ? (completedProjects / totalProjects) * 100 : 0;
 
         return {
             summary: {
@@ -330,13 +377,16 @@ export const fetchAnalyticsData = async () => {
                 totalProjects,
                 totalCollections,
                 totalPhotos,
-                totalFileSize, // In MB
+                totalFileSize,
+                activeStudios: activeStudiosCount,
+                dormantStudios: studios.length - activeStudiosCount,
                 avgProjectsPerStudio,
-                avgCollectionsPerProject,
-                avgPhotosPerCollection,
-                avgPhotosPerProject,
-                avgFileSize
+                avgTTFU,
+                projectCompletionRate,
+                estimatedMonthlyBurn,
+                storageEfficiency: totalPhotos ? (totalFileSize / totalPhotos) : 0, // MB per photo
             },
+            leaderboard: [...studioPerformance].sort((a, b) => b.storageUsed - a.storageUsed).slice(0, 10),
             studioPerformance
         };
     } catch (error) {
