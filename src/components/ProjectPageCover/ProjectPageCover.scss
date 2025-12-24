@@ -1,0 +1,179 @@
+@import '../../style/variables';
+@import '../../style/components';
+
+.project-page-cover {
+    &.project-cover {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        .project-cover-image {
+            img {
+                transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+        }
+
+        &:hover {
+            .project-cover-image img {
+                transform: scale(1.02);
+            }
+        }
+
+        .cover-footer {
+            .static-tools.bottom {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+                width: 100%;
+                padding: 24px 32px;
+                background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                
+                .client {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    flex: 1;
+                }
+
+                .project-name-editor {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+
+                    h1 {
+                        font-size: 2.5rem;
+                        font-weight: 700;
+                        color: white;
+                        margin: 0;
+                        cursor: pointer;
+                        letter-spacing: -0.02em;
+                        text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+                        transition: color 0.2s;
+                        
+                        &:hover {
+                            color: $green-accessible-light;
+                        }
+                    }
+
+                    .edit-pen {
+                        width: 20px;
+                        height: 20px;
+                        background-image: url("https://img.icons8.com/material-rounded/24/FFFFFF/edit--v1.png");
+                        background-size: contain;
+                        background-repeat: no-repeat;
+                        opacity: 0;
+                        transition: all 0.2s;
+                        cursor: pointer;
+                        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+                        
+                        &:hover {
+                            transform: scale(1.1);
+                        }
+                    }
+
+                    &:hover .edit-pen {
+                        opacity: 0.6;
+                    }
+                }
+
+                .link-pin-container {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    
+                    .link-pin {
+                        display: flex;
+                        align-items: center;
+                        background: rgba(255, 255, 255, 0.08);
+                        backdrop-filter: blur(12px);
+                        border-radius: 12px;
+                        padding: 6px 14px;
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                        transition: all 0.2s;
+
+                        &:hover {
+                            background: rgba(255, 255, 255, 0.12);
+                            border-color: rgba(255, 255, 255, 0.2);
+                        }
+
+                        .linkToGallery {
+                            color: rgba(255, 255, 255, 0.7);
+                            text-decoration: none;
+                            font-size: 0.9rem;
+                            font-family: monospace;
+                        }
+
+                        .copy.icon {
+                            margin-left: 10px;
+                            opacity: 0.5;
+                            cursor: pointer;
+                            &:hover { opacity: 1; }
+                        }
+                    }
+
+                    .project-pin {
+                        font-size: 0.85rem;
+                        font-weight: 600;
+                        color: $green-accessible-light;
+                        background: rgba($green-accessible-light, 0.1);
+                        padding: 4px 10px;
+                        border-radius: 6px;
+                        border: 1px solid rgba($green-accessible-light, 0.2);
+                    }
+                }
+
+                .action-buttons {
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+
+                    .view-cta {
+                        display: flex;
+                        align-items: center;
+                        background: rgba(0, 0, 0, 0.6);
+                        padding: 4px;
+                        border-radius: 12px;
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+
+                        .controls {
+                            display: flex;
+                            gap: 4px;
+
+                            .control {
+                                width: 36px;
+                                height: 36px;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+
+                                .icon {
+                                    width: 20px;
+                                    height: 20px;
+                                    opacity: 0.4;
+                                    filter: brightness(0) invert(1);
+                                    transition: opacity 0.2s;
+                                }
+
+                                &:hover {
+                                    background: rgba(255, 255, 255, 0.05);
+                                    .icon { opacity: 0.7; }
+                                }
+
+                                &.active {
+                                    background: rgba(255, 255, 255, 0.15);
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                                    .icon { opacity: 1; }
+                                    transform: translateY(-1px);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

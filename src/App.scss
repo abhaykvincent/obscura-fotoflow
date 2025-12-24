@@ -2356,14 +2356,6 @@ body{
             }
           }
         }
-        .project-dashboard-header {
-          top: 8px*8;
-          width: calc(100% - 8px*3);
-          display: flex;
-          justify-content: space-between;
-          gap: 4px;
-          left: 12px;
-      }
         .project-collection .header {
           display: grid;
           grid-template-columns: 2fr auto 2fr;
@@ -2766,14 +2758,6 @@ body{
       }
 
       }
-    }
-    .project-dashboard-header{
-      top: 8px*8;
-      width: calc(100% - 8px*2);
-      display:flex;
-      justify-content: space-between;
-      gap:8px*0.5;
-      left: 8px*1.5;
     }
     .project-dashboard{
       .tools-overview{

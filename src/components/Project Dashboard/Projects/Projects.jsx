@@ -24,32 +24,11 @@ function DashboardProjects({project}){
   // Inside your component
   return (
     <>
-     <div className="project-dashboard-header">
-      {/* <div className="tools">
-        
-      <Link to={`/${studioName}/invitation-creator/${project.id}`}>
-        <div className="button secondary  icon  invitation disabled" > Invitation</div>
-      </Link>
-        <div className="button secondary icon user disabled" >Client</div>
-      </div> */}
-      <div className="view-cta">
-
-        <div className="control-wrap">
-            <div className="controls">
-            <div className={`control ctrl-active ${projectDashboardView === 'dashboard' ? 'active' : ''}`}
-                  onClick={()=>setProjectDashboardView('dashboard')}
-                ><div className="icon list-view"></div></div>
-                <div className={`control ctrl-all ${projectDashboardView === 'abstract' ? 'active' : ''}`}
-                  onClick={()=>setProjectDashboardView('abstract')}
-                ><div className="icon card-view"></div></div>
-                
-            </div>
-            <div className={`active`}></div>
-          </div>
-      </div>
-      </div>
-      
-      <ProjectCover project={project} />
+      <ProjectCover 
+        project={project} 
+        projectDashboardView={projectDashboardView} 
+        setProjectDashboardView={setProjectDashboardView} 
+      />
     {
       projectDashboardView === 'abstract'?
       (project.collections.length === 0 ? (

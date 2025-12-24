@@ -12,8 +12,9 @@ import { ProjectStatus } from "../Project/ProjectStatus/ProjectStatus";
 import { getGalleryURL } from "../../utils/urlUtils";
 import { getStorageForDomain } from "../../utils/uploadOperations";
 import { selectStudio } from "../../app/slices/studioSlice";
+import "./ProjectPageCover.scss";
 
-export const ProjectCover = ({ project }) => {
+export const ProjectCover = ({ project, projectDashboardView, setProjectDashboardView }) => {
     const dispatch = useDispatch();
     const currentStudio = useSelector(selectUserStudio);
     const domain = useSelector(selectDomain);
@@ -169,7 +170,10 @@ export const ProjectCover = ({ project }) => {
                                     </a>
                                 </div>
                                 </div>
-                                <div className="button primary outline text-only  icon copy"></div>
+                                <div className="button primary outline text-only  icon copy" onClick={() => {
+                                     navigator.clipboard.writeText(getGalleryURL('share',currentStudio?.domain,project?.id));
+                                     dispatch(showAlert({ type: "success", message: "Link copied to clipboard!" }));
+                                }}></div>
 
                             </div>
                                 {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
@@ -186,23 +190,23 @@ export const ProjectCover = ({ project }) => {
                         </div>
                         </div>
                         <div className="action-buttons">
+                            {setProjectDashboardView && (
+                                <div className="view-cta">
+                                    <div className="control-wrap">
+                                        <div className="controls">
+                                            <div className={`control ctrl-active ${projectDashboardView === 'dashboard' ? 'active' : ''}`}
+                                                onClick={() => setProjectDashboardView('dashboard')}
+                                            ><div className="icon list-view"></div></div>
+                                            <div className={`control ctrl-all ${projectDashboardView === 'abstract' ? 'active' : ''}`}
+                                                onClick={() => setProjectDashboardView('abstract')}
+                                            ><div className="icon card-view"></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             <ProjectStatus project={project} />
 
-                            {/* <div className="button secondary outline icon archive"> Archive</div>
-                        
-                            <div className="cover-info project-expiry project-archive">
-                                <div className="icon-show expire"></div>
-
-                                    <p>Archives 
-                                        <span> in </span> 
-                                        {
-                                            project?.createdAt ? 
-                                            Math.ceil(((new Date(project?.createdAt).getTime() + 90 * 24 * 60 * 60 * 1000) - Date.now()) / (1000 * 60 * 60 * 24))
-                                            : 0
-                                        } Days</p>
-
-                            </div> */}
                         
                         </div>
                         
@@ -261,10 +265,6 @@ export const ProjectCover = ({ project }) => {
             {
             !isSetFocusButton && project.pin? 
                 <div className="cover-tools">
-                    {/* <div
-                        className="button transparent-button secondary icon set-focus"
-                        onClick={setFocusButtonClick}
-                    >Set focus</div> */}
                     <div className="button transparent-button secondary icon image">
                         <label htmlFor={`change-cover-${project.id}`} style={{ cursor: "pointer" }}>
                             Change Cover
@@ -280,10 +280,6 @@ export const ProjectCover = ({ project }) => {
                 </div>
                 :
                 <div className="cover-tools">
-                    {/* <div
-                        className="button transparent-button primary icon set-focus"
-                        onClick={ () => saveFocusPoint(focusPointLocal)}
-                    >Save</div> */}
                 </div>
             }
             {isSetFocusButton && project?.projectCover && (
