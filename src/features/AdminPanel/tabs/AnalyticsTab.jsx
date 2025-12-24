@@ -191,7 +191,11 @@ export const AnalyticsTab = ({ type, analytics, loading, lastUpdated, onRefresh 
                                     <th>Domain</th>
                                     <th>Projects</th>
                                     <th>Photos</th>
-                                    <th>Storage Used</th>
+                                    <th>Storage</th>
+                                    <th title="Average Photos per Project">Ph/Proj</th>
+                                    <th title="Average Storage per Project">MB/Proj</th>
+                                    <th title="Average Photos per Collection">Ph/Coll</th>
+                                    <th title="Average Size per Photo">MB/Ph</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -205,6 +209,10 @@ export const AnalyticsTab = ({ type, analytics, loading, lastUpdated, onRefresh 
                                         <td style={{ color: studio.storageUsed > 5000 ? '#ff6b6b' : '#fff' }}>
                                             {(studio.storageUsed / 1024).toFixed(2)} GB
                                         </td>
+                                        <td>{studio.avgPhotosPerProject.toFixed(0)}</td>
+                                        <td>{studio.avgStoragePerProject.toFixed(1)}</td>
+                                        <td>{studio.avgPhotosPerCollection.toFixed(0)}</td>
+                                        <td>{studio.avgSizePerPhoto.toFixed(2)}</td>
                                         <td>
                                             <span className={`paid-status ${studio.isActive ? 'paid' : 'idle'}`}>
                                                 {studio.isActive ? 'Active' : 'Dormant'}

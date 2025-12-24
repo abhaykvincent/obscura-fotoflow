@@ -353,7 +353,12 @@ export const fetchAnalyticsData = async () => {
                 collectionsCount: studioCollections,
                 photosCount: studioPhotos,
                 storageUsed: studioSize,
-                isActive: studioIsActive
+                isActive: studioIsActive,
+                // Per-studio metrics
+                avgPhotosPerProject: projectsCount ? studioPhotos / projectsCount : 0,
+                avgStoragePerProject: projectsCount ? studioSize / projectsCount : 0,
+                avgPhotosPerCollection: studioCollections ? studioPhotos / studioCollections : 0,
+                avgSizePerPhoto: studioPhotos ? studioSize / studioPhotos : 0
             });
         }
 
