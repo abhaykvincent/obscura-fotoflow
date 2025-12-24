@@ -269,3 +269,78 @@ export const updateStudio = async (studioId, updates) => {
         throw error;
     }
 };
+
+export const fetchAnalyticsData = async () => {
+    try {
+        const studiosCollection = collection(db, 'studios');
+        const studiosSnapshot = await getDocs(studiosCollection);
+        const studios = studiosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        let totalProjects = 0;
+        let totalCollections = 0;
+        let totalPhotos = 0;
+        let totalFileSize = 0;
+
+        const studioPerformance = [];
+
+        for (const studio of studios) {
+            const projectsCollection = collection(db, 'studios', studio.domain, 'projects');
+            const projectsSnapshot = await getDocs(projectsCollection);
+            const projectsCount = projectsSnapshot.size;
+            totalProjects += projectsCount;
+
+            let studioCollections = 0;
+            let studioPhotos = 0;
+            let studioSize = 0;
+
+            for (const projectDoc of projectsSnapshot.docs) {
+                const projectData = projectDoc.data();
+                studioSize += projectData.totalFileSize || 0;
+                studioPhotos += projectData.uploadedFilesCount || 0;
+
+                const collectionsCollection = collection(projectDoc.ref, 'collections');
+                const collectionsSnapshot = await getDocs(collectionsCollection);
+                studioCollections += collectionsSnapshot.size;
+            }
+
+            totalCollections += studioCollections;
+            totalPhotos += studioPhotos;
+            totalFileSize += studioSize;
+
+            studioPerformance.push({
+                id: studio.id,
+                name: studio.name,
+                domain: studio.domain,
+                projectsCount,
+                collectionsCount: studioCollections,
+                photosCount: studioPhotos,
+                storageUsed: studioSize
+            });
+        }
+
+        const avgProjectsPerStudio = studios.length ? totalProjects / studios.length : 0;
+        const avgCollectionsPerProject = totalProjects ? totalCollections / totalProjects : 0;
+        const avgPhotosPerCollection = totalCollections ? totalPhotos / totalCollections : 0;
+        const avgPhotosPerProject = totalProjects ? totalPhotos / totalProjects : 0;
+        const avgFileSize = totalPhotos ? (totalFileSize / totalPhotos) : 0; // Average photo size in MB
+
+        return {
+            summary: {
+                totalStudios: studios.length,
+                totalProjects,
+                totalCollections,
+                totalPhotos,
+                totalFileSize, // In MB
+                avgProjectsPerStudio,
+                avgCollectionsPerProject,
+                avgPhotosPerCollection,
+                avgPhotosPerProject,
+                avgFileSize
+            },
+            studioPerformance
+        };
+    } catch (error) {
+        console.error('Error fetching analytics data:', error);
+        throw error;
+    }
+};

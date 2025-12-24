@@ -20,6 +20,7 @@ import { ReferralsTab } from './tabs/ReferralsTab';
 import { SupportTab } from './tabs/SupportTab';
 import { PricingTab } from './tabs/PricingTab'; // Import Pricing Tab
 import { SalesOverviewTab } from './tabs/SalesOverviewTab'; // Import Sales Overview
+import { AnalyticsTab } from './tabs/AnalyticsTab'; // Import Analytics Tab
 
 // Hooks
 import { useAdminData } from './hooks/useAdminData';
@@ -54,13 +55,19 @@ const SALES_TABS = [
     { id: 'trials', icon: 'user', label: 'Active Trials' },
 ];
 
+const ANALYTICS_TABS = [
+    { id: 'analytics-overview', icon: 'analytics', label: 'Overview' },
+    { id: 'studios-performance', icon: 'studio', label: 'Studios' },
+    { id: 'projects-performance', icon: 'history', label: 'Projects' },
+];
+
 function AdminPanel() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { page } = useParams();
 
     // -- State Management --
-    const { users, studios, referrals, leads, loading } = useAdminData();
+    const { users, studios, referrals, leads, analytics, loading } = useAdminData();
     const [selectedRole, setSelectedRole] = useState('admin');
 
     // -- Tab Logic --
@@ -87,7 +94,7 @@ function AdminPanel() {
         
         // Determine default tab for the new role if current tab is invalid
         let newTab = selectedTab;
-        const validTabs = role === 'sales' ? SALES_TABS : ADMIN_TABS;
+        const validTabs = role === 'sales' ? SALES_TABS : (role === 'analytics' ? ANALYTICS_TABS : ADMIN_TABS);
         
         if (!validTabs.find(t => t.id === selectedTab)) {
             newTab = validTabs[0].id;
@@ -153,6 +160,26 @@ function AdminPanel() {
                     </div>
                 );
 
+            // ANALYTICS TABS
+            case 'analytics-overview':
+                return <AnalyticsTab analytics={analytics} />;
+            case 'studios-performance':
+                return (
+                    <div className="invoice-history">
+                        <div className="support-list" style={{ padding: '20px', color: '#fff' }}>
+                            Studios Performance Coming Soon
+                        </div>
+                    </div>
+                );
+            case 'projects-performance':
+                return (
+                    <div className="invoice-history">
+                        <div className="support-list" style={{ padding: '20px', color: '#fff' }}>
+                            Projects Performance Coming Soon
+                        </div>
+                    </div>
+                );
+
             default:
                 // Fallback: If tab doesn't match, maybe show first tab of current role or 404
                 return <div style={{color:'white', padding:'20px'}}>Select a tab</div>;
@@ -160,7 +187,7 @@ function AdminPanel() {
     };
 
     // Determine which tabs to show
-    const currentTabs = selectedRole === 'sales' ? SALES_TABS : ADMIN_TABS;
+    const currentTabs = selectedRole === 'sales' ? SALES_TABS : (selectedRole === 'analytics' ? ANALYTICS_TABS : ADMIN_TABS);
 
     return (
         <>

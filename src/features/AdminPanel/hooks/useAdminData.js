@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchStudios } from '../../../firebase/functions/studios';
+import { fetchStudios, fetchAnalyticsData } from '../../../firebase/functions/studios';
 import { 
     fetchUsers, 
     fetchAllReferalsFromFirestore, 
@@ -12,6 +12,7 @@ export const useAdminData = () => {
         studios: [],
         referrals: [],
         leads: [],
+        analytics: null,
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -19,14 +20,15 @@ export const useAdminData = () => {
     const refreshData = useCallback(async () => {
         setLoading(true);
         try {
-            const [users, studios, referrals, leads] = await Promise.all([
+            const [users, studios, referrals, leads, analytics] = await Promise.all([
                 fetchUsers(),
                 fetchStudios(),
                 fetchAllReferalsFromFirestore(),
-                fetchLeads()
+                fetchLeads(),
+                fetchAnalyticsData()
             ]);
             
-            setData({ users, studios, referrals, leads });
+            setData({ users, studios, referrals, leads, analytics });
             setError(null);
         } catch (err) {
             console.error('Error fetching admin data:', err);
