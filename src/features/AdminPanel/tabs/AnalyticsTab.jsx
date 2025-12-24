@@ -187,37 +187,48 @@ export const AnalyticsTab = ({ type, analytics, loading, lastUpdated, onRefresh 
                         <table className="invoice-table">
                             <thead>
                                 <tr>
-                                    <th>Studio Name</th>
-                                    <th>Domain</th>
-                                    <th>Projects</th>
+                                    {/* Identity */}
+                                    <th style={{ width: '200px' }}>Studio</th>
+                                    <th>Status</th>
+                                    
+                                    {/* Volume Metrics */}
+                                    <th style={{ borderLeft: '1px solid #333', paddingLeft: '15px' }}>Projects</th>
                                     <th>Photos</th>
                                     <th>Storage</th>
-                                    <th title="Average Photos per Project">Ph/Proj</th>
-                                    <th title="Average Storage per Project">MB/Proj</th>
+
+                                    {/* Efficiency Ratios */}
+                                    <th style={{ borderLeft: '1px solid #333', paddingLeft: '15px' }} title="Average Photos per Project">Ph/Proj</th>
                                     <th title="Average Photos per Collection">Ph/Coll</th>
-                                    <th title="Average Size per Photo">MB/Ph</th>
-                                    <th>Status</th>
+                                    <th title="Average Storage per Project">MB/Proj</th>
+                                    <th title="Average Size per Photo">MB/Photo</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {leaderboard.map((studio, index) => (
                                     <tr key={studio.id}>
-                                        <td><strong>{index + 1}. {studio.name}</strong></td>
-                                        <td>/{studio.domain}</td>
-                                        <td>{studio.projectsCount}</td>
-                                        <td>{studio.photosCount}</td>
-                                        <td style={{ color: studio.storageUsed > 5000 ? '#ff6b6b' : '#fff' }}>
-                                            {(studio.storageUsed / 1024).toFixed(2)} GB
+                                        {/* Identity */}
+                                        <td>
+                                            <div style={{ fontWeight: 'bold' }}>{index + 1}. {studio.name}</div>
+                                            <div style={{ fontSize: '0.75rem', color: '#666' }}>/{studio.domain}</div>
                                         </td>
-                                        <td>{studio.avgPhotosPerProject.toFixed(0)}</td>
-                                        <td>{studio.avgStoragePerProject.toFixed(1)}</td>
-                                        <td>{studio.avgPhotosPerCollection.toFixed(0)}</td>
-                                        <td>{studio.avgSizePerPhoto.toFixed(2)}</td>
                                         <td>
                                             <span className={`paid-status ${studio.isActive ? 'paid' : 'idle'}`}>
                                                 {studio.isActive ? 'Active' : 'Dormant'}
                                             </span>
                                         </td>
+
+                                        {/* Volume Metrics */}
+                                        <td style={{ borderLeft: '1px solid #333', paddingLeft: '15px' }}>{studio.projectsCount}</td>
+                                        <td>{studio.photosCount.toLocaleString()}</td>
+                                        <td style={{ color: studio.storageUsed > 5000 ? '#ff6b6b' : '#fff' }}>
+                                            {(studio.storageUsed / 1024).toFixed(2)} GB
+                                        </td>
+
+                                        {/* Efficiency Ratios */}
+                                        <td style={{ borderLeft: '1px solid #333', paddingLeft: '15px' }}>{studio.avgPhotosPerProject.toFixed(0)}</td>
+                                        <td>{studio.avgPhotosPerCollection.toFixed(0)}</td>
+                                        <td>{studio.avgStoragePerProject.toFixed(1)}</td>
+                                        <td>{studio.avgSizePerPhoto.toFixed(2)}</td>
                                     </tr>
                                 ))}
                             </tbody>
