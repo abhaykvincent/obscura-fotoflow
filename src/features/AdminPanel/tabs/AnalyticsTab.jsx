@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const AnalyticsTab = ({ analytics, loading, lastUpdated, onRefresh }) => {
+export const AnalyticsTab = ({ type, analytics, loading, lastUpdated, onRefresh }) => {
     
     const formatLastUpdated = (timestamp) => {
         if (!timestamp) return 'Never';
@@ -58,15 +58,179 @@ export const AnalyticsTab = ({ analytics, loading, lastUpdated, onRefresh }) => 
 
     const { summary, leaderboard } = analytics;
 
+    const renderContent = () => {
+        switch (type) {
+            case 'analytics-growth':
+                return (
+                    <div style={{ marginTop: '30px' }}>
+                        <h4 style={{ color: '#555', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Growth & Adoption</h4>
+                        <div className="admin-dashboard">
+                            <div className="cards">
+                                <div className="group">
+                                    <div className="card">
+                                        <h1 className='count'>{summary.avgTTFU.toFixed(1)}h</h1>
+                                        <p>Avg Time to First Upload</p>
+                                        <h4 className='cyan'>Onboarding TTFU</h4>
+                                    </div>
+                                    <div className="card">
+                                        <h1 className='count'>{summary.activeStudios}</h1>
+                                        <p>Active (last 14 days)</p>
+                                        <h4 className='green'>Active Studios</h4>
+                                    </div>
+                                </div>
+                                <div className="group">
+                                    <div className="card">
+                                        <h1 className='count'>{((summary.activeStudios / summary.totalStudios) * 100).toFixed(1)}%</h1>
+                                        <p>Active vs Total</p>
+                                        <h4 className='purple'>Adoption Rate</h4>
+                                    </div>
+                                    <div className="card">
+                                        <h1 className='count'>{summary.dormantStudios}</h1>
+                                        <p>Inactive {'>'} 14 days</p>
+                                        <h4 className='orange'>Dormant Studios</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style={{ marginTop: '30px', padding: '20px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
+                             <p style={{ color: '#888', fontSize: '0.9rem' }}>
+                                💡 <strong>Growth Insight:</strong> Active studios represent photographers who have engaged with the platform in the last 14 days. A high Adoption Rate indicates strong product-market fit.
+                             </p>
+                        </div>
+                    </div>
+                );
+
+            case 'analytics-costs':
+                return (
+                    <div style={{ marginTop: '30px' }}>
+                        <h4 style={{ color: '#555', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Infrastructure & Cost Control</h4>
+                        <div className="admin-dashboard">
+                            <div className="cards">
+                                <div className="group">
+                                    <div className="card">
+                                        <h1 className='count'>${summary.estimatedMonthlyBurn.toFixed(2)}</h1>
+                                        <p>Storage Ops Estimate</p>
+                                        <h4 className='orange'>Monthly Burn</h4>
+                                    </div>
+                                    <div className="card">
+                                        <h1 className='count'>{summary.storageEfficiency.toFixed(2)} MB</h1>
+                                        <p>Avg File Size</p>
+                                        <h4 className='blue'>Efficiency Ratio</h4>
+                                    </div>
+                                </div>
+                                <div className="group">
+                                    <div className="card">
+                                        <h1 className='count'>{(summary.totalFileSize / 1024).toFixed(2)} GB</h1>
+                                        <p>Platform Storage</p>
+                                        <h4 className='yellow'>Total Footprint</h4>
+                                    </div>
+                                    <div className="card">
+                                        <h1 className='count'>{(summary.totalFileSize / summary.totalPhotos || 0).toFixed(2)}</h1>
+                                        <p>MB / Photo Avg</p>
+                                        <h4 className='cyan'>Compression Ratio</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style={{ marginTop: '30px', padding: '20px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
+                             <p style={{ color: '#888', fontSize: '0.9rem' }}>
+                                💡 <strong>Cost Insight:</strong> The monthly burn is an estimate based on Firebase Storage costs ($0.026/GB). Monitoring the Efficiency Ratio helps identify if photographers are uploading unnecessarily large files.
+                             </p>
+                        </div>
+                    </div>
+                );
+
+            case 'analytics-retention':
+                return (
+                    <div style={{ marginTop: '30px' }}>
+                        <h4 style={{ color: '#555', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Engagement & Retention</h4>
+                        <div className="admin-dashboard">
+                            <div className="cards">
+                                <div className="group">
+                                    <div className="card">
+                                        <h1 className='count'>{summary.projectCompletionRate.toFixed(1)}%</h1>
+                                        <p>Selected / Completed</p>
+                                        <h4 className='green'>Completion Rate</h4>
+                                    </div>
+                                    <div className="card">
+                                        <h1 className='count'>{summary.avgProjectsPerStudio.toFixed(1)}</h1>
+                                        <p>Avg Projects / User</p>
+                                        <h4 className='purple'>Stickiness</h4>
+                                    </div>
+                                </div>
+                                <div className="group">
+                                    <div className="card">
+                                        <h1 className='count'>{summary.totalPhotos.toLocaleString()}</h1>
+                                        <p>Total Deliverables</p>
+                                        <h4 className='blue'>Assets Managed</h4>
+                                    </div>
+                                    <div className="card">
+                                        <h1 className='count'>{summary.totalProjects}</h1>
+                                        <p>Total Success Events</p>
+                                        <h4 className='cyan'>Pipeline Volume</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style={{ marginTop: '30px', padding: '20px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
+                             <p style={{ color: '#888', fontSize: '0.9rem' }}>
+                                💡 <strong>Retention Insight:</strong> Completion Rate tracks how many projects reach the 'client delivery' phase. A high stickiness score (Avg Projects/User) indicates users are making FotoFlow their primary workflow tool.
+                             </p>
+                        </div>
+                    </div>
+                );
+
+            case 'analytics-leaderboard':
+                return (
+                    <div style={{ marginTop: '30px' }}>
+                        <h4 style={{ color: '#555', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Heavy User Leaderboard (Top 10 Storage)</h4>
+                        <table className="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th>Studio Name</th>
+                                    <th>Domain</th>
+                                    <th>Projects</th>
+                                    <th>Photos</th>
+                                    <th>Storage Used</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {leaderboard.map((studio, index) => (
+                                    <tr key={studio.id}>
+                                        <td><strong>{index + 1}. {studio.name}</strong></td>
+                                        <td>/{studio.domain}</td>
+                                        <td>{studio.projectsCount}</td>
+                                        <td>{studio.photosCount}</td>
+                                        <td style={{ color: studio.storageUsed > 5000 ? '#ff6b6b' : '#fff' }}>
+                                            {(studio.storageUsed / 1024).toFixed(2)} GB
+                                        </td>
+                                        <td>
+                                            <span className={`paid-status ${studio.isActive ? 'paid' : 'idle'}`}>
+                                                {studio.isActive ? 'Active' : 'Dormant'}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                );
+
+            default:
+                return null;
+        }
+    };
+
     return (
         <div className="invoice-history">
             <section className="analytics-overview">
-                {/* Header */}
+                {/* Header (Always Visible) */}
                 <div className="actions" style={{ alignItems: 'flex-start' }}>
                     <div className="left-actions">
-                        <h3>Platform Intelligence</h3>
+                        <h3>{type.split('-')[1].charAt(0).toUpperCase() + type.split('-')[1].slice(1)} Analytics</h3>
                         <p style={{ color: '#888', fontSize: '0.9em', marginTop: '5px' }}>
-                            Last calculated: <span style={{ color: '#aaa' }}>{formatLastUpdated(lastUpdated)}</span>
+                            Platform-wide intelligence • Last calculated: <span style={{ color: '#aaa' }}>{formatLastUpdated(lastUpdated)}</span>
                         </p>
                     </div>
                     <div className="right-actions">
@@ -75,144 +239,14 @@ export const AnalyticsTab = ({ analytics, loading, lastUpdated, onRefresh }) => 
                             onClick={onRefresh}
                             disabled={loading}
                         >
-                            {loading ? 'Refreshing...' : 'Refresh Metrics'}
+                            {loading ? 'Refreshing...' : 'Refresh All Metrics'}
                         </button>
                     </div>
                 </div>
 
-                {/* 1. Growth & Adoption */}
-                <div style={{ marginTop: '30px' }}>
-                    <h4 style={{ color: '#555', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Growth & Adoption</h4>
-                    <div className="admin-dashboard">
-                        <div className="cards">
-                            <div className="group">
-                                <div className="card">
-                                    <h1 className='count'>{summary.avgTTFU.toFixed(1)}h</h1>
-                                    <p>Avg Time to First Upload</p>
-                                    <h4 className='cyan'>Onboarding TTFU</h4>
-                                </div>
-                                <div className="card">
-                                    <h1 className='count'>{summary.activeStudios}</h1>
-                                    <p>Active (last 14 days)</p>
-                                    <h4 className='green'>Active Studios</h4>
-                                </div>
-                            </div>
-                            <div className="group">
-                                <div className="card">
-                                    <h1 className='count'>{((summary.activeStudios / summary.totalStudios) * 100).toFixed(1)}%</h1>
-                                    <p>Active vs Total</p>
-                                    <h4 className='purple'>Adoption Rate</h4>
-                                </div>
-                                <div className="card">
-                                    <h1 className='count'>{summary.dormantStudios}</h1>
-                                    <p>Inactive {'>'} 14 days</p>
-                                    <h4 className='orange'>Dormant Studios</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {/* Tabbed Content */}
+                {renderContent()}
 
-                {/* 2. Infrastructure & Cost Control */}
-                <div style={{ marginTop: '40px' }}>
-                    <h4 style={{ color: '#555', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Infrastructure & Cost</h4>
-                    <div className="admin-dashboard">
-                        <div className="cards">
-                            <div className="group">
-                                <div className="card">
-                                    <h1 className='count'>${summary.estimatedMonthlyBurn.toFixed(2)}</h1>
-                                    <p>Storage Ops Estimate</p>
-                                    <h4 className='orange'>Monthly Burn</h4>
-                                </div>
-                                <div className="card">
-                                    <h1 className='count'>{summary.storageEfficiency.toFixed(2)} MB</h1>
-                                    <p>Avg File Size</p>
-                                    <h4 className='blue'>Efficiency Ratio</h4>
-                                </div>
-                            </div>
-                            <div className="group">
-                                <div className="card">
-                                    <h1 className='count'>{(summary.totalFileSize / 1024).toFixed(2)} GB</h1>
-                                    <p>Platform Storage</p>
-                                    <h4 className='yellow'>Total Footprint</h4>
-                                </div>
-                                <div className="card">
-                                    <h1 className='count'>{(summary.totalFileSize / summary.totalPhotos || 0).toFixed(2)}</h1>
-                                    <p>MB / Photo Avg</p>
-                                    <h4 className='cyan'>Compression Ratio</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* 3. Engagement & Retention */}
-                <div style={{ marginTop: '40px' }}>
-                    <h4 style={{ color: '#555', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Engagement & Retention</h4>
-                    <div className="admin-dashboard">
-                        <div className="cards">
-                            <div className="group">
-                                <div className="card">
-                                    <h1 className='count'>{summary.projectCompletionRate.toFixed(1)}%</h1>
-                                    <p>Selected / Completed</p>
-                                    <h4 className='green'>Completion Rate</h4>
-                                </div>
-                                <div className="card">
-                                    <h1 className='count'>{summary.avgProjectsPerStudio.toFixed(1)}</h1>
-                                    <p>Avg Projects / User</p>
-                                    <h4 className='purple'>Stickiness</h4>
-                                </div>
-                            </div>
-                            <div className="group">
-                                <div className="card">
-                                    <h1 className='count'>{summary.totalPhotos.toLocaleString()}</h1>
-                                    <p>Total Deliverables</p>
-                                    <h4 className='blue'>Assets Managed</h4>
-                                </div>
-                                <div className="card">
-                                    <h1 className='count'>{summary.totalProjects}</h1>
-                                    <p>Total Success Events</p>
-                                    <h4 className='cyan'>Pipeline Volume</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* 4. Heavy User Leaderboard */}
-                <div style={{ marginTop: '40px' }}>
-                    <h4 style={{ color: '#555', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Heavy User Leaderboard (Top 10 Storage)</h4>
-                    <table className="invoice-table">
-                        <thead>
-                            <tr>
-                                <th>Studio Name</th>
-                                <th>Domain</th>
-                                <th>Projects</th>
-                                <th>Photos</th>
-                                <th>Storage Used</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {leaderboard.map((studio, index) => (
-                                <tr key={studio.id}>
-                                    <td><strong>{index + 1}. {studio.name}</strong></td>
-                                    <td>/{studio.domain}</td>
-                                    <td>{studio.projectsCount}</td>
-                                    <td>{studio.photosCount}</td>
-                                    <td style={{ color: studio.storageUsed > 5000 ? '#ff6b6b' : '#fff' }}>
-                                        {(studio.storageUsed / 1024).toFixed(2)} GB
-                                    </td>
-                                    <td>
-                                        <span className={`paid-status ${studio.isActive ? 'paid' : 'idle'}`}>
-                                            {studio.isActive ? 'Active' : 'Dormant'}
-                                        </span>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
             </section>
         </div>
     );
