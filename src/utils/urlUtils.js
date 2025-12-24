@@ -56,7 +56,7 @@ export function getThumbnailUrl1(originalUrl) {
     // Split the pathname at '/o/' to separate the prefix and object path
     const parts = pathname.split('/o/');
     if (parts.length !== 2) {
-      return 'kjhgfd';
+      return originalUrl;
       throw new Error('Invalid URL format: missing /o/');
     }
     

@@ -1388,6 +1388,8 @@ export const createDummyProjectsInFirestore = async (domain, n = 5) => {
         const addedProject = await addProjectToStudio(domain, dummyProject);
         const projectDocRef = doc(db, 'studios', domain, 'projects', addedProject.id);
 
+        const projectEvents = [];
+
         // Process each collection
         for (const coll of dummyCollectionsMeta) {
             const numImages = Math.floor(Math.random() * 15) + 10; // 10-25 images
@@ -1411,8 +1413,30 @@ export const createDummyProjectsInFirestore = async (domain, n = 5) => {
             coll.galleryCover = images[0].url;
             coll.favoriteImages = images.slice(1, 4).map(img => img.url);
             
+            const collectionSize = numImages * 0.5;
             totalProjectFilesCount += numImages;
-            totalProjectSize += numImages * 0.5; // Assume 0.5MB per image for dummy data
+            totalProjectSize += collectionSize;
+
+            // Add Image Grid Event (simulating actual upload logic)
+            projectEvents.push({
+                type: 'image-grid',
+                id: `image-grid-${coll.id}-${createdAt}`,
+                images: images,
+                collectionId: coll.id,
+                date: createdAt,
+            });
+
+            // Add Upload Completion Event (simulating actual upload logic)
+            projectEvents.push({
+                id: `upload-completion-${coll.id}-${createdAt}`,
+                type: coll.name,
+                date: createdAt,
+                location: '',
+                crews: [],
+                collectionId: coll.id,
+                filesCount: numImages,
+                totalSize: collectionSize,
+            });
 
             const collectionDoc = {
                 id: coll.id,
@@ -1438,19 +1462,19 @@ export const createDummyProjectsInFirestore = async (domain, n = 5) => {
             await setDoc(collectionRef, collectionDoc);
         }
 
-        // Dummy Events (re-using earlier logic but simplified)
-        const dummyEvents = Array.from({ length: 1 }, () => ({
+        // Dummy Main Event
+        projectEvents.push({
             id: `event-${generateRandomString(5)}`,
             type: dummyProject.type,
             date: createdAt,
             location: locations[Math.floor(Math.random() * locations.length)],
             crews: []
-        }));
+        });
 
         // Final Project Update with aggregated data
         await updateDoc(projectDocRef, {
             collections: dummyCollectionsMeta,
-            events: dummyEvents,
+            events: projectEvents,
             totalFileSize: totalProjectSize,
             uploadedFilesCount: totalProjectFilesCount,
             projectCover: firstImageUrl,
