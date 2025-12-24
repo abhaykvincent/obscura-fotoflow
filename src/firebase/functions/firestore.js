@@ -1320,7 +1320,6 @@ export const createDummyProjectsInFirestore = async (domain, n = 5) => {
     const projectStatuses = ['draft', 'active', 'selected', 'completed', 'archived'];
     const collectionNames = ['Originals', 'High Res', 'Web Quality', 'Selections', 'Highlights', 'Ceremony', 'Reception'];
 
-    // Helper to get a random timestamp in the past 13 months
     const now = Date.now();
     const thirteenMonthsAgo = new Date();
     thirteenMonthsAgo.setMonth(thirteenMonthsAgo.getMonth() - 13);
@@ -1353,51 +1352,19 @@ export const createDummyProjectsInFirestore = async (domain, n = 5) => {
         const randomOffset = Math.floor(Math.random() * thirteenMonthsMs);
         const createdAt = now - randomOffset;
 
-        // Dummy Events
-        const dummyEvents = Array.from({ length: Math.floor(Math.random() * 3) + 1 }, (_, idx) => ({
-            id: `event-${generateRandomString(5)}`,
-            type: projectTypes[Math.floor(Math.random() * projectTypes.length)],
-            date: createdAt + (idx * 86400000), // Day by day
-            location: locations[Math.floor(Math.random() * locations.length)],
-            crews: Array.from({ length: Math.floor(Math.random() * 2) + 1 }, () => ({
-                name: `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`,
-                role: ['Photographer', 'Assistant', 'Editor'][Math.floor(Math.random() * 3)]
-            }))
-        }));
-
-        // Dummy Payments
-        const dummyPayments = Array.from({ length: Math.floor(Math.random() * 2) + 1 }, () => ({
-            id: `payment-${generateRandomString(5)}`,
-            amount: Math.floor(Math.random() * 1000) + 500,
-            date: createdAt + Math.floor(Math.random() * 1000000),
-            description: 'Installment Payment',
-            status: ['paid', 'pending'][Math.floor(Math.random() * 2)]
-        }));
-
-        // Dummy Expenses
-        const dummyExpenses = Array.from({ length: Math.floor(Math.random() * 3) + 1 }, () => ({
-            id: `expense-${generateRandomString(5)}`,
-            amount: Math.floor(Math.random() * 200) + 50,
-            date: createdAt + Math.floor(Math.random() * 1000000),
-            category: ['Travel', 'Equipment', 'Props'][Math.floor(Math.random() * 3)],
-            description: 'Project related expense'
-        }));
-
-        // Dummy Budgets
-        const totalBudget = Math.floor(Math.random() * 5000) + 2000;
-        const dummyBudgets = {
-            totalBudget: totalBudget,
-            allocatedFunds: Math.floor(totalBudget * 0.8),
-            remainingFunds: Math.floor(totalBudget * 0.2)
-        };
-
-        // Dummy Collections IDs (metadata)
-        const dummyCollections = Array.from({ length: Math.floor(Math.random() * 2) + 1 }, () => ({
+        // Dummy Collections Metadata (to be updated later with counts)
+        const dummyCollectionsMeta = Array.from({ length: Math.floor(Math.random() * 2) + 2 }, () => ({
             id: `${collectionNames[Math.floor(Math.random() * collectionNames.length)].toLowerCase()}-${generateRandomString(5)}`,
             name: collectionNames[Math.floor(Math.random() * collectionNames.length)],
             status: 'visible',
-            filesCount: 0
+            filesCount: 0,
+            galleryCover: '',
+            favoriteImages: []
         }));
+
+        let totalProjectFilesCount = 0;
+        let totalProjectSize = 0;
+        let firstImageUrl = '';
 
         const dummyProject = {
             name: projectName,
@@ -1406,12 +1373,12 @@ export const createDummyProjectsInFirestore = async (domain, n = 5) => {
             projectValidityMonths: [3, 6, 12][i % 3],
             createdAt: createdAt,
             status: projectStatuses[Math.floor(Math.random() * projectStatuses.length)],
-            collections: dummyCollections,
-            events: dummyEvents,
-            payments: dummyPayments,
-            expenses: dummyExpenses,
-            budgets: dummyBudgets,
-            projectCover: `https://picsum.photos/seed/${i + Math.random()}/1200/800`,
+            collections: dummyCollectionsMeta,
+            events: [],
+            payments: [],
+            expenses: [],
+            budgets: {},
+            projectCover: '',
             pin: Math.floor(1000 + Math.random() * 9000).toString(),
             description: `This is a dummy project for development and testing. #${i} - Client: ${clientName || projectName}`,
             totalFileSize: 0,
@@ -1419,18 +1386,50 @@ export const createDummyProjectsInFirestore = async (domain, n = 5) => {
         };
 
         const addedProject = await addProjectToStudio(domain, dummyProject);
+        const projectDocRef = doc(db, 'studios', domain, 'projects', addedProject.id);
 
-        // For each dummy collection, we should also create the collection document in the subcollection
-        for (const coll of dummyCollections) {
+        // Process each collection
+        for (const coll of dummyCollectionsMeta) {
+            const numImages = Math.floor(Math.random() * 15) + 10; // 10-25 images
+            const images = Array.from({ length: numImages }, (_, imgIdx) => {
+                const isSelected = Math.random() > 0.7; // 30% chance of being selected
+                const imgUrl = `https://picsum.photos/seed/${coll.id}-${imgIdx}/1200/800`;
+                if (!firstImageUrl) firstImageUrl = imgUrl;
+                
+                return {
+                    name: `image-${imgIdx}.jpg`,
+                    url: imgUrl,
+                    lastModified: createdAt,
+                    dateTimeOriginal: new Date(createdAt).toISOString(),
+                    dimensions: { width: 1200, height: 800 },
+                    thumbAvailable: true,
+                    status: isSelected ? 'selected' : 'unselected'
+                };
+            });
+
+            coll.filesCount = numImages;
+            coll.galleryCover = images[0].url;
+            coll.favoriteImages = images.slice(1, 4).map(img => img.url);
+            
+            totalProjectFilesCount += numImages;
+            totalProjectSize += numImages * 0.5; // Assume 0.5MB per image for dummy data
+
             const collectionDoc = {
                 id: coll.id,
                 name: coll.name,
                 status: coll.status,
-                uploadedFiles: [],
+                uploadedFiles: images,
                 smartGallery: {
                     id: coll.id,
                     name: coll.name,
-                    sections: [],
+                    sections: [
+                        {
+                            id: `image-grid-${coll.id}`,
+                            type: 'image-grid',
+                            order: 1,
+                            images: images
+                        }
+                    ],
                     createdAt: Date.now(),
                     updatedAt: Date.now(),
                 }
@@ -1438,8 +1437,38 @@ export const createDummyProjectsInFirestore = async (domain, n = 5) => {
             const collectionRef = doc(db, 'studios', domain, 'projects', addedProject.id, 'collections', coll.id);
             await setDoc(collectionRef, collectionDoc);
         }
+
+        // Dummy Events (re-using earlier logic but simplified)
+        const dummyEvents = Array.from({ length: 1 }, () => ({
+            id: `event-${generateRandomString(5)}`,
+            type: dummyProject.type,
+            date: createdAt,
+            location: locations[Math.floor(Math.random() * locations.length)],
+            crews: []
+        }));
+
+        // Final Project Update with aggregated data
+        await updateDoc(projectDocRef, {
+            collections: dummyCollectionsMeta,
+            events: dummyEvents,
+            totalFileSize: totalProjectSize,
+            uploadedFilesCount: totalProjectFilesCount,
+            projectCover: firstImageUrl,
+            payments: Array.from({ length: 1 }, () => ({
+                id: `payment-${generateRandomString(5)}`,
+                amount: 1500,
+                date: createdAt,
+                description: 'Initial Deposit',
+                status: 'paid'
+            })),
+            budgets: {
+                totalBudget: 3000,
+                allocatedFunds: 2400,
+                remainingFunds: 600
+            }
+        });
     }
-    console.log(`Created ${n} enhanced dummy projects in studio: ${domain}`);
+    console.log(`Created ${n} fully populated dummy projects in studio: ${domain}`);
 };
 
 export * from './admin-firestore';
