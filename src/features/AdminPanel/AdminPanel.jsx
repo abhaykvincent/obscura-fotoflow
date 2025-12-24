@@ -67,7 +67,7 @@ function AdminPanel() {
     const { page } = useParams();
 
     // -- State Management --
-    const { users, studios, referrals, leads, analytics, loading } = useAdminData();
+    const { users, studios, referrals, leads, analytics, analyticsLoading, analyticsLastUpdated, refreshAnalytics, loading } = useAdminData();
     const [selectedRole, setSelectedRole] = useState('admin');
 
     // -- Tab Logic --
@@ -162,7 +162,14 @@ function AdminPanel() {
 
             // ANALYTICS TABS
             case 'analytics-overview':
-                return <AnalyticsTab analytics={analytics} />;
+                return (
+                    <AnalyticsTab 
+                        analytics={analytics} 
+                        loading={analyticsLoading} 
+                        lastUpdated={analyticsLastUpdated}
+                        onRefresh={refreshAnalytics}
+                    />
+                );
             case 'studios-performance':
                 return (
                     <div className="invoice-history">
