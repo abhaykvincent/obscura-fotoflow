@@ -15,20 +15,21 @@ export const useAdminData = () => {
         analytics: null,
     });
     const [loading, setLoading] = useState(true);
+    const [analyticsLoading, setAnalyticsLoading] = useState(false);
+    const [analyticsLastUpdated, setAnalyticsLastUpdated] = useState(null);
     const [error, setError] = useState(null);
 
     const refreshData = useCallback(async () => {
         setLoading(true);
         try {
-            const [users, studios, referrals, leads, analytics] = await Promise.all([
+            const [users, studios, referrals, leads] = await Promise.all([
                 fetchUsers(),
                 fetchStudios(),
                 fetchAllReferalsFromFirestore(),
-                fetchLeads(),
-                fetchAnalyticsData()
+                fetchLeads()
             ]);
             
-            setData({ users, studios, referrals, leads, analytics });
+            setData(prev => ({ ...prev, users, studios, referrals, leads }));
             setError(null);
         } catch (err) {
             console.error('Error fetching admin data:', err);
@@ -38,9 +39,24 @@ export const useAdminData = () => {
         }
     }, []);
 
+    const refreshAnalytics = useCallback(async () => {
+        setAnalyticsLoading(true);
+        try {
+            const analytics = await fetchAnalyticsData();
+            setData(prev => ({ ...prev, analytics }));
+            setAnalyticsLastUpdated(new Date().getTime());
+            setError(null);
+        } catch (err) {
+            console.error('Error fetching analytics data:', err);
+            setError(err.message);
+        } finally {
+            setAnalyticsLoading(false);
+        }
+    }, []);
+
     useEffect(() => {
         refreshData();
     }, [refreshData]);
 
-    return { ...data, loading, error, refreshData };
+    return { ...data, loading, analyticsLoading, analyticsLastUpdated, error, refreshData, refreshAnalytics };
 };

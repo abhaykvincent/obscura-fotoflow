@@ -1,19 +1,82 @@
 import React from 'react';
 
-export const AnalyticsTab = ({ analytics }) => {
-    if (!analytics) return <div style={{ color: 'white', padding: '20px' }}>Loading analytics...</div>;
+export const AnalyticsTab = ({ analytics, loading, lastUpdated, onRefresh }) => {
+    
+    const formatLastUpdated = (timestamp) => {
+        if (!timestamp) return 'Never';
+        const seconds = Math.floor((new Date().getTime() - timestamp) / 1000);
+        
+        let interval = Math.floor(seconds / 31536000);
+        if (interval >= 1) return interval + " years ago";
+        interval = Math.floor(seconds / 2592000);
+        if (interval >= 1) return interval + " months ago";
+        interval = Math.floor(seconds / 86400);
+        if (interval >= 1) return interval + " days ago";
+        interval = Math.floor(seconds / 3600);
+        if (interval >= 1) return interval + " hours ago";
+        interval = Math.floor(seconds / 60);
+        if (interval >= 1) return interval + " minutes ago";
+        if (seconds < 10) return "just now";
+        return Math.floor(seconds) + " seconds ago";
+    };
+
+    if (loading) {
+        return (
+            <div className="invoice-history">
+                <div style={{ padding: '40px', textAlign: 'center', color: '#888' }}>
+                    <div className="loading-spinner" style={{ marginBottom: '20px' }}>
+                        {/* You can use a CSS spinner here */}
+                        <span style={{ fontSize: '1.2em' }}>Aggregating Platform Data...</span>
+                    </div>
+                    <p>This might take a moment as we calculate metrics across all studios and projects.</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!analytics) {
+        return (
+            <div className="invoice-history">
+                <div style={{ 
+                    padding: '60px 20px', 
+                    textAlign: 'center', 
+                    background: 'rgba(255,255,255,0.02)', 
+                    borderRadius: '12px',
+                    border: '1px dashed #444',
+                    margin: '20px'
+                }}>
+                    <h3 style={{ color: '#fff', marginBottom: '10px' }}>No Analytics Data Generated</h3>
+                    <p style={{ color: '#888', marginBottom: '30px', maxWidth: '400px', margin: '0 auto 30px' }}>
+                        Platform-wide analytics require a manual trigger as they involve deep scanning of all studio collections.
+                    </p>
+                    <button className="button primary" onClick={onRefresh}>
+                        Generate Analytics Report
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     const { summary } = analytics;
 
     return (
         <div className="invoice-history">
             <section className="analytics-overview">
-                <div className="actions">
+                <div className="actions" style={{ alignItems: 'flex-start' }}>
                     <div className="left-actions">
                         <h3>Platform Analytics</h3>
                         <p style={{ color: '#888', fontSize: '0.9em', marginTop: '5px' }}>
-                            Overview of system-wide performance and usage metrics.
+                            Last updated: <span style={{ color: '#aaa' }}>{formatLastUpdated(lastUpdated)}</span>
                         </p>
+                    </div>
+                    <div className="right-actions">
+                        <button 
+                            className={`button secondary outline icon refresh ${loading ? 'loading' : ''}`} 
+                            onClick={onRefresh}
+                            disabled={loading}
+                        >
+                            {loading ? 'Refreshing...' : 'Refresh Data'}
+                        </button>
                     </div>
                 </div>
 
