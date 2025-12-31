@@ -57,12 +57,15 @@ export default function Project() {
     modalsRef.current = modals;
   }, [modals]);
   useEffect(() => {
+    if(project?.collections.length === 0){
+
     const timer = setTimeout(() => {
         dispatch(openModal('createCollection'));
       }, 1000); // Using 500ms for a noticeable yet quick delay
 
       // Cleanup the timeout if the component unmounts or dependencies change
       return () => clearTimeout(timer);
+    }
   }, [project]);
 
   useEffect(() => {

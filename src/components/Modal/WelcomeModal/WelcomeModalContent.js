@@ -54,7 +54,7 @@ export const welcomeScreens = [
             You're all set to begin.
         </p>
         <div className="visual-placeholder create-project"></div>
-        <p>
+        <p className='create-project-tagline'>
             🎉 <span className='highlight'> Let's get started. </span> 
         </p>
       </>
