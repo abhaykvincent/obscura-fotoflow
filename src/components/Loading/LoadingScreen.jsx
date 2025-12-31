@@ -8,41 +8,49 @@ const LoadingScreen = () => {
     const canvasRef = useRef(null);
 
     useEffect(() => {
+        let interval;
+        let timeout;
+        
         if (show && celebration && canvasRef.current) {
-            const myConfetti = confetti.create(canvasRef.current, {
-                resize: true,
-                useWorker: true
-            });
+            timeout = setTimeout(() => {
+                const myConfetti = confetti.create(canvasRef.current, {
+                    resize: true,
+                    useWorker: true
+                });
 
-            const duration = 5 * 1000;
-            const animationEnd = Date.now() + duration;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+                const duration = 5 * 1000;
+                const animationEnd = Date.now() + duration;
+                const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
 
-            function randomInRange(min, max) {
-                return Math.random() * (max - min) + min;
-            }
-
-            const interval = setInterval(function() {
-                const timeLeft = animationEnd - Date.now();
-
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
+                function randomInRange(min, max) {
+                    return Math.random() * (max - min) + min;
                 }
 
-                const particleCount = 50 * (timeLeft / duration);
-                myConfetti(Object.assign({}, defaults, { 
-                    particleCount, 
-                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-                    colors: ['#54a134', '#66b346', '#336c1b', '#ffffff']
-                }));
-                myConfetti(Object.assign({}, defaults, { 
-                    particleCount, 
-                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-                    colors: ['#54a134', '#66b346', '#336c1b', '#ffffff']
-                }));
-            }, 250);
+                interval = setInterval(function() {
+                    const timeLeft = animationEnd - Date.now();
 
-            return () => clearInterval(interval);
+                    if (timeLeft <= 0) {
+                        return clearInterval(interval);
+                    }
+
+                    const particleCount = 50 * (timeLeft / duration);
+                    myConfetti(Object.assign({}, defaults, { 
+                        particleCount, 
+                        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                        colors: ['#54a134', '#66b346', '#336c1b', '#ffffff']
+                    }));
+                    myConfetti(Object.assign({}, defaults, { 
+                        particleCount, 
+                        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                        colors: ['#54a134', '#66b346', '#336c1b', '#ffffff']
+                    }));
+                }, 250);
+            }, 1500); // 1.5s delay before confetti starts
+
+            return () => {
+                clearInterval(interval);
+                clearTimeout(timeout);
+            };
         }
     }, [show, celebration]);
 

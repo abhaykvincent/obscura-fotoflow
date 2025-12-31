@@ -8,7 +8,7 @@ import { addProject, createSubProject, selectProjects } from '../../../app/slice
 import { closeModalWithAnimation, selectModal } from '../../../app/slices/modalSlice';
 import { selectUser, selectUserStudio } from '../../../app/slices/authSlice';
 import { createNotification } from '../../../app/slices/notificationSlice';
-import { showLoading, hideLoading } from '../../../app/slices/loadingSlice';
+import { showLoading, hideLoading, setLoadingContext } from '../../../app/slices/loadingSlice';
 // Hooks
 import { useModalFocus } from '../../../hooks/modalInputFocus';
 // Components
@@ -107,6 +107,11 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
     try {
       const response = await dispatch(action);
       const payload = response.payload;
+
+      dispatch(setLoadingContext({ context: `${projectType} created successfully!`, subcontext: "" }));
+      
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Stay on page for a second
+
       dispatchNotification(payload, user);
       dispatch(showAlert({ type: "success", message: `${projectType} created successfully!` }));
 
