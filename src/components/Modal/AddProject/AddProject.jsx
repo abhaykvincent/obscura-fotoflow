@@ -141,20 +141,6 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
 
   return (
     <div className="modal-container" ref={modalRef}>
-      {isFirstProject && (
-        <canvas
-          ref={confettiCanvasRef}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            pointerEvents: 'none',
-            zIndex: 20
-          }}
-        />
-      )}
       <div className="modal create-project island">
         <div className="modal-header">
           <div className="modal-controls">
