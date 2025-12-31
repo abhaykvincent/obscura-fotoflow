@@ -45,7 +45,7 @@ export default function Selection() {
   collectionId = collectionId || project?.collections[0]?.id;
   
   useEffect(() => {
-    if (!isPinValid()) {
+    if (!isPinValid(projectId)) {
       navigate(`/${studioName}/selection/${projectId}/pin`);
     }
   }, [studioName, projectId, navigate]);

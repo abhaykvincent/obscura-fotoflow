@@ -5,27 +5,28 @@ import { isPinValid, savePinToLocalStorage, PIN_LENGTH } from '../../utils/pinUt
 import './GalleryPIN.scss';
 import { setUserType } from '../../analytics/utils';
 
-function GalleryPIN({ setAuthenticated, projectPin }) {
+function GalleryPIN({ setAuthenticated, projectPin, projectId }) {
   const [pin, setPin] = useState(new Array(PIN_LENGTH).fill(''));
   const [pinError, setPinError] = useState(false);
   const pinInputs = useRef([]);
 
   // Focus first input or authenticate if a valid PIN is in storage
   useEffect(() => {
-    if (isPinValid()) {
+    if (isPinValid(projectId)) {
       setAuthenticated(true);
 
     } else {
       pinInputs.current[0]?.focus();
     }
-  }, [setAuthenticated]);
+  }, [setAuthenticated, projectId]);
 
 
   const handlePinCheck = (newPin) => {
-    const enteredPin = newPin.join('');
+    const pinToCheck = newPin || pin;
+    const enteredPin = pinToCheck.join('');
     if (enteredPin === projectPin) {
       setAuthenticated(true);
-      savePinToLocalStorage(enteredPin);
+      savePinToLocalStorage(enteredPin, projectId);
       setUserType('Client');
 
     } else {
