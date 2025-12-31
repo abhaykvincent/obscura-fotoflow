@@ -35,27 +35,11 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   const nameInputRef = useRef(null);
   const name2InputRef = useRef(null);
   const typeInputRef = useRef(null);
-  const confettiCanvasRef = useRef(null);
   const modalRef = useModalFocus(isVisible);
 
   const isFirstProject = projects.length === 0 && !isSubProject;
 
   const onClose = () => dispatch(closeModalWithAnimation("createProject"));
-
-  const handleConfetti = () => {
-    if (!confettiCanvasRef.current) return;
-    const myConfetti = confetti.create(confettiCanvasRef.current, {
-      resize: true,
-      useWorker: true
-    });
-    
-    myConfetti({
-      particleCount: 150,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#54a134', '#66b346', '#336c1b', '#ffffff']
-    });
-  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -106,11 +90,11 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
       return;
     }
     const domain = currentStudio.domain;
-    if (isFirstProject) {
-      handleConfetti();
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for confetti to mostly finish
-    }
-    dispatch(showLoading({context:`Creating ${projectData.type} project`,subcontext:`${projectData.name} `}));
+    dispatch(showLoading({
+      context:`Creating ${projectData.type} project`,
+      subcontext:`${projectData.name} `,
+      celebration: isFirstProject
+    }));
     onClose();
 
     await new Promise(resolve => setTimeout(resolve, 1100)); // Wait for animation
