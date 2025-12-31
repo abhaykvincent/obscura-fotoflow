@@ -171,7 +171,7 @@ function ShareGallery({project }) {
 
               <div className="select-galleries">
                 {project?.collections.map((collection, index) => (
-                  <div key={index} className={`gallery-item ${collection.status !== 'visible' ? 'disabled' : ''}`}>
+                  <div key={index} className={`gallery-item ${collection.status !== 'visible' && collection.status !== 'selected'  ? 'disabled' : ''}`}>
                     <div className="gallery-info" onClick={() => {
                         const newStatus = collection.status === 'visible' ? 'hide' : 'visible';
                         dispatch(updateCollectionStatus({
