@@ -23,6 +23,7 @@ import { createNotification } from '../../../app/slices/notificationSlice';
 import { updateCollectionStatus } from '../../../app/slices/projectsSlice';
 import ImageGalleryDesigner from '../../ImageGalleryDesigner/ImageGalleryDesigner';
 import { selectGalleryMode, setGalleryMode } from '../../../app/slices/gallerySlice';
+import { getOperatingSystem } from '../../../utils/generalUtils';
 
 const CollectionImages = ({ id, collectionId, project }) => {
     const projectCollectionRef = useRef(null);
@@ -358,7 +359,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                         </div>
                     { !showAllPhotos ?
                     <><div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
-                        Open in <div className="lr button secondary"> PC</div>
+                        <div className="lr button secondary">Open in my {getOperatingSystem()}</div>
                     </div>
                         {/* <DownloadFiles className={`open-in ${showAllPhotos ? 'disabled' : ''}`} folderPath={`${domain}/${id}/${collectionId}/`} project={project} collection={findCollectionById(project, collectionId)}/> */}
                         </>:
