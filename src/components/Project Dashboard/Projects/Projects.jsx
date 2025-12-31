@@ -29,6 +29,23 @@ function DashboardProjects({project}){
         projectDashboardView={projectDashboardView} 
         setProjectDashboardView={setProjectDashboardView} 
       />
+      {/* <div className="project-bashboard-toolbar">
+      {setProjectDashboardView && (
+        <div className="view-cta">
+            <div className="control-wrap">
+                <div className="controls">
+                    <div className={`control ctrl-active ${projectDashboardView === 'dashboard' ? 'active' : ''}`}
+                        onClick={() => setProjectDashboardView('dashboard')}
+                    ><div className="icon list-view"></div></div>
+                    <div className={`control ctrl-all ${projectDashboardView === 'abstract' ? 'active' : ''}`}
+                        onClick={() => setProjectDashboardView('abstract')}
+                    ><div className="icon card-view"></div></div>
+                </div>
+            </div>
+        </div>
+    )}
+
+      </div> */}
     {
       projectDashboardView === 'abstract'?
       (project.collections.length === 0 ? (
@@ -69,18 +86,20 @@ function DashboardProjects({project}){
         </>
       ) : (
         <>
+
+                                    
           <CollectionsPanel {...{project,collectionId:project.collections[0]?.id}}/>
-          <div className="dashboard-overview">
-         <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
-            <DashboardEvents project={project} />
-            <div className={`section financials-overview ${project.payments.length > 0 ? 'has-payments' : ''}`}>
-              <DashboardPayments project={project} />
-            </div>
+          
+          {/* <div className="dashboard-overview">
+            <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
+                <DashboardEvents project={project} />
+                <div className={`section financials-overview ${project.payments.length > 0 ? 'has-payments' : ''}`}>
+                  <DashboardPayments project={project} />
+                </div>
+              </div>
+            <SidePanel project={project} />
 
-          </div>
-        <SidePanel project={project} />
-
-          </div>
+          </div> */}
         </>
       ))
       :<>

@@ -83,7 +83,6 @@
 }
 .project-dashboard{
 	position: relative;
-	display: grid;
 	align-content: normal;
 	justify-content: start;
 	justify-items: start;
@@ -234,7 +233,6 @@
 		}
 	}
 	.dashboard-overview {
-		display: grid;
 		grid-template-columns: auto auto;
 		justify-content: space-between;
 		align-items: start;

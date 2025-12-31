@@ -136,7 +136,8 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                         <p>1.6K <span>Views</span></p>
                     </div> */}
                     <div className="client">
-                        
+                        <div className="project-name-wrapper">
+
                         <div className="project-name-editor">
                             { isEditing ? (
                                 <div className="editable-data ">
@@ -156,6 +157,14 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                             )
                             }
                             <div className="edit-pen" onClick={handleNameDoubleClick} ></div>
+                        </div>
+                        <div className="project-tags">
+
+                        <div className="tags">
+                            {!isEditing &&<div className="tag type">{project?.type}</div>}
+                            {/* <div className="tag">Hindu</div> */}
+                        </div>
+                        </div>
                         </div>
 
 
@@ -180,36 +189,7 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
 
                         </div>
                         </div> 
-                        </div>
 
-                        <div className="project-tags">
-
-                        <div className="tags">
-                            {!isEditing &&<div className="tag type">{project?.type}</div>}
-                            {/* <div className="tag">Hindu</div> */}
-                        </div>
-                        </div>
-                        <div className="action-buttons">
-                            {setProjectDashboardView && (
-                                <div className="view-cta">
-                                    <div className="control-wrap">
-                                        <div className="controls">
-                                            <div className={`control ctrl-active ${projectDashboardView === 'dashboard' ? 'active' : ''}`}
-                                                onClick={() => setProjectDashboardView('dashboard')}
-                                            ><div className="icon list-view"></div></div>
-                                            <div className={`control ctrl-all ${projectDashboardView === 'abstract' ? 'active' : ''}`}
-                                                onClick={() => setProjectDashboardView('abstract')}
-                                            ><div className="icon card-view"></div></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            <ProjectStatus project={project} />
-
-                        
-                        </div>
-                        
                         {
                             project.pin&&
                             <div className="bottom-right">
@@ -239,6 +219,16 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                             )}
                             </div>
                         }
+                    </div>
+
+                        <div className="action-buttons">
+
+                            <ProjectStatus project={project} />
+
+                        
+                        </div>
+                        
+                        
                     
                 </div>
                 
