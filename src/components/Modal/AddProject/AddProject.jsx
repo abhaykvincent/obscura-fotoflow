@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import confetti from 'canvas-confetti';
 // Redux
 import { showAlert } from '../../../app/slices/alertSlice';
-import { addProject, createSubProject } from '../../../app/slices/projectsSlice';
+import { addProject, createSubProject, selectProjects } from '../../../app/slices/projectsSlice';
 import { closeModalWithAnimation, selectModal } from '../../../app/slices/modalSlice';
 import { selectUser, selectUserStudio } from '../../../app/slices/authSlice';
 import { createNotification } from '../../../app/slices/notificationSlice';
@@ -24,6 +25,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   const { createProject: isVisible } = useSelector(selectModal);
   const currentStudio = useSelector(selectUserStudio);
   const user = useSelector(selectUser);
+  const projects = useSelector(selectProjects);
 
   const [projectData, setProjectData] = useState({ ...initialProjectData });
   const [errors, setErrors] = useState({});
@@ -33,9 +35,27 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   const nameInputRef = useRef(null);
   const name2InputRef = useRef(null);
   const typeInputRef = useRef(null);
+  const confettiCanvasRef = useRef(null);
   const modalRef = useModalFocus(isVisible);
 
+  const isFirstProject = projects.length === 0 && !isSubProject;
+
   const onClose = () => dispatch(closeModalWithAnimation("createProject"));
+
+  const handleConfetti = () => {
+    if (!confettiCanvasRef.current) return;
+    const myConfetti = confetti.create(confettiCanvasRef.current, {
+      resize: true,
+      useWorker: true
+    });
+    
+    myConfetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#54a134', '#66b346', '#336c1b', '#ffffff']
+    });
+  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -86,6 +106,9 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
       return;
     }
     const domain = currentStudio.domain;
+    if (isFirstProject) {
+      handleConfetti();
+    }
     dispatch(showLoading({context:`Creating ${projectData.type} project`,subcontext:`${projectData.name} `}));
     onClose();
 
@@ -133,6 +156,20 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
 
   return (
     <div className="modal-container" ref={modalRef}>
+      {isFirstProject && (
+        <canvas
+          ref={confettiCanvasRef}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 20
+          }}
+        />
+      )}
       <div className="modal create-project island">
         <div className="modal-header">
           <div className="modal-controls">
