@@ -141,7 +141,7 @@ function UploadButton({
             }));
           console.log(domain)
         setTimeout(() => {
-          dispatch(openModal('shareGallery'))
+          dispatch(openModal('uploadCompleted'))
         }, 1000);
         
 
