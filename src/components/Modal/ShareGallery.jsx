@@ -11,6 +11,7 @@ import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
 import { updateSelectionGalleryStatus, updateCollectionStatus } from '../../app/slices/projectsSlice';
 import QRCodeModal from './QRCodeModal';
+import PinReminderModal from './PinReminderModal';
 import { QRCodeCanvas } from 'qrcode.react';
 import logo from '../../assets/img/logo192.png';
 
@@ -226,12 +227,7 @@ function ShareGallery({project }) {
               <div className="gallery-view-status">
 
                 <div className="link-group">
-                  <div className="button primary outline text-only  icon link"
-                    onClick={() => {
-                      // open link in new tab
-                      window.open(getGalleryURL('smart-gallery', domain, project?.id), '_blank');
-                    }}
-                  >Smart Gallery</div>
+                  
                   </div>
                 </div>
               <div className="gallery-view-status">
@@ -239,7 +235,7 @@ function ShareGallery({project }) {
                   <div className="button primary outline text-only  icon link"
                     onClick={() => {
                       // open link in new tab
-                      window.open(getGalleryURL('share', domain, project?.id), '_blank');
+                      window.open(getGalleryURL('smart-gallery', domain, project?.id), '_blank');
                     }}
                   >Gallery Link</div>
                   <div className="button primary outline text-only  icon copy"
@@ -261,8 +257,7 @@ function ShareGallery({project }) {
                 <div className="link-group">
                   <div className="button primary outline text-only  icon link"
                     onClick={() => {
-                      // open link in new tab
-                      window.open(getGalleryURL('selection', domain, project?.id), '_blank');
+                      dispatch(openModal('pinReminder'));
                     }
                   }
                   >Selection Link</div>
@@ -309,6 +304,10 @@ function ShareGallery({project }) {
       </div>
       <div className="modal-backdrop" onClick={onClose}></div>
       {visible.qrCode && <QRCodeModal url={qrCodeUrl} project={project} />}
+      <PinReminderModal 
+        pin={project?.pin} 
+        onComplete={() => window.open(getGalleryURL('selection', domain, project?.id), '_blank')} 
+      />
     </div>
   );
 }
