@@ -59,7 +59,7 @@ function PinReminderModal({ pin, onComplete }) {
             <p className="pin-instruction">Please remember this PIN to access the selection gallery</p>
             <div className="pin-value-animated">
                {pin?.split('').map((char, index) => (
-                 <span key={index} style={{ animationDelay: `${index * 0.1}s` }}>{char}</span>
+                 <span key={index} style={{ animationDelay: `${(index<=1?index:index+6) * 0.06 + 0.1}s` }}>{char}</span>
                ))}
             </div>
             <div className="progress-container">

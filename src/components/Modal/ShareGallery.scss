@@ -116,7 +116,7 @@
     }
     .gallery-view-status{
             display: grid;
-            grid-template-columns: 8px*14   8px*16 8px*10   8px*9;
+            grid-template-columns: auto   8px*16 8px*12   8px*4;
             align-items: center;
             gap: 8px*1;
             margin-top: 8px*0;

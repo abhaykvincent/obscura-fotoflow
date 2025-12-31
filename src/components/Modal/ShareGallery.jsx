@@ -247,9 +247,9 @@ function ShareGallery({project }) {
                 </div>
                 
                 <p className="client-label">Anyone with link</p>
-                <div className="button secondary  transparent-button icon public">Public</div>
+                <div className="button secondary icon public">Public</div>
               
-                <div className="button primary outline  ">Share</div>
+                <div className="button secondary outline  icon icon-only share"></div>
 
               </div>
               <div className="gallery-view-status">
@@ -270,8 +270,8 @@ function ShareGallery({project }) {
                 </div>
 
                 <p className="client-label">Client Only</p>
-                <div className="button secondary outline icon pin">{project?.pin}</div>
-                <div className="button primary outline ">Share</div>
+                <div className="button secondary  icon pin">{project?.pin}</div>
+                <div className="button secondary outline  icon icon-only share"></div>
 
                 
               </div>
