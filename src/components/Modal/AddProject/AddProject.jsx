@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import confetti from 'canvas-confetti';
 // Redux
 import { showAlert } from '../../../app/slices/alertSlice';
-import { addProject, createSubProject } from '../../../app/slices/projectsSlice';
+import { addProject, createSubProject, selectProjects } from '../../../app/slices/projectsSlice';
 import { closeModalWithAnimation, selectModal } from '../../../app/slices/modalSlice';
 import { selectUser, selectUserStudio } from '../../../app/slices/authSlice';
 import { createNotification } from '../../../app/slices/notificationSlice';
-import { showLoading, hideLoading } from '../../../app/slices/loadingSlice';
+import { showLoading, hideLoading, setLoadingContext } from '../../../app/slices/loadingSlice';
 // Hooks
 import { useModalFocus } from '../../../hooks/modalInputFocus';
 // Components
@@ -24,6 +25,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   const { createProject: isVisible } = useSelector(selectModal);
   const currentStudio = useSelector(selectUserStudio);
   const user = useSelector(selectUser);
+  const projects = useSelector(selectProjects);
 
   const [projectData, setProjectData] = useState({ ...initialProjectData });
   const [errors, setErrors] = useState({});
@@ -34,6 +36,8 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   const name2InputRef = useRef(null);
   const typeInputRef = useRef(null);
   const modalRef = useModalFocus(isVisible);
+
+  const isFirstProject = projects.length === 0 && !isSubProject;
 
   const onClose = () => dispatch(closeModalWithAnimation("createProject"));
 
@@ -86,7 +90,11 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
       return;
     }
     const domain = currentStudio.domain;
-    dispatch(showLoading({context:`Creating ${projectData.type} project`,subcontext:`${projectData.name} `}));
+    dispatch(showLoading({
+      context:`Creating ${projectData.type} project`,
+      subcontext:`${projectData.name} `,
+      celebration: isFirstProject
+    }));
     onClose();
 
     await new Promise(resolve => setTimeout(resolve, 1100)); // Wait for animation
@@ -99,6 +107,11 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
     try {
       const response = await dispatch(action);
       const payload = response.payload;
+
+      dispatch(setLoadingContext({ context: `${projectType} created successfully!`, subcontext: "" }));
+      
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Stay on page for a second
+
       dispatchNotification(payload, user);
       dispatch(showAlert({ type: "success", message: `${projectType} created successfully!` }));
 

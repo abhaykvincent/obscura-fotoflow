@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     show: false,
     context: 'Loading...',
-    subcontext:''
+    subcontext:'',
+    celebration: false
 };
 
 const loadingSlice = createSlice({
@@ -16,12 +17,14 @@ const loadingSlice = createSlice({
                 console.log(action.payload)
                 state.context = action.payload.context;
                 state.subcontext = action.payload.subcontext;
+                state.celebration = action.payload.celebration || false;
             }
         },
         hideLoading: (state) => {
             state.show = false;
             state.context = 'Loading...';
             state.subcontext = '';
+            state.celebration = false;
         },
         setLoadingContext: (state, action) => {
             state.context = action.payload.context;
