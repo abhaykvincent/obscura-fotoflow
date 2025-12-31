@@ -155,7 +155,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 }));
               console.log(domain)
             setTimeout(() => {
-              dispatch(openModal('shareGallery'))
+              dispatch(openModal('uploadCompleted'))
             }, 1000);
             
     

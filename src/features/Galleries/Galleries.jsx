@@ -6,6 +6,7 @@ import { findCollectionById } from '../../utils/CollectionQuery';
 import AddCollectionModal from '../../components/Modal/AddCollection';
 import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 import ShareGallery from '../../components/Modal/ShareGallery'
+import UploadCompletedModal from '../../components/Modal/UploadCompleted';
 import CollectionsPanel from '../../components/Project/Collections/CollectionsPanel';
 import CollectionImages from '../../components/Project/Collections/CollectionImages';
 // Actions
@@ -179,6 +180,7 @@ export default function Galleries({}) {
 
     <AddCollectionModal project={project} />
     <ShareGallery   project={project} />
+    <UploadCompletedModal project={project} collectionName={collection?.name} />
 
     {/* Page Main */}
     <main className={`gallery-page ${galleryMode === 'designMode' ? 'designMode' : ''}`}>
