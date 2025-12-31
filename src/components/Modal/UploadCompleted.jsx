@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
 import { useModalFocus } from '../../hooks/modalInputFocus';
@@ -11,7 +11,19 @@ function UploadCompletedModal({ project, collectionName }) {
   const dispatch = useDispatch();
   const visible = useSelector(selectModal);
   const uploadList = useSelector(selectUploadList);
-  const uploadedCount = Object.values(uploadList).filter(file => file.status === 'uploaded').length;
+  const [uploadedCount, setUploadedCount] = useState(0);
+
+  useEffect(() => {
+    if (visible.uploadCompleted) {
+      const count = Object.values(uploadList).filter(file => file.status === 'uploaded').length;
+      if (count > 0) {
+        setUploadedCount(count);
+      }
+    } else {
+      // Reset count when modal is fully closed/not visible
+      setUploadedCount(0);
+    }
+  }, [visible.uploadCompleted, uploadList]);
 
   const onClose = () => dispatch(closeModalWithAnimation('uploadCompleted'));
 
