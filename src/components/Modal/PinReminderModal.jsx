@@ -7,20 +7,22 @@ function PinReminderModal({ pin, onComplete }) {
   const visible = useSelector(selectModal);
   const dispatch = useDispatch();
   const [countdown, setCountdown] = useState(3);
+  const [isOpened, setIsOpened] = useState(false);
 
   useEffect(() => {
     if (!visible.pinReminder) {
       setCountdown(3);
+      setIsOpened(false);
       return;
     }
+
+    if (isOpened) return;
 
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          setTimeout(() => {
-             handleComplete();
-          }, 500);
+          handleComplete();
           return 0;
         }
         return prev - 1;
@@ -28,11 +30,13 @@ function PinReminderModal({ pin, onComplete }) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [visible.pinReminder]);
+  }, [visible.pinReminder, isOpened]);
 
   const handleComplete = () => {
-    dispatch(closeModal('pinReminder'));
-    if (onComplete) onComplete();
+    if (!isOpened) {
+      setIsOpened(true);
+      if (onComplete) onComplete();
+    }
   };
 
   const onClose = () => dispatch(closeModal('pinReminder'));
@@ -59,14 +63,17 @@ function PinReminderModal({ pin, onComplete }) {
                ))}
             </div>
             <div className="progress-container">
-                <div className="progress-bar" style={{ width: `${(countdown / 3) * 100}%` }}></div>
+                <div className="progress-bar" style={{ width: isOpened ? '0%' : `${(countdown / 3) * 100}%` }}></div>
             </div>
-            <p className="auto-close-label">Redirecting in {countdown}s...</p>
+            <p className="auto-close-label">
+              {isOpened ? 'Link opened in new tab' : `Redirecting in ${countdown}s...`}
+            </p>
           </div>
         </div>
         <div className="actions">
-           <div className="button secondary" onClick={onClose}>Cancel</div>
-           <div className="button primary" onClick={handleComplete}>Open Link Now</div>
+           <div className="button secondary" onClick={onClose}>Close</div>
+           {!isOpened && <div className="button primary" onClick={handleComplete}>Open Link Now</div>}
+           {isOpened && <div className="button primary" onClick={() => onComplete()}>Re-open Link</div>}
         </div>
       </div>
       <div className="modal-backdrop" onClick={onClose}></div>
