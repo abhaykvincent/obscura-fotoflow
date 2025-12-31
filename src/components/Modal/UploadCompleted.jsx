@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import { closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import { selectUploadList } from '../../app/slices/uploadSlice';
+import { selectProjects } from '../../app/slices/projectsSlice';
 import checkmark from '../../assets/img/icons/checkmark.svg';
 
 import './UploadCompleted.scss';
@@ -12,13 +13,16 @@ function UploadCompletedModal({ project, collectionName }) {
   const dispatch = useDispatch();
   const visible = useSelector(selectModal);
   const uploadList = useSelector(selectUploadList);
+  const projects = useSelector(selectProjects);
   const [uploadedCount, setUploadedCount] = useState(0);
   const confettiCanvasRef = useRef(null);
   const hasCelebratedRef = useRef(false);
 
-  // Determine if this is the first upload in the project
-  // If uploadedFilesCount is equal to current batch count, it's the first time files are in this project
-  const isFirstUpload = project && project.uploadedFilesCount === uploadedCount && uploadedCount > 0;
+  // Determine if this is the first project overall AND the first upload in this project
+  const isFirstProjectOverall = projects.length === 1;
+  const isFirstUploadInThisProject = project && project.uploadedFilesCount === uploadedCount && uploadedCount > 0;
+  
+  const shouldShowConfetti = isFirstProjectOverall && isFirstUploadInThisProject;
 
   useEffect(() => {
     if (visible.uploadCompleted) {
@@ -34,11 +38,11 @@ function UploadCompletedModal({ project, collectionName }) {
   }, [visible.uploadCompleted, uploadList]);
 
   useEffect(() => {
-    if (visible.uploadCompleted && isFirstUpload && !hasCelebratedRef.current && confettiCanvasRef.current) {
+    if (visible.uploadCompleted && shouldShowConfetti && !hasCelebratedRef.current && confettiCanvasRef.current) {
       handleConfetti();
       hasCelebratedRef.current = true;
     }
-  }, [visible.uploadCompleted, isFirstUpload]);
+  }, [visible.uploadCompleted, shouldShowConfetti]);
 
   const handleConfetti = () => {
     const myConfetti = confetti.create(confettiCanvasRef.current, {
@@ -71,7 +75,7 @@ function UploadCompletedModal({ project, collectionName }) {
 
   return (
     <div className="modal-container" ref={modalRef}>
-      {isFirstUpload && (
+      {shouldShowConfetti && (
         <canvas
           ref={confettiCanvasRef}
           style={{
