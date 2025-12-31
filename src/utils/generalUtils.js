@@ -12,3 +12,10 @@ export const isAppleDevice = () => {
     return /iPhone|iPad|iPod|Macintosh|Mac Intel|Mac Apple Silicon/i.test(userAgent);
 
 };
+
+export const getOperatingSystem = () => {
+    const userAgent = navigator.userAgent;
+    if (/Macintosh|MacIntel|MacPPC|Mac68K/i.test(userAgent)) return 'Mac';
+    if (/Win32|Win64|Windows|WinCE/i.test(userAgent)) return 'Windows';
+    return 'PC';
+};
