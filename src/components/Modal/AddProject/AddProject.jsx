@@ -108,6 +108,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
     const domain = currentStudio.domain;
     if (isFirstProject) {
       handleConfetti();
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for confetti to mostly finish
     }
     dispatch(showLoading({context:`Creating ${projectData.type} project`,subcontext:`${projectData.name} `}));
     onClose();
