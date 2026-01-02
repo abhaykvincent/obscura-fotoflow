@@ -46,95 +46,135 @@
     background-color: #000;
   }
   
-  .controls {
-    width: 100%;
-    position: fixed; // Fixed relative to viewport
-    z-index: 100;
-    
-    // Glassmorphism Base
-    &.glass-panel {
-      background: rgba(0, 0, 0, 0.4); // Darker tint for better text contrast
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      
-      &.top {
-        top: 0;
-        padding-top: env(safe-area-inset-top); // Handle notch
-      }
-    }
-
-    &.top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 16px;
-      height: 64px; // Consistent height
-      
-      .left-controls {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-
-        .back {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          background-image: url('../../assets/img/icons/arrow-round-back.svg');
-          background-position: center;
-          background-repeat: no-repeat;
-          background-size: 24px;
-          cursor: pointer;
-          transition: background-color 0.2s;
-
-          &:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-          }
-        }
-
-        .file-name {
-          color: white;
-          font-size: 0.95rem;
-          font-weight: 500;
-          letter-spacing: 0.5px;
-          text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-        }
-      }
-
-      .right-controls {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-
-        .icon {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          background-position: center;
-          background-repeat: no-repeat;
-          background-size: 20px;
-          cursor: pointer;
-          transition: all 0.2s;
-
-          &:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            transform: scale(1.05);
-          }
-          
-          &.options {
-             // Specific styles if needed
-          }
-        }
+      .controls {
+        width: 100%;
+        position: fixed; // Fixed relative to viewport
+        z-index: 100;
         
-        // Styles for DownloadImage component wrapper if present
-        .download-btn { // Assuming DownloadImage renders something selectable
-             opacity: 0.8;
-             &:hover { opacity: 1; }
+        // Glassmorphism Base
+        &.glass-panel {
+          background: rgba(0, 0, 0, 0.4); // Darker tint for better text contrast
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          
+          &.top {
+            top: 0;
+            padding-top: env(safe-area-inset-top); // Handle notch
+          }
+        }
+    
+        &.top {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0 16px;
+          height: 64px; // Consistent height
+          
+          .left-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+    
+            .back {
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              background-image: url('../../assets/img/icons/arrow-round-back.svg');
+              background-position: center;
+              background-repeat: no-repeat;
+              background-size: 24px;
+              cursor: pointer;
+              transition: background-color 0.2s;
+    
+              &:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+              }
+            }
+    
+            .file-name {
+              color: white;
+              font-size: 0.95rem;
+              font-weight: 500;
+              letter-spacing: 0.5px;
+              text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            }
+          }
+    
+          .right-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+    
+            .icon {
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              background-position: center;
+              background-repeat: no-repeat;
+              background-size: 20px;
+              cursor: pointer;
+              transition: all 0.2s;
+    
+              &:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                transform: scale(1.05);
+              }
+              
+              &.options {
+                 // Specific styles if needed
+              }
+            }
+            
+            // Styles for DownloadImage component wrapper if present
+            .download-btn { // Assuming DownloadImage renders something selectable
+                 opacity: 0.8;
+                 &:hover { opacity: 1; }
+            }
+          }
         }
       }
-    }
-  }
-}
+  
+      // Navigation Buttons
+      .nav-button {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 48px;
+        height: 48px;
+        background-color: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 24px;
+        cursor: pointer;
+        z-index: 90; // Below controls but above image
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.25);
+        }
+  
+        &.prev {
+          left: 24px;
+          background-image: url('../../assets/img/icons/arrow-round-back.svg');
+          &:hover {
+            transform: translateY(-50%) scale(1.1);
+          }
+        }
+  
+        &.next {
+          right: 24px;
+          background-image: url('../../assets/img/icons/arrow-round-back.svg');
+          transform: translateY(-50%) rotate(180deg);
+          &:hover {
+            transform: translateY(-50%) rotate(180deg) scale(1.1);
+          }
+        }
+      }}
 
 
 // Dropdown Styles (Radix UI)

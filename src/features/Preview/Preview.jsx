@@ -116,6 +116,33 @@ function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePrev
           resetControlsTimeout={resetControlsTimeout}
         />
 
+        <AnimatePresence>
+            {showControls && (
+                <>
+                    {previewIndex > 0 && (
+                        <motion.div 
+                            className="nav-button prev interactive" 
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.2 }}
+                            onClick={(e) => { e.stopPropagation(); paginate(-1); resetControlsTimeout(); }}
+                        />
+                    )}
+                    {previewIndex < imagesLength - 1 && (
+                        <motion.div 
+                            className="nav-button next interactive"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            transition={{ duration: 0.2 }}
+                            onClick={(e) => { e.stopPropagation(); paginate(1); resetControlsTimeout(); }}
+                        />
+                    )}
+                </>
+            )}
+        </AnimatePresence>
+
         <div className="image-container" onClick={toggleControls}>
           <AnimatePresence initial={false} custom={direction} mode="popLayout">
             <ImageDisplay
