@@ -172,16 +172,35 @@ function ShareGallery({project }) {
               <div className="select-galleries">
                 {project?.collections.map((collection, index) => (
                   <div key={index} className={`gallery-item ${collection.status !== 'visible' && collection.status !== 'selected'  ? 'disabled' : ''}`}>
-                    <div className="gallery-info" onClick={() => {
-                        const newStatus = collection.status === 'visible' ? 'hide' : 'visible';
-                        dispatch(updateCollectionStatus({
-                          domain,
-                          projectId: project?.id,
-                          collectionId: collection.id,
-                          status: newStatus
-                        }));
-                      }}>
-                      <div className={`status-dot ${collection.status === 'visible' ? 'active' : ''}`}></div>
+                    
+
+                    
+                    <div className="gallery-info">
+
+                    <div className="selection-toggle">
+                      {/* <p className={`toggle-status-label ${collection.status === 'visible' ? '' : 'toggle-off'}`}>
+                        {collection.status === 'visible' ? 'Visible' : 'Hidden'}
+                      </p> */}
+                      <FormControlLabel
+                        control={
+                          <IOSSwitch
+                            sx={{ m: 1 }}
+                            checked={collection.status === 'visible'}
+                            onChange={(event) => {
+                              const newStatus = event.target.checked ? 'visible' : 'hide';
+                              dispatch(updateCollectionStatus({
+                                domain,
+                                projectId: project?.id,
+                                collectionId: collection.id,
+                                status: newStatus
+                              }));
+                            }}
+                            color="green"
+                          />
+                        }
+                        label=""
+                      />
+                    </div>
                       <div>
                         <div className="gallery-name">{collection.name}</div>
                         <div className="gallery-images-count">
