@@ -138,7 +138,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
   };
 
   const getModalSubtitle = () => {
-    if (currentStep === 1) return "Choose template";
+    if (currentStep === 1) return "Template";
     return projectData.type || (isSubProject ? "New Sub-Project" : "New Project");
   };
 

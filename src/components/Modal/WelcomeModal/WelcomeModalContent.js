@@ -40,7 +40,7 @@ export const welcomeScreens = [
         </p>
         <div className="visual-placeholder smart-gallery"></div>
         <p>
-            Now, let our AI <span className='mid-highlight'>automatically categorize</span> your photos within your galleries into <span className='highlight'>'Best', 'Good', and 'Other'</span>, saving you hours of manual sorting.
+            Now, let our <span className='highlight'>Gallery Designer</span> helps you complete the professional look your brand deserves in <span className='mid-highlight'>Minutes</span>, saving you hours.
 
         </p>
       </>

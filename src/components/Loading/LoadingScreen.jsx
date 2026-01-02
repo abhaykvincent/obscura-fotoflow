@@ -44,7 +44,7 @@ const LoadingScreen = () => {
                         origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
                         colors: ['#54a134', '#66b346', '#336c1b', '#ffffff']
                     }));
-                }, 250);
+                }, 150);
             }, 1500); // 1.5s delay before confetti starts
 
             return () => {
