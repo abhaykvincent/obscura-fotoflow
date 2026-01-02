@@ -65,6 +65,7 @@ const handleSuggestedNameChange = (event) => {
   };
 
   setCollectionData(updatedData); // update local state
+  handleSubmit(updatedData); // auto-submit
 };
 
 
@@ -89,14 +90,14 @@ const handleSuggestedNameChange = (event) => {
   };
 
 
- const handleSubmit = () => {
-  let data = CollectionData;
+ const handleSubmit = (passedData) => {
+  const data = passedData || CollectionData;
   if (isLoading) return; // Use Redux isLoading
 
   const isValid = validateForm(data); // validate passed data
   if (!isValid) return;
 
-  dispatch(showLoading({context:`Adding ${CollectionData.name} to ${project.name}..`, subcontext:``})); // Dispatch showLoading
+  dispatch(showLoading({context:`Adding ${data.name} to ${project.name}..`, subcontext:``})); // Dispatch showLoading
   const domain = defaultStudio.domain;
   onClose();
 
