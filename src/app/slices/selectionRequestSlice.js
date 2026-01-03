@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { createSelectionRequest, fetchSelectionRequests, approveSelectionRequest } from '../../firebase/functions/studios';
+import { createSelectionRequest, fetchSelectionRequests, approveSelectionRequest, declineSelectionRequest } from '../../firebase/functions/studios';
 
 export const requestSelectionReset = createAsyncThunk(
   'selectionRequest/requestReset',
@@ -25,6 +25,14 @@ export const acceptSelectionReset = createAsyncThunk(
   }
 );
 
+export const declineSelectionReset = createAsyncThunk(
+  'selectionRequest/declineReset',
+  async ({ domain, projectId }) => {
+    await declineSelectionRequest(domain, projectId);
+    return projectId;
+  }
+);
+
 const selectionRequestSlice = createSlice({
   name: 'selectionRequest',
   initialState: {
@@ -32,7 +40,11 @@ const selectionRequestSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    removeRequestLocally: (state, action) => {
+      state.requests = state.requests.filter((req) => req.projectId !== action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getSelectionRequests.pending, (state) => {
@@ -48,9 +60,13 @@ const selectionRequestSlice = createSlice({
       })
       .addCase(acceptSelectionReset.fulfilled, (state, action) => {
         state.requests = state.requests.filter((req) => req.projectId !== action.payload);
+      })
+      .addCase(declineSelectionReset.fulfilled, (state, action) => {
+        state.requests = state.requests.filter((req) => req.projectId !== action.payload);
       });
   },
 });
 
+export const { removeRequestLocally } = selectionRequestSlice.actions;
 export const selectSelectionRequests = (state) => state.selectionRequest.requests;
 export default selectionRequestSlice.reducer;

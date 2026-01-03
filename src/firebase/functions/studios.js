@@ -454,3 +454,20 @@ export const approveSelectionRequest = async (domain, projectId) => {
         throw error;
     }
 };
+
+export const declineSelectionRequest = async (domain, projectId) => {
+    try {
+        const studioRef = doc(db, 'studios', domain);
+        const selectionRequestsRef = collection(studioRef, 'selectionRequests');
+        const requestRef = doc(selectionRequestsRef, projectId);
+        
+        // Update request status to declined
+        await updateDoc(requestRef, { status: 'declined', declinedAt: Date.now() });
+        
+        console.log(`Selection reset request declined for project ${projectId}`);
+        return true;
+    } catch (error) {
+        console.error('Error declining selection request:', error);
+        throw error;
+    }
+};
