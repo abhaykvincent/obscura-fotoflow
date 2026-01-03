@@ -10,6 +10,7 @@ import { copyToClipboard, extractDomain, getGalleryURL } from '../../utils/urlUt
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
 import { updateSelectionGalleryStatus, updateCollectionStatus } from '../../app/slices/projectsSlice';
+import { acceptSelectionReset, selectSelectionRequests } from '../../app/slices/selectionRequestSlice';
 import QRCodeModal from './QRCodeModal';
 import PinReminderModal from './PinReminderModal';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -87,8 +88,10 @@ function ShareGallery({project }) {
 
   const visible = useSelector(selectModal)
   const domain = useSelector(selectDomain)
+  const selectionRequests = useSelector(selectSelectionRequests);
   const [qrCodeUrl, setQrCodeUrl] = useState('');
 
+  const pendingRequest = selectionRequests.find(req => req.projectId === project?.id);
 
   const onClose = () => dispatch(closeModalWithAnimation('shareGallery'))
 
@@ -132,6 +135,17 @@ function ShareGallery({project }) {
           <div className="modal-title">Share Gallery</div>
         </div>
         <div className='modal-body'>
+          {pendingRequest && (
+            <div className="selection-request-banner island">
+              <div className="request-info">
+                <p>Client requested to change their selection.</p>
+              </div>
+              <div className="button primary small" onClick={() => {
+                dispatch(acceptSelectionReset({ domain, projectId: project.id }));
+                dispatch(showAlert({ type: 'success', message: 'Selection reset allowed!' }));
+              }}>Allow Re-selection</div>
+            </div>
+          )}
           <div className="form-section">
             {/* map project collections and render it with a check box to select galleries to share */}
             <div className="share-project-details">

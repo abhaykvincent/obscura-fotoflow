@@ -13,6 +13,7 @@ import { toTitleCase } from '../../utils/stringUtils';
 import { isPinValid } from '../../utils/pinUtils';
 import { showAlert } from '../../app/slices/alertSlice';
 import Alert from '../../components/Alert/Alert';
+import { requestSelectionReset } from '../../app/slices/selectionRequestSlice';
 
 export default function Selection() {
   let { studioName,projectId, collectionId } = useParams();
@@ -282,10 +283,13 @@ export default function Selection() {
             Go to gallery
           </Link>
           <p className='button-label'>Need to make changes? </p>
-          <div className="button  secondary light-mode text"
-            onClick={() => setSelectionCompleted(false)}
+          <div className="button secondary light-mode text"
+            onClick={() => {
+              dispatch(requestSelectionReset({ domain: studioName, projectId: project.id, projectName: project.name }));
+              dispatch(showAlert({ type: 'success', message: 'Request sent to photographer!' }));
+            }}
           >
-            Select again
+            Request to select again
           </div>
           </div>
         </div>
