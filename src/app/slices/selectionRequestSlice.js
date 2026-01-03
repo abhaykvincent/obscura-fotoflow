@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { createSelectionRequest, fetchSelectionRequests, approveSelectionRequest } from '../../firebase/functions/studios';
+import { createSelectionRequest, fetchSelectionRequests, approveSelectionRequest, declineSelectionRequest } from '../../firebase/functions/studios';
 
 export const requestSelectionReset = createAsyncThunk(
   'selectionRequest/requestReset',
@@ -21,6 +21,14 @@ export const acceptSelectionReset = createAsyncThunk(
   'selectionRequest/acceptReset',
   async ({ domain, projectId }) => {
     await approveSelectionRequest(domain, projectId);
+    return projectId;
+  }
+);
+
+export const declineSelectionReset = createAsyncThunk(
+  'selectionRequest/declineReset',
+  async ({ domain, projectId }) => {
+    await declineSelectionRequest(domain, projectId);
     return projectId;
   }
 );
@@ -47,6 +55,9 @@ const selectionRequestSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(acceptSelectionReset.fulfilled, (state, action) => {
+        state.requests = state.requests.filter((req) => req.projectId !== action.payload);
+      })
+      .addCase(declineSelectionReset.fulfilled, (state, action) => {
         state.requests = state.requests.filter((req) => req.projectId !== action.payload);
       });
   },

@@ -17,7 +17,8 @@ import { getEventTimeAgo } from '../../utils/dateUtils';
 import AddProjectModal from '../../components/Modal/AddProject/AddProject';
 import WelcomeModal from '../../components/Modal/WelcomeModal/WelcomeModal';
 import { fetchUserByEmail } from '../../firebase/functions/firestore';
-import { getSelectionRequests, selectSelectionRequests } from '../../app/slices/selectionRequestSlice';
+import { acceptSelectionReset, declineSelectionReset, getSelectionRequests, selectSelectionRequests } from '../../app/slices/selectionRequestSlice';
+import { showAlert } from '../../app/slices/alertSlice';
 
 function Home() {
     const dispatch = useDispatch()
@@ -142,10 +143,18 @@ function Home() {
                                         <p className="request-text">Client requested to select again for <b>{request.projectName}</b></p>
                                     </div>
                                     <div className="request-actions">
+                                        <div className="button secondary small" onClick={() => {
+                                            dispatch(declineSelectionReset({ domain: defaultStudio.domain, projectId: request.projectId }));
+                                            dispatch(showAlert({ type: 'info', message: 'Selection reset request cancelled.' }));
+                                        }}>Cancel</div>
+                                        <div className="button primary small outline" onClick={() => {
+                                            dispatch(acceptSelectionReset({ domain: defaultStudio.domain, projectId: request.projectId }));
+                                            dispatch(showAlert({ type: 'success', message: 'Selection reset allowed!' }));
+                                        }}>Accept</div>
                                         <div className="button primary small" onClick={() => {
                                             const project = projects.find(p => p.id === request.projectId);
                                             if (project) {
-                                                dispatch(openModal({ name: 'shareGallery', data: project }));
+                                                navigate(`/${defaultStudio.domain}/projects/${project.id}`, { state: { openModal: 'shareGallery' } });
                                             }
                                         }}>Manage</div>
                                     </div>
