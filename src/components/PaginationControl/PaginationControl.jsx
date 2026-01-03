@@ -46,6 +46,7 @@ const PageNumbers = ({ currentPage, totalPages, handlePageChange ,images}) => {
   return (
     <>
       <PaginationButton onClick={() => handlePageChange(1)} active={currentPage === 1}>1</PaginationButton>
+      
       {currentPage > 3 && <span className="ellipsis">...</span>}
       {currentPage === totalPages && <PaginationButton onClick={() => handlePageChange(totalPages - 2)}>{totalPages - 2}</PaginationButton>}
       {currentPage > 2 && currentPage < totalPages && (
@@ -59,6 +60,7 @@ const PageNumbers = ({ currentPage, totalPages, handlePageChange ,images}) => {
       )}
       {currentPage === 1 && <PaginationButton onClick={() => handlePageChange(3)}>3</PaginationButton>}
       {currentPage < totalPages - 2 && <span className="ellipsis">...</span>}
+
       <PaginationButton onClick={() => handlePageChange(totalPages)} active={currentPage === totalPages}>{totalPages}</PaginationButton>
     </>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 
@@ -34,6 +34,7 @@ import { selectStudio } from '../../app/slices/studioSlice';
 export default function Project() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
 
   const domain = useSelector(selectDomain);
@@ -52,6 +53,14 @@ export default function Project() {
     projects?.find((p) => p.id === id),
     [projects, id]
   );
+
+  useEffect(() => {
+    if (project && location.state?.openModal === 'shareGallery') {
+      dispatch(openModal('shareGallery'));
+      // Clear location state to prevent modal from re-opening on reload/back
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [project, location.state, dispatch, navigate, location.pathname]);
 
   useEffect(() => {
     modalsRef.current = modals;

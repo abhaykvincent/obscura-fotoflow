@@ -132,7 +132,6 @@ function Home() {
                         >New</div>
                     </div>
                 </div>
-                
                 {selectionRequests.length > 0 && (
                     <div className="section requests">
                         <h3 className='section-heading'>Selection Reset Requests</h3>
