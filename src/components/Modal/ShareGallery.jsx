@@ -11,7 +11,6 @@ import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
 import { updateSelectionGalleryStatus, updateCollectionStatus, selectUpdatingCollections } from '../../app/slices/projectsSlice';
 import { acceptSelectionReset, selectSelectionRequests } from '../../app/slices/selectionRequestSlice';
-// ... (lines omitted for brevity, will use full context in the actual call)
 import QRCodeModal from './QRCodeModal';
 import PinReminderModal from './PinReminderModal';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -172,19 +171,26 @@ function ShareGallery({project }) {
                 </div>
             </div>
 
-              <div className="select-galleries">
-                {project?.collections.map((collection, index) => (
-                  <div key={index} className={`gallery-item ${collection.status !== 'visible' && collection.status !== 'selected'  ? 'disabled' : ''}`}>
-                    
-                    
+            <div className="select-galleries">
+
+              {project?.collections.map((collection, index) => {
+
+                const isUpdating = updatingCollections[collection.id]?.status || updatingCollections[collection.id]?.selection;
+
+                return (
+
+                  <div key={index} className={`gallery-item ${collection.status !== 'visible' && collection.status !== 'selected' ? 'disabled' : ''} ${isUpdating ? 'updating' : ''}`}>
+
                     <div className="gallery-info">
 
-                    <div className="selection-toggle">
+                      <div className="selection-toggle">
                       {/* <p className={`toggle-status-label ${collection.status === 'visible' ? '' : 'toggle-off'}`}>
                         {collection.status === 'visible' ? 'Visible' : 'Hidden'}
                       </p> */}
                       {updatingCollections[collection.id]?.status ? (
-                        <div className="spinner"></div>
+                        <div className="spinner-container">
+                          <div className="spinner"></div>
+                        </div>
                       ) : (
                         <FormControlLabel
                           control={
@@ -223,7 +229,9 @@ function ShareGallery({project }) {
                         }
                       </p>
                       {updatingCollections[collection.id]?.selection ? (
-                        <div className="spinner"></div>
+                        <div className="spinner-container" style={{ width: '16px', margin: '0 8px' }}>
+                          <div className="spinner" style={{ width: '12px', height: '12px' }}></div>
+                        </div>
                       ) : (
                         <div className={`selection-icon ${collection.selectionGallery === true ? 'active' : ''}`}></div>
                       )}
@@ -249,10 +257,10 @@ function ShareGallery({project }) {
                       />
                     </div>
                   </div>
-                ))}
+                )
+              })
+            }
               </div>
-
-              
 
               <div className="gallery-view-status">
 
