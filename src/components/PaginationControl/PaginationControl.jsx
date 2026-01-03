@@ -73,6 +73,7 @@ export default function PaginationControl({
   handlePageChange, 
   saveSelection,
   completeSelection,
+  completeCollection,
   currentCollectionIndex,
   totalCollections,
   project
@@ -138,7 +139,7 @@ export default function PaginationControl({
             highlight={true} 
               onClick={() => {
                 handlePageChange(currentPage + 1);
-                saveSelection();
+                completeCollection();
               }}
             >
               Next Collection

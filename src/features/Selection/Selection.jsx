@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Lottie from 'react-lottie';
 import animationData from '../../assets/animations/CompletedAnimation.json';
-import { fetchProject, addSelectedImagesToFirestore, updateProjectStatusInFirestore, removeUnselectedImagesFromFirestore, updateCollectionStatusByCollectionIdInFirestore } from '../../firebase/functions/firestore';
+import { fetchProject, addSelectedImagesToFirestore, updateProjectStatusInFirestore, removeUnselectedImagesFromFirestore } from '../../firebase/functions/firestore';
 import SelectionGallery from '../../components/ImageGallery/SelectionGallery';
 import PaginationControl from '../../components/PaginationControl/PaginationControl';
 import './Selection.scss';
@@ -14,6 +14,7 @@ import { isPinValid } from '../../utils/pinUtils';
 import { showAlert } from '../../app/slices/alertSlice';
 import Alert from '../../components/Alert/Alert';
 import { requestSelectionReset } from '../../app/slices/selectionRequestSlice';
+import { updateCollectionStatus } from '../../app/slices/projectsSlice';
 
 export default function Selection() {
   let { studioName,projectId, collectionId } = useParams();
@@ -149,17 +150,29 @@ export default function Selection() {
   const saveSelection = async () => {
     try {
       await handleAddOrRemoveSelectedImages();
-      await updateProjectStatusInFirestore(studioName, projectId, 'selected');
-      await updateCollectionStatusByCollectionIdInFirestore(studioName, projectId, collectionId, 'visible',true);
     } catch (error) {
       console.error('Failed to update project status:', error);
     }
   };
 
-  const completeSelection = () => {
+  const completeCollection = async () => {
+    try {
+      await handleAddOrRemoveSelectedImages();
+      dispatch(updateCollectionStatus({ domain: studioName, projectId, collectionId, status: 'visible', selectionGallery: false }));
+    } catch (error) {
+      console.error('Failed to update collection status:', error);
+    }
+  };
+
+  const completeSelection = async () => {
     if (!selectionCompleted) {
       setSelectionCompleted(true); 
-      saveSelection();
+      await saveSelection();
+      try {
+        dispatch(updateCollectionStatus({ domain: studioName, projectId, collectionId, status: 'visible', selectionGallery: false }));
+      } catch (error) {
+        console.error('Failed to update collection status:', error);
+      }
     }
   };
   const handleAddOrRemoveSelectedImages = async () => {
@@ -256,6 +269,7 @@ export default function Selection() {
               currentPage={page}
               totalPages={totalPages}
               completeSelection={completeSelection}
+              completeCollection={completeCollection}
               handlePageChange={async (newPage) => {
                 handleAddOrRemoveSelectedImages()
 
