@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Navigate } from 'react-router-dom';
 import { fetchSmartGallery, selectSmartGallery, selectSmartGalleryStatus } from '../../app/slices/smartGallerySlice';
 import SectionRenderer from './SectionRenderer';
 import { toTitleCase } from '../../utils/stringUtils';
@@ -31,7 +32,7 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
   }
 
   if (!smartGalleryData) {
-    return <div>No gallery data available.</div>;
+    return <Navigate to={`/${domain}/share/${projectId}${collectionId ? `/${collectionId}` : ''}`} replace />;
   }
 
   return (
