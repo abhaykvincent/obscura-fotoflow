@@ -1,5 +1,6 @@
 import { db } from "../app";
-import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
+import { collection, doc, getDocs, updateDoc, setDoc } from "firebase/firestore";
+import { generateRandomString } from "../../utils/stringUtils";
 
 /**
  * Migrates all collections for all projects within a studio.
@@ -52,4 +53,30 @@ export const migrateCollectionsByStudio = async (domain) => {
     }
 
     console.log(`Migration completed for studio: ${domain}`);
+};
+
+/**
+ * Adds a new user/lead to the 'leads' collection in Firestore.
+ * @param {object} userData - The user data, including displayName, studioName, email, phone, domain, and role.
+ * @returns {Promise<string>} The UID of the newly created lead.
+ */
+export const addUserAsLead = async (userData) => {
+    const { email, phone, displayName, studioName, role } = userData;
+    const uid = `${(studioName || displayName).toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
+    const userDocRef = doc(db, 'leads', uid);
+
+    await setDoc(userDocRef, {
+        uid: uid,
+        displayName,
+        email,
+        phone,
+        studio: {
+            name: studioName,
+            domain: '',
+        },
+        role,
+        createdAt: new Date().toISOString(),
+    });
+
+    return uid;
 };

@@ -15,41 +15,66 @@ import AddProjectModal from '../../Modal/AddProject/AddProject';
 import CollectionsPanel from '../../Project/Collections/CollectionsPanel';
 import SidePanel from '../../Project/SidePanel/SidePanel'
 import { ProjectCover } from '../../ProjectPageCover/ProjectPageCover';
+import { acceptSelectionReset, declineSelectionReset, selectSelectionRequests } from '../../../app/slices/selectionRequestSlice';
+import { selectUserStudio } from '../../../app/slices/authSlice';
 
 function DashboardProjects({project}){
   const dispatch =useDispatch()
   const navigate = useNavigate();
   const { studioName } = useParams();
   const [projectDashboardView, setProjectDashboardView] = useState('abstract')
+  const selectionRequests = useSelector(selectSelectionRequests);
+  const defaultStudio = useSelector(selectUserStudio);
+
+  const pendingRequest = selectionRequests.find(req => req.projectId === project?.id);
+
   // Inside your component
   return (
     <>
-     <div className="project-dashboard-header">
-      {/* <div className="tools">
-        
-      <Link to={`/${studioName}/invitation-creator/${project.id}`}>
-        <div className="button secondary  icon  invitation disabled" > Invitation</div>
-      </Link>
-        <div className="button secondary icon user disabled" >Client</div>
-      </div> */}
-      <div className="view-cta">
-
-        <div className="control-wrap">
-            <div className="controls">
-            <div className={`control ctrl-active ${projectDashboardView === 'dashboard' ? 'active' : ''}`}
-                  onClick={()=>setProjectDashboardView('dashboard')}
-                ><div className="icon list-view"></div></div>
-                <div className={`control ctrl-all ${projectDashboardView === 'abstract' ? 'active' : ''}`}
-                  onClick={()=>setProjectDashboardView('abstract')}
-                ><div className="icon card-view"></div></div>
-                
-            </div>
-            <div className={`active`}></div>
-          </div>
-      </div>
-      </div>
+      <ProjectCover 
+        project={project} 
+        projectDashboardView={projectDashboardView} 
+        setProjectDashboardView={setProjectDashboardView} 
+      />
       
-      <ProjectCover project={project} />
+      {pendingRequest && (
+        <div className="selection-requests-list dashboard">
+          <div className="selection-request-item island">
+            <div className="request-info">
+              <p className="request-text">Client requested to select again for <b>{pendingRequest.projectName}</b></p>
+            </div>
+            <div className="request-actions">
+              <div className="button secondary small" onClick={() => {
+                dispatch(declineSelectionReset({ domain: defaultStudio.domain, projectId: project.id }));
+                dispatch(showAlert({ type: 'info', message: 'Selection reset request cancelled.' }));
+              }}>Cancel</div>
+              <div className="button primary small outline" onClick={() => {
+                dispatch(acceptSelectionReset({ domain: defaultStudio.domain, projectId: project.id }));
+                dispatch(showAlert({ type: 'success', message: 'Selection reset allowed!' }));
+              }}>Accept</div>
+              <div className="button primary small" onClick={() => dispatch(openModal('shareGallery'))}>Share</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* <div className="project-bashboard-toolbar">
+      {setProjectDashboardView && (
+        <div className="view-cta">
+            <div className="control-wrap">
+                <div className="controls">
+                    <div className={`control ctrl-active ${projectDashboardView === 'dashboard' ? 'active' : ''}`}
+                        onClick={() => setProjectDashboardView('dashboard')}
+                    ><div className="icon list-view"></div></div>
+                    <div className={`control ctrl-all ${projectDashboardView === 'abstract' ? 'active' : ''}`}
+                        onClick={() => setProjectDashboardView('abstract')}
+                    ><div className="icon card-view"></div></div>
+                </div>
+            </div>
+        </div>
+    )}
+
+      </div> */}
     {
       projectDashboardView === 'abstract'?
       (project.collections.length === 0 ? (
@@ -76,32 +101,34 @@ function DashboardProjects({project}){
             </div>
           </div>
           
-          <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
+          {/* <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
             <DashboardEvents project={project} />
             <div className="financials-overview">
               <DashboardPayments project={project} />
             </div>
 
                     <SidePanel project={project} />
-          </div>
+          </div> */}
 
 
 
         </>
       ) : (
         <>
+
+                                    
           <CollectionsPanel {...{project,collectionId:project.collections[0]?.id}}/>
-          <div className="dashboard-overview">
-         <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
-            <DashboardEvents project={project} />
-            <div className={`section financials-overview ${project.payments.length > 0 ? 'has-payments' : ''}`}>
-              <DashboardPayments project={project} />
-            </div>
+          
+          {/* <div className="dashboard-overview">
+            <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
+                <DashboardEvents project={project} />
+                <div className={`section financials-overview ${project.payments.length > 0 ? 'has-payments' : ''}`}>
+                  <DashboardPayments project={project} />
+                </div>
+              </div>
+            <SidePanel project={project} />
 
-          </div>
-        <SidePanel project={project} />
-
-          </div>
+          </div> */}
         </>
       ))
       :<>

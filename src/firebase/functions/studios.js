@@ -1,5 +1,8 @@
-import { db, storage } from "../app";
-import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, increment} from "firebase/firestore";
+
+
+// Studio
+import { db } from "../app";
+import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, increment, query, where } from "firebase/firestore";
 
 import { generateMemorablePIN, generateRandomString, toKebabCase, toTitleCase} from "../../utils/stringUtils";
 import { isProduction } from "../../analytics/utils";
@@ -11,88 +14,140 @@ import { version } from "jszip";
 
 
 // Studio
-export const createStudio = async (studioData) => {
+export const createStudio = async (studioData,user) => {
     const { name, domain } = studioData; // Assuming domain is provided
     const id = `${name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`;
-    const currentDate = new Date().toISOString().split('T')[0];
-    const subscriptionId = `${id}-core-free-${currentDate}`;
+    const currentDate = new Date();
+    const currentDateISO = currentDate.toISOString().split('T')[0];
 
     const studiosCollection = collection(db, 'studios');
+    const pricingGroupsCollection = collection(db, 'pricingGroups');
+
+    // Determine bucket for 50-50 split
+    const snapshot = await getDocs(studiosCollection);
+    const studioCount = snapshot.size;
+    const buckets = ['gs://fotoflow-india-1', 'gs://fotoflow-india-2'];
+    const bucketUrl = buckets[studioCount % 2];
+    
+    // Determine which pricing group to use
+    const targetGroupTag = (studioCount % 2) + 1 === 1 ? 'BP001' : 'BP002';
+    
+    // Fetch pricing groups
+    const pricingGroupsQuery = query(pricingGroupsCollection, where("id", "in", ["BP001", "BP002"]));
+    const pricingGroupsSnapshot = await getDocs(pricingGroupsQuery);
+    const pricingGroups = pricingGroupsSnapshot.docs.map(doc => doc.data());
+
+    const targetGroup = pricingGroups.find(group => group.id === targetGroupTag);
+
+    if (!targetGroup || targetGroup.plans.length === 0) {
+        console.error(`Pricing group ${targetGroupTag} not found or has no plans.`);
+        throw new Error(`Pricing group ${targetGroupTag} not found or has no plans.`);
+    }
+
+    // Select the first plan from the target group
+    const selectedPlan = targetGroup.plans[0];
+    const monthlyTier = selectedPlan.pricing.tiers.find(tier => tier.interval === 'month');
+    const yearlyTier = selectedPlan.pricing.tiers.find(tier => tier.interval === 'year');
+
+    const trialPeriodDays = selectedPlan.pricing.trialPeriodDays || 0;
+
+    const trialEndDate = new Date(currentDate.getTime() + trialPeriodDays * 24 * 60 * 60 * 1000);
+    const subscriptionEndDate = new Date(currentDate.getTime() + (monthlyTier ? 30 : 365) * 24 * 60 * 60 * 1000); // Assuming monthly if available, else yearly
 
     // Studio document
     const studioDoc = {
         id: id,
         name: name,
         domain: domain,
-        planName: 'Core',
-        status: 'active',
-        batch: '002',
+        ownerId:user.email,
+        bucketUrl: bucketUrl,
+        userBatch: (studioCount % 2)+1,
+        planName: selectedPlan.name,
+        status: 'active', // Can be 'trialing' if trial period is active
+        batch: targetGroupTag, // Use the BP tag as the batch
         usage: {
             storage: {
-                quota: 5 * 1000, // 5 GB
-                used: 0,         // 0 GB
+                quota: selectedPlan.limits.storageGb * 1000, // Convert GB to MB
+                used: 0,
             },
             projects: {
-                weeklyUsed: 0,
+                monthlyQuota: selectedPlan.limits.maxProjects,
                 monthlyUsed: 0,
             },
+            collections:{
+                quota: selectedPlan.limits.maxGalleries
+            }
         },
-        subscriptionId: subscriptionId,
-        subscriptionHistory: [subscriptionId],
+        billing: {
+            razorpayCustomerId: null,
+            razorpaySubscriptionId: null,
+            planId: monthlyTier?.razorpayPlanId || yearlyTier?.razorpayPlanId || null,
+            status: trialPeriodDays > 0 ? 'trialing' : 'active',
+            currentPeriodEnd: subscriptionEndDate.toISOString().split('T')[0],
+            trialEnd: trialEndDate.toISOString().split('T')[0],
+            cancelAtPeriodEnd: false, // Default to not cancelling at period end
+            quantity: 1,
+            subscriptionHistory: [], // Will be populated below
+        },
+        subscriptionId: '', // Will be populated below
         metadata: {
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            createdAt: currentDateISO,
+            updatedAt: currentDateISO,
             createdBy: id,
             updatedBy: id,
             version: 2
         },
-        trialEndDate: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        trialEndDate: trialEndDate.toISOString().split('T')[0],
     };
+
+    const newSubscriptionId = `${id}-${selectedPlan.slug}-${currentDateISO}`;
+    studioDoc.subscriptionId = newSubscriptionId;
+    studioDoc.billing.subscriptionHistory.push(newSubscriptionId);
 
     // Subscription document
     const subscriptionDoc = {
-        id: subscriptionId,
+        id: newSubscriptionId,
         studioId: domain,
         plan: {
-            planId: 'core-free',
-            name: 'Core',
-            type: 'free',
+            planId: selectedPlan.id,
+            name: selectedPlan.name,
+            type: selectedPlan.type,
         },
         billing: {
-            billingCycle: 'yearly',
+            billingCycle: monthlyTier ? 'monthly' : (yearlyTier ? 'yearly' : 'one-time'),
             autoRenew: true,
             paymentRecived: false,
             paymentPlatform: null,
             paymentMethod: null,
         },
         dates: {
-            startDate: currentDate,
-            endDate: new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            startDate: currentDateISO,
+            endDate: subscriptionEndDate.toISOString().split('T')[0],
         },
         pricing: {
-            basePrice: 0,
+            basePrice: monthlyTier?.price || yearlyTier?.price || 0,
             discount: 0,
             tax: 0,
-            currency: 'INR',
-            totalPrice: 0,
+            currency: selectedPlan.pricing.currency,
+            totalPrice: monthlyTier?.price || yearlyTier?.price || 0,
         },
-        status: 'active',
+        status: trialPeriodDays > 0 ? 'trialing' : 'active',
         metadata: {
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            createdAt: currentDateISO,
+            updatedAt: currentDateISO,
             createdBy: id,
             updatedBy: id,
         },
     };
 
-    // Create invoice for the free plan
+    // Create invoice for the selected plan
     const invoiceId = await createInvoice(
         id,
-        { name: 'Core', type: 'free' }, // Simplified plan object for invoice
-        subscriptionId,
-        0, // Amount is 0 for free plan
-        'yearly',
-        'paid' // Marked as paid since it's free
+        { name: selectedPlan.name, type: selectedPlan.type },
+        newSubscriptionId,
+        subscriptionDoc.pricing.totalPrice,
+        subscriptionDoc.billing.billingCycle,
+        trialPeriodDays > 0 ? 'pending' : 'paid' // Invoice pending during trial, paid otherwise
     );
 
     // Add invoiceId to subscription document
@@ -102,12 +157,11 @@ export const createStudio = async (studioData) => {
     // Save documents
     const studioRef = doc(studiosCollection, studioDoc.domain);
     const subscriptionRef = doc(collection(db, 'subscriptions'), subscriptionDoc.id);
-    const invoiceRef = doc(collection(db, 'invoices'), invoiceId);
 
     try {
         await setDoc(studioRef, studioDoc);
         await setDoc(subscriptionRef, subscriptionDoc);
-        console.log('Studio, subscription, and invoice created successfully.');
+        console.log(`Studio '${studioDoc.name}', subscription '${subscriptionDoc.id}', and invoice '${invoiceId}' created successfully.`);
         return { 
             studio: studioDoc, 
             subscription: subscriptionDoc,
@@ -118,6 +172,7 @@ export const createStudio = async (studioData) => {
         throw error;
     }
 };
+
 export const checkStudioDomainAvailability = async (domain) => {
 
     console.log("Checking domain availability for:", domain);
@@ -180,6 +235,239 @@ export const updateGalleryTagline = async (studioId, galleryTagline) => {
         return true;
     } catch (error) {
         console.error(`Error updating gallery tagline for studio ${studioId}:`, error.message);
+        throw error;
+    }
+};
+
+export const updateStudioLogo = async (studioId, logoUrl) => {
+    try {
+        const studioRef = doc(db, 'studios', studioId);
+        await updateDoc(studioRef, {
+            'studioLogo': logoUrl,
+            'metadata.updatedAt': new Date().toISOString(),
+        });
+        console.log(`Logo for studio ${studioId} updated successfully.`);
+        return true;
+    } catch (error) {
+        console.error(`Error updating logo for studio ${studioId}:`, error.message);
+        throw error;
+    }
+};
+
+export const updateStudio = async (studioId, updates) => {
+    try {
+        const studioRef = doc(db, 'studios', studioId);
+        const updateData = {
+            ...updates,
+            'metadata.updatedAt': new Date().toISOString(),
+        };
+        await updateDoc(studioRef, updateData);
+        console.log(`Studio ${studioId} updated successfully with:`, updates);
+        return true;
+    } catch (error) {
+        console.error(`Error updating studio ${studioId}:`, error.message);
+        throw error;
+    }
+};
+
+export const fetchAnalyticsData = async () => {
+    try {
+        const studiosCollection = collection(db, 'studios');
+        const studiosSnapshot = await getDocs(studiosCollection);
+        const studios = studiosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        const usersCollection = collection(db, 'users');
+        const usersSnapshot = await getDocs(usersCollection);
+        const users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        let totalProjects = 0;
+        let totalCollections = 0;
+        let totalPhotos = 0;
+        let totalFileSize = 0;
+        let completedProjects = 0;
+        let activeStudiosCount = 0;
+        let totalTTFU = 0;
+        let ttfuCount = 0;
+
+        const fourteenDaysAgo = Date.now() - (14 * 24 * 60 * 60 * 1000);
+        const studioPerformance = [];
+
+        for (const studio of studios) {
+            const projectsCollection = collection(db, 'studios', studio.domain, 'projects');
+            const projectsSnapshot = await getDocs(projectsCollection);
+            const projectsCount = projectsSnapshot.size;
+            totalProjects += projectsCount;
+
+            let studioCollections = 0;
+            let studioPhotos = 0;
+            let studioSize = 0;
+            let studioIsActive = false;
+            let firstProjectDate = null;
+
+            for (const projectDoc of projectsSnapshot.docs) {
+                const projectData = projectDoc.data();
+                studioSize += projectData.totalFileSize || 0;
+                studioPhotos += projectData.uploadedFilesCount || 0;
+
+                // Track activity (upload or open in last 14 days)
+                if ((projectData.lastOpened || 0) > fourteenDaysAgo || (projectData.createdAt || 0) > fourteenDaysAgo) {
+                    studioIsActive = true;
+                }
+
+                // Track completion (selected or completed status)
+                if (['selected', 'completed'].includes(projectData.status)) {
+                    completedProjects++;
+                }
+
+                // Track first project for TTFU
+                if (!firstProjectDate || projectData.createdAt < firstProjectDate) {
+                    firstProjectDate = projectData.createdAt;
+                }
+
+                const collectionsCollection = collection(projectDoc.ref, 'collections');
+                const collectionsSnapshot = await getDocs(collectionsCollection);
+                studioCollections += collectionsSnapshot.size;
+            }
+
+            if (studioIsActive) activeStudiosCount++;
+
+            // Calculate TTFU for this studio owner
+            const owner = users.find(u => u.email === studio.ownerId);
+            if (owner && owner.createdAt && firstProjectDate) {
+                const diff = (firstProjectDate - owner.createdAt) / (1000 * 60 * 60); // Hours
+                if (diff > 0) {
+                    totalTTFU += diff;
+                    ttfuCount++;
+                }
+            }
+
+            totalCollections += studioCollections;
+            totalPhotos += studioPhotos;
+            totalFileSize += studioSize;
+
+            studioPerformance.push({
+                id: studio.id,
+                name: studio.name,
+                domain: studio.domain,
+                projectsCount,
+                collectionsCount: studioCollections,
+                photosCount: studioPhotos,
+                storageUsed: studioSize,
+                isActive: studioIsActive,
+                // Per-studio metrics
+                avgPhotosPerProject: projectsCount ? studioPhotos / projectsCount : 0,
+                avgStoragePerProject: projectsCount ? studioSize / projectsCount : 0,
+                avgPhotosPerCollection: studioCollections ? studioPhotos / studioCollections : 0,
+                avgSizePerPhoto: studioPhotos ? studioSize / studioPhotos : 0
+            });
+        }
+
+        // Infrastructure Cost Constants (Firebase Estimates)
+        const STORAGE_COST_PER_GB = 0.026;
+        const totalGB = totalFileSize / 1024;
+        const estimatedMonthlyBurn = totalGB * STORAGE_COST_PER_GB;
+
+        const avgProjectsPerStudio = studios.length ? totalProjects / studios.length : 0;
+        const avgTTFU = ttfuCount ? totalTTFU / ttfuCount : 0;
+        const projectCompletionRate = totalProjects ? (completedProjects / totalProjects) * 100 : 0;
+        const avgCollectionsPerProject = totalProjects ? totalCollections / totalProjects : 0;
+        const avgPhotosPerCollection = totalCollections ? totalPhotos / totalCollections : 0;
+        const avgPhotosPerProject = totalProjects ? totalPhotos / totalProjects : 0;
+
+        return {
+            summary: {
+                totalStudios: studios.length,
+                totalProjects,
+                totalCollections,
+                totalPhotos,
+                totalFileSize,
+                activeStudios: activeStudiosCount,
+                dormantStudios: studios.length - activeStudiosCount,
+                avgProjectsPerStudio,
+                avgTTFU,
+                projectCompletionRate,
+                estimatedMonthlyBurn,
+                avgCollectionsPerProject,
+                avgPhotosPerCollection,
+                avgPhotosPerProject,
+                storageEfficiency: totalPhotos ? (totalFileSize / totalPhotos) : 0, // MB per photo
+            },
+            leaderboard: [...studioPerformance].sort((a, b) => b.storageUsed - a.storageUsed).slice(0, 10),
+            studioPerformance
+        };
+    } catch (error) {
+        console.error('Error fetching analytics data:', error);
+        throw error;
+    }
+};
+
+// Selection Requests
+export const createSelectionRequest = async (domain, projectId, projectName) => {
+    try {
+        const studioRef = doc(db, 'studios', domain);
+        const selectionRequestsRef = collection(studioRef, 'selectionRequests');
+        const requestDoc = {
+            projectId,
+            projectName,
+            status: 'pending',
+            requestedAt: Date.now(),
+        };
+        await setDoc(doc(selectionRequestsRef, projectId), requestDoc);
+        console.log(`Selection reset request created for project ${projectId}`);
+        return requestDoc;
+    } catch (error) {
+        console.error('Error creating selection request:', error);
+        throw error;
+    }
+};
+
+export const fetchSelectionRequests = async (domain) => {
+    try {
+        const studioRef = doc(db, 'studios', domain);
+        const selectionRequestsRef = collection(studioRef, 'selectionRequests');
+        const q = query(selectionRequestsRef, where('status', '==', 'pending'));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error('Error fetching selection requests:', error);
+        throw error;
+    }
+};
+
+export const approveSelectionRequest = async (domain, projectId) => {
+    try {
+        const studioRef = doc(db, 'studios', domain);
+        const selectionRequestsRef = collection(studioRef, 'selectionRequests');
+        const requestRef = doc(selectionRequestsRef, projectId);
+        
+        // Update request status
+        await updateDoc(requestRef, { status: 'accepted', acceptedAt: Date.now() });
+        
+        // Update project status back to active to allow re-selection
+        const projectRef = doc(db, 'studios', domain, 'projects', projectId);
+        await updateDoc(projectRef, { status: 'active' });
+        
+        console.log(`Selection reset request approved for project ${projectId}`);
+        return true;
+    } catch (error) {
+        console.error('Error approving selection request:', error);
+        throw error;
+    }
+};
+
+export const declineSelectionRequest = async (domain, projectId) => {
+    try {
+        const studioRef = doc(db, 'studios', domain);
+        const selectionRequestsRef = collection(studioRef, 'selectionRequests');
+        const requestRef = doc(selectionRequestsRef, projectId);
+        
+        // Update request status to declined
+        await updateDoc(requestRef, { status: 'declined', declinedAt: Date.now() });
+        
+        console.log(`Selection reset request declined for project ${projectId}`);
+        return true;
+    } catch (error) {
+        console.error('Error declining selection request:', error);
         throw error;
     }
 };

@@ -9,6 +9,8 @@ import './GallerySections.scss';
 import {
   DndContext,
   closestCenter,
+  rectIntersection,
+  closestCorners,
   KeyboardSensor,
   PointerSensor as DndPointerSensor,
   useSensor,
@@ -224,6 +226,40 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
     }
   };
 
+  const handleDragOver = (event) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    const { id: activeId } = active;
+    const { id: overId } = over;
+
+    if (activeId === overId) return;
+
+    const activeType = active.data.current?.type;
+    const overType = over.data.current?.type;
+
+    if (activeType === 'image' && overType === 'image') {
+      const activeSectionId = active.data.current.fromSection;
+      const overSectionId = over.data.current.fromSection;
+
+      if (activeSectionId && overSectionId && activeSectionId === overSectionId) {
+        const sectionIndex = sections.findIndex((s) => s.id === activeSectionId);
+        if (sectionIndex === -1) return;
+
+        const section = sections[sectionIndex];
+        const oldIndex = section.images.findIndex((img) => img.url === activeId);
+        const newIndex = section.images.findIndex((img) => img.url === overId);
+
+        if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
+          const newSections = [...sections];
+          const newImages = arrayMove(section.images, oldIndex, newIndex);
+          newSections[sectionIndex] = { ...section, images: newImages };
+          onSectionsUpdate(newSections);
+        }
+      }
+    }
+  };
+
   const handleDragEnd = (event) => {
     const { active, over } = event;
     setActiveItem(null);
@@ -243,21 +279,24 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
     } else if (activeType === 'image') {
       const fromSectionId = active.data.current.fromSection;
       let toSectionId = null;
-      let newImageIndex = -1;
 
       const overType = over.data.current?.type;
 
       if (overType === 'image') {
         toSectionId = over.data.current.fromSection;
-        newImageIndex = sections.find(s => s.id === toSectionId)?.images.findIndex(i => i.url === over.id) ?? -1;
       } else if (overType === 'section') {
         const toSection = sections.find(s => s.id === over.id);
         if (toSection?.type === 'image-grid') {
           toSectionId = over.id;
-          newImageIndex = toSection.images.length; // Append
         }
       }
 
+      // If moving within the same section, handleDragOver already handled it.
+      if (fromSectionId === toSectionId) {
+        return;
+      }
+
+      // Handle moving to a different section
       if (!toSectionId) return;
 
       const fromSectionIndex = sections.findIndex(s => s.id === fromSectionId);
@@ -265,20 +304,25 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
 
       if (fromSectionIndex === -1 || toSectionIndex === -1) return;
 
-      const fromSection = sections[fromSectionIndex];
+      const newSections = JSON.parse(JSON.stringify(sections));
+      const fromSection = newSections[fromSectionIndex];
       const imageIndex = fromSection.images.findIndex(img => img.url === active.id);
+      
       if (imageIndex === -1) return;
 
-      const newSections = JSON.parse(JSON.stringify(sections));
-      const [movedImage] = newSections[fromSectionIndex].images.splice(imageIndex, 1);
-
-      if (fromSectionId === toSectionId) {
-        if (newImageIndex === -1) newImageIndex = newSections[toSectionIndex].images.length;
-        newSections[toSectionIndex].images.splice(newImageIndex, 0, movedImage);
+      const [movedImage] = fromSection.images.splice(imageIndex, 1);
+      
+      let newImageIndex = -1;
+      if (overType === 'image') {
+         newImageIndex = newSections[toSectionIndex].images.findIndex(i => i.url === over.id);
+      }
+      
+      if (newImageIndex === -1) {
+        newSections[toSectionIndex].images.push(movedImage);
       } else {
-        if (newImageIndex === -1) newImageIndex = newSections[toSectionIndex].images.length;
         newSections[toSectionIndex].images.splice(newImageIndex, 0, movedImage);
       }
+      
       onSectionsUpdate(newSections);
     }
   };
@@ -306,8 +350,9 @@ const GallerySections = ({id, collectionId, collectionName, sections, onSections
     <div className="gallery-sections">
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCenter}
+        collisionDetection={rectIntersection}
         onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
         autoScroll={false}
       >

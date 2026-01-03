@@ -15,6 +15,53 @@
     &.sleep{
         opacity: 0.5;
     }
+    &.sleep-sidebar {
+        width: 8px*8;
+        border-right: 0px solid $dark-1-5;
+        background-color: rgba(0,0,0,0.2);
+        
+        .label, .profile-settings, .storage-bars, .plan-labels, .expiry-label, .corner-tools {
+            opacity: 0 !important;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .menu-list {
+            padding: 8px*1.5;
+            padding-top: 0;
+            // Ensure icons are still centered and visible
+            .menu {
+                grid-template-columns: 8px*3; 
+                justify-content: center;
+                padding: 4px 0;
+                .icon {
+                    opacity: 0.6;
+                    transform: scale(1);
+                }
+            }
+        }
+
+        &:hover {
+            width: $sidebar-width;
+            opacity: 1;
+            background-color: $dark-3;
+            pointer-events: all;
+            
+            .label, .profile-settings, .storage-bars, .plan-labels, .expiry-label, .corner-tools {
+                opacity: 1 !important;
+                pointer-events: all;
+            }
+
+            .menu-list .menu {
+                grid-template-columns: 8px*3 auto;
+                justify-content: start;
+                padding: 4px 8px;
+                .icon {
+                    opacity: 0.9;
+                }
+            }
+        }
+    }
     .menu-list{
         padding: 8px*1.5;
         padding-top: 0;
@@ -28,6 +75,7 @@
             opacity: 0.0;
             transform: translateX(8px*0);
             display: flex;
+            display: none;
             width: 8px*8;
             color: $gray-accessible-dark;
             text-align: center;
@@ -924,6 +972,12 @@
             border: 1px solid transparent;
             margin-left: 0px;
             transition-duration: 0.1s;
+        }
+    }
+    &:hover{
+    transition-duration: 0.2s;
+        .menu-list .label{
+            display: flex;
         }
     }
 }

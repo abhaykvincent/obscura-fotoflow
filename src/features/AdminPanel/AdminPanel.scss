@@ -1,4 +1,5 @@
 @import '../../style/variables';
+@import './AdminControls.scss'; // Import the new SCSS file
 @import '../BillingHistory/BillingHistory.scss';
 
 .App .admin-panel {
@@ -10,7 +11,10 @@
         margin-top: 8px; // 8px*2
         margin-bottom: 8px; // 8px*2
     }
-
+    .admin-controls-header{
+        margin-top: 8px*4;
+        margin-left: -8px;
+    }
     .admin-dashboard {
         margin: 8px 0; // 8px*2 0
         margin-bottom: 8px*2;
@@ -18,7 +22,6 @@
         .cards {
             display: flex;
             gap: 8px*1.618*1.618*1.618; // 8px*2
-            margin: 8px 0; // 8px*1 0
             .group{
                 display: grid;
                 grid-template-columns: 1fr 1fr;
@@ -59,6 +62,10 @@
                             
                         background-size: 90%;
                         background-image:url('https://img.icons8.com/?size=30&id=61029&format=png&color=555555');
+                        }
+                        &.analytics{
+                            background-size: 90%;
+                            background-image:url('https://img.icons8.com/?size=100&id=108771&format=png&color=555555');
                         }
                     }
 
@@ -104,8 +111,8 @@
 
     .tabs {
         display: flex;
-        margin-bottom: 8px*2; // Add margin below tabs
-        gap: 8px;
+        margin-bottom: 8px*3; // Add margin below tabs
+        gap: 0px;
         .tab-button {            
             background-color: $dark-2 ;// Adjust with your primary color
             font-size: 1.2rem;
@@ -123,15 +130,50 @@
                 background-color: $dark-2 ;// Adjust with your primary color
 
             }
+            &:first-child{
+                border-radius: 6px 0px 0px 6px;
+            }
+            &:last-child{
+                border-radius:   0px 6px 6px 0px;
+            }
         }
 
         .tab-button.active {
-            background-color: none ;// Adjust with your primary color
+            background-color: rgba(255, 255, 255, 0.1);// Adjust with your primary color
             color: #fff;
+            border: 1px solid $gray4-default-dark;
             border-bottom: 2px solid $green-default-dark;
-            border-radius: 0;
+            border-radius: 4px 4px 4px 4px;
+            margin-top: -2px;
+            box-shadow: 0px 0px 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 10;
         }
     }
+        .actions{
+            display: grid;
+            grid-template-columns: auto auto;
+            justify-content:none;
+            margin-bottom: 8px*2;
+            .left-actions{
+                display: flex;
+                justify-content: start;
+                align-items: center;
+                gap:8px;
+            }
+            .right-actions{
+                display: grid;
+                justify-content: end;
+                align-items: center;
+            }
+        }
+
+                span.selected-group-name{
+                    color: $gray-default-dark;
+                    &::before{
+                        width: 8px*2;
+                        margin-right: 0;
+                    }
+                }
 
     .section-title {
         margin-bottom: 8px; // 8px*1
@@ -149,12 +191,61 @@
         padding: 0px; // Space around the section
         
     }
+
+    .search-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-input {
+            height: 2.2rem;
+            width: 8px*20; // Adjust as needed
+            padding: 8px 12px;
+            padding-right: 30px; /* Make space for the clear button */
+            margin-right: 8px;
+            border: 1px solid $dark-1;
+            border-radius: 6px;
+            background-color: $dark-3;
+            color: $light-0;
+            font-size: 1rem;
+            &:focus {
+                outline: none;
+                border-color: $green-accessible-dark;
+            }
+        }
+        
+    .clear-search-button {
+        position: absolute;
+        right: 8px*0.5; /* Position it inside the input field */
+        background: transparent;
+        border: none;
+        color: $gray3-default-light; /* Minimal highlight color */
+        cursor: pointer;
+        font-size: 1.4rem;
+        padding: 8px*1.5;
+        height: 100%;
+        display: flex;
+        align-items: center;
+
+        opacity: 0;
+        animation: fadeInLeft 0.1s 0.3s;
+        animation-fill-mode: forwards;
+        &:hover {
+
+            color: white; /* Slightly more highlight on hover */
+           
+        }
+        &:hover  ~ .search-input{
+                color: red;
+                }
+        
+    }
+
     .referal-codes-list {
         display: grid;
         position: relative;
         gap: 8px; // Space between support cards
-        padding: 8px; // Space around the section
-        margin-top: -8px*2;
         .clickable-row {
             cursor: pointer;
 
@@ -196,17 +287,7 @@
             }
         }
 
-        .actions {
-            text-align: right;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 10px;
-
-            .button {
-                margin-left: 8px;
-            }
-        }
+        
         .campainPlatform{
             width: auto;
             height: 8px*3;

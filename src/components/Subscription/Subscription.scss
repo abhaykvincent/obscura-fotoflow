@@ -225,6 +225,11 @@ span.iconic-gradient{
             }
         }
     }
+    .billing-history{
+        position: fixed;
+        right: 8px*4;
+        top: 8px*3;
+    }
 
     .plans-container{
         margin-left: 8px*2;
@@ -238,7 +243,7 @@ span.iconic-gradient{
             grid-template-columns: 8px*12 auto 8px*12;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px*2;
+            margin-bottom: 8px*6;
             margin-top: -8px*1;
             padding: 8px*0 8px*2;
             .subscriptions-heading{
@@ -334,6 +339,22 @@ span.iconic-gradient{
                 color: $green-dark-accessible-light;
             }
         }
+        
+        .badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: $green-default-light;
+            color: $dark-2;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-bottom-left-radius: 8px;
+            border-top-right-radius: 8px;
+            z-index: 10;
+            box-shadow: -1px 1px 4px rgba(0,0,0,0.3);
+        }
+
         .plan-name{
             font-size: 1.4rem;
             color: $gray5-accessible-light;
@@ -393,6 +414,8 @@ span.iconic-gradient{
                 h1{
                     font-size: 1.5rem;
                     opacity: 0;
+                        margin-bottom: 8px*2;
+
                     transform: translateX(8px*3);
                     animation-name: green-storage-text-upsell;
                     animation-duration: 0.1s;
@@ -478,6 +501,16 @@ span.iconic-gradient{
                     margin-top: 8px;
                     margin-bottom: 8px;
                     color: $gray5-accessible-light;
+                }
+            }
+            .see-more-features {
+                color: $green-default-light;
+                font-size: 0.8rem;
+                cursor: pointer;
+                margin-top: 8px;
+                text-decoration: underline;
+                &:hover {
+                    color: $green-accessible-light;
                 }
             }
         }
@@ -601,7 +634,7 @@ span.iconic-gradient{
                 box-shadow: 1px 2px 1px 1px #000000,1px -1px 16px 2px #537f2835;
             }
         }
-        &.company{
+        &.enterprise{
             background-color: $dark-3;
             overflow: hidden;
             opacity: 1;
@@ -711,16 +744,21 @@ span.iconic-gradient{
             }
         }
         &.studio{
-            border: 1px solid #1b3204 !important;
-            border-top: 1px solid #65a222!important;
-            border-left: 1px solid #2f510b!important;
-            box-shadow: 0px 2px 8px black!important;
+            border: 2px solid #54a134 !important;
+            border-top: 2px solid #65a222 !important;
+            //box-shadow: 0px 8px 24px rgba(0,0,0,0.6), 0 0 20px rgba(84, 161, 52, 0.3) !important;
+            transform: scale(1.05);
+            z-index: 10;
+            position: relative;
+
+    margin-top: -8px;
             .plan-name{
                 position: relative;
                 text-align: center;
                 z-index: 2;
                 color: $green-accessible-dark;
-
+                font-weight: 700;
+                margin-top: 8px;
             }
             .cover{
                 
@@ -745,8 +783,22 @@ span.iconic-gradient{
                         content: "";
                     }
             }
+            .plan-features p{
+                color: $gray3-default-light;
+            }
+            .button.primary {
+                background: linear-gradient(135deg, #54a134 0%, #3e7a25 100%);
+                color: white;
+                border: none;
+                font-weight: 600;
+                box-shadow: 0 4px 15px rgba(84, 161, 52, 0.4);
+                &:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 20px rgba(84, 161, 52, 0.6);
+                }
+            }
         }
-        &.core{
+        &.free{
             opacity: 0.8;
             .plan-name{
 
@@ -784,7 +836,7 @@ span.iconic-gradient{
         }
         &.agency,&.enterprise,&.premium,&.print-shop{
             .cover{
-                padding: 8px*3;
+                //padding: 8px*3;
             }
         }
         &.active{
@@ -903,6 +955,11 @@ span.iconic-gradient{
     .plans{
         grid-template-columns: minmax(100px, 240px) minmax(100px, 240px) minmax(100px, 240px);
         column-gap: 8px*4;
+        
+        .plan.studio {
+            transform: scale(1);
+            margin-top: 0;
+        }
     }
     .home .section .projects{
         .project{
@@ -978,6 +1035,8 @@ span.iconic-gradient{
             padding: 8px*2;
             height: 8px*6.8;
             font-size: 1.4rem;
+            line-height: 2.4rem !important;
+
         }
         
         

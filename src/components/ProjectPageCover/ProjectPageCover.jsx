@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { db, storage } from "../../firebase/app";
+import { db } from "../../firebase/app";
 import { doc, updateDoc } from "firebase/firestore";
 import { selectDomain, selectUserStudio } from "../../app/slices/authSlice";
 import { showAlert } from "../../app/slices/alertSlice";
@@ -10,11 +10,15 @@ import { updateProjectCover, updateProjectName } from "../../app/slices/projects
 import { convertMegabytes } from "../../utils/stringUtils";
 import { ProjectStatus } from "../Project/ProjectStatus/ProjectStatus";
 import { getGalleryURL } from "../../utils/urlUtils";
+import { getStorageForDomain } from "../../utils/uploadOperations";
+import { selectStudio } from "../../app/slices/studioSlice";
+import "./ProjectPageCover.scss";
 
-export const ProjectCover = ({ project }) => {
+export const ProjectCover = ({ project, projectDashboardView, setProjectDashboardView }) => {
     const dispatch = useDispatch();
     const currentStudio = useSelector(selectUserStudio);
     const domain = useSelector(selectDomain);
+    const studio = useSelector(selectStudio);
 
     const [focusPoint, setFocusPoint] = useState( project?.focusPoint);
     const [focusPointLocal, setFocusPointLocal] = useState(project?.focusPoint);
@@ -58,8 +62,9 @@ export const ProjectCover = ({ project }) => {
         if (!file) return;
     
         try {
+            const customStorage = await getStorageForDomain(domain, studio.bucketUrl);
             // Define the storage path
-            const storageRef = ref(storage, `studios/${currentStudio.domain}/projects/${project.id}/cover.jpg`);
+            const storageRef = ref(customStorage, `studios/${currentStudio.domain}/projects/${project.id}/cover.jpg`);
     
             // Upload the file to Firebase Storage
             await uploadBytes(storageRef, file);
@@ -131,7 +136,8 @@ export const ProjectCover = ({ project }) => {
                         <p>1.6K <span>Views</span></p>
                     </div> */}
                     <div className="client">
-                        
+                        <div className="project-name-wrapper">
+
                         <div className="project-name-editor">
                             { isEditing ? (
                                 <div className="editable-data ">
@@ -152,6 +158,14 @@ export const ProjectCover = ({ project }) => {
                             }
                             <div className="edit-pen" onClick={handleNameDoubleClick} ></div>
                         </div>
+                        <div className="project-tags">
+
+                        <div className="tags">
+                            {!isEditing &&<div className="tag type">{project?.type}</div>}
+                            {/* <div className="tag">Hindu</div> */}
+                        </div>
+                        </div>
+                        </div>
 
 
                         <div className="link-pin">
@@ -165,43 +179,17 @@ export const ProjectCover = ({ project }) => {
                                     </a>
                                 </div>
                                 </div>
-                                <div className="button primary outline text-only  icon copy"></div>
+                                <div className="button primary outline text-only  icon copy" onClick={() => {
+                                     navigator.clipboard.writeText(getGalleryURL('share',currentStudio?.domain,project?.id));
+                                     dispatch(showAlert({ type: "success", message: "Link copied to clipboard!" }));
+                                }}></div>
 
                             </div>
                                 {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
 
                         </div>
                         </div> 
-                        </div>
 
-                        <div className="project-tags">
-
-                        <div className="tags">
-                            {!isEditing &&<div className="tag type">{project?.type}</div>}
-                            {/* <div className="tag">Hindu</div> */}
-                        </div>
-                        </div>
-                        <div className="action-buttons">
-
-                            <ProjectStatus project={project} />
-
-                            <div className="button secondary outline icon archive"> Archive</div>
-                        
-                            <div className="cover-info project-expiry project-archive">
-                                <div className="icon-show expire"></div>
-
-                                    <p>Archives 
-                                        <span> in </span> 
-                                        {
-                                            project?.createdAt ? 
-                                            Math.ceil(((new Date(project?.createdAt).getTime() + 90 * 24 * 60 * 60 * 1000) - Date.now()) / (1000 * 60 * 60 * 24))
-                                            : 0
-                                        } Days</p>
-
-                            </div>
-                        
-                        </div>
-                        
                         {
                             project.pin&&
                             <div className="bottom-right">
@@ -231,6 +219,16 @@ export const ProjectCover = ({ project }) => {
                             )}
                             </div>
                         }
+                    </div>
+
+                        <div className="action-buttons">
+
+                            <ProjectStatus project={project} />
+
+                        
+                        </div>
+                        
+                        
                     
                 </div>
                 
@@ -257,10 +255,6 @@ export const ProjectCover = ({ project }) => {
             {
             !isSetFocusButton && project.pin? 
                 <div className="cover-tools">
-                    {/* <div
-                        className="button transparent-button secondary icon set-focus"
-                        onClick={setFocusButtonClick}
-                    >Set focus</div> */}
                     <div className="button transparent-button secondary icon image">
                         <label htmlFor={`change-cover-${project.id}`} style={{ cursor: "pointer" }}>
                             Change Cover
@@ -276,10 +270,6 @@ export const ProjectCover = ({ project }) => {
                 </div>
                 :
                 <div className="cover-tools">
-                    {/* <div
-                        className="button transparent-button primary icon set-focus"
-                        onClick={ () => saveFocusPoint(focusPointLocal)}
-                    >Save</div> */}
                 </div>
             }
             {isSetFocusButton && project?.projectCover && (

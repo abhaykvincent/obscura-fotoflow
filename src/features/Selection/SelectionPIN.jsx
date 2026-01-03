@@ -41,7 +41,7 @@ export default function SelectionPIN() {
   return (
     <div className="select-project">
       <div className="project-header">
-        <Link to={`/${studioName}/share/${project.id}`} className="button back-btn icon back">
+        <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button back-btn icon back">
           Back to Gallery
         </Link>
         <img className='banner' src={images[0] ? images[0].url : ''} alt="Project Banner" />
@@ -49,7 +49,7 @@ export default function SelectionPIN() {
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
         </div>
       </div>
-      <GalleryPIN setAuthenticated={setAuthenticated} projectPin={project.pin} />
+      <GalleryPIN setAuthenticated={setAuthenticated} projectPin={project.pin} projectId={projectId} />
     </div>
   );
 }

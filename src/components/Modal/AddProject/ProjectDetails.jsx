@@ -79,6 +79,8 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
       <div className="field team-field">
         <label>Team</label>
         <div className="team-members">
+          <div className="team-member-wrap">
+
           <div className="team-member">
             <div
               className="profile-image"
@@ -88,19 +90,21 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
               
             </span>
           </div>
-          <p>Auto assigned</p>
+          <p className='auto-asigned-label'>Auto assigned</p>
+          </div>
+          <div className="button disabled add-crew icon add">Crew</div>
         </div>
       </div>
       <div className="field live-field">
-        <label></label>
         <div
           className={`advanced-toggle ${showAdvanced ? 'down' : 'up'}`}
           onClick={() => setShowAdvanced(!showAdvanced)}
         >
-          <span>{showAdvanced ? 'Hide Options' : 'Advanced'}</span>
+          <span>{showAdvanced ? 'Hide' : 'Advanced'}</span>
           <span className={`arrow`}></span>
 
         </div>
+        <div className="advanced-label">Validity {projectData.projectValidityMonths} { projectData.projectValidityMonths > 1 ? `years`:`year`}</div>
       </div>
       <div className={`advanced-options ${showAdvanced ? 'show' : ''}`}>
         <div className="advanced-options-inner">
@@ -124,7 +128,7 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
                 ))}
               </div>
               <div className="info">
-                Files will be deleted after <span> <b className={animateValidity ? 'validity-change-animation' : ''}>{projectData.projectValidityMonths} years</b>.</span>
+                Files will be deleted after <span> <b className={animateValidity ? 'validity-change-animation' : ''}>{projectData.projectValidityMonths} { projectData.projectValidityMonths > 1 ? `years`:`year`}</b>.</span>
               </div>
             </div>
           </div>

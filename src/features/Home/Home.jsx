@@ -17,12 +17,15 @@ import { getEventTimeAgo } from '../../utils/dateUtils';
 import AddProjectModal from '../../components/Modal/AddProject/AddProject';
 import WelcomeModal from '../../components/Modal/WelcomeModal/WelcomeModal';
 import { fetchUserByEmail } from '../../firebase/functions/firestore';
+import { acceptSelectionReset, declineSelectionReset, getSelectionRequests, removeRequestLocally, selectSelectionRequests } from '../../app/slices/selectionRequestSlice';
+import { showAlert } from '../../app/slices/alertSlice';
 
 function Home() {
     const dispatch = useDispatch()
     const projects = useSelector(selectProjects)
     const defaultStudio = useSelector(selectUserStudio)
     const user = useSelector(selectUser);
+    const selectionRequests = useSelector(selectSelectionRequests);
     const navigate = useNavigate();
 
     document.title = `FotoFlow | ${defaultStudio.name}`;
@@ -33,6 +36,12 @@ function Home() {
     const [upcommingShoots, setUpcommingShoots] = useState([])
 
     const modals = useSelector(selectModal);
+
+    useEffect(() => {
+        if (defaultStudio?.domain) {
+            dispatch(getSelectionRequests(defaultStudio.domain));
+        }
+    }, [defaultStudio, dispatch]);
 
     useEffect(() => {
         const checkWelcomeStatus = async () => {
@@ -124,6 +133,37 @@ function Home() {
                         >New</div>
                     </div>
                 </div>
+                {selectionRequests.length > 0 && (
+                    <div className="section requests">
+                        <h3 className='section-heading'>Selection Reset Requests</h3>
+                        <div className="selection-requests-list">
+                            {selectionRequests.map((request) => (
+                                <div key={request.id} className="selection-request-item island">
+                                    <div className="request-info">
+                                        <p className="request-text">Client requested to select again for <b>{request.projectName}</b></p>
+                                    </div>
+                                    <div className="request-actions">
+                                        <div className="button secondary small" onClick={() => {
+                                            dispatch(declineSelectionReset({ domain: defaultStudio.domain, projectId: request.projectId }));
+                                            dispatch(showAlert({ type: 'info', message: 'Selection reset request cancelled.' }));
+                                        }}>Reject</div>
+                                        <div className="button primary small outline" onClick={() => {
+                                            dispatch(acceptSelectionReset({ domain: defaultStudio.domain, projectId: request.projectId }));
+                                            dispatch(showAlert({ type: 'success', message: 'Selection reset allowed!' }));
+                                        }}>Accept</div>
+                                        <div className="button primary small" onClick={() => {
+                                            const project = projects.find(p => p.id === request.projectId);
+                                            if (project) {
+                                                dispatch(removeRequestLocally(request.projectId));
+                                                navigate(`/${defaultStudio.domain}/project/${project.id}`, { state: { openModal: 'shareGallery' } });
+                                            }
+                                        }}>Manage</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
                 {
                     projects.length > 0 ? (
                         <>
@@ -145,7 +185,7 @@ function Home() {
                                 </div>
                             </div>
                             }
-                            <div className="section recent">
+                            {recentProjects.length !== 0 && <div className="section recent">
                                 <h3 className='section-heading'>Recent Projects</h3>
                                 <div className="projects recent">
                                     {
@@ -173,7 +213,7 @@ function Home() {
                                         </div>
                                     </Link>
                                 </div>
-                            </div>
+                            </div>}
 
                         </>
                     ) :

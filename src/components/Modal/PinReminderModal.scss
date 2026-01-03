@@ -1,0 +1,88 @@
+@import '../../style/variables';
+@import '../../style/components';
+
+.pin-reminder {
+  .pin-modal {
+    max-width: 400px;
+    width: 90%;
+    
+    .pin-display-container {
+      padding: 16px 8px;
+      display: flex;
+      margin: 0 8px*4;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      text-align: center;
+      
+      .pin-instruction {
+        font-size: 0.95rem;
+        color: $gray4-default-light;
+        margin: 0;
+        opacity: 0.8;
+      }
+      
+      .pin-value-animated {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin: 10px 0;
+        
+        span {
+          display: inline-block;
+          font-size: 3.5rem;
+          font-weight: 700;
+          color: $green-accessible-light;
+          text-shadow: 0 0 20px rgba($green-accessible-light, 0.3);
+          animation: pinPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        }
+      }
+      
+      .progress-container {
+          width: 100%;
+          height: 4px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 2px;
+          overflow: hidden;
+          margin-top: 10px;
+          
+          .progress-bar {
+              height: 100%;
+              background: $green-accessible-light;
+              transition: width 1s linear;
+          }
+      }
+      
+      .auto-close-label {
+        font-size: 0.85rem;
+        color: $gray-default-dark;
+        margin: 0;
+      }
+    }
+  }
+}
+
+@keyframes pinPop {
+  0% {
+    transform: translateY(20px) scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+// Support for closing animation if handled by modalSlice/App
+.modal-container.closingModal {
+    .pin-modal {
+        animation: modalOut 0.3s ease forwards;
+    }
+}
+
+@keyframes modalOut {
+    to {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+}

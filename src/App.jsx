@@ -35,6 +35,7 @@ import PortfolioWebsite from './features/Website/Website';
 import Settings from './features/Settings/Settings';
 import BillingHistory from './features/BillingHistory/BillingHistory';
 import SmartGallery from './features/SmartGallery/SmartGallery';
+import UserProfile from './features/AdminPanel/UserProfile/UserProfile';
 
 // Components
 import Alert from './components/Alert/Alert';
@@ -79,6 +80,7 @@ const AuthWrapper = ({ isAuthenticated }) => {
 // APP
 export default function App() {
   const dispatch = useDispatch();
+  const location = useLocation();
   const user = useSelector(selectUser);
   const authLoading = useSelector(selectAuthLoading);
 
@@ -107,7 +109,7 @@ export default function App() {
   useEffect(() => {
     if (isAuthenticated && currentDomain !== 'guest') {
 
-  dispatch(showLoading('Loading App ..'))
+  dispatch(showLoading({context:` Loading App ..`,subcontext:` `}))
       // Fetching data for studio
       console.log(`%cFetching data for ${currentDomain}...`,`color: gray`)
       dispatch(fetchProjects({currentDomain}))
@@ -164,7 +166,7 @@ export default function App() {
   }
   // RENDER
   return (
-    <div className={`App ${isLightModePage() && 'light-mode-page'}`}>
+    <div className={`App ${isLightModePage() ? 'light-mode-page' : ''}`}>
       <LoadingScreen />
       <HotKeys keyMap={keyMap} handlers={handlers} className='app-wrap'>
       {/* <SupportIcon userId={defaultStudio?.domain}/> */}
@@ -176,6 +178,8 @@ export default function App() {
           <UploadProgress/>
           <UpgradeModal/>
           <TrialStatusModal/>
+
+          {/* <SupportIcon/> */}
         </>
       )}
       {
@@ -220,6 +224,7 @@ export default function App() {
 
                 <Route path="/admin" element={<AdminPanel />} />
                 <Route path="/admin/:page" element={<AdminPanel />} />
+                <Route path="/admin/user/:userId" element={<UserProfile />} />
                 <Route path="/tools" element={<DeveloperTools />} />
               </Route>
 

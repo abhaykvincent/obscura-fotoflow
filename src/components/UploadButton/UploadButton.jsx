@@ -10,6 +10,7 @@ import { handleUpload } from '../../utils/uploadOperations';
 import { addAllFileSizesToMB, validateFileTypes, extractExifData } from '../../utils/fileUtils';
 import { createNotification } from '../../app/slices/notificationSlice';
 import { fetchProjects, updateCollectionStatus } from '../../app/slices/projectsSlice';
+import { addUploadedFilesToFirestore, addUploadCompletionEventToFirestore } from '../../firebase/functions/firestore';
 
 // import { fetchProject } from '../../firebase/functions/firestore'; // fetchProject seems unused in this component
 
@@ -35,6 +36,36 @@ function UploadButton({
   const storageLimit = useSelector(selectStudioStorageUsage);
   const studiodata = useSelector(selectStudio);
   const currentStudio = useSelector(selectUserStudio);
+
+  const handleDummyUpload = async (limit) => {
+    setIsPhotosImported(true);
+    const dummyFiles = [];
+    for (let i = 0; i < limit; i++) {
+        dummyFiles.push({
+            name: `dummy-image-${i}.jpg`,
+            url: `https://picsum.photos/seed/${i + Math.random()}/1200/800`,
+            lastModified: Date.now(),
+            dateTimeOriginal: new Date().toISOString(),
+            dimensions: { width: 1200, height: 800 },
+            thumbAvailable: true,
+        });
+    }
+
+    try {
+        await addUploadedFilesToFirestore(domain, id, collectionId, 0, dummyFiles);
+        await addUploadCompletionEventToFirestore(domain, id, collectionId, dummyFiles, 0, collectionName);
+        
+        setImageUrls(prevUrls => [...prevUrls, ...dummyFiles]);
+        localDispatch(showAlert({ type: 'success', message: '534 Dummy files added successfully!' }));
+        localDispatch(fetchProjects({ currentDomain: domain }));
+    } catch (error) {
+        console.error('Dummy upload failed:', error);
+        localDispatch(showAlert({ type: 'error', message: 'Dummy upload failed, check console for details.' }));
+    } finally {
+        setIsPhotosImported(false);
+    }
+  };
+
   const handleFileInputChange = useCallback(async (event) => {
     const selectedFiles = Array.from(event.target.files);
     const importFileSize = addAllFileSizesToMB(selectedFiles);
@@ -67,7 +98,7 @@ function UploadButton({
         // setUploadStatus('open'); // This was local, Redux state will be set by handleUpload via dispatch
 
         // Handle upload Operation - Updated call
-        const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch, collectionName);
+        const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch, collectionName, studiodata.bucketUrl);
 
         const endTime = Date.now();  // Record the end time
         const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
@@ -106,11 +137,12 @@ function UploadButton({
               domain,
               projectId: id,
               collectionId,
-              status: 'visible'
+              status: 'visible',
+              selectionGallery:true
             }));
           console.log(domain)
         setTimeout(() => {
-          dispatch(openModal('shareGallery'))
+          dispatch(openModal('uploadCompleted'))
         }, 1000);
         
 
@@ -137,6 +169,14 @@ function UploadButton({
         Upload
       </label>
       <input id="fileInput" type="file" multiple onChange={handleFileInputChange} />
+      {process.env.NODE_ENV === 'development' && (
+        <div className="dummy-buttons">
+          <button onClick={()=>handleDummyUpload(128)} className="button secondary">128</button>
+          <button onClick={()=>handleDummyUpload(256)} className="button secondary">256</button>
+          <button onClick={()=>handleDummyUpload(512)} className="button secondary">512</button>
+          <button onClick={()=>handleDummyUpload(1024)} className="button secondary">1024</button>
+        </div>
+      )}
     </>
   );
 }

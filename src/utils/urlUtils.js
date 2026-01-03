@@ -9,7 +9,7 @@
       }
 // get website url at https://www.website.com/domain
 export function getWebsiteURL(domain) {
-    return `${window.location.protocol}//${window.location.host}/${domain}/share/portfolio`;
+    return `${window.location.protocol}//${window.location.host}/${domain}/smart-gallerys/portfolio`;
   }
   export function isDomainOnlyURL(url) {
     const host = `${window.location.protocol}//${window.location.host}`;
@@ -46,6 +46,7 @@ export function getThumbnailUrl(imageUrl,collectionId) {
 }
 
 export function getThumbnailUrl1(originalUrl) {
+  if(!originalUrl) return;
     // Parse the URL into a URL object
     const url = new URL(originalUrl);
     
@@ -55,6 +56,7 @@ export function getThumbnailUrl1(originalUrl) {
     // Split the pathname at '/o/' to separate the prefix and object path
     const parts = pathname.split('/o/');
     if (parts.length !== 2) {
+      return originalUrl;
       throw new Error('Invalid URL format: missing /o/');
     }
     

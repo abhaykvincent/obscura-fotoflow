@@ -62,7 +62,7 @@ animation-timing-function: ease-out;
     border-left: 1px solid rgba(255, 255, 255, 0.3);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     border-right: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 1px 1px 4 px 2px rgba(253, 253, 253, 0.01), 
+    box-shadow: 1px 1px 4px 2px rgba(253, 253, 253, 0.01),
                 0px 0px 16px 6px rgba(0, 0, 0, 0.3);
 
     -webkit-backdrop-filter: blur(3px);
@@ -236,9 +236,9 @@ animation-timing-function: ease-out;
         position: relative;
         top:0;
         left:0;
-        height: 8PX*2;
-        width: 8PX*2;
-        color: red
+        height: 8px * 2;
+        width: 8px * 2;
+        color: red;
         }
     }
     .bigger{
@@ -269,12 +269,21 @@ animation-timing-function: ease-out;
         border-right: 1px solid $gray2-accessible-dark;
         }
     }
-
+.auto-asigned-label{
+  text-align: center;
+  color: $gray5-default-dark;
+  margin-top: 4px;
+}.advanced-label{
+  color: $gray4-default-dark;
+  margin-top: 4px;
+  margin-left: 6px;
+}
     .team-members{
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: 8px;
+        align-items: flex-start;
+        gap: 8px*2;
         transition-duration: 0.4s;
         .team-member{
         display: flex;
@@ -375,6 +384,8 @@ animation-timing-function: ease-out;
           border-left: 1px solid $green-accessible-light;
           border-top: 1px solid $green-accessible-light;
           background-color: $dark-3;
+                   transform: translateY(2px);
+
           }
           // hide radio buttons
           input[type="radio"] {
@@ -427,6 +438,8 @@ animation-timing-function: ease-out;
       
     }
     .project-validity-wrap{
+
+      margin-left: 8px;
       label{
         margin:0;
       }
@@ -438,8 +451,14 @@ animation-timing-function: ease-out;
         .radio-button-group{
         margin: 8px*0.5;
         margin-left: 0px;
+        transform: translateY(0px);
               border: 1px solid $dark-0;
               border-radius: 6px;
+              &:active{
+
+    transform: translateY(2px);
+    transition-duration: 0.2s;
+              }
           label{
               padding: 8px*1.6 *1.2  8px*1.6 *3;
             font-size: 1.3rem;
@@ -549,7 +568,7 @@ animation-timing-function: ease-out;
     position: absolute;
     bottom: 0px;
     border-top: 1px solid $dark-1;
-    border-radius: 0px 0px 8px*1.5 8px*1.5;
+    border-radius: 8px*1 8px*1 8px*1.5 8px*1.5;
     padding: 8px*1 8px*2 ;
     background: linear-gradient(0deg, rgba(0,0,0,0) 70%, rgba(74, 92, 66, 0.1) 100%);
     backdrop-filter: blur(8px);
@@ -645,7 +664,7 @@ animation-timing-function: ease-out;
     display: grid;
     position: relative;
     justify-content: center;
-    background-color: $dark-2-5;
+    background-color: rgba(0, 0, 0, 0.1);
     border: 1px solid $gray6-default-dark;
     border-left: 1px solid $gray5-default-dark;
     border-top: 1px solid $gray5-default-dark;
@@ -734,19 +753,41 @@ animation-timing-function: ease-out;
         } 
         .logo-container{
         display: grid;
-        justify-content: end;
+        justify-content: center;
         }
         &.google{
-        background-color: $dark-3;
-        box-shadow: 2px 3px 4px 1px rgba(0, 0, 0, 0.8);
-        border: 1px solid $gray-default-light;
+        background: linear-gradient(345deg, black 30%,#1b25133c 85%, #27352270 100%);
+        box-shadow:
+         2px 4px 4px rgba(0, 0, 0, 0.1);
+        padding-top: 11px;
+        border-top: 1px solid #212c1eec;
+        border-left: 1px solid #212c1eec;
+        border-right: 1px solid #49723fec;
+        border-bottom: 1px solid #212c1eec;
         opacity: 0;
-        animation: fadeInUp 0.35s ease-in 1s;
+        animation: primary-action-signin  0.35s ease-in 1s;
         animation-fill-mode: forwards;
+        text-shadow: 1px 1px 3px black;
         &:hover{
         border: 1px solid $gray6-accessible-light;
         } 
-
+        @keyframes primary-action-signin {
+            0% {
+              opacity: 0;
+              transform: translateY(2px);
+              box-shadow:
+                
+                  2px 4px 4px rgba(0, 0, 0, 0.1);  
+            }
+            100% {
+              opacity: 1;
+              transform: translateY(0);
+              box-shadow:
+              2px 4px 4px rgba(0, 0, 0, 0.8),
+              inset 2px 2px 2px #20151f9d,
+              inset 4px 4px 8px #3a493542;
+            }
+          }
         }
         &.apple{
         color: $gray3-default-dark;
@@ -870,7 +911,7 @@ p.open-with-login-label{
   .project-details{
     .field{
 
-      grid-template-columns: 8px*10 8px*36;
+      grid-template-columns: 8px*14 8px*36;
     }
   }
 }
@@ -1224,6 +1265,19 @@ transition-delay: 0.2s;
             margin-left: 8px;
             margin-bottom: 4px;
           }
+          .advanced-label{
+            text-align: left;
+            margin-top: 0;
+          }
+          &.live-field{
+            display: flex;
+            flex-flow: row-reverse;
+            justify-content: space-between;
+            margin-bottom: -8px;
+            z-index: 1;
+
+
+          }
           .radio-button-group{
             label{
               text-align: left;
@@ -1239,7 +1293,7 @@ transition-delay: 0.2s;
           }
         }
         .project-validity-options{
-          margin-top: 8px*2;
+          margin-top: 8px*1;
           &.template-options{
             display: grid;
             grid-template-columns: 1fr ;

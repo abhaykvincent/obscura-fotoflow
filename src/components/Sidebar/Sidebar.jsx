@@ -56,7 +56,7 @@ function Sidebar() {
   const archiveUsedPercentage = (archiveQuotaMB > 0) ? (storageUsedMB / archiveQuotaMB) * 100 : 0; 
 
   return (
-    <div className={`sidebar ${location.pathname === `/${studioName}/home` ? 'sleep-sidebar' : 'sleep-sidebar'}`}>
+    <div className="sidebar sleep-sidebar">
 
       <div className="menu-list">
         <Link to={`/${studioName}/home`}>

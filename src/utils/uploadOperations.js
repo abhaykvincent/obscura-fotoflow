@@ -4,8 +4,10 @@ import {
     ref,
     list,
     uploadBytes,
+    getStorage,
+    connectStorageEmulator,
 } from "firebase/storage";
-import { db, storage } from '../firebase/app';
+import { db, storage as defaultStorage, app } from '../firebase/app';
 import { delay } from "./generalUtils";
 import { showAlert } from "../app/slices/alertSlice";
 import { 
@@ -21,8 +23,46 @@ import { fetchProjects } from "../app/slices/projectsSlice";
 
 import imageCompression from 'browser-image-compression';
 import { addAllFileSizesToMB, extractExifData } from "./fileUtils";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { set } from "date-fns";
+
+const storageInstances = {};
+
+export const getStorageForDomain = async (domain, bucketUrl) => {
+    if (storageInstances[domain]) {
+        return storageInstances[domain];
+    }
+    let finalBucketUrl = bucketUrl;
+
+    if (!finalBucketUrl) {
+        const studioRef = doc(db, "studios", domain);
+        const studioSnap = await getDoc(studioRef);
+
+        if (studioSnap.exists()) {
+            const studioData = studioSnap.data();
+            if (studioData.bucketUrl) {
+                finalBucketUrl = studioData.bucketUrl;
+            }
+        }
+    }
+
+    // If a bucketUrl is found, create and connect a new storage instance.
+    if (finalBucketUrl) {
+        const newStorage = getStorage(app, finalBucketUrl);
+
+        if (process.env.NODE_ENV === 'development') {
+            const EMULATOR_HOST = process.env.REACT_APP_EMULATOR_HOST;
+            const EMULATOR_PORT = parseInt(process.env.REACT_APP_EMULATOR_PORT, 10);
+            connectStorageEmulator(newStorage, EMULATOR_HOST, EMULATOR_PORT);
+        }
+
+        storageInstances[domain] = newStorage;
+        return newStorage;
+    }
+
+    // If no bucketUrl is found for the domain, fall back to the default storage.
+    return defaultStorage;
+}
 
 // Image Compression
 const compressImages = async (files, maxWidthOrHeight) => {
@@ -46,7 +86,7 @@ const metadata = {
   };
 // File Single upload function
 // Remove setUploadLists, add dispatch and fileId
-export const uploadFile = async (domain, id, collectionId, file, dispatch, fileId, dateTimeOriginal, dimensions) => {
+export const uploadFile = async (storage, domain, id, collectionId, file, dispatch, fileId, dateTimeOriginal, dimensions) => {
     const MAX_RETRIES = 5;
     const INITIAL_RETRY_DELAY = 500;
     let retries = 0;
@@ -171,7 +211,7 @@ export const uploadFile = async (domain, id, collectionId, file, dispatch, fileI
 
 // Upload a slice of files with sliceSize : 5
 // Remove setUploadLists, add dispatch
-const sliceUpload = async (domain, slice, id, collectionId, dispatch, originalFilesInfo) => {
+const sliceUpload = async (storage, domain, slice, id, collectionId, dispatch, originalFilesInfo) => {
     // originalFilesInfo is an array of {name, id} for files in this slice
     // to correctly map compressed files back to their original IDs.
 
@@ -197,14 +237,14 @@ const sliceUpload = async (domain, slice, id, collectionId, dispatch, originalFi
             const fileId = originalFile.id; // This is the crucial part: use the pre-generated ID
             // Create a new File object for the compressed data but with original name for storage path
             const namedCompressedFile = new File([compressedFile], originalFile.rawFile.name, { type: compressedFile.type });
-            return uploadFile(domain, id, `${collectionId}-thumb`, namedCompressedFile, dispatch, fileId);
+            return uploadFile(storage, domain, id, `${collectionId}-thumb`, namedCompressedFile, dispatch, fileId);
         });
 
         const uploadPromises = compressedFiles.map((compressedFile, index) => {
             const originalFile = slice[index];
             const fileId = originalFile.id;
             const namedCompressedFile = new File([compressedFile], originalFile.rawFile.name, { type: compressedFile.type });
-            return uploadFile(domain, id, collectionId, namedCompressedFile, dispatch, fileId, originalFile.dateTimeOriginal, originalFile.dimensions);
+            return uploadFile(storage, domain, id, collectionId, namedCompressedFile, dispatch, fileId, originalFile.dateTimeOriginal, originalFile.dimensions);
         });
         
         // Combine all upload promises and resolve them concurrently
@@ -222,7 +262,10 @@ const sliceUpload = async (domain, slice, id, collectionId, dispatch, originalFi
 
 // Upload ENTRY POINT
 // Remove setUploadLists, setUploadStatus (local setters), add dispatch
-export const handleUpload = async (domain, files, id, collectionId, importFileSize, dispatch, collectionName, sectionId, retries = 2, sliceSize = 32 ) => {
+export const handleUpload = async (domain, files, id, collectionId, importFileSize, dispatch, collectionName, sectionId, retries = 2, sliceSize = 32, bucketUrl ) => {
+    
+    console.log(bucketUrl)
+    const storage = await getStorageForDomain(domain, bucketUrl);
     console.log(domain, files, id, collectionId, importFileSize, dispatch, collectionName, retries, sliceSize)
     // 1. Generate initialFileObjects with unique IDs for Redux state
     // Using file.name as fileId here, acknowledge potential uniqueness issues.
@@ -312,7 +355,7 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
             console.groupCollapsed('Uploading Slice ' + (i / sliceSize + 1) + ' of ' + Math.ceil(filesWithIds.length / sliceSize));
             
             // Pass dispatch and the current slice (which includes fileId)
-            const results = await sliceUpload(domain, sliceOfFilesWithIds, id, collectionId, dispatch);
+            const results = await sliceUpload(storage, domain, sliceOfFilesWithIds, id, collectionId, dispatch);
             uploadedFilesCollector.push(...results); // results is an array of promises from uploadFile
 
             const endTime = Date.now();
@@ -449,7 +492,7 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
 // Upload Cover Photo
 export const uploadCover = async (file, project) => {
 // Upload a slice of files with sliceSize : 5
-
+    const storage = await getStorageForDomain(project.domain);
     const storageRef = ref(storage, `${project.domain}/${project.id}/covers/${file.name}`);
     await uploadBytes(storageRef, file);
     const newCoverUrl = await getDownloadURL(storageRef);
@@ -460,5 +503,17 @@ export const uploadCover = async (file, project) => {
     return newCoverUrl;
 };
 
+// Upload Studio Logo
+export const uploadStudioLogo = async (file, studioDomain) => {
+    const storage = await getStorageForDomain(studioDomain);
+    const storageRef = ref(storage, `${studioDomain}/branding/logo/${file.name}`);
+    await uploadBytes(storageRef, file);
+    const newLogoUrl = await getDownloadURL(storageRef);
+
+    const studioDocRef = doc(db, "studios", studioDomain);
+    await updateDoc(studioDocRef, { studioLogo: newLogoUrl });
+
+    return newLogoUrl;
+};
 
 // Firestore Database

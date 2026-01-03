@@ -230,7 +230,7 @@
             .right{
                 .status-signal{
                     position: absolute;
-                    left: 6px;
+                    right: 6px;
                     top: 6px;
                     height: 6px;
                     width: 6px;
@@ -319,7 +319,7 @@
                     line-height: 1rem;
                 }
                 .icon{
-                    padding: 8px*1;
+                    padding: 8px*0;
                     background-size: 80%;
                     background-position: center;
                     opacity: 0.5;

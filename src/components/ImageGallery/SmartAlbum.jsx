@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Navigate } from 'react-router-dom';
 import { fetchSmartGallery, selectSmartGallery, selectSmartGalleryStatus } from '../../app/slices/smartGallerySlice';
 import SectionRenderer from './SectionRenderer';
 import { toTitleCase } from '../../utils/stringUtils';
@@ -31,7 +32,7 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
   }
 
   if (!smartGalleryData) {
-    return <div>No gallery data available.</div>;
+    return <Navigate to={`/${domain}/share/${projectId}${collectionId ? `/${collectionId}` : ''}`} replace />;
   }
 
   return (
@@ -40,7 +41,7 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
 
         {smartGalleryData.projectCover ? (
 
-          <img src={smartGalleryData.projectCover} alt="Cover" className="banner cover" style={{ objectPosition: `${smartGalleryData.focusPoint.x * 100}% ${smartGalleryData.focusPoint.y * 100}%` }} />
+          <img src={smartGalleryData.projectCover} alt="Cover" className="banner cover" style={{ objectPosition: `${smartGalleryData?.focusPoint?.x * 100}% ${smartGalleryData.focusPoint?.y * 100}%` }} />
         ) : (
           <div className="cover-photo-placeholder">
             <span>Cover Photo</span>

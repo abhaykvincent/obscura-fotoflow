@@ -1,119 +1,164 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './Preview.scss';
-import { shortenFileName } from '../../utils/stringUtils';
-import { setCoverPhotoInFirestore, setGalleryCoverPhotoInFirestore } from '../../firebase/functions/firestore';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router';
+import { AnimatePresence, motion } from 'framer-motion';
 import ImageDisplay from './ImageDisplay';
-import SwipeHandler from './SwipeHandler';
-import { deleteFile } from '../../app/slices/projectsSlice';
 import PreviewControls from './PreviewControls';
+import { deleteFile } from '../../app/slices/projectsSlice';
 
-function Preview({ image, previewIndex, setPreviewIndex: setParentPreviewIndex, imagesLength, closePreview, projectId, collectionId }) {
+function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePreview, projectId, collectionId }) {
   const { studioName } = useParams();
   const dispatch = useDispatch();
+  
+  // Immersive Mode State
   const [showControls, setShowControls] = useState(true);
-  const [showSwipeGuide, setShowSwipeGuide] = useState(true);
-  const [currentImage, setCurrentImage] = useState(image);
-  const [nextImage, setNextImage] = useState(null);
-  const [direction, setDirection] = useState(null); // 'left' or 'right' for animation
+  const controlsTimeoutRef = useRef(null);
+  
+  // Direction for animation: 1 = right (next), -1 = left (prev)
+  const [direction, setDirection] = useState(0);
 
-  const animationTimeoutRef = useRef(null);
-  let hideControlsTimeout;
-
-  const handleUserInteraction = () => {
+  // Auto-hide controls logic
+  const resetControlsTimeout = useCallback(() => {
     setShowControls(true);
-    clearTimeout(hideControlsTimeout);
-    hideControlsTimeout = setTimeout(() => setShowControls(false), 3000);
-  };
+    if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+    controlsTimeoutRef.current = setTimeout(() => {
+      setShowControls(false);
+    }, 30000000);
+  }, []);
 
-  const setPreviewIndex = useCallback((newIndex, animDirection) => {
-    if (newIndex === previewIndex) return;
-
-    setDirection(animDirection);
+  const toggleControls = useCallback((e) => {
+    // Prevent toggling if clicking on interactive elements
+    if (e && (e.target.closest('button') || e.target.closest('.interactive'))) return;
     
-
-    // Clear any existing animation timeout
-    if (animationTimeoutRef.current) {
-      clearTimeout(animationTimeoutRef.current);
+    if (showControls) {
+      setShowControls(false);
+      if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+    } else {
+      resetControlsTimeout();
     }
+  }, [showControls, resetControlsTimeout]);
 
-    // Start the animation, then update the current image after it completes
-    animationTimeoutRef.current = setTimeout(() => {
-      setParentPreviewIndex(newIndex); // This will cause the `image` prop to update
-      setDirection(null);
-      setNextImage(null);
-    }, 300); // Match this duration to your CSS animation duration
-  }, [previewIndex, image, setParentPreviewIndex]);
-
+  // Initial setup and cleanup
   useEffect(() => {
-    // When the `image` prop changes (meaning setParentPreviewIndex was called),
-    // update the currentImage state.
-    setCurrentImage(image);
-  }, [image]);
+    resetControlsTimeout();
+    
+    const handleMouseMove = () => resetControlsTimeout();
+    window.addEventListener('mousemove', handleMouseMove);
+    
+    return () => {
+      if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [resetControlsTimeout]);
+
+  // Navigation handlers
+  const paginate = useCallback((newDirection) => {
+    setDirection(newDirection);
+    const newIndex = previewIndex + newDirection;
+    if (newIndex >= 0 && newIndex < imagesLength) {
+      setPreviewIndex(newIndex);
+    } else {
+        // Bounce effect or close? For now, just stop.
+        setDirection(0);
+    }
+  }, [previewIndex, imagesLength, setPreviewIndex]);
 
   const handleDelete = async () => {
     try {
       await dispatch(deleteFile({ studioName, projectId, collectionId, imageUrl: image.url, imageName: image.name }));
-      const newIndex = previewIndex < imagesLength - 1 ? previewIndex + 1 : previewIndex - 1;
-      newIndex >= 0 ? setPreviewIndex(newIndex) : closePreview();
+      // Logic to move to next image or close is handled by parent usually, 
+      // but here we might need to adjust index if parent doesn't auto-update from store quickly enough
+      // safely move to next or prev
+      if (imagesLength > 1) {
+         const newIndex = previewIndex === imagesLength - 1 ? previewIndex - 1 : previewIndex;
+         setPreviewIndex(newIndex);
+      } else {
+        closePreview();
+      }
     } catch (error) {
       console.error('Error deleting file:', error);
     }
   };
 
+  // Keyboard navigation
   useEffect(() => {
-    window.addEventListener('mousemove', handleUserInteraction);
-    window.addEventListener('touchstart', handleUserInteraction);
-    handleUserInteraction();
-    return () => {
-      clearTimeout(hideControlsTimeout);
-      window.removeEventListener('mousemove', handleUserInteraction);
-      window.removeEventListener('touchstart', handleUserInteraction);
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowRight') {
+        paginate(1);
+      } else if (e.key === 'ArrowLeft') {
+        paginate(-1);
+      } else if (e.key === 'Escape') {
+        closePreview();
+      }
     };
-  }, []);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [paginate, closePreview]);
 
-  // Hide swipe guide after 2 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => setShowSwipeGuide(false), 1200);
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
-    <div className="preview-wrapper">
-      {showSwipeGuide && (
-        <div className="guide swipe-guide">
-          <div className="swipe-animation-wrapper">
-            <div className="swipe-animation"></div>
-          </div>
-        </div>
-      )}
-      <div className='preview' >
-        <SwipeHandler 
-          previewIndex={previewIndex}
-          imagesLength={imagesLength}
-          setPreviewIndex={setPreviewIndex}
-          setShowControls={setShowControls}
+    <motion.div 
+      className="preview-wrapper"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <div className='preview'>
+        <PreviewControls
           showControls={showControls}
-          handleUserInteraction={handleUserInteraction}
-        >
-          <PreviewControls
-            showControls={showControls}
-            image={image}
-            closePreview={closePreview}
-            handleDelete={handleDelete}
-            projectId={projectId}
-            collectionId={collectionId}
-            studioName={studioName}
-          />
-          <ImageDisplay
-            currentImage={currentImage}
-            nextImage={nextImage}
-            direction={direction}
-          />
-        </SwipeHandler>
+          image={image}
+          closePreview={closePreview}
+          handleDelete={handleDelete}
+          projectId={projectId}
+          collectionId={collectionId}
+          studioName={studioName}
+          resetControlsTimeout={resetControlsTimeout}
+        />
+
+        <AnimatePresence>
+            {showControls && (
+                <>
+                    {previewIndex > 0 && (
+                        <motion.div 
+                            className="nav-button prev interactive" 
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.2 }}
+                            onClick={(e) => { e.stopPropagation(); paginate(-1); resetControlsTimeout(); }}
+                        />
+                    )}
+                    {previewIndex < imagesLength - 1 && (
+                        <motion.div 
+                            className="nav-button next interactive"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            transition={{ duration: 0.2 }}
+                            onClick={(e) => { e.stopPropagation(); paginate(1); resetControlsTimeout(); }}
+                        />
+                    )}
+                </>
+            )}
+        </AnimatePresence>
+
+        <div className="image-container" onClick={toggleControls}>
+          <AnimatePresence initial={false} custom={direction} mode="popLayout">
+            <ImageDisplay
+              key={image.url} // Key change triggers animation
+              image={image}
+              direction={direction}
+              paginate={paginate}
+              closePreview={closePreview}
+              collectionId={collectionId}
+              resetControlsTimeout={resetControlsTimeout}
+              isControlsVisible={showControls}
+            />
+          </AnimatePresence>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

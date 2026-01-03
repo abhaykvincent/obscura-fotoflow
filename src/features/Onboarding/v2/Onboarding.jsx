@@ -14,6 +14,8 @@ import CreateStudioForm from './components/CreateStudioForm';
 import '../Onboarding.scss';
 import { generateReferral } from '../../../app/slices/referralsSlice';
 import { hideLoading } from '../../../app/slices/loadingSlice';
+import PrivacyPolicyModal from '../../../components/Modal/PrivacyPolicyModal';
+import TermsOfServiceModal from '../../../components/Modal/TermsOfServiceModal';
 
 function Onboarding() {
     const navigate = useNavigate();
@@ -64,6 +66,7 @@ function Onboarding() {
         try {
             const result = await signInWithPopup(auth, provider);
             const loginUser = result.user;
+            console.log(loginUser)
             trackEvent('google_auth_completed', { email: loginUser.email });
 
             const serializedUser = {
@@ -113,22 +116,28 @@ function Onboarding() {
 
     return (
         <main className="onboarding-container">
+            <PrivacyPolicyModal/>
+            <TermsOfServiceModal/>
             <div className="logo animate-reveal" style={{ animationDelay: '0.2s' }}></div>
             <div className={`user-authentication animate-reveal ${!user?.email ? 'auth-screen' : ''}`} style={{ animationDelay: '0.4s' }}>
-                {invitation?.name && !user?.email && (
+                {invitation && !user?.email && (
                     <>
                         <p className='onboarding-greeting'>
                             <span className={`timeGreeting icon ${greeting.timeOfDay}`}>{greeting.timeGreeting}</span>
                             <span className='iconic-gradient-white'>{invitation.name}</span>
                         </p>
-                        <p className='onboarding-message'>{greeting.personalizedMessage}</p>
+                        {invitation?.studioName ? 
+                            <p className='onboarding-invitation-message'> {`Private Beta --`} <span className="iconic-gradient-green">{invitation?.studioName}</span> <div className="icon-unlock"></div> </p>:
+                            <p className='onboarding-invitation-message'> You are invited to join private beta.</p>
+                        }   
                     </>
                 )}
 
                 {!invitation && !invitation && (
                     <div className='activate-fotoflow-whatsapp'>
                         <p>{ref!=='0000' ? `Your Referral Code ${ref} is invalid or expired` : ` Fotoflow is currently Invite only. `}<br />
-                        {ref!=='0000' ? `Check link again or ` : 'Ckick to '}<a href="https://wa.me/+916235099329?text=Activate%20Fotoflow" target="_blank" rel="noopener noreferrer">Join Waitlist</a></p>
+                        {ref!=='0000' ? `Check link again ` : ''}
+                        </p>
                         
                     </div>
                 )}
@@ -153,11 +162,25 @@ function Onboarding() {
                         >Logout</div>
                     </div>
                 :
-                !isDisabled && <div className={`button google-login-button ${isDisabled ? 'disabled' : ''}`} onClick={() => !isDisabled && handleGoogleSignIn()}>
-                    Continue with Google <div className="google-logo"></div>
-                </div>
+                !isDisabled && 
+                <>
+
+                    <div className={`button google-login-button ${isDisabled ? 'disabled' : ''}`} onClick={() => !isDisabled && handleGoogleSignIn()}>
+                        Continue with Google <div className="google-logo"></div>
+                    </div>
+                     <p className='onboarding-message'> Start Streamline your wedding photography workflow.</p>
+                
+                </>
                 }
             </div>
+            {!invitation && (
+                    <div className='wishlist-whatsapp animate-reveal' style={{ animationDelay: '1.2s' }}>
+                        <p> 
+                            <a href="https://wa.me/+916235099329?text=Activate%20Fotoflow" target="_blank" rel="noopener noreferrer"> Join Waitlist</a>
+                            </p>
+                        
+                    </div>
+                )}
             {!invitation && (
                     <div className='contact-whatsapp animate-reveal' style={{ animationDelay: '1.2s' }}>
                         <p> Contact Support 

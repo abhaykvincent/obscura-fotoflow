@@ -119,7 +119,7 @@ export default function ShareProject() {
             `}
           >
             {
-            <Link to={collection.uploadedFiles !== undefined && `/${studioName}/share/${project.id}/${collection.id}`}>{collection.name}</Link>
+            <Link to={collection.uploadedFiles !== undefined && `/${studioName}/smart-gallery/${project.id}/${collection.id}`}>{collection.name}</Link>
             }
           </div>
         ))}
