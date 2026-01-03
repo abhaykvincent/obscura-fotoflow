@@ -37,10 +37,10 @@ function UploadButton({
   const studiodata = useSelector(selectStudio);
   const currentStudio = useSelector(selectUserStudio);
 
-  const handleDummyUpload = async () => {
+  const handleDummyUpload = async (limit) => {
     setIsPhotosImported(true);
     const dummyFiles = [];
-    for (let i = 0; i < 534; i++) {
+    for (let i = 0; i < limit; i++) {
         dummyFiles.push({
             name: `dummy-image-${i}.jpg`,
             url: `https://picsum.photos/seed/${i + Math.random()}/1200/800`,
@@ -137,11 +137,12 @@ function UploadButton({
               domain,
               projectId: id,
               collectionId,
-              status: 'visible'
+              status: 'visible',
+              selectionGallery:true
             }));
           console.log(domain)
         setTimeout(() => {
-          dispatch(openModal('shareGallery'))
+          dispatch(openModal('uploadCompleted'))
         }, 1000);
         
 
@@ -169,13 +170,12 @@ function UploadButton({
       </label>
       <input id="fileInput" type="file" multiple onChange={handleFileInputChange} />
       {process.env.NODE_ENV === 'development' && (
-        <button 
-          onClick={handleDummyUpload}
-          className="button secondary"
-          style={{ marginLeft: '10px', height: 'fit-content' }}
-        >
-          Dummy Upload (534)
-        </button>
+        <div className="dummy-buttons">
+          <button onClick={()=>handleDummyUpload(128)} className="button secondary">128</button>
+          <button onClick={()=>handleDummyUpload(256)} className="button secondary">256</button>
+          <button onClick={()=>handleDummyUpload(512)} className="button secondary">512</button>
+          <button onClick={()=>handleDummyUpload(1024)} className="button secondary">1024</button>
+        </div>
       )}
     </>
   );

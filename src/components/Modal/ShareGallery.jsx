@@ -9,8 +9,10 @@ import { useLocation } from 'react-router';
 import { copyToClipboard, extractDomain, getGalleryURL } from '../../utils/urlUtils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
-import { updateSelectionGalleryStatus, updateCollectionStatus } from '../../app/slices/projectsSlice';
+import { updateSelectionGalleryStatus, updateCollectionStatus, selectUpdatingCollections } from '../../app/slices/projectsSlice';
+import { acceptSelectionReset, selectSelectionRequests } from '../../app/slices/selectionRequestSlice';
 import QRCodeModal from './QRCodeModal';
+import PinReminderModal from './PinReminderModal';
 import { QRCodeCanvas } from 'qrcode.react';
 import logo from '../../assets/img/logo192.png';
 
@@ -86,8 +88,11 @@ function ShareGallery({project }) {
 
   const visible = useSelector(selectModal)
   const domain = useSelector(selectDomain)
+  const selectionRequests = useSelector(selectSelectionRequests);
+  const updatingCollections = useSelector(selectUpdatingCollections);
   const [qrCodeUrl, setQrCodeUrl] = useState('');
 
+  const pendingRequest = selectionRequests.find(req => req.projectId === project?.id);
 
   const onClose = () => dispatch(closeModalWithAnimation('shareGallery'))
 
@@ -115,8 +120,6 @@ function ShareGallery({project }) {
 
   if (!visible.shareGallery) {
     return null;
-  }
-  else{
   }
 
   return (
@@ -168,23 +171,54 @@ function ShareGallery({project }) {
                 </div>
             </div>
 
-              <div className="select-galleries">
-                {project?.collections.map((collection, index) => (
-                  <div key={index} className={`gallery-item ${collection.status !== 'visible' ? 'disabled' : ''}`}>
-                    <div className="gallery-info" onClick={() => {
-                        const newStatus = collection.status === 'visible' ? 'hide' : 'visible';
-                        dispatch(updateCollectionStatus({
-                          domain,
-                          projectId: project?.id,
-                          collectionId: collection.id,
-                          status: newStatus
-                        }));
-                      }}>
-                      <div className={`status-dot ${collection.status === 'visible' ? 'active' : ''}`}></div>
+            <div className="select-galleries">
+
+              {project?.collections.map((collection, index) => {
+
+                const isUpdating = updatingCollections[collection.id]?.status || updatingCollections[collection.id]?.selection;
+
+                return (
+
+                  <div key={index} className={`gallery-item ${collection.status !== 'visible' && collection.status !== 'selected' ? 'disabled' : ''} ${isUpdating ? 'updating' : ''}`}>
+
+                    <div className="gallery-info">
+
+                      <div className="selection-toggle">
+                      {/* <p className={`toggle-status-label ${collection.status === 'visible' ? '' : 'toggle-off'}`}>
+                        {collection.status === 'visible' ? 'Visible' : 'Hidden'}
+                      </p> */}
+                      {updatingCollections[collection.id]?.status ? (
+                        <div className="spinner-container">
+                          <div className="spinner"></div>
+                        </div>
+                      ) : (
+                        <FormControlLabel
+                          control={
+                            <IOSSwitch
+                              sx={{ m: 1 }}
+                              checked={collection.status === 'visible'}
+                              onChange={(event) => {
+                                const newStatus = event.target.checked ? 'visible' : 'hide';
+                                dispatch(updateCollectionStatus({
+                                  domain,
+                                  projectId: project?.id,
+                                  collectionId: collection.id,
+                                  status: newStatus
+                                }));
+                              }}
+                              color="green"
+                            />
+                          }
+                          label=""
+                        />
+                      )}
+                    </div>
                       <div>
                         <div className="gallery-name">{collection.name}</div>
                         <div className="gallery-images-count">
-                          {collection.filesCount > 1 ? `${collection.filesCount} Photos` : ''}
+                          {
+                          collection.status !== 'visible'|| collection.status !== 'selected' ?'Hidden':
+                          (collection.filesCount > 1 ? `${collection.filesCount} Photos` : '')}
                         </div>
                       </div>
                     </div>
@@ -195,20 +229,26 @@ function ShareGallery({project }) {
                           collection.selectionGallery === true ? 'Waiting for client selection.' : 'Turn on selection'
                         }
                       </p>
-                      <div className={`selection-icon ${collection.selectionGallery === true ? 'active' : ''}`}></div>
+                      {updatingCollections[collection.id]?.selection ? (
+                        <div className="spinner-container" style={{ width: '16px', margin: '0 8px' }}>
+                          <div className="spinner" style={{ width: '12px', height: '12px' }}></div>
+                        </div>
+                      ) : (
+                        <div className={`selection-icon ${collection.selectionGallery === true ? 'active' : ''}`}></div>
+                      )}
                       <FormControlLabel
                         control={
                           <IOSSwitch
                             sx={{ m: 1 }}
                             checked={collection.selectionGallery === true}
-                            disabled={collection.status !== 'visible'}
+                            disabled={collection.status !== 'visible' || updatingCollections[collection.id]?.selection}
                             onChange={(event) => {
-                              const newStatus = event.target.checked ? true: false;
+                              const newStatus = event.target.checked;
                               dispatch(updateSelectionGalleryStatus({
                                 domain,
                                 projectId: project?.id,
                                 collectionId: collection.id,
-                                status: newStatus
+                                selectionGallery: newStatus
                               }));
                             }}
                             color="blue"
@@ -218,20 +258,15 @@ function ShareGallery({project }) {
                       />
                     </div>
                   </div>
-                ))}
+                )
+              })
+            }
               </div>
-
-              
 
               <div className="gallery-view-status">
 
                 <div className="link-group">
-                  <div className="button primary outline text-only  icon link"
-                    onClick={() => {
-                      // open link in new tab
-                      window.open(getGalleryURL('smart-gallery', domain, project?.id), '_blank');
-                    }}
-                  >Smart Gallery</div>
+                  
                   </div>
                 </div>
               <div className="gallery-view-status">
@@ -239,7 +274,7 @@ function ShareGallery({project }) {
                   <div className="button primary outline text-only  icon link"
                     onClick={() => {
                       // open link in new tab
-                      window.open(getGalleryURL('share', domain, project?.id), '_blank');
+                      window.open(getGalleryURL('smart-gallery', domain, project?.id), '_blank');
                     }}
                   >Gallery Link</div>
                   <div className="button primary outline text-only  icon copy"
@@ -251,9 +286,9 @@ function ShareGallery({project }) {
                 </div>
                 
                 <p className="client-label">Anyone with link</p>
-                <div className="button secondary  transparent-button icon public">Public</div>
+                <div className="button secondary icon public">Public</div>
               
-                <div className="button primary outline  ">Share</div>
+                <div className="button secondary outline  icon icon-only share"></div>
 
               </div>
               <div className="gallery-view-status">
@@ -261,8 +296,7 @@ function ShareGallery({project }) {
                 <div className="link-group">
                   <div className="button primary outline text-only  icon link"
                     onClick={() => {
-                      // open link in new tab
-                      window.open(getGalleryURL('selection', domain, project?.id), '_blank');
+                      dispatch(openModal('pinReminder'));
                     }
                   }
                   >Selection Link</div>
@@ -275,8 +309,8 @@ function ShareGallery({project }) {
                 </div>
 
                 <p className="client-label">Client Only</p>
-                <div className="button secondary outline icon pin">{project?.pin}</div>
-                <div className="button primary outline ">Share</div>
+                <div className="button secondary  icon pin">{project?.pin}</div>
+                <div className="button secondary outline  icon icon-only share"></div>
 
                 
               </div>
@@ -309,6 +343,10 @@ function ShareGallery({project }) {
       </div>
       <div className="modal-backdrop" onClick={onClose}></div>
       {visible.qrCode && <QRCodeModal url={qrCodeUrl} project={project} />}
+      <PinReminderModal 
+        pin={project?.pin} 
+        onComplete={() => window.open(getGalleryURL('selection', domain, project?.id), '_blank')} 
+      />
     </div>
   );
 }

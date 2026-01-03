@@ -124,7 +124,7 @@
           }
           .visual-placeholder{
             width: 80%;
-            height: 8px*20;
+            height: 8px*28;
             margin: 8px*4 10%;
             background-position: center;
             background-size: contain;
@@ -138,11 +138,18 @@
             }
             &.organize-projects {
               background-image: url('../../../assets/img/page illustrations/welcome-modal-image2.png');
-              background-size: 180%;
-              background-position: 60% 55%;
+              background-size: 140%;
+              background-position: 60% 40%;
             }
             &.smart-gallery {
-              background-image: url('../../../assets/img/page illustrations/welcome-modal-image2.png');
+              background-image: url('../../../assets/img/page illustrations/welcome-modal-image3.png');
+              background-size: 140%;
+              background-position: 60% 40%;
+            }
+            &.collaboration-selection{
+              background-image: url('../../../assets/img/page illustrations/welcome-modal-image4.png');
+              background-size: 120%;
+              background-position: 60% 40%;
             }
             &.create-project {
               height: 8px*28;;
@@ -152,6 +159,14 @@
               background-size: auto 130%;
               background-position: 50% 30%;
             
+            }
+          }
+          .create-project-tagline{
+            font-size: 1.6rem;
+            font-weight: normal;
+            margin-top: 8px*4;
+            .highlight{
+              margin-left: 8px;
             }
           }
         }

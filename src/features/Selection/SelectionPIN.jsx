@@ -49,7 +49,7 @@ export default function SelectionPIN() {
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
         </div>
       </div>
-      <GalleryPIN setAuthenticated={setAuthenticated} projectPin={project.pin} />
+      <GalleryPIN setAuthenticated={setAuthenticated} projectPin={project.pin} projectId={projectId} />
     </div>
   );
 }

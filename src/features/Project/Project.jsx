@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 
@@ -34,6 +34,7 @@ import { selectStudio } from '../../app/slices/studioSlice';
 export default function Project() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
 
   const domain = useSelector(selectDomain);
@@ -54,15 +55,26 @@ export default function Project() {
   );
 
   useEffect(() => {
+    if (project && location.state?.openModal === 'shareGallery') {
+      dispatch(openModal('shareGallery'));
+      // Clear location state to prevent modal from re-opening on reload/back
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [project, location.state, dispatch, navigate, location.pathname]);
+
+  useEffect(() => {
     modalsRef.current = modals;
   }, [modals]);
   useEffect(() => {
+    if(project?.collections.length === 0){
+
     const timer = setTimeout(() => {
         dispatch(openModal('createCollection'));
-      }, 1000); // Using 500ms for a noticeable yet quick delay
+      }, 2000); // Using 500ms for a noticeable yet quick delay
 
       // Cleanup the timeout if the component unmounts or dependencies change
       return () => clearTimeout(timer);
+    }
   }, [project]);
 
   useEffect(() => {

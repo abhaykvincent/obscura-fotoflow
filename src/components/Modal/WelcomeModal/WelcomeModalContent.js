@@ -40,8 +40,23 @@ export const welcomeScreens = [
         </p>
         <div className="visual-placeholder smart-gallery"></div>
         <p>
-            Now, let our AI <span className='mid-highlight'>automatically categorize</span> your photos within your galleries into <span className='highlight'>'Best', 'Good', and 'Other'</span>, saving you hours of manual sorting.
+            Now, let our <span className='highlight'>Gallery Designer</span> helps you complete the professional look your brand deserves in <span className='mid-highlight'>Minutes</span>, saving you hours.
 
+        </p>
+      </>
+    ),
+  },
+  {
+    /* 3RD POSITION: SELECTION & COLLABORATION */
+    title: <>Collaborate on <span className='iconic-gradient'>Selections</span>.</>,
+    body: (
+      <>
+        <p>
+            Forget the hassle of <span className='highlight'>mailing or</span> and the headache of <span className='highlight'>hunting for filenames.</span>
+        </p>
+        <div className="visual-placeholder collaboration-selection"></div>
+        <p>
+            When clients <span className='highlight'>Select </span> their favorites, Fotoflow lets you <span className='mid-highlight'>instantly <span className='highlight'>locate </span> locate the original files</span> on your <span className='highlight'>computer </span>  for final editing.
         </p>
       </>
     ),
@@ -54,7 +69,7 @@ export const welcomeScreens = [
             You're all set to begin.
         </p>
         <div className="visual-placeholder create-project"></div>
-        <p>
+        <p className='create-project-tagline'>
             🎉 <span className='highlight'> Let's get started. </span> 
         </p>
       </>

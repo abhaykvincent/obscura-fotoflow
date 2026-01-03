@@ -975,3 +975,42 @@ border: 0px solid #535353;
         font-size: 0.9rem;
     }
 }
+
+.selection-requests-list {
+    display: flex;
+    gap: 8px*2;
+    overflow-x: auto;
+    padding: 8px;
+    &.dashboard {
+        padding: 0;
+        margin-bottom: 8px*2;
+        .selection-request-item {
+            width: 100%;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+    .selection-request-item {
+        min-width: 8px*30;
+        padding: 8px*2;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        .request-text {
+            font-size: 0.9rem;
+            color: #b3b3b3;
+            b {
+                color: white;
+            }
+        }
+        .request-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+    }
+}

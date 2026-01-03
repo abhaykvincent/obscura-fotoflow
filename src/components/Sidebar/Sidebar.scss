@@ -17,7 +17,7 @@
     }
     &.sleep-sidebar {
         width: 8px*8;
-        border-right: 1px solid $dark-1-5;
+        border-right: 0px solid $dark-1-5;
         background-color: rgba(0,0,0,0.2);
         
         .label, .profile-settings, .storage-bars, .plan-labels, .expiry-label, .corner-tools {

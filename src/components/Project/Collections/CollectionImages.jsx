@@ -23,6 +23,7 @@ import { createNotification } from '../../../app/slices/notificationSlice';
 import { updateCollectionStatus } from '../../../app/slices/projectsSlice';
 import ImageGalleryDesigner from '../../ImageGalleryDesigner/ImageGalleryDesigner';
 import { selectGalleryMode, setGalleryMode } from '../../../app/slices/gallerySlice';
+import { getOperatingSystem } from '../../../utils/generalUtils';
 
 const CollectionImages = ({ id, collectionId, project }) => {
     const projectCollectionRef = useRef(null);
@@ -154,7 +155,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 }));
               console.log(domain)
             setTimeout(() => {
-              dispatch(openModal('shareGallery'))
+              dispatch(openModal('uploadCompleted'))
             }, 1000);
             
     
@@ -316,27 +317,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
 
                 <div className="options">
 
-                <div className="open-buttons ">
-                    { !showAllPhotos ?
-                    <><div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
-                        Copy to <div className="lr button secondary">{copyStatus}</div>
-                    </div>
-                        <DownloadFiles className={`open-in ${showAllPhotos ? 'disabled' : ''}`} folderPath={`${domain}/${id}/${collectionId}/`} project={project} collection={findCollectionById(project, collectionId)}/>
-                        </>:
-                    <>
-                    <div className="control-wrap">
-                        <div className="controls">
-                            <div className={`control ctrl-all ${galleryView === 'grid' ? 'active' : ''}`} 
-                                onClick={() => setGalleryView('grid')} 
-                            ><div className="icon card-view"></div></div>
-                            <div className={`control ctrl-active  ${galleryView === 'list' ? 'active' : ''}`} 
-                                onClick={() => setGalleryView('list')}
-                            ><div className="icon list-view"></div></div>
-                        </div>
-                    <div className={`active`}></div>
-                </div>
-                </>}
-                </div>
+                
                     {/* Updated UploadButton props: removed setUploadStatus, setUploadLists; added dispatch */}
                     <UploadButton {...{ 
                         isPhotosImported, 
@@ -362,16 +343,39 @@ const CollectionImages = ({ id, collectionId, project }) => {
                     </div>
                 
                 {collectionImages?.length > 0 || imageUrls.length > 0  ? (
-                    <div className="view-control">
-                        <div className="control-label label-all-photos">{collectionImages?.length ? collectionImages?.length: imageUrls.length} Photos</div>
-                        <div className="control-wrap">
-                            <div className="controls">
-                                <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All photos</div>
-                                <div className={`control ${!showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(false)}>Selected  {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
+
+                    <div className="gallery-header-right">
+                        
+                        <div className="view-control">
+                            {/* <div className="control-label label-all-photos">{collectionImages?.length ? collectionImages?.length: imageUrls.length} Photos</div> */}
+                            <div className="control-wrap">
+                                <div className="controls">
+                                    <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All photos</div>
+                                    <div className={`control ${!showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(false)}>Selected ({selectedImages.length}) {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
+                                </div>
+                                <div className={`active`}></div>
                             </div>
-                            <div className={`active`}></div>
+                            <div className={`control-label label-selected-photos ${selectedImages.length>0&&' active'}`}> </div>
                         </div>
-                        <div className={`control-label label-selected-photos ${selectedImages.length>0&&' active'}`}>{selectedImages.length} Photos</div>
+                    { !showAllPhotos ?
+                    <><div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
+                        <div className="lr button secondary">Open in my {getOperatingSystem()}</div>
+                    </div>
+                        {/* <DownloadFiles className={`open-in ${showAllPhotos ? 'disabled' : ''}`} folderPath={`${domain}/${id}/${collectionId}/`} project={project} collection={findCollectionById(project, collectionId)}/> */}
+                        </>:
+                    <>
+                    {/* <div className="control-wrap">
+                        <div className="controls">
+                            <div className={`control ctrl-all ${galleryView === 'grid' ? 'active' : ''}`} 
+                                onClick={() => setGalleryView('grid')} 
+                            ><div className="icon card-view"></div></div>
+                            <div className={`control ctrl-active  ${galleryView === 'list' ? 'active' : ''}`} 
+                                onClick={() => setGalleryView('list')}
+                            ><div className="icon list-view"></div></div>
+                        </div>
+                    <div className={`active`}></div>
+                </div> */}
+                </>}
                     </div>
                 ) : (
                     <div className="empty-message"></div>

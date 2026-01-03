@@ -660,7 +660,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
             totalFileSize: importFileSize + projectData.data().totalFileSize,
             uploadedFilesCount: projectData.data().uploadedFilesCount + uploadedFiles.length,
             projectCover: projectData.data().projectCover === '' ? uploadedFiles[0]?.url : projectData.data().projectCover,
-            status: "uploaded",
+            status: "active",
             pin: projectData.data().pin || generateMemorablePIN(4),
         });
             
@@ -760,7 +760,7 @@ export const addSelectedImagesToFirestore = async (domain, projectId, collection
         });
 
         await updateDoc(collectionDocRef, { ...collectionData, uploadedFiles: updatedImages });
-        updateCollectionStatusByCollectionIdInFirestore(domain, projectId, collectionId, status);
+        updateCollectionStatusByCollectionIdInFirestore(domain, projectId, collectionId, status,true);
 
         // Update status on the project
         const projectSnapshot = await getDoc(projectDocRef);
@@ -883,8 +883,10 @@ export const setGalleryCoverPhotoInFirestore = async (domain, projectId, collect
     }
 };
 
-export const updateCollectionStatusByCollectionIdInFirestore = async (domain, projectId, collectionId, status) => {
+export const updateCollectionStatusByCollectionIdInFirestore = async (domain, projectId, collectionId, status,selectionGallery) => {
     try {
+
+        console.log(status,selectionGallery)
         const projectRef = doc(db, 'studios', domain, 'projects', projectId);
         const projectSnapshot = await getDoc(projectRef);
 
@@ -897,7 +899,8 @@ export const updateCollectionStatusByCollectionIdInFirestore = async (domain, pr
             if (collection.id === collectionId) {
                 return { 
                     ...collection, 
-                    status ,
+                    selectionGallery:selectionGallery?selectionGallery:collection.selectionGallery ,
+                    status:status,
                     version: 2
                 };
             }

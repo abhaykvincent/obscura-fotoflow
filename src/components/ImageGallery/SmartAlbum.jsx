@@ -40,7 +40,7 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
 
         {smartGalleryData.projectCover ? (
 
-          <img src={smartGalleryData.projectCover} alt="Cover" className="banner cover" style={{ objectPosition: `${smartGalleryData.focusPoint.x * 100}% ${smartGalleryData.focusPoint.y * 100}%` }} />
+          <img src={smartGalleryData.projectCover} alt="Cover" className="banner cover" style={{ objectPosition: `${smartGalleryData?.focusPoint?.x * 100}% ${smartGalleryData.focusPoint?.y * 100}%` }} />
         ) : (
           <div className="cover-photo-placeholder">
             <span>Cover Photo</span>

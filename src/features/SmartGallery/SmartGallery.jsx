@@ -79,7 +79,7 @@ export default function SmartGallery() {
         for (const collection of project.collections) {
           if (collection.uploadedFiles?.length > 0) {
             const status = await fetchCollectionStatus(studioName, projectId, collection.id);
-            if (status === 'visible') {
+            if (status !== 'hide') {
               newVisibleCollections.push(collection);
             }
           }
