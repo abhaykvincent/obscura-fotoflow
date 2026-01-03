@@ -133,17 +133,6 @@ function ShareGallery({project }) {
           <div className="modal-title">Share Gallery</div>
         </div>
         <div className='modal-body'>
-          {pendingRequest && (
-            <div className="selection-request-banner island">
-              <div className="request-info">
-                <p>Client requested to change their selection.</p>
-              </div>
-              <div className="button primary small" onClick={() => {
-                dispatch(acceptSelectionReset({ domain, projectId: project.id }));
-                dispatch(showAlert({ type: 'success', message: 'Selection reset allowed!' }));
-              }}>Allow Re-selection</div>
-            </div>
-          )}
           <div className="form-section">
             {/* map project collections and render it with a check box to select galleries to share */}
             <div className="share-project-details">

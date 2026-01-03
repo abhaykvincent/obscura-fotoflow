@@ -70,34 +70,6 @@
 
     }
 
-    .selection-requests-list {
-        display: flex;
-        gap: 8px*2;
-        overflow-x: auto;
-        padding: 8px;
-        .selection-request-item {
-            min-width: 8px*30;
-            padding: 8px*2;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            .request-text {
-                font-size: 0.9rem;
-                color: $gray-default-light;
-                b {
-                    color: white;
-                }
-            }
-            .request-actions {
-                display: flex;
-                justify-content: flex-end;
-                gap: 8px;
-            }
-        }
-    }
-
     .mobile-actions{
         position: fixed;
         bottom: 8px*8;

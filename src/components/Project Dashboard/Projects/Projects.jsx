@@ -15,12 +15,19 @@ import AddProjectModal from '../../Modal/AddProject/AddProject';
 import CollectionsPanel from '../../Project/Collections/CollectionsPanel';
 import SidePanel from '../../Project/SidePanel/SidePanel'
 import { ProjectCover } from '../../ProjectPageCover/ProjectPageCover';
+import { acceptSelectionReset, declineSelectionReset, selectSelectionRequests } from '../../../app/slices/selectionRequestSlice';
+import { selectUserStudio } from '../../../app/slices/authSlice';
 
 function DashboardProjects({project}){
   const dispatch =useDispatch()
   const navigate = useNavigate();
   const { studioName } = useParams();
   const [projectDashboardView, setProjectDashboardView] = useState('abstract')
+  const selectionRequests = useSelector(selectSelectionRequests);
+  const defaultStudio = useSelector(selectUserStudio);
+
+  const pendingRequest = selectionRequests.find(req => req.projectId === project?.id);
+
   // Inside your component
   return (
     <>
@@ -29,6 +36,28 @@ function DashboardProjects({project}){
         projectDashboardView={projectDashboardView} 
         setProjectDashboardView={setProjectDashboardView} 
       />
+      
+      {pendingRequest && (
+        <div className="selection-requests-list dashboard">
+          <div className="selection-request-item island">
+            <div className="request-info">
+              <p className="request-text">Client requested to select again for <b>{pendingRequest.projectName}</b></p>
+            </div>
+            <div className="request-actions">
+              <div className="button secondary small" onClick={() => {
+                dispatch(declineSelectionReset({ domain: defaultStudio.domain, projectId: project.id }));
+                dispatch(showAlert({ type: 'info', message: 'Selection reset request cancelled.' }));
+              }}>Cancel</div>
+              <div className="button primary small outline" onClick={() => {
+                dispatch(acceptSelectionReset({ domain: defaultStudio.domain, projectId: project.id }));
+                dispatch(showAlert({ type: 'success', message: 'Selection reset allowed!' }));
+              }}>Accept</div>
+              <div className="button primary small" onClick={() => dispatch(openModal('shareGallery'))}>Share</div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* <div className="project-bashboard-toolbar">
       {setProjectDashboardView && (
         <div className="view-cta">
