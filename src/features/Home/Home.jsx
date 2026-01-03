@@ -17,7 +17,7 @@ import { getEventTimeAgo } from '../../utils/dateUtils';
 import AddProjectModal from '../../components/Modal/AddProject/AddProject';
 import WelcomeModal from '../../components/Modal/WelcomeModal/WelcomeModal';
 import { fetchUserByEmail } from '../../firebase/functions/firestore';
-import { acceptSelectionReset, declineSelectionReset, getSelectionRequests, selectSelectionRequests } from '../../app/slices/selectionRequestSlice';
+import { acceptSelectionReset, declineSelectionReset, getSelectionRequests, removeRequestLocally, selectSelectionRequests } from '../../app/slices/selectionRequestSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 
 function Home() {
@@ -146,7 +146,7 @@ function Home() {
                                         <div className="button secondary small" onClick={() => {
                                             dispatch(declineSelectionReset({ domain: defaultStudio.domain, projectId: request.projectId }));
                                             dispatch(showAlert({ type: 'info', message: 'Selection reset request cancelled.' }));
-                                        }}>Cancel</div>
+                                        }}>Reject</div>
                                         <div className="button primary small outline" onClick={() => {
                                             dispatch(acceptSelectionReset({ domain: defaultStudio.domain, projectId: request.projectId }));
                                             dispatch(showAlert({ type: 'success', message: 'Selection reset allowed!' }));
@@ -154,7 +154,8 @@ function Home() {
                                         <div className="button primary small" onClick={() => {
                                             const project = projects.find(p => p.id === request.projectId);
                                             if (project) {
-                                                navigate(`/${defaultStudio.domain}/projects/${project.id}`, { state: { openModal: 'shareGallery' } });
+                                                dispatch(removeRequestLocally(request.projectId));
+                                                navigate(`/${defaultStudio.domain}/project/${project.id}`, { state: { openModal: 'shareGallery' } });
                                             }
                                         }}>Manage</div>
                                     </div>

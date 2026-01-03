@@ -40,7 +40,11 @@ const selectionRequestSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    removeRequestLocally: (state, action) => {
+      state.requests = state.requests.filter((req) => req.projectId !== action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getSelectionRequests.pending, (state) => {
@@ -63,5 +67,6 @@ const selectionRequestSlice = createSlice({
   },
 });
 
+export const { removeRequestLocally } = selectionRequestSlice.actions;
 export const selectSelectionRequests = (state) => state.selectionRequest.requests;
 export default selectionRequestSlice.reducer;
