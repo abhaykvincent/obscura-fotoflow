@@ -23,7 +23,7 @@ export const ProjectStatus = ({ project }) => {
                 value={project?.status}
                 onChange={(e) => handleStatusChange(e.target.value)}
             >
-                {['draft', 'active', 'selected', 'completed', 'archived'].map(status => (
+                {['draft', 'active', 'completed', 'archived'].map(status => (
                     <option key={status} value={status}>
                         {status.charAt(0).toUpperCase() + status.slice(1)}
                     </option>

@@ -11,6 +11,7 @@ const initialState = {
   data: [],
   status: 'login',
   loading : false,
+  updatingCollections: {},
   error: null,
 };
 // Projects
@@ -410,10 +411,15 @@ const projectsSlice = createSlice({
         state.error = action.error.message;
       });
       builder
-      .addCase(updateCollectionStatus.pending, (state) => {
+      .addCase(updateCollectionStatus.pending, (state, action) => {
+        const { collectionId } = action.meta.arg;
+        state.updatingCollections[collectionId] = { ...state.updatingCollections[collectionId], status: true };
       })
       .addCase(updateCollectionStatus.fulfilled, (state, action) => {
         const { projectId, collectionId, status, selectionGallery } = action.payload;
+        if (state.updatingCollections[collectionId]) {
+          state.updatingCollections[collectionId].status = false;
+        }
         const projectToUpdate = state.data.find((project) => project.id === projectId);
         if (projectToUpdate) {
           const collectionToUpdate = projectToUpdate.collections.find(
@@ -426,15 +432,24 @@ const projectsSlice = createSlice({
         }
       })
       .addCase(updateCollectionStatus.rejected, (state, action) => {
+        const { collectionId } = action.meta.arg;
+        if (state.updatingCollections[collectionId]) {
+          state.updatingCollections[collectionId].status = false;
+        }
         state.status = 'failed';
         state.error = action.error.message;
       });
 
       builder
-      .addCase(updateSelectionGalleryStatus.pending, (state) => {
+      .addCase(updateSelectionGalleryStatus.pending, (state, action) => {
+        const { collectionId } = action.meta.arg;
+        state.updatingCollections[collectionId] = { ...state.updatingCollections[collectionId], selection: true };
       })
       .addCase(updateSelectionGalleryStatus.fulfilled, (state, action) => {
         const { projectId, collectionId, selectionGallery } = action.payload;
+        if (state.updatingCollections[collectionId]) {
+          state.updatingCollections[collectionId].selection = false;
+        }
         console.log(selectionGallery)
         const projectToUpdate = state.data.find((project) => project.id === projectId);
         if (projectToUpdate) {
@@ -447,6 +462,10 @@ const projectsSlice = createSlice({
         }
       })
       .addCase(updateSelectionGalleryStatus.rejected, (state, action) => {
+        const { collectionId } = action.meta.arg;
+        if (state.updatingCollections[collectionId]) {
+          state.updatingCollections[collectionId].selection = false;
+        }
         state.status = 'failed';
         state.error = action.error.message;
       });
@@ -689,3 +708,4 @@ export default projectsSlice.reducer;
 export const selectProjects = (state) => state.projects.data;
 export const selectProjectsStatus = (state) => state.projects.status;
 export const selectLoading = (state) => state.projects.loading;
+export const selectUpdatingCollections = (state) => state.projects.updatingCollections;

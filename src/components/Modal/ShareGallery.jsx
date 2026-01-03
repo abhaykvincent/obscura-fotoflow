@@ -9,7 +9,7 @@ import { useLocation } from 'react-router';
 import { copyToClipboard, extractDomain, getGalleryURL } from '../../utils/urlUtils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
-import { updateSelectionGalleryStatus, updateCollectionStatus } from '../../app/slices/projectsSlice';
+import { updateSelectionGalleryStatus, updateCollectionStatus, selectUpdatingCollections } from '../../app/slices/projectsSlice';
 import { acceptSelectionReset, selectSelectionRequests } from '../../app/slices/selectionRequestSlice';
 import QRCodeModal from './QRCodeModal';
 import PinReminderModal from './PinReminderModal';
@@ -89,6 +89,7 @@ function ShareGallery({project }) {
   const visible = useSelector(selectModal)
   const domain = useSelector(selectDomain)
   const selectionRequests = useSelector(selectSelectionRequests);
+  const updatingCollections = useSelector(selectUpdatingCollections);
   const [qrCodeUrl, setQrCodeUrl] = useState('');
 
   const pendingRequest = selectionRequests.find(req => req.projectId === project?.id);
@@ -170,37 +171,48 @@ function ShareGallery({project }) {
                 </div>
             </div>
 
-              <div className="select-galleries">
-                {project?.collections.map((collection, index) => (
-                  <div key={index} className={`gallery-item ${collection.status !== 'visible' && collection.status !== 'selected'  ? 'disabled' : ''}`}>
-                    
-                    
+            <div className="select-galleries">
+
+              {project?.collections.map((collection, index) => {
+
+                const isUpdating = updatingCollections[collection.id]?.status || updatingCollections[collection.id]?.selection;
+
+                return (
+
+                  <div key={index} className={`gallery-item ${collection.status !== 'visible' && collection.status !== 'selected' ? 'disabled' : ''} ${isUpdating ? 'updating' : ''}`}>
+
                     <div className="gallery-info">
 
-                    <div className="selection-toggle">
+                      <div className="selection-toggle">
                       {/* <p className={`toggle-status-label ${collection.status === 'visible' ? '' : 'toggle-off'}`}>
                         {collection.status === 'visible' ? 'Visible' : 'Hidden'}
                       </p> */}
-                      <FormControlLabel
-                        control={
-                          <IOSSwitch
-                            sx={{ m: 1 }}
-                            checked={collection.status === 'visible'}
-                            onChange={(event) => {
-                              const newStatus = event.target.checked ? 'visible' : 'hide';
-                              dispatch(updateCollectionStatus({
-                                domain,
-                                projectId: project?.id,
-                                collectionId: collection.id,
-                                status: newStatus,
-                                selectionGallery: collection.selectionGallery
-                              }));
-                            }}
-                            color="green"
-                          />
-                        }
-                        label=""
-                      />
+                      {updatingCollections[collection.id]?.status ? (
+                        <div className="spinner-container">
+                          <div className="spinner"></div>
+                        </div>
+                      ) : (
+                        <FormControlLabel
+                          control={
+                            <IOSSwitch
+                              sx={{ m: 1 }}
+                              checked={collection.status === 'visible'}
+                              onChange={(event) => {
+                                const newStatus = event.target.checked ? 'visible' : 'hide';
+                                dispatch(updateCollectionStatus({
+                                  domain,
+                                  projectId: project?.id,
+                                  collectionId: collection.id,
+                                  status: newStatus,
+                                  selectionGallery: collection.selectionGallery
+                                }));
+                              }}
+                              color="green"
+                            />
+                          }
+                          label=""
+                        />
+                      )}
                     </div>
                       <div>
                         <div className="gallery-name">{collection.name}</div>
@@ -216,13 +228,19 @@ function ShareGallery({project }) {
                           collection.selectionGallery === true ? 'Waiting for client selection.' : 'Turn on selection'
                         }
                       </p>
-                      <div className={`selection-icon ${collection.selectionGallery === true ? 'active' : ''}`}></div>
+                      {updatingCollections[collection.id]?.selection ? (
+                        <div className="spinner-container" style={{ width: '16px', margin: '0 8px' }}>
+                          <div className="spinner" style={{ width: '12px', height: '12px' }}></div>
+                        </div>
+                      ) : (
+                        <div className={`selection-icon ${collection.selectionGallery === true ? 'active' : ''}`}></div>
+                      )}
                       <FormControlLabel
                         control={
                           <IOSSwitch
                             sx={{ m: 1 }}
                             checked={collection.selectionGallery === true}
-                            disabled={collection.status !== 'visible'}
+                            disabled={collection.status !== 'visible' || updatingCollections[collection.id]?.selection}
                             onChange={(event) => {
                               const newStatus = event.target.checked;
                               dispatch(updateSelectionGalleryStatus({
@@ -239,10 +257,10 @@ function ShareGallery({project }) {
                       />
                     </div>
                   </div>
-                ))}
+                )
+              })
+            }
               </div>
-
-              
 
               <div className="gallery-view-status">
 

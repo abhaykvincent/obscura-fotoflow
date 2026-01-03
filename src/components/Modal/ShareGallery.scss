@@ -1,5 +1,11 @@
 @import '../../style/variables';
 @import '../../style/components';
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 .App{
     
 .share-gallery{
@@ -203,6 +209,27 @@
         .selection-toggle{
             display: flex;
             align-items: center;
+            min-width: 8px*6; // Ensure a minimum width to stabilize layout
+            justify-content: center;
+
+            .spinner-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px; // Match IOSSwitch width
+                height: 16px; // Match IOSSwitch height
+                margin: 8px; // Match m:1 margin
+            }
+
+            .spinner {
+                width: 14px;
+                height: 14px;
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                border-top: 2px solid #ffffff;
+                border-radius: 50%;
+                animation: spin 0.8s linear infinite;
+            }
+
             .toggle-status-label{
                 font-size: 0.8rem;
                 color: $gray2-default-dark;
@@ -321,6 +348,11 @@
             border:1px solid rgba(255, 255, 255, 0.1);
             padding: 8px 12px;
             box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.3);
+
+            &.updating {
+              pointer-events: none;
+              opacity: 0.8;
+            }
 
             &.disabled {
             background-color: rgba(255, 255, 255, 0.05);
