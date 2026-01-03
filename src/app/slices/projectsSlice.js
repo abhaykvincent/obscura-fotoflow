@@ -413,7 +413,7 @@ const projectsSlice = createSlice({
       .addCase(updateCollectionStatus.pending, (state) => {
       })
       .addCase(updateCollectionStatus.fulfilled, (state, action) => {
-        const { projectId, collectionId, status } = action.payload;
+        const { projectId, collectionId, status, selectionGallery } = action.payload;
         const projectToUpdate = state.data.find((project) => project.id === projectId);
         if (projectToUpdate) {
           const collectionToUpdate = projectToUpdate.collections.find(
@@ -421,6 +421,7 @@ const projectsSlice = createSlice({
           );
           if (collectionToUpdate) {
             collectionToUpdate.status = status;
+            collectionToUpdate.selectionGallery = selectionGallery;
           }
         }
       })

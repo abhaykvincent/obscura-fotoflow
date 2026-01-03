@@ -192,8 +192,7 @@ function ShareGallery({project }) {
                                 projectId: project?.id,
                                 collectionId: collection.id,
                                 status: newStatus,
-                                selectionGallery:true
-
+                                selectionGallery: collection.selectionGallery
                               }));
                             }}
                             color="green"
@@ -224,13 +223,12 @@ function ShareGallery({project }) {
                             checked={collection.selectionGallery === true}
                             disabled={collection.status !== 'visible'}
                             onChange={(event) => {
-                              const newStatus = event.target.checked ? false: true;
+                              const newStatus = event.target.checked;
                               dispatch(updateSelectionGalleryStatus({
                                 domain,
                                 projectId: project?.id,
                                 collectionId: collection.id,
-                                status: 'visible',
-                                selectionGallery:newStatus
+                                selectionGallery: newStatus
                               }));
                             }}
                             color="blue"
