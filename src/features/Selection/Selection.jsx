@@ -149,17 +149,21 @@ export default function Selection() {
   const saveSelection = async () => {
     try {
       await handleAddOrRemoveSelectedImages();
-      await updateProjectStatusInFirestore(studioName, projectId, 'selected');
-      await updateCollectionStatusByCollectionIdInFirestore(studioName, projectId, collectionId, 'visible',true);
     } catch (error) {
       console.error('Failed to update project status:', error);
     }
   };
 
-  const completeSelection = () => {
+  const completeSelection = async () => {
     if (!selectionCompleted) {
       setSelectionCompleted(true); 
-      saveSelection();
+      await saveSelection();
+      await updateProjectStatusInFirestore(studioName, projectId, 'selected');
+      try {
+        await updateCollectionStatusByCollectionIdInFirestore(studioName, projectId, collectionId, 'visible', false);
+      } catch (error) {
+        console.error('Failed to update collection status:', error);
+      }
     }
   };
   const handleAddOrRemoveSelectedImages = async () => {
