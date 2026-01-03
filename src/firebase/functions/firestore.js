@@ -899,7 +899,7 @@ export const updateCollectionStatusByCollectionIdInFirestore = async (domain, pr
             if (collection.id === collectionId) {
                 return { 
                     ...collection, 
-                    selectionGallery:selectionGallery ,
+                    selectionGallery:selectionGallery?selectionGallery:collection.selectionGallery ,
                     status:status,
                     version: 2
                 };

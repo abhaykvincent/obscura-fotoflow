@@ -203,8 +203,7 @@ function ShareGallery({project }) {
                                   domain,
                                   projectId: project?.id,
                                   collectionId: collection.id,
-                                  status: newStatus,
-                                  selectionGallery: collection.selectionGallery
+                                  status: newStatus
                                 }));
                               }}
                               color="green"
@@ -217,7 +216,9 @@ function ShareGallery({project }) {
                       <div>
                         <div className="gallery-name">{collection.name}</div>
                         <div className="gallery-images-count">
-                          {collection.filesCount > 1 ? `${collection.filesCount} Photos` : ''}
+                          {
+                          collection.status !== 'visible'|| collection.status !== 'selected' ?'Hidden':
+                          (collection.filesCount > 1 ? `${collection.filesCount} Photos` : '')}
                         </div>
                       </div>
                     </div>
