@@ -9,8 +9,9 @@ import { useLocation } from 'react-router';
 import { copyToClipboard, extractDomain, getGalleryURL } from '../../utils/urlUtils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
-import { updateSelectionGalleryStatus, updateCollectionStatus } from '../../app/slices/projectsSlice';
+import { updateSelectionGalleryStatus, updateCollectionStatus, selectUpdatingCollections } from '../../app/slices/projectsSlice';
 import { acceptSelectionReset, selectSelectionRequests } from '../../app/slices/selectionRequestSlice';
+// ... (lines omitted for brevity, will use full context in the actual call)
 import QRCodeModal from './QRCodeModal';
 import PinReminderModal from './PinReminderModal';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -89,6 +90,7 @@ function ShareGallery({project }) {
   const visible = useSelector(selectModal)
   const domain = useSelector(selectDomain)
   const selectionRequests = useSelector(selectSelectionRequests);
+  const updatingCollections = useSelector(selectUpdatingCollections);
   const [qrCodeUrl, setQrCodeUrl] = useState('');
 
   const pendingRequest = selectionRequests.find(req => req.projectId === project?.id);
@@ -181,26 +183,30 @@ function ShareGallery({project }) {
                       {/* <p className={`toggle-status-label ${collection.status === 'visible' ? '' : 'toggle-off'}`}>
                         {collection.status === 'visible' ? 'Visible' : 'Hidden'}
                       </p> */}
-                      <FormControlLabel
-                        control={
-                          <IOSSwitch
-                            sx={{ m: 1 }}
-                            checked={collection.status === 'visible'}
-                            onChange={(event) => {
-                              const newStatus = event.target.checked ? 'visible' : 'hide';
-                              dispatch(updateCollectionStatus({
-                                domain,
-                                projectId: project?.id,
-                                collectionId: collection.id,
-                                status: newStatus,
-                                selectionGallery: collection.selectionGallery
-                              }));
-                            }}
-                            color="green"
-                          />
-                        }
-                        label=""
-                      />
+                      {updatingCollections[collection.id]?.status ? (
+                        <div className="spinner"></div>
+                      ) : (
+                        <FormControlLabel
+                          control={
+                            <IOSSwitch
+                              sx={{ m: 1 }}
+                              checked={collection.status === 'visible'}
+                              onChange={(event) => {
+                                const newStatus = event.target.checked ? 'visible' : 'hide';
+                                dispatch(updateCollectionStatus({
+                                  domain,
+                                  projectId: project?.id,
+                                  collectionId: collection.id,
+                                  status: newStatus,
+                                  selectionGallery: collection.selectionGallery
+                                }));
+                              }}
+                              color="green"
+                            />
+                          }
+                          label=""
+                        />
+                      )}
                     </div>
                       <div>
                         <div className="gallery-name">{collection.name}</div>
@@ -216,13 +222,17 @@ function ShareGallery({project }) {
                           collection.selectionGallery === true ? 'Waiting for client selection.' : 'Turn on selection'
                         }
                       </p>
-                      <div className={`selection-icon ${collection.selectionGallery === true ? 'active' : ''}`}></div>
+                      {updatingCollections[collection.id]?.selection ? (
+                        <div className="spinner"></div>
+                      ) : (
+                        <div className={`selection-icon ${collection.selectionGallery === true ? 'active' : ''}`}></div>
+                      )}
                       <FormControlLabel
                         control={
                           <IOSSwitch
                             sx={{ m: 1 }}
                             checked={collection.selectionGallery === true}
-                            disabled={collection.status !== 'visible'}
+                            disabled={collection.status !== 'visible' || updatingCollections[collection.id]?.selection}
                             onChange={(event) => {
                               const newStatus = event.target.checked;
                               dispatch(updateSelectionGalleryStatus({
