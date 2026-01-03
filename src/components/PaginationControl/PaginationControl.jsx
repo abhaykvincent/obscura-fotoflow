@@ -46,6 +46,7 @@ const PageNumbers = ({ currentPage, totalPages, handlePageChange ,images}) => {
   return (
     <>
       <PaginationButton onClick={() => handlePageChange(1)} active={currentPage === 1}>1</PaginationButton>
+      
       {currentPage > 3 && <span className="ellipsis">...</span>}
       {currentPage === totalPages && <PaginationButton onClick={() => handlePageChange(totalPages - 2)}>{totalPages - 2}</PaginationButton>}
       {currentPage > 2 && currentPage < totalPages && (
@@ -59,6 +60,7 @@ const PageNumbers = ({ currentPage, totalPages, handlePageChange ,images}) => {
       )}
       {currentPage === 1 && <PaginationButton onClick={() => handlePageChange(3)}>3</PaginationButton>}
       {currentPage < totalPages - 2 && <span className="ellipsis">...</span>}
+
       <PaginationButton onClick={() => handlePageChange(totalPages)} active={currentPage === totalPages}>{totalPages}</PaginationButton>
     </>
   );
@@ -76,11 +78,13 @@ export default function PaginationControl({
   project
 }) {
   const isLastPage = currentPage === totalPages || totalPages === 0;
-  const isLastCollection = currentCollectionIndex === project.collections.length;
+  
+  // Find the next collection that has selectionGallery enabled
+  const nextSelectableCollection = project.collections.slice(currentCollectionIndex).find(c => c.selectionGallery !== false);
+  const isLastCollection = !nextSelectableCollection;
   
   const { studioName } = useParams();
-  console.log(totalCollections, isLastCollection,currentCollectionIndex)
-  console.log(project.collections)
+  
   return (
     <nav className="pagination" aria-label="Pagination">
 
@@ -129,7 +133,7 @@ export default function PaginationControl({
             Finish
           </PaginationButton>
         ) : (
-          <Link to={`/${studioName}/selection/${project.id}/${project.collections[currentCollectionIndex].id}`}>
+          <Link to={`/${studioName}/selection/${project.id}/${nextSelectableCollection.id}`}>
             <PaginationButton
             highlight={true} 
               onClick={() => {

@@ -400,3 +400,57 @@ export const fetchAnalyticsData = async () => {
         throw error;
     }
 };
+
+// Selection Requests
+export const createSelectionRequest = async (domain, projectId, projectName) => {
+    try {
+        const studioRef = doc(db, 'studios', domain);
+        const selectionRequestsRef = collection(studioRef, 'selectionRequests');
+        const requestDoc = {
+            projectId,
+            projectName,
+            status: 'pending',
+            requestedAt: Date.now(),
+        };
+        await setDoc(doc(selectionRequestsRef, projectId), requestDoc);
+        console.log(`Selection reset request created for project ${projectId}`);
+        return requestDoc;
+    } catch (error) {
+        console.error('Error creating selection request:', error);
+        throw error;
+    }
+};
+
+export const fetchSelectionRequests = async (domain) => {
+    try {
+        const studioRef = doc(db, 'studios', domain);
+        const selectionRequestsRef = collection(studioRef, 'selectionRequests');
+        const q = query(selectionRequestsRef, where('status', '==', 'pending'));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error('Error fetching selection requests:', error);
+        throw error;
+    }
+};
+
+export const approveSelectionRequest = async (domain, projectId) => {
+    try {
+        const studioRef = doc(db, 'studios', domain);
+        const selectionRequestsRef = collection(studioRef, 'selectionRequests');
+        const requestRef = doc(selectionRequestsRef, projectId);
+        
+        // Update request status
+        await updateDoc(requestRef, { status: 'accepted', acceptedAt: Date.now() });
+        
+        // Update project status back to active to allow re-selection
+        const projectRef = doc(db, 'studios', domain, 'projects', projectId);
+        await updateDoc(projectRef, { status: 'active' });
+        
+        console.log(`Selection reset request approved for project ${projectId}`);
+        return true;
+    } catch (error) {
+        console.error('Error approving selection request:', error);
+        throw error;
+    }
+};

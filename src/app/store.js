@@ -19,6 +19,7 @@ import loadingReducer from './slices/loadingSlice';
 import adminSettingsReducer from './slices/adminSettingsSlice';
 import usersReducer from './slices/usersSlice';
 import userProfileReducer from './slices/userProfileSlice';
+import selectionRequestReducer from './slices/selectionRequestSlice';
 
 export const store = configureStore({
   reducer: {
@@ -42,5 +43,6 @@ export const store = configureStore({
     adminSettings: adminSettingsReducer,
     users: usersReducer,
     userProfile: userProfileReducer,
+    selectionRequest: selectionRequestReducer,
   },
 });

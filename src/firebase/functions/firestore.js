@@ -887,8 +887,6 @@ export const updateCollectionStatusByCollectionIdInFirestore = async (domain, pr
     try {
 
         console.log(status,selectionGallery)
-
-        debugger
         const projectRef = doc(db, 'studios', domain, 'projects', projectId);
         const projectSnapshot = await getDoc(projectRef);
 
