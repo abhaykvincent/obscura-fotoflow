@@ -68,6 +68,26 @@ export default function Selection() {
   // Update images when project or collectionId changes
   useEffect(() => {
     if(!project) return
+    
+    // Determine the current collection, handling the initial case where collectionId might be missing
+    const currentId = collectionId || project.collections[0]?.id;
+    const currentColl = project.collections.find(c => c.id === currentId);
+
+    // If selection is disabled for this collection, skip to the next valid one or finish
+    if (currentColl && currentColl.selectionGallery === false) {
+      const currentIndex = project.collections.findIndex(c => c.id === currentColl.id);
+      const nextColl = project.collections.slice(currentIndex + 1).find(c => c.selectionGallery !== false);
+      
+      if (nextColl) {
+        navigate(`/${studioName}/selection/${projectId}/${nextColl.id}`);
+        return;
+      } else {
+        // No more selectable collections, complete selection
+        setSelectionCompleted(true);
+        return;
+      }
+    }
+
     document.title = project.name+' | Selection'
 
     setTotalCollections(project.collections.length)
@@ -76,7 +96,7 @@ export default function Selection() {
     newImages.length>0?setImages(newImages):setImages([])
     setTotalPages(Math.ceil(newImages.length/size))
     setPage(1)
-  }, [project, collectionId]);
+  }, [project, collectionId, studioName, projectId, navigate]);
 
   // Paginate images
   const paginatedImages = useMemo(() => {
@@ -97,6 +117,15 @@ export default function Selection() {
       const projectData = await fetchProject(studioName, projectId);
 
       setProject(projectData);
+
+      // Ensure we navigate to the first selectable collection if current one is invalid
+      const firstSelectable = projectData.collections.find(c => c.selectionGallery !== false);
+      if (firstSelectable && !collectionId) {
+        navigate(`/${studioName}/selection/${projectId}/${firstSelectable.id}`, { replace: true });
+      } else if (!firstSelectable) {
+        setSelectionCompleted(true);
+      }
+
       // get all images url with status 'selected' from projectData as set
       const selectedImagesInFirestore = []
       projectData.collections.forEach((collection) => {
@@ -152,7 +181,9 @@ export default function Selection() {
   // Collections panel
   const CollectionsPanel = () => (
     <div className="collections-panel">
-      {project.collections.map((collection, index) => (
+      {project.collections
+        .filter(collection => collection.selectionGallery !== false)
+        .map((collection, index) => (
         <div
           key={collection.id}
           className={`
@@ -163,7 +194,7 @@ export default function Selection() {
         >
           {
           <Link to={collection.uploadedFiles !== undefined && `/${studioName}/selection/${project.id}/${collection.id}`}>{collection.name}
-            <span className='photo-count-label'>{` ${project.collections[currentCollectionIndex]?.uploadedFiles?.length}`}</span>
+            <span className='photo-count-label'>{` ${collection.uploadedFiles?.length}`}</span>
           </Link>
           
         }

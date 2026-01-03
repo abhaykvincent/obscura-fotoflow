@@ -76,11 +76,13 @@ export default function PaginationControl({
   project
 }) {
   const isLastPage = currentPage === totalPages || totalPages === 0;
-  const isLastCollection = currentCollectionIndex === project.collections.length;
+  
+  // Find the next collection that has selectionGallery enabled
+  const nextSelectableCollection = project.collections.slice(currentCollectionIndex).find(c => c.selectionGallery !== false);
+  const isLastCollection = !nextSelectableCollection;
   
   const { studioName } = useParams();
-  console.log(totalCollections, isLastCollection,currentCollectionIndex)
-  console.log(project.collections)
+  
   return (
     <nav className="pagination" aria-label="Pagination">
 
@@ -129,7 +131,7 @@ export default function PaginationControl({
             Finish
           </PaginationButton>
         ) : (
-          <Link to={`/${studioName}/selection/${project.id}/${project.collections[currentCollectionIndex].id}`}>
+          <Link to={`/${studioName}/selection/${project.id}/${nextSelectableCollection.id}`}>
             <PaginationButton
             highlight={true} 
               onClick={() => {
