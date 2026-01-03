@@ -137,7 +137,8 @@ function UploadButton({
               domain,
               projectId: id,
               collectionId,
-              status: 'visible'
+              status: 'visible',
+              selectionGallery:true
             }));
           console.log(domain)
         setTimeout(() => {

@@ -98,18 +98,18 @@ export const updateCollectionName = createAsyncThunk(
 
 export const updateCollectionStatus = createAsyncThunk(
   'projects/updateCollectionStatus',
-  async ({ domain, projectId, collectionId, status }, { dispatch }) => {
-    await updateCollectionStatusByCollectionIdInFirestore(domain, projectId, collectionId, status);
-    return { projectId, collectionId, status };
+  async ({ domain, projectId, collectionId, status,selectionGallery }, { dispatch }) => {
+    await updateCollectionStatusByCollectionIdInFirestore(domain, projectId, collectionId, status,selectionGallery);
+    return { projectId, collectionId, status,selectionGallery };
   }
 );
 
 
 export const updateSelectionGalleryStatus = createAsyncThunk(
   'projects/updateSelectionGalleryStatus',
-  async ({ domain, projectId, collectionId, status }, { dispatch }) => {
-    await updateSelectionGalleryStatusByCollectionIdInFirestore(domain, projectId, collectionId, status);
-    return { projectId, collectionId, status };
+  async ({ domain, projectId, collectionId, selectionGallery }, { dispatch }) => {
+    await updateSelectionGalleryStatusByCollectionIdInFirestore(domain, projectId, collectionId, selectionGallery);
+    return { projectId, collectionId, selectionGallery };
   }
 );
 export const updateCollectionSelectionStatus = createAsyncThunk(
@@ -433,14 +433,15 @@ const projectsSlice = createSlice({
       .addCase(updateSelectionGalleryStatus.pending, (state) => {
       })
       .addCase(updateSelectionGalleryStatus.fulfilled, (state, action) => {
-        const { projectId, collectionId, status } = action.payload;
+        const { projectId, collectionId, selectionGallery } = action.payload;
+        console.log(selectionGallery)
         const projectToUpdate = state.data.find((project) => project.id === projectId);
         if (projectToUpdate) {
           const collectionToUpdate = projectToUpdate.collections.find(
             (collection) => collection.id === collectionId
           );
           if (collectionToUpdate) {
-            collectionToUpdate.selectionGallery = status;
+            collectionToUpdate.selectionGallery = selectionGallery;
           }
         }
       })

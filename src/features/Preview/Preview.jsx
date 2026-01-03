@@ -24,7 +24,7 @@ function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePrev
     if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
     controlsTimeoutRef.current = setTimeout(() => {
       setShowControls(false);
-    }, 3000);
+    }, 30000000);
   }, []);
 
   const toggleControls = useCallback((e) => {

@@ -47,6 +47,21 @@ export const welcomeScreens = [
     ),
   },
   {
+    /* 3RD POSITION: SELECTION & COLLABORATION */
+    title: <>Collaborate on <span className='iconic-gradient'>Selections</span>.</>,
+    body: (
+      <>
+        <p>
+            Forget the hassle of <span className='highlight'>mailing or</span> and the headache of <span className='highlight'>hunting for filenames.</span>
+        </p>
+        <div className="visual-placeholder collaboration-selection"></div>
+        <p>
+            When clients <span className='highlight'>Select </span> their favorites, Fotoflow lets you <span className='mid-highlight'>instantly <span className='highlight'>locate </span> locate the original files</span> on your <span className='highlight'>computer </span>  for final editing.
+        </p>
+      </>
+    ),
+  },
+  {
     title: <>Create your <span className='iconic-gradient'>First Project</span></>,
     body: (
       <>

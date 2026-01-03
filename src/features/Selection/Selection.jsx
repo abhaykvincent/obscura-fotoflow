@@ -120,7 +120,7 @@ export default function Selection() {
     try {
       await handleAddOrRemoveSelectedImages();
       await updateProjectStatusInFirestore(studioName, projectId, 'selected');
-      await updateCollectionStatusByCollectionIdInFirestore(studioName, projectId, collectionId, 'selected');
+      await updateCollectionStatusByCollectionIdInFirestore(studioName, projectId, collectionId, 'visible',true);
     } catch (error) {
       console.error('Failed to update project status:', error);
     }

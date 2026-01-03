@@ -173,7 +173,6 @@ function ShareGallery({project }) {
                 {project?.collections.map((collection, index) => (
                   <div key={index} className={`gallery-item ${collection.status !== 'visible' && collection.status !== 'selected'  ? 'disabled' : ''}`}>
                     
-
                     
                     <div className="gallery-info">
 
@@ -192,7 +191,9 @@ function ShareGallery({project }) {
                                 domain,
                                 projectId: project?.id,
                                 collectionId: collection.id,
-                                status: newStatus
+                                status: newStatus,
+                                selectionGallery:true
+
                               }));
                             }}
                             color="green"
@@ -223,12 +224,13 @@ function ShareGallery({project }) {
                             checked={collection.selectionGallery === true}
                             disabled={collection.status !== 'visible'}
                             onChange={(event) => {
-                              const newStatus = event.target.checked ? true: false;
+                              const newStatus = event.target.checked ? false: true;
                               dispatch(updateSelectionGalleryStatus({
                                 domain,
                                 projectId: project?.id,
                                 collectionId: collection.id,
-                                status: newStatus
+                                status: 'visible',
+                                selectionGallery:newStatus
                               }));
                             }}
                             color="blue"
