@@ -185,7 +185,7 @@ function Home() {
                                 </div>
                             </div>
                             }
-                            <div className="section recent">
+                            {recentProjects.length !== 0 && <div className="section recent">
                                 <h3 className='section-heading'>Recent Projects</h3>
                                 <div className="projects recent">
                                     {
@@ -213,7 +213,7 @@ function Home() {
                                         </div>
                                     </Link>
                                 </div>
-                            </div>
+                            </div>}
 
                         </>
                     ) :
