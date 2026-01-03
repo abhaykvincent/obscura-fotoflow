@@ -154,13 +154,21 @@ export default function Selection() {
     }
   };
 
+  const completeCollection = async () => {
+    try {
+      await handleAddOrRemoveSelectedImages();
+      await updateCollectionStatusByCollectionIdInFirestore(studioName, projectId, collectionId, 'visible', true);
+    } catch (error) {
+      console.error('Failed to update collection status:', error);
+    }
+  };
+
   const completeSelection = async () => {
     if (!selectionCompleted) {
       setSelectionCompleted(true); 
       await saveSelection();
-      await updateProjectStatusInFirestore(studioName, projectId, 'selected');
       try {
-        await updateCollectionStatusByCollectionIdInFirestore(studioName, projectId, collectionId, 'visible', false);
+        await updateCollectionStatusByCollectionIdInFirestore(studioName, projectId, collectionId, 'visible', true);
       } catch (error) {
         console.error('Failed to update collection status:', error);
       }
@@ -260,6 +268,7 @@ export default function Selection() {
               currentPage={page}
               totalPages={totalPages}
               completeSelection={completeSelection}
+              completeCollection={completeCollection}
               handlePageChange={async (newPage) => {
                 handleAddOrRemoveSelectedImages()
 
