@@ -5,10 +5,10 @@ import TextBlock from '../ImageGalleryDesigner/GallerySections/TextBlock';
 import SubGallery from '../ImageGalleryDesigner/GallerySections/SubGallery';
 import Embed from '../ImageGalleryDesigner/GallerySections/Embed';
 
-const SectionRenderer = ({ section }) => {
+const SectionRenderer = ({ section, onImageClick }) => {
   switch (section.type) {
     case 'image-grid':
-      return <ImageGrid section={section} isViewOnly={true} />;
+      return <ImageGrid section={section} isViewOnly={true} onImageClick={onImageClick} />;
     case 'carousel':
       return <Carousel section={section} isViewOnly={true} />;
     case 'text-block':

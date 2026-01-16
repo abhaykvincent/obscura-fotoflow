@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import { fetchSmartGallery, selectSmartGallery, selectSmartGalleryStatus } from '../../app/slices/smartGallerySlice';
@@ -7,21 +7,54 @@ import { toTitleCase } from '../../utils/stringUtils';
 import './SmartAlbum.scss'
 import { selectProjects } from '../../app/slices/projectsSlice';
 import { get } from 'firebase/database';
+import Preview from '../../features/Preview/Preview';
+
 const SmartAlbum = ({ domain, projectId, collectionId }) => {
   const dispatch = useDispatch();
   const smartGalleryData = useSelector(selectSmartGallery);
   const smartGalleryStatus = useSelector(selectSmartGalleryStatus);
+  
+  // Preview State
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(0);
+  const [allImages, setAllImages] = useState([]);
 
   const projects = useSelector(selectProjects);
   const selectedProject = useMemo(() => 
       projects?.find((p) => p.id === projectId),
       [projects, projectId]
     );
+
   useEffect(() => {
     if (domain && projectId && collectionId) {
       dispatch(fetchSmartGallery({ domain, projectId, collectionId }));
     }
   }, [dispatch, domain, projectId, collectionId])
+
+  useEffect(() => {
+    if (smartGalleryData?.sections) {
+      const images = [];
+      smartGalleryData.sections.forEach(section => {
+        if (section.type === 'image-grid' && section.images) {
+          images.push(...section.images);
+        }
+        // Add other section types here if they contain images that should be in the global preview
+      });
+      setAllImages(images);
+    }
+  }, [smartGalleryData]);
+
+  const openPreview = (image) => {
+    const index = allImages.findIndex(img => img.url === image.url);
+    if (index !== -1) {
+      setPreviewIndex(index);
+      setIsPreviewOpen(true);
+    }
+  };
+
+  const closePreview = () => {
+    setIsPreviewOpen(false);
+  };
 
   if (smartGalleryStatus === 'loading') {
     return <div>Loading...</div>;
@@ -48,8 +81,8 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
           </div>
         )}
         <div className="gallery-info">
-          <h1 className='project-name'>{toTitleCase(selectedProject.name)}</h1>
-          <p className='project-type'>{toTitleCase(smartGalleryData.name)}</p>
+          <h1 className='project-name'>{toTitleCase(selectedProject?.name || '')}</h1>
+          <p className='project-type'>{toTitleCase(smartGalleryData?.name || '')}</p>
         </div>
       </div>
 
@@ -62,9 +95,22 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
 
       <div className="gallery-sections">
         {smartGalleryData.sections.map((section) => (
-          <SectionRenderer key={section.id} section={section} />
+          <SectionRenderer key={section.id} section={section} onImageClick={openPreview} />
         ))}
       </div>
+
+      {isPreviewOpen && (
+        <Preview
+          image={allImages[previewIndex]}
+          previewIndex={previewIndex}
+          setPreviewIndex={setPreviewIndex}
+          imagesLength={allImages.length}
+          closePreview={closePreview}
+          projectId={projectId}
+          collectionId={collectionId}
+          images={allImages} // Pass allImages if Preview expects it for swiping
+        />
+      )}
     </div>
   );
 };
