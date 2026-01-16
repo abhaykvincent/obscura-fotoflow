@@ -115,7 +115,15 @@ export const ImageDragOverlay = ({ image }) => {
   );
 };
 
-const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, toggleScaleControl, isViewOnly }) => {
+// ... imports ...
+
+// ... computeLayout ...
+
+// ... SortableImage ... (keep as is)
+
+// ... ImageDragOverlay ... (keep as is)
+
+const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, toggleScaleControl, isViewOnly, onImageClick }) => {
   const [showScaleControl, setShowScaleControl] = useState(false);
 
   useEffect(() => {
@@ -123,6 +131,7 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
       toggleScaleControl.current = () => setShowScaleControl(prev => !prev);
     }
   }, [toggleScaleControl]);
+  
   const handleScaleChange = (event) => {
     const newScale = Number(event.target.value);
     onSectionUpdate({ ...section, gridSettings: { ...section.gridSettings, scale: newScale } });
@@ -217,6 +226,24 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
           <p>No images to display.</p>
         </div>
       ) : (
+        isViewOnly ? (
+           <div className="image-grid-display" ref={containerRef} data-section-id={section.id}>
+            {layout.map((row, rowIndex) => (
+              <div key={rowIndex} className="image-grid-row">
+                {row.map((image, imgIndex) => (
+                   <div 
+                      key={image.url} 
+                      className="image-grid-item" 
+                      style={{ width: image.width, height: image.height, cursor: onImageClick ? 'pointer' : 'default' }}
+                      onClick={() => onImageClick && onImageClick(image, images.findIndex(img => img.url === image.url))}
+                   >
+                    <img src={image.url} alt={`Gallery Image ${imgIndex}`} style={{ width: '100%', height: '100%', display: 'block', borderRadius: '4px', objectFit: 'cover' }} />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        ) : (
         <SortableContext items={images.map(img => img.url)} strategy={rectSortingStrategy}>
           <div className="image-grid-display" ref={containerRef} data-section-id={section.id}>
             {layout.map((row, rowIndex) => (
@@ -234,6 +261,7 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
             ))}
           </div>
         </SortableContext>
+        )
       )}
     </div>
   );
