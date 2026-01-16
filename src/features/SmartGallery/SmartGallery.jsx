@@ -141,9 +141,12 @@ export default function SmartGallery() {
                   <Link 
                     to={`/${studioName}/smart-gallery/${projectId}/${prevCollection.id}`} 
                     className="nav-link prev"
+                    style={{ backgroundImage: `url(${prevCollection.uploadedFiles[0]?.url})` }}
                   >
-                    <span className="nav-label">Previous Album</span>
-                    <span className="nav-name">{toTitleCase(prevCollection.name)}</span>
+                    <div className="nav-content">
+                      <span className="nav-label">Previous Album</span>
+                      <span className="nav-name">{toTitleCase(prevCollection.name)}</span>
+                    </div>
                   </Link>
                 ) : <div className="nav-placeholder" />}
 
@@ -151,17 +154,22 @@ export default function SmartGallery() {
                   <Link 
                     to={`/${studioName}/smart-gallery/${projectId}/${nextCollection.id}`} 
                     className="nav-link next"
+                    style={{ backgroundImage: `url(${nextCollection.uploadedFiles[0]?.url})` }}
                   >
-                    <span className="nav-label">Next Album</span>
-                    <span className="nav-name">{toTitleCase(nextCollection.name)}</span>
+                    <div className="nav-content">
+                      <span className="nav-label">Next Album</span>
+                      <span className="nav-name">{toTitleCase(nextCollection.name)}</span>
+                    </div>
                   </Link>
                 ) : (
                   <Link 
                     to={`/${studioName}/smart-gallery/${projectId}`} 
                     className="nav-link next home"
                   >
-                    <span className="nav-label">Back to</span>
-                    <span className="nav-name">All Albums</span>
+                    <div className="nav-content">
+                      <span className="nav-label">Back to</span>
+                      <span className="nav-name">All Albums</span>
+                    </div>
                   </Link>
                 )}
               </div>
