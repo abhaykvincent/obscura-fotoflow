@@ -21,6 +21,8 @@ export default function SmartGallery() {
   const tagline = settings?.gallery?.galleryTagline || `smile with ${studioName}`;
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState(null);
+  const [visibleCollections, setVisibleCollections] = useState([]);
+  const [collectionsLoading, setCollectionsLoading] = useState(true);
 
   const StudioBrandingFooter = () => {
     if (project?.type === "FUNERAL") return null;
@@ -84,6 +86,27 @@ export default function SmartGallery() {
   }, [studioName, projectId, isAuthenticated, user]);
 
   useEffect(() => {
+    const checkCollectionVisibility = async () => {
+      if (!project?.collections) return;
+      
+      setCollectionsLoading(true);
+      const newVisibleCollections = [];
+      for (const collection of project.collections) {
+        if (collection.uploadedFiles?.length > 0) {
+          const status = await fetchCollectionStatus(studioName, projectId, collection.id);
+          if (status !== 'hide') {
+            newVisibleCollections.push(collection);
+          }
+        }
+      }
+      setVisibleCollections(newVisibleCollections);
+      setCollectionsLoading(false);
+    };
+
+    checkCollectionVisibility();
+  }, [project, studioName, projectId]);
+
+  useEffect(() => {
     if (project) {
         if (collectionId) {
             const collection = project.collections.find((c) => c.id === collectionId);
@@ -103,39 +126,62 @@ export default function SmartGallery() {
   }
 
   if (collectionId) {
+    const currentIndex = visibleCollections.findIndex(c => c.id === collectionId);
+    const prevCollection = currentIndex > 0 ? visibleCollections[currentIndex - 1] : null;
+    const nextCollection = currentIndex < visibleCollections.length - 1 ? visibleCollections[currentIndex + 1] : null;
+
     return (
       <div className="share-project">
           <SmartAlbum domain={studioName} projectId={projectId} collectionId={collectionId} />
+          
+          {(prevCollection || nextCollection) && !collectionsLoading && (
+            <div className="collection-navigation">
+              <div className="nav-links">
+                {prevCollection ? (
+                  <Link 
+                    to={`/${studioName}/smart-gallery/${projectId}/${prevCollection.id}`} 
+                    className="nav-link prev"
+                    style={{ backgroundImage: `url(${prevCollection.uploadedFiles[0]?.url})` }}
+                  >
+                    <div className="nav-content">
+                      <span className="nav-label">Previous Album</span>
+                      <span className="nav-name">{toTitleCase(prevCollection.name)}</span>
+                    </div>
+                  </Link>
+                ) : <div className="nav-placeholder" />}
+
+                {nextCollection ? (
+                  <Link 
+                    to={`/${studioName}/smart-gallery/${projectId}/${nextCollection.id}`} 
+                    className="nav-link next"
+                    style={{ backgroundImage: `url(${nextCollection.uploadedFiles[0]?.url})` }}
+                  >
+                    <div className="nav-content">
+                      <span className="nav-label">Next Album</span>
+                      <span className="nav-name">{toTitleCase(nextCollection.name)}</span>
+                    </div>
+                  </Link>
+                ) : (
+                  <Link 
+                    to={`/${studioName}/smart-gallery/${projectId}`} 
+                    className="nav-link next home"
+                  >
+                    <div className="nav-content">
+                      <span className="nav-label">Back to</span>
+                      <span className="nav-name">All Albums</span>
+                    </div>
+                  </Link>
+                )}
+              </div>
+            </div>
+          )}
+
           <StudioBrandingFooter />
- 
       </div>
     );
   }
 
   const CollectionsGrid = () => {
-    const [visibleCollections, setVisibleCollections] = useState([]);
-    const [collectionsLoading, setCollectionsLoading] = useState(true);
-
-    useEffect(() => {
-      const checkCollectionVisibility = async () => {
-        const newVisibleCollections = [];
-        for (const collection of project.collections) {
-          if (collection.uploadedFiles?.length > 0) {
-            const status = await fetchCollectionStatus(studioName, projectId, collection.id);
-            if (status !== 'hide') {
-              newVisibleCollections.push(collection);
-            }
-          }
-        }
-        setVisibleCollections(newVisibleCollections);
-        setCollectionsLoading(false);
-      };
-
-      if (project?.collections) {
-        checkCollectionVisibility();
-      }
-    }, [project, studioName, projectId]);
-
     if (collectionsLoading) {
       return <LoadingLight />;
     }
