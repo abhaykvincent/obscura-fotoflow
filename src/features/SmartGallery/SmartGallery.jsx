@@ -5,6 +5,8 @@ import { fetchProject } from '../../firebase/functions/firestore';
 import SmartAlbum from '../../components/ImageGallery/SmartAlbum';
 import { useSelector } from 'react-redux';
 import { selectIsAuthenticated, selectUser } from '../../app/slices/authSlice';
+import { selectStudioAdminSettings } from '../../app/slices/adminSettingsSlice';
+import { selectStudio } from '../../app/slices/studioSlice';
 import { toTitleCase } from '../../utils/stringUtils';
 import { setUserType } from '../../analytics/utils';
 import { LoadingLight } from '../../components/Loading/Loading';
@@ -14,8 +16,49 @@ export default function SmartGallery() {
   const { studioName, projectId, collectionId } = useParams();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
+  const studio = useSelector(selectStudio);
+  const { settings } = useSelector(selectStudioAdminSettings);
+  const tagline = settings?.gallery?.galleryTagline || `smile with ${studioName}`;
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState(null);
+
+  const StudioBrandingFooter = () => {
+    if (project?.type === "FUNERAL") return null;
+    
+    return (
+      <footer className="studio-branding-footer">
+        <div className="footer-content">
+          {studio?.studioLogo && (
+            <img src={studio.studioLogo} alt={`${studio.name} logo`} className="studio-footer-logo" />
+          )}
+          <div className="branding-text">
+            <h3 className="studio-name">{studio?.name || studioName}</h3>
+            <p className="studio-tagline">{tagline}</p>
+          </div>
+          <div className="studio-contact-info">
+            {studio?.website && (
+              <a href={studio.website.startsWith('http') ? studio.website : `https://${studio.website}`} target="_blank" rel="noopener noreferrer" className="contact-link">
+                Website
+              </a>
+            )}
+            {studio?.social?.instagram && (
+              <a href={`https://instagram.com/${studio.social.instagram}`} target="_blank" rel="noopener noreferrer" className="contact-link">
+                Instagram
+              </a>
+            )}
+            {studio?.social?.facebook && (
+              <a href={`https://facebook.com/${studio.social.facebook}`} target="_blank" rel="noopener noreferrer" className="contact-link">
+                Facebook
+              </a>
+            )}
+          </div>
+        </div>
+        <div className="powered-by">
+          Powered by <a href="https://fotoflow.pro" target="_blank" rel="noopener noreferrer">FotoFlow Pro</a>
+        </div>
+      </footer>
+    );
+  };
 
   useEffect(() => {
     document.body.style.backgroundColor = 'white';
@@ -63,7 +106,7 @@ export default function SmartGallery() {
     return (
       <div className="share-project">
           <SmartAlbum domain={studioName} projectId={projectId} collectionId={collectionId} />
-          {project.type !== "FUNERAL" && <p className='studio-tag-line'>{`smile with ${studioName}`}</p>}
+          <StudioBrandingFooter />
  
       </div>
     );
@@ -134,7 +177,7 @@ export default function SmartGallery() {
           Download
         </Link>
       </div>
-      {project.type !== "FUNERAL" && <p className='studio-tag-line'>{`smile with ${studioName}`}</p>}
+      <StudioBrandingFooter />
     </div>
   );
 }
