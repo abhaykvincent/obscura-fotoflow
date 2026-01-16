@@ -11,7 +11,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const computeLayout = (images, containerWidth, targetRowHeight, gap) => {
+const computeLayout = (images, containerWidth, targetRowHeight, gap, isMobile) => {
   if (!containerWidth || !images || images.length === 0) return [];
 
   const rows = [];
@@ -25,7 +25,22 @@ const computeLayout = (images, containerWidth, targetRowHeight, gap) => {
     const aspectRatio = image.dimensions.width / image.dimensions.height;
     const scaledWidth = targetRowHeight * aspectRatio;
 
-    if (currentRowWidth + scaledWidth + (currentRow.length > 0 ? gap : 0) > containerWidth && currentRow.length > 0) {
+    let shouldBreak = false;
+    if (currentRow.length > 0) {
+      if (isMobile) {
+        const isLandscape = aspectRatio >= 1;
+        const currentHasLandscape = currentRow.some(img => (img.dimensions.width / img.dimensions.height) >= 1);
+        if (currentHasLandscape || isLandscape || currentRow.length >= 2) {
+          shouldBreak = true;
+        }
+      } else {
+        if (currentRowWidth + scaledWidth + (currentRow.length > 0 ? gap : 0) > containerWidth) {
+          shouldBreak = true;
+        }
+      }
+    }
+
+    if (shouldBreak) {
       const totalAspectRatio = currentRow.reduce((acc, img) => acc + (img.dimensions.width / img.dimensions.height), 0);
       const rowHeight = (containerWidth - (currentRow.length - 1) * gap) / totalAspectRatio;
 
@@ -44,11 +59,21 @@ const computeLayout = (images, containerWidth, targetRowHeight, gap) => {
   });
 
   if (currentRow.length > 0) {
-    rows.push(currentRow.map(img => ({
-      ...img,
-      width: targetRowHeight * (img.dimensions.width / img.dimensions.height),
-      height: targetRowHeight,
-    })));
+    if (isMobile) {
+      const totalAspectRatio = currentRow.reduce((acc, img) => acc + (img.dimensions.width / img.dimensions.height), 0);
+      const rowHeight = (containerWidth - (currentRow.length - 1) * gap) / totalAspectRatio;
+      rows.push(currentRow.map(img => ({
+        ...img,
+        width: rowHeight * (img.dimensions.width / img.dimensions.height),
+        height: rowHeight,
+      })));
+    } else {
+      rows.push(currentRow.map(img => ({
+        ...img,
+        width: targetRowHeight * (img.dimensions.width / img.dimensions.height),
+        height: targetRowHeight,
+      })));
+    }
   }
 
   return rows;
@@ -169,7 +194,8 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
     if (images && containerWidth) {
       const targetRowHeight = 200;
       const gap = 10;
-      const computedLayout = computeLayout(images, containerWidth, targetRowHeight, gap);
+      const isMobile = containerWidth < 768;
+      const computedLayout = computeLayout(images, containerWidth, targetRowHeight, gap, isMobile);
       setLayout(computedLayout);
     }
   }, [images, containerWidth]);
