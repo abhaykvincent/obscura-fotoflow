@@ -28,14 +28,7 @@ const computeLayout = (images, containerWidth, targetRowHeight, gap, isMobile) =
     let shouldBreak = false;
     if (currentRow.length > 0) {
       if (isMobile) {
-        const isLandscape = aspectRatio > 1;
-        const currentHasLandscape = currentRow.some(img => (img.dimensions.width / img.dimensions.height) > 1);
-        
         if (currentRow.length >= 2) {
-          shouldBreak = true;
-        } else if (currentHasLandscape && isLandscape) {
-          // If we have a landscape and the new image is also a landscape, break.
-          // This allows P+P, P+L, and L+P, but keeps L+L separate.
           shouldBreak = true;
         }
       } else {
