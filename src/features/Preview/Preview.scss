@@ -135,7 +135,12 @@
               
               &.options {
                  background-image: url('../../assets/img/icons/options-dots.png');
-                 background-size: 24px;
+                 background-size:auto 40%;
+              }
+              &.download {
+                             background-image: url('https://img.icons8.com/?size=100&id=8365&format=png&color=FFFFFF&stroke=500');
+
+                 background-size:auto 65%;
               }
             }
             
