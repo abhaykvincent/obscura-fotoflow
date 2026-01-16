@@ -48,19 +48,18 @@
   
       .controls {
         width: 100%;
-        position: fixed; // Fixed relative to viewport
+        position: fixed;
         z-index: 100;
         
         // Glassmorphism Base
         &.glass-panel {
-          background: rgba(0, 0, 0, 0.4); // Darker tint for better text contrast
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          background: rgba(0, 0, 0, 0.45);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
           
           &.top {
             top: 0;
-            padding-top: env(safe-area-inset-top); // Handle notch
           }
         }
     
@@ -68,68 +67,101 @@
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 0 16px;
-          height: 64px; // Consistent height
+          padding: env(safe-area-inset-top) 20px 0;
+          height: calc(72px + env(safe-area-inset-top));
           
           .left-controls {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
     
             .back {
-              width: 40px;
-              height: 40px;
+              width: 44px;
+              height: 44px;
               border-radius: 50%;
               background-image: url('../../assets/img/icons/arrow-round-back.svg');
               background-position: center;
               background-repeat: no-repeat;
               background-size: 24px;
               cursor: pointer;
-              transition: background-color 0.2s;
+              transition: all 0.2s;
     
               &:hover {
-                background-color: rgba(255, 255, 255, 0.1);
+                background-color: rgba(255, 255, 255, 0.15);
               }
             }
     
             .file-name {
               color: white;
-              font-size: 0.95rem;
+              font-size: 1rem;
               font-weight: 500;
-              letter-spacing: 0.5px;
-              text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+              letter-spacing: 0.3px;
+              text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+              display: flex;
+              align-items: center;
+              height: 44px;
+              min-width: 160px;
+              overflow: hidden;
+
+              .name-wrapper {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 40vw;
+              }
             }
           }
     
           .right-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
     
             .icon {
-              width: 40px;
-              height: 40px;
+              width: 44px;
+              height: 44px;
               border-radius: 50%;
               background-position: center;
               background-repeat: no-repeat;
-              background-size: 20px;
+              background-size: 22px;
               cursor: pointer;
               transition: all 0.2s;
+              filter: brightness(0) invert(1); // Ensure white if the original is black
     
               &:hover {
-                background-color: rgba(255, 255, 255, 0.1);
+                background-color: rgba(255, 255, 255, 0.15);
                 transform: scale(1.05);
               }
               
               &.options {
-                 // Specific styles if needed
+                 background-image: url('../../assets/img/icons/options-dots.png');
+                 background-size: 24px;
               }
             }
             
-            // Styles for DownloadImage component wrapper if present
-            .download-btn { // Assuming DownloadImage renders something selectable
-                 opacity: 0.8;
-                 &:hover { opacity: 1; }
+            // Handle DownloadImage component alignment
+            .interactive {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              height: 44px;
+              width: 44px;
+              border-radius: 50%;
+              transition: background-color 0.2s;
+
+              &:hover {
+                background-color: rgba(255, 255, 255, 0.15);
+              }
+
+              // In case DownloadImage renders a button/icon inside
+              button, .download-btn {
+                background: none;
+                border: none;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              }
             }
           }
         }
@@ -222,16 +254,36 @@
 @media only screen and (max-width: 768px) {
   .App .preview {
     .controls.top {
-      height: auto;
-      min-height: 56px;
-      padding: 8px 12px;
+      height: calc(64px + env(safe-area-inset-top));
+      padding: env(safe-area-inset-top) 12px 0;
       
-      .left-controls .file-name {
-        font-size: 0.85rem;
-        max-width: 150px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+      .left-controls {
+        gap: 8px;
+        .file-name {
+          font-size: 0.9rem;
+          min-width: 100px;
+          height: 40px;
+
+          .name-wrapper {
+            max-width: 50vw;
+          }
+        }
+
+        .back {
+          width: 40px;
+          height: 40px;
+          background-size: 20px;
+        }
+      }
+
+      .right-controls {
+        gap: 4px;
+        
+        .icon, .interactive {
+          width: 40px;
+          height: 40px;
+          background-size: 20px;
+        }
       }
     }
   }
