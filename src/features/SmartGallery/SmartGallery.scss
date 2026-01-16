@@ -42,21 +42,6 @@
       padding: 0 8px*5;
   }
 
-  .studio-tag-line {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 8px * 10 8px * 3;
-    color: $dark-3;
-    font-family: 'Lastri', serif;
-    font-size: 1.2rem;
-    letter-spacing: 0.02em;
-    opacity: 0.8;
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
-    margin-top: 8px * 5;
-    text-align: center;
-    width: 100%;
-  }
 
   .gallary{
 
@@ -218,20 +203,80 @@
       }
     }
   }
-  .studio-tag-line {
+  .studio-branding-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 8px * 10 8px * 5;
+    padding-bottom: 8px*2;
+    margin-top: 8px * 10;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    padding: 8px * 10 8px * 3;
-    color: $dark-3;
-    font-family: 'Lastri', serif;
-    font-size: 1.2rem;
-    letter-spacing: 0.02em;
-    opacity: 0.8;
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
-    margin-top: 8px * 5;
-    text-align: center;
-    width: 100%;
+    background-color: #fafafa;
+    
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      max-width: 800px;
+      text-align: center;
+      
+      .studio-footer-logo {
+        height: 64px;
+        width: auto;
+        object-fit: contain;
+        margin-bottom: 8px;
+      }
+      
+      .branding-text {
+        .studio-name {
+          font-family: 'Lastri', serif;
+          font-size: 1.8rem;
+          margin-bottom: 4px;
+          color: rgba(0, 0, 0, 0.85);
+        }
+        
+        .studio-tagline {
+          font-size: 1.1rem;
+          color: rgba(0, 0, 0, 0.5);
+          letter-spacing: 0.05em;
+        }
+      }
+      
+      .studio-contact-info {
+        display: flex;
+        gap: 24px;
+        margin-top: 16px;
+        
+        .contact-link {
+          text-decoration: none;
+          color: rgba(0, 0, 0, 0.7);
+          font-weight: 500;
+          font-size: 0.9rem;
+          transition: color 0.2s ease;
+          
+          &:hover {
+            color: $dark-0;
+          }
+        }
+      }
+    }
+    
+    .powered-by {
+      margin-top: 8px * 8;
+      font-size: 0.8rem;
+      color: rgba(0, 0, 0, 0.3);
+      
+      a {
+        color: rgba(0, 0, 0, 0.4);
+        text-decoration: none;
+        font-weight: 600;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
   }
 }
 
