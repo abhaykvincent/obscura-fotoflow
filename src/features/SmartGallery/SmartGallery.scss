@@ -40,13 +40,22 @@
   }
   .shared-collection{
       padding: 0 8px*5;
-      .studio-tag-line{
-        display: grid;
-        align-items: center;
-        text-align: center;
-        height: 8px*10;
-        color: $dark-3;
-      }
+  }
+
+  .studio-tag-line {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px * 10 8px * 3;
+    color: $dark-3;
+    font-family: 'Lastri', serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.02em;
+    opacity: 0.8;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    margin-top: 8px * 5;
+    text-align: center;
+    width: 100%;
   }
 
   .gallary{
@@ -209,12 +218,20 @@
       }
     }
   }
-  .studio-tag-line{
-    display: grid;
+  .studio-tag-line {
+    display: flex;
+    justify-content: center;
     align-items: center;
-    text-align: center;
-    height: 8px*10;
+    padding: 8px * 10 8px * 3;
     color: $dark-3;
+    font-family: 'Lastri', serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.02em;
+    opacity: 0.8;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    margin-top: 8px * 5;
+    text-align: center;
+    width: 100%;
   }
 }
 

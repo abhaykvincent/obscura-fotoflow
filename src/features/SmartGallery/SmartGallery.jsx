@@ -5,6 +5,7 @@ import { fetchProject } from '../../firebase/functions/firestore';
 import SmartAlbum from '../../components/ImageGallery/SmartAlbum';
 import { useSelector } from 'react-redux';
 import { selectIsAuthenticated, selectUser } from '../../app/slices/authSlice';
+import { selectStudioAdminSettings } from '../../app/slices/adminSettingsSlice';
 import { toTitleCase } from '../../utils/stringUtils';
 import { setUserType } from '../../analytics/utils';
 import { LoadingLight } from '../../components/Loading/Loading';
@@ -14,6 +15,8 @@ export default function SmartGallery() {
   const { studioName, projectId, collectionId } = useParams();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
+  const { settings } = useSelector(selectStudioAdminSettings);
+  const tagline = settings?.gallery?.galleryTagline || `smile with ${studioName}`;
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState(null);
 
@@ -63,7 +66,7 @@ export default function SmartGallery() {
     return (
       <div className="share-project">
           <SmartAlbum domain={studioName} projectId={projectId} collectionId={collectionId} />
-          {project.type !== "FUNERAL" && <p className='studio-tag-line'>{`smile with ${studioName}`}</p>}
+          {project.type !== "FUNERAL" && <p className='studio-tag-line'>{tagline}</p>}
  
       </div>
     );
@@ -134,7 +137,7 @@ export default function SmartGallery() {
           Download
         </Link>
       </div>
-      {project.type !== "FUNERAL" && <p className='studio-tag-line'>{`smile with ${studioName}`}</p>}
+      {project.type !== "FUNERAL" && <p className='studio-tag-line'>{tagline}</p>}
     </div>
   );
 }
