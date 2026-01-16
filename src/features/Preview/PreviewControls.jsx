@@ -39,20 +39,20 @@ function PreviewControls({ showControls, image, closePreview, handleDelete, proj
           <div className='left-controls'>
             <div className="back interactive" onClick={closePreview}></div>
 
-            <span className="file-name" style={{ position: "relative", display: "inline-block", minWidth: "120px" }}>
+            <div className="file-name">
               <AnimatePresence mode="wait">
-                <motion.span
+                <motion.div
                   key={transitionKey}
-                  initial={{ opacity: 0, x: 5 }}
+                  initial={{ opacity: 0, x: 10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -5 }}
+                  exit={{ opacity: 0, x: -10 }}
                   transition={{ duration: 0.3 }}
-                  style={{ position: "absolute", left: 0 }}
+                  className="name-wrapper"
                 >
                   {shortenFileName(displayedName)}
-                </motion.span>
+                </motion.div>
               </AnimatePresence>
-            </span>
+            </div>
           </div>
 
           <div className="right-controls">

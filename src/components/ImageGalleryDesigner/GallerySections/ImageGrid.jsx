@@ -11,7 +11,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const computeLayout = (images, containerWidth, targetRowHeight, gap) => {
+const computeLayout = (images, containerWidth, targetRowHeight, gap, isMobile) => {
   if (!containerWidth || !images || images.length === 0) return [];
 
   const rows = [];
@@ -25,7 +25,20 @@ const computeLayout = (images, containerWidth, targetRowHeight, gap) => {
     const aspectRatio = image.dimensions.width / image.dimensions.height;
     const scaledWidth = targetRowHeight * aspectRatio;
 
-    if (currentRowWidth + scaledWidth + (currentRow.length > 0 ? gap : 0) > containerWidth && currentRow.length > 0) {
+    let shouldBreak = false;
+    if (currentRow.length > 0) {
+      if (isMobile) {
+        if (currentRow.length >= 2) {
+          shouldBreak = true;
+        }
+      } else {
+        if (currentRowWidth + scaledWidth + (currentRow.length > 0 ? gap : 0) > containerWidth) {
+          shouldBreak = true;
+        }
+      }
+    }
+
+    if (shouldBreak) {
       const totalAspectRatio = currentRow.reduce((acc, img) => acc + (img.dimensions.width / img.dimensions.height), 0);
       const rowHeight = (containerWidth - (currentRow.length - 1) * gap) / totalAspectRatio;
 
@@ -44,11 +57,21 @@ const computeLayout = (images, containerWidth, targetRowHeight, gap) => {
   });
 
   if (currentRow.length > 0) {
-    rows.push(currentRow.map(img => ({
-      ...img,
-      width: targetRowHeight * (img.dimensions.width / img.dimensions.height),
-      height: targetRowHeight,
-    })));
+    if (isMobile) {
+      const totalAspectRatio = currentRow.reduce((acc, img) => acc + (img.dimensions.width / img.dimensions.height), 0);
+      const rowHeight = (containerWidth - (currentRow.length - 1) * gap) / totalAspectRatio;
+      rows.push(currentRow.map(img => ({
+        ...img,
+        width: rowHeight * (img.dimensions.width / img.dimensions.height),
+        height: rowHeight,
+      })));
+    } else {
+      rows.push(currentRow.map(img => ({
+        ...img,
+        width: targetRowHeight * (img.dimensions.width / img.dimensions.height),
+        height: targetRowHeight,
+      })));
+    }
   }
 
   return rows;
@@ -115,7 +138,15 @@ export const ImageDragOverlay = ({ image }) => {
   );
 };
 
-const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, toggleScaleControl, isViewOnly }) => {
+// ... imports ...
+
+// ... computeLayout ...
+
+// ... SortableImage ... (keep as is)
+
+// ... ImageDragOverlay ... (keep as is)
+
+const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, toggleScaleControl, isViewOnly, onImageClick }) => {
   const [showScaleControl, setShowScaleControl] = useState(false);
 
   useEffect(() => {
@@ -123,6 +154,7 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
       toggleScaleControl.current = () => setShowScaleControl(prev => !prev);
     }
   }, [toggleScaleControl]);
+  
   const handleScaleChange = (event) => {
     const newScale = Number(event.target.value);
     onSectionUpdate({ ...section, gridSettings: { ...section.gridSettings, scale: newScale } });
@@ -160,7 +192,8 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
     if (images && containerWidth) {
       const targetRowHeight = 200;
       const gap = 10;
-      const computedLayout = computeLayout(images, containerWidth, targetRowHeight, gap);
+      const isMobile = containerWidth < 768;
+      const computedLayout = computeLayout(images, containerWidth, targetRowHeight, gap, isMobile);
       setLayout(computedLayout);
     }
   }, [images, containerWidth]);
@@ -217,6 +250,24 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
           <p>No images to display.</p>
         </div>
       ) : (
+        isViewOnly ? (
+           <div className="image-grid-display" ref={containerRef} data-section-id={section.id}>
+            {layout.map((row, rowIndex) => (
+              <div key={rowIndex} className="image-grid-row">
+                {row.map((image, imgIndex) => (
+                   <div 
+                      key={image.url} 
+                      className="image-grid-item" 
+                      style={{ width: image.width, height: image.height, cursor: onImageClick ? 'pointer' : 'default' }}
+                      onClick={() => onImageClick && onImageClick(image, images.findIndex(img => img.url === image.url))}
+                   >
+                    <img src={image.url} alt={`Gallery Image ${imgIndex}`} style={{ width: '100%', height: '100%', display: 'block', borderRadius: '4px', objectFit: 'cover' }} />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        ) : (
         <SortableContext items={images.map(img => img.url)} strategy={rectSortingStrategy}>
           <div className="image-grid-display" ref={containerRef} data-section-id={section.id}>
             {layout.map((row, rowIndex) => (
@@ -234,6 +285,7 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
             ))}
           </div>
         </SortableContext>
+        )
       )}
     </div>
   );
