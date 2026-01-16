@@ -1465,9 +1465,19 @@ transition-delay: 0.2s;
 
 @media only screen and (max-width: 430px) {
   .App{
-    .modal.loginModal .actions{
+    .modal.loginModal{
+      width: 100vw;
+      left: 0;
+    .actions{
+      max-width: 100vw;
       .login-subtitle {
      width: 100%;
       }
+      .button{
+        gap:8px*0.5;
+        font-size: 0.9rem;
+        width: calc(100vw - 8px*1);
+      }
+    } 
     } 
 }}

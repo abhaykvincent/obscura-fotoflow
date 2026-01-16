@@ -21,7 +21,7 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
     if (domain && projectId && collectionId) {
       dispatch(fetchSmartGallery({ domain, projectId, collectionId }));
     }
-  }, [dispatch, domain, projectId, collectionId]);
+  }, [dispatch, domain, projectId, collectionId])
 
   if (smartGalleryStatus === 'loading') {
     return <div>Loading...</div>;
@@ -31,7 +31,7 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
     return <div>Error loading gallery.</div>;
   }
 
-  if (!smartGalleryData) {
+  if (!smartGalleryData && smartGalleryStatus !== 'loading') {
     return <Navigate to={`/${domain}/share/${projectId}${collectionId ? `/${collectionId}` : ''}`} replace />;
   }
 
@@ -39,7 +39,7 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
     <div className="smart-album">
       <div className="project-header">
 
-        {smartGalleryData.projectCover ? (
+        {smartGalleryData?.projectCover ? (
 
           <img src={smartGalleryData.projectCover} alt="Cover" className="banner cover" style={{ objectPosition: `${smartGalleryData?.focusPoint?.x * 100}% ${smartGalleryData.focusPoint?.y * 100}%` }} />
         ) : (
