@@ -41,12 +41,22 @@ function UploadButton({
     setIsPhotosImported(true);
     const dummyFiles = [];
     for (let i = 0; i < limit; i++) {
+        // Patterned orientation: simulate a shoot with mixed orientations (e.g., 1 in 5 is portrait)
+        const isPortrait = i % 5 === 0;
+        const baseWidth = isPortrait ? 800 : 1200;
+        const baseHeight = isPortrait ? 1200 : 800;
+        
+        // Randomize dimensions slightly (between 80% and 120% of base) to simulate varied crops/resolutions
+        const randomScale = 0.8 + Math.random() * 0.4;
+        const width = Math.floor(baseWidth * randomScale);
+        const height = Math.floor(baseHeight * randomScale);
+
         dummyFiles.push({
             name: `dummy-image-${i}.jpg`,
-            url: `https://picsum.photos/seed/${i + Math.random()}/1200/800`,
+            url: `https://picsum.photos/seed/${i + Math.random()}/${width}/${height}`,
             lastModified: Date.now(),
             dateTimeOriginal: new Date().toISOString(),
-            dimensions: { width: 1200, height: 800 },
+            dimensions: { width, height },
             thumbAvailable: true,
         });
     }
