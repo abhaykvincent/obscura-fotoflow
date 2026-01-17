@@ -65,7 +65,7 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
   }
 
   if (!smartGalleryData && smartGalleryStatus !== 'loading') {
-    return <Navigate to={`/${domain}/share/${projectId}${collectionId ? `/${collectionId}` : ''}`} replace />;
+    return <Navigate to={`/${domain}/smart-gallery/${projectId}${collectionId ? `/${collectionId}` : ''}`} replace />;
   }
 
   return (
