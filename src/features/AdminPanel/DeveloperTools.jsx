@@ -159,7 +159,7 @@ function DeveloperTools() {
 
                 {firestoreData && (
                     <div className="firestore-explorer">
-                        <div className="sidebar">
+                        <div className="explorer-sidebar">
                             <div className="sidebar-header">Collections</div>
                             {renderNav()}
                         </div>
