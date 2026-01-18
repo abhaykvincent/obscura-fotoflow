@@ -1,12 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Navigate } from 'react-router-dom';
 import { fetchSmartGallery, selectSmartGallery, selectSmartGalleryStatus } from '../../app/slices/smartGallerySlice';
 import SectionRenderer from './SectionRenderer';
 import { toTitleCase } from '../../utils/stringUtils';
 import './SmartAlbum.scss'
 import { selectProjects } from '../../app/slices/projectsSlice';
-import { get } from 'firebase/database';
 import Preview from '../../features/Preview/Preview';
 
 const SmartAlbum = ({ domain, projectId, collectionId }) => {
@@ -64,8 +62,8 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
     return <div>Error loading gallery.</div>;
   }
 
-  if (!smartGalleryData && smartGalleryStatus !== 'loading') {
-    return <Navigate to={`/${domain}/smart-gallery/${projectId}${collectionId ? `/${collectionId}` : ''}`} replace />;
+  if (!smartGalleryData) {
+    return null;
   }
 
   return (
