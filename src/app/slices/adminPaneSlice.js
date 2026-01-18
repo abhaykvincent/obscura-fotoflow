@@ -29,7 +29,32 @@ export const fetchAllFirestoreData = createAsyncThunk(
       if (domain) {
         const projectsRef = collection(db, 'studios', domain, 'projects');
         const projectSnapshot = await getDocs(projectsRef);
-        data[`projects (${domain})`] = projectSnapshot.docs.map(doc => ({ id: doc.id, ...convertTimestamps(doc.data()) }));
+        const projects = projectSnapshot.docs.map(doc => ({ id: doc.id, ...convertTimestamps(doc.data()) }));
+        
+        data['projects'] = projects;
+
+        // Fetch subcollections for each project
+        const collectionsMap = {};
+        const eventsMap = {};
+
+        await Promise.all(projects.map(async (project) => {
+          // Fetch collections
+          const colsRef = collection(db, 'studios', domain, 'projects', project.id, 'collections');
+          const colsSnap = await getDocs(colsRef);
+          if (!colsSnap.empty) {
+            collectionsMap[project.id] = colsSnap.docs.map(doc => ({ id: doc.id, ...convertTimestamps(doc.data()) }));
+          }
+
+          // Fetch events
+          const eventsRef = collection(db, 'studios', domain, 'projects', project.id, 'events');
+          const eventsSnap = await getDocs(eventsRef);
+          if (!eventsSnap.empty) {
+            eventsMap[project.id] = eventsSnap.docs.map(doc => ({ id: doc.id, ...convertTimestamps(doc.data()) }));
+          }
+        }));
+
+        if (Object.keys(collectionsMap).length > 0) data['projects::collections'] = collectionsMap;
+        if (Object.keys(eventsMap).length > 0) data['projects::events'] = eventsMap;
       }
 
       return data;

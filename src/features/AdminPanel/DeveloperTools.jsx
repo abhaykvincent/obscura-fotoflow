@@ -53,7 +53,8 @@ function DeveloperTools() {
     const dispatch = useDispatch();
     const domain = useSelector(selectDomain);
     const { firestoreData, loading } = useSelector((state) => state.adminPane);
-    const [activeTab, setActiveTab] = useState('ALL');
+    const [activeMainTab, setActiveMainTab] = useState('ALL');
+    const [activeSubTab, setActiveSubTab] = useState('Main');
 
     const handleAddDummyProjects = async () => {
         if (!domain) {
@@ -79,7 +80,8 @@ function DeveloperTools() {
 
     const handleFetchData = async () => {
         try {
-            setActiveTab('ALL'); // Reset tab on new fetch
+            setActiveMainTab('ALL');
+            setActiveSubTab('Main');
             await dispatch(fetchAllFirestoreData(domain)).unwrap();
             dispatch(showAlert({ type: 'success', message: 'Firestore data fetched successfully!' }));
         } catch (error) {
@@ -87,14 +89,30 @@ function DeveloperTools() {
         }
     };
 
+    const getActiveData = () => {
+        if (!firestoreData) return null;
+        if (activeMainTab === 'ALL') return firestoreData;
+        if (activeSubTab === 'Main') return firestoreData[activeMainTab];
+        return firestoreData[`${activeMainTab}::${activeSubTab}`];
+    };
+
     const handleCopyJson = () => {
-        if (!firestoreData) return;
-        const dataToCopy = activeTab === 'ALL' ? firestoreData : firestoreData[activeTab];
-        navigator.clipboard.writeText(JSON.stringify(dataToCopy, null, 2));
+        const data = getActiveData();
+        if (!data) return;
+        navigator.clipboard.writeText(JSON.stringify(data, null, 2));
         dispatch(showAlert({ type: 'success', message: 'JSON copied to clipboard!' }));
     };
 
-    const collectionKeys = firestoreData ? Object.keys(firestoreData) : [];
+    // Extract Main Tabs (unique prefixes before '::')
+    const allKeys = firestoreData ? Object.keys(firestoreData) : [];
+    const mainTabs = [...new Set(allKeys.map(k => k.split('::')[0]))];
+
+    // Extract Sub Tabs for the active main tab
+    const subTabs = activeMainTab === 'ALL' ? [] : allKeys
+        .filter(k => k.startsWith(`${activeMainTab}::`))
+        .map(k => k.split('::')[1]);
+
+    const showSubTabs = subTabs.length > 0;
 
     return (
         <main className="developer-tools">
@@ -143,34 +161,35 @@ function DeveloperTools() {
                             </div>
                         </div>
 
+                        {/* Main Tabs */}
                         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 15 }}>
                             <button
-                                onClick={() => setActiveTab('ALL')}
+                                onClick={() => { setActiveMainTab('ALL'); setActiveSubTab('Main'); }}
                                 style={{
-                                    background: activeTab === 'ALL' ? '#0E639C' : '#333',
+                                    background: activeMainTab === 'ALL' ? '#0E639C' : '#333',
                                     color: 'white',
                                     border: 'none',
                                     padding: '5px 15px',
                                     borderRadius: 20,
                                     cursor: 'pointer',
-                                    fontWeight: activeTab === 'ALL' ? 'bold' : 'normal',
+                                    fontWeight: activeMainTab === 'ALL' ? 'bold' : 'normal',
                                     fontSize: '12px'
                                 }}
                             >
                                 ALL
                             </button>
-                            {collectionKeys.map(key => (
+                            {mainTabs.map(key => (
                                 <button
                                     key={key}
-                                    onClick={() => setActiveTab(key)}
+                                    onClick={() => { setActiveMainTab(key); setActiveSubTab('Main'); }}
                                     style={{
-                                        background: activeTab === key ? '#0E639C' : '#333',
+                                        background: activeMainTab === key ? '#0E639C' : '#333',
                                         color: 'white',
                                         border: 'none',
                                         padding: '5px 15px',
                                         borderRadius: 20,
                                         cursor: 'pointer',
-                                        fontWeight: activeTab === key ? 'bold' : 'normal',
+                                        fontWeight: activeMainTab === key ? 'bold' : 'normal',
                                         fontSize: '12px'
                                     }}
                                 >
@@ -179,7 +198,47 @@ function DeveloperTools() {
                             ))}
                         </div>
 
-                        <JsonViewer data={activeTab === 'ALL' ? firestoreData : firestoreData[activeTab]} />
+                        {/* Sub Tabs */}
+                        {showSubTabs && (
+                            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 15, marginLeft: 20, paddingLeft: 10, borderLeft: '2px solid #555' }}>
+                                <span style={{ color: '#888', alignSelf: 'center', fontSize: '12px' }}>Subcollections:</span>
+                                <button
+                                    onClick={() => setActiveSubTab('Main')}
+                                    style={{
+                                        background: activeSubTab === 'Main' ? '#4CAF50' : '#444',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '4px 12px',
+                                        borderRadius: 15,
+                                        cursor: 'pointer',
+                                        fontSize: '11px',
+                                        fontWeight: activeSubTab === 'Main' ? 'bold' : 'normal'
+                                    }}
+                                >
+                                    Main Documents
+                                </button>
+                                {subTabs.map(subKey => (
+                                    <button
+                                        key={subKey}
+                                        onClick={() => setActiveSubTab(subKey)}
+                                        style={{
+                                            background: activeSubTab === subKey ? '#4CAF50' : '#444',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '4px 12px',
+                                            borderRadius: 15,
+                                            cursor: 'pointer',
+                                            fontSize: '11px',
+                                            fontWeight: activeSubTab === subKey ? 'bold' : 'normal'
+                                        }}
+                                    >
+                                        {subKey}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+                        <JsonViewer data={getActiveData()} />
                     </div>
                 )}
             </div>
