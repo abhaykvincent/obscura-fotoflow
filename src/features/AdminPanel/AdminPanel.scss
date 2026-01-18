@@ -313,134 +313,155 @@
             gap: 8px; // Space between support cards
         }
         
-        .firestore-explorer {
-            display: flex;
-            height: 700px;
-            background-color: $dark-3;
-            border: 1px solid $dark-1;
-            border-radius: 6px;
-            overflow: hidden;
-            margin-top: 16px;
-            color: $light-0;
-        
-            .sidebar {
-                width: 250px;
-                min-width: 250px;
-                background-color: $dark-2;
-                border-right: 1px solid $dark-1;
-                overflow-y: auto;
+            .firestore-explorer {
                 display: flex;
-                flex-direction: column;
-        
-                .sidebar-header {
-                     padding: 12px 16px;
-                     font-weight: bold;
-                     border-bottom: 1px solid $dark-1;
-                     color: $light-0;
-                     font-size: 0.9rem;
-                     text-transform: uppercase;
-                     letter-spacing: 0.5px;
-                }
-        
-                .nav-group {
+                height: 700px;
+                background-color: $dark-3;
+                border: 1px solid $dark-1;
+                border-radius: 6px;
+                overflow: hidden;
+                margin-top: 16px;
+                color: $light-0;
+            
+                .sidebar {
+                    width: 250px;
+                    min-width: 250px;
+                    background-color: $dark-2;
+                    border-right: 1px solid $dark-1;
+                    overflow-y: auto;
                     display: flex;
                     flex-direction: column;
-                }
-        
-                .nav-item {
-                     cursor: pointer;
-                     padding: 10px 16px;
-                     color: $gray-default-dark;
-                     font-size: 0.9rem;
-                     transition: all 0.2s ease;
-                     display: flex;
-                     justify-content: space-between;
-                     align-items: center;
-                     
-                     &:hover {
-                         background-color: rgba(255,255,255,0.05);
+            
+                    .sidebar-header {
+                         padding: 12px 16px;
+                         font-weight: bold;
+                         border-bottom: 1px solid $dark-1;
                          color: $light-0;
-                     }
-                     
-                     &.active {
-                         background-color: rgba($green-accessible-dark, 0.1);
-                         color: $green-accessible-dark;
-                         border-right: 3px solid $green-accessible-dark;
-                     }
-                }
-                
-                .sub-nav {
-                    background-color: rgba(0,0,0,0.2);
+                         font-size: 0.9rem;
+                         text-transform: uppercase;
+                         letter-spacing: 0.5px;
+                    }
+            
+                    .nav-group {
+                        display: flex;
+                        flex-direction: column;
+                    }
+            
                     .nav-item {
-                        padding-left: 32px;
-                        font-size: 0.85rem;
-                        
-                         &.active {
-                             background-color: rgba($green-accessible-dark, 0.2);
+                         cursor: pointer;
+                         padding: 10px 16px;
+                         color: $gray-default-dark;
+                         font-size: 0.9rem;
+                         transition: all 0.2s ease;
+                         display: flex;
+                         justify-content: space-between;
+                         align-items: center;
+                         
+                         &:hover {
+                             background-color: rgba(255,255,255,0.05);
                              color: $light-0;
-                             border-right: none;
+                         }
+                         
+                         &.active {
+                             background-color: rgba($green-accessible-dark, 0.1);
+                             color: $green-accessible-dark;
+                             border-right: 3px solid $green-accessible-dark;
                          }
                     }
                 }
-            }
-        
-            .content-area {
-                flex: 1;
-                overflow: hidden;
-                display: flex;
-                flex-direction: column;
-                background-color: #1E1E1E; // Code editor background
-        
-                .toolbar {
-                    padding: 10px 16px;
-                    border-bottom: 1px solid #333;
+            
+                .content-area {
+                    flex: 1;
+                    overflow: hidden;
                     display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    background-color: #252526;
-                    
-                    h3 {
-                        margin: 0;
-                        font-size: 1rem;
-                        font-weight: normal;
-                        color: #ccc;
-                    }
-    
-                    .actions {
-                        margin-bottom: 0;
+                    flex-direction: column;
+                    background-color: #1E1E1E; // Code editor background
+            
+                    .toolbar {
+                        padding: 10px 16px;
+                        border-bottom: 1px solid #333;
                         display: flex;
-                        gap: 8px;
-                    }
-    
-                    button {
-                        background: #0E639C;
-                        color: white;
-                        border: none;
-                        padding: 4px 12px;
-                        border-radius: 2px;
-                        cursor: pointer;
-                        font-size: 0.8rem;
+                        justify-content: space-between;
+                        align-items: center;
+                        background-color: #252526;
                         
-                        &:hover {
-                            background: lighten(#0E639C, 10%);
+                        h3 {
+                            margin: 0;
+                            font-size: 1rem;
+                            font-weight: normal;
+                            color: #ccc;
                         }
-                        
-                        &.clear-btn {
-                            background: #C586C0;
+        
+                        .actions {
+                            margin-bottom: 0;
+                            display: flex;
+                            gap: 8px;
+                        }
+        
+                        button {
+                            background: #0E639C;
+                            color: white;
+                            border: none;
+                            padding: 4px 12px;
+                            border-radius: 2px;
+                            cursor: pointer;
+                            font-size: 0.8rem;
+                            
                             &:hover {
-                                background: lighten(#C586C0, 10%);
+                                background: lighten(#0E639C, 10%);
+                            }
+                            
+                            &.clear-btn {
+                                background: #C586C0;
+                                &:hover {
+                                    background: lighten(#C586C0, 10%);
+                                }
                             }
                         }
                     }
+                    
+                    .viewer-container {
+                         flex: 1;
+                         display: flex;
+                         flex-direction: column;
+                         overflow: hidden;
+        
+                         .viewer-tabs {
+                             display: flex;
+                             background-color: #2D2D2D;
+                             border-bottom: 1px solid #333;
+                             padding: 0 8px;
+                             gap: 2px;
+        
+                             .tab-btn {
+                                 padding: 8px 16px;
+                                 font-size: 0.85rem;
+                                 cursor: pointer;
+                                 color: #999;
+                                 background-color: transparent;
+                                 border-top: 2px solid transparent;
+                                 transition: all 0.2s;
+        
+                                 &:hover {
+                                     background-color: #333;
+                                     color: #ddd;
+                                 }
+        
+                                 &.active {
+                                     background-color: #1E1E1E;
+                                     color: #fff;
+                                     border-top: 2px solid $green-accessible-dark;
+                                 }
+                             }
+                         }
+        
+                         .json-wrapper {
+                             flex: 1;
+                             overflow: auto;
+                             padding: 16px;
+                             font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
+                             font-size: 14px;
+                         }
+                    }
                 }
-                
-                .viewer-container {
-                     flex: 1;
-                     overflow: auto;
-                     padding: 16px;
-                     font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
-                     font-size: 14px;
-                }
-            }
-        }
-    }
+            }    }

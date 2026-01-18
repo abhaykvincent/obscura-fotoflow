@@ -123,44 +123,23 @@ function DeveloperTools() {
                     ALL DATA
                 </div>
                 {mainTabs.map(key => {
-                    const subTabs = getSubTabsFor(key);
                     const isActive = activeMainTab === key;
-                    const hasSubTabs = subTabs.length > 0;
-
                     return (
                         <div key={key} className="nav-group">
                             <div 
-                                className={`nav-item ${isActive && activeSubTab === 'Main' && !hasSubTabs ? 'active' : ''}`}
+                                className={`nav-item ${isActive ? 'active' : ''}`}
                                 onClick={() => { setActiveMainTab(key); setActiveSubTab('Main'); }}
                             >
-                                {key} {hasSubTabs && (isActive ? ' ▼' : ' ▶')}
+                                {key}
                             </div>
-                            
-                            {isActive && hasSubTabs && (
-                                <div className="sub-nav">
-                                    <div 
-                                        className={`nav-item ${activeSubTab === 'Main' ? 'active' : ''}`}
-                                        onClick={() => setActiveSubTab('Main')}
-                                    >
-                                        Main Documents
-                                    </div>
-                                    {subTabs.map(subKey => (
-                                        <div 
-                                            key={subKey}
-                                            className={`nav-item ${activeSubTab === subKey ? 'active' : ''}`}
-                                            onClick={() => setActiveSubTab(subKey)}
-                                        >
-                                            {subKey}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
                         </div>
                     );
                 })}
             </>
         );
     };
+
+    const currentSubTabs = activeMainTab !== 'ALL' ? getSubTabsFor(activeMainTab) : [];
 
     return (
         <main className="developer-tools">
@@ -187,15 +166,37 @@ function DeveloperTools() {
                         <div className="content-area">
                             <div className="toolbar">
                                 <h3>
-                                    {activeMainTab === 'ALL' ? 'Full Database Dump' : `${activeMainTab} ${activeSubTab !== 'Main' ? `/ ${activeSubTab}` : ''}`}
+                                    {activeMainTab === 'ALL' ? 'Full Database Dump' : activeMainTab}
                                 </h3>
                                 <div className="actions">
                                     <button onClick={handleCopyJson}>Copy JSON</button>
                                     <button className="clear-btn" onClick={() => dispatch(clearFirestoreData())}>Clear</button>
                                 </div>
                             </div>
+                            
                             <div className="viewer-container">
-                                <JsonViewer data={getActiveData()} />
+                                {currentSubTabs.length > 0 && (
+                                    <div className="viewer-tabs">
+                                        <div 
+                                            className={`tab-btn ${activeSubTab === 'Main' ? 'active' : ''}`}
+                                            onClick={() => setActiveSubTab('Main')}
+                                        >
+                                            Main Documents
+                                        </div>
+                                        {currentSubTabs.map(subKey => (
+                                            <div 
+                                                key={subKey}
+                                                className={`tab-btn ${activeSubTab === subKey ? 'active' : ''}`}
+                                                onClick={() => setActiveSubTab(subKey)}
+                                            >
+                                                {subKey}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                <div className="json-wrapper">
+                                    <JsonViewer data={getActiveData()} />
+                                </div>
                             </div>
                         </div>
                     </div>
