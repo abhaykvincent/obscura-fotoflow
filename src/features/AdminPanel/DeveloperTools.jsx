@@ -53,7 +53,8 @@ function DeveloperTools() {
     const dispatch = useDispatch();
     const domain = useSelector(selectDomain);
     const { firestoreData, loading } = useSelector((state) => state.adminPane);
-    const [activeTab, setActiveTab] = useState('ALL');
+    const [activeMainTab, setActiveMainTab] = useState('ALL');
+    const [activeSubTab, setActiveSubTab] = useState('Main');
 
     const handleAddDummyProjects = async () => {
         if (!domain) {
@@ -79,7 +80,8 @@ function DeveloperTools() {
 
     const handleFetchData = async () => {
         try {
-            setActiveTab('ALL'); // Reset tab on new fetch
+            setActiveMainTab('ALL');
+            setActiveSubTab('Main');
             await dispatch(fetchAllFirestoreData(domain)).unwrap();
             dispatch(showAlert({ type: 'success', message: 'Firestore data fetched successfully!' }));
         } catch (error) {
@@ -87,14 +89,57 @@ function DeveloperTools() {
         }
     };
 
+    const getActiveData = () => {
+        if (!firestoreData) return null;
+        if (activeMainTab === 'ALL') return firestoreData;
+        if (activeSubTab === 'Main') return firestoreData[activeMainTab];
+        return firestoreData[`${activeMainTab}::${activeSubTab}`];
+    };
+
     const handleCopyJson = () => {
-        if (!firestoreData) return;
-        const dataToCopy = activeTab === 'ALL' ? firestoreData : firestoreData[activeTab];
-        navigator.clipboard.writeText(JSON.stringify(dataToCopy, null, 2));
+        const data = getActiveData();
+        if (!data) return;
+        navigator.clipboard.writeText(JSON.stringify(data, null, 2));
         dispatch(showAlert({ type: 'success', message: 'JSON copied to clipboard!' }));
     };
 
-    const collectionKeys = firestoreData ? Object.keys(firestoreData) : [];
+    // Extract Main Tabs (unique prefixes before '::')
+    const allKeys = firestoreData ? Object.keys(firestoreData) : [];
+    const mainTabs = [...new Set(allKeys.map(k => k.split('::')[0]))].filter(k => k !== 'ALL'); // Exclude ALL if present manually
+
+    const getSubTabsFor = (mainKey) => {
+        return allKeys
+            .filter(k => k.startsWith(`${mainKey}::`))
+            .map(k => k.split('::')[1]);
+    };
+
+    const renderNav = () => {
+        return (
+            <>
+                <div 
+                    className={`nav-item ${activeMainTab === 'ALL' ? 'active' : ''}`} 
+                    onClick={() => { setActiveMainTab('ALL'); setActiveSubTab('Main'); }}
+                >
+                    ALL DATA
+                </div>
+                {mainTabs.map(key => {
+                    const isActive = activeMainTab === key;
+                    return (
+                        <div key={key} className="nav-group">
+                            <div 
+                                className={`nav-item ${isActive ? 'active' : ''}`}
+                                onClick={() => { setActiveMainTab(key); setActiveSubTab('Main'); }}
+                            >
+                                {key}
+                            </div>
+                        </div>
+                    );
+                })}
+            </>
+        );
+    };
+
+    const currentSubTabs = activeMainTab !== 'ALL' ? getSubTabsFor(activeMainTab) : [];
 
     return (
         <main className="developer-tools">
@@ -113,73 +158,47 @@ function DeveloperTools() {
                 </div>
 
                 {firestoreData && (
-                    <div style={{ 
-                        marginTop: 30, 
-                        background: '#1E1E1E', 
-                        color: '#D4D4D4', 
-                        padding: 20, 
-                        borderRadius: 8,
-                        fontFamily: 'Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace',
-                        fontSize: '14px',
-                        textAlign: 'left',
-                        maxHeight: '800px',
-                        overflowY: 'auto'
-                    }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 15, borderBottom: '1px solid #333', paddingBottom: 10 }}>
-                            <h3 style={{ margin: 0, color: '#fff' }}>Firestore Data Explorer</h3>
-                            <div style={{ display: 'flex', gap: 10 }}>
-                                <button 
-                                    onClick={handleCopyJson}
-                                    style={{ background: '#0E639C', color: 'white', border: 'none', padding: '5px 10px', borderRadius: 4, cursor: 'pointer' }}
-                                >
-                                    Copy JSON
-                                </button>
-                                <button 
-                                    onClick={() => dispatch(clearFirestoreData())}
-                                    style={{ background: '#C586C0', color: 'white', border: 'none', padding: '5px 10px', borderRadius: 4, cursor: 'pointer' }}
-                                >
-                                    Clear
-                                </button>
+                    <div className="firestore-explorer">
+                        <div className="explorer-sidebar">
+                            <div className="sidebar-header">Collections</div>
+                            {renderNav()}
+                        </div>
+                        <div className="content-area">
+                            <div className="toolbar">
+                                <h3>
+                                    {activeMainTab === 'ALL' ? 'Full Database Dump' : activeMainTab}
+                                </h3>
+                                <div className="actions">
+                                    <button onClick={handleCopyJson}>Copy JSON</button>
+                                    <button className="clear-btn" onClick={() => dispatch(clearFirestoreData())}>Clear</button>
+                                </div>
+                            </div>
+                            
+                            <div className="viewer-container">
+                                {currentSubTabs.length > 0 && (
+                                    <div className="viewer-tabs">
+                                        <div 
+                                            className={`tab-btn ${activeSubTab === 'Main' ? 'active' : ''}`}
+                                            onClick={() => setActiveSubTab('Main')}
+                                        >
+                                            Main Documents
+                                        </div>
+                                        {currentSubTabs.map(subKey => (
+                                            <div 
+                                                key={subKey}
+                                                className={`tab-btn ${activeSubTab === subKey ? 'active' : ''}`}
+                                                onClick={() => setActiveSubTab(subKey)}
+                                            >
+                                                {subKey}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                <div className="json-wrapper">
+                                    <JsonViewer data={getActiveData()} />
+                                </div>
                             </div>
                         </div>
-
-                        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 15 }}>
-                            <button
-                                onClick={() => setActiveTab('ALL')}
-                                style={{
-                                    background: activeTab === 'ALL' ? '#0E639C' : '#333',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '5px 15px',
-                                    borderRadius: 20,
-                                    cursor: 'pointer',
-                                    fontWeight: activeTab === 'ALL' ? 'bold' : 'normal',
-                                    fontSize: '12px'
-                                }}
-                            >
-                                ALL
-                            </button>
-                            {collectionKeys.map(key => (
-                                <button
-                                    key={key}
-                                    onClick={() => setActiveTab(key)}
-                                    style={{
-                                        background: activeTab === key ? '#0E639C' : '#333',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '5px 15px',
-                                        borderRadius: 20,
-                                        cursor: 'pointer',
-                                        fontWeight: activeTab === key ? 'bold' : 'normal',
-                                        fontSize: '12px'
-                                    }}
-                                >
-                                    {key}
-                                </button>
-                            ))}
-                        </div>
-
-                        <JsonViewer data={activeTab === 'ALL' ? firestoreData : firestoreData[activeTab]} />
                     </div>
                 )}
             </div>
