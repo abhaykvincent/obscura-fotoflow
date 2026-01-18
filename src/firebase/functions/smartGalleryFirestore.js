@@ -32,8 +32,26 @@ export const fetchSmartGalleryFromFirestore = async (domain, projectId, collecti
         if (collectionSnapshot.exists()) {
             const collectionData = collectionSnapshot.data();
             // Convert any Firestore Timestamps in smartGallery to milliseconds
-            const smartGallery = convertTimestampsToMillis(collectionData.smartGallery) || null;
-            return smartGallery;
+            if (collectionData.smartGallery) {
+                return convertTimestampsToMillis(collectionData.smartGallery);
+            } else {
+                // Simulate smartGallery data if missing
+                return {
+                    name: collectionData.name || '',
+                    projectCover: collectionData.uploadedFiles?.[0]?.url || '',
+                    focusPoint: { x: 0.5, y: 0.5 },
+                    sections: [
+                        {
+                            id: 'default-grid',
+                            type: 'image-grid',
+                            images: collectionData.uploadedFiles || []
+                        }
+                    ],
+                    coverSize: 'default',
+                    textPosition: 'center',
+                    overlayColor: 'rgba(0,0,0,0.3)'
+                };
+            }
         } else {
             console.warn(`Collection ${collectionId} not found for project ${projectId} in domain ${domain}`);
             return null;
