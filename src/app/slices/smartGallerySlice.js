@@ -35,6 +35,7 @@ const smartGallerySlice = createSlice
     builder
       .addCase(fetchSmartGallery.pending, (state) => {
         state.status = 'loading';
+        state.data = null;
       })
       .addCase(fetchSmartGallery.fulfilled, (state, action) => {
         state.status = 'succeeded';
