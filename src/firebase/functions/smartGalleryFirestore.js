@@ -35,6 +35,7 @@ export const fetchSmartGalleryFromFirestore = async (domain, projectId, collecti
             if (collectionData.smartGallery) {
                 return convertTimestampsToMillis(collectionData.smartGallery);
             } else {
+                debugger
                 // Simulate smartGallery data if missing
                 return {
                     name: collectionData.name || '',

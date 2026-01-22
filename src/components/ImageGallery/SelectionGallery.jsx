@@ -39,7 +39,12 @@ const SelectionGallery = ({ project, images, selectedImages,setUnselectedImages,
         message: 'Selection Completed!',
       }))}
     >
-      <img className="img" src={fileUrl.url} alt={`File ${index}`} />
+      <img 
+        className="img" 
+        src={fileUrl.url} 
+        alt={`File ${index}`} 
+        loading="lazy"
+      />
       
       {project.status !== "selected" && <input
         type="checkbox"

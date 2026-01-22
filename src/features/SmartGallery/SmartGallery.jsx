@@ -31,7 +31,12 @@ export default function SmartGallery() {
       <footer className="studio-branding-footer">
         <div className="footer-content">
           {studio?.studioLogo && (
-            <img src={studio.studioLogo} alt={`${studio.name} logo`} className="studio-footer-logo" />
+            <img 
+              src={studio.studioLogo} 
+              alt={`${studio.name} logo`} 
+              className="studio-footer-logo" 
+              loading="lazy"
+            />
           )}
           <div className="branding-text">
             <h3 className="studio-name">{studio?.name || studioName}</h3>
@@ -206,7 +211,12 @@ export default function SmartGallery() {
   return (
     <div className="smart-gallery-page">
       <div className="project-header">
-        <img className='banner' src={project.projectCover} alt={`${project.name} cover`} />
+        <img 
+          className='banner' 
+          src={project.projectCover} 
+          alt={`${project.name} cover`} 
+          loading="lazy"
+        />
         <div className="gallery-info">
           <h1 className='project-name'>{toTitleCase(project.name)}</h1>
           <p className='project-type'>{toTitleCase(project.type)}</p>
