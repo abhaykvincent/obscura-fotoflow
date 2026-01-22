@@ -12,6 +12,8 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 
 const computeLayout = (images, containerWidth, targetRowHeight, gap, isMobile) => {
+  console.log(images)
+  debugger
   if (!containerWidth || !images || images.length === 0) return [];
 
   const rows = [];
@@ -148,7 +150,7 @@ export const ImageDragOverlay = ({ image }) => {
 
 const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, toggleScaleControl, isViewOnly, onImageClick }) => {
   const [showScaleControl, setShowScaleControl] = useState(false);
-
+  console.log(section)
   useEffect(() => {
     if (toggleScaleControl) {
       toggleScaleControl.current = () => setShowScaleControl(prev => !prev);
