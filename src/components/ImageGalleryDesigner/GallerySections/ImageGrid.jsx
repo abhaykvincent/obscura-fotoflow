@@ -121,8 +121,43 @@ const SortableImage = ({ image, sectionId, alt, style: propsStyle }) => {
       <img 
         src={image.url} 
         alt={alt} 
+        loading="lazy"
         style={{ width: '100%', height: '100%', display: 'block', borderRadius: '4px', objectFit: 'cover' }} 
       />
+    </div>
+  );
+};
+
+const LazyRow = ({ children, height }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const rowRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        } else {
+          setIsVisible(false);
+        }
+      },
+      { rootMargin: '400px' } // Buffer for smoother scrolling
+    );
+
+    if (rowRef.current) {
+      observer.observe(rowRef.current);
+    }
+
+    return () => {
+      if (rowRef.current) {
+        observer.unobserve(rowRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <div ref={rowRef} className="image-grid-row" style={{ minHeight: isVisible ? 'auto' : `${height}px` }}>
+      {isVisible ? children : null}
     </div>
   );
 };
@@ -283,7 +318,7 @@ const ImageGrid = ({ id, collectionId, collectionName, section, onSectionUpdate,
       {isViewOnly ? (
         <div className="image-grid-display" ref={containerRef}>
           {layout.map((row, rowIndex) => (
-            <div key={rowIndex} className="image-grid-row">
+            <LazyRow key={rowIndex} height={row[0]?.height || TARGET_ROW_HEIGHT}>
               {row.map((image, imgIndex) => (
                 <div 
                   key={image.url} 
@@ -294,11 +329,12 @@ const ImageGrid = ({ id, collectionId, collectionName, section, onSectionUpdate,
                   <img 
                     src={image.url} 
                     alt={`Gallery item ${imgIndex}`} 
+                    loading="lazy"
                     style={{ width: '100%', height: '100%', display: 'block', borderRadius: '4px', objectFit: 'cover' }} 
                   />
                 </div>
               ))}
-            </div>
+            </LazyRow>
           ))}
         </div>
       ) : (
