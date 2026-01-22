@@ -12,19 +12,21 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 
 const computeLayout = (images, containerWidth, targetRowHeight, gap, isMobile) => {
-  console.log(images)
-  debugger
   if (!containerWidth || !images || images.length === 0) return [];
+
+  const getAspectRatio = (img) => {
+    if (img.dimensions && img.dimensions.width && img.dimensions.height) {
+      return img.dimensions.width / img.dimensions.height;
+    }
+    return 1; // Default to square for older data without dimensions
+  };
 
   const rows = [];
   let currentRow = [];
   let currentRowWidth = 0;
 
   images.forEach(image => {
-    if (!image.dimensions || !image.dimensions.width || !image.dimensions.height) {
-      return;
-    }
-    const aspectRatio = image.dimensions.width / image.dimensions.height;
+    const aspectRatio = getAspectRatio(image);
     const scaledWidth = targetRowHeight * aspectRatio;
 
     let shouldBreak = false;
@@ -41,12 +43,12 @@ const computeLayout = (images, containerWidth, targetRowHeight, gap, isMobile) =
     }
 
     if (shouldBreak) {
-      const totalAspectRatio = currentRow.reduce((acc, img) => acc + (img.dimensions.width / img.dimensions.height), 0);
+      const totalAspectRatio = currentRow.reduce((acc, img) => acc + getAspectRatio(img), 0);
       const rowHeight = (containerWidth - (currentRow.length - 1) * gap) / totalAspectRatio;
 
       rows.push(currentRow.map(img => ({
         ...img,
-        width: rowHeight * (img.dimensions.width / img.dimensions.height),
+        width: rowHeight * getAspectRatio(img),
         height: rowHeight,
       })));
 
@@ -60,17 +62,17 @@ const computeLayout = (images, containerWidth, targetRowHeight, gap, isMobile) =
 
   if (currentRow.length > 0) {
     if (isMobile) {
-      const totalAspectRatio = currentRow.reduce((acc, img) => acc + (img.dimensions.width / img.dimensions.height), 0);
+      const totalAspectRatio = currentRow.reduce((acc, img) => acc + getAspectRatio(img), 0);
       const rowHeight = (containerWidth - (currentRow.length - 1) * gap) / totalAspectRatio;
       rows.push(currentRow.map(img => ({
         ...img,
-        width: rowHeight * (img.dimensions.width / img.dimensions.height),
+        width: rowHeight * getAspectRatio(img),
         height: rowHeight,
       })));
     } else {
       rows.push(currentRow.map(img => ({
         ...img,
-        width: targetRowHeight * (img.dimensions.width / img.dimensions.height),
+        width: targetRowHeight * getAspectRatio(img),
         height: targetRowHeight,
       })));
     }
@@ -139,14 +141,6 @@ export const ImageDragOverlay = ({ image }) => {
     </div>
   );
 };
-
-// ... imports ...
-
-// ... computeLayout ...
-
-// ... SortableImage ... (keep as is)
-
-// ... ImageDragOverlay ... (keep as is)
 
 const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, toggleScaleControl, isViewOnly, onImageClick }) => {
   const [showScaleControl, setShowScaleControl] = useState(false);
