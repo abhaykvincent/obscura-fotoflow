@@ -11,12 +11,16 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const computeLayout = (images, containerWidth, targetRowHeight, gap, isMobile) => {
+const computeLayout = (images, containerWidth, targetRowHeight, gap, isMobile, tempDimensions = {}) => {
   if (!containerWidth || !images || images.length === 0) return [];
 
   const getAspectRatio = (img) => {
     if (img.dimensions && img.dimensions.width && img.dimensions.height) {
       return img.dimensions.width / img.dimensions.height;
+    }
+    const temp = tempDimensions[img.url];
+    if (temp && temp.width && temp.height) {
+      return temp.width / temp.height;
     }
     return 1; // Default to square for older data without dimensions
   };
@@ -104,8 +108,6 @@ let newTransform;
       scaleX: transform.scaleX,
       scaleY: transform.scaleY,
     }
-    console.log(transform)
-
   }
   const style = {
     transform: CSS.Translate.toString(newTransform),
@@ -144,7 +146,8 @@ export const ImageDragOverlay = ({ image }) => {
 
 const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, toggleScaleControl, isViewOnly, onImageClick }) => {
   const [showScaleControl, setShowScaleControl] = useState(false);
-  console.log(section)
+  const [tempDimensions, setTempDimensions] = useState({});
+
   useEffect(() => {
     if (toggleScaleControl) {
       toggleScaleControl.current = () => setShowScaleControl(prev => !prev);
@@ -163,6 +166,43 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
   const containerRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [layout, setLayout] = useState([]);
+
+  // Fetch missing dimensions on the go
+  useEffect(() => {
+    const missing = images.filter(img => 
+      (!img.dimensions || !img.dimensions.width || !img.dimensions.height) && !tempDimensions[img.url]
+    );
+
+    if (missing.length > 0) {
+      missing.forEach(img => {
+        const i = new Image();
+        i.onload = () => {
+          setTempDimensions(prev => ({
+            ...prev,
+            [img.url]: { width: i.naturalWidth, height: i.naturalHeight }
+          }));
+        };
+        i.src = img.url;
+      });
+    }
+  }, [images, tempDimensions]);
+
+  // Heal data: update section when dimensions are found
+  useEffect(() => {
+    const imagesToUpdate = images.filter(img => 
+      (!img.dimensions || !img.dimensions.width || !img.dimensions.height) && tempDimensions[img.url]
+    );
+
+    if (imagesToUpdate.length > 0 && !isViewOnly && onSectionUpdate) {
+      const updatedImages = images.map(img => {
+        if ((!img.dimensions || !img.dimensions.width || !img.dimensions.height) && tempDimensions[img.url]) {
+          return { ...img, dimensions: tempDimensions[img.url] };
+        }
+        return img;
+      });
+      onSectionUpdate({ ...section, images: updatedImages });
+    }
+  }, [images, tempDimensions, isViewOnly, onSectionUpdate, section]);
 
   useLayoutEffect(() => {
     const observer = new ResizeObserver(entries => {
@@ -189,10 +229,10 @@ const ImageGrid = ({id, collectionId,collectionName, section, onSectionUpdate, t
       const targetRowHeight = 200;
       const gap = 10;
       const isMobile = containerWidth < 768;
-      const computedLayout = computeLayout(images, containerWidth, targetRowHeight, gap, isMobile);
+      const computedLayout = computeLayout(images, containerWidth, targetRowHeight, gap, isMobile, tempDimensions);
       setLayout(computedLayout);
     }
-  }, [images, containerWidth]);
+  }, [images, containerWidth, tempDimensions]);
 
   const onDrop = useCallback((acceptedFiles) => {
     const importFileSize = 0;
