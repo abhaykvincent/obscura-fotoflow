@@ -31,12 +31,11 @@ export const migrateCollectionsByStudio = async (domain) => {
             const updatedCollections = projectData.collections.map(collection => {
                 // Example migration: add version if it doesn't exist
                 if (collection.version === undefined) {
-                    debugger
                     return {
                         ...collection,
                         status: 'visible', // Default status if not set
                         selectionGallery: true,
-                        version: 2, // or some other migration logic
+                        version: 2, // data version - collection
                     };
                 }
                 return collection;

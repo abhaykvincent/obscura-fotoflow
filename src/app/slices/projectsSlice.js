@@ -109,7 +109,11 @@ export const updateCollectionStatus = createAsyncThunk(
 export const updateSelectionGalleryStatus = createAsyncThunk(
   'projects/updateSelectionGalleryStatus',
   async ({ domain, projectId, collectionId, selectionGallery }, { dispatch }) => {
-    await updateSelectionGalleryStatusByCollectionIdInFirestore(domain, projectId, collectionId, selectionGallery);
+    if (selectionGallery) {
+      await updateCollectionStatusByCollectionIdInFirestore(domain, projectId, collectionId, 'active', selectionGallery);
+    } else {
+      await updateSelectionGalleryStatusByCollectionIdInFirestore(domain, projectId, collectionId, selectionGallery);
+    }
     return { projectId, collectionId, selectionGallery };
   }
 );
@@ -458,6 +462,9 @@ const projectsSlice = createSlice({
           );
           if (collectionToUpdate) {
             collectionToUpdate.selectionGallery = selectionGallery;
+            if (selectionGallery) {
+              collectionToUpdate.status = 'active';
+            }
           }
         }
       })
