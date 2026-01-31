@@ -307,11 +307,234 @@
             }
         }
     }
-    .support-list {
-        display: grid;
-        gap: 8px; // Space between support cards
+        
+        .support-list {
+            display: grid;
+            gap: 8px; // Space between support cards
+        }
+            }
+
+    
+
+    /* Firestore Explorer - New 3-Column Layout */
+    .firestore-explorer-container {
+        display: flex;
+        flex-direction: column;
+        height: 700px;
+        background-color: $dark-3;
+        border: 1px solid $dark-1;
+        border-radius: 6px;
+        overflow: hidden;
+        margin-top: 16px;
+        color: $light-0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+        .fs-breadcrumbs {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            background-color: $dark-2;
+            border-bottom: 1px solid $dark-1;
+            font-size: 0.9rem;
+            color: $gray-default-dark;
+
+            .crumb {
+                cursor: pointer;
+                padding: 4px 8px;
+                border-radius: 4px;
+                transition: background-color 0.2s, color 0.2s;
+                display: flex;
+                align-items: baseline;
+
+                .doc-id {
+                    font-size: 0.8em;
+                    opacity: 0.7;
+                    margin-left: 4px;
+                }
+
+                &:hover {
+                    background-color: rgba(255, 255, 255, 0.1);
+                    color: $light-0;
+                }
+
+                &.active {
+                    color: $light-0;
+                    font-weight: 500;
+                    cursor: default;
+                    &:hover { background-color: transparent; }
+                }
+            }
+
+            .sep {
+                margin: 0 4px;
+                color: $gray3-default-light;
+                font-size: 0.8em;
+            }
+        }
+
+        .fs-columns {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            background-color: #1E1E1E; /* Code editor bg */
+
+            .fs-col {
+                display: flex;
+                flex-direction: column;
+                border-right: 1px solid #333;
+                overflow: hidden;
+
+                .col-header {
+                    padding: 8px 12px;
+                    background-color: #252526;
+                    border-bottom: 1px solid #333;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    color: #ccc;
+                    text-transform: uppercase;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    .count {
+                        font-weight: normal;
+                        opacity: 0.6;
+                        font-size: 0.8em;
+                    }
+                }
+
+                .col-list {
+                    flex: 1;
+                    overflow-y: auto;
+                    
+                    .list-item {
+                        padding: 8px 12px;
+                        cursor: pointer;
+                        font-size: 0.9rem;
+                        color: #bbb;
+                        border-bottom: 1px solid #2a2a2a;
+                        display: flex;
+                        align-items: center;
+                        transition: all 0.1s;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+
+                        .text {
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+
+                        &:hover {
+                            background-color: #2a2d2e;
+                            color: #eee;
+                        }
+
+                        &.active {
+                            background-color: rgba($green-accessible-dark, 0.15);
+                            color: white;
+                            border-left: 3px solid $green-accessible-dark;
+                            padding-left: 9px; /* Adjust for border */
+                        }
+                    }
+
+                    .empty-msg {
+                        padding: 16px;
+                        text-align: center;
+                        color: #666;
+                        font-style: italic;
+                        font-size: 0.9rem;
+                    }
+                }
+            }
+
+            .collections-col {
+                flex: 0 0 220px;
+                min-width: 200px;
+                background-color: #252526; /* Slightly lighter sidebar */
+                .col-list { background-color: #1E1E1E; }
+            }
+
+            .documents-col {
+                flex: 0 0 240px;
+                min-width: 200px;
+            }
+
+            .data-col {
+                flex: 1;
+                min-width: 300px;
+                border-right: none;
+                display: flex;
+                flex-direction: column;
+
+                .data-content {
+                    flex: 1;
+                    overflow-y: auto;
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .subcollections-panel {
+                    padding: 12px 16px;
+                    background-color: #2D2D2D;
+                    border-bottom: 1px solid #333;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+
+                    .sub-label {
+                        font-size: 0.8rem;
+                        color: #888;
+                        text-transform: uppercase;
+                    }
+
+                    .sub-chips {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 8px;
+
+                        .chip {
+                            background-color: #383838;
+                            padding: 4px 10px;
+                            border-radius: 12px;
+                            font-size: 0.85rem;
+                            color: #ccc;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            gap: 6px;
+                            transition: background-color 0.2s;
+                            border: 1px solid #444;
+
+                            .arrow { opacity: 0.5; font-size: 0.8em; }
+
+                            &:hover {
+                                background-color: #444;
+                                color: white;
+                                border-color: #555;
+                            }
+                        }
+                    }
+                }
+
+                .json-panel {
+                    flex: 1;
+                    padding: 16px;
+                    overflow: auto;
+                    font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
+                    font-size: 14px;
+                }
+
+                .empty-state {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    color: #555;
+                    
+                    .icon { font-size: 3rem; margin-bottom: 10px; opacity: 0.5; }
+                }
+            }
+        }
     }
-    
-    
-    
-}

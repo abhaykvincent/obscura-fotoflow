@@ -104,7 +104,6 @@ function AdminPanel() {
 
         setSelectedTab(newTab);
         navigate(`/admin/${newTab}`);
-        console.log('Role switched to:', role, 'Tab set to:', newTab);
     }, [selectedTab, navigate]);
 
     const handleTabChange = useCallback((tab) => {

@@ -121,7 +121,11 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
             className={`project-page-cover project-cover ${isSetFocusButton ? "focus-button-active" : ""} ${project?.projectCover || project?.projectCover.length > 0 ? "cover-show" : "cover-hide"}`}
         >
             {project?.projectCover ? <div className="project-cover-image" >
-                <img  src={project?.projectCover.replace('-thumb', '')} style={{ height: '100%', width: 'auto', objectFit: 'cover' }} />
+                <img  
+                    src={project?.projectCover.replace('-thumb', '')} 
+                    loading="lazy"
+                    style={{ height: '100%', width: 'auto', objectFit: 'cover' }} 
+                />
             </div>:
             <div className="project-cover-image no-cover-image" >
                 

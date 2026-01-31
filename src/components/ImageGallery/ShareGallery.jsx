@@ -58,7 +58,7 @@ const ShareGallery = ({ images = [], sections = null, projectId, collectionId, d
     const checkCollectionStatus = async () => {
       try {
         const status = await fetchCollectionStatus(domain, projectId, collectionId);
-        if (status === 'visible') {
+        if (status === 'visible' || status === 'active') {
           setDisplayGallery(true);
         } else {
           setDisplayGallery(false);
