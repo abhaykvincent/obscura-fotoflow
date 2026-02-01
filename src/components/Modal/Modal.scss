@@ -707,7 +707,7 @@ animation-timing-function: ease-out;
     line-height: 1.7rem;
     font-weight:600;
     text-align: center;
-    margin-bottom: -8px*1.2;
+    margin-bottom: -8px*0.2;
     margin-left: 8px;
     opacity: 0;
     animation: fadeInUp 0.3s ease-in 0.6s;
@@ -760,10 +760,10 @@ animation-timing-function: ease-out;
         box-shadow:
          2px 4px 4px rgba(0, 0, 0, 0.1);
         padding-top: 11px;
-        border-top: 1px solid #212c1eec;
-        border-left: 1px solid #212c1eec;
+        border-top: 1px solid #34572aec;
+        border-left: 1px solid #283e21ec;
         border-right: 1px solid #49723fec;
-        border-bottom: 1px solid #212c1eec;
+        border-bottom: 1px solid #1f2d1cec;
         opacity: 0;
         animation: primary-action-signin  0.35s ease-in 1s;
         animation-fill-mode: forwards;
@@ -803,7 +803,7 @@ animation-timing-function: ease-out;
         animation-fill-mode: forwards;
 
         box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.0);
-        background-color: $dark-2-5;
+        background-color: $dark-3;
         &:hover{
         border: 1px solid $gray-accessible-light;
         } 
@@ -1476,7 +1476,7 @@ transition-delay: 0.2s;
       .button{
         gap:8px*0.5;
         font-size: 0.9rem;
-        width: calc(100vw - 8px*1);
+        width: calc(100vw - 8px*4);
       }
     } 
     } 

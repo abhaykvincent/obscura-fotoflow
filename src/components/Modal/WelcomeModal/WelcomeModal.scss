@@ -210,17 +210,23 @@
   @media only screen and (max-width: 520px) 
   {
     
-.App .modal-container {
+.App {
   
-.welcome-modal .modal.island{
-  top: 8px*8;
-  text-align: center;
-  .modal-body { // viewport
-    overflow: hidden;
-    padding: 0;
-    min-width: auto;
+  .welcome-modal .modal{
+
+    .island{
+      top: 8px*8;
+      text-align: center;
+      .modal-body { // viewport
+        overflow: hidden;
+        padding: 0;
+        min-width: auto;
+      }
+    }
+      .modal-footer{
+        height: 8px*18;
+      }
   }
-}
 }
   }
   
