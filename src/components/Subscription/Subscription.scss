@@ -1048,6 +1048,7 @@ span.iconic-gradient{
        
         .section .projects{
             .project{
+    grid-template-columns: 8px*12 auto;
                 .project-cover{
                     width: 8px*10;
                 }

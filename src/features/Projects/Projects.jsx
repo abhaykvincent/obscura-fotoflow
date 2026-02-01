@@ -22,6 +22,7 @@ import './Projects.scss';
 // --- Constants ---
 const FILTER_TABS = {
     ALL: 'all',
+    DRAFT: 'draft',
     SELECTED: 'selected',
     COMPLETED: 'completed',
     ARCHIVED: 'archive'
@@ -114,6 +115,8 @@ function Projects() {
         switch (selectedTab) {
             case FILTER_TABS.ARCHIVED:
                 return getProjectsByStorageStatus(projectsWithinRange, 'archive');
+            case FILTER_TABS.DRAFT:
+                return getProjectsByStatus(projectsWithinRange, 'draft');
             case FILTER_TABS.SELECTED:
                 return getProjectsByStatus(projectsWithinRange, 'selected');
             case FILTER_TABS.COMPLETED:
@@ -188,7 +191,9 @@ function Projects() {
     const renderEmptyState = () => {
         let heading = "No projects found";
         
-        if (selectedTab === FILTER_TABS.SELECTED) {
+        if (selectedTab === FILTER_TABS.DRAFT) {
+            heading = "No draft projects found for this period";
+        } else if (selectedTab === FILTER_TABS.SELECTED) {
             heading = "No selection completed projects found for this period";
         } else if (selectedTab === FILTER_TABS.COMPLETED) {
             heading = "No completed projects found for this period";
@@ -303,6 +308,13 @@ function Projects() {
                                         role="button" tabIndex={0}
                                     >
                                         All
+                                    </div>
+                                    <div
+                                        className={`control ctrl-draft ${selectedTab === FILTER_TABS.DRAFT ? 'active' : ''}`}
+                                        onClick={() => handleTabClick(FILTER_TABS.DRAFT)}
+                                        role="button" tabIndex={0}
+                                    >
+                                        Draft
                                     </div>
                                     <div
                                         className={`control ctrl-draft ${selectedTab === FILTER_TABS.SELECTED ? 'active' : ''}`}
