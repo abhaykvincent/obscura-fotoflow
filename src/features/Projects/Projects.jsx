@@ -22,8 +22,7 @@ import './Projects.scss';
 // --- Constants ---
 const FILTER_TABS = {
     ALL: 'all',
-    PENDING: 'pending',
-    DESIGNING: 'designing',
+    SELECTED: 'selected',
     COMPLETED: 'completed',
     ARCHIVED: 'archive'
 };
@@ -115,10 +114,8 @@ function Projects() {
         switch (selectedTab) {
             case FILTER_TABS.ARCHIVED:
                 return getProjectsByStorageStatus(projectsWithinRange, 'archive');
-            case FILTER_TABS.PENDING:
+            case FILTER_TABS.SELECTED:
                 return getProjectsByStatus(projectsWithinRange, 'selected');
-            case FILTER_TABS.DESIGNING:
-                return getProjectsByStatus(projectsWithinRange, 'active');
             case FILTER_TABS.COMPLETED:
                 return getProjectsByStatus(projectsWithinRange, 'completed');
             default:
@@ -191,10 +188,8 @@ function Projects() {
     const renderEmptyState = () => {
         let heading = "No projects found";
         
-        if (selectedTab === FILTER_TABS.PENDING) {
-            heading = "No pending projects found for this period";
-        } else if (selectedTab === FILTER_TABS.DESIGNING) {
-            heading = "No projects in designing stage for this period";
+        if (selectedTab === FILTER_TABS.SELECTED) {
+            heading = "No selection completed projects found for this period";
         } else if (selectedTab === FILTER_TABS.COMPLETED) {
             heading = "No completed projects found for this period";
         } else if (selectedTab === FILTER_TABS.ARCHIVED) {
@@ -310,18 +305,11 @@ function Projects() {
                                         All
                                     </div>
                                     <div
-                                        className={`control ctrl-draft ${selectedTab === FILTER_TABS.PENDING ? 'active' : ''}`}
-                                        onClick={() => handleTabClick(FILTER_TABS.PENDING)}
+                                        className={`control ctrl-draft ${selectedTab === FILTER_TABS.SELECTED ? 'active' : ''}`}
+                                        onClick={() => handleTabClick(FILTER_TABS.SELECTED)}
                                         role="button" tabIndex={0}
                                     >
-                                        Pending
-                                    </div>
-                                    <div
-                                        className={`control ctrl-draft ${selectedTab === FILTER_TABS.DESIGNING ? 'active' : ''}`}
-                                        onClick={() => handleTabClick(FILTER_TABS.DESIGNING)}
-                                        role="button" tabIndex={0}
-                                    >
-                                        Designing
+                                        Selected
                                     </div>
                                     <div
                                         className={`control ctrl-draft ${selectedTab === FILTER_TABS.COMPLETED ? 'active' : ''}`}
