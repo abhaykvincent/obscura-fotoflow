@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { fetchSmartGallery, selectSmartGallery, selectSmartGalleryStatus } from '../../app/slices/smartGallerySlice';
 import SectionRenderer from './SectionRenderer';
 import { toTitleCase } from '../../utils/stringUtils';
@@ -12,6 +13,7 @@ import { trackEvent } from '../../analytics/utils';
 
 const SmartAlbum = ({ domain, projectId, collectionId }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const smartGalleryData = useSelector(selectSmartGallery);
   const smartGalleryStatus = useSelector(selectSmartGalleryStatus);
   const [displayGallery, setDisplayGallery] = useState(false);
@@ -104,6 +106,10 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
     setIsPreviewOpen(false);
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   if (smartGalleryStatus === 'loading') {
     return <div>Loading...</div>;
   }
@@ -126,6 +132,11 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
 
   return (
     <div className="smart-album">
+      <button 
+        className="nav-button prev back-button" 
+        onClick={handleBack}
+        title="Go Back"
+      />
       <div className="project-header">
 
         {smartGalleryData?.projectCover ? (
