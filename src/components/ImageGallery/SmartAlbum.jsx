@@ -111,7 +111,43 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
   };
 
   if (smartGalleryStatus === 'loading') {
-    return <div>Loading...</div>;
+    return (
+      <div className="smart-album-loading">
+        <button 
+          className="nav-button prev back-button" 
+          onClick={handleBack}
+          title="Go Back"
+        />
+        {selectedProject?.projectCover ? (
+          <div className="loading-cover-container">
+            <img 
+              src={selectedProject.projectCover} 
+              alt="Loading Cover" 
+              className="loading-cover"
+              style={{ 
+                objectPosition: selectedProject?.focusPoint 
+                  ? `${selectedProject.focusPoint.x * 100}% ${selectedProject.focusPoint.y * 100}%` 
+                  : 'center' 
+              }}
+            />
+            <div className="loading-overlay">
+              <div className="loading-content">
+                <h1 className="project-name">{toTitleCase(selectedProject?.name || '')}</h1>
+                <div className="loading-indicator">
+                  <div className="spinner"></div>
+                  <span>Loading Gallery...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="loading-fallback">
+            <div className="spinner"></div>
+            <p>Loading {toTitleCase(selectedProject?.name || 'Gallery')}...</p>
+          </div>
+        )}
+      </div>
+    );
   }
 
   if (smartGalleryStatus === 'failed') {
