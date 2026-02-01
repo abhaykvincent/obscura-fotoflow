@@ -388,7 +388,6 @@
         padding-right: 8px*0;
         .projects{
             grid-template-columns: 1fr 1fr 1fr;  
-            padding-right: 8px*3;
             &.selection{
                 grid-template-columns:  1fr 1fr 1fr 1fr;  
             }
@@ -486,8 +485,9 @@
 
     .home .section .projects{
         grid-template-columns: 1fr  ;
-        &.selection{
-            grid-template-columns:  1fr ;  
+        &.selection{        
+            grid-template-columns: 80vw 80vw !important;
+
         }
     }
     .home {
