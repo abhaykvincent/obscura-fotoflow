@@ -600,11 +600,17 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
             updatedSections = currentSmartGallery.sections.map(section => {
                 if (section.id === sectionId) {
                     sectionFound = true;
+                    
+                    const mergedImages = [...section.images, ...uploadedFiles];
+                    mergedImages.sort((a, b) => {
+                        const dateA = new Date(a.dateTimeOriginal || a.lastModified).getTime();
+                        const dateB = new Date(b.dateTimeOriginal || b.lastModified).getTime();
+                        return dateA - dateB;
+                    });
     
                     return {
                         ...section,
-                        images: [...section.images,
-                             ...uploadedFiles], // Append new images
+                        images: mergedImages,
                     };
                 }
                 return section;
@@ -612,17 +618,8 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         }
 
         if (!sectionFound) {
-            // If sectionId was not provided or not found, organize photos into new sections
-            const startOrder = currentSmartGallery.sections.length > 0 
-                ? Math.max(...currentSmartGallery.sections.map(s => s.order || 0)) + 1 
-                : 1;
-
-            const newSections = organizePhotos(uploadedFiles, collectionId, startOrder);
-
-            updatedSections = [
-                ...currentSmartGallery.sections,
-                ...newSections
-            ];
+            // If sectionId was not provided or not found, organize photos into new sections or merge with existing
+            updatedSections = organizePhotos(uploadedFiles, collectionId, currentSmartGallery.sections);
         }
 
         const updatedSmartGallery = {
