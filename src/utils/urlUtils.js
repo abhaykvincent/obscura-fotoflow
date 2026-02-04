@@ -41,11 +41,33 @@ export function getThumbnailUrl(imageUrl) {
 
   if (!imageUrl) return "";
 
-  // New architecture: replace "web/" prefix with "thumb/"
+  // 1. Try new architecture prefix swap
 
-  // In Firebase storage URLs, this is often encoded as "web%2F"
+  if (imageUrl.includes("/o/web%2F")) {
 
-  return imageUrl.replace("/o/web%2F", "/o/thumb%2F");
+    return imageUrl.replace("/o/web%2F", "/o/thumb%2F");
+
+  }
+
+  // 2. Fallback to old architecture (find collectionId and append -thumb)
+
+  // This is a bit heuristic, but matches the old logic
+
+  // We look for the pattern before the last filename
+
+  const parts = imageUrl.split('%2F');
+
+  if (parts.length >= 4 && !parts[2].includes('-thumb')) {
+
+     const newParts = [...parts];
+
+     newParts[2] = newParts[2] + "-thumb";
+
+     return newParts.join('%2F');
+
+  }
+
+  return imageUrl;
 
 }
 
@@ -75,7 +97,7 @@ export function getThumbnailUrl1(originalUrl) {
 
     
 
-    // Check if it starts with web%2F or web/
+    // Check for NEW architecture
 
     if (objectPath.startsWith('web%2F')) {
 
@@ -85,13 +107,21 @@ export function getThumbnailUrl1(originalUrl) {
 
       objectPath = objectPath.replace('web/', 'thumb/');
 
-    } else {
+    } 
 
-      // Fallback: if it doesn't have the prefix, maybe it's old format
+    // Check for OLD architecture
 
-      // but the request is for the new architecture.
+    else {
 
-      return originalUrl;
+      const objectParts = objectPath.split('%2F');
+
+      if (objectParts.length >= 3 && !objectParts[2].includes('-thumb')) {
+
+        objectParts[2] += '-thumb';
+
+        objectPath = objectParts.join('%2F');
+
+      }
 
     }
 
@@ -110,3 +140,5 @@ export function getThumbnailUrl1(originalUrl) {
   }
 
 }
+
+

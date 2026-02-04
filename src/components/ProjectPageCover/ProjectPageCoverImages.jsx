@@ -134,7 +134,7 @@ export const ProjectPageCoverImages = ({ project }) => {
         >
             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', overflowX: 'auto', scrollbarWidth: 'none' }}>
                 {allImages.map((image, i) => (
-                    <img key={i} src={image.replace('/o/thumb%2F', '/o/web%2F')} style={{ height: '100%', width: 'auto', objectFit: 'cover' }} />
+                    <img key={i} src={image.replace('/o/thumb%2F', '/o/web%2F').replace('-thumb', '')} style={{ height: '100%', width: 'auto', objectFit: 'cover' }} />
                 ))}
             </div>
 
