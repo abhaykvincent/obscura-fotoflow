@@ -35,18 +35,27 @@ The upload feature is responsible for importing photos from a user's local machi
 
 ## 4. Key Technical Details
 
-### Slicing & Concurrency
-To ensure stability, `handleUpload` uses a sequential slice processing strategy. It uploads `sliceSize` (default 32) files concurrently. Only when a slice finishes does the next one begin.
+### Cloud Storage Folder Architecture
+Files are organized in Firebase Storage using a prefix-based structure to enable easy lifecycle targeting (e.g., different retention policies or transition rules for thumbnails vs. web images):
+- **Web (Optimized)**: `web/{domain}/{projectId}/{collectionId}/{fileName}`
+- **Thumbnails**: `thumb/{domain}/{projectId}/{collectionId}/{fileName}`
+- **Project Covers**: `covers/{domain}/{projectId}/{fileName}`
+- **Studio Branding**: `branding/{domain}/logo/{fileName}`
 
 ### Image Compression
 We use `browser-image-compression` to optimize files before they leave the client.
+- **Web (Main)**: Max width/height 2048px, 82% quality, original format preserved.
+- **Thumbnail**: Max width/height 500px, 65% quality, WebP format.
 - **Quota Management**: We check `importFileSize` against `storageLimit.quota - storageLimit.used` before starting.
 
-### Retry Mechanism
-The `uploadFile` function implements a robust retry logic:
-- **Max Retries**: 5 attempts.
-- **Backoff**: Exponential (Initial delay 500ms, doubling each time).
-- **Resumable**: Uses `uploadBytesResumable` for better reliability on flaky networks.
+### UploadProgress Component
+The `UploadProgress` component (located in `src/components/UploadProgress/`) provides real-time feedback to the user:
+- **Redux Integration**: Subscribes to `selectUploadList` and `selectUploadStatus` from `uploadSlice`.
+- **States**: `minimize`, `maximize`, `completed`, and `close`.
+- **Automatic Behavior**: Minimizes automatically after 60 seconds if the upload is still in progress.
+- **Tracking**: Calculates overall percentage and identifies individual file statuses (pending, uploading, uploaded, failed).
+
+### Slicing & Concurrency
 
 ### Redux State Schema (`uploadSlice`)
 ```javascript
