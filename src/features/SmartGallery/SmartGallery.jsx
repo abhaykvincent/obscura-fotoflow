@@ -122,8 +122,39 @@ export default function SmartGallery() {
     }
   }, [project, collectionId]);
 
-  if (loading) {
-    return <LoadingLight />;
+  if (loading || (collectionsLoading && !collectionId)) {
+    return (
+      <div className="smart-album-loading">
+        {project?.projectCover ? (
+          <div className="loading-cover-container">
+            <img 
+              src={project.projectCover} 
+              alt="Loading Cover" 
+              className="loading-cover"
+              style={{ 
+                objectPosition: project?.focusPoint 
+                  ? `${project.focusPoint.x * 100}% ${project.focusPoint.y * 100}%` 
+                  : 'center' 
+              }}
+            />
+            <div className="loading-overlay">
+              <div className="loading-content">
+                <h1 className="project-name">{toTitleCase(project?.name || '')}</h1>
+                <div className="loading-indicator">
+                  <div className="spinner"></div>
+                  <span>Loading Gallery...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="loading-fallback">
+            <div className="spinner"></div>
+            <p>Loading {toTitleCase(project?.name || 'Gallery')}...</p>
+          </div>
+        )}
+      </div>
+    );
   }
 
   if (!project) {
@@ -187,10 +218,6 @@ export default function SmartGallery() {
   }
 
   const CollectionsGrid = () => {
-    if (collectionsLoading) {
-      return <LoadingLight />;
-    }
-
     return (
       <div className="collections-grid">
         {visibleCollections.map((collection) => (
