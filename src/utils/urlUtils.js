@@ -37,50 +37,76 @@ export const copyToClipboard = (url) => {
   });
 };
 
-export function getThumbnailUrl(imageUrl,collectionId) {
- // replace collectionId in url with "thumb-"+collectionId
- const newUrl = imageUrl.split(collectionId);  
- // trim first 30 chars
- // newUrl[0] = newUrl[0].substring(0, 30);
- return      newUrl[0]+collectionId+"-thumb"+newUrl[1];
+export function getThumbnailUrl(imageUrl) {
+
+  if (!imageUrl) return "";
+
+  // New architecture: replace "web/" prefix with "thumb/"
+
+  // In Firebase storage URLs, this is often encoded as "web%2F"
+
+  return imageUrl.replace("/o/web%2F", "/o/thumb%2F");
+
 }
 
+
+
 export function getThumbnailUrl1(originalUrl) {
-  if(!originalUrl) return;
-    // Parse the URL into a URL object
+
+  if (!originalUrl) return "";
+
+  try {
+
     const url = new URL(originalUrl);
-    
-    // Extract the pathname (e.g., '/v0/b/fotoflow-studio.firebasestorage.app/o/poiuy%2Fjhk-yLKl4%2Fbaptism-nmnTu%2FScreen%20Shot%202025-03-25%20at%201.41.51%20AM.png')
+
     const pathname = url.pathname;
-    
-    // Split the pathname at '/o/' to separate the prefix and object path
+
     const parts = pathname.split('/o/');
-    if (parts.length !== 2) {
+
+    
+
+    if (parts.length !== 2) return originalUrl;
+
+    
+
+    const prefix = parts[0]; 
+
+    let objectPath = parts[1];
+
+    
+
+    // Check if it starts with web%2F or web/
+
+    if (objectPath.startsWith('web%2F')) {
+
+      objectPath = objectPath.replace('web%2F', 'thumb%2F');
+
+    } else if (objectPath.startsWith('web/')) {
+
+      objectPath = objectPath.replace('web/', 'thumb/');
+
+    } else {
+
+      // Fallback: if it doesn't have the prefix, maybe it's old format
+
+      // but the request is for the new architecture.
+
       return originalUrl;
-      throw new Error('Invalid URL format: missing /o/');
+
     }
+
     
-    const prefix = parts[0]; // e.g., '/v0/b/fotoflow-studio.firebasestorage.app'
-    const objectPath = parts[1]; // e.g., 'poiuy%2Fjhk-yLKl4%2Fbaptism-nmnTu%2FScreen%20Shot%202025-03-25%20at%201.41.51%20AM.png'
-    
-    // Split the object path by '%2F' (encoded '/')
-    const objectParts = objectPath.split('%2F');
-    if (objectParts.length < 3) {
-      throw new Error('Invalid object path: must have at least domain, id, and collectionId');
-    }
-    
-    // Append '-thumb' to the third part (collectionId)
-    objectParts[2] += '-thumb';
-    
-    // Rejoin the object path components
-    const newObjectPath = objectParts.join('%2F');
-    
-    // Construct the new pathname
-    const newPathname = `${prefix}/o/${newObjectPath}`;
-    
-    // Update the URL's pathname
-    url.pathname = newPathname;
-    
-    // Return the modified URL as a string
+
+    url.pathname = `${prefix}/o/${objectPath}`;
+
     return url.toString();
+
+  } catch (e) {
+
+    console.error("Error generating thumbnail URL:", e);
+
+    return originalUrl;
+
   }
+
+}
