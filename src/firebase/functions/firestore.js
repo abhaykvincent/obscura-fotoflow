@@ -9,6 +9,7 @@ import { removeUndefinedFields } from "../../utils/generalUtils";
 import { fetchSmartGalleryFromFirestore, updateSmartGalleryInFirestore } from './smartGalleryFirestore';
 import { isProduction } from "../../analytics/utils";
 import { getStorageForDomain } from "../../utils/uploadOperations";
+import { organizePhotos } from "../../utils/smartGalleryUtils";
 
 // Users
 export const fetchUserOrLeadById = async (userId) => {
@@ -611,15 +612,16 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         }
 
         if (!sectionFound) {
-            // If sectionId was not provided or not found, create a new image-grid section
+            // If sectionId was not provided or not found, organize photos into new sections
+            const startOrder = currentSmartGallery.sections.length > 0 
+                ? Math.max(...currentSmartGallery.sections.map(s => s.order || 0)) + 1 
+                : 1;
+
+            const newSections = organizePhotos(uploadedFiles, collectionId, startOrder);
+
             updatedSections = [
                 ...currentSmartGallery.sections,
-                {
-                    id: `image-grid-${collectionId}-${new Date().getTime()}`, // Generate a new ID
-                    type: 'image-grid',
-                    order: currentSmartGallery.sections.length + 1, // Place at the end
-                    images: uploadedFiles,
-                }
+                ...newSections
             ];
         }
 
