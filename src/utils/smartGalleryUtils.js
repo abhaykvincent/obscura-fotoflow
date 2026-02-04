@@ -11,7 +11,7 @@ export const organizePhotos = (photos, collectionId, existingSections = []) => {
 
     // Deep copy existing sections to avoid mutation side effects
     let sections = JSON.parse(JSON.stringify(existingSections));
-    const TIME_GAP_THRESHOLD = 30 * 60 * 1000;
+    const TIME_GAP_THRESHOLD = 1 * 60 * 1000;
 
     // Helper to get time from section
     const getSectionTime = (section) => {
