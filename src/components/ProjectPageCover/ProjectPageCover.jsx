@@ -122,7 +122,7 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
         >
             {project?.projectCover ? <div className="project-cover-image" >
                 <img  
-                    src={project?.projectCover.replace('-thumb', '')} 
+                    src={project?.projectCover.replace('/o/thumb%2F', '/o/web%2F').replace('-thumb', '')} 
                     loading="lazy"
                     style={{ height: '100%', width: 'auto', objectFit: 'cover' }} 
                 />
