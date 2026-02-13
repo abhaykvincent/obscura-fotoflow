@@ -4,11 +4,19 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { trackEvent } from '../../analytics/utils';
 import { getStorageForDomain } from '../../utils/uploadOperations';
+import { useDispatch } from 'react-redux';
+import { showAlert } from '../../app/slices/alertSlice';
 
 const DownloadFiles = ({ folderPath ,className, project,collection}) => {
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const downloadAllFiles = async () => {
+    if (project.storage?.status === 'archive') {
+      dispatch(showAlert({ type: 'error', message: 'This project is archived. Please restore it to Active Storage to download original files.' }));
+      return;
+    }
+
     setLoading(true);
     const storage = await getStorageForDomain(project.domain);
     const folderRef = ref(storage, folderPath);
@@ -42,6 +50,7 @@ const DownloadFiles = ({ folderPath ,className, project,collection}) => {
       saveAs(zipBlob, `${project.name} | ${collection.name}.zip`);
     } catch (error) {
       console.error('Error downloading files:', error);
+      dispatch(showAlert({ type: 'error', message: 'Failed to download files. Please try again.' }));
     } finally {
       setLoading(false);
 

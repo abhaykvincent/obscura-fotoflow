@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
-import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateCollectionSelectionStatusByCollectionIdInFirestore, updateSelectionGalleryStatusByCollectionIdInFirestore, updateCollectionStatusByCollectionIdInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore, updateProjectStorageToArchive } from '../../firebase/functions/firestore';
+import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateCollectionSelectionStatusByCollectionIdInFirestore, updateSelectionGalleryStatusByCollectionIdInFirestore, updateCollectionStatusByCollectionIdInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore, updateProjectStorageToArchive, restoreProjectFromArchive } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/app';
@@ -20,16 +20,23 @@ export const fetchProjects = createAsyncThunk(
   async ({ currentDomain }) => {
     const projects = await fetchProjectsFromFirestore(currentDomain);
 
-    const threeMonthsAgo = new Date();
-    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     const processedProjects = await Promise.all(projects.map(async (project) => {
       // Ensure createdAt exists and is a valid timestamp, and the project is not already archived
       if (project.createdAt && typeof project.createdAt === 'number' && project.storage?.status !== 'archive') {
         const createdAtDate = new Date(project.createdAt);
+        const lastRestoredAt = project.storage?.lastRestoredAt ? new Date(project.storage.lastRestoredAt) : null;
+        
+        // Use projectValidityMonths if available, otherwise default to 3 months
+        const validityMonths = project.projectValidityMonths || 3;
+        const archiveThreshold = new Date();
+        archiveThreshold.setMonth(archiveThreshold.getMonth() - validityMonths);
 
-        // Check if the project's creation date is before 3 months ago
-        if (createdAtDate < threeMonthsAgo) {
+        // Check if the project's creation date is before the threshold
+        // AND check if it was restored more than 30 days ago (30-day lock)
+        if (createdAtDate < archiveThreshold && (!lastRestoredAt || lastRestoredAt < thirtyDaysAgo)) {
           // Update the project in Firestore
           await updateProjectStorageToArchive(currentDomain, project.id);
           
@@ -56,6 +63,24 @@ export const fetchProjects = createAsyncThunk(
     }));
 
     return convertTimestamps(processedProjects);
+  }
+);
+
+export const restoreProject = createAsyncThunk(
+  'projects/restoreProject',
+  async ({ domain, projectId }, { dispatch }) => {
+    await restoreProjectFromArchive(domain, projectId);
+    dispatch(showAlert({ type: 'success', message: 'Project restored to Active storage for 30 days.' }));
+    return { projectId };
+  }
+);
+
+export const archiveProject = createAsyncThunk(
+  'projects/archiveProject',
+  async ({ domain, projectId }, { dispatch }) => {
+    await updateProjectStorageToArchive(domain, projectId);
+    dispatch(showAlert({ type: 'success', message: 'Project moved to Archive storage.' }));
+    return { projectId };
   }
 );
 
@@ -704,6 +729,47 @@ const projectsSlice = createSlice({
             ...subProjectData,
           });
         }
+      });
+
+      builder
+      .addCase(restoreProject.fulfilled, (state, action) => {
+        const { projectId } = action.payload;
+        const now = Date.now();
+        state.data = state.data.map((project) =>
+          project.id === projectId
+            ? {
+                ...project,
+                storage: {
+                  ...project.storage,
+                  status: 'active',
+                  lastRestoredAt: now,
+                  storageHistory: [
+                    ...(project.storage?.storageHistory || []),
+                    { status: 'active', dateMoved: now }
+                  ]
+                }
+              }
+            : project
+        );
+      })
+      .addCase(archiveProject.fulfilled, (state, action) => {
+        const { projectId } = action.payload;
+        const now = Date.now();
+        state.data = state.data.map((project) =>
+          project.id === projectId
+            ? {
+                ...project,
+                storage: {
+                  ...project.storage,
+                  status: 'archive',
+                  storageHistory: [
+                    ...(project.storage?.storageHistory || []),
+                    { status: 'archive', dateMoved: now }
+                  ]
+                }
+              }
+            : project
+        );
       });
   },
 });

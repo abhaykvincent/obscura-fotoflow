@@ -112,17 +112,22 @@ function Projects() {
             return !isNaN(projectDate) && projectDate >= cutoffDate;
         });
 
+        if (selectedTab === FILTER_TABS.ARCHIVED) {
+            return getProjectsByStorageStatus(projectsWithinRange, 'archive');
+        }
+
+        // For all other tabs (Live view), exclude archived projects
+        const liveProjects = projectsWithinRange.filter(project => project.storage?.status !== 'archive');
+
         switch (selectedTab) {
-            case FILTER_TABS.ARCHIVED:
-                return getProjectsByStorageStatus(projectsWithinRange, 'archive');
             case FILTER_TABS.DRAFT:
-                return getProjectsByStatus(projectsWithinRange, 'draft');
+                return getProjectsByStatus(liveProjects, 'draft');
             case FILTER_TABS.SELECTED:
-                return getProjectsByStatus(projectsWithinRange, 'selected');
+                return getProjectsByStatus(liveProjects, 'selected');
             case FILTER_TABS.COMPLETED:
-                return getProjectsByStatus(projectsWithinRange, 'completed');
+                return getProjectsByStatus(liveProjects, 'completed');
             default:
-                return projectsWithinRange;
+                return liveProjects;
         }
     }, [allProjects, selectedTab, visibleDays]);
 

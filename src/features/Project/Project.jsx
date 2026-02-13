@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 
 // Redux
-import { deleteProject, selectProjects, selectProjectsStatus, updateProjectName } from '../../app/slices/projectsSlice';
+import { deleteProject, selectProjects, selectProjectsStatus, updateProjectName, restoreProject } from '../../app/slices/projectsSlice';
 import { closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 import { showAlert } from '../../app/slices/alertSlice';
@@ -128,7 +128,13 @@ export default function Project() {
     dispatch(deleteProject({ domain,bucketUrl, projectId: id }));
   }
 
+  const handleRestoreProject = () => {
+    dispatch(restoreProject({ domain, projectId: id }));
+  }
+
   if (!project) return null;
+
+  const isArchived = project.storage?.status === 'archive';
 
   return (
     <>
@@ -146,7 +152,18 @@ export default function Project() {
       <AddBudgetModal project={project} />
 
       <main className='project-page'>
+        {isArchived ? (
+          <div className="archive-banner">
+            <div className="banner-content">
+              <div className="icon archive-icon"></div>
+              <p>This project is in <strong>Archive Storage</strong>. Original files are restricted.</p>
+              <button className="button primary small" onClick={handleRestoreProject}>Restore to Active</button>
+            </div>
+          </div>
+        ):
         <ProjectPageCoverImages project={project} />
+      
+      }
         <div className="project-dashboard">
           <DashboardProjects project={project} />
         </div>
@@ -167,10 +184,10 @@ export default function Project() {
           </div>
 
           <button
-            className={`button primary share icon ${project.uploadedFilesCount > 0 ? '' : 'disabled'}`}
-            onClick={() => project.uploadedFilesCount > 0 && dispatch(openModal('shareGallery'))}
+            className={`button primary share icon ${(project.uploadedFilesCount > 0 && !isArchived) ? '' : 'disabled'}`}
+            onClick={() => project.uploadedFilesCount > 0 && !isArchived && dispatch(openModal('shareGallery'))}
           >
-            Share
+            {isArchived ? 'Archived' : 'Share'}
           </button>
 
           <DropdownMenu>
@@ -178,7 +195,7 @@ export default function Project() {
               <div className="icon options" />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => !isArchived && dispatch(openModal('createCollection'))} disabled={isArchived}>
                 <div className="icon-show add" /> New Gallery
               </DropdownMenuItem>
               <DropdownMenuSeparator />

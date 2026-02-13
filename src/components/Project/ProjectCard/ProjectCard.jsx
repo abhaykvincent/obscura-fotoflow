@@ -12,6 +12,7 @@ function ProjectCard({project,type}) {
         ${project.id} 
         ${project.type?project.type:''} 
         ${project.status?project.status:''}
+        ${project.storage?.status === 'archive' ? 'archive' : ''}
         ${type?type:''} 
         `} 
         to={`/${defaultStudio.domain}/project/${project.id}`} key={project.id}
