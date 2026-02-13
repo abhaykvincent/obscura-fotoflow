@@ -136,6 +136,7 @@ export default function Project() {
   if (!project) return null;
 
   const isArchived = project.storage?.status === 'archive';
+  const archiveDate = project.storage?.storageHistory?.find(h => h.status === 'archive')?.dateMoved;
 
   return (
     <>
@@ -156,9 +157,17 @@ export default function Project() {
         {isArchived ? (
           <div className="archive-banner">
             <div className="banner-content">
-              <div className="icon archive-icon"></div>
-              <p>This project is in <strong>Archive Storage</strong>. Original files are archived.</p>
-              <button className="button primary small" onClick={handleRestoreProject}>Restore to Active</button>
+              <div className="status-badge">Archived</div>
+              <div className="banner-info">
+                <h3>Storage Optimized</h3>
+                <p>
+                  This project was moved to <strong>Archive Storage</strong> on {archiveDate ? new Date(archiveDate).toLocaleDateString() : 'N/A'}. 
+                  Smart Previews are still active, but original files must be restored for download.
+                </p>
+              </div>
+              <div className="banner-actions">
+                <button className="button primary small" onClick={handleRestoreProject}>Restore Originals</button>
+              </div>
             </div>
           </div>
         ):
