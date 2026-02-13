@@ -27,6 +27,7 @@ import AddBudgetModal from '../../components/Modal/AddBudget';
 import SidePanel from '../../components/Project/SidePanel/SidePanel'
 
 import './Project.scss';
+import './ArchiveBanner.scss';
 import { ProjectPageCoverImages } from '../../components/ProjectPageCover/ProjectPageCoverImages';
 import { isDeveloper, isProduction } from '../../analytics/utils';
 import { selectStudio } from '../../app/slices/studioSlice';
@@ -156,7 +157,7 @@ export default function Project() {
           <div className="archive-banner">
             <div className="banner-content">
               <div className="icon archive-icon"></div>
-              <p>This project is in <strong>Archive Storage</strong>. Original files are restricted.</p>
+              <p>This project is in <strong>Archive Storage</strong>. Original files are archived.</p>
               <button className="button primary small" onClick={handleRestoreProject}>Restore to Active</button>
             </div>
           </div>

@@ -1,0 +1,111 @@
+@import "../../style/variables";
+
+.archive-banner {
+  width: 100%;
+  height: 8px*20;
+  background: rgba($orange-default-dark, 0.08);
+  border-bottom: 1px solid rgba($orange-default-dark, 0.2);
+  padding: $spacing-unit * 1.5;
+  margin-bottom: 8px*8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(8px);
+  position: relative;
+  z-index: 10;
+  animation: slideDown 0.4s ease-out;
+
+  .banner-content {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: $spacing-unit * 3;
+    padding: 0 ($spacing-unit * 2);
+
+    .archive-icon {
+      width: 28px;
+      height: 28px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff9f0a'%3E%3Cpath d='M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.01 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12.14l.82 1H5.12z'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 4px rgba($orange-default-dark, 0.3));
+    }
+
+    p {
+      margin: 0;
+      color: rgba($light-3, 0.9);
+      font-size: 14px;
+      line-height: 1.5;
+      letter-spacing: 0.2px;
+      flex-grow: 1;
+
+      strong {
+        color: $orange-default-dark;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 1px;
+      }
+    }
+
+    .button {
+      white-space: nowrap;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      font-weight: 600;
+      
+      &.primary {
+        background: $orange-default-dark;
+        color: $dark-4;
+        border: none;
+        
+        &:hover {
+          background: lighten($orange-default-dark, 10%);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba($orange-default-dark, 0.3);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: $spacing-unit * 2;
+    
+    .banner-content {
+      flex-direction: column;
+      text-align: center;
+      gap: $spacing-unit * 2;
+      padding: 0;
+      
+      .archive-icon {
+        width: 32px;
+        height: 32px;
+      }
+
+      p {
+        font-size: 13px;
+      }
+
+      .button {
+        width: 100%;
+        padding: 12px;
+      }
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

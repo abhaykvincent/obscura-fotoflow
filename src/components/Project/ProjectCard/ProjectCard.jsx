@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../../app/slices/authSlice';
 import { getThumbnailUrl1 } from '../../../utils/urlUtils';
 import { convertMegabytes } from '../../../utils/stringUtils';
+import ProjectExpiration from '../../ProjectExpiration/ProjectExpiration';
 
 function ProjectCard({project,type}) {   
   const defaultStudio = useSelector(selectUserStudio)
@@ -31,6 +32,9 @@ function ProjectCard({project,type}) {
                 <div className="left">
                     <p className="project-type">{project.type}</p>
                     <h4 className="project-title">{project.name}</h4>
+                    {project.storage?.status !== 'archive' && (
+                        <ProjectExpiration createdAt={project.createdAt} projectValidityMonths={project.projectValidityMonths} />
+                    )}
                     <div className="info-bar">
                         <div className="tags">
                         {project?.events?.length > 0 && (

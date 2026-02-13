@@ -29,9 +29,9 @@ export default function ProjectExpiration({ createdAt, projectValidityMonths = 1
   }, [createdAt]);
 
   return (
-    <div className='project-expiration'>
-      {daysRemaining > 0 
-        ? `Project archives in ${daysRemaining} days` 
+    daysRemaining <= 14 && <div className='project-expiration'>
+      {daysRemaining > 0
+        ? `Archives in ${daysRemaining} days` 
         : 'Project is archived'}
     </div>
   );

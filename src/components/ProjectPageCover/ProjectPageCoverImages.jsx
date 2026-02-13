@@ -145,7 +145,7 @@ export const ProjectPageCoverImages = ({ project }) => {
                         className="button transparent-button secondary icon set-focus"
                         onClick={setFocusButtonClick}
                     >Set focus</div> */}
-                    <div className="button transparent-button secondary icon image">
+                    {/* <div className="button transparent-button secondary icon image">
                         <label htmlFor={`change-cover-${project.id}`} style={{ cursor: "pointer" }}>
                             Change Cover
                         </label>
@@ -156,7 +156,7 @@ export const ProjectPageCoverImages = ({ project }) => {
                             style={{ display: "none" }}
                             onChange={handleCoverChange}
                         />
-                    </div>
+                    </div> */}
                 </div>
                 :
                 <div className="cover-tools">
