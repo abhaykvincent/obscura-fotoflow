@@ -9,6 +9,7 @@ import { removeUndefinedFields } from "../../utils/generalUtils";
 import { fetchSmartGalleryFromFirestore, updateSmartGalleryInFirestore } from './smartGalleryFirestore';
 import { isProduction } from "../../analytics/utils";
 import { getStorageForDomain } from "../../utils/uploadOperations";
+import { organizePhotos } from "../../utils/smartGalleryUtils";
 
 // Users
 export const fetchUserOrLeadById = async (userId) => {
@@ -599,11 +600,17 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
             updatedSections = currentSmartGallery.sections.map(section => {
                 if (section.id === sectionId) {
                     sectionFound = true;
+                    
+                    const mergedImages = [...section.images, ...uploadedFiles];
+                    mergedImages.sort((a, b) => {
+                        const dateA = new Date(a.dateTimeOriginal || a.lastModified).getTime();
+                        const dateB = new Date(b.dateTimeOriginal || b.lastModified).getTime();
+                        return dateA - dateB;
+                    });
     
                     return {
                         ...section,
-                        images: [...section.images,
-                             ...uploadedFiles], // Append new images
+                        images: mergedImages,
                     };
                 }
                 return section;
@@ -611,16 +618,8 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         }
 
         if (!sectionFound) {
-            // If sectionId was not provided or not found, create a new image-grid section
-            updatedSections = [
-                ...currentSmartGallery.sections,
-                {
-                    id: `image-grid-${collectionId}-${new Date().getTime()}`, // Generate a new ID
-                    type: 'image-grid',
-                    order: currentSmartGallery.sections.length + 1, // Place at the end
-                    images: uploadedFiles,
-                }
-            ];
+            // If sectionId was not provided or not found, organize photos into new sections or merge with existing
+            updatedSections = organizePhotos(uploadedFiles, collectionId, currentSmartGallery.sections);
         }
 
         const updatedSmartGallery = {

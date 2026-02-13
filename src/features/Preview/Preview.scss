@@ -179,36 +179,53 @@
         transform: translateY(-50%);
         width: 48px;
         height: 48px;
-        background-color: rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(4px);
         -webkit-backdrop-filter: blur(4px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        
+        // Intensified gradient border at corners (Glassmorphism highlight)
+        border: 1px solid transparent;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), 
+                          linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.3) 100%);
+        background-origin: padding-box, border-box;
+        background-clip: padding-box, border-box;
+
         border-radius: 50%;
         background-repeat: no-repeat;
         background-position: center;
-        background-size: 24px;
+        background-size: 24px, auto, auto;
         cursor: pointer;
         z-index: 90; // Below controls but above image
         transition: all 0.2s ease;
         
         &:hover {
-          background-color: rgba(255, 255, 255, 0.25);
+          background-image: linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)), 
+                            linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.4) 100%);
         }
   
         &.prev {
           left: 24px;
-          background-image: url('../../assets/img/icons/arrow-round-back.svg');
+          background-image: url('../../assets/img/icons/arrow-round-back.svg'), 
+                            linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), 
+                            linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.3) 100%);
           &:hover {
             transform: translateY(-50%) scale(1.1);
+            background-image: url('../../assets/img/icons/arrow-round-back.svg'), 
+                              linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)), 
+                              linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.4) 100%);
           }
         }
   
         &.next {
           right: 24px;
-          background-image: url('../../assets/img/icons/arrow-round-next.svg');
+          background-image: url('../../assets/img/icons/arrow-round-next.svg'), 
+                            linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), 
+                            linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.3) 100%);
           transform: translateY(-50%) rotate(180deg);
           &:hover {
             transform: translateY(-50%) rotate(180deg) scale(1.1);
+            background-image: url('../../assets/img/icons/arrow-round-next.svg'), 
+                              linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)), 
+                              linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.4) 100%);
           }
         }
       }}
