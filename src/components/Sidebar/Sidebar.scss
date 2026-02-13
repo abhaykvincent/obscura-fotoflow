@@ -2,7 +2,7 @@
 
 $sidebar-collapsed-width: 64px;
 $sidebar-expanded-width: 240px;
-$transition-speed: 0.25s;
+$transition-speed: 0.5s;
 
 .sidebar-overlay {
     display: none;
@@ -40,8 +40,32 @@ $transition-speed: 0.25s;
         }
 
         .sidebar-bottom {
-            opacity: 1;
-            pointer-events: all;
+            .sidebar-stats, .sidebar-footer {
+                opacity: 1;
+                pointer-events: all;
+                height: auto;
+                margin-top: 0;
+                 gap: 8px*2;
+            }
+
+            .profile-section {
+                .profile-trigger {
+                background: $dark-2;
+                border: 1px solid $dark-1;
+                display: flex;
+                    justify-content: space-between;
+                    padding: 8px;
+
+                    .user-details, .chevron-icon {
+                        opacity: 1;
+                        max-width: 200px;
+                    }
+                }
+
+                .avatar-wrapper .avatar-progress {
+                    opacity: 0;
+                }
+            }
         }
 
         .admin-section-label {
@@ -148,12 +172,27 @@ $transition-speed: 0.25s;
         padding: 12px;
         background: darken($dark-3, 2%);
         border-top: 1px solid $dark-1-5;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s ease;
+        transition: all $transition-speed ease;
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 8px;
+
+        /* .sidebar-stats, .sidebar-footer {
+            opacity: 0;
+            pointer-events: none;
+            height: 0;
+            overflow: hidden;
+            margin: 0;
+            transition: all $transition-speed ease;
+        } */
+          .system-time .time ,.sidebar-stats, .sidebar-footer{
+            opacity: 0;
+            pointer-events: none;
+            height: 0;
+            overflow: hidden;
+            margin: 0;
+            transition: all $transition-speed ease;
+        }
 
         .sidebar-stats {
             display: flex;
@@ -242,13 +281,12 @@ $transition-speed: 0.25s;
             position: relative;
 
             .profile-trigger {
-                display: flex;
                 align-items: center;
-                justify-content: space-between;
-                padding: 8px;
-                background: $dark-2;
+                justify-content: center;
+                padding: 8px 0;
                 border-radius: 8px;
-                border: 1px solid $dark-1;
+                    background-color: none;
+                    border: none;
                 cursor: pointer;
                 transition: background 0.2s ease;
 
@@ -259,6 +297,41 @@ $transition-speed: 0.25s;
                     align-items: center;
                     gap: 10px;
 
+                    .avatar-wrapper {
+                        position: relative;
+                        width: 32px;
+                        height: 32px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        .avatar-progress {
+                            position: absolute;
+                            width: 40px;
+                            height: 40px;
+                            top: -4px;
+                            left: -4px;
+                            pointer-events: none;
+                            transition: opacity $transition-speed ease;
+
+                            .progress-bg {
+                                fill: none;
+                                stroke: rgba(255, 255, 255, 0.1);
+                                stroke-width: 2;
+                            }
+
+                            .progress-fill {
+                                fill: none;
+                                stroke: $green-default-light;
+                                stroke-width: 2;
+                                stroke-linecap: round;
+                                transform: rotate(-90deg);
+                                transform-origin: center;
+                                transition: stroke-dashoffset 0.5s ease;
+                            }
+                        }
+                    }
+
                     .avatar {
                         width: 32px;
                         height: 32px;
@@ -268,6 +341,11 @@ $transition-speed: 0.25s;
                     }
 
                     .user-details {
+                        opacity: 0;
+                        max-width: 0;
+                        overflow: hidden;
+                        transition: opacity 0.2s ease, max-width 0.2s ease;
+
                         .display-name {
                             font-size: 0.85rem;
                             font-weight: 600;
@@ -290,6 +368,11 @@ $transition-speed: 0.25s;
                 }
 
                 .chevron-icon {
+                    opacity: 0;
+                    max-width: 0;
+                    overflow: hidden;
+                    transition: opacity 0.2s ease, max-width 0.2s ease;
+                    
                     width: 16px;
                     height: 16px;
                     background-image: url('../../assets/img/icons/arrow-dropdown.png');
@@ -346,9 +429,11 @@ $transition-speed: 0.25s;
         }
 
         .sidebar-footer {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: 8px auto;
+            flex-direction: row;
             gap: 12px;
+            width: 100%;
 
             .footer-actions {
                 display: flex;
@@ -413,8 +498,31 @@ $transition-speed: 0.25s;
         .sidebar-bottom {
             opacity: 1 !important;
             pointer-events: all !important;
-        }
 
+            .sidebar-stats, .sidebar-footer {
+                opacity: 1 !important;
+                pointer-events: all !important;
+                height: auto !important;
+                margin-top: 0 !important;
+            }
+
+            .profile-section {
+                .profile-trigger {
+                    justify-content: space-between !important;
+                    padding: 8px !important;
+
+                    .user-details, .chevron-icon {
+                        opacity: 1 !important;
+                        max-width: 200px !important;
+                    }
+                }
+
+                .avatar-wrapper .avatar-progress {
+                    opacity: 0 !important;
+                }
+            }
+        }
+        
         .admin-section-label {
             opacity: 0.6 !important;
         }
