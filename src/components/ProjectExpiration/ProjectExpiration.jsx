@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
-export default function ProjectExpiration({ createdAt }) {
+export default function ProjectExpiration({ createdAt, projectValidityMonths = 12 }) {
   const [daysRemaining, setDaysRemaining] = useState(0);
 
   useEffect(() => {
     const calculateDaysRemaining = () => {
-      // 365 days in milliseconds
-      const expirationPeriod = 365 * 24 * 60 * 60 * 1000;
-      const expirationDate = createdAt + expirationPeriod;
+      // Use projectValidityMonths to calculate expiration
+      const expirationDate = new Date(createdAt);
+      expirationDate.setMonth(expirationDate.getMonth() + projectValidityMonths);
+      
       const currentDate = Date.now();
 
       // Calculate the difference in days
-      const remainingTime = expirationDate - currentDate;
+      const remainingTime = expirationDate.getTime() - currentDate;
       const daysLeft = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
       
       // Update state
@@ -28,17 +29,10 @@ export default function ProjectExpiration({ createdAt }) {
   }, [createdAt]);
 
   return (
-    <>
-    <div className='project-expiration'>
-      {daysRemaining > 0 
-        ? `Project expires in ${daysRemaining} days` 
-        : 'Project has expired'}
+    daysRemaining <= 14 && <div className='project-expiration'>
+      {daysRemaining > 0
+        ? `Archives in ${daysRemaining} days` 
+        : 'Project is archived'}
     </div>
-    <div className='project-expiration'>
-      {daysRemaining > 0 
-        ? `Project Archives in ${daysRemaining} days` 
-        : 'Project has expired'}
-    </div>
-    </>
   );
 }

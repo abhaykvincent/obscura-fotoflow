@@ -1,8 +1,20 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
+    
+    // Smart Previews: Always accessible
+    match /thumb/{domain}/{projectId}/{allPaths=**} {
+      allow read: if true;
+    }
+
+    // Original/Web files: Restricted if archived
+    match /web/{domain}/{projectId}/{allPaths=**} {
+      allow read: if firestore.get(/databases/(default)/documents/studios/$(domain)/projects/$(projectId)).data.storage.status != 'archive';
+      allow write: if true; // Keep write access for now as per existing rules
+    }
+
+    // Default rules for other paths
     match /{allPaths=**} {
-      // Allow read and write access to all users during development.
       allow read, write: if true;
     }
   }

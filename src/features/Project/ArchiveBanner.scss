@@ -1,0 +1,133 @@
+@import "../../style/variables";
+
+.archive-banner {
+  width: 100%;
+  min-height: 140px;
+  background: linear-gradient(135deg, rgba($dark-1, 0.95) 0%, rgba($dark-2, 0.9) 100%);
+  border-bottom: 1px solid rgba($orange-default-dark, 0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  z-index: 10;
+  
+  // Subtle Noise Texture Overlay
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  // Accent Glow
+  &::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -10%;
+    width: 40%;
+    height: 200%;
+    background: radial-gradient(circle, rgba($orange-default-dark, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+    transform: rotate(-15deg);
+  }
+
+  .banner-content {
+    max-width: 1100px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: $spacing-unit * 4;
+    padding: $spacing-unit * 3 ($spacing-unit * 4);
+    position: relative;
+    z-index: 2;
+
+    .status-badge {
+      padding: 4px 12px;
+      background: rgba($orange-default-dark, 0.1);
+      border: 1px solid rgba($orange-default-dark, 0.3);
+      color: $orange-default-dark;
+      border-radius: 100px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      white-space: nowrap;
+      box-shadow: 0 0 15px rgba($orange-default-dark, 0.1);
+    }
+
+    .banner-info {
+      flex: 1;
+      
+      h3 {
+        margin: 0 0 6px 0;
+        color: white;
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: -0.3px;
+      }
+
+      p {
+        margin: 0;
+        color: $gray-default-dark;
+        font-size: 14px;
+        line-height: 1.6;
+        max-width: 600px;
+
+        strong {
+          color: $gray3-default-light;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .banner-actions {
+      display: flex;
+      align-items: center;
+      gap: $spacing-unit * 2;
+
+      .button.primary {
+        background: $orange-default-dark;
+        color: $dark-4;
+        border: none;
+        padding: 10px 24px;
+        font-weight: 700;
+        border-radius: 6px;
+        box-shadow: 0 4px 14px rgba($orange-default-dark, 0.2);
+        
+        &:hover {
+          background: lighten($orange-default-dark, 10%);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba($orange-default-dark, 0.3);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+
+  @media (max-width: 900px) {
+    .banner-content {
+      flex-direction: column;
+      text-align: center;
+      gap: $spacing-unit * 2;
+      padding: $spacing-unit * 4 $spacing-unit * 2;
+
+      .banner-info {
+        p {
+          max-width: 100%;
+        }
+      }
+
+      .banner-actions {
+        width: 100%;
+        .button { width: 100%; }
+      }
+    }
+  }
+}

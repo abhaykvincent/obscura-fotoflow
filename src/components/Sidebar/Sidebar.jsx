@@ -174,7 +174,7 @@ function Sidebar() {
                   <span>Storage</span>
                 </div>
                 <div className="storage-values">
-                  <span className="used">{convertMegabytes(studio?.usage?.storage?.used)}</span>
+                  <span className="used">{convertMegabytes(studio?.usage?.storage?.used,2)}</span>
                   <span className="divider">/</span>
                   <span className="quota">{convertMegabytes(studio?.usage?.storage?.quota)}</span>
                 </div>

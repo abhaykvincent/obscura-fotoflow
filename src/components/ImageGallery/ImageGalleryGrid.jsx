@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Preview from '../../features/Preview/Preview';
 import { shortenFileName } from '../../utils/stringUtils';
 import { downloadImage } from '../ImageDownload/ImageDownload';
+import { showAlert } from '../../app/slices/alertSlice';
 
 // Extracted component for a single photo item in the grid.
 // This encapsulates the photo's display logic and its own state, like the options menu.
-const PhotoItem = React.memo(({ fileUrl, index, onImageClick }) => {
+const PhotoItem = React.memo(({ fileUrl, index, onImageClick, isArchived }) => {
   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+  const dispatch = useDispatch();
 
   const handleMenuIconClick = (e) => {
     e.stopPropagation(); // Prevent the onImageClick handler of the parent from firing.
@@ -15,6 +18,10 @@ const PhotoItem = React.memo(({ fileUrl, index, onImageClick }) => {
 
   const handleDownload = (e) => {
     e.stopPropagation();
+    if (isArchived) {
+      dispatch(showAlert({ type: 'error', message: 'Project is archived. Restore it to download original files.' }));
+      return;
+    }
     downloadImage(fileUrl.url, fileUrl.name);
     setShowOptionsMenu(false); // Close menu after action
   };
@@ -53,10 +60,12 @@ const PhotoItem = React.memo(({ fileUrl, index, onImageClick }) => {
   );
 });
 
-const ImageGalleryGrid = React.memo(({ projectId, collectionId, imageUrls }) => {
+const ImageGalleryGrid = React.memo(({ projectId, collectionId, imageUrls, project }) => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
   const containerRef = useRef(null);
+
+  const isArchived = project?.storage?.status === 'archive';
 
   const openPreview = (index) => {
     setPreviewIndex(index);
@@ -145,6 +154,7 @@ const ImageGalleryGrid = React.memo(({ projectId, collectionId, imageUrls }) => 
               fileUrl={fileUrl}
               index={index}
               onImageClick={openPreview}
+              isArchived={isArchived}
             />
           ))}
         </div>
