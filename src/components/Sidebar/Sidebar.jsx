@@ -70,7 +70,7 @@ function Sidebar() {
   return (
     <>
       <div className="sidebar-overlay" onClick={closeSidebar}></div>
-      <div className="sidebar sleep-sidebar">
+      <div className="sidebar sleep-sidebar" onMouseLeave={() => setProfileOptionActive(false)}>
         <div className="menu-list">
           <Link to={`/${studioName}/home`} onClick={closeSidebar}>
             <div className={`menu home ${isActive(`/${studioName}/home`) ? 'active' : ''}`}>
