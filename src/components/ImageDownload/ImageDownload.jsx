@@ -17,17 +17,14 @@ const getDownloadPreference = () => {
 };
 
 const recordDownloadChoice = (choice) => {
+  localStorage.setItem(PREFERENCE_KEY, choice);
+  
   let history = JSON.parse(localStorage.getItem(SMART_KEY) || '[]');
   history.push(choice);
   if (history.length > HISTORY_LIMIT) {
     history = history.slice(-HISTORY_LIMIT);
   }
   localStorage.setItem(SMART_KEY, JSON.stringify(history));
-
-  // If last N choices are the same, set as preference
-  if (history.length === HISTORY_LIMIT && history.every(h => h === choice)) {
-    localStorage.setItem(PREFERENCE_KEY, choice);
-  }
 };
 
 export async function downloadImage(url, fileName, quality = 'original') {
@@ -87,11 +84,8 @@ function DownloadImage({ url, fileName, isArchived }) {
 
   const onMainClick = (e) => {
     e.stopPropagation();
-    if (preference) {
-      handleDownload(preference);
-    } else {
-      setIsOpen(true);
-    }
+    // Default to 'original' if no preference exists yet
+    handleDownload(preference || 'original');
   };
 
   return (
@@ -101,10 +95,10 @@ function DownloadImage({ url, fileName, isArchived }) {
           <button 
             className={`main-download-btn ${downloading ? 'loading' : ''}`}
             onClick={onMainClick}
-            title={preference ? `Quick Download (${preference})` : 'Download Options'}
+            title={preference ? `Download ${preference}` : 'Download Original'}
             disabled={downloading}
           >
-            {preference ? <Zap size={16} className="zap-icon" /> : <Download size={16} />}
+            {preference === 'compressed' ? <Zap size={16} className="zap-icon" /> : <Download size={16} />}
             {downloading && <div className="spinner" />}
           </button>
           
