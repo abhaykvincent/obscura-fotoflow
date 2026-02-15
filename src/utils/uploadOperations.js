@@ -82,7 +82,7 @@ const compressImages = async (files, options = {}) => {
 
 // Firebase Cloud Storage
 const metadata = {
-    cacheControl: 'public, max-age=31536000', // Cache for 1 year
+    cacheControl: 'public, max-age=41536000', // Cache for 1 year
   };
 // File Single upload function
 // Remove setUploadLists, add dispatch and fileId
