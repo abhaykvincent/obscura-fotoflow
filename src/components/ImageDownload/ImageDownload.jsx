@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Download, Zap, ChevronDown } from 'lucide-react';
 import { trackEvent } from '../../analytics/utils';
-import { getThumbnailUrl } from '../../utils/urlUtils';
+import { getImageUrlByQuality } from '../../utils/urlUtils';
 import { useDispatch } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
 import './DownloadImage.scss';
@@ -58,7 +58,7 @@ function DownloadImage({ url, fileName, isArchived }) {
   
   const preference = getDownloadPreference();
 
-  const handleDownload = useCallback(async (quality, overrideUrl = null) => {
+  const handleDownload = useCallback(async (quality) => {
     if (quality === 'original' && isArchived) {
       dispatch(showAlert({ 
         type: 'error', 
@@ -68,8 +68,9 @@ function DownloadImage({ url, fileName, isArchived }) {
     }
 
     setDownloading(true);
-    const targetUrl = overrideUrl || (quality === 'compressed' ? getThumbnailUrl(url) : url);
-    const targetName = quality === 'compressed' ? `compressed_${fileName}` : fileName;
+    // Swap prefix from /web to /original or /thumb
+    const targetUrl = getImageUrlByQuality(url, quality);
+    const targetName = quality !== 'original' ? `${quality}_${fileName}` : fileName;
 
     try {
       await downloadImage(targetUrl, targetName, quality);
