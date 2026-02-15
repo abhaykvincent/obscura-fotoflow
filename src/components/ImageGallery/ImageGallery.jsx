@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Preview from '../../features/Preview/Preview';
-import downloadImage  from '../../components/ImageDownload/ImageDownload';
+import { downloadImage } from '../ImageDownload/ImageDownload';
 import { shortenFileName } from '../../utils/stringUtils';
+import { useDispatch } from 'react-redux';
+import { showAlert } from '../../app/slices/alertSlice';
 
 // Helper function to group images by lastModified threshold
 const groupImagesByLastModified = (images, thresholdInMinutes, timeThrottleInMinutes) => {
@@ -90,11 +92,13 @@ const TimestampDisplay = ({ timestamp }) => {
   );
 };
 
-const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
+const ImageGallery = ({ projectId,collectionId, imageUrls, project }) => {
   // Preview
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
+  const dispatch = useDispatch();
 
+  const isArchived = project?.storage?.status === 'archive';
               const [showOptionsMenu, setShowOptionsMenu] = useState(false);
   const containerRef = useRef(null);
   const openPreview = (index) => {
@@ -175,6 +179,16 @@ const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
                 setShowOptionsMenu(!showOptionsMenu);
               };
 
+              const handleDownload = (e) => {
+                e.stopPropagation();
+                if (isArchived) {
+                  dispatch(showAlert({ type: 'error', message: 'Project is archived. Restore it to download original files.' }));
+                  return;
+                }
+                downloadImage(fileUrl.url, fileUrl.name);
+                setShowOptionsMenu(false);
+              };
+
               return (
                 <div
                   className="photo-wrap"
@@ -194,7 +208,7 @@ const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
                       <div className="top">
                         <div className="menu-icon" onClick={handleMenuIconClick}></div>
                         <div className={`option-menu ${showOptionsMenu ? 'visible' : ''}`} onClick={(e) => e.stopPropagation()}>
-                          <div className="photo-option" onClick={() => downloadImage(fileUrl.url, fileUrl.name)}>Download</div>
+                          <div className="photo-option" onClick={handleDownload}>Download</div>
                           <div className="photo-option">Share</div>
                           <div className="photo-option">Set as cover</div>
                           <div className="photo-option">Delete</div>
@@ -214,7 +228,7 @@ const ImageGallery = ({ projectId,collectionId, imageUrls }) => {
             })}
           </div>
       ))}
-      {isPreviewOpen && <Preview image={imageUrls[previewIndex]} {...{ previewIndex, setPreviewIndex, imagesLength: imageUrls.length, closePreview, projectId,collectionId,setPreviewIndex }} />}
+      {isPreviewOpen && <Preview image={imageUrls[previewIndex]} {...{ previewIndex, setPreviewIndex, imagesLength: imageUrls.length, closePreview, projectId,collectionId,setPreviewIndex, isArchived }} />}
     </div>
   );
 };
