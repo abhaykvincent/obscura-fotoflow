@@ -23,7 +23,6 @@ $transition-speed: 0.5s;
     width: $sidebar-collapsed-width;
     height: calc(100dvh - 8px*7);
     background: $dark-3;
-    border-right: 1px solid $dark-1-5;
     z-index: 30;
     display: flex;
     flex-direction: column;
@@ -34,12 +33,15 @@ $transition-speed: 0.5s;
         width: $sidebar-expanded-width;
         box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
 
+        border-right: 1px solid $dark-2;
         .menu-list .menu .label {
             opacity: 1;
             transform: translateX(0);
         }
 
         .sidebar-bottom {
+        background: darken($dark-3, 2%);
+        border-top: 1px solid $dark-1-5;
             .sidebar-stats, .sidebar-footer {
                 opacity: 1;
                 pointer-events: all;
@@ -47,6 +49,12 @@ $transition-speed: 0.5s;
                 margin-top: 0;
                  gap: 8px*2;
             }
+            .plan-status{
+                opacity: 1;
+                pointer-events: all;
+                height: auto;
+                margin-top: 0;}
+                transition-delay: 1s;
 
             .profile-section {
                 .profile-trigger {
@@ -76,6 +84,7 @@ $transition-speed: 0.5s;
     .menu-list {
         flex: 1;
         padding: 12px;
+        padding-top: 8px*4;
         display: flex;
         flex-direction: column;
         gap: 4px;
@@ -95,6 +104,7 @@ $transition-speed: 0.5s;
             align-items: center;
             gap: 12px;
             padding: 10px;
+            padding-right: 8px*4.2; 
             border-radius: 8px;
             color: $gray-accessible-dark;
             transition: all 0.2s ease;
@@ -170,8 +180,8 @@ $transition-speed: 0.5s;
 
     .sidebar-bottom {
         padding: 12px;
-        background: darken($dark-3, 2%);
-        border-top: 1px solid $dark-1-5;
+        background: none;
+        border-top:none;
         transition: all $transition-speed ease;
         display: flex;
         flex-direction: column;
@@ -200,6 +210,10 @@ $transition-speed: 0.5s;
             gap: 12px;
 
             .plan-status {
+                opacity: 0;
+                transition-delay: 0.1s;
+                transition-duration: 0.1s;
+                transition-timing-function: ease-out;
                 .trial-info {
                     font-size: 0.75rem;
                     margin-bottom: 4px;
