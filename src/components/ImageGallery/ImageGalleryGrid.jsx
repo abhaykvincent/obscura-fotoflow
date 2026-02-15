@@ -143,6 +143,7 @@ const ImageGalleryGrid = React.memo(({ projectId, collectionId, imageUrls, proje
           closePreview={closePreview}
           projectId={projectId}
           collectionId={collectionId}
+          isArchived={isArchived}
         />
       )}
 

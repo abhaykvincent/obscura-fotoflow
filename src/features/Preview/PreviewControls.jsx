@@ -5,7 +5,7 @@ import { setCoverPhotoInFirestore, setGalleryCoverPhotoInFirestore } from '../..
 import DownloadImage from '../../components/ImageDownload/ImageDownload';
 import { AnimatePresence, motion } from 'framer-motion';
 
-function PreviewControls({ showControls, image, closePreview, handleDelete, projectId, collectionId, studioName, resetControlsTimeout }) {
+function PreviewControls({ showControls, image, closePreview, handleDelete, projectId, collectionId, studioName, resetControlsTimeout, isArchived }) {
   const isPhotographer = window.location.pathname.includes('/gallery/');
 
   const [displayedName, setDisplayedName] = useState(image.name);
@@ -57,7 +57,7 @@ function PreviewControls({ showControls, image, closePreview, handleDelete, proj
 
           <div className="right-controls">
             <div className="interactive">
-                <DownloadImage url={image.url} fileName={image.name} />
+                <DownloadImage url={image.url} fileName={image.name} isArchived={isArchived} />
             </div>
             
             {isPhotographer && (

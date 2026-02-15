@@ -7,7 +7,7 @@ import ImageDisplay from './ImageDisplay';
 import PreviewControls from './PreviewControls';
 import { deleteFile } from '../../app/slices/projectsSlice';
 
-function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePreview, projectId, collectionId }) {
+function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePreview, projectId, collectionId, isArchived }) {
   const { studioName } = useParams();
   const dispatch = useDispatch();
   
@@ -120,6 +120,7 @@ function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePrev
           collectionId={collectionId}
           studioName={studioName}
           resetControlsTimeout={resetControlsTimeout}
+          isArchived={isArchived}
         />
 
         <AnimatePresence>

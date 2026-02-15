@@ -391,7 +391,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 imageUrls.length > 0 ? (
                     galleryView === 'grid' ?
                     <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id, collectionId, project }} />:
-                    <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId }} />
+                    <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId, project }} />
                 ) : (
                     <label 
                         htmlFor="fileInput" 
