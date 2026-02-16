@@ -50,7 +50,7 @@
         border: 1px solid $green-default-dark;
         border-left: 1px solid rgb(132, 193, 40);
         border-top: 1px solid rgb(178, 234, 95);
-        color: white;
+        color: white !important;
         &.outline {
             background: none;
             border: 1px solid $green-dark-accessible-light;
