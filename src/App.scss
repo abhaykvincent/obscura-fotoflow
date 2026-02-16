@@ -2190,7 +2190,7 @@ body{
         }
         .photo-wrap{
           &:hover{
-
+            z-index: 41;
           animation: photo-hover-animamtion 0.2s;
           animation-fill-mode: forwards;
           @keyframes photo-hover-animamtion {
