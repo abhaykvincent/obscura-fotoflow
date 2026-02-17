@@ -71,7 +71,7 @@ function UploadProgress({}) {
             <div className="header-title">
                 <h4>Uploading {totalProgress} of {Object.keys(uploadList).length}</h4>
                 <p></p>
-            </div>
+    </div>
         }
         <div className="modal-controls">
             <div className="control maximize"
