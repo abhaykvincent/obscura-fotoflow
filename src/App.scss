@@ -2101,6 +2101,11 @@ body{
                 color: $light-0; /* White on hover */
                 background-color: $dark-1; /* Darker background on hover */
               }
+
+              &.delete-option:hover {
+                background-color: $red-default-dark;
+                color: $light-3;
+              }
             }
             // style for every fifth one
 
@@ -2190,7 +2195,7 @@ body{
         }
         .photo-wrap{
           &:hover{
-
+            z-index: 41;
           animation: photo-hover-animamtion 0.2s;
           animation-fill-mode: forwards;
           @keyframes photo-hover-animamtion {
