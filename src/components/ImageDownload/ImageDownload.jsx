@@ -99,7 +99,7 @@ function DownloadImage({ url, fileName, isArchived }) {
             title={preference ? `Download ${preference}` : 'Download Original'}
             disabled={downloading}
           >
-            {preference === 'compressed' ? <Zap size={16} className="zap-icon" /> : <Download size={16} />}
+            {<Download size={16} />}
             {downloading && <div className="spinner" />}
           </button>
           

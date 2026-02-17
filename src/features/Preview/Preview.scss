@@ -205,8 +205,10 @@
         &.prev {
           left: 24px;
           background-image: url('../../assets/img/icons/arrow-round-back.svg'), 
-                            linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), 
-                            linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.3) 100%);
+                            linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.12) 40%,rgba(255, 255, 255, 0.1) 70%, rgba(255, 255, 255, 0.2) 100%);
+          border-top: 1px solid rgba(255, 255, 255, 0.2);
+          border-left: 1px solid rgba(255, 255, 255, 0.12);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.03);
           &:hover {
             transform: translateY(-50%) scale(1.1);
             background-image: url('../../assets/img/icons/arrow-round-back.svg'), 
@@ -218,15 +220,13 @@
         &.next {
           right: 24px;
           background-image: url('../../assets/img/icons/arrow-round-next.svg'), 
-                            linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), 
-                            linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.3) 100%);
-          transform: translateY(-50%) rotate(180deg);
+                            linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(117, 117, 117, 0.12) 40%,rgba(117, 117, 117, 0.1) 70%, rgba(255, 255, 255, 0.15) 100%);
+          border-top: 1px solid rgba(255, 255, 255, 0.14);
+          border-left: 1px solid rgba(255, 255, 255, 0.1);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+          transform: scale(1) translateY(-50%) rotate(180deg);
           &:hover {
-            transform: translateY(-50%) rotate(180deg) scale(1.1);
-            background-image: url('../../assets/img/icons/arrow-round-next.svg'), 
-                              linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)), 
-                              linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.4) 100%);
-          }
+          transform: scale(1.02) translateY(-50%) rotate(180deg);}
         }
       }}
 
