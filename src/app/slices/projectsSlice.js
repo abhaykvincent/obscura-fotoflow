@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
-import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateCollectionSelectionStatusByCollectionIdInFirestore, updateSelectionGalleryStatusByCollectionIdInFirestore, updateCollectionStatusByCollectionIdInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore, updateProjectStorageToArchive, restoreProjectFromArchive } from '../../firebase/functions/firestore';
+import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateCollectionSelectionStatusByCollectionIdInFirestore, updateSelectionGalleryStatusByCollectionIdInFirestore, updateCollectionStatusByCollectionIdInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore, updateProjectStorageToArchive, restoreProjectFromArchive, toggleFileFavoriteInFirestore } from '../../firebase/functions/firestore';
 import { showAlert } from './alertSlice';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/app';
@@ -219,6 +219,14 @@ export const addBudget =  createAsyncThunk(
     // Call the function to delete the file
     await deleteFileFromFirestoreAndStorage(studioName, projectId, collectionId, imageUrl, imageName);
     return { projectId, collectionId, fileName: imageName }; // Return necessary data
+  }
+);
+
+export const toggleFileFavorite = createAsyncThunk(
+  'projects/toggleFileFavorite',
+  async ({ studioName, projectId, collectionId, imageUrl }, { dispatch }) => {
+    const newStatus = await toggleFileFavoriteInFirestore(studioName, projectId, collectionId, imageUrl);
+    return { projectId, collectionId, imageUrl, newStatus };
   }
 );
 // Invitations
@@ -527,11 +535,35 @@ const projectsSlice = createSlice({
       })
       
       .addCase(deleteFile.fulfilled, (state, action) => {
+        const { projectId, collectionId, fileName } = action.payload;
+        const project = state.data.find(p => p.id === projectId);
+        if (project) {
+          const collection = project.collections.find(c => c.id === collectionId);
+          if (collection && collection.uploadedFiles) {
+            collection.uploadedFiles = collection.uploadedFiles.filter(f => f.name !== fileName);
+          }
+        }
       })
     
       .addCase(deleteFile.rejected, (state, action) => {
         state.error = action.error.message;
       });
+
+      builder
+      .addCase(toggleFileFavorite.fulfilled, (state, action) => {
+        const { projectId, collectionId, imageUrl, newStatus } = action.payload;
+        const project = state.data.find(p => p.id === projectId);
+        if (project) {
+          const collection = project.collections.find(c => c.id === collectionId);
+          if (collection && collection.uploadedFiles) {
+            const file = collection.uploadedFiles.find(f => f.url === imageUrl);
+            if (file) {
+              file.status = newStatus;
+            }
+          }
+        }
+      });
+
       // Add Event
       builder
       .addCase(addEvent.pending, (state) => {

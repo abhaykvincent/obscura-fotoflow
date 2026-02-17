@@ -1,15 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import Preview from '../../features/Preview/Preview';
 import { shortenFileName } from '../../utils/stringUtils';
 import { downloadImage } from '../ImageDownload/ImageDownload';
 import { showAlert } from '../../app/slices/alertSlice';
+import { deleteFile, toggleFileFavorite } from '../../app/slices/projectsSlice';
+import { setCoverPhotoInFirestore, setGalleryCoverPhotoInFirestore } from '../../firebase/functions/firestore';
 
 // Extracted component for a single photo item in the grid.
 // This encapsulates the photo's display logic and its own state, like the options menu.
-const PhotoItem = React.memo(({ fileUrl, index, onImageClick, isArchived }) => {
+const PhotoItem = React.memo(({ fileUrl, index, onImageClick, isArchived, projectId, collectionId }) => {
   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
   const dispatch = useDispatch();
+  const { studioName } = useParams();
 
   const handleMenuIconClick = (e) => {
     e.stopPropagation(); // Prevent the onImageClick handler of the parent from firing.
@@ -26,24 +30,65 @@ const PhotoItem = React.memo(({ fileUrl, index, onImageClick, isArchived }) => {
     setShowOptionsMenu(false); // Close menu after action
   };
 
+  const handleFavoriteToggle = (e) => {
+    e.stopPropagation();
+    dispatch(toggleFileFavorite({ studioName, projectId, collectionId, imageUrl: fileUrl.url }));
+  };
+
+  const handleShare = (e) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(fileUrl.url);
+    dispatch(showAlert({ type: 'success', message: 'Image URL copied to clipboard!' }));
+    setShowOptionsMenu(false);
+  };
+
+  const handleSetProjectCover = async (e) => {
+    e.stopPropagation();
+    try {
+      await setCoverPhotoInFirestore(studioName, projectId, fileUrl.url);
+      dispatch(showAlert({ type: 'success', message: 'Set as project cover!' }));
+    } catch (error) {
+      dispatch(showAlert({ type: 'error', message: 'Failed to set project cover.' }));
+    }
+    setShowOptionsMenu(false);
+  };
+
+  const handleSetGalleryCover = async (e) => {
+    e.stopPropagation();
+    try {
+      await setGalleryCoverPhotoInFirestore(studioName, projectId, collectionId, fileUrl.url);
+      dispatch(showAlert({ type: 'success', message: 'Set as gallery cover!' }));
+    } catch (error) {
+      dispatch(showAlert({ type: 'error', message: 'Failed to set gallery cover.' }));
+    }
+    setShowOptionsMenu(false);
+  };
+
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    if (window.confirm('Are you sure you want to delete this photo?')) {
+      dispatch(deleteFile({ studioName, projectId, collectionId, imageUrl: fileUrl.url, imageName: fileUrl.name }));
+    }
+    setShowOptionsMenu(false);
+  };
+
   return (
     <div className="photo-wrap" onClick={() => onImageClick(index)}>
       <div className="hover-options-wrap">
         <div className="hover-options">
-          {fileUrl.status && (
-            <div className="favorite-wrap">
-              <div className={`favorite ${fileUrl?.status === 'selected' ? 'selected' : ''}`}>
-                <div className="icon"></div>
-              </div>
+          <div className="favorite-wrap" onClick={handleFavoriteToggle}>
+            <div className={`favorite ${fileUrl?.status === 'selected' ? 'selected' : ''}`}>
+              <div className="icon"></div>
             </div>
-          )}
+          </div>
           <div className="top">
             <div className="menu-icon" onClick={handleMenuIconClick}></div>
             <div className={`option-menu ${showOptionsMenu ? 'visible' : ''}`} onClick={(e) => e.stopPropagation()}>
               <div className="photo-option" onClick={handleDownload}>Download</div>
-              <div className="photo-option">Share</div>
-              <div className="photo-option">Set as cover</div>
-              <div className="photo-option">Delete</div>
+              <div className="photo-option" onClick={handleShare}>Share</div>
+              <div className="photo-option" onClick={handleSetProjectCover}>Set as project cover</div>
+              <div className="photo-option" onClick={handleSetGalleryCover}>Set as gallery cover</div>
+              <div className="photo-option delete-option" onClick={handleDelete}>Delete</div>
             </div>
           </div>
           <div className="bottom">
@@ -92,7 +137,7 @@ const ImageGalleryGrid = React.memo(({ projectId, collectionId, imageUrls, proje
       document.body.style.overflow = 'hidden';
     } else {
       if (header) header.style.display = 'grid';
-      if (sidebar) sidebar.style.display = 'block';
+      if (sidebar) sidebar.style.display = 'flex';
       if (projectInfo) projectInfo.style.display = 'grid';
       document.body.style.overflow = 'auto';
     }
@@ -156,6 +201,8 @@ const ImageGalleryGrid = React.memo(({ projectId, collectionId, imageUrls, proje
               index={index}
               onImageClick={openPreview}
               isArchived={isArchived}
+              projectId={projectId}
+              collectionId={collectionId}
             />
           ))}
         </div>

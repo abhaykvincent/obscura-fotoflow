@@ -220,6 +220,16 @@ const CollectionImages = ({ id, collectionId, project }) => {
         document.title = `${project.name}'s ${collectionId } Gallery`
     }, [collectionId]);
 
+    // Update collectionImages when project prop changes (e.g., after Redux update)
+    useEffect(() => {
+        if (project && project.collections) {
+            const currentCollection = project.collections.find(c => c.id === collectionId);
+            if (currentCollection && currentCollection.uploadedFiles) {
+                setCollectionImages(currentCollection.uploadedFiles);
+            }
+        }
+    }, [project, collectionId]);
+
     // Fetch Images
     useEffect(() => {
         if (!collectionImages) {

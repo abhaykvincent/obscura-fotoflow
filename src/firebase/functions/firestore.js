@@ -884,6 +884,43 @@ export const removeUnselectedImagesFromFirestore = async (domain, projectId, col
       throw error;
     }
   };
+
+export const toggleFileFavoriteInFirestore = async (domain, projectId, collectionId, fileUrl) => {
+    if (!domain || !projectId || !collectionId || !fileUrl) {
+        throw new Error('Domain, Project ID, Collection ID, and File URL are required.');
+    }
+
+    const collectionDocRef = doc(db, 'studios', domain, 'projects', projectId, 'collections', collectionId);
+
+    try {
+        const collectionSnapshot = await getDoc(collectionDocRef);
+        if (!collectionSnapshot.exists()) {
+            throw new Error('Collection does not exist.');
+        }
+
+        const collectionData = collectionSnapshot.data();
+        const updatedFiles = collectionData.uploadedFiles.map(file => {
+            if (file.url === fileUrl) {
+                return {
+                    ...file,
+                    status: file.status === 'selected' ? 'unselected' : 'selected'
+                };
+            }
+            return file;
+        });
+
+        await updateDoc(collectionDocRef, { uploadedFiles: updatedFiles });
+        console.log(`File favorite status toggled successfully.`);
+        
+        // Find the updated status to return
+        const updatedFile = updatedFiles.find(file => file.url === fileUrl);
+        return updatedFile.status;
+    } catch (error) {
+        console.error('Error toggling file favorite:', error.message);
+        throw error;
+    }
+};
+
 // Cover photo
 export const setCoverPhotoInFirestore = async (domain, projectId, image) => {
     if (!domain || !projectId || !image) {
