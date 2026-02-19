@@ -397,10 +397,19 @@ const CollectionImages = ({ id, collectionId, project }) => {
                             <div className={`control-label label-selected-photos ${selectedImages.length>0&&' active'}`}> </div>
                         </div>
                     { !showAllPhotos ?
-                    <><div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
-                        <div className="lr button secondary">Open in my {getOperatingSystem()}</div>
+                    <>
+                    <div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
+                        <div className="button secondary">Open in {getOperatingSystem()}</div>
+                    <DownloadFiles 
+                        className={`open-in${showAllPhotos ? 'disabled' : ''}`} 
+                        project={project} 
+                        collection={findCollectionById(project, collectionId)} 
+                        files={selectedImages}
+                        buttonText="Download"
+                    />
+                    
                     </div>
-                        {/* <DownloadFiles className={`open-in ${showAllPhotos ? 'disabled' : ''}`} folderPath={`${domain}/${id}/${collectionId}/`} project={project} collection={findCollectionById(project, collectionId)}/> */}
+                    
                         </>:
                     <>
                     {/* <div className="control-wrap">
