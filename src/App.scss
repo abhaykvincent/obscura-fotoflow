@@ -965,6 +965,7 @@ body{
       background-color: rgba(16, 16, 16, 0.9);
       .options{
         display: flex; 
+        align-items: center;
         gap: 8px;
         .dummy-buttons{
           display: flex;

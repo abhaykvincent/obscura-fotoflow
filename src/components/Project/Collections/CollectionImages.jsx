@@ -370,6 +370,17 @@ const CollectionImages = ({ id, collectionId, project }) => {
                         // setUploadLists, // Removed
                         dispatch // Added
                     }} />
+                        <div className="view-control">
+                            {/* <div className="control-label label-all-photos">{collectionImages?.length ? collectionImages?.length: imageUrls.length} Photos</div> */}
+                            <div className="control-wrap">
+                                <div className="controls">
+                                    <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All photos</div>
+                                    <div className={`control ${!showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(false)}>Selected ({selectedImages.length}) {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
+                                </div>
+                                <div className={`active`}></div>
+                            </div>
+                            <div className={`control-label label-selected-photos ${selectedImages.length>0&&' active'}`}> </div>
+                        </div>
                 </div>
                 <div className="view-control gallery-mode">
                         <div className="control-wrap">
@@ -385,22 +396,20 @@ const CollectionImages = ({ id, collectionId, project }) => {
 
                     <div className="gallery-header-right">
                         
-                        <div className="view-control">
-                            {/* <div className="control-label label-all-photos">{collectionImages?.length ? collectionImages?.length: imageUrls.length} Photos</div> */}
-                            <div className="control-wrap">
-                                <div className="controls">
-                                    <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All photos</div>
-                                    <div className={`control ${!showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(false)}>Selected ({selectedImages.length}) {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
-                                </div>
-                                <div className={`active`}></div>
-                            </div>
-                            <div className={`control-label label-selected-photos ${selectedImages.length>0&&' active'}`}> </div>
-                        </div>
                     { !showAllPhotos ?
-                    <><div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
-                        <div className="lr button secondary">Open in my {getOperatingSystem()}</div>
+                    <>
+                    <div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
+                    {/* <div className="button secondary">Open in {getOperatingSystem()}</div> */}
+                    <DownloadFiles 
+                        className={`open-in${showAllPhotos ? 'disabled' : ''}`} 
+                        project={project} 
+                        collection={findCollectionById(project, collectionId)} 
+                        files={selectedImages}
+                        buttonText="Download"
+                    />
+                    
                     </div>
-                        {/* <DownloadFiles className={`open-in ${showAllPhotos ? 'disabled' : ''}`} folderPath={`${domain}/${id}/${collectionId}/`} project={project} collection={findCollectionById(project, collectionId)}/> */}
+                    
                         </>:
                     <>
                     {/* <div className="control-wrap">

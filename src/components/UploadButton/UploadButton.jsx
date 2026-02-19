@@ -181,10 +181,9 @@ function UploadButton({
       <input id="fileInput" type="file" multiple onChange={handleFileInputChange} />
       {process.env.NODE_ENV === 'development' && (
         <div className="dummy-buttons">
-          <button onClick={()=>handleDummyUpload(128)} className="button secondary">128</button>
-          <button onClick={()=>handleDummyUpload(256)} className="button secondary">256</button>
-          <button onClick={()=>handleDummyUpload(512)} className="button secondary">512</button>
-          <button onClick={()=>handleDummyUpload(1024)} className="button secondary">1024</button>
+          <button onClick={()=>handleDummyUpload(128)} className="button secondary">8</button>
+          <button onClick={()=>handleDummyUpload(128)} className="button secondary">16</button>
+          <button onClick={()=>handleDummyUpload(128)} className="button secondary">32</button>
         </div>
       )}
     </>
