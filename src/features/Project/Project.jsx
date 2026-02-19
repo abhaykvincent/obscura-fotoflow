@@ -192,12 +192,12 @@ export default function Project() {
           <div className={`button tertiary icon pin ${pinIconClass}`} onClick={handlePinCopy}>
             {pinText}
           </div>
-
+            {isArchived ? 'Archived (Only client  and you)' : 'Share'}
           <button
-            className={`button primary share icon ${(project.uploadedFilesCount > 0 && !isArchived) ? '' : 'disabled'}`}
-            onClick={() => project.uploadedFilesCount > 0 && !isArchived && dispatch(openModal('shareGallery'))}
+            className={`button primary share icon ${(project.uploadedFilesCount > 0 && !isArchived) ? '' : ''}`}
+            onClick={() => project.uploadedFilesCount > 0  && dispatch(openModal('shareGallery'))}
           >
-            {isArchived ? 'Archived' : 'Share'}
+            Share
           </button>
 
           <DropdownMenu>

@@ -299,6 +299,22 @@
             margin-right: 4px;
             opacity: 0.7;
         }
+        &.play::before{
+            text-decoration: none;
+            background-size: 100%;
+            background-image: url('https://img.icons8.com/?size=100&id=Uh8hvgeb99i5&format=png&color=FFFFFF');
+            padding-top:4px;
+            margin-right: 8px*2;
+            opacity: 0.7;
+        }
+        &.selection::before{
+            text-decoration: none;
+            background-size: 100%;
+            background-image: url('https://img.icons8.com/?size=100&id=82861&format=png&color=FFFFFF');
+            padding-top: 4px;
+            margin-right:8px*2;
+            opacity: 0.7;
+        }
         &.hand-pointer::before{
             text-decoration: none;
             background-size: 80%;

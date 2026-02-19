@@ -178,13 +178,13 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                             <div className='link' >
                             
                                 <div className="link-container">
-                                    <a className='linkToGallery' href={getGalleryURL('share',currentStudio?.domain,project?.id)} target='_blank' > 
-                                    ...{getGalleryURL('share',currentStudio?.domain,project?.id).slice(-16)}
+                                    <a className='linkToGallery' href={getGalleryURL('smart-gallery',currentStudio?.domain,project?.id)} target='_blank' > 
+                                    ...{getGalleryURL('smart-gallery',currentStudio?.domain,project?.id).slice(-16)}
                                     </a>
                                 </div>
                                 </div>
                                 <div className="button primary outline text-only  icon copy" onClick={() => {
-                                     navigator.clipboard.writeText(getGalleryURL('share',currentStudio?.domain,project?.id));
+                                     navigator.clipboard.writeText(getGalleryURL('smart-gallery',currentStudio?.domain,project?.id));
                                      dispatch(showAlert({ type: "success", message: "Link copied to clipboard!" }));
                                 }}></div>
 
