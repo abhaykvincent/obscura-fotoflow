@@ -751,7 +751,7 @@ const projectsSlice = createSlice({
         builder
       .addCase(createSubProject.fulfilled, (state, action) => {
         const { parentProjectId, subProjectId, subProjectData } = action.payload;
-        const parentProject = state.projects.find((p) => p.id === parentProjectId);
+        const parentProject = state.data.find((p) => p.id === parentProjectId);
         if (parentProject) {
           if (!parentProject.subProjects) {
             parentProject.subProjects = [];
