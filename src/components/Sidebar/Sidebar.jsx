@@ -84,18 +84,20 @@ function Sidebar() {
               <div className="label">Projects</div>
             </div>
           </Link>
-          <Link to={`/${studioName}/packages`} onClick={closeSidebar}>
-            <div className={`menu packages ${isActive(`/${studioName}/packages`) ? 'active' : ''}`}>
-              <div className="icon"></div>
-              <div className="label">Packages</div>
-            </div>
-          </Link>
           
           {process.env.NODE_ENV === 'development' && (
             <Link to={`/${studioName}/portfolio-editor`} onClick={closeSidebar}>
               <div className={`menu portfolio ${isActive(`/${studioName}/portfolio-editor`) ? 'active' : ''}`}>
                 <div className="icon"></div>
                 <div className="label">Website</div>
+              </div>
+            </Link>
+          )}
+          {process.env.NODE_ENV === 'development' && (
+            <Link to={`/${studioName}/packages`} onClick={closeSidebar}>
+              <div className={`menu packages ${isActive(`/${studioName}/packages`) ? 'active' : ''}`}>
+                <div className="icon"></div>
+                <div className="label">Packages</div>
               </div>
             </Link>
           )}
