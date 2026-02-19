@@ -45,4 +45,13 @@ export const store = configureStore({
     userProfile: userProfileReducer,
     selectionRequest: selectionRequestReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        warnAfter: 128, // Increase the threshold to 128ms to avoid warnings during development
+      },
+      immutableCheck: {
+        warnAfter: 128, // Also increase immutable check threshold
+      },
+    }),
 });

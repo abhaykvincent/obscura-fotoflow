@@ -152,7 +152,7 @@ function ImageDisplay({ image, direction, paginate, closePreview, collectionId, 
       exit="exit"
       transition={{
         x: { type: "spring", stiffness: 300, damping: 30 },
-        opacity: { duration: 0.2 }
+        opacity: { duration: 0.01 }
       }}
 
       // Swipe Gestures (Only when NOT zoomed)
@@ -184,8 +184,8 @@ function ImageDisplay({ image, direction, paginate, closePreview, collectionId, 
             maxWidth: '100%',
             maxHeight: '100%',
             // scale is handled by controls/animate
-            filter: isHighResLoaded ? 'none' : 'blur(20px)',
-            transition: 'filter 0.3s ease-out',
+            filter: isHighResLoaded ? 'none' : 'none',
+            transition: 'filter 0.2s ease-out',
             cursor: isZoomed ? 'grab' : 'default'
           }}
           draggable={false} // Prevent native drag
