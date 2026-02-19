@@ -181,6 +181,7 @@ const ImageGalleryGrid = React.memo(({ projectId, collectionId, imageUrls, proje
     <>
       {isPreviewOpen && (
         <Preview
+          images={imageUrls}
           image={imageUrls[previewIndex]}
           previewIndex={previewIndex}
           setPreviewIndex={setPreviewIndex}
