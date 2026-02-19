@@ -8,7 +8,7 @@ import { capitalizeFirstLetter, hexToRgb } from '../../utils/stringUtils';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectDomain } from '../../app/slices/authSlice';
 import { useParams } from 'react-router';
-import { getGoogleMapsUrl } from '../../utils/urlUtils';
+import { getGoogleMapsUrl, getThumbnailUrl } from '../../utils/urlUtils';
 import WishMessages from './WishMessages';
 
 const Preview = ({ editor, data,project }) => {
@@ -18,8 +18,25 @@ const Preview = ({ editor, data,project }) => {
   const [backgroundOptionImage, setBackgroundOptionImage] = useState('');
   const [countdown, setCountdown] = useState('');
   const [selectedColor, setSelectedColor] = useState(data?.backgroundColor || '#ffffff'); // Default to white if no color
+  const [isCoverLoaded, setIsCoverLoaded] = useState(false);
+  const [coverSrc, setCoverSrc] = useState('');
 
   const galleryRef = useRef(null);
+
+  useEffect(() => {
+    if (data?.coverPhoto) {
+      setCoverSrc(getThumbnailUrl(data.coverPhoto));
+      setIsCoverLoaded(false);
+      
+      const img = new Image();
+      img.src = data.coverPhoto;
+      img.onload = () => {
+        setCoverSrc(data.coverPhoto);
+        setIsCoverLoaded(true);
+      };
+    }
+  }, [data?.coverPhoto]);
+
   useEffect(() => {
 
     let selectedBackground = '';
@@ -161,7 +178,14 @@ const initialMessages = [
       <div className="screen-wrap">
         <div className="screen" style={{ background: data?.backgroundColor + "05" }}>
           <div className='project-cover' alt="Cover">
-            <img src={data?.coverPhoto} alt="" srcset="" />
+            <img 
+              src={coverSrc} 
+              alt="" 
+              style={{ 
+                filter: isCoverLoaded ? 'none' : 'blur(10px)', 
+                transition: 'filter 0.5s ease-out' 
+              }} 
+            />
           </div>
           <div className="container"
             style={{

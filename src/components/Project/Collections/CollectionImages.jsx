@@ -64,6 +64,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
     };
 
     const galleryPageRef = useRef(null);
+    const loaderRef = useRef(null);
 
     useEffect(() => {
         galleryPageRef.current = document.querySelector('.gallery-page');
@@ -91,6 +92,34 @@ const CollectionImages = ({ id, collectionId, project }) => {
             }
         };
     }, []);
+
+    // Infinite scroll observer
+    useEffect(() => {
+        if (!showAllPhotos || !galleryPageRef.current) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && collectionImages?.length > imageUrls.length) {
+                    setPage((prevPage) => prevPage + 1);
+                }
+            },
+            {
+                root: galleryPageRef.current,
+                rootMargin: '600px', // Trigger load more 600px before reaching the bottom for preloading
+            }
+        );
+
+        const currentLoader = loaderRef.current;
+        if (currentLoader) {
+            observer.observe(currentLoader);
+        }
+
+        return () => {
+            if (currentLoader) {
+                observer.unobserve(currentLoader);
+            }
+        };
+    }, [collectionImages?.length, imageUrls.length, showAllPhotos, galleryPageRef.current]);
 
     // Global upload status from Redux
     const globalUploadStatus = useSelector(selectUploadStatus);
@@ -425,14 +454,14 @@ const CollectionImages = ({ id, collectionId, project }) => {
             }
 
             {
-                collectionImages?.length >0 && <div className={`${galleryMode === 'designMode' && 'bottom-panel-light-mode'} image-gallery-bottom-panel `}>
+                collectionImages?.length >0 && <div className={`${galleryMode === 'designMode' && 'bottom-panel-light-mode'} image-gallery-bottom-panel `} ref={loaderRef}>
                     {/* <div className="button secondary">Load All</div> */}
                     
-                    {collectionImages?.length !== imageUrls.length && collectionImages?.length >0 && <div className={`button primary`}
+                    {collectionImages?.length !== imageUrls.length && collectionImages?.length >0 && showAllPhotos && <div className={`button primary`}
                         onClick={() => setPage(page + 1)}
-                    >Load More</div>}
+                    >Loading more...</div>}
 
-                    {(imageUrls.length !==0 && collectionImages?.length === imageUrls.length)  && <p className='caughtup-label label'>You are all caught up!</p>}
+                    {(imageUrls.length !==0 && collectionImages?.length === imageUrls.length && showAllPhotos)  && <p className='caughtup-label label'>You are all caught up!</p>}
 
                 </div>
             }

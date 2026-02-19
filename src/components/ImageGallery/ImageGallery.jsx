@@ -228,7 +228,7 @@ const ImageGallery = ({ projectId,collectionId, imageUrls, project }) => {
             })}
           </div>
       ))}
-      {isPreviewOpen && <Preview image={imageUrls[previewIndex]} {...{ previewIndex, setPreviewIndex, imagesLength: imageUrls.length, closePreview, projectId,collectionId,setPreviewIndex, isArchived }} />}
+      {isPreviewOpen && <Preview images={imageUrls} image={imageUrls[previewIndex]} {...{ previewIndex, setPreviewIndex, imagesLength: imageUrls.length, closePreview, projectId,collectionId,setPreviewIndex, isArchived }} />}
     </div>
   );
 };

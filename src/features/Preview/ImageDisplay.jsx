@@ -184,8 +184,8 @@ function ImageDisplay({ image, direction, paginate, closePreview, collectionId, 
             maxWidth: '100%',
             maxHeight: '100%',
             // scale is handled by controls/animate
-            filter: isHighResLoaded ? 'none' : 'none',
-            transition: 'filter 0.2s ease-out',
+            filter: isHighResLoaded ? 'none' : 'blur(15px)',
+            transition: 'filter 0.4s ease-out',
             cursor: isZoomed ? 'grab' : 'default'
           }}
           draggable={false} // Prevent native drag

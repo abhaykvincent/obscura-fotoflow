@@ -271,7 +271,7 @@ function ShareGallery({project }) {
                 </div>
               <div className="gallery-view-status">
                 <div className="link-group">
-                  <div className="button primary outline text-only  icon link"
+                  <div className="button primary outline text-only  icon play"
                     onClick={() => {
                       // open link in new tab
                       window.open(getGalleryURL('smart-gallery', domain, project?.id), '_blank');
@@ -294,7 +294,7 @@ function ShareGallery({project }) {
               <div className="gallery-view-status">
 
                 <div className="link-group">
-                  <div className="button primary outline text-only  icon link"
+                  <div className="button primary outline text-only  icon selection"
                     onClick={() => {
                       dispatch(openModal('pinReminder'));
                     }
