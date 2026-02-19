@@ -37,38 +37,41 @@ export const copyToClipboard = (url) => {
   });
 };
 
+export function getImageUrlByQuality(url, quality = 'web') {
+  if (!url) return "";
+  
+  // Valid qualities are 'web', 'thumb', 'original'
+  const targetQuality = quality.toLowerCase();
+  
+  // 1. Handle New Architecture (URL encoded prefixes)
+  // Matches patterns like /o/web%2F, /o/thumb%2F, /o/original%2F
+  const encodedMatch = url.match(/\/o\/(web|thumb|original)%2F/i);
+  if (encodedMatch) {
+    return url.replace(/\/o\/(web|thumb|original)%2F/i, `/o/${targetQuality}%2F`);
+  }
+
+  // 2. Handle New Architecture (Unencoded prefixes - sometimes seen in emulators/proxies)
+  const unencodedMatch = url.match(/\/o\/(web|thumb|original)\//i);
+  if (unencodedMatch) {
+    return url.replace(/\/o\/(web|thumb|original)\//i, `/o/${targetQuality}/`);
+  }
+
+  // 3. Fallback for Old Architecture (if applicable, though user specified 3 versions)
+  // Old architecture usually only had web and thumb (using -thumb suffix)
+  if (targetQuality === 'thumb') {
+    const parts = url.split('%2F');
+    if (parts.length >= 4 && !parts[2].includes('-thumb')) {
+      const newParts = [...parts];
+      newParts[2] = newParts[2] + "-thumb";
+      return newParts.join('%2F');
+    }
+  }
+
+  return url;
+}
+
 export function getThumbnailUrl(imageUrl) {
-
-  if (!imageUrl) return "";
-
-  // 1. Try new architecture prefix swap
-
-  if (imageUrl.includes("/o/web%2F")) {
-
-    return imageUrl.replace("/o/web%2F", "/o/thumb%2F");
-
-  }
-
-  // 2. Fallback to old architecture (find collectionId and append -thumb)
-
-  // This is a bit heuristic, but matches the old logic
-
-  // We look for the pattern before the last filename
-
-  const parts = imageUrl.split('%2F');
-
-  if (parts.length >= 4 && !parts[2].includes('-thumb')) {
-
-     const newParts = [...parts];
-
-     newParts[2] = newParts[2] + "-thumb";
-
-     return newParts.join('%2F');
-
-  }
-
-  return imageUrl;
-
+  return getImageUrlByQuality(imageUrl, 'thumb');
 }
 
 

@@ -266,7 +266,14 @@ export const addProjectToStudio = async (domain, project) => {
     const id = project.type !== 'Portfolio'?`${project.name.toLowerCase().replace(/\s/g, '-')}-${generateRandomString(5)}`:'portfolio';
     const projectData = {
       id,
-      ...project
+      ...project,
+      storage: {
+        status: 'active',
+        storageHistory: [{
+          status: 'active',
+          dateMoved: Date.now()
+        }]
+      }
     };
   
     try {
@@ -384,6 +391,12 @@ export const updateProjectStorageToArchive = async (domain, projectId) => {
 
         if (projectSnapshot.exists()) {
             const projectData = projectSnapshot.data();
+            
+            if (projectData.storage?.status === 'archive') {
+                console.log(`Project ${projectId} is already archived.`);
+                return;
+            }
+
             const newStorageHistoryEntry = {
                 status: 'archive',
                 dateMoved: Date.now(),
@@ -399,12 +412,63 @@ export const updateProjectStorageToArchive = async (domain, projectId) => {
 
             await updateDoc(projectDocRef, updatedData);
             console.log(`Project ${projectId} storage status updated to archive.`);
+
+            // Decrement studio storage usage (Hot Storage)
+            const studioDocRef = doc(db, 'studios', domain);
+            await updateDoc(studioDocRef, {
+                "usage.storage.used": increment(-(projectData.totalFileSize || 0))
+            });
         } else {
             console.error(`Project ${projectId} does not exist.`);
             throw new Error('Project does not exist.');
         }
     } catch (error) {
         console.error(`Error updating project storage for ${projectId}: ${error.message}`);
+        throw error;
+    }
+};
+
+export const restoreProjectFromArchive = async (domain, projectId) => {
+    if (!domain || !projectId) {
+        throw new Error('Domain and Project ID are required for restoration.');
+    }
+
+    const projectDocRef = doc(db, 'studios', domain, 'projects', projectId);
+
+    try {
+        const projectSnapshot = await getDoc(projectDocRef);
+
+        if (projectSnapshot.exists()) {
+            const projectData = projectSnapshot.data();
+            const now = Date.now();
+
+            const newStorageHistoryEntry = {
+                status: 'active',
+                dateMoved: now,
+            };
+
+            const updatedData = {
+                storage: {
+                    ...projectData.storage,
+                    status: 'active',
+                    lastRestoredAt: now,
+                    storageHistory: arrayUnion(newStorageHistoryEntry)
+                }
+            };
+
+            await updateDoc(projectDocRef, updatedData);
+            console.log(`Project ${projectId} storage status restored to active.`);
+
+            // Increment studio storage usage back (Hot Storage)
+            const studioDocRef = doc(db, 'studios', domain);
+            await updateDoc(studioDocRef, {
+                "usage.storage.used": increment(projectData.totalFileSize || 0)
+            });
+        } else {
+            throw new Error('Project does not exist.');
+        }
+    } catch (error) {
+        console.error(`Error restoring project storage for ${projectId}: ${error.message}`);
         throw error;
     }
 };
@@ -820,6 +884,43 @@ export const removeUnselectedImagesFromFirestore = async (domain, projectId, col
       throw error;
     }
   };
+
+export const toggleFileFavoriteInFirestore = async (domain, projectId, collectionId, fileUrl) => {
+    if (!domain || !projectId || !collectionId || !fileUrl) {
+        throw new Error('Domain, Project ID, Collection ID, and File URL are required.');
+    }
+
+    const collectionDocRef = doc(db, 'studios', domain, 'projects', projectId, 'collections', collectionId);
+
+    try {
+        const collectionSnapshot = await getDoc(collectionDocRef);
+        if (!collectionSnapshot.exists()) {
+            throw new Error('Collection does not exist.');
+        }
+
+        const collectionData = collectionSnapshot.data();
+        const updatedFiles = collectionData.uploadedFiles.map(file => {
+            if (file.url === fileUrl) {
+                return {
+                    ...file,
+                    status: file.status === 'selected' ? 'unselected' : 'selected'
+                };
+            }
+            return file;
+        });
+
+        await updateDoc(collectionDocRef, { uploadedFiles: updatedFiles });
+        console.log(`File favorite status toggled successfully.`);
+        
+        // Find the updated status to return
+        const updatedFile = updatedFiles.find(file => file.url === fileUrl);
+        return updatedFile.status;
+    } catch (error) {
+        console.error('Error toggling file favorite:', error.message);
+        throw error;
+    }
+};
+
 // Cover photo
 export const setCoverPhotoInFirestore = async (domain, projectId, image) => {
     if (!domain || !projectId || !image) {

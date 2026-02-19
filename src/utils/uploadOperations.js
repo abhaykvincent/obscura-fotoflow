@@ -51,7 +51,7 @@ export const getStorageForDomain = async (domain, bucketUrl) => {
         const newStorage = getStorage(app, finalBucketUrl);
 
         if (process.env.NODE_ENV === 'development') {
-            const EMULATOR_HOST = process.env.REACT_APP_EMULATOR_HOST;
+            const EMULATOR_HOST = window.location.hostname
             const EMULATOR_PORT = parseInt(process.env.REACT_APP_EMULATOR_PORT, 10);
             connectStorageEmulator(newStorage, EMULATOR_HOST, EMULATOR_PORT);
         }
@@ -82,7 +82,7 @@ const compressImages = async (files, options = {}) => {
 
 // Firebase Cloud Storage
 const metadata = {
-    cacheControl: 'public, max-age=31536000', // Cache for 1 year
+    cacheControl: 'public, max-age=41536000', // Cache for 1 year
   };
 // File Single upload function
 // Remove setUploadLists, add dispatch and fileId
@@ -239,15 +239,21 @@ const sliceUpload = async (storage, domain, slice, id, collectionId, dispatch, o
             return uploadFile(storage, 'thumb', domain, id, collectionId, namedCompressedFile, dispatch, fileId);
         });
 
-        const uploadPromises = compressedFiles.map((compressedFile, index) => {
+        const uploadPromises = slice.map((item) => {
+            const fileId = item.id;
+            return uploadFile(storage, 'original', domain, id, collectionId, item.rawFile, dispatch, fileId, item.dateTimeOriginal, item.dimensions);
+        });
+
+        const webUploadPromises = compressedFiles.map((compressedFile, index) => {
             const originalFile = slice[index];
             const fileId = originalFile.id;
             const namedCompressedFile = new File([compressedFile], originalFile.rawFile.name, { type: compressedFile.type });
             return uploadFile(storage, 'web', domain, id, collectionId, namedCompressedFile, dispatch, fileId, originalFile.dateTimeOriginal, originalFile.dimensions);
         });
+
         
         // Combine all upload promises and resolve them concurrently
-        const results = Promise.all([...thumbnailUploadPromises, ...uploadPromises]);
+        const results = Promise.all([...thumbnailUploadPromises,...uploadPromises, ...webUploadPromises]);
         return results;
     } catch (error) {
         console.error("Error during slice upload:", error);

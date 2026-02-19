@@ -220,6 +220,16 @@ const CollectionImages = ({ id, collectionId, project }) => {
         document.title = `${project.name}'s ${collectionId } Gallery`
     }, [collectionId]);
 
+    // Update collectionImages when project prop changes (e.g., after Redux update)
+    useEffect(() => {
+        if (project && project.collections) {
+            const currentCollection = project.collections.find(c => c.id === collectionId);
+            if (currentCollection && currentCollection.uploadedFiles) {
+                setCollectionImages(currentCollection.uploadedFiles);
+            }
+        }
+    }, [project, collectionId]);
+
     // Fetch Images
     useEffect(() => {
         if (!collectionImages) {
@@ -390,8 +400,8 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 
                 imageUrls.length > 0 ? (
                     galleryView === 'grid' ?
-                    <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id,collectionId }} />:
-                    <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId }} />
+                    <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id, collectionId, project }} />:
+                    <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId, project }} />
                 ) : (
                     <label 
                         htmlFor="fileInput" 

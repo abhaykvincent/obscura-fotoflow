@@ -23,6 +23,10 @@ function Sidebar() {
 
   const studioName = defaultStudio?.domain || 'guest';
 
+  const usedPercentage = parseFloat(storageUsage.usedPercentage) || 0;
+  const circumference = 113.1; // 2 * Math.PI * 18
+  const strokeDashoffset = circumference - (usedPercentage / 100) * circumference;
+
   useEffect(() => {
     if (storageLimit) {
       const used = storageLimit.used / 1000;
@@ -66,7 +70,7 @@ function Sidebar() {
   return (
     <>
       <div className="sidebar-overlay" onClick={closeSidebar}></div>
-      <div className="sidebar sleep-sidebar">
+      <div className="sidebar sleep-sidebar" onMouseLeave={() => setProfileOptionActive(false)}>
         <div className="menu-list">
           <Link to={`/${studioName}/home`} onClick={closeSidebar}>
             <div className={`menu home ${isActive(`/${studioName}/home`) ? 'active' : ''}`}>
@@ -174,7 +178,7 @@ function Sidebar() {
                   <span>Storage</span>
                 </div>
                 <div className="storage-values">
-                  <span className="used">{convertMegabytes(studio?.usage?.storage?.used)}</span>
+                  <span className="used">{convertMegabytes(studio?.usage?.storage?.used,2)}</span>
                   <span className="divider">/</span>
                   <span className="quota">{convertMegabytes(studio?.usage?.storage?.quota)}</span>
                 </div>
@@ -188,7 +192,20 @@ function Sidebar() {
           <div className="profile-section">
             <div className={`profile-trigger ${profileOptionActive ? 'active' : ''}`} onClick={toggleProfileOption}>
               <div className="profile-info">
-                <div className="avatar" style={{ backgroundImage: `url(${user?.photoURL})` }}></div>
+                <div className="avatar-wrapper">
+                  <svg className="avatar-progress" viewBox="0 0 40 40">
+                    <circle className="progress-bg" cx="20" cy="20" r="18" />
+                    <circle
+                      className="progress-fill"
+                      cx="20"
+                      cy="20"
+                      r="18"
+                      strokeDasharray={circumference}
+                      style={{ strokeDashoffset }}
+                    />
+                  </svg>
+                  <div className="avatar" style={{ backgroundImage: `url(${user?.photoURL})` }}></div>
+                </div>
                 <div className="user-details">
                   <div className="display-name">{user?.displayName}</div>
                   <div className="user-roles">

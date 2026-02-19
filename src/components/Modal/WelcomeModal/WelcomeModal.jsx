@@ -60,6 +60,7 @@ const WelcomeModal = () => {
             <div className="control minimize"></div>
             <div className="control maximize"></div>
           </div>
+          <h3>Fotoflow</h3>
         </div>
         
         <div className="modal-body">
