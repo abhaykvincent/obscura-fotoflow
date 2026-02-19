@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { fetchSmartGallery, selectSmartGallery, selectSmartGalleryStatus } from '../../app/slices/smartGallerySlice';
 import SectionRenderer from './SectionRenderer';
 import { toTitleCase } from '../../utils/stringUtils';
@@ -12,6 +13,7 @@ import { trackEvent } from '../../analytics/utils';
 
 const SmartAlbum = ({ domain, projectId, collectionId }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const smartGalleryData = useSelector(selectSmartGallery);
   const smartGalleryStatus = useSelector(selectSmartGalleryStatus);
   const [displayGallery, setDisplayGallery] = useState(false);
@@ -104,8 +106,48 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
     setIsPreviewOpen(false);
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   if (smartGalleryStatus === 'loading') {
-    return <div>Loading...</div>;
+    return (
+      <div className="smart-album-loading">
+        <button 
+          className="nav-button prev back-button" 
+          onClick={handleBack}
+          title="Go Back"
+        />
+        {selectedProject?.projectCover ? (
+          <div className="loading-cover-container">
+            <img 
+              src={selectedProject.projectCover} 
+              alt="Loading Cover" 
+              className="loading-cover"
+              style={{ 
+                objectPosition: selectedProject?.focusPoint 
+                  ? `${selectedProject.focusPoint.x * 100}% ${selectedProject.focusPoint.y * 100}%` 
+                  : 'center' 
+              }}
+            />
+            <div className="loading-overlay">
+              <div className="loading-content">
+                <h1 className="project-name">{toTitleCase(selectedProject?.name || '')}</h1>
+                <div className="loading-indicator">
+                  <div className="spinner"></div>
+                  <span>Loading Gallery...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="loading-fallback">
+            <div className="spinner"></div>
+            <p>Loading {toTitleCase(selectedProject?.name || 'Gallery')}...</p>
+          </div>
+        )}
+      </div>
+    );
   }
 
   if (smartGalleryStatus === 'failed') {
@@ -126,6 +168,11 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
 
   return (
     <div className="smart-album">
+      <button 
+        className="nav-button prev back-button" 
+        onClick={handleBack}
+        title="Go Back"
+      />
       <div className="project-header">
 
         {smartGalleryData?.projectCover ? (

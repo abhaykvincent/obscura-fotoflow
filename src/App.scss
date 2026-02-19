@@ -21,9 +21,10 @@
   box-sizing: border-box;
   font-family: 'Product Sans';
   cursor: inherit;
-  /* &::-webkit-scrollbar{
+  &::-webkit-scrollbar{
+    display: none;
       margin-top: 8px*1;
-      width: 8px*1.5;
+      width: 8px*0;
       background: rgba(108, 108, 108, 0.2) ;
       padding: 2px;
 
@@ -34,11 +35,11 @@
       background: rgba(108, 108, 108, 0.2) ;
 
       border-radius: 8px;
-      width: 8px*0.5;
+      width: 8px*0;
       border: 4px solid $dark-2; 
       margin:8px;
       cursor: grab;
-    } */
+    }
 }
 h1,h2{
   font-family: 'Product Sans';
@@ -645,6 +646,7 @@ body{
         0px 0px 8px 2px rgb(255 255 255 / 2%);
         }
       }
+
     }
     &.gallery-page{
       
@@ -819,7 +821,7 @@ body{
         }
         .controls{
           display: flex;;
-          border-radius: $border-radius-1+1;
+          border-radius: 8px*2;
           transition-duration: 0.15s;
           background: linear-gradient(120deg, $dark-1 -80%, $dark-2 20%,$dark-2 60%, $dark-3 100%);
           border: 1px solid $gray6-accessible-dark;
@@ -837,7 +839,7 @@ body{
             padding: 8px*0.5 8px*1.5;
             font-weight: 500;
             font-size: 0.8rem;
-            border-radius: 6px;
+          border-radius: 8px*2;
             cursor: pointer;
             transition-duration: 0.15s;
             .favorite{
@@ -874,7 +876,7 @@ body{
           .control{
             padding: 6px 8px*1.5;
             font-weight: 400;
-            border-radius: $border-radius-1;
+            border-radius: 8px*3;
             border-right: 1px solid rgba(255, 255, 255, 0.02);
             color: $gray-accessible-dark;
             white-space: nowrap;
@@ -894,7 +896,7 @@ body{
               border-top: 1px solid $gray3-accessible-dark;
               border-left: 1px solid $gray3-accessible-dark;
               border-bottom: 1px solid $gray5-accessible-dark;
-              border-radius: 6px !important;
+              border-radius: 8px*2 !important;
               box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);;
               transform: scale(1);
               transition-duration: 0.05s;
@@ -1015,7 +1017,7 @@ body{
           justify-content: flex-end;
           .controls{
 
-                border-radius: 8px*1.2 !important;
+                border-radius: 8px*2 !important;
           }
           .control{
             font-size: 1rem;
@@ -1023,7 +1025,7 @@ body{
 
             &.active{
               transform: scale(1.1);
-                border-radius: 8px*1.2 !important;
+                border-radius: 8px*2 !important;
                 border: 1px solid $gray2-accessible-dark  !important;
             }
           }
@@ -2099,6 +2101,11 @@ body{
                 color: $light-0; /* White on hover */
                 background-color: $dark-1; /* Darker background on hover */
               }
+
+              &.delete-option:hover {
+                background-color: $red-default-dark;
+                color: $light-3;
+              }
             }
             // style for every fifth one
 
@@ -2188,7 +2195,7 @@ body{
         }
         .photo-wrap{
           &:hover{
-
+            z-index: 41;
           animation: photo-hover-animamtion 0.2s;
           animation-fill-mode: forwards;
           @keyframes photo-hover-animamtion {

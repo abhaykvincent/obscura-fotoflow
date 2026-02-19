@@ -122,7 +122,7 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
         >
             {project?.projectCover ? <div className="project-cover-image" >
                 <img  
-                    src={project?.projectCover.replace('-thumb', '')} 
+                    src={project?.projectCover.replace('/o/thumb%2F', '/o/web%2F').replace('-thumb', '')} 
                     loading="lazy"
                     style={{ height: '100%', width: 'auto', objectFit: 'cover' }} 
                 />
@@ -259,7 +259,7 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
             {
             !isSetFocusButton && project.pin? 
                 <div className="cover-tools">
-                    <div className="button transparent-button secondary icon image">
+                    {/* <div className="button transparent-button secondary icon image">
                         <label htmlFor={`change-cover-${project.id}`} style={{ cursor: "pointer" }}>
                             Change Cover
                         </label>
@@ -270,7 +270,7 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                             style={{ display: "none" }}
                             onChange={handleCoverChange}
                         />
-                    </div>
+                    </div> */}
                 </div>
                 :
                 <div className="cover-tools">

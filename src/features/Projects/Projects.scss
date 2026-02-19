@@ -276,12 +276,12 @@
         }
         &.list{
             max-width: 8px*60;
-            grid-template-columns: 1fr;
+            //grid-template-columns: 1fr;
             gap: 8px*2;
             .project{
                 .project-cover{
                     min-height: 8px*10;
-                    width: 8px*12;
+                    //width: 8px*12;
                 }
             }
         }
@@ -537,13 +537,15 @@
     }
 
     .projects .view-control .filter-controls {
-        flex-direction: column;
+        display: grid;
         width: 100%;
-        gap: 8px*2;
+        gap: 8px;
+        margin-bottom: 8px;
+        justify-content: start;
+        justify-items: start;
     }
 
     .projects .view-control .filter-controls .control-wrap {
-        width: 100%;
         .label {
             position: relative;
             top: 0;
@@ -564,7 +566,7 @@
 
     .projects .view-control .view-type-controls {
         width: 100%;
-        display: flex;
+        display: none;
         justify-content: flex-end;
         .label {
             position: relative;

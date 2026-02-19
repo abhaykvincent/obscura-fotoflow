@@ -3,7 +3,7 @@
     display: inline-block;
     padding: 5px 8px*1.4;
     padding-bottom: 8px*0.8;
-    border-radius: 5px;
+    border-radius: 8px*2;
     font-size: 0.95rem;
     line-height: 1.1rem;
 	letter-spacing: 0.5px;
@@ -49,8 +49,8 @@
         background: linear-gradient(110deg, $green-dark-accessible-light 50% , #70ab17 200%);
         border: 1px solid $green-default-dark;
         border-left: 1px solid rgb(132, 193, 40);
-        border-top: 1px solid rgb(115, 166, 39);
-        color: white;
+        border-top: 1px solid rgb(178, 234, 95);
+        color: white !important;
         &.outline {
             background: none;
             border: 1px solid $green-dark-accessible-light;

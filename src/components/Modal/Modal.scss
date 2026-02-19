@@ -29,8 +29,9 @@
 position: absolute;
 right: calc(0vw );
 height: calc(100dvh - $header-height*2);
-background-color: $dark-2;
-border-radius: 8px*1.5;
+background-color: rgba(0, 0, 0, 0.016);
+
+border-radius: 8px*3;
 border: 2px solid $gray4-accessible-dark;
 padding-bottom: 8px*9;
 transform: translate(100%,0%) scale(0.9);
@@ -56,11 +57,12 @@ animation-timing-function: ease-out;
     animation-name: modal-in-island;
     animation-duration: 0.2s;
     transition-delay: 0.1s;
-    background-color: rgba(16, 16, 16, 0.8);
+    background-color: rgba(0, 0, 0, 0.016);
 
-    border-top: 1px solid rgba(255, 255, 255, 0.4);
-    border-left: 1px solid rgba(255, 255, 255, 0.3);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     border-right: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 1px 1px 4px 2px rgba(253, 253, 253, 0.01),
                 0px 0px 16px 6px rgba(0, 0, 0, 0.3);
@@ -82,17 +84,22 @@ animation-timing-function: ease-out;
     grid-template-columns: 8px*8 auto 8px*8;
     align-items: center;
     position: relative;
-    width: 100%;
+    width: calc(100% - 8px);
     height: 8px*6;
     font-size: 0.9rem;
     font-weight: 600;
     line-height: 8px*3.5;
     text-align: center;
     backdrop-filter: blur(8px);
-    border-radius: 8px*1.5 8px*1.5 0 0;
+    border-radius: 8px*2.5;
+    margin-top: 4px;
+    margin-left: 4px;
     overflow: hidden;
     border-bottom: 1px solid $dark-1;
+        background-color: rgba(0, 0, 0, 0.01);
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
     .modal-controls{
+      opacity: 0;
     display: flex;
     width: 100%;
     align-items: center;
@@ -567,8 +574,8 @@ animation-timing-function: ease-out;
     width: 100%;
     position: absolute;
     bottom: 0px;
-    border-top: 1px solid $dark-1;
-    border-radius: 8px*1 8px*1 8px*1.5 8px*1.5;
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 8px*3;
     padding: 8px*1 8px*2 ;
     background: linear-gradient(0deg, rgba(0,0,0,0) 70%, rgba(74, 92, 66, 0.1) 100%);
     backdrop-filter: blur(8px);
@@ -1324,7 +1331,7 @@ transition-delay: 0.2s;
         display: flex;
         padding: 8px;
         padding-left: 8px*3;
-        background-color: $dark-1-5;
+        background-color: rgba(0, 0, 0, 0.016);
       box-shadow: 0 2px 1px 1px rgba(0, 0, 0, 0.2);
         .modal-title{
           font-size: 1.2rem;

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 
 // Redux
-import { deleteProject, selectProjects, selectProjectsStatus, updateProjectName } from '../../app/slices/projectsSlice';
+import { deleteProject, selectProjects, selectProjectsStatus, updateProjectName, restoreProject } from '../../app/slices/projectsSlice';
 import { closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 import { showAlert } from '../../app/slices/alertSlice';
@@ -27,6 +27,7 @@ import AddBudgetModal from '../../components/Modal/AddBudget';
 import SidePanel from '../../components/Project/SidePanel/SidePanel'
 
 import './Project.scss';
+import './ArchiveBanner.scss';
 import { ProjectPageCoverImages } from '../../components/ProjectPageCover/ProjectPageCoverImages';
 import { isDeveloper, isProduction } from '../../analytics/utils';
 import { selectStudio } from '../../app/slices/studioSlice';
@@ -128,7 +129,14 @@ export default function Project() {
     dispatch(deleteProject({ domain,bucketUrl, projectId: id }));
   }
 
+  const handleRestoreProject = () => {
+    dispatch(restoreProject({ domain, projectId: id }));
+  }
+
   if (!project) return null;
+
+  const isArchived = project.storage?.status === 'archive';
+  const archiveDate = project.storage?.storageHistory?.find(h => h.status === 'archive')?.dateMoved;
 
   return (
     <>
@@ -146,7 +154,26 @@ export default function Project() {
       <AddBudgetModal project={project} />
 
       <main className='project-page'>
+        {isArchived ? (
+          <div className="archive-banner">
+            <div className="banner-content">
+              <div className="status-badge">Archived</div>
+              <div className="banner-info">
+                <h3>Storage Optimized</h3>
+                <p>
+                  This project was moved to <strong>Archive Storage</strong> on {archiveDate ? new Date(archiveDate).toLocaleDateString() : 'N/A'}. 
+                  Smart Previews are still active, but original files must be restored for download.
+                </p>
+              </div>
+              <div className="banner-actions">
+                <button className="button primary small" onClick={handleRestoreProject}>Restore Originals</button>
+              </div>
+            </div>
+          </div>
+        ):
         <ProjectPageCoverImages project={project} />
+      
+      }
         <div className="project-dashboard">
           <DashboardProjects project={project} />
         </div>
@@ -167,10 +194,10 @@ export default function Project() {
           </div>
 
           <button
-            className={`button primary share icon ${project.uploadedFilesCount > 0 ? '' : 'disabled'}`}
-            onClick={() => project.uploadedFilesCount > 0 && dispatch(openModal('shareGallery'))}
+            className={`button primary share icon ${(project.uploadedFilesCount > 0 && !isArchived) ? '' : 'disabled'}`}
+            onClick={() => project.uploadedFilesCount > 0 && !isArchived && dispatch(openModal('shareGallery'))}
           >
-            Share
+            {isArchived ? 'Archived' : 'Share'}
           </button>
 
           <DropdownMenu>
@@ -178,7 +205,7 @@ export default function Project() {
               <div className="icon options" />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => !isArchived && dispatch(openModal('createCollection'))} disabled={isArchived}>
                 <div className="icon-show add" /> New Gallery
               </DropdownMenuItem>
               <DropdownMenuSeparator />

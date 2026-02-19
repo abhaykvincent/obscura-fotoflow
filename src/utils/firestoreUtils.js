@@ -11,6 +11,10 @@ export const convertTimestamps = (data) => {
     return data.toDate().toISOString();
   }
 
+  if (data instanceof Date) {
+    return data.toISOString();
+  }
+
   if (Array.isArray(data)) {
     return data.map(item => convertTimestamps(item));
   }

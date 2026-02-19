@@ -51,7 +51,7 @@ export const getStorageForDomain = async (domain, bucketUrl) => {
         const newStorage = getStorage(app, finalBucketUrl);
 
         if (process.env.NODE_ENV === 'development') {
-            const EMULATOR_HOST = process.env.REACT_APP_EMULATOR_HOST;
+            const EMULATOR_HOST = window.location.hostname
             const EMULATOR_PORT = parseInt(process.env.REACT_APP_EMULATOR_PORT, 10);
             connectStorageEmulator(newStorage, EMULATOR_HOST, EMULATOR_PORT);
         }
@@ -65,14 +65,14 @@ export const getStorageForDomain = async (domain, bucketUrl) => {
 }
 
 // Image Compression
-const compressImages = async (files, maxWidthOrHeight) => {
-    const options = {
+const compressImages = async (files, options = {}) => {
+    const defaultOptions = {
         maxSizeMB: 1,
-        maxWidthOrHeight,
         useWebWorker: true,
+        ...options
     };
     return Promise.all(
-        [...files].map((file) => imageCompression(file, options).catch((error) => {
+        [...files].map((file) => imageCompression(file, defaultOptions).catch((error) => {
             console.error('Image compression failed:', error);
             return file; // Return the original file on error
         }))
@@ -82,23 +82,20 @@ const compressImages = async (files, maxWidthOrHeight) => {
 
 // Firebase Cloud Storage
 const metadata = {
-    cacheControl: 'public, max-age=31536000', // Cache for 1 year
+    cacheControl: 'public, max-age=41536000', // Cache for 1 year
   };
 // File Single upload function
 // Remove setUploadLists, add dispatch and fileId
-export const uploadFile = async (storage, domain, id, collectionId, file, dispatch, fileId, dateTimeOriginal, dimensions) => {
+export const uploadFile = async (storage, type, domain, id, collectionId, file, dispatch, fileId, dateTimeOriginal, dimensions) => {
     const MAX_RETRIES = 5;
     const INITIAL_RETRY_DELAY = 500;
     let retries = 0;
 
     // Dispatch action to indicate start of upload for this file
-    // Assuming fileId is derived from original file object if `file` here is the compressed one.
-    // For simplicity, we'll use file.name as part of the ID if fileId isn't directly the name.
-    // It's crucial that fileId matches what was used in startUploadSession.
     dispatch(updateUploadFile({ fileId, changes: { status: 'uploading', progress: 0 } }));
 
     return new Promise((resolve, reject) => {
-        const storageRef = ref(storage, `${domain}/${id}/${collectionId}/${file.name}`);
+        const storageRef = ref(storage, `${type}/${domain}/${id}/${collectionId}/${file.name}`);
         let uploadTask;
 
         try {
@@ -137,6 +134,7 @@ export const uploadFile = async (storage, domain, id, collectionId, file, dispat
                         url,
                         fileId, // Include fileId in resolution if useful for caller
                         dimensions,
+                        type, // Include the prefix type (web/thumb)
                     });
                 }
             );
@@ -195,6 +193,7 @@ export const uploadFile = async (storage, domain, id, collectionId, file, dispat
                             url,
                             fileId,
                             dimensions,
+                            type,
                         });
                     }
                 );
@@ -224,8 +223,8 @@ const sliceUpload = async (storage, domain, slice, id, collectionId, dispatch, o
         // The key is to correctly pass the fileId for the *original* file
         // to uploadFile, even when uploading a compressed version.
         const [compressedFiles, compressedThumbnailFiles] = await Promise.all([
-            compressImages([...slice.map(item => item.rawFile)], 1920),
-            compressImages([...slice.map(item => item.rawFile)], 480)
+            compressImages([...slice.map(item => item.rawFile)], { maxWidthOrHeight: 2048, initialQuality: 0.82 }),
+            compressImages([...slice.map(item => item.rawFile)], { maxWidthOrHeight: 500, initialQuality: 0.65, fileType: 'image/webp' })
         ]);
 
         // We need to map these compressed files back to their original fileIds.
@@ -237,18 +236,24 @@ const sliceUpload = async (storage, domain, slice, id, collectionId, dispatch, o
             const fileId = originalFile.id; // This is the crucial part: use the pre-generated ID
             // Create a new File object for the compressed data but with original name for storage path
             const namedCompressedFile = new File([compressedFile], originalFile.rawFile.name, { type: compressedFile.type });
-            return uploadFile(storage, domain, id, `${collectionId}-thumb`, namedCompressedFile, dispatch, fileId);
+            return uploadFile(storage, 'thumb', domain, id, collectionId, namedCompressedFile, dispatch, fileId);
         });
 
-        const uploadPromises = compressedFiles.map((compressedFile, index) => {
+        const uploadPromises = slice.map((item) => {
+            const fileId = item.id;
+            return uploadFile(storage, 'original', domain, id, collectionId, item.rawFile, dispatch, fileId, item.dateTimeOriginal, item.dimensions);
+        });
+
+        const webUploadPromises = compressedFiles.map((compressedFile, index) => {
             const originalFile = slice[index];
             const fileId = originalFile.id;
             const namedCompressedFile = new File([compressedFile], originalFile.rawFile.name, { type: compressedFile.type });
-            return uploadFile(storage, domain, id, collectionId, namedCompressedFile, dispatch, fileId, originalFile.dateTimeOriginal, originalFile.dimensions);
+            return uploadFile(storage, 'web', domain, id, collectionId, namedCompressedFile, dispatch, fileId, originalFile.dateTimeOriginal, originalFile.dimensions);
         });
+
         
         // Combine all upload promises and resolve them concurrently
-        const results = Promise.all([...thumbnailUploadPromises, ...uploadPromises]);
+        const results = Promise.all([...thumbnailUploadPromises,...uploadPromises, ...webUploadPromises]);
         return results;
     } catch (error) {
         console.error("Error during slice upload:", error);
@@ -391,7 +396,7 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
                 // Each result corresponds to an uploadFile call (original or thumbnail)
                 // We are interested in the original file uploads for addUploadedFilesToFirestore
                 // Thumbnails are handled, but their direct result isn't usually added to this list.
-                if (result.status === 'fulfilled' && result.value && result.value.url && !result.value.url.includes('-thumb')) {
+                if (result.status === 'fulfilled' && result.value && result.value.url && result.value.type === 'web') {
                     finalUploadedFiles.push({
                         name: result.value.name, // Name from resolved promise
                         url: result.value.url,
@@ -493,7 +498,7 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
 export const uploadCover = async (file, project) => {
 // Upload a slice of files with sliceSize : 5
     const storage = await getStorageForDomain(project.domain);
-    const storageRef = ref(storage, `${project.domain}/${project.id}/covers/${file.name}`);
+    const storageRef = ref(storage, `covers/${project.domain}/${project.id}/${file.name}`);
     await uploadBytes(storageRef, file);
     const newCoverUrl = await getDownloadURL(storageRef);
 
@@ -506,7 +511,7 @@ export const uploadCover = async (file, project) => {
 // Upload Studio Logo
 export const uploadStudioLogo = async (file, studioDomain) => {
     const storage = await getStorageForDomain(studioDomain);
-    const storageRef = ref(storage, `${studioDomain}/branding/logo/${file.name}`);
+    const storageRef = ref(storage, `branding/${studioDomain}/logo/${file.name}`);
     await uploadBytes(storageRef, file);
     const newLogoUrl = await getDownloadURL(storageRef);
 
