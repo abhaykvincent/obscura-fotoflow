@@ -4,7 +4,6 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { trackEvent } from '../../analytics/utils';
 import { getStorageForDomain } from '../../utils/uploadOperations';
-import { getOriginalUrl } from '../../utils/urlUtils';
 import { useDispatch } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
 
@@ -27,7 +26,7 @@ const DownloadFiles = ({ folderPath ,className, project,collection, files, butto
       if (files && files.length > 0) {
         // Use provided files
         fileList = files.map(file => ({
-          url: getOriginalUrl(file.url),
+          url: file.url,
           name: file.name
         }));
       } else if (folderPath) {
@@ -37,7 +36,7 @@ const DownloadFiles = ({ folderPath ,className, project,collection, files, butto
         const res = await listAll(folderRef);
         
         fileList = await Promise.all(res.items.map(async (itemRef) => ({
-          url: getOriginalUrl(await getDownloadURL(itemRef)),
+          url: await getDownloadURL(itemRef),
           name: itemRef.name
         })));
       }

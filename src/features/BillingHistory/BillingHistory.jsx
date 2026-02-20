@@ -49,7 +49,7 @@ export default function BillingHistory() {
   const subscriptionsTable = subscriptions.map((subscription) => ({
     invoiceId: subscription.id,
     status: subscription.status,
-    amount: `₹${subscription.pricing.totalPrice / 100}`, // Assuming price is in cents
+    amount: `₹${subscription.pricing.totalPrice}`, // Assuming price is in cents
     created: new Date(subscription.dates?.startDate).toLocaleString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -94,10 +94,10 @@ export default function BillingHistory() {
   // Calculate totals
   const totalPaid = subscriptions
     .filter((s) => s.billing?.paymentRecived)
-    .reduce((sum, s) => sum + s.pricing.totalPrice / 100, 0);
+    .reduce((sum, s) => sum + s.pricing.totalPrice , 0);
   const totalOutstanding = subscriptions
     .filter((s) => !s.billing?.paymentRecived)
-    .reduce((sum, s) => sum + s.pricing?.totalPrice / 100, 0);
+    .reduce((sum, s) => sum + s.pricing?.totalPrice , 0);
 
   return (
     <div className="billing-container">
