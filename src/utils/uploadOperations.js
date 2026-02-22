@@ -223,8 +223,8 @@ const sliceUpload = async (storage, domain, slice, id, collectionId, dispatch, o
         // The key is to correctly pass the fileId for the *original* file
         // to uploadFile, even when uploading a compressed version.
         const [compressedFiles, compressedThumbnailFiles] = await Promise.all([
-            compressImages([...slice.map(item => item.rawFile)], { maxWidthOrHeight: 2048, initialQuality: 0.82 }),
-            compressImages([...slice.map(item => item.rawFile)], { maxWidthOrHeight: 500, initialQuality: 0.65, fileType: 'image/webp' })
+            compressImages([...slice.map(item => item.rawFile)], { maxWidthOrHeight: 1024*4, maxSizeMB:4}),
+            compressImages([...slice.map(item => item.rawFile)], { maxWidthOrHeight: 1024*1, maxSizeMB:0.1, fileType: 'image/webp', initialQuality: 0.7 })
         ]);
 
         // We need to map these compressed files back to their original fileIds.
