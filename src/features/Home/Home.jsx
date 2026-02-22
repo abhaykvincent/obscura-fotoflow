@@ -112,15 +112,16 @@ function Home() {
             <AddProjectModal />
 
             <div className="home-header">
-                <div className="search-bar">
-                    <SearchInput />
-                </div>
-
                 <Link to={`/${defaultStudio.name}/notifications`}>
                     <div className="notifications">
                         <div className="new"></div>
                     </div>
                 </Link>
+                
+                <div className="search-bar">
+                    <SearchInput />
+                </div>
+
                 
             </div>
             <main className="home">
