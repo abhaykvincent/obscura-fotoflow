@@ -26,7 +26,7 @@ export const createStudio = async (studioData,user) => {
     // Determine bucket for 50-50 split
     const snapshot = await getDocs(studiosCollection);
     const studioCount = snapshot.size;
-    const buckets = ['gs://fotoflow-india-1', 'gs://fotoflow-india-2'];
+    const buckets = ['gs://fotoflow-india-1', 'gs://fotoflow-india-2']
     const bucketUrl = buckets[studioCount % 2];
     
     // Determine which pricing group to use

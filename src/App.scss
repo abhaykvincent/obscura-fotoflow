@@ -625,7 +625,7 @@ body{
       .project-cover-image{
         height: 8px*31.5;
         &.no-cover-image{
-          width: 8px*31.5;
+          width: 8px*31.5*0;
           height: 8px*31.5;
           border: 3px solid $gray5-default-dark;
           border-radius: 8px;
@@ -635,6 +635,7 @@ body{
           -webkit-backdrop-filter: blur(4px);
           backdrop-filter: blur(4px);
           background-color: rgba(21, 21, 21, 1);
+          opacity: 0;
         }
         img{
           height: 8px*32;
@@ -965,6 +966,7 @@ body{
       background-color: rgba(16, 16, 16, 0.9);
       .options{
         display: flex; 
+        align-items: center;
         gap: 8px;
         .dummy-buttons{
           display: flex;

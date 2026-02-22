@@ -239,12 +239,12 @@ const sliceUpload = async (storage, domain, slice, id, collectionId, dispatch, o
             return uploadFile(storage, 'thumb', domain, id, collectionId, namedCompressedFile, dispatch, fileId);
         });
 
-        const uploadPromises = slice.map((item) => {
+       /*  const uploadPromises = slice.map((item) => {
             const fileId = item.id;
             return uploadFile(storage, 'original', domain, id, collectionId, item.rawFile, dispatch, fileId, item.dateTimeOriginal, item.dimensions);
-        });
+        }); */
 
-        const webUploadPromises = compressedFiles.map((compressedFile, index) => {
+        const uploadPromises = compressedFiles.map((compressedFile, index) => {
             const originalFile = slice[index];
             const fileId = originalFile.id;
             const namedCompressedFile = new File([compressedFile], originalFile.rawFile.name, { type: compressedFile.type });
@@ -253,7 +253,7 @@ const sliceUpload = async (storage, domain, slice, id, collectionId, dispatch, o
 
         
         // Combine all upload promises and resolve them concurrently
-        const results = Promise.all([...thumbnailUploadPromises,...uploadPromises, ...webUploadPromises]);
+        const results = Promise.all([...thumbnailUploadPromises,...uploadPromises/* , ...webUploadPromises */]);
         return results;
     } catch (error) {
         console.error("Error during slice upload:", error);

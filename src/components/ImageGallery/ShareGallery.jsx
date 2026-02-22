@@ -176,7 +176,7 @@ const ShareGallery = ({ images = [], sections = null, projectId, collectionId, d
         loading && 
           <div className="loader">LOADING ...</div>
       }
-      {displayGallery && isPreviewOpen && <Preview image={images[previewIndex] } {...{previewIndex,setPreviewIndex,imagesLength:images.length,closePreview,projectId,collectionId}}/>}
+      {displayGallery && isPreviewOpen && <Preview images={images} image={images[previewIndex] } {...{previewIndex,setPreviewIndex,imagesLength:images.length,closePreview,projectId,collectionId}}/>}
     </div>
   );
 };

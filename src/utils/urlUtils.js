@@ -74,6 +74,10 @@ export function getThumbnailUrl(imageUrl) {
   return getImageUrlByQuality(imageUrl, 'thumb');
 }
 
+export function getOriginalUrl(imageUrl) {
+  return getImageUrlByQuality(imageUrl, 'original');
+}
+
 
 
 export function getThumbnailUrl1(originalUrl) {

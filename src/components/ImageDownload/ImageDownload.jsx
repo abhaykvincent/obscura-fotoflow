@@ -27,7 +27,7 @@ const recordDownloadChoice = (choice) => {
   localStorage.setItem(SMART_KEY, JSON.stringify(history));
 };
 
-export async function downloadImage(url, fileName, quality = 'original') {
+export async function downloadImage(url, fileName, quality = 'web') {
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error('Download failed');
@@ -70,10 +70,11 @@ function DownloadImage({ url, fileName, isArchived }) {
     setDownloading(true);
     // Swap prefix from /web to /original or /thumb
     const targetUrl = getImageUrlByQuality(url, quality);
-    const targetName = quality !== 'original' ? `${quality}_${fileName}` : fileName;
+    //const targetName = quality !== 'original' ? `${quality}_${fileName}` : fileName;
+    const targetName =  `${quality}_${fileName}`;
 
     try {
-      await downloadImage(targetUrl, targetName, quality);
+      await downloadImage(targetUrl, targetName, 'web');
       recordDownloadChoice(quality);
     } catch (error) {
       dispatch(showAlert({ type: 'error', message: 'Download failed. Please try again.' }));
@@ -86,7 +87,7 @@ function DownloadImage({ url, fileName, isArchived }) {
   const onMainClick = (e) => {
     e.stopPropagation();
     // Default to 'original' if no preference exists yet
-    handleDownload(preference || 'original');
+    handleDownload(preference || 'web');
   };
 
   return (
@@ -114,7 +115,7 @@ function DownloadImage({ url, fileName, isArchived }) {
           <DropdownMenu.Content className="download-dropdown-content" sideOffset={5} align="end">
             <DropdownMenu.Item 
               className={`dropdown-item ${isArchived ? 'disabled' : ''}`}
-              onSelect={() => handleDownload('original')}
+              onSelect={() => handleDownload('web')}
               disabled={isArchived}
             >
               <div className="item-icon"><Download size={16} /></div>
@@ -127,14 +128,14 @@ function DownloadImage({ url, fileName, isArchived }) {
 
             <DropdownMenu.Item 
               className="dropdown-item"
-              onSelect={() => handleDownload('compressed')}
+              onSelect={() => handleDownload('web')}
             >
               <div className="item-icon"><Zap size={16} /></div>
               <div className="item-text">
                 <span className="label">Compressed</span>
                 <span className="desc">Best for social media</span>
               </div>
-              {preference === 'compressed' && <Zap size={14} className="pref-indicator" />}
+              {preference === 'web' && <Zap size={14} className="pref-indicator" />}
             </DropdownMenu.Item>
 
             {preference && (

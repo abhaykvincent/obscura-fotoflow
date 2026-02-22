@@ -20,10 +20,10 @@ export const initialPlans = [
   {
     name: 'Freelancer',
     pricing: [
-      { storage: 500, monthlyPrice: '₹899', yearlyPrice: '₹7,990', specialOffer: ['for 3 months','₹999 afterwards'], defaultPlan: true },
+      { storage: 100, monthlyPrice: '₹899', yearlyPrice: '₹7,990', specialOffer: ['for 3 months','₹999 afterwards'], defaultPlan: true },
     ],
     defaultPlan: 0,
-    defaultStorage: 500,
+    defaultStorage: 100,
     features: [
       'Unlimited Gallery',
       'Unlimited Selection',
@@ -39,12 +39,12 @@ export const initialPlans = [
   {
     name: 'Studio',
     pricing: [
-      { storage: 3072, 
+      { storage: 1024, 
         monthlyPriceWas: '₹2400', monthlyPrice: '₹1,799', yearlyPrice: '₹15,990', 
         specialOffer: ['6x Value for money', 'Most wedding studios pick this'],
         defaultPlan: true},
     ],
-    defaultStorage: 3072,
+    defaultStorage: 1024,
     defaultPlan: 0,
     features: [
       'Website',
