@@ -461,6 +461,7 @@ animation-timing-function: ease-out;
         transform: translateY(0px);
               border: 1px solid $dark-0;
               border-radius: 6px;
+            border-radius: 8px*2;
               &:active{
 
     transform: translateY(2px);
@@ -524,6 +525,7 @@ animation-timing-function: ease-out;
           display: flex;
           flex-wrap: nowrap;
           .radio-button-group{
+            border-radius: 8px*2;
             background-color: $dark-2;
           box-shadow: 1px 1px 0 1px rgba(0, 0, 0, 0.1);
           }
@@ -1355,6 +1357,7 @@ transition-delay: 0.2s;
               label{
                 display: flex;
                 align-items: center;
+                border-radius: 8px*2;
               }
             }
             .radio-button-group:nth-child(1) label{
@@ -1414,7 +1417,7 @@ transition-delay: 0.2s;
         .button{
           width: calc(100vw - 8px*5.75);
           padding: 8px*1.5;
-          border-radius: 6px;
+          border-radius: 8px*2;
           font-size: 1.1rem;
           &.secondary{
             width: calc(100vw - 8px*7);

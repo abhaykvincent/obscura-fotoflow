@@ -265,9 +265,11 @@ const sliceUpload = async (storage, domain, slice, id, collectionId, dispatch, o
     }
 };
 
+
 // Upload ENTRY POINT
+
 // Remove setUploadLists, setUploadStatus (local setters), add dispatch
-export const handleUpload = async (domain, files, id, collectionId, importFileSize, dispatch, collectionName, sectionId, retries = 2, sliceSize = 32, bucketUrl ) => {
+export const handleUpload = async (domain, files, id, collectionId, importFileSize, dispatch, collectionName, sectionId, retries = 2, sliceSize = 8, bucketUrl ) => {
     
     console.log(bucketUrl)
     const storage = await getStorageForDomain(domain, bucketUrl);
@@ -492,6 +494,9 @@ export const handleUpload = async (domain, files, id, collectionId, importFileSi
             return { uploadedFiles: [], error: error.message, pin: null };
         });
 };
+
+
+
 
 
 // Upload Cover Photo

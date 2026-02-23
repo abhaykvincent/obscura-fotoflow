@@ -73,8 +73,9 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
     );
   };
 
-  const handleNextStep = () => {
-    if (currentStep === 1 && !projectData.type.trim()) {
+  const handleNextStep = (typeOverride) => {
+    const typeToCheck = typeof typeOverride === 'string' ? typeOverride : projectData.type;
+    if (currentStep === 1 && !typeToCheck.trim()) {
       setErrors({ type: "Project type is required" });
       typeInputRef.current?.focus();
       return;
