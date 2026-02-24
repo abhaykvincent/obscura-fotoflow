@@ -143,7 +143,16 @@ const CollectionImages = ({ id, collectionId, project }) => {
             const startTime = Date.now();  // Record the start time
     
             // Handle upload Operation - Updated call
-            const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch, findCollectionById(project, collectionId)?.name, undefined, undefined, studio.bucketUrl);
+            const resp = await handleUpload({
+              domain,
+              files: selectedFiles,
+              id,
+              collectionId,
+              importFileSize,
+              dispatch,
+              collectionName: findCollectionById(project, collectionId)?.name,
+              bucketUrl: studio.bucketUrl
+            });
     
             const endTime = Date.now();  // Record the end time
             const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
