@@ -9,7 +9,6 @@ import {
     selectUploadStatus,
     clearUploadSession
 } from '../../../app/slices/uploadSlice';
-import Lottie from 'react-lottie';
 import animationData from '../../../assets/animations/UploadFiles.json';
 import { selectDomain, selectUserStudio } from '../../../app/slices/authSlice';
 import DownloadFiles from '../../DownloadFiles/DownloadFiles';
@@ -143,7 +142,16 @@ const CollectionImages = ({ id, collectionId, project }) => {
             const startTime = Date.now();  // Record the start time
     
             // Handle upload Operation - Updated call
-            const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch, findCollectionById(project, collectionId)?.name, undefined, undefined, studio.bucketUrl);
+            const resp = await handleUpload({
+              domain,
+              files: selectedFiles,
+              id,
+              collectionId,
+              importFileSize,
+              dispatch,
+              collectionName: findCollectionById(project, collectionId)?.name,
+              bucketUrl: studio.bucketUrl
+            });
     
             const endTime = Date.now();  // Record the end time
             const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
@@ -448,8 +456,8 @@ const CollectionImages = ({ id, collectionId, project }) => {
                         onDragOver={handleDragOver}
                     >
                         <div className="drop-area">
-                            <Lottie options={defaultOptions} height={150} width={150} />
-                            <h2>Drop files here</h2>
+{/*                             <Lottie options={defaultOptions} height={150} width={150} />
+ */}                            <h2>Drop files here</h2>
                             <p>or use the "Upload" Button</p>
                         </div>
                     </label>

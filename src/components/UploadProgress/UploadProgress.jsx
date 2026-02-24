@@ -62,7 +62,7 @@ function UploadProgress() {
                     ) : (
                         <>
                             <h4>Uploading {totalProgressCount} of {totalFilesCount}</h4>
-                            <p>{uploadPercent.toFixed(0)}% completed</p>
+                            {/* <p>{uploadPercent.toFixed(0)}% completed</p> */}
                         </>
                     )}
                 </div>
