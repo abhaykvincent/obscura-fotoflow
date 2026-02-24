@@ -9,7 +9,6 @@ import {
     selectUploadStatus,
     clearUploadSession
 } from '../../../app/slices/uploadSlice';
-import Lottie from 'react-lottie';
 import animationData from '../../../assets/animations/UploadFiles.json';
 import { selectDomain, selectUserStudio } from '../../../app/slices/authSlice';
 import DownloadFiles from '../../DownloadFiles/DownloadFiles';
@@ -457,8 +456,8 @@ const CollectionImages = ({ id, collectionId, project }) => {
                         onDragOver={handleDragOver}
                     >
                         <div className="drop-area">
-                            <Lottie options={defaultOptions} height={150} width={150} />
-                            <h2>Drop files here</h2>
+{/*                             <Lottie options={defaultOptions} height={150} width={150} />
+ */}                            <h2>Drop files here</h2>
                             <p>or use the "Upload" Button</p>
                         </div>
                     </label>
