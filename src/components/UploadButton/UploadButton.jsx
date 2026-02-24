@@ -41,12 +41,22 @@ function UploadButton({
     setIsPhotosImported(true);
     const dummyFiles = [];
     for (let i = 0; i < limit; i++) {
+        // Patterned orientation: simulate a shoot with mixed orientations (e.g., 1 in 5 is portrait)
+        const isPortrait = i % 5 === 0;
+        const baseWidth = isPortrait ? 800 : 1200;
+        const baseHeight = isPortrait ? 1200 : 800;
+        
+        // Randomize dimensions slightly (between 80% and 120% of base) to simulate varied crops/resolutions
+        const randomScale = 0.8 + Math.random() * 0.4;
+        const width = Math.floor(baseWidth * randomScale);
+        const height = Math.floor(baseHeight * randomScale);
+
         dummyFiles.push({
             name: `dummy-image-${i}.jpg`,
-            url: `https://picsum.photos/seed/${i + Math.random()}/1200/800`,
+            url: `https://picsum.photos/seed/${i + Math.random()}/${width}/${height}`,
             lastModified: Date.now(),
             dateTimeOriginal: new Date().toISOString(),
-            dimensions: { width: 1200, height: 800 },
+            dimensions: { width, height },
             thumbAvailable: true,
         });
     }
@@ -98,7 +108,16 @@ function UploadButton({
         // setUploadStatus('open'); // This was local, Redux state will be set by handleUpload via dispatch
 
         // Handle upload Operation - Updated call
-        const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch, collectionName, studiodata.bucketUrl);
+        const resp = await handleUpload({
+          domain,
+          files: selectedFiles,
+          id,
+          collectionId,
+          importFileSize,
+          dispatch,
+          collectionName,
+          bucketUrl: studiodata.bucketUrl
+        });
 
         const endTime = Date.now();  // Record the end time
         const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
@@ -171,10 +190,9 @@ function UploadButton({
       <input id="fileInput" type="file" multiple onChange={handleFileInputChange} />
       {process.env.NODE_ENV === 'development' && (
         <div className="dummy-buttons">
-          <button onClick={()=>handleDummyUpload(128)} className="button secondary">128</button>
-          <button onClick={()=>handleDummyUpload(256)} className="button secondary">256</button>
-          <button onClick={()=>handleDummyUpload(512)} className="button secondary">512</button>
-          <button onClick={()=>handleDummyUpload(1024)} className="button secondary">1024</button>
+          <button onClick={()=>handleDummyUpload(128)} className="button secondary">8</button>
+          <button onClick={()=>handleDummyUpload(128)} className="button secondary">16</button>
+          <button onClick={()=>handleDummyUpload(128)} className="button secondary">32</button>
         </div>
       )}
     </>

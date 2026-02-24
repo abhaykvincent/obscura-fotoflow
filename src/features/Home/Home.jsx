@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Home.scss';
 import { getProjectsByEventId, getProjectsByLastUpdated, getProjectsByStatus, getRecentProjects, getUpcommingShoots } from '../../utils/projectFilters';
@@ -34,8 +34,29 @@ function Home() {
     const [selectedProjects, setSelectedProjects] = useState([])
     const [recentProjects, setRecentProjects] = useState([])
     const [upcommingShoots, setUpcommingShoots] = useState([])
+    const [isAddButtonVisible, setIsAddButtonVisible] = useState(true);
+    const addButtonRef = useRef(null);
 
     const modals = useSelector(selectModal);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setIsAddButtonVisible(entry.isIntersecting);
+            },
+            { threshold: 0 }
+        );
+
+        if (addButtonRef.current) {
+            observer.observe(addButtonRef.current);
+        }
+
+        return () => {
+            if (addButtonRef.current) {
+                observer.unobserve(addButtonRef.current);
+            }
+        };
+    }, []);
 
     useEffect(() => {
         if (defaultStudio?.domain) {
@@ -91,24 +112,27 @@ function Home() {
             <AddProjectModal />
 
             <div className="home-header">
-                <div className="search-bar">
-                    <SearchInput />
-                </div>
-
                 <Link to={`/${defaultStudio.name}/notifications`}>
                     <div className="notifications">
                         <div className="new"></div>
                     </div>
                 </Link>
                 
+                <div className="search-bar">
+                    <SearchInput />
+                </div>
+
+                
             </div>
             <main className="home">
                 {/*  */}
-                <div className="mobile-actions">
+                {!isAddButtonVisible && (
+                    <div className="mobile-actions">
                         <div className="button primary icon icon-only add-mobile"
                             onClick={() => dispatch(openModal('createProject'))}
                         ></div>
-                </div>
+                    </div>
+                )}
                 <div className="welcome-section">
                     <div className="welcome-content">
                         <div className='welcome-message-top user-name'>
@@ -127,7 +151,7 @@ function Home() {
                         <StoragePie height={120}totalSpace={1000} usedSpace={10} /> */}
                     </div>
 
-                    <div className="actions">
+                    <div className="actions" ref={addButtonRef}>
                         <div className="button primary icon add"
                             onClick={() => dispatch(openModal('createProject'))}
                         >New</div>

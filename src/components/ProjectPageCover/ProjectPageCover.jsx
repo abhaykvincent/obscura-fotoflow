@@ -121,7 +121,11 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
             className={`project-page-cover project-cover ${isSetFocusButton ? "focus-button-active" : ""} ${project?.projectCover || project?.projectCover.length > 0 ? "cover-show" : "cover-hide"}`}
         >
             {project?.projectCover ? <div className="project-cover-image" >
-                <img  src={project?.projectCover.replace('-thumb', '')} style={{ height: '100%', width: 'auto', objectFit: 'cover' }} />
+                <img  
+                    src={project?.projectCover.replace('/o/thumb%2F', '/o/web%2F').replace('-thumb', '')} 
+                    loading="lazy"
+                    style={{ height: '100%', width: 'auto', objectFit: 'cover' }} 
+                />
             </div>:
             <div className="project-cover-image no-cover-image" >
                 
@@ -174,13 +178,13 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                             <div className='link' >
                             
                                 <div className="link-container">
-                                    <a className='linkToGallery' href={getGalleryURL('share',currentStudio?.domain,project?.id)} target='_blank' > 
-                                    ...{getGalleryURL('share',currentStudio?.domain,project?.id).slice(-16)}
+                                    <a className='linkToGallery' href={getGalleryURL('smart-gallery',currentStudio?.domain,project?.id)} target='_blank' > 
+                                    ...{getGalleryURL('smart-gallery',currentStudio?.domain,project?.id).slice(-16)}
                                     </a>
                                 </div>
                                 </div>
                                 <div className="button primary outline text-only  icon copy" onClick={() => {
-                                     navigator.clipboard.writeText(getGalleryURL('share',currentStudio?.domain,project?.id));
+                                     navigator.clipboard.writeText(getGalleryURL('smart-gallery',currentStudio?.domain,project?.id));
                                      dispatch(showAlert({ type: "success", message: "Link copied to clipboard!" }));
                                 }}></div>
 
@@ -255,7 +259,7 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
             {
             !isSetFocusButton && project.pin? 
                 <div className="cover-tools">
-                    <div className="button transparent-button secondary icon image">
+                    {/* <div className="button transparent-button secondary icon image">
                         <label htmlFor={`change-cover-${project.id}`} style={{ cursor: "pointer" }}>
                             Change Cover
                         </label>
@@ -266,7 +270,7 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                             style={{ display: "none" }}
                             onChange={handleCoverChange}
                         />
-                    </div>
+                    </div> */}
                 </div>
                 :
                 <div className="cover-tools">

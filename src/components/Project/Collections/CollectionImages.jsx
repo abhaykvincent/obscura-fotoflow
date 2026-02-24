@@ -9,7 +9,6 @@ import {
     selectUploadStatus,
     clearUploadSession
 } from '../../../app/slices/uploadSlice';
-import Lottie from 'react-lottie';
 import animationData from '../../../assets/animations/UploadFiles.json';
 import { selectDomain, selectUserStudio } from '../../../app/slices/authSlice';
 import DownloadFiles from '../../DownloadFiles/DownloadFiles';
@@ -64,6 +63,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
     };
 
     const galleryPageRef = useRef(null);
+    const loaderRef = useRef(null);
 
     useEffect(() => {
         galleryPageRef.current = document.querySelector('.gallery-page');
@@ -92,6 +92,34 @@ const CollectionImages = ({ id, collectionId, project }) => {
         };
     }, []);
 
+    // Infinite scroll observer
+    useEffect(() => {
+        if (!showAllPhotos || !galleryPageRef.current) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && collectionImages?.length > imageUrls.length) {
+                    setPage((prevPage) => prevPage + 1);
+                }
+            },
+            {
+                root: galleryPageRef.current,
+                rootMargin: '600px', // Trigger load more 600px before reaching the bottom for preloading
+            }
+        );
+
+        const currentLoader = loaderRef.current;
+        if (currentLoader) {
+            observer.observe(currentLoader);
+        }
+
+        return () => {
+            if (currentLoader) {
+                observer.unobserve(currentLoader);
+            }
+        };
+    }, [collectionImages?.length, imageUrls.length, showAllPhotos, galleryPageRef.current]);
+
     // Global upload status from Redux
     const globalUploadStatus = useSelector(selectUploadStatus);
 
@@ -114,7 +142,16 @@ const CollectionImages = ({ id, collectionId, project }) => {
             const startTime = Date.now();  // Record the start time
     
             // Handle upload Operation - Updated call
-            const resp = await handleUpload(domain, selectedFiles, id, collectionId, importFileSize, dispatch, findCollectionById(project, collectionId)?.name, undefined, undefined, studio.bucketUrl);
+            const resp = await handleUpload({
+              domain,
+              files: selectedFiles,
+              id,
+              collectionId,
+              importFileSize,
+              dispatch,
+              collectionName: findCollectionById(project, collectionId)?.name,
+              bucketUrl: studio.bucketUrl
+            });
     
             const endTime = Date.now();  // Record the end time
             const duration = (endTime - startTime) / 1000;  // Calculate duration in seconds
@@ -219,6 +256,16 @@ const CollectionImages = ({ id, collectionId, project }) => {
             });
         document.title = `${project.name}'s ${collectionId } Gallery`
     }, [collectionId]);
+
+    // Update collectionImages when project prop changes (e.g., after Redux update)
+    useEffect(() => {
+        if (project && project.collections) {
+            const currentCollection = project.collections.find(c => c.id === collectionId);
+            if (currentCollection && currentCollection.uploadedFiles) {
+                setCollectionImages(currentCollection.uploadedFiles);
+            }
+        }
+    }, [project, collectionId]);
 
     // Fetch Images
     useEffect(() => {
@@ -331,6 +378,17 @@ const CollectionImages = ({ id, collectionId, project }) => {
                         // setUploadLists, // Removed
                         dispatch // Added
                     }} />
+                        <div className="view-control">
+                            {/* <div className="control-label label-all-photos">{collectionImages?.length ? collectionImages?.length: imageUrls.length} Photos</div> */}
+                            <div className="control-wrap">
+                                <div className="controls">
+                                    <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All photos</div>
+                                    <div className={`control ${!showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(false)}>Selected ({selectedImages.length}) {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
+                                </div>
+                                <div className={`active`}></div>
+                            </div>
+                            <div className={`control-label label-selected-photos ${selectedImages.length>0&&' active'}`}> </div>
+                        </div>
                 </div>
                 <div className="view-control gallery-mode">
                         <div className="control-wrap">
@@ -346,22 +404,20 @@ const CollectionImages = ({ id, collectionId, project }) => {
 
                     <div className="gallery-header-right">
                         
-                        <div className="view-control">
-                            {/* <div className="control-label label-all-photos">{collectionImages?.length ? collectionImages?.length: imageUrls.length} Photos</div> */}
-                            <div className="control-wrap">
-                                <div className="controls">
-                                    <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All photos</div>
-                                    <div className={`control ${!showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(false)}>Selected ({selectedImages.length}) {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
-                                </div>
-                                <div className={`active`}></div>
-                            </div>
-                            <div className={`control-label label-selected-photos ${selectedImages.length>0&&' active'}`}> </div>
-                        </div>
                     { !showAllPhotos ?
-                    <><div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
-                        <div className="lr button secondary">Open in my {getOperatingSystem()}</div>
+                    <>
+                    <div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
+                    {/* <div className="button secondary">Open in {getOperatingSystem()}</div> */}
+                    <DownloadFiles 
+                        className={`open-in${showAllPhotos ? 'disabled' : ''}`} 
+                        project={project} 
+                        collection={findCollectionById(project, collectionId)} 
+                        files={selectedImages}
+                        buttonText="Download"
+                    />
+                    
                     </div>
-                        {/* <DownloadFiles className={`open-in ${showAllPhotos ? 'disabled' : ''}`} folderPath={`${domain}/${id}/${collectionId}/`} project={project} collection={findCollectionById(project, collectionId)}/> */}
+                    
                         </>:
                     <>
                     {/* <div className="control-wrap">
@@ -390,8 +446,8 @@ const CollectionImages = ({ id, collectionId, project }) => {
                 
                 imageUrls.length > 0 ? (
                     galleryView === 'grid' ?
-                    <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id,collectionId }} />:
-                    <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId }} />
+                    <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id, collectionId, project }} />:
+                    <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId, project }} />
                 ) : (
                     <label 
                         htmlFor="fileInput" 
@@ -400,8 +456,8 @@ const CollectionImages = ({ id, collectionId, project }) => {
                         onDragOver={handleDragOver}
                     >
                         <div className="drop-area">
-                            <Lottie options={defaultOptions} height={150} width={150} />
-                            <h2>Drop files here</h2>
+{/*                             <Lottie options={defaultOptions} height={150} width={150} />
+ */}                            <h2>Drop files here</h2>
                             <p>or use the "Upload" Button</p>
                         </div>
                     </label>
@@ -415,14 +471,14 @@ const CollectionImages = ({ id, collectionId, project }) => {
             }
 
             {
-                collectionImages?.length >0 && <div className={`${galleryMode === 'designMode' && 'bottom-panel-light-mode'} image-gallery-bottom-panel `}>
+                collectionImages?.length >0 && <div className={`${galleryMode === 'designMode' && 'bottom-panel-light-mode'} image-gallery-bottom-panel `} ref={loaderRef}>
                     {/* <div className="button secondary">Load All</div> */}
                     
-                    {collectionImages?.length !== imageUrls.length && collectionImages?.length >0 && <div className={`button primary`}
+                    {collectionImages?.length !== imageUrls.length && collectionImages?.length >0 && showAllPhotos && <div className={`button primary`}
                         onClick={() => setPage(page + 1)}
-                    >Load More</div>}
+                    >Loading more...</div>}
 
-                    {(imageUrls.length !==0 && collectionImages?.length === imageUrls.length)  && <p className='caughtup-label label'>You are all caught up!</p>}
+                    {(imageUrls.length !==0 && collectionImages?.length === imageUrls.length && showAllPhotos)  && <p className='caughtup-label label'>You are all caught up!</p>}
 
                 </div>
             }

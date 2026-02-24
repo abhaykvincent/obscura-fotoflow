@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Subscription.scss';
 import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../app/slices/authSlice';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { initialPlans } from '../../data/plans';
 import PlanCard from './PlanCard';
 
@@ -10,6 +10,7 @@ import PlanCard from './PlanCard';
 function Subscription() {
   const [plans, setPlans] = useState(initialPlans);
   const defaultStudio = useSelector(selectUserStudio);
+  //return <Navigate to={`/${defaultStudio.domain}`} replace />;
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [showPaidFeatures, setShowPaidFeatures] = useState(false);
 

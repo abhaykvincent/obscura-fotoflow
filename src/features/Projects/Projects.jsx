@@ -22,8 +22,10 @@ import './Projects.scss';
 // --- Constants ---
 const FILTER_TABS = {
     ALL: 'all',
+    DRAFT: 'draft',
     SELECTED: 'selected',
-    ARCHIVED: 'archived'
+    COMPLETED: 'completed',
+    ARCHIVED: 'archive'
 };
 
 const VIEW_TYPES = {
@@ -111,12 +113,22 @@ function Projects() {
         });
 
         if (selectedTab === FILTER_TABS.ARCHIVED) {
-            return getProjectsByStorageStatus(projectsWithinRange, 'archive')
+            return getProjectsByStorageStatus(projectsWithinRange, 'archive');
         }
-        if (selectedTab === FILTER_TABS.SELECTED) {
-            return getProjectsByStatus(projectsWithinRange, 'selected');
+
+        // For all other tabs (Live view), exclude archived projects
+        const liveProjects = projectsWithinRange.filter(project => project.storage?.status !== 'archive');
+
+        switch (selectedTab) {
+            case FILTER_TABS.DRAFT:
+                return getProjectsByStatus(liveProjects, 'draft');
+            case FILTER_TABS.SELECTED:
+                return getProjectsByStatus(liveProjects, 'selected');
+            case FILTER_TABS.COMPLETED:
+                return getProjectsByStatus(liveProjects, 'completed');
+            default:
+                return liveProjects;
         }
-        return projectsWithinRange;
     }, [allProjects, selectedTab, visibleDays]);
 
     const groupedProjects = useMemo(() => {
@@ -181,31 +193,33 @@ function Projects() {
     }, []);
 
     // --- Render Logic ---
-    const renderEmptyState = () => (
-        <div className="section recent">
-            <h3 className="section-heading">
-                {selectedTab === FILTER_TABS.SELECTED
-                    ? "No selection completed projects found for this period."
-                    : "Create Your First Project"}
-            </h3>
-            {selectedTab !== FILTER_TABS.SELECTED && (
-                <div className="projects-list">
-                    <div className="project new" onClick={handleNewProjectClick} role="button" tabIndex={0}>
-                        <div className="project-cover"></div>
-                        <div className="project-details">
-                            <div className="details-top">
-                                <h4 className="project-title">Create Project</h4>
-                            </div>
-                        </div>
-                        <div className="project-options"></div>
+    const renderEmptyState = () => {
+        let heading = "No projects found";
+        
+        if (selectedTab === FILTER_TABS.DRAFT) {
+            heading = "No draft projects found for this period";
+        } else if (selectedTab === FILTER_TABS.SELECTED) {
+            heading = "No selection completed projects found for this period";
+        } else if (selectedTab === FILTER_TABS.COMPLETED) {
+            heading = "No completed projects found for this period";
+        } else if (selectedTab === FILTER_TABS.ARCHIVED) {
+            heading = "No archived projects found for this period";
+        }
+
+        return (
+            <div className="section recent">
+                <h3 className="section-heading">{heading}</h3>
+                <p className="empty-state-message">Try adjusting the filter or loading older projects.</p>
+                {hasMoreProjectsToLoad && (
+                    <div className="load-more-container" style={{ marginLeft: 0 }}>
+                        <button className="button secondary" onClick={handleLoadMore}>
+                            Load Older Projects
+                        </button>
                     </div>
-                </div>
-            )}
-            {allProjects.length > 0 && filteredProjects.length === 0 && (
-                 <p className="empty-state-message">No projects found within the current date range. Try loading more.</p>
-            )}
-        </div>
-    );
+                )}
+            </div>
+        );
+    };
 
     const renderProjectGroups = () => (
         <>
@@ -273,7 +287,7 @@ function Projects() {
                                 <div className="label">Storage</div>
                                 <div className="controls">
                                     <div
-                                        className={`control status-control control-live  ${selectedTab === FILTER_TABS.ALL ? 'active' : ''}`}
+                                        className={`control status-control control-live  ${selectedTab !== FILTER_TABS.ARCHIVED ? 'active' : ''}`}
                                         onClick={() => handleTabClick(FILTER_TABS.ALL)}
                                         role="button" tabIndex={0}
                                     >
@@ -301,22 +315,22 @@ function Projects() {
                                         All
                                     </div>
                                     <div
+                                        className={`control ctrl-draft ${selectedTab === FILTER_TABS.DRAFT ? 'active' : ''}`}
+                                        onClick={() => handleTabClick(FILTER_TABS.DRAFT)}
+                                        role="button" tabIndex={0}
+                                    >
+                                        Draft
+                                    </div>
+                                    <div
                                         className={`control ctrl-draft ${selectedTab === FILTER_TABS.SELECTED ? 'active' : ''}`}
                                         onClick={() => handleTabClick(FILTER_TABS.SELECTED)}
                                         role="button" tabIndex={0}
                                     >
-                                        Pending
+                                        Selected
                                     </div>
                                     <div
-                                        className={`control ctrl-draft ${selectedTab === FILTER_TABS.ARCHIVED ? 'active' : ''}`}
-                                        onClick={() => handleTabClick(FILTER_TABS.ARCHIVED)}
-                                        role="button" tabIndex={0}
-                                    >
-                                        Designing
-                                    </div>
-                                    <div
-                                        className={`control ctrl-draft ${selectedTab === FILTER_TABS.ARCHIVED ? 'active' : ''}`}
-                                        onClick={() => handleTabClick(FILTER_TABS.ARCHIVED)}
+                                        className={`control ctrl-draft ${selectedTab === FILTER_TABS.COMPLETED ? 'active' : ''}`}
+                                        onClick={() => handleTabClick(FILTER_TABS.COMPLETED)}
                                         role="button" tabIndex={0}
                                     >
                                         Completed

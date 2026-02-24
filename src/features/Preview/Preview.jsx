@@ -7,10 +7,34 @@ import ImageDisplay from './ImageDisplay';
 import PreviewControls from './PreviewControls';
 import { deleteFile } from '../../app/slices/projectsSlice';
 
-function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePreview, projectId, collectionId }) {
+function Preview({ images, image, previewIndex, setPreviewIndex, imagesLength, closePreview, projectId, collectionId, isArchived }) {
   const { studioName } = useParams();
   const dispatch = useDispatch();
   
+  // Preload adjacent images
+  useEffect(() => {
+    if (!images || images.length === 0) return;
+
+    const preloadImage = (url) => {
+      if (!url) return;
+      const img = new Image();
+      img.src = url;
+    };
+
+    // Preload next image
+    if (previewIndex < images.length - 1) {
+      preloadImage(images[previewIndex + 1].url);
+    }
+    // Preload previous image
+    if (previewIndex > 0) {
+      preloadImage(images[previewIndex - 1].url);
+    }
+    // Preload one more next for smoother browsing
+    if (previewIndex < images.length - 2) {
+      preloadImage(images[previewIndex + 2].url);
+    }
+  }, [previewIndex, images]);
+
   // Immersive Mode State
   const [showControls, setShowControls] = useState(true);
   const controlsTimeoutRef = useRef(null);
@@ -20,29 +44,35 @@ function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePrev
 
   // Auto-hide controls logic
   const resetControlsTimeout = useCallback(() => {
-    setShowControls(true);
+    if (!showControls) return; // Don't show if hidden (click required to unlock)
     if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
     controlsTimeoutRef.current = setTimeout(() => {
       setShowControls(false);
     }, 30000000);
-  }, []);
+  }, [showControls]);
 
   const toggleControls = useCallback((e) => {
     // Prevent toggling if clicking on interactive elements
     if (e && (e.target.closest('button') || e.target.closest('.interactive'))) return;
     
+    setShowControls(prev => !prev);
+  }, []);
+
+  // Handle timeout on show/hide
+  useEffect(() => {
     if (showControls) {
-      setShowControls(false);
+      // Start/Reset timeout when shown
       if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+      controlsTimeoutRef.current = setTimeout(() => {
+        setShowControls(false);
+      }, 30000000);
     } else {
-      resetControlsTimeout();
+      if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
     }
-  }, [showControls, resetControlsTimeout]);
+  }, [showControls]);
 
   // Initial setup and cleanup
   useEffect(() => {
-    resetControlsTimeout();
-    
     const handleMouseMove = () => resetControlsTimeout();
     window.addEventListener('mousemove', handleMouseMove);
     
@@ -114,6 +144,7 @@ function Preview({ image, previewIndex, setPreviewIndex, imagesLength, closePrev
           collectionId={collectionId}
           studioName={studioName}
           resetControlsTimeout={resetControlsTimeout}
+          isArchived={isArchived}
         />
 
         <AnimatePresence>

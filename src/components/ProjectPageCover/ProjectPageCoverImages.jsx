@@ -134,7 +134,7 @@ export const ProjectPageCoverImages = ({ project }) => {
         >
             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', overflowX: 'auto', scrollbarWidth: 'none' }}>
                 {allImages.map((image, i) => (
-                    <img key={i} src={image.replace('-thumb', '')} style={{ height: '100%', width: 'auto', objectFit: 'cover' }} />
+                    <img key={i} src={image.replace('/o/thumb%2F', '/o/web%2F').replace('-thumb', '')} style={{ height: '100%', width: 'auto', objectFit: 'cover' }} />
                 ))}
             </div>
 
@@ -145,7 +145,7 @@ export const ProjectPageCoverImages = ({ project }) => {
                         className="button transparent-button secondary icon set-focus"
                         onClick={setFocusButtonClick}
                     >Set focus</div> */}
-                    <div className="button transparent-button secondary icon image">
+                    {/* <div className="button transparent-button secondary icon image">
                         <label htmlFor={`change-cover-${project.id}`} style={{ cursor: "pointer" }}>
                             Change Cover
                         </label>
@@ -156,7 +156,7 @@ export const ProjectPageCoverImages = ({ project }) => {
                             style={{ display: "none" }}
                             onChange={handleCoverChange}
                         />
-                    </div>
+                    </div> */}
                 </div>
                 :
                 <div className="cover-tools">

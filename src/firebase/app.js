@@ -77,15 +77,10 @@ const vertexAI = getVertexAI(app);
 
 //const model = getGenerativeModel(vertexAI, { model: "gemini-2.0-flash-001" });
 const model = getGenerativeModel(vertexAI, { model: "gemini-2.0-pro-exp-02-05" });
-//const model = getGenerativeModel(vertexAI, { model: "gemini-2.0-flash" });
 
-//const model = getGenerativeModel(vertexAI, { model: "gemini-1.5-flash" });
-//const model = getGenerativeModel(vertexAI, { model: "gemini-1.5-pro" });
-
-//const model = getGenerativeModel(vertexAI, { model: "gemini-1.0-pro" });
 
 if (process.env.NODE_ENV === 'development') {
-    const EMULATOR_HOST = process.env.REACT_APP_EMULATOR_HOST;
+    const EMULATOR_HOST = window.location.hostname;
     const EMULATOR_PORT = process.env.REACT_APP_EMULATOR_PORT;
     const EMULATOR_FIRESTORE_PORT = process.env.REACT_APP_EMULATOR_FIRESTORE_PORT;
     const EMULATOR_AUTH_PORT = process.env.REACT_APP_EMULATOR_AUTH_PORT;

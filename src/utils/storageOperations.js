@@ -15,7 +15,8 @@ export const fetchImageUrls = async (domain, projectId, collectionId, setImageUr
     
     const storage = await getStorageForDomain(domain);
     // Reference to the images folder within the specific studio, project, and collection
-    const storageRef = ref(storage, `${domain}/${projectId}/${collectionId}`);
+    // New architecture: web/{domain}/{projectId}/{collectionId}
+    const storageRef = ref(storage, `web/${domain}/${projectId}/${collectionId}`);
 
     try {
         const imageUrls = []; // Create an empty array to store the image URLs
@@ -48,7 +49,8 @@ export const fetchImageUrls = async (domain, projectId, collectionId, setImageUr
 export const fetchImageInfo = async (domain, projectId, collectionId) => {
     const storage = await getStorageForDomain(domain);
     // Reference to the images folder within the specific studio, project, and collection
-    const storageRef = ref(storage, `${domain}/${projectId}/${collectionId}`);
+    // New architecture: web/{domain}/{projectId}/{collectionId}
+    const storageRef = ref(storage, `web/${domain}/${projectId}/${collectionId}`);
     const imageInfoList = [];
 
     try {
@@ -74,19 +76,24 @@ export const fetchImageInfo = async (domain, projectId, collectionId) => {
 
 export const deleteCollectionFromStorage = async (domain,id, collectionId) => {
     const storage = await getStorageForDomain(domain);
-    const storageRef = ref(storage, `${domain}/${id}/${collectionId}`);
-    const listResult = await list(storageRef);
+    
+    // Delete web version
+    const storageRefWeb = ref(storage, `web/${domain}/${id}/${collectionId}`);
+    try {
+        const listResult = await list(storageRefWeb);
+        for (const item of listResult.items) {
+            await deleteObject(item);
+        }
+    } catch (e) { console.warn("Web collection not found or already deleted", e); }
 
-    for (const item of listResult.items) {
-        await deleteObject(item);
-    }
-
-    const storageRefThumb = ref(storage, `${domain}/${id}/${collectionId}-thumb`);
-    const listThumbResult = await list(storageRefThumb);
-
-    for (const item of listThumbResult.items) {
-        await deleteObject(item);
-    }
+    // Delete thumbnail version
+    const storageRefThumb = ref(storage, `thumb/${domain}/${id}/${collectionId}`);
+    try {
+        const listThumbResult = await list(storageRefThumb);
+        for (const item of listThumbResult.items) {
+            await deleteObject(item);
+        }
+    } catch (e) { console.warn("Thumb collection not found or already deleted", e); }
 
 }
 
@@ -95,44 +102,34 @@ export const deleteProjectFromStorage = async (domain, bucketUrl, projectId) => 
     console.log(domain, bucketUrl, projectId);
     try {
         const storage = await getStorageForDomain(domain, bucketUrl);
-        const projectRef = ref(storage, `${domain}/${projectId}`);
         
-        // 1. List all items and prefixes directly under the project path
-        const projectList = await list(projectRef);
-        console.log('Project prefixes (collections):', projectList.prefixes);
+        const prefixes = ['web', 'thumb', 'covers'];
+        
+        for (const prefix of prefixes) {
+            const projectRef = ref(storage, `${prefix}/${domain}/${projectId}`);
+            try {
+                // 1. List all items and prefixes directly under the project path
+                const projectList = await list(projectRef);
+                console.log(`Cleaning ${prefix} prefix for project...`);
 
-        // 2. Iterate through projectList prefixes (collections) to delete their contents
-        for (const collectionRef of projectList.prefixes) {
-            console.log('Listing contents of collection:', collectionRef.fullPath);
-            const collectionList = await listAll(collectionRef); // Use listAll for a complete list
-            console.log(collectionList.items.length, 'images found in collection.');
+                // 2. Iterate through projectList prefixes (collections) to delete their contents
+                for (const collectionRef of projectList.prefixes) {
+                    const collectionList = await listAll(collectionRef);
+                    const deletionPromises = collectionList.items.map(imageRef => deleteObject(imageRef));
+                    await Promise.all(deletionPromises);
+                }
 
-            // Iterate through images in each collection
-            const deletionPromises = collectionList.items.map(imageRef => {
-                console.log('Deleting image:', imageRef.fullPath);
-                return deleteObject(imageRef);
-            });
-
-            // Wait for all image deletions in the current collection to complete
-            await Promise.all(deletionPromises);
-            console.log(`All images in collection ${collectionRef.name} deleted successfully.`);
-            
-            // NOTE: Do NOT call deleteObject(collectionRef). Folders are not objects.
+                // 3. Delete any files directly under the projectRef
+                const topLevelFileDeletionPromises = projectList.items.map(fileRef => deleteObject(fileRef));
+                await Promise.all(topLevelFileDeletionPromises);
+            } catch (e) {
+                console.warn(`Could not clean ${prefix} folder for project ${projectId}:`, e.message);
+            }
         }
-
-        // 3. Delete any files directly under the projectRef (if there are any)
-        const topLevelFileDeletionPromises = projectList.items.map(fileRef => {
-            console.log('Deleting top-level file:', fileRef.fullPath);
-            return deleteObject(fileRef);
-        });
         
-        await Promise.all(topLevelFileDeletionPromises);
-        
-        console.log('Project contents deleted successfully. (Virtual folder removed).');
+        console.log('Project contents deleted successfully from all prefix folders.');
     } catch (error) {
-        // Use a clearer error message
         console.error('Error during project deletion from storage:', error);
-        // You might want to throw the error again to handle it up the chain
         throw error; 
     }
 };

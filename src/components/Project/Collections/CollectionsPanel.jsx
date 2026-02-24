@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../../app/slices/modalSlice';
 import { positionCollectionsActiveBox } from '../../../utils/UI/collectionActiveBox';
 import { selectUserStudio } from '../../../app/slices/authSlice';
+import { getThumbnailUrl } from '../../../utils/urlUtils';
 
 const CollectionsPanel = ({ project, collectionId}) => {
   const dispatch = useDispatch();
@@ -26,10 +27,10 @@ const CollectionsPanel = ({ project, collectionId}) => {
               <div className={`gallery  no-images `} key={collection.id} onClick={()=>{}}>
                 <div className="thumbnails">
                   <div className="thumbnail thumb1">
-                    <div className={`backthumb bthumb1 ${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29')}`}
+                    <div className={`backthumb bthumb1 ${getThumbnailUrl(collection.galleryCover)}`}
                     style={{
                       backgroundImage: collection?.galleryCover 
-                        ? `url("${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29')}")` 
+                        ? `url("${getThumbnailUrl(collection.galleryCover)}")` 
                         : 'url(https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333)',
                       backgroundSize: collection?.galleryCover ? 'cover' : '40%',
                       backgroundPosition: collection?.galleryCover ? 'center' : '40%',
@@ -49,7 +50,7 @@ const CollectionsPanel = ({ project, collectionId}) => {
                   <div className={`backthumb bthumb1 ${decodeURIComponent(collection.galleryCover)}`}
                     style={{
                       backgroundImage: collection?.galleryCover 
-                        ? `url("${collection.galleryCover.replace(/\(/g, '%28').replace(/\)/g, '%29').split('&token=')[0]}")` 
+                        ? `url("${getThumbnailUrl(collection.galleryCover)}")` 
                         : 'url(https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333)',
                       backgroundSize: collection?.galleryCover ? 'cover' : '40%',
                     }}

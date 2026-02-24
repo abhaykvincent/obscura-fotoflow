@@ -1,6 +1,6 @@
 // ImageDisplay.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, useMotionValue, useAnimation } from 'framer-motion';
+import { motion, useMotionValue, useAnimation, useTransform } from 'framer-motion';
 import { getThumbnailUrl } from '../../utils/urlUtils';
 
 const swipeConfidenceThreshold = 10000;
@@ -17,6 +17,17 @@ function ImageDisplay({ image, direction, paginate, closePreview, collectionId, 
   const [isZoomed, setIsZoomed] = useState(false);
   const controls = useAnimation();
   const scale = useMotionValue(1);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  // Vertical movement threshold: 
+  // We counter-move the content until the wrapper has been dragged past the threshold.
+  const threshold = 40;
+  const contentY = useTransform(y, (latest) => {
+    if (isZoomed) return 0; // Don't interfere with zoom panning
+    if (Math.abs(latest) < threshold) return -latest;
+    return latest > 0 ? -threshold : threshold;
+  });
   
   // Touch Refs for Pinch
   const distRef = useRef(0);
@@ -28,6 +39,8 @@ function ImageDisplay({ image, direction, paginate, closePreview, collectionId, 
     setImgSrc(getThumbnailUrl(image.url, collectionId));
     setIsZoomed(false);
     scale.set(1);
+    x.set(0);
+    y.set(0);
     
     // Reset zoom controls
     controls.start({ scale: 1, x: 0, y: 0, transition: { duration: 0 } });
@@ -39,7 +52,7 @@ function ImageDisplay({ image, direction, paginate, closePreview, collectionId, 
       setImgSrc(image.url);
       setIsHighResLoaded(true);
     };
-  }, [image.url, collectionId, scale, controls]);
+  }, [image.url, collectionId, scale, controls, x, y]);
 
   // Gestures (Swipe / Dismiss) - Applied to Wrapper
   const handleWrapperDragEnd = (e, { offset, velocity }) => {
@@ -50,8 +63,9 @@ function ImageDisplay({ image, direction, paginate, closePreview, collectionId, 
       paginate(1);
     } else if (swipe > swipeConfidenceThreshold) {
       paginate(-1);
-    } else if (Math.abs(offset.y) > 100 || swipeY > swipeConfidenceThreshold) { 
+    } else if (Math.abs(offset.y) > 120 || swipeY > swipeConfidenceThreshold) { 
       // Dismiss if dragged down significantly or swiped down fast
+      // (Increased threshold to 120 to account for the 40px visual dead-zone)
       closePreview();
     }
     // Note: If no action, AnimatePresence's animate="center" will snap x back to 0 automatically.
@@ -125,7 +139,8 @@ function ImageDisplay({ image, direction, paginate, closePreview, collectionId, 
         position: 'absolute', top: 0, left: 0, 
         width: '100%', height: '100%', 
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        touchAction: 'none'
+        touchAction: 'none',
+        x, y // Bind motion values for drag tracking
       }}
       
       // Slide Animations (Enter/Exit)
@@ -137,11 +152,12 @@ function ImageDisplay({ image, direction, paginate, closePreview, collectionId, 
       exit="exit"
       transition={{
         x: { type: "spring", stiffness: 300, damping: 30 },
-        opacity: { duration: 0.2 }
+        opacity: { duration: 0.01 }
       }}
 
       // Swipe Gestures (Only when NOT zoomed)
       drag={!isZoomed}
+      dragDirectionLock={true} // Lock to axis to prevent diagonal jitter
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
       dragElastic={0.7} // Rubber band effect
       onDragEnd={handleWrapperDragEnd}
@@ -151,28 +167,30 @@ function ImageDisplay({ image, direction, paginate, closePreview, collectionId, 
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
     >
-      <motion.img
-        src={imgSrc}
-        // Zoom & Pan Animations
-        animate={controls}
-        
-        // Pan Gestures (Only when Zoomed)
-        drag={isZoomed}
-        dragConstraints={{ left: -1000, right: 1000, top: -1000, bottom: 1000 }} // Limit pan
-        dragElastic={0.1}
+      <motion.div style={{ y: contentY, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <motion.img
+          src={imgSrc}
+          // Zoom & Pan Animations
+          animate={controls}
+          
+          // Pan Gestures (Only when Zoomed)
+          drag={isZoomed}
+          dragConstraints={{ left: -1000, right: 1000, top: -1000, bottom: 1000 }} // Limit pan
+          dragElastic={0.1}
 
-        style={{
-          width: 'auto',
-          height: 'auto',
-          maxWidth: '100%',
-          maxHeight: '100%',
-          // scale is handled by controls/animate
-          filter: isHighResLoaded ? 'none' : 'blur(20px)',
-          transition: 'filter 0.3s ease-out',
-          cursor: isZoomed ? 'grab' : 'default'
-        }}
-        draggable={false} // Prevent native drag
-      />
+          style={{
+            width: 'auto',
+            height: 'auto',
+            maxWidth: '100%',
+            maxHeight: '100%',
+            // scale is handled by controls/animate
+            filter: isHighResLoaded ? 'none' : 'blur(15px)',
+            transition: 'filter 0.4s ease-out',
+            cursor: isZoomed ? 'grab' : 'default'
+          }}
+          draggable={false} // Prevent native drag
+        />
+      </motion.div>
     </motion.div>
   );
 }

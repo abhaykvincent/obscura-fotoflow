@@ -12,7 +12,7 @@ export default function CurrentPlanSection({ currentSubscription, studio }) {
         <div className='current-plan-label'>{currentSubscription?.plan?.name}</div>
         {/* Displays the total price of the current plan and its payment status */}
         <p className='plan-pricing'>
-          ₹{currentSubscription?.pricing?.totalPrice / 100}{' '}
+          ₹{currentSubscription?.pricing?.totalPrice}{' '}
           <span
             className={`status-tag ${
               currentSubscription?.billing?.paymentRecived ? 'paid' : currentSubscription?.plan?.type === "free" ? 'free' : 'unpaid'
