@@ -7,6 +7,7 @@ import { downloadImage } from '../ImageDownload/ImageDownload';
 import { showAlert } from '../../app/slices/alertSlice';
 import { deleteFile, toggleFileFavorite } from '../../app/slices/projectsSlice';
 import { setCoverPhotoInFirestore, setGalleryCoverPhotoInFirestore } from '../../firebase/functions/firestore';
+import { getThumbnailUrl } from '../../utils/urlUtils';
 
 // Extracted component for a single photo item in the grid.
 // This encapsulates the photo's display logic and its own state, like the options menu.
@@ -98,7 +99,7 @@ const PhotoItem = React.memo(({ fileUrl, index, onImageClick, isArchived, projec
       </div>
       <div
         className='photo'
-        style={{ backgroundImage: `url("${fileUrl.url}")` }}
+        style={{ backgroundImage: `url("${getThumbnailUrl(fileUrl.url)}")` }}
         alt={`File ${index}`}
       ></div>
     </div>

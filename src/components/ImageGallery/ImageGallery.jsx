@@ -4,6 +4,7 @@ import { downloadImage } from '../ImageDownload/ImageDownload';
 import { shortenFileName } from '../../utils/stringUtils';
 import { useDispatch } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
+import { getImageUrlByQuality, getThumbnailUrl } from '../../utils/urlUtils';
 
 // Helper function to group images by lastModified threshold
 const groupImagesByLastModified = (images, thresholdInMinutes, timeThrottleInMinutes) => {
@@ -221,7 +222,7 @@ const ImageGallery = ({ projectId,collectionId, imageUrls, project }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="photo" style={{ backgroundImage: `url("${fileUrl.url}")` }} alt={`File ${index}`}>
+                  <div className="photo" style={{ backgroundImage: `url("${getThumbnailUrl(fileUrl.url)}")` }} alt={`File ${index}`}>
                   </div>
                 </div>
               );
