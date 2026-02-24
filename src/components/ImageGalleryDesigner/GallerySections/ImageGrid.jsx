@@ -260,7 +260,17 @@ const ImageGrid = ({ id, collectionId, collectionName, section, onSectionUpdate,
   }, [images, containerWidth, tempDimensions, gridScale]);
 
   const onDrop = useCallback((acceptedFiles) => {
-    handleUpload(domain, acceptedFiles, id, collectionId, 0, dispatch, collectionName, section.id, undefined, studio.bucketUrl);
+    handleUpload({
+      domain,
+      files: acceptedFiles,
+      id,
+      collectionId,
+      importFileSize: 0,
+      dispatch,
+      collectionName,
+      sectionId: section.id,
+      bucketUrl: studio.bucketUrl
+    });
   }, [section.id, dispatch, domain, id, collectionId, collectionName, studio.bucketUrl]);
 
   const handleFileSelect = (event) => {
