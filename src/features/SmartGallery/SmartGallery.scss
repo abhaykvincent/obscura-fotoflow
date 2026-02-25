@@ -211,6 +211,20 @@
 }
 
 .smart-gallery-page {
+  &.pin-entry-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    .pin-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #fafafa;
+    }
+  }
+
   .project-header {
     display: grid;
     position: relative;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import './SmartGallery.scss';
 import { fetchProject } from '../../firebase/functions/firestore';
 import SmartAlbum from '../../components/ImageGallery/SmartAlbum';
@@ -12,7 +12,6 @@ import { setUserType, trackEvent } from '../../analytics/utils';
 import { LoadingLight } from '../../components/Loading/Loading';
 import { fetchCollectionStatus } from '../../firebase/functions/firestore';
 import { getImageUrlByQuality, getThumbnailUrl } from '../../utils/urlUtils';
-import GalleryPIN from '../../components/GalleryPIN/GalleryPIN';
 import { isPinValid } from '../../utils/pinUtils';
 import { showAlert } from '../../app/slices/alertSlice';
 import JSZip from 'jszip';
@@ -20,6 +19,8 @@ import { saveAs } from 'file-saver';
 
 export default function SmartGallery() {
   const { studioName, projectId, collectionId } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
@@ -32,7 +33,6 @@ export default function SmartGallery() {
   const [collectionsLoading, setCollectionsLoading] = useState(true);
   
   const [isClientAuthenticated, setIsClientAuthenticated] = useState(false);
-  const [showPinModal, setShowPinModal] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
   const StudioBrandingFooter = () => {
@@ -137,7 +137,7 @@ export default function SmartGallery() {
   }, [project, collectionId]);
 
   const handleDownloadAll = async () => {
-    if (!project) return;
+    if (!project || isDownloading) return;
 
     // Check project age (90 days limit)
     const createdAt = new Date(project.createdAt);
@@ -199,10 +199,21 @@ export default function SmartGallery() {
     }
   };
 
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const autoDownload = searchParams.get('autoDownload');
+
+    if (autoDownload === 'true' && isClientAuthenticated && visibleCollections.length > 0 && !isDownloading) {
+      handleDownloadAll();
+      // Remove the search param from URL to prevent multiple triggers on reload
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location.search, isClientAuthenticated, visibleCollections, isDownloading, navigate, location.pathname]);
+
   const handleDownloadClick = (e) => {
     e.preventDefault();
     if (!isClientAuthenticated) {
-      setShowPinModal(true);
+      navigate(`/${studioName}/smart-gallery/${projectId}/download/pin`);
     } else {
       handleDownloadAll();
     }
@@ -351,36 +362,9 @@ export default function SmartGallery() {
         </button>
       </div>
 
-      
-
       <StudioBrandingFooter />
-      {showPinModal && (
-        <div className="modal-container">
-          <div className="modal island">
-            <div className="modal-header">
-              <div className="modal-controls">
-                <div className="control close" onClick={() => setShowPinModal(false)}></div>
-              </div>
-              <div className="modal-title">Authentication Required</div>
-            </div>
-            <div className="modal-body">
-              <GalleryPIN 
-                projectId={projectId}
-                projectPin={project.pin}
-                setAuthenticated={(val) => {
-                  setIsClientAuthenticated(val);
-                  if (val) {
-                    setShowPinModal(false);
-                    handleDownloadAll();
-                  }
-                }}
-              />
-            </div>
-          </div>
-          <div className="modal-backdrop" onClick={() => setShowPinModal(false)}></div>
-        </div>
-      )}
     </div>
   );
 }
+
 
