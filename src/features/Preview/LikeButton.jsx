@@ -59,7 +59,7 @@ const LikeButton = ({ image, projectId, collectionId, studioName, resetControlsT
     return (
         <div className="like-button-container interactive" onClick={handleLike}>
             <motion.div 
-                className={`heart-icon ${isLiked ? 'active' : ''}`}
+                className={`heart-icon ${isLiked ? 'active' : ''} ${isUpdating ? 'updating' : ''}`}
                 whileTap={{ scale: 0.8 }}
                 animate={{ scale: isLiked ? [1, 1.2, 1] : 1 }}
                 transition={{ duration: 0.3 }}

@@ -229,13 +229,7 @@ function ShareGallery({project }) {
                           collection.selectionGallery === true ? 'Waiting for client selection.' : 'Turn on selection'
                         }
                       </p>
-                      {updatingCollections[collection.id]?.selection ? (
-                        <div className="spinner-container" style={{ width: '16px', margin: '0 8px' }}>
-                          <div className="spinner" style={{ width: '12px', height: '12px' }}></div>
-                        </div>
-                      ) : (
-                        <div className={`selection-icon ${collection.selectionGallery === true ? 'active' : ''}`}></div>
-                      )}
+                      <div className={`selection-icon ${collection.selectionGallery === true ? 'active' : ''} ${updatingCollections[collection.id]?.selection ? 'updating' : ''}`}></div>
                       <FormControlLabel
                         control={
                           <IOSSwitch
