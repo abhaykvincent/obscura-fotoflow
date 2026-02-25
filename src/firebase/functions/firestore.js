@@ -937,6 +937,40 @@ export const toggleFileFavoriteInFirestore = async (domain, projectId, collectio
     }
 };
 
+export const updateImageLikeCountInFirestore = async (domain, projectId, collectionId, imageUrl, action = 'increment') => {
+    if (!domain || !projectId || !collectionId || !imageUrl) {
+        throw new Error('Domain, Project ID, Collection ID, and Image URL are required.');
+    }
+
+    const collectionDocRef = doc(db, 'studios', domain, 'projects', projectId, 'collections', collectionId);
+
+    try {
+        const collectionSnapshot = await getDoc(collectionDocRef);
+        if (!collectionSnapshot.exists()) {
+            throw new Error('Collection does not exist.');
+        }
+
+        const collectionData = collectionSnapshot.data();
+        const updatedFiles = collectionData.uploadedFiles.map(file => {
+            if (file.url === imageUrl) {
+                const currentLikes = file.likes || 0;
+                return { 
+                    ...file, 
+                    likes: action === 'increment' ? currentLikes + 1 : Math.max(0, currentLikes - 1) 
+                };
+            }
+            return file;
+        });
+
+        await updateDoc(collectionDocRef, { ...collectionData, uploadedFiles: updatedFiles });
+        const updatedFile = updatedFiles.find(f => f.url === imageUrl);
+        return updatedFile.likes;
+    } catch (error) {
+        console.error(`Error updating image like count: ${error.message}`);
+        throw error;
+    }
+};
+
 // Cover photo
 export const setCoverPhotoInFirestore = async (domain, projectId, image) => {
     if (!domain || !projectId || !image) {

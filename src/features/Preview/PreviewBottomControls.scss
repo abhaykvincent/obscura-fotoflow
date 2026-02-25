@@ -1,0 +1,36 @@
+@import '../../style/variables';
+
+.controls.bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
+    
+    // Glassmorphism Base
+    &.glass-panel {
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .bottom-controls-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 12px 20px;
+        height: 72px;
+    }
+}
+
+// Media Queries for Mobile
+@media only screen and (max-width: 768px) {
+    .controls.bottom {
+        .bottom-controls-content {
+            height: 64px;
+            padding: 8px 12px;
+        }
+    }
+}

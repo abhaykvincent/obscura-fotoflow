@@ -5,6 +5,7 @@ import { useParams } from 'react-router';
 import { AnimatePresence, motion } from 'framer-motion';
 import ImageDisplay from './ImageDisplay';
 import PreviewControls from './PreviewControls';
+import PreviewBottomControls from './PreviewBottomControls';
 import { deleteFile } from '../../app/slices/projectsSlice';
 
 function Preview({ images, image, previewIndex, setPreviewIndex, imagesLength, closePreview, projectId, collectionId, isArchived }) {

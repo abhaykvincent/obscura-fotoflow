@@ -1,0 +1,64 @@
+@import '../../style/variables';
+
+.like-button-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    .heart-icon {
+        width: 24px;
+        height: 24px;
+        background-image: url('../../assets/img/icons/heart.svg');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        filter: brightness(0) invert(1); // Default to white
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+        &.active {
+            filter: none; // Show original color (or apply red)
+            // If we want red, we can use filter or change background image
+            // Let's use filter to make it red if heart.svg is green
+            filter: invert(27%) sepia(91%) saturate(2352%) hue-rotate(346deg) brightness(104%) contrast(101%);
+        }
+    }
+
+    .likes-count {
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 600;
+        min-width: 1ch;
+    }
+}
+
+// Media Queries for Mobile
+@media only screen and (max-width: 768px) {
+    .like-button-container {
+        padding: 6px 12px;
+        .heart-icon {
+            width: 20px;
+            height: 20px;
+        }
+        .likes-count {
+            font-size: 0.8rem;
+        }
+    }
+}
