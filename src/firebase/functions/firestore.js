@@ -566,6 +566,22 @@ export const updateCollectionNameInFirestore = async (domain, projectId, collect
     try {
       const collectionDocRef = doc(db, 'studios', domain, 'projects', projectId, 'collections', collectionId);
       await updateDoc(collectionDocRef, { name: newName });
+
+      const projectDocRef = doc(db, 'studios', domain, 'projects', projectId);
+      const projectSnapshot = await getDoc(projectDocRef);
+
+      if (projectSnapshot.exists()) {
+        const projectData = projectSnapshot.data();
+        const updatedCollections = projectData.collections.map(collection => {
+            if (collection.id === collectionId) {
+                return { ...collection, name: newName };
+            }
+            return collection;
+        });
+
+        await updateDoc(projectDocRef, { collections: updatedCollections });
+      }
+
       console.log('Collection name updated successfully 🎉');
     } catch (error) {
       console.error('Error updating collection name:', error.message);
