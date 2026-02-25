@@ -189,6 +189,16 @@ function Preview({ images, image, previewIndex, setPreviewIndex, imagesLength, c
             />
           </AnimatePresence>
         </div>
+
+        <PreviewBottomControls
+          showControls={showControls}
+          image={image}
+          projectId={projectId}
+          collectionId={collectionId}
+          studioName={studioName}
+          resetControlsTimeout={resetControlsTimeout}
+        />
+
       </div>
     </motion.div>
   );

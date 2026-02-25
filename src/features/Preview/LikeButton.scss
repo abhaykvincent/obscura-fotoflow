@@ -6,14 +6,16 @@
     gap: 8px;
     padding: 8px 16px;
     border-radius: 100px;
-    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     cursor: pointer;
     transition: all 0.2s ease;
     user-select: none;
-
+    -webkit-backdrop-filter: blur(10px);
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(117, 117, 117, 0.12) 40%, rgba(117, 117, 117, 0.1) 70%, rgba(255, 255, 255, 0.15) 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
     &:hover {
         background: rgba(255, 255, 255, 0.2);
         transform: translateY(-2px);
@@ -21,6 +23,10 @@
 
     &:active {
         transform: translateY(0);
+    background-image: linear-gradient(135deg, rgba(220, 252, 221, 0.2) 0%, rgba(117, 117, 117, 0.12) 40%, rgba(117, 117, 117, 0.1) 70%, rgba(255, 255, 255, 0.15) 100%);
+border-top: 1px solid rgba(132, 231, 155, 0.5);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
     }
 
     .heart-icon {
@@ -30,14 +36,17 @@
         background-repeat: no-repeat;
         background-position: center;
         background-size: contain;
-        filter: brightness(0) invert(1); // Default to white
+        filter: brightness(0) invert(1) contrast(0.3) drop-shadow( -2px -1px 0px rgba(67, 67, 67, 0.4)); // Default to white; // Default to white
+        opacity: 1;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
         &.active {
             filter: none; // Show original color (or apply red)
             // If we want red, we can use filter or change background image
             // Let's use filter to make it red if heart.svg is green
-            filter: invert(27%) sepia(91%) saturate(2352%) hue-rotate(346deg) brightness(104%) contrast(101%);
+                    filter: brightness(1.5) invert(0) drop-shadow( -2px -1px 0px rgb(189, 255, 201)); // Default to white
+        opacity: 1;
+
         }
     }
 
