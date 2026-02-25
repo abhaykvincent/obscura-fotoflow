@@ -186,7 +186,7 @@ export default function Galleries({}) {
     <main className={`gallery-page ${galleryMode === 'designMode' ? 'designMode' : ''}`}>
       {
         project?.collections && project.collections.length !== 0 && (
-          <div className="project-collections">
+          <div className="project-collections" tabIndex={0}>
             <CollectionsPanel {...{project,collectionId:targetCollectionId}}/>
             <CollectionImages   {...{ id, collectionId:targetCollectionId,project}} />
           </div>

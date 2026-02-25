@@ -1551,3 +1551,14 @@
 		border: 1px solid $gray4-default-dark;
 	}
 }
+
+.gallery-page {
+	overflow: hidden !important;
+}
+
+.project-collections {
+	scroll-behavior: smooth;
+	overflow-y: scroll;
+	height: 100%;
+	outline: none;
+}

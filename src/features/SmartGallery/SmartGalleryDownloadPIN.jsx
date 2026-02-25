@@ -31,7 +31,9 @@ export default function SmartGalleryDownloadPIN() {
     if (authenticated) {
       navigate(`/${studioName}/smart-gallery/${projectId}?autoDownload=true`);
     }
-  }, [authenticated, navigate, studioName, projectId]);
+  }, [authenticated, navigate, studioName, projectId]); 
+
+  
 
   if (!project) return null;
 
