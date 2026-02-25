@@ -53,11 +53,12 @@
         
         // Glassmorphism Base
         &.glass-panel {
-          background: rgba(0, 0, 0, 0.45);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          background: rgba(0, 0, 0, 0.0);
+          backdrop-filter: blur(0px);
+          -webkit-backdrop-filter: blur(0px);
           
+          border-top: 1px solid rgba(255, 255, 255, 0);
+          border-bottom: 1px solid rgba(255, 255, 255, 0);
           &.top {
             top: 0;
           }
