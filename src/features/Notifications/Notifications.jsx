@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom'
 import './Notifications.scss'
 import { useDispatch, useSelector } from 'react-redux';
@@ -38,16 +39,19 @@ function Notifications() {
 	
   return (
 	<div className="notifications-page">
-		<div className="project-info notifications-page-info">
-			<div className="breadcrumbs">
-				<Link className="back " to={`/`}>Home </Link>
-			</div>
-			<div className="client">
-				<h1>Notifications</h1>
-				<div className="type"></div>
-			</div>
-		<div className="project-options"></div>
-      	</div>
+		{createPortal(
+			<div className="project-info notifications-page-info">
+				<div className="breadcrumbs">
+					<Link className="back " to={`/`}>Home </Link>
+				</div>
+				<div className="client">
+					<h1>Notifications</h1>
+					<div className="type"></div>
+				</div>
+			<div className="project-options"></div>
+			</div>,
+			document.getElementById('header-feature-content') || document.body
+		)}
 		<main>
 			<div className="notifications-list">
 				<label  className="label" htmlFor="">{`${notificationsRecent.length } new notifications`}</label>

@@ -113,9 +113,9 @@ function Home() {
 
             <div className="home-header">
                 <Link to={`/${defaultStudio.name}/notifications`}>
-                    <div className="notifications">
+                    {/* <div className="notifications">
                         <div className="new"></div>
-                    </div>
+                    </div> */}
                 </Link>
                 
                 <div className="search-bar">

@@ -7,7 +7,7 @@
   }
   .home-header,.search-header {
     position: fixed;
-    left: 8px*20;
+    right: 8px*2;
     top: 0vw;
     margin: 8px;
     z-index: 50;
@@ -44,7 +44,6 @@
   
   .project-info{
     top: 00px;
-    left: calc($sidebar-width - -8px*1);
     width: calc(100vw - $sidebar-width);
     position: fixed; 
     display: grid;
@@ -57,7 +56,21 @@
     gap: 8px*1;
     animation: gallery-page-reveal 0.1s ease-out forwards;
     
+    #header-feature-content & {
+      position: relative;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 0 8px*2;
+      z-index: 1;
+      animation: none;
+      background: transparent;
+    }
     
+    .breadcrumbs, .client, .project-options {
+      min-width: 0;
+    }
+
     button{
 
       .icon{
@@ -102,6 +115,9 @@
       opacity: 0.8;
       color: $gray6-default-light;
       overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 25vw;
       &:after{
         position: absolute;
         right: 0px;
@@ -253,11 +269,6 @@
     animation-fill-mode: forwards;
     animation-timing-function: ease-in;
     cursor: pointer;
-    h1{
-      //text editor cursor 
-      cursor: text;
-
-    }
     .edit-pen{
       opacity: 0.3;
       width: 8px*3;
@@ -303,8 +314,21 @@
     h1{
       position: relative;
       display: flex;
+      align-items: center;
       font-size: 1.5rem;
       white-space: nowrap;
+      max-width: 100%;
+      min-width: 0;
+      cursor: text;
+
+      span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 45vw;
+        display: inline-block;
+      }
+
       &::after{
         transition-duration: 0.2s;
         transition-delay: 0.5s;
@@ -370,12 +394,28 @@
   }
   .project-info{
     top: 0;
-    left: $sidebar-width;
-    width: calc(100vw - 8px*21);
+    //width: calc(100vw - 8px*21);
       padding-left: 8px*0;
     grid-template-columns: 1fr auto  1fr;
     transition-duration: 0.2s;
     transition-delay: 0.1s;
+
+    .breadcrumbs, .client, .project-options {
+      min-width: 0;
+    }
+
+    #header-feature-content & {
+      position: relative;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 0 8px*2;
+      z-index: 1;
+      animation: none;
+      background: transparent;
+      transition: none;
+    }
+
     .breadcrumbs{
       position: relative;
       padding-left: 0px;
