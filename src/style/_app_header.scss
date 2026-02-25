@@ -1,7 +1,7 @@
 header{
     position: fixed;
     display:grid;
-    grid-template-columns: auto 1fr 1fr;
+    grid-template-columns: auto auto 1fr;
     top:  0px;
     width: 100vw;
     height: $header-height;
@@ -46,6 +46,12 @@ header{
         font-size: 1rem;
         font-weight: 800;
       }
+    }
+    #header-feature-content{
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
     }
     
     

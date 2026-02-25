@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Editor from './Editor.jsx';
 import Preview from './Preview';
 import { useDispatch, useSelector } from 'react-redux';
@@ -84,29 +85,32 @@ const InvitationPage = () => {
   if (!project) return <div>Loading project data...</div>;
   return (
     <>
-    <div className="project-info invitation-page-header">
-      <div className="breadcrumbs">
-        <Link className="back highlight" to={`/${domain}/project/${encodeURIComponent(projectId)}`}>{project?.name}</Link>
-      </div>
-      <div className="client">
-        <h1>Invitation</h1>
-        <div className="view-control">
-          <div className="control-wrap">
-            <div className="controls">
-                <div className={`control ctrl-all active`} >All</div>
-                <div className={`control ctrl-draft`} >Archived</div>
-            </div>
-            <div className={`active`}></div>
-          </div>
+    {createPortal(
+      <div className="project-info invitation-page-header">
+        <div className="breadcrumbs">
+          <Link className="back highlight" to={`/${domain}/project/${encodeURIComponent(projectId)}`}>{project?.name}</Link>
         </div>
-        
-      </div>
-      <div className="project-options">
-        <Link className={`button secondary outline icon preview-icon `} target="_blank" to={`/${domain}/invitation/${projectId}`} >Preview</Link>
-        <div className={`button primary  icon publish-icon publish-button ${pubishingStatus}`} onClick={publishInvitation} >Publish</div>
-        
-      </div>
-    </div>
+        <div className="client">
+          <h1>Invitation</h1>
+          <div className="view-control">
+            <div className="control-wrap">
+              <div className="controls">
+                  <div className={`control ctrl-all active`} >All</div>
+                  <div className={`control ctrl-draft`} >Archived</div>
+              </div>
+              <div className={`active`}></div>
+            </div>
+          </div>
+          
+        </div>
+        <div className="project-options">
+          <Link className={`button secondary outline icon preview-icon `} target="_blank" to={`/${domain}/invitation/${projectId}`} >Preview</Link>
+          <div className={`button primary  icon publish-icon publish-button ${pubishingStatus}`} onClick={publishInvitation} >Publish</div>
+          
+        </div>
+      </div>,
+      document.getElementById('header-feature-content') || document.body
+    )}
     <main className="invitation-page">
       <Editor  data={invitationData} onChange={handleDataChange} />
       <Preview editor='true' data={invitationData} project={project}/>

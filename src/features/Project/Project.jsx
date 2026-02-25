@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
@@ -174,48 +175,49 @@ export default function Project() {
         <ProjectPageCoverImages project={project} />
       
       }
-        <div className="project-dashboard">
-          <DashboardProjects project={project} />
-        </div>
-      </main>
-
-      <div className="project-info gallary-page-info project-page-info">
-        <div className="breadcrumbs">
-          <Link className="back" to={`/${defaultStudio.domain}/projects`}>
-            Projects
-          </Link>
-        </div>
-        <div className="client"></div>
-        <div className="project-options options">
-          
-
-          <div className={`button tertiary icon pin ${pinIconClass}`} onClick={handlePinCopy}>
-            {pinText}
-          </div>
-            {isArchived ? 'Archived (Only client  and you)' : 'Share'}
-          <button
-            className={`button primary share icon ${(project.uploadedFilesCount > 0 && !isArchived) ? '' : ''}`}
-            onClick={() => project.uploadedFilesCount > 0  && dispatch(openModal('shareGallery'))}
-          >
-            Share
-          </button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <div className="icon options" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onSelect={() => !isArchived && dispatch(openModal('createCollection'))} disabled={isArchived}>
-                <div className="icon-show add" /> New Gallery
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={() => dispatch(openModal('confirmDeleteproject'))}>
-                <div className="icon-show delete" /> Delete Project
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-    </>
-  );
-}
+                <div className="project-dashboard">
+                  <DashboardProjects project={project} />
+                </div>
+              </main>
+        
+              {createPortal(
+                <div className="project-info gallary-page-info project-page-info">
+                  <div className="breadcrumbs">
+                    <Link className="back" to={`/${defaultStudio.domain}/projects`}>
+                      Projects
+                    </Link>
+                  </div>
+                  <div className="client"></div>
+                  <div className="project-options options">
+                    <div className={`button tertiary icon pin ${pinIconClass}`} onClick={handlePinCopy}>
+                      {pinText}
+                    </div>
+                      {isArchived ? 'Archived (Only client  and you)' : 'Share'}
+                    <button
+                      className={`button primary share icon ${(project.uploadedFilesCount > 0 && !isArchived) ? '' : ''}`}
+                      onClick={() => project.uploadedFilesCount > 0  && dispatch(openModal('shareGallery'))}
+                    >
+                      Share
+                    </button>
+        
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <div className="icon options" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem onSelect={() => !isArchived && dispatch(openModal('createCollection'))} disabled={isArchived}>
+                          <div className="icon-show add" /> New Gallery
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onSelect={() => dispatch(openModal('confirmDeleteproject'))}>
+                          <div className="icon-show delete" /> Delete Project
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>,
+                document.getElementById('header-feature-content') || document.body
+              )}
+            </>
+          );
+        }
