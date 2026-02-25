@@ -49,7 +49,16 @@ export default function SelectionPIN() {
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
         </div>
       </div>
-      <GalleryPIN setAuthenticated={setAuthenticated} projectPin={project.pin} projectId={projectId} />
+      <div className="pin-container" style={{ padding: '60px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+        <GalleryPIN setAuthenticated={setAuthenticated} projectPin={project.pin} projectId={projectId} />
+        <Link 
+          to={`/${studioName}/smart-gallery/${project.id}`} 
+          className="button secondary outline small"
+          style={{ textShadow: 'none', border: '1px solid #ddd', color: '#666' }}
+        >
+          Cancel & Back to Gallery
+        </Link>
+      </div>
     </div>
   );
 }
