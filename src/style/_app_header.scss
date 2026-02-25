@@ -31,7 +31,6 @@ header{
         height: 100%;
         align-items:center;
         gap: 8px*0.5;
-        overflow: hidden;
         cursor:default;
       .logo{
         width: 8px*7;
@@ -45,6 +44,7 @@ header{
       .studio-name-logo{
         font-size: 1rem;
         font-weight: 800;
+        max-width: 8px*18;
       }
     }
     #header-feature-content{

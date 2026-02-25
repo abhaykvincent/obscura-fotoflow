@@ -123,7 +123,7 @@ export default function Galleries({}) {
               </div>
             </div>
           ) : (
-            <h1 onClick={handleDoubleClick}>{collection.name}</h1>
+            <h1 onClick={handleDoubleClick}><span>{collection.name}</span></h1>
           )}
           <div className="type"></div>
         </div>
