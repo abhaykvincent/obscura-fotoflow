@@ -11,6 +11,7 @@ import { toTitleCase } from '../../utils/stringUtils';
 import { setUserType } from '../../analytics/utils';
 import { LoadingLight } from '../../components/Loading/Loading';
 import { fetchCollectionStatus } from '../../firebase/functions/firestore';
+import { getImageUrlByQuality, getThumbnailUrl } from '../../utils/urlUtils';
 
 export default function SmartGallery() {
   const { studioName, projectId, collectionId } = useParams();
@@ -224,7 +225,7 @@ export default function SmartGallery() {
             <Link key={collection.id} to={`/${studioName}/smart-gallery/${project.id}/${collection.id}`} className="collection-card-link">
               <div
                 className="collection-card"
-                style={{ backgroundImage: `url(${collection.uploadedFiles[0]?.url})` }}
+                style={{ backgroundImage: `url(${getThumbnailUrl(collection.galleryCover)})` }}
               >
                 <div className="collection-name">{toTitleCase(collection.name)}</div>
                 <div className="collection-image-count">{collection.uploadedFiles.length} images</div>

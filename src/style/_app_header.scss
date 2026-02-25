@@ -1,0 +1,58 @@
+header{
+    position: fixed;
+    display:grid;
+    grid-template-columns: auto auto 1fr;
+    top:  0px;
+    width: 100vw;
+    height: $header-height;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(16px);
+    background-color: #0d0d0da3;
+    box-shadow:  -1px 1px 4px rgba(0, 0, 0, 0);
+    @include boxed;
+    border:none;
+    border-right: none;
+    border-left: none;
+    border-top: none;
+    z-index: 40;
+    .hamburger{
+      display: none;
+      opacity: 0.6;
+      svg{
+        width: 8px*4;
+        height: 8px*4;
+      }
+    }
+    .logo-wrapper{
+      display: grid;
+      grid-template-columns: 8px*7 auto;;
+      padding-left :0px;
+        width: auto;
+        height: 100%;
+        align-items:center;
+        gap: 8px*0.5;
+        cursor:default;
+      .logo{
+        width: 8px*7;
+        height: 8px*8;
+        background-image: url('../assets/img/fotoflow-pro-logo.svg');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+
+      }
+      .studio-name-logo{
+        font-size: 1rem;
+        font-weight: 800;
+        max-width: 8px*18;
+      }
+    }
+    #header-feature-content{
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
+    
+    
+  }
