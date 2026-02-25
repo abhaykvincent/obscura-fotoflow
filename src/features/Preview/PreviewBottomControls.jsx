@@ -10,10 +10,15 @@ import './PreviewBottomControls.scss';
 function PreviewBottomControls({ showControls, image, projectId, collectionId, studioName, resetControlsTimeout }) {
     const isAuthenticated = useSelector(selectIsAuthenticated);
     const user = useSelector(selectUser);
+    const projects = useSelector((state) => state.projects.data);
+
+    const collection = projects.find(p => p.id === projectId)?.collections.find(c => c.id === collectionId);
 
     const isPhotographer = isAuthenticated && user?.studio?.domain === studioName;
     const isClientWithPIN = isPinValid(projectId);
-    const canSelect = isPhotographer || isClientWithPIN;
+    
+    // Photographer can always select, clients only if selectionGallery is active
+    const canSelect = isPhotographer || (isClientWithPIN && collection?.selectionGallery === true);
 
     const controlVariants = {
         visible: { y: 0, opacity: 1, transition: { duration: 0.3, ease: "easeOut" } },

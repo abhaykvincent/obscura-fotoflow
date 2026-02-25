@@ -350,9 +350,11 @@ export default function SmartGallery() {
         <CollectionsGrid />
       </div>
       <div className="action-buttons-container">
-        <Link to={`/${studioName}/selection/${project.id}/pin`} className="button secondary icon selected">
-          Select Photos
-        </Link>
+        {project?.collections?.some(c => c.selectionGallery === true) && (
+          <Link to={`/${studioName}/selection/${project.id}/pin`} className="button secondary icon selected">
+            Select Photos
+          </Link>
+        )}
         <button 
           onClick={handleDownloadClick} 
           className={`button primary icon download ${isDownloading ? 'loading' : ''}`}
