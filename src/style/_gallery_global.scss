@@ -1,0 +1,320 @@
+
+.gallary{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px*2;
+  margin-top: 8px*0;
+  .photos{
+    display:flex;
+    flex-wrap: wrap;
+    //display:grid;
+    //grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap:8px*0;
+      border-radius: 3px;
+  }
+}
+.project-collection{
+  .photos{
+    display:flex;
+    flex-wrap: wrap;
+    //display:grid;
+    //grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap:8px*0;
+      border-radius: 4px;
+      padding: 1px;
+    &:hover{
+
+    }
+      .group-date{
+      position: absolute;
+      margin-top: -8px*3;
+      margin-left: 8px*1.5;
+      color: $dark-1;
+      font-size: 0.8rem;
+      font-weight: bold;
+      .highlight{
+        color: $dark-0
+      }
+    }
+
+
+    .photo-wrap{
+
+      width: calc(100vw/4 - $sidebar-width/4 - 8px*2);
+      position: relative;
+      margin-left: -1px;
+      margin-top: -1px;
+      position: relative;
+      border-radius: 2px;
+      background-color: $dark-2;
+      transition-duration: 0.1s;
+      transition-timing-function: ease-in;
+      border: 1px solid $dark-1;
+      cursor: pointer;
+      
+      overflow: hidden;
+
+      .photo{
+        width: calc(100vw/4 - $sidebar-width/4 - 8px * 2);
+        height: 100%;
+        top: 0;
+        height: 100%;
+        padding-top: 70%;
+        opacity: 0;
+        //add a loading animation with linear-gradient
+        //background: linear-gradient(90deg, $dark-3 20%, $dark-2 40%,$dark-2 60%, $dark-3 80%);
+        
+        transform: scale(0.90);
+        border-radius: 2px;
+        // background size: take the width of largest side
+        background-size: contain;
+        background-position: center center;
+        transition-duration: 0.1s;
+        transition-timing-function: ease-out;
+        transition: transform 0.2s;
+        animation: gallery-photo-reveal 0.2s;
+        animation-fill-mode: forwards;
+        animation-delay: 2s;
+        animation-timing-function: ease-in;
+      }
+      @keyframes gallery-photo-reveal {
+          0%{
+            transform: scale(1.2);
+            opacity: 0;
+          }
+          100%{
+            transform: scale(1);
+            opacity: 1;
+          }
+      }
+      .hover-options-wrap{
+          position: absolute;
+          width: 100%;;
+          height: 100%;
+      }
+      .hover-options{
+        position: relative;
+        width: 100%;;
+        height: 100%;
+        z-index: 1;
+        overflow: hidden;
+        .favorite-wrap{
+          position: absolute;
+        }
+        .favorite{
+          width: 8px*4;
+          height: 8px*4;
+          opacity: 1;
+          padding: 8px*2;
+          cursor: pointer;
+          &.selected{
+            opacity: 1;
+            background-image: url('../assets/img/icons/heart.svg');
+            background-size: 50%;
+            background-position: center;
+            transform: translateX(1px);
+            transition-duration: 0.1s;
+            &:hover{
+              background-image: url('../assets/img/icons/heart-dislike.svg');
+
+            }
+          }
+        }
+        .top{
+          position: absolute;
+          top: -8px*2;
+          right: 0;
+          height: 8px*4;
+          transition-duration: 0.1s;
+          opacity: 0;
+          .menu-icon{
+            height: 8px*3;
+            width: 8px*3;
+            margin: 4px;
+            border-radius: 4px;
+            background-image: url('../assets/img/icons/options-dots.png');
+            background-size: auto 60%;
+            background-position: center center;
+            background-color: rgba(0, 0, 0, 0.3);
+            box-shadow:  1px 1px 1px 1px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px) ;
+
+            text-align: center;
+            border: 1px solid $gray6-default-dark;
+            border-top: 1px solid $gray2-default-dark;
+            border-left: 1px solid $gray2-default-dark;
+            &:hover{
+              background-color: $dark-2;
+              border: 1px solid $dark-0;
+              transition-duration: 0.1s;
+              opacity: 1;
+              & + .option-menu {
+                opacity: 1;
+                transform: translateY(0);
+                transition-duration: 0.1s;
+              }
+            }
+          }
+          .option-menu{
+            position: absolute;
+            right: 0;
+            top: 100%; /* Position below the menu-icon */
+            width: 8px*18.5;
+            padding: 4px 6px;
+            background-color: $dark-2-5; /* Darker background */
+            border-radius: 4px;
+            opacity: 0;
+            visibility: hidden; /* Hidden by default */
+            transform: translateY(8px); /* Slight initial offset */
+            transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0.2s ease-out;
+            border: 1px solid $dark-1;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+            z-index: 10; /* Ensure it's above other elements */
+
+            &.visible {
+              opacity: 1;
+              visibility: visible;
+              transform: translateY(0);
+            }
+
+            .photo-option{
+              padding: 6px 8px; /* Slightly more padding */
+              font-size: 0.9rem;
+              border-bottom: 1px solid $dark-1; /* Darker border */
+              border-radius: 2px;
+              color: $gray4-accessible-light; /* Lighter text color */
+              font-weight: 500;
+              cursor: pointer;
+              transition: background-color 0.1s ease-out, color 0.1s ease-out;
+
+              &:last-child{
+                border-bottom: none;
+              }
+              &:hover{
+                color: $light-0; /* White on hover */
+                background-color: $dark-1; /* Darker background on hover */
+              }
+
+              &.delete-option:hover {
+                background-color: $red-default-dark;
+                color: $light-3;
+              }
+            }
+            // style for every fifth one
+
+            
+          }
+        }
+        .bottom{
+          position: absolute;
+          bottom: -8px*2;
+          height: 8px*3;
+          transition-duration: 0.1s;
+          width: 100%;
+          opacity: 0;
+          .filename{
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 100%;
+            font-size: 0.8rem;
+            text-align: center;
+            color: $gray6-accessible-light;
+            padding-bottom: 4px;
+            padding-top: 8px;
+            backdrop-filter: blur(8px) ;
+            background: rgba(0, 0, 0, 0.1);
+            
+		  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      box-shadow: -1px 0 2px rgba(0, 0, 0, 0.5);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+          }
+        }
+      }
+      &:nth-child(5n){
+        .option-menu{
+        right: -8px*1 !important
+        }
+    }
+      &:hover{
+        border: 1px solid $dark-2;      
+        border-left: 1px solid $dark-1;      
+        border-top: 1px solid $dark-1;      
+        background-color: $dark-2-5;
+        transition-duration: 0.2s;
+        transition-timing-function: ease-in;
+        border-radius: 2px;
+        box-shadow:  1px 1px 2px 1px rgba(0, 0, 0, 0.387),  1px 1px 16px*4 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        .photo{
+          transform: scale(1.8)translateY(8px*0);
+          transition-duration: 0.1s;
+          transition-timing-function: ease-out;
+          backdrop-filter: shadow(0px 0px 0px 1px $dark-1);
+        }
+        .hover-options{
+          .top{
+            position: absolute;
+            top: 0;
+            opacity: 1;
+            transition-delay: 0.2s;
+          }
+          .bottom{
+            position: absolute;
+            bottom: 0;
+            transition-duration: 0.05s;
+            transition-delay: 0.1s;
+            opacity: 1;
+          }
+        }
+      }
+      // when clicked and stay the style
+      /* &:active{
+        
+        box-shadow: inset 0px 0px 0px 4px rgba(255, 255, 255,0.5);
+      } */
+      
+    }
+
+        // loop nth child animation delay increments
+        @for $i from 1 through 32 {
+          .photo-wrap:nth-child(#{$i}){
+            .photo{
+                $delay: 0.0s + 0.02s * ($i - 1);
+                animation: gallery-photo-reveal 0.2s ease-out $delay;
+                animation-fill-mode: forwards;
+          }
+          }  
+        }
+        .photo-wrap{
+          &:hover{
+            z-index: 41;
+          animation: photo-hover-animamtion 0.2s;
+          animation-fill-mode: forwards;
+          @keyframes photo-hover-animamtion {
+            0%{
+              transform: scale(1)translateY(8px*0);
+            }
+            100%{
+              transform: scale(1.1)translateY(0px);
+            }
+          }
+          }
+        }
+  }
+}
+
+  @keyframes image-loading {
+      
+  0% {
+    background-color: $dark-3;
+  }
+  100% {
+    background-color: $dark-2;
+  }
+  }
+
+  .firebase-emulator-warning{
+    display: none;
+  }
