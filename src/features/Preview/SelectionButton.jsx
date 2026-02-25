@@ -44,13 +44,13 @@ const SelectionButton = ({ image, projectId, collectionId, studioName, resetCont
     return (
         <div className="selection-button-container interactive" onClick={handleToggleSelection}>
             <motion.div 
-                className={`select-icon ${isSelected ? 'active' : ''}`}
+                className={`select-icon ${isSelected ? 'active' : ''} ${isUpdating ? 'updating' : ''}`}
                 whileTap={{ scale: 0.8 }}
                 animate={{ scale: isSelected ? [1, 1.2, 1] : 1 }}
                 transition={{ duration: 0.3 }}
             />
             <span className="selection-label">
-                {isSelected ? 'Selected' : 'Select'}
+                {isUpdating ? 'Updating...' : (isSelected ? 'Selected' : 'Select')}
             </span>
         </div>
     );
