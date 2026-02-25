@@ -1,0 +1,72 @@
+@import '../../style/variables';
+
+.selection-button-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    -webkit-backdrop-filter: blur(10px);
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(117, 117, 117, 0.12) 40%, rgba(117, 117, 117, 0.1) 70%, rgba(255, 255, 255, 0.15) 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    margin-right: 12px;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0);
+        background-image: linear-gradient(135deg, rgba(220, 252, 221, 0.2) 0%, rgba(117, 117, 117, 0.12) 40%, rgba(117, 117, 117, 0.1) 70%, rgba(255, 255, 255, 0.15) 100%);
+        border-top: 1px solid rgba(132, 231, 155, 0.5);
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    .select-icon {
+        width: 24px;
+        height: 24px;
+        background-image: url('../../assets/img/icons/checkmark.svg');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        filter: brightness(0) invert(1) contrast(0.3) drop-shadow( -2px -1px 0px rgba(67, 67, 67, 0.4));
+        opacity: 1;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+        &.active {
+            filter: brightness(1.5) invert(0) drop-shadow( -2px -1px 0px rgb(189, 255, 201));
+            opacity: 1;
+        }
+    }
+
+    .selection-label {
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 600;
+        min-width: 1ch;
+    }
+}
+
+// Media Queries for Mobile
+@media only screen and (max-width: 768px) {
+    .selection-button-container {
+        padding: 6px 12px;
+        margin-right: 8px;
+        .select-icon {
+            width: 20px;
+            height: 20px;
+        }
+        .selection-label {
+            font-size: 0.8rem;
+        }
+    }
+}
