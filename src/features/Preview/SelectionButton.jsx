@@ -49,7 +49,7 @@ const SelectionButton = ({ image, projectId, collectionId, studioName, resetCont
                 animate={{ scale: isSelected ? [1, 1.2, 1] : 1 }}
                 transition={{ duration: 0.3 }}
             />
-            <span className="selection-label">
+            <span className={`selection-label ${isUpdating ? 'updating' : ''}`}>
                 {isUpdating ? 'Updating...' : (isSelected ? 'Selected' : 'Select')}
             </span>
         </div>
