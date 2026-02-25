@@ -34,7 +34,7 @@
     .select-icon {
         width: 24px;
         height: 24px;
-        background-image: url('https://img.icons8.com/?size=100&id=83205&format=png&color=FFFFFFhttps://img.icons8.com/?size=100&id=83205&format=png&color=228BE6');
+        background-image: url('https://img.icons8.com/?size=100&id=83205&format=png&color=FFFFFF');
         background-repeat: no-repeat;
         background-position: center;     
                    background-size: 100%;
@@ -43,8 +43,9 @@
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
             &.active {
-                background-image: url('https://img.icons8.com/?size=100&id=83205&format=png&color=228BE6');
+                background: white url('https://img.icons8.com/?size=100&id=83205&format=png&color=228BE6');
                 background-size: 100%;
+                border-radius: 50%;
                 background-repeat: no-repeat;
         background-position: center;
                 transform: scale(1.1);
