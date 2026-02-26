@@ -8,7 +8,7 @@ const swipePower = (offset, velocity) => {
   return Math.abs(offset) * velocity;
 };
 
-function ImageDisplay({ image, direction, paginate, closePreview, collectionId, resetControlsTimeout }) {
+function ImageDisplay({ image, direction, paginate, closePreview, collectionId, resetControlsTimeout, onCurrentLoad }) {
   // Image Loading State
   const [imgSrc, setImgSrc] = useState(getThumbnailUrl(image.url, collectionId));
   const [isHighResLoaded, setIsHighResLoaded] = useState(false);
@@ -51,8 +51,9 @@ function ImageDisplay({ image, direction, paginate, closePreview, collectionId, 
     highResImg.onload = () => {
       setImgSrc(image.url);
       setIsHighResLoaded(true);
+      if (onCurrentLoad) onCurrentLoad();
     };
-  }, [image.url, collectionId, scale, controls, x, y]);
+  }, [image.url, collectionId, scale, controls, x, y, onCurrentLoad]);
 
   // Gestures (Swipe / Dismiss) - Applied to Wrapper
   const handleWrapperDragEnd = (e, { offset, velocity }) => {
