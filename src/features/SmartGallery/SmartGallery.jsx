@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import './SmartGallery.scss';
 import { fetchProject } from '../../firebase/functions/firestore';
 import SmartAlbum from '../../components/ImageGallery/SmartAlbum';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectIsAuthenticated, selectUser } from '../../app/slices/authSlice';
 import { selectStudioAdminSettings } from '../../app/slices/adminSettingsSlice';
 import { selectStudio } from '../../app/slices/studioSlice';
 import { toTitleCase } from '../../utils/stringUtils';
-import { setUserType } from '../../analytics/utils';
+import { setUserType, trackEvent } from '../../analytics/utils';
 import { LoadingLight } from '../../components/Loading/Loading';
 import { fetchCollectionStatus } from '../../firebase/functions/firestore';
+import { getImageUrlByQuality, getThumbnailUrl } from '../../utils/urlUtils';
+import { isPinValid } from '../../utils/pinUtils';
+import { showAlert } from '../../app/slices/alertSlice';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 export default function SmartGallery() {
   const { studioName, projectId, collectionId } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
   const studio = useSelector(selectStudio);
@@ -23,6 +31,9 @@ export default function SmartGallery() {
   const [project, setProject] = useState(null);
   const [visibleCollections, setVisibleCollections] = useState([]);
   const [collectionsLoading, setCollectionsLoading] = useState(true);
+  
+  const [isClientAuthenticated, setIsClientAuthenticated] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const StudioBrandingFooter = () => {
     if (project?.type === "FUNERAL") return null;
@@ -69,7 +80,10 @@ export default function SmartGallery() {
 
   useEffect(() => {
     document.body.style.backgroundColor = 'white';
-  }, []);
+    if (isPinValid(projectId)) {
+      setIsClientAuthenticated(true);
+    }
+  }, [projectId]);
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -121,6 +135,89 @@ export default function SmartGallery() {
         }
     }
   }, [project, collectionId]);
+
+  const handleDownloadAll = async () => {
+    if (!project || isDownloading) return;
+
+    // Check project age (90 days limit)
+    const createdAt = new Date(project.createdAt);
+    const ninetyDaysAgo = new Date();
+    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+
+    if (createdAt < ninetyDaysAgo) {
+      dispatch(showAlert({ 
+        type: 'error', 
+        message: 'Bulk download for this project is no longer available (90-day limit exceeded). Please contact the studio for support.' 
+      }));
+      return;
+    }
+
+    setIsDownloading(true);
+    const zip = new JSZip();
+    let totalFiles = 0;
+
+    try {
+      for (const collection of visibleCollections) {
+        const folder = zip.folder(toTitleCase(collection.name));
+        const files = collection.uploadedFiles || [];
+        
+        const filePromises = files.map(async (file) => {
+          try {
+            const webUrl = getImageUrlByQuality(file.url, 'web');
+            const response = await fetch(webUrl);
+            const blob = await response.blob();
+            folder.file(file.name, blob);
+            totalFiles++;
+          } catch (err) {
+            console.error(`Failed to download ${file.name}:`, err);
+          }
+        });
+        
+        await Promise.all(filePromises);
+      }
+
+      if (totalFiles === 0) {
+        dispatch(showAlert({ type: 'error', message: 'No photos found to download.' }));
+        setIsDownloading(false);
+        return;
+      }
+
+      const content = await zip.generateAsync({ type: 'blob' });
+      saveAs(content, `${toTitleCase(project.name)} - All Albums (Web Quality).zip`);
+      
+      trackEvent('gallery_bulk_downloaded', {
+        project_id: projectId,
+        total_files: totalFiles
+      });
+
+      dispatch(showAlert({ type: 'success', message: 'Download started successfully!' }));
+    } catch (error) {
+      console.error('Download failed:', error);
+      dispatch(showAlert({ type: 'error', message: 'Failed to generate download. Please try again.' }));
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const autoDownload = searchParams.get('autoDownload');
+
+    if (autoDownload === 'true' && isClientAuthenticated && visibleCollections.length > 0 && !isDownloading) {
+      handleDownloadAll();
+      // Remove the search param from URL to prevent multiple triggers on reload
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location.search, isClientAuthenticated, visibleCollections, isDownloading, navigate, location.pathname]);
+
+  const handleDownloadClick = (e) => {
+    e.preventDefault();
+    if (!isClientAuthenticated) {
+      navigate(`/${studioName}/smart-gallery/${projectId}/download/pin`);
+    } else {
+      handleDownloadAll();
+    }
+  };
 
   if (loading || (collectionsLoading && !collectionId)) {
     return (
@@ -224,7 +321,7 @@ export default function SmartGallery() {
             <Link key={collection.id} to={`/${studioName}/smart-gallery/${project.id}/${collection.id}`} className="collection-card-link">
               <div
                 className="collection-card"
-                style={{ backgroundImage: `url(${collection.uploadedFiles[0]?.url})` }}
+                style={{ backgroundImage: `url(${getThumbnailUrl(collection.galleryCover)})` }}
               >
                 <div className="collection-name">{toTitleCase(collection.name)}</div>
                 <div className="collection-image-count">{collection.uploadedFiles.length} images</div>
@@ -253,14 +350,23 @@ export default function SmartGallery() {
         <CollectionsGrid />
       </div>
       <div className="action-buttons-container">
-        <Link to={`/${studioName}/selection/${project.id}/pin`} className="button secondary icon selected">
-          Select Photos
-        </Link>
-        <Link to={`/${studioName}/selection/${project.id}/pin`} className="button primary icon download">
-          Download
-        </Link>
+        {project?.collections?.some(c => c.selectionGallery === true) && (
+          <Link to={`/${studioName}/selection/${project.id}/pin`} className="button secondary icon selected">
+            Select Photos
+          </Link>
+        )}
+        <button 
+          onClick={handleDownloadClick} 
+          className={`button primary icon download ${isDownloading ? 'loading' : ''}`}
+          disabled={isDownloading}
+        >
+          {isDownloading ? 'Preparing...' : 'Download'}
+        </button>
       </div>
+
       <StudioBrandingFooter />
     </div>
   );
 }
+
+

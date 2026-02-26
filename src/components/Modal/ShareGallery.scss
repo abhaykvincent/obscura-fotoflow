@@ -299,6 +299,14 @@
             transition-delay: 0.2s;
             transition-duration: 0.2s;
             }
+            &.updating {
+                background-image: none;
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                border-top: 2px solid #ffffff;
+                border-radius: 50%;
+                animation: spin 0.8s linear infinite;
+                transition: none;
+            }
         }
         input{
             height: auto;

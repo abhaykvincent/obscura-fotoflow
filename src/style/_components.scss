@@ -252,6 +252,13 @@
             margin-right: 8px;
             opacity: 0.6;
         }
+        &.download::before{
+            background-size: 70%;
+            background-image: url('https://img.icons8.com/?size=100&id=8365&format=png&color=FFFFFF');
+            padding-top: 4px;
+            margin-right: 8px;
+            opacity: 0.8;
+        }
         &.qr-code::before{
             background-size: 90%;
             background-image: url('https://img.icons8.com/?size=100&id=eVzJ4kKqXKDy&format=png&color=FFFFFF');

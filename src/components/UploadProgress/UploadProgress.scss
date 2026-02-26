@@ -138,6 +138,7 @@
                     width : 100%;
                     grid-column-start: 1;
                     grid-column-end:4;
+                    overflow: hidden;
                     .file-progress-bar{
                         height: 2px;
                         min-width : 2%;

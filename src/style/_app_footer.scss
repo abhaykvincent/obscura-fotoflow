@@ -1,0 +1,33 @@
+.footer{
+    display: flex;
+    gap: 4px;
+    position: fixed;
+    justify-content: center;
+    height: 8px*2;
+    overflow: hidden;
+    transform: translateX(-50%);
+    left: 50vw;
+    bottom: 8px*0.3;
+    font-size: 0.7rem;
+    color: $gray2-accessible-dark;
+    z-index: 299;
+    opacity: 0.9;
+    a{
+      color: $gray4-accessible-dark;
+
+      text-shadow: 0px 1px 2px black,0px 0px 4px rgba(119, 119, 119, 0.419)
+    }
+    span{
+      color: $gray4-accessible-dark;
+      
+    }
+    .copyright-symbol{
+      color: $gray3-accessible-dark;
+      line-height: 2rem;
+      transform: translateY(-6px);
+      font-size: 1.4rem;
+      text-shadow: 0px 1px 2px black,0px 0px 4px rgb(119, 119, 119)
+
+
+    }
+  }
