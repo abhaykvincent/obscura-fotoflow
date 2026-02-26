@@ -6,11 +6,13 @@ import { useEffect } from 'react';
  * 
  * @param {Array} images - The list of images.
  * @param {number} currentIndex - The index of the currently displayed image.
+ * @param {boolean} isCurrentLoaded - Whether the current image has finished loading.
  * @param {number} delay - Delay in ms before starting preloads (default: 500ms).
  */
-export function useImagePreloader(images, currentIndex, delay = 500) {
+export function useImagePreloader(images, currentIndex, isCurrentLoaded, delay = 500) {
   useEffect(() => {
-    if (!images || images.length === 0) return;
+    // Only start preloading after the current high-res image is loaded
+    if (!images || images.length === 0 || !isCurrentLoaded) return;
 
     const preloadImage = (url) => {
       if (!url) return;
@@ -18,7 +20,7 @@ export function useImagePreloader(images, currentIndex, delay = 500) {
       img.src = url;
     };
 
-    // Delay preloading to give the current image priority
+    // Delay preloading further to give UI a chance to settle
     const timer = setTimeout(() => {
       // Preload next image
       if (currentIndex < images.length - 1) {
@@ -35,5 +37,5 @@ export function useImagePreloader(images, currentIndex, delay = 500) {
     }, delay);
 
     return () => clearTimeout(timer);
-  }, [currentIndex, images, delay]);
+  }, [currentIndex, images, delay, isCurrentLoaded]);
 }

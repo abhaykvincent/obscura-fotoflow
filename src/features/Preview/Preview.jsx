@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './Preview.scss';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router';
@@ -28,9 +28,15 @@ function Preview({
 }) {
   const { studioName } = useParams();
   const dispatch = useDispatch();
+  const [isCurrentLoaded, setIsCurrentLoaded] = useState(false);
 
-  // 1. Preload adjacent images for performance
-  useImagePreloader(images, previewIndex);
+  // 1. Preload adjacent images for performance, but only after current is ready
+  useImagePreloader(images, previewIndex, isCurrentLoaded);
+
+  // Reset loading state when image changes
+  useEffect(() => {
+    setIsCurrentLoaded(false);
+  }, [image.url]);
 
   // 2. Manage immersive mode (auto-hide controls)
   const { 
@@ -141,6 +147,7 @@ function Preview({
               collectionId={collectionId}
               resetControlsTimeout={resetControlsTimeout}
               isControlsVisible={showControls}
+              onCurrentLoad={() => setIsCurrentLoaded(true)}
             />
           </AnimatePresence>
         </div>
