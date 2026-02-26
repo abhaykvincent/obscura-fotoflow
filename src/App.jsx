@@ -35,6 +35,7 @@ import PortfolioWebsite from './features/Website/Website';
 import Settings from './features/Settings/Settings';
 import BillingHistory from './features/BillingHistory/BillingHistory';
 import SmartGallery from './features/SmartGallery/SmartGallery';
+import SmartGalleryDownloadPIN from './features/SmartGallery/SmartGalleryDownloadPIN';
 import UserProfile from './features/AdminPanel/UserProfile/UserProfile';
 
 // Components
@@ -193,6 +194,7 @@ export default function App() {
               <Route path="/login" element={<LoginModal />} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/:studioName/smart-gallery/:projectId/:collectionId?" element={<SmartGallery/>}/>
+              <Route path="/:studioName/smart-gallery/:projectId/download/pin" element={<SmartGalleryDownloadPIN/>}/>
               <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>
               <Route path="/:studioName/selection/:projectId/pin" element={<SelectionPIN/>}/>
               <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>

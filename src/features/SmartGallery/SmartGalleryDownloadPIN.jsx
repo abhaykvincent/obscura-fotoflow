@@ -3,13 +3,12 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { fetchProject } from '../../firebase/functions/firestore';
 import GalleryPIN from '../../components/GalleryPIN/GalleryPIN';
 import { toTitleCase } from '../../utils/stringUtils';
-import './Selection.scss'; // Reuse the same styles
+import './SmartGallery.scss';
 
-export default function SelectionPIN() {
+export default function SmartGalleryDownloadPIN() {
   const { studioName, projectId } = useParams();
   const navigate = useNavigate();
   const [project, setProject] = useState(null);
-  const [images, setImages] = useState([]);
   const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -21,8 +20,6 @@ export default function SelectionPIN() {
       try {
         const projectData = await fetchProject(studioName, projectId);
         setProject(projectData);
-        const firstCollectionImages = projectData?.collections[0]?.uploadedFiles || [];
-        setImages(firstCollectionImages);
       } catch (error) {
         console.error('Failed to fetch project:', error);
       }
@@ -32,21 +29,24 @@ export default function SelectionPIN() {
 
   useEffect(() => {
     if (authenticated) {
-      navigate(`/${studioName}/selection/${projectId}`);
+      navigate(`/${studioName}/smart-gallery/${projectId}?autoDownload=true`);
     }
-  }, [authenticated, navigate, studioName, projectId]);
+  }, [authenticated, navigate, studioName, projectId]); 
 
-  if (!project) return null; // Or a loading indicator
+  
+
+  if (!project) return null;
 
   return (
-    <div className="select-project">
+    <div className="smart-gallery-page pin-entry-page">
       <div className="project-header">
-        <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button back-btn icon back">
+        <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button back-btn icon back" style={{ position: 'absolute', top: '24px', left: '24px', zIndex: 10 }}>
           Back to Gallery
         </Link>
-        <img className='banner' src={images[0] ? images[0].url : ''} alt="Project Banner" />
+        <img className='banner' src={project.projectCover} alt="Project Banner" />
         <div className="gallery-info">
-          <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
+          <h1 className='project-name'>{toTitleCase(project.name)}</h1>
+          <p className='project-type'>Download Authentication</p>
         </div>
       </div>
       <div className="pin-container" style={{ padding: '60px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>

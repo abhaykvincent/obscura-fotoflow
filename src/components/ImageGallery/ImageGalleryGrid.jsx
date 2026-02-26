@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import Preview from '../../features/Preview/Preview';
 import { shortenFileName } from '../../utils/stringUtils';
@@ -8,6 +8,8 @@ import { showAlert } from '../../app/slices/alertSlice';
 import { deleteFile, toggleFileFavorite } from '../../app/slices/projectsSlice';
 import { setCoverPhotoInFirestore, setGalleryCoverPhotoInFirestore } from '../../firebase/functions/firestore';
 import { getThumbnailUrl } from '../../utils/urlUtils';
+import { selectIsAuthenticated, selectUser } from '../../app/slices/authSlice';
+import { isPinValid } from '../../utils/pinUtils';
 
 // Extracted component for a single photo item in the grid.
 // This encapsulates the photo's display logic and its own state, like the options menu.
@@ -15,6 +17,16 @@ const PhotoItem = React.memo(({ fileUrl, index, onImageClick, isArchived, projec
   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
   const dispatch = useDispatch();
   const { studioName } = useParams();
+
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
+  const projects = useSelector((state) => state.projects.data);
+
+  const isPhotographer = isAuthenticated && user?.studio?.domain === studioName;
+  const isClientWithPIN = isPinValid(projectId);
+  const collection = projects.find(p => p.id === projectId)?.collections.find(c => c.id === collectionId);
+  
+  const canSelect = isPhotographer || (isClientWithPIN && collection?.selectionGallery === true);
 
   const handleMenuIconClick = (e) => {
     e.stopPropagation(); // Prevent the onImageClick handler of the parent from firing.
@@ -77,11 +89,13 @@ const PhotoItem = React.memo(({ fileUrl, index, onImageClick, isArchived, projec
     <div className="photo-wrap" onClick={() => onImageClick(index)}>
       <div className="hover-options-wrap">
         <div className="hover-options">
-          <div className="favorite-wrap" onClick={handleFavoriteToggle}>
-            <div className={`favorite ${fileUrl?.status === 'selected' ? 'selected' : ''}`}>
-              <div className="icon"></div>
+          {canSelect && (
+            <div className="favorite-wrap" onClick={handleFavoriteToggle}>
+              <div className={`favorite ${fileUrl?.status === 'selected' ? 'selected' : ''}`}>
+                <div className="icon"></div>
+              </div>
             </div>
-          </div>
+          )}
           <div className="top">
             <div className="menu-icon" onClick={handleMenuIconClick}></div>
             <div className={`option-menu ${showOptionsMenu ? 'visible' : ''}`} onClick={(e) => e.stopPropagation()}>
