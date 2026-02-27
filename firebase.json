@@ -1,4 +1,10 @@
 {
+  "functions": {
+    "predeploy": [
+      "cp build/index.html functions/index.html"
+    ],
+    "source": "functions"
+  },
   "hosting": {
     "public": "build",
     "ignore": [
@@ -6,10 +12,20 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [{
-      "source": "**",
-      "destination": "/index.html"
-    }],
+    "rewrites": [
+      {
+        "source": "/:studioName/smart-gallery/:projectId",
+        "function": "serveGallery"
+      },
+      {
+        "source": "/:studioName/smart-gallery/:projectId/:collectionId",
+        "function": "serveGallery"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
     "headers": [
       {
         "source": "**/*.@(jpg|jpeg|png|gif|webp)",
