@@ -52,10 +52,12 @@ export const verifyAuth = createAsyncThunk(
           if (appUser) {
             localStorage.setItem('authenticated', 'true');
             localStorage.setItem('user', JSON.stringify(appUser));
-            if (appUser.studio) {
-              localStorage.setItem('studio', JSON.stringify(appUser.studio));
+            
+            const userStudio = appUser.studios?.[0] || appUser.studio;
+            if (userStudio) {
+              localStorage.setItem('studio', JSON.stringify(userStudio));
             }
-            resolve({ isAuthenticated: true, user: appUser, studio: appUser.studio });
+            resolve({ isAuthenticated: true, user: appUser, studio: userStudio });
           } else {
             localStorage.removeItem('authenticated');
             localStorage.removeItem('user');
@@ -95,19 +97,17 @@ export const login = createAsyncThunk(
       // store user
       localStorage.setItem('user', JSON.stringify(serializedUser));
       const users = await fetchUsers()
-      const user = users.find(user => {
-      if(user.email === serializedUser.email){
-        return user
-        }
-      })
-
-      color= '#54a134'
-      console.log(`%cUser found in ${user.studio.name} `, `color: ${color}; font-size: ${fontSize}`);
+      const user = users.find(u => u.email === serializedUser.email);
 
       if (user) {
+        const userStudio = user.studios?.[0] || user.studio;
+        
+        color= '#54a134'
+        console.log(`%cUser found in ${userStudio?.name || 'no studio'} `, `color: ${color}; font-size: ${fontSize}`);
+
         localStorage.setItem('authenticated', 'true');
-        if(user.studio){
-          localStorage.setItem('studio', JSON.stringify(user.studio));
+        if(userStudio){
+          localStorage.setItem('studio', JSON.stringify(userStudio));
           // store user
           localStorage.setItem('user', JSON.stringify(user));
           return {
@@ -115,15 +115,16 @@ export const login = createAsyncThunk(
           }
         }
       } 
-      if(user.email){
+      
+      if(serializedUser.email){
         color= '#54a134'
         console.log(`%c${serializedUser.email} Authenticated as  ${serializedUser.displayName}`, `color: ${color}; font-size: ${fontSize}`);
         localStorage.setItem('authenticated', 'true');
 
-          // store user
-          localStorage.setItem('user', JSON.stringify(user));
+        // store user
+        localStorage.setItem('user', JSON.stringify(user || serializedUser));
           
-        return user
+        return user || serializedUser;
       }
       
       
@@ -155,7 +156,7 @@ const authSlice = createSlice({
     },
     setCurrentStudio: (state, action) => {
       state.currentStudio = action.payload;
-      localStorage.setItem('studio',JSON.parse(action.payload))
+      localStorage.setItem('studio',JSON.stringify(action.payload))
     },
     setStudioLogo: (state, action) => {
       if (state.currentStudio) {
@@ -179,7 +180,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = { ...state.user, ...action.payload, name: action.payload.displayName, image: action.payload.photoURL };
         if(action.payload !== 'no-studio-found') {
-          state.currentStudio = action.payload.studio;
+          state.currentStudio = action.payload.studios?.[0] || action.payload.studio || initialState.currentStudio;
         }
         else{
           // get user from local storage 

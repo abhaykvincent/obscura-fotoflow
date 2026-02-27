@@ -34,9 +34,12 @@ const LoginModal = () => {
     }
   },[googleSignInResult])
   const dispatchNotification = (response, deviceInfo, loginLocation) => {
+    const studio = response.payload.studios?.[0] || response.payload.studio;
+    if (!studio) return;
+
     dispatch(
       createNotification({
-        studioId: response.payload.studio.domain,
+        studioId: studio.domain,
         notificationData: {
           title: 'New Login Detected',
           message: `Your account was accessed via Google  from ${deviceInfo} in ${loginLocation ? `\n ${loginLocation}` : ''}`,
@@ -94,7 +97,8 @@ const LoginModal = () => {
         // Dispatch notification
         dispatchNotification(response, deviceInfo, loginLocation);
   
-        navigate(`/${response.payload.studio.domain}`);
+        const studio = response.payload.studios?.[0] || response.payload.studio;
+        navigate(`/${studio.domain}`);
       }
     } catch (error) {
       console.log('Error during sign-in:', error);

@@ -194,8 +194,13 @@ export const fetchStudiosOfUser = async (email) => {
         ...doc.data(),
     }));
     const user = usersData.find((user) => user.email === email);
-    const studio = user?.studio
-    return studio;
+    
+    if (user?.studios) {
+        return user.studios;
+    }
+    
+    // Fallback for old structure
+    return user?.studio ? [user.studio] : [];
 };
 export const fetchStudios = async () => {
     const studiosCollection = collection(db, 'studios');
