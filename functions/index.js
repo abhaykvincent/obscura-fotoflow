@@ -65,8 +65,8 @@ exports.serveGallery = functions.https.onRequest(async (req, res) => {
       if (projectDoc.exists) {
         const project = projectDoc.data();
         title = `${toTitleCase(project.name)} | Gallery`;
-        description = `View the ${toTitleCase(project.type || 'photo')} collection by ${toTitleCase(studioName)}.`;
-        image = project.projectCover ? getImageUrlByQuality(project.projectCover, 'web') : '';
+        description = `${toTitleCase(project.type || 'photo')} collection by ${toTitleCase(studioName)}.`;
+        image = project.projectCover ? getImageUrlByQuality(project.projectCover, 'thumb') : '';
       }
     } catch (err) {
       console.error('Error fetching project from Firestore:', err);
