@@ -240,3 +240,90 @@
       margin-top: 16px;
     }
   }
+
+  .dev-qr-trigger {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1000;
+    cursor: pointer;
+    background: $green-default-dark;
+    padding: 10px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.1);
+      background: $green-default-light;
+    }
+
+    .button.icon.icon-only.share {
+      margin: 0;
+      color: white;
+      &::before {
+        content: "QR";
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .dev-qr-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .modal.island {
+      max-width: 400px;
+      width: 90%;
+      background: $dark-0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-body {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .qr-code-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+
+        canvas {
+          padding: 15px;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .ip-label {
+          font-family: monospace;
+          color: $green-default-dark;
+          font-size: 1rem;
+          margin-top: 10px;
+          word-break: break-all;
+          text-align: center;
+        }
+
+        .instruction {
+          color: $gray-default-dark;
+          font-size: 0.9rem;
+          text-align: center;
+        }
+      }
+    }
+
+    .actions {
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+  }
