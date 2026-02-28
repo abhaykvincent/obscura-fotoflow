@@ -48,8 +48,19 @@ function UserProfile() {
                 </div>
                 <div className="card">
                     <h2>Studio Information</h2>
-                    <p><strong>Studio Name:</strong> {user.studio?.name || 'N/A'}</p>
-                    <p><strong>Roles:</strong> {user.roles?.join(', ') || 'N/A'}</p>
+                    {(user.studios && user.studios.length > 0) ? (
+                        user.studios.map((studio, index) => (
+                            <div key={index} className="studio-info" style={{ marginBottom: index < user.studios.length - 1 ? '10px' : '0' }}>
+                                <p><strong>Studio Name:</strong> {studio.name} ({studio.domain})</p>
+                                <p><strong>Roles:</strong> {studio.roles?.join(', ') || 'N/A'}</p>
+                            </div>
+                        ))
+                    ) : (
+                        <>
+                            <p><strong>Studio Name:</strong> {user.studio?.name || 'N/A'}</p>
+                            <p><strong>Roles:</strong> {user.roles?.join(', ') || 'N/A'}</p>
+                        </>
+                    )}
                 </div>
                 {/* Add more cards for other details like projects, activity, etc. */}
             </div>

@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { signInWithPopup } from 'firebase/auth';
 import { analytics, auth, provider } from '../../../firebase/app';
-import { selectUser, setUser, logout } from '../../../app/slices/authSlice';
+import { selectUser, setUser, logout, login } from '../../../app/slices/authSlice';
 import { showAlert } from '../../../app/slices/alertSlice';
 import { isDeveloper, trackEvent } from '../../../analytics/utils';
 import { usePersonalizedGreeting } from './hooks/usePersonalizedGreeting';
@@ -17,6 +17,8 @@ import { hideLoading } from '../../../app/slices/loadingSlice';
 import PrivacyPolicyModal from '../../../components/Modal/PrivacyPolicyModal';
 import TermsOfServiceModal from '../../../components/Modal/TermsOfServiceModal';
 
+import { fetchStudiosOfUser } from '../../../firebase/functions/studios';
+
 function Onboarding() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -29,6 +31,10 @@ function Onboarding() {
     const { invitation, isLoading: isInvitationLoading } = useInvitation(ref);
     console.log('Invitation Data:', invitation);
     const { formData, updateFormData, errors, isDomainAvailable, isCheckingDomain, validateStudioForm, validateContactForm, validateAllSetForm } = useOnboardingForm({ studioName: invitation?.studioName, studioContact: invitation?.studioContact }, user);
+
+    const [userStudios, setUserStudios] = useState([]);
+    const [showStudioSelection, setShowStudioSelection] = useState(false);
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
 
     useEffect(() => {
         const studioLocal = JSON.parse(localStorage.getItem('studio'));
@@ -62,12 +68,55 @@ function Onboarding() {
         }
     },[])
 
+    const handleSelectStudio = async (studio) => {
+        try {
+            setIsLoggingIn(true);
+            const serializedUser = {
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+                access: userStudios,
+                selectedStudio: studio,
+            };
+
+            const response = await dispatch(login(serializedUser));
+            if (response.payload !== 'no-studio-found') {
+                navigate(`/${studio.domain}`);
+            }
+        } catch (error) {
+            console.error('Error selecting studio:', error);
+        } finally {
+            setIsLoggingIn(false);
+        }
+    };
+
     const handleGoogleSignIn = async () => {
         try {
             const result = await signInWithPopup(auth, provider);
             const loginUser = result.user;
             console.log(loginUser)
             trackEvent('google_auth_completed', { email: loginUser.email });
+
+            const studiosResponse = await fetchStudiosOfUser(loginUser.email);
+            setUserStudios(studiosResponse);
+
+            if (studiosResponse.length > 0) {
+                const serializedUser = {
+                    userId: loginUser.email,
+                    email: loginUser.email,
+                    displayName: loginUser.displayName,
+                    photoURL: loginUser.photoURL,
+                    access: studiosResponse,
+                    studio: studiosResponse,
+                };
+                dispatch(setUser(serializedUser));
+                analytics.setUserId(loginUser.email);
+                
+                if (studiosResponse.length > 0) {
+                    setShowStudioSelection(true);
+                }
+                return;
+            }
 
             const serializedUser = {
                 userId: loginUser.email,
@@ -102,12 +151,12 @@ function Onboarding() {
         }
     };
 
-    if (isInvitationLoading) {
+    if (isInvitationLoading || isLoggingIn) {
         return <div className="loading-container">
             <div className="loading-spinner"></div>
             <div className="loading-context-container">
 
-            <p className="loading-context">Validating referral code...</p>
+            <p className="loading-context">{isLoggingIn ? 'Logging into studio...' : 'Validating referral code...'}</p>
             </div>
         </div>; // Or a proper loading spinner
     }
@@ -119,93 +168,138 @@ function Onboarding() {
             <PrivacyPolicyModal/>
             <TermsOfServiceModal/>
             <div className="logo animate-reveal" style={{ animationDelay: '0.2s' }}></div>
-            <div className={`user-authentication animate-reveal ${!user?.email ? 'auth-screen' : ''}`} style={{ animationDelay: '0.4s' }}>
-                {invitation && !user?.email && (
-                    <>
-                        <p className='onboarding-greeting'>
-                            <span className={`timeGreeting icon ${greeting.timeOfDay}`}>{greeting.timeGreeting}</span>
-                            <span className='iconic-gradient-white'>{invitation.name}</span>
-                        </p>
-                        {invitation?.studioName ? 
-                            <p className='onboarding-invitation-message'> {`Private Beta --`} <span className="iconic-gradient-green">{invitation?.studioName}</span> <div className="icon-unlock"></div> </p>:
-                            <p className='onboarding-invitation-message'> You are invited to join private beta.</p>
-                        }   
-                    </>
-                )}
-
-                {!invitation && !invitation && (
-                    <div className='activate-fotoflow-whatsapp'>
-                        <p>{ref!=='0000' ? `Your Referral Code ${ref} is invalid or expired` : ` Fotoflow is currently Invite only. `}<br />
-                        {ref!=='0000' ? `Check link again ` : ''}
-                        </p>
-                        
+            
+            {showStudioSelection ? (
+                <div className="user-authentication animate-reveal studio-selection-screen" style={{ animationDelay: '0.4s' }}>
+                    <p className='onboarding-greeting'>
+                        <span className={`timeGreeting icon ${greeting.timeOfDay}`}>{greeting.timeGreeting}</span>
+                        <span className='iconic-gradient-white'>{user.displayName}</span>
+                    </p>
+                    <p className='onboarding-invitation-message'> You already have active studios.</p>
+                    
+                    <div className="studio-list mt-6">
+                        {userStudios.map((studio) => (
+                            <div 
+                                key={studio.domain} 
+                                className="studio-item-card"
+                                onClick={() => handleSelectStudio(studio)}
+                            >
+                                <div className="studio-card-info">
+                                    <span className="studio-card-name">{studio.name}</span>
+                                    <span className="studio-card-domain">{studio.domain}.fotoflow.pro</span>
+                                </div>
+                                <div className="icon-arrow-right"></div>
+                            </div>
+                        ))}
                     </div>
-                )}
 
-                {user?.email?
-                    <div className={`logged-user 
-                    ${!invitation && 'unavaillable-referral-code'}
-                    `}>
-                        <div className='user-image'
-                            style={
-                            user?.photoURL ? {backgroundImage: `url(${user.photoURL})`} : {}
-                            }
-                        >
-                        </div>
-                        <div className="logged-user-info">
-                            
-                        <span> {user.email}</span></div>
-                        <div className="logout-button"
-                            onClick={()=>{ 
-                            dispatch(logout())
-                            }}
-                        >Logout</div>
+                    <div className="divider-text">OR</div>
+
+                    <div 
+                        className="button outline-dashed full-width"
+                        onClick={() => setShowStudioSelection(false)}
+                    >
+                        Create a New Studio
                     </div>
-                :
-                !isDisabled && 
+
+                    <div className="logout-option mt-4" onClick={() => {
+                        dispatch(logout());
+                        setShowStudioSelection(false);
+                    }}>
+                        Logout and use different account
+                    </div>
+                </div>
+            ) : (
                 <>
+                <div className={`user-authentication animate-reveal ${!user?.email ? 'auth-screen' : ''}`} style={{ animationDelay: '0.4s' }}>
+                    {invitation && !user?.email && (
+                        <>
+                            <p className='onboarding-greeting'>
+                                <span className={`timeGreeting icon ${greeting.timeOfDay}`}>{greeting.timeGreeting}</span>
+                                <span className='iconic-gradient-white'>{invitation.name}</span>
+                            </p>
+                            {invitation?.studioName ? 
+                                <p className='onboarding-invitation-message'> {`Private Beta --`} <span className="iconic-gradient-green">{invitation?.studioName}</span> <div className="icon-unlock"></div> </p>:
+                                <p className='onboarding-invitation-message'> You are invited to join private beta.</p>
+                            }   
+                        </>
+                    )}
 
-                    <div className={`button google-login-button ${isDisabled ? 'disabled' : ''}`} onClick={() => !isDisabled && handleGoogleSignIn()}>
-                        Continue with Google <div className="google-logo"></div>
-                    </div>
-                     <p className='onboarding-message'> Start Streamline your wedding photography workflow.</p>
-                
-                </>
+                    {!invitation && !invitation && (
+                        <div className='activate-fotoflow-whatsapp'>
+                            <p>{ref!=='0000' ? `Your Referral Code ${ref} is invalid or expired` : ` Fotoflow is currently Invite only. `}<br />
+                            {ref!=='0000' ? `Check link again ` : ''}
+                            </p>
+                            
+                        </div>
+                    )}
+
+                    {user?.email?
+                        <div className={`logged-user 
+                        ${!invitation && 'unavaillable-referral-code'}
+                        `}>
+                            <div className='user-image'
+                                style={
+                                user?.photoURL ? {backgroundImage: `url(${user.photoURL})`} : {}
+                                }
+                            >
+                            </div>
+                            <div className="logged-user-info">
+                                
+                            <span> {user.email}</span></div>
+                            <div className="logout-button"
+                                onClick={()=>{ 
+                                dispatch(logout())
+                                }}
+                            >Logout</div>
+                        </div>
+                    :
+                    !isDisabled && 
+                    <>
+
+                        <div className={`button google-login-button ${isDisabled ? 'disabled' : ''}`} onClick={() => !isDisabled && handleGoogleSignIn()}>
+                            Continue with Google <div className="google-logo"></div>
+                        </div>
+                        <p className='onboarding-message'> Start Streamline your wedding photography workflow.</p>
+                    
+                    </>
+                    }
+                </div>
+                {!invitation && (
+                        <div className='wishlist-whatsapp animate-reveal' style={{ animationDelay: '1.2s' }}>
+                            <p> 
+                                <a href="https://wa.me/+916235099329?text=Activate%20Fotoflow" target="_blank" rel="noopener noreferrer"> Join Waitlist</a>
+                                </p>
+                            
+                        </div>
+                    )}
+                {!invitation && (
+                        <div className='contact-whatsapp animate-reveal' style={{ animationDelay: '1.2s' }}>
+                            <p> Contact Support 
+                                <a href="https://wa.me/+916235099329?text=Activate%20Fotoflow" target="_blank" rel="noopener noreferrer"> Whatsapp</a>
+                                </p>
+                            
+                        </div>
+                    )}
+                {user?.email &&
+                <div className={`form-wrapper animate-reveal ${!invitation && 'unavaillable-referral-code'}`} style={{ animationDelay: '0.6s' }}>
+                    <CreateStudioForm
+                        user={user}
+                        formData={formData}
+                        studioName={invitation?.studioName}
+                        updateFormData={updateFormData}
+                        onNext={handleCreateAccount}
+                        errors={errors}
+                        isDomainAvailable={isDomainAvailable}
+                        isCheckingDomain={isCheckingDomain}
+                        disabled={isDisabled}
+                        validateStudioForm={validateStudioForm}
+                        validateAllSetForm={validateAllSetForm}
+                    />
+                </div>
                 }
-            </div>
-            {!invitation && (
-                    <div className='wishlist-whatsapp animate-reveal' style={{ animationDelay: '1.2s' }}>
-                        <p> 
-                            <a href="https://wa.me/+916235099329?text=Activate%20Fotoflow" target="_blank" rel="noopener noreferrer"> Join Waitlist</a>
-                            </p>
-                        
-                    </div>
-                )}
-            {!invitation && (
-                    <div className='contact-whatsapp animate-reveal' style={{ animationDelay: '1.2s' }}>
-                        <p> Contact Support 
-                            <a href="https://wa.me/+916235099329?text=Activate%20Fotoflow" target="_blank" rel="noopener noreferrer"> Whatsapp</a>
-                            </p>
-                        
-                    </div>
-                )}
-            {user?.email &&
-            <div className={`form-wrapper animate-reveal ${!invitation && 'unavaillable-referral-code'}`} style={{ animationDelay: '0.6s' }}>
-                <CreateStudioForm
-                    user={user}
-                    formData={formData}
-                    studioName={invitation?.studioName}
-                    updateFormData={updateFormData}
-                    onNext={handleCreateAccount}
-                    errors={errors}
-                    isDomainAvailable={isDomainAvailable}
-                    isCheckingDomain={isCheckingDomain}
-                    disabled={isDisabled}
-                    validateStudioForm={validateStudioForm}
-                    validateAllSetForm={validateAllSetForm}
-                />
-            </div>
-            }
+                </>
+            )}
         </main>
     );
 }

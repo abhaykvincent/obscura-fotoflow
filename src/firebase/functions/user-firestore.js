@@ -1,5 +1,5 @@
 import { db } from "../app";
-import { doc, getDoc, setDoc, updateDoc, collection, getDocs } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, collection, getDocs, writeBatch, deleteField, query, where, arrayUnion } from "firebase/firestore";
 
 // Users
 export const fetchUserOrLeadById = async (userId) => {
@@ -22,18 +22,65 @@ export const fetchUserOrLeadById = async (userId) => {
     return null; // Not found in either collection
 };
 
-export const createUser = async (userData) => {
-    const {email,studio,displayName,photoURL} = userData;
-    console.log(displayName)
+export const migrateUsersToMultiStudio = async () => {
     const usersCollection = collection(db, 'users');
+    const querySnapshot = await getDocs(usersCollection);
+    
+    const batch = writeBatch(db);
+    let count = 0;
+
+    querySnapshot.docs.forEach((userDoc) => {
+        const data = userDoc.data();
+        if (data.studio && !data.studios) {
+            const oldStudio = data.studio;
+            const userRef = doc(db, 'users', userDoc.id);
+            
+            batch.update(userRef, {
+                studios: [oldStudio],
+                activeStudioDomain: oldStudio.domain,
+                studio: deleteField()
+            });
+            count++;
+        }
+    });
+
+    if (count > 0) {
+        await batch.commit();
+        console.log(`Successfully migrated ${count} users.`);
+    } else {
+        console.log('No users needed migration.');
+    }
+    return count;
+};
+
+export const createUser = async (userData) => {
+    const {email, studio, displayName, photoURL} = userData;
+    const userDocRef = doc(db, 'users', email);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (userDocSnap.exists()) {
+        const existingData = userDocSnap.data();
+        const updateData = {
+            studios: arrayUnion(studio),
+            studio: studio,
+            activeStudioDomain: studio.domain,
+            displayName: displayName || existingData.displayName,
+            photoURL: photoURL || existingData.photoURL
+        };
+        await updateDoc(userDocRef, updateData);
+        return { ...existingData, ...updateData };
+    }
+
     const userDoc = {
         displayName: displayName,
         email : email,
+        studios : [studio],
         studio : studio,
         photoURL : photoURL,
-        hasSeenWelcomeModal: false
+        hasSeenWelcomeModal: false,
+        activeStudioDomain: studio.domain
     }
-    await setDoc(doc(usersCollection, userDoc.email), userDoc)
+    await setDoc(userDocRef, userDoc)
     return userDoc
 }
 export const updateUser = async (email, updateData) => {
@@ -62,11 +109,12 @@ export const fetchLeads = async () => {
 };
 export const fetchUserByEmail = async (email) => {
     const usersCollection = collection(db, 'users');
-    const querySnapshot = await getDocs(usersCollection);
-    const usersData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-    }));
-    const user = usersData.find((user) => user.email === email);
-    return user;
+    const q = query(usersCollection, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+        return null;
+    }
+    
+    return { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() };
 };

@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { showAlert } from '../../../app/slices/alertSlice';
 import { migrateCollectionsByStudio } from '../../../firebase/functions/firestore';
 import { migrateStudios } from '../../../firebase/functions/subscription';
+import { migrateUsersToMultiStudio } from '../../../firebase/functions/user-firestore';
 
 export const StudiosTab = ({ studios }) => {
     const dispatch = useDispatch();
@@ -26,8 +27,9 @@ export const StudiosTab = ({ studios }) => {
 
     const handleMigration = async (action, successMsg, errorMsg) => {
         try {
-            await action();
-            dispatch(showAlert({ type: 'success', message: successMsg }));
+            const result = await action();
+            const message = typeof result === 'number' ? `${successMsg} (${result} users)` : successMsg;
+            dispatch(showAlert({ type: 'success', message }));
         } catch (error) {
             console.error(error);
             dispatch(showAlert({ type: 'error', message: `${errorMsg}: ${error.message}` }));
@@ -55,6 +57,13 @@ export const StudiosTab = ({ studios }) => {
                                 <button className="clear-search-button" onClick={() => setSearchQuery('')}>&times;</button>
                             )}
                         </div>
+                    </div>
+                    <div className="right-actions">
+                        <button className="button secondary outline" onClick={() => handleMigration(
+                            migrateUsersToMultiStudio,
+                            'All users migrated to multi-studio!',
+                            'Error migrating users'
+                        )}>Migrate All Users (Multi-Studio)</button>
                     </div>
                 </div>
                 <table className="invoice-table">

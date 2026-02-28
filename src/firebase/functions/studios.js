@@ -188,14 +188,21 @@ export const checkStudioDomainAvailability = async (domain) => {
 };
 export const fetchStudiosOfUser = async (email) => {
     const usersCollection = collection(db, 'users');
-    const querySnapshot = await getDocs(usersCollection);
-    const usersData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-    }));
-    const user = usersData.find((user) => user.email === email);
-    const studio = user?.studio
-    return studio;
+    const q = query(usersCollection, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+        return [];
+    }
+
+    const user = querySnapshot.docs[0].data();
+    
+    if (user?.studios) {
+        return user.studios;
+    }
+    
+    // Fallback for old structure
+    return user?.studio ? [user.studio] : [];
 };
 export const fetchStudios = async () => {
     const studiosCollection = collection(db, 'studios');
