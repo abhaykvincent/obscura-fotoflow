@@ -28,7 +28,7 @@ const LoginModal = () => {
   const [showStudioSelection, setShowStudioSelection] = useState(false);
   const [showDevQR, setShowDevQR] = useState(false);
 
-  const localIp = process.env.REACT_APP_EMULATOR_HOST || 'localhost';
+  const localIp = window.location.hostname;
   const devUrl = `http://${localIp}:${window.location.port || '3000'}`;
   
   useEffect(()=>{
