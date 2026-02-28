@@ -28,12 +28,21 @@ function getImageUrlByQuality(url, quality = 'web') {
 
 exports.serveGallery = functions.https.onRequest(async (req, res) => {
   // Extract studio and project from URL path
-  // Expected path format: /:studioName/smart-gallery/:projectId
+  // Expected path format: /:studioName/(smart-gallery|share)/:projectId
   const pathParts = req.path.split('/').filter(p => !!p);
   const studioName = pathParts[0];
+  const routeType = pathParts[1];
   const projectId = pathParts[2];
+  const collectionId = pathParts[3];
 
-  console.log(projectId)
+  console.log(`Serving gallery for studio: ${studioName}, project: ${projectId}, type: ${routeType}`);
+
+  // Redirect old /share links to /smart-gallery
+  if (routeType === 'share') {
+    const targetPath = `/${studioName}/smart-gallery/${projectId}${collectionId ? `/${collectionId}` : ''}`;
+    console.log(`Redirecting legacy share link to: ${targetPath}`);
+    return res.redirect(301, targetPath);
+  }
 
   // Path to the built index.html
   // Note: During deploy, we must ensure index.html is accessible here

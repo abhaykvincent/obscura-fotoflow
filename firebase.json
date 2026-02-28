@@ -22,6 +22,14 @@
         "function": "serveGallery"
       },
       {
+        "source": "/:studioName/share/:projectId",
+        "function": "serveGallery"
+      },
+      {
+        "source": "/:studioName/share/:projectId/:collectionId",
+        "function": "serveGallery"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
