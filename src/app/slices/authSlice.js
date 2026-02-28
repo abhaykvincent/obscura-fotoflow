@@ -100,7 +100,7 @@ export const login = createAsyncThunk(
       const user = users.find(u => u.email === serializedUser.email);
 
       if (user) {
-        const userStudio = user.studios?.[0] || user.studio;
+        const userStudio = serializedUser.selectedStudio || user.studios?.[0] || user.studio;
         
         color= '#54a134'
         console.log(`%cUser found in ${userStudio?.name || 'no studio'} `, `color: ${color}; font-size: ${fontSize}`);
@@ -111,7 +111,8 @@ export const login = createAsyncThunk(
           // store user
           localStorage.setItem('user', JSON.stringify(user));
           return {
-            ...user
+            ...user,
+            selectedStudio: userStudio
           }
         }
       } 
@@ -180,7 +181,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = { ...state.user, ...action.payload, name: action.payload.displayName, image: action.payload.photoURL };
         if(action.payload !== 'no-studio-found') {
-          state.currentStudio = action.payload.studios?.[0] || action.payload.studio || initialState.currentStudio;
+          state.currentStudio = action.payload.selectedStudio || action.payload.studios?.[0] || action.payload.studio || initialState.currentStudio;
         }
         else{
           // get user from local storage 
