@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import { isAppleDevice } from '../../utils/generalUtils';
 import { createNotification } from '../../app/slices/notificationSlice';
 import { fetchLoginLocation } from '../../utils/locationUtils';
+import { QRCodeCanvas } from 'qrcode.react';
 
 const LoginModal = () => {
   const dispatch = useDispatch();
@@ -25,6 +26,10 @@ const LoginModal = () => {
   const [googleSignInResult, setGoogleSignInResult] = useState({});
   const [userStudios, setUserStudios] = useState([]);
   const [showStudioSelection, setShowStudioSelection] = useState(false);
+  const [showDevQR, setShowDevQR] = useState(false);
+
+  const localIp = process.env.REACT_APP_EMULATOR_HOST || 'localhost';
+  const devUrl = `http://${localIp}:${window.location.port || '3000'}`;
   
   useEffect(()=>{
     
@@ -269,7 +274,37 @@ const LoginModal = () => {
           </span>
         </p>
       </div>
+
+      {isDeveloper && (
+        <div className="dev-qr-trigger" onClick={() => setShowDevQR(true)}>
+          <div className="button icon icon-only share"></div>
+        </div>
+      )}
     </div>
+
+    {showDevQR && (
+      <div className="dev-qr-modal modal-container">
+        <div className="modal island">
+          <div className="modal-header">
+            <div className="modal-controls">
+              <div className="control close" onClick={() => setShowDevQR(false)}></div>
+            </div>
+            <div className="modal-title">Developer Access</div>
+          </div>
+          <div className="modal-body">
+            <div className="qr-code-section">
+              <QRCodeCanvas value={devUrl} size={256} />
+              <p className="ip-label">{devUrl}</p>
+              <p className="instruction">Scan to open on mobile</p>
+            </div>
+          </div>
+          <div className="actions">
+            <div className="button primary" onClick={() => setShowDevQR(false)}>Close</div>
+          </div>
+        </div>
+        <div className="modal-backdrop" onClick={() => setShowDevQR(false)}></div>
+      </div>
+    )}
     <AddStudio/>
     <LoginEmailPassword/>
     <TermsOfServiceModal/>
