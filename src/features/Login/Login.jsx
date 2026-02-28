@@ -13,7 +13,7 @@ import { fetchStudiosOfUser } from '../../firebase/functions/studios';
 import { isDeveloper, trackEvent } from '../../analytics/utils';
 import { updateProjectsStatus } from '../../app/slices/projectsSlice';
 import { Link } from 'react-router-dom';
-import { isAppleDevice } from '../../utils/generalUtils';
+import { isAppleDevice, getLocalIP } from '../../utils/generalUtils';
 import { createNotification } from '../../app/slices/notificationSlice';
 import { fetchLoginLocation } from '../../utils/locationUtils';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -27,10 +27,20 @@ const LoginModal = () => {
   const [userStudios, setUserStudios] = useState([]);
   const [showStudioSelection, setShowStudioSelection] = useState(false);
   const [showDevQR, setShowDevQR] = useState(false);
+  const [localIp, setLocalIp] = useState(window.location.hostname);
 
-  const localIp = process.env.REACT_APP_EMULATOR_HOST || window.location.hostname;
   const devUrl = `http://${localIp}:${window.location.port || '3000'}`;
   
+  useEffect(() => {
+    if (isDeveloper && (localIp === 'localhost' || localIp === '127.0.0.1')) {
+      getLocalIP().then(ip => {
+        if (ip) {
+          setLocalIp(ip);
+        }
+      });
+    }
+  }, [localIp]);
+
   useEffect(()=>{
     
   },[])
@@ -277,7 +287,7 @@ const LoginModal = () => {
 
       {isDeveloper && (
         <div className="dev-qr-trigger" onClick={() => setShowDevQR(true)}>
-          <div className="button icon icon-only share"></div>
+          <div /* className="button icon icon-only share" */></div>
         </div>
       )}
     </div>
