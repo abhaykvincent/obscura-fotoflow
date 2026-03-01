@@ -78,41 +78,39 @@ function DashboardProjects({project}){
     {
       projectDashboardView === 'abstract'?
       (project.collections.length === 0 ? (
-        <>  
-          <div className="gallery new empty-gallery" 
-          onClick={()=>dispatch(openModal('createCollection'))}>
-            <div className="heading-section">
-              <h3 className='heading'>Galleries <span>{project.collections.length}</span></h3>
-            </div>
-            <div className="thumbnails">
-              <div className="thumbnail thumb1">
-                <div className="backthumb bthumb1">
-                  <div className="button primary outline"
-                  onClick={() => {
-                    // Your action for Delete
-                    dispatch(openModal('createCollection'));
-                  }}
-                  >New Gallery</div>
+        (() => {
+          const isArchived = project.status === 'archive' || project.storage?.status === 'archive';
+          const isExpired = project.status === 'expired';
+          
+          if (isExpired) return null;
+
+          return (
+            <div 
+              className={`gallery new empty-gallery ${isArchived ? 'disabled' : ''}`} 
+              onClick={() => !isArchived && dispatch(openModal('createCollection'))}
+            >
+              <div className="heading-section">
+                <h3 className='heading'>Galleries <span>{project.collections.length}</span></h3>
+              </div>
+              <div className="thumbnails">
+                <div className="thumbnail thumb1">
+                  <div className="backthumb bthumb1">
+                    <div 
+                      className="button primary outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!isArchived) dispatch(openModal('createCollection'));
+                      }}
+                    >New Gallery</div>
+                  </div>
+                  <div className="backthumb bthumb2"></div>
+                  <div className="backthumb bthumb3"></div>
+                  <div className="backthumb bthumb4"></div>
                 </div>
-                <div className="backthumb bthumb2"></div>
-                <div className="backthumb bthumb3"></div>
-                <div className="backthumb bthumb4"></div>
               </div>
             </div>
-          </div>
-          
-          {/* <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
-            <DashboardEvents project={project} />
-            <div className="financials-overview">
-              <DashboardPayments project={project} />
-            </div>
-
-                    <SidePanel project={project} />
-          </div> */}
-
-
-
-        </>
+          );
+        })()
       ) : (
         <>
 

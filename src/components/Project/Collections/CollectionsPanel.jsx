@@ -11,6 +11,9 @@ const CollectionsPanel = ({ project, collectionId}) => {
   const defaultStudio = useSelector(selectUserStudio)
   positionCollectionsActiveBox(collectionId,project.collections)
 
+  const isArchived = project.status === 'archive' || project.storage?.status === 'archive';
+  const isExpired = project.status === 'expired';
+
   return <div className="galleries">
             <div className="heading-section">
               <h3 className='heading'>Galleries <span>{project.collections.length}</span></h3>
@@ -80,16 +83,20 @@ const CollectionsPanel = ({ project, collectionId}) => {
 
             
           ))}
-          <div className="gallery new" 
-            onClick={() => dispatch(openModal('createCollection'))}>
-            <div className="thumbnails">
-              <div className="thumbnail thumb1">
-                <div className="backthumb bthumb1">
-                  <div className="button primary outline">Create Gallery</div>
+          {!isExpired && (
+            <div 
+              className={`gallery new ${isArchived ? 'disabled' : ''}`} 
+              onClick={() => !isArchived && dispatch(openModal('createCollection'))}
+            >
+              <div className="thumbnails">
+                <div className="thumbnail thumb1">
+                  <div className="backthumb bthumb1">
+                    <div className="button primary outline">Create Gallery</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
           
           {/* <div className="active-box box"></div> */}
         </div>:''

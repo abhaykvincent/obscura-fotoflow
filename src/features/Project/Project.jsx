@@ -69,9 +69,11 @@ export default function Project() {
     modalsRef.current = modals;
   }, [modals]);
   useEffect(() => {
-    if(project?.collections.length === 0){
+    const isArchived = project?.status === 'archive' || project?.storage?.status === 'archive';
+    const isExpired = project?.status === 'expired';
 
-    const timer = setTimeout(() => {
+    if (project?.collections.length === 0 && !isArchived && !isExpired) {
+      const timer = setTimeout(() => {
         dispatch(openModal('createCollection'));
       }, 2000); // Using 500ms for a noticeable yet quick delay
 
@@ -102,7 +104,10 @@ export default function Project() {
       
       updateProjectLastOpenedInFirestore(domain, project.id);
 
-      if (project.collections.length === 0) {
+      const isArchived = project.status === 'archive' || project.storage?.status === 'archive';
+      const isExpired = project.status === 'expired';
+
+      if (project.collections.length === 0 && !isArchived && !isExpired) {
         setTimeout(() => {
           const isAnyModalOpen = Object.values(modalsRef.current).some(Boolean);
           if (!isAnyModalOpen) dispatch(openModal('firstCollection'));
@@ -135,7 +140,7 @@ export default function Project() {
     dispatch(restoreProject({ domain, projectId: id }));
   }
 
-  const isArchived = project?.status === 'archive';
+  const isArchived = project?.status === 'archive' || project?.storage?.status === 'archive';
   const isExpired = project?.status === 'expired';
   const archiveDate = project?.storage?.storageHistory?.find(h => h.status === 'archive')?.dateMoved;
   
