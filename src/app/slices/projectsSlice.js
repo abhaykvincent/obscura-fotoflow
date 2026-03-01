@@ -29,10 +29,14 @@ export const fetchProjects = createAsyncThunk(
         const createdAtDate = new Date(project.createdAt);
         const lastRestoredAt = project.storage?.lastRestoredAt ? new Date(project.storage.lastRestoredAt) : null;
         
-        // Use projectValidityMonths if available, otherwise default to 3 months
-        const validityMonths = project.projectValidityMonths || 3;
+        // Calculate archive threshold based on fileRetentionYears
+        // For old projects, fallback to projectValidityMonths (which stored years)
+        const retentionYears = project.fileRetentionYears ? parseInt(project.fileRetentionYears) : (project.projectValidityMonths && parseInt(project.projectValidityMonths) <= 3 ? parseInt(project.projectValidityMonths) : 1);
         const archiveThreshold = new Date();
-        archiveThreshold.setMonth(archiveThreshold.getMonth() - validityMonths);
+        archiveThreshold.setMonth(archiveThreshold.getMonth() - (retentionYears * 12));
+        
+        // Add a 30-day grace period before archiving
+        archiveThreshold.setDate(archiveThreshold.getDate() - 30);
 
         // Check if the project's creation date is before the threshold
         // AND check if it was restored more than 30 days ago (30-day lock)

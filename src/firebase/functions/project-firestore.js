@@ -81,6 +81,8 @@ export const addProjectToStudio = async (domain, project) => {
     const projectData = {
       id,
       ...project,
+      projectValidityMonths: project.projectValidityMonths || '6',
+      fileRetentionYears: project.fileRetentionYears || '1',
       storage: {
         status: 'active',
         storageHistory: [{
