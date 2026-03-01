@@ -19,6 +19,20 @@ export function formatDate(dateInput) {
   // Format the final date string
   return `${weekday}, ${month} ${day}, ${year}`;
 }
+
+export const formatDateStyle02 = (timestamp) => {
+  if (!timestamp) return 'N/A';
+  
+  // Handle Firestore Timestamp vs Date string
+  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  
+  return date.toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
 export function formatInvitationDate(dateInput) {
   const date = new Date(dateInput); // Ensure it's a Date object
   const now = new Date();
