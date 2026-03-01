@@ -135,21 +135,11 @@ export default function Project() {
     dispatch(restoreProject({ domain, projectId: id }));
   }
 
-  const isExpired = useMemo(() => {
-    if (!project?.createdAt || !project?.projectValidityMonths) return false;
-
-    const createdAt = new Date(project.createdAt);
-    const validityMonths = parseInt(project.projectValidityMonths || '6');
-    const expiryDate = createdAt;
-    expiryDate.setMonth(expiryDate.getMonth() + validityMonths);
-    console.log(Date.now() > expiryDate.getTime())
-    return Date.now() > expiryDate.getTime();
-  }, [project]);
+  const isArchived = project?.status === 'archive';
+  const isExpired = project?.status === 'expired';
+  const archiveDate = project?.storage?.storageHistory?.find(h => h.status === 'archive')?.dateMoved;
   
   if (!project) return null;
-
-  const isArchived = project.storage?.status === 'archive';
-  const archiveDate = project.storage?.storageHistory?.find(h => h.status === 'archive')?.dateMoved;
 
   return (
     <>
@@ -167,23 +157,7 @@ export default function Project() {
       <AddBudgetModal project={project} />
 
       <main className='project-page'>
-        {isArchived || !isExpired ? (
-          <div className="archive-banner">
-            <div className="banner-content">
-              <div className="status-badge">Archived</div>
-              <div className="banner-info">
-                <h3>Storage Optimized</h3>
-                <p>
-                  This project was moved to <strong>Archive Storage</strong> on {archiveDate ? new Date(archiveDate).toLocaleDateString() : 'N/A'}. 
-                  Smart Previews are still active, but original files must be restored for download.
-                </p>
-              </div>
-              <div className="banner-actions">
-                <button className="button primary small" onClick={handleRestoreProject}>Restore Originals</button>
-              </div>
-            </div>
-          </div>
-        ) : isExpired ? (
+        {isExpired ? (
           <div className="archive-banner expired-banner">
             <div className="banner-content">
               <div className="status-badge">Expired</div>
@@ -219,12 +193,12 @@ export default function Project() {
                     <div className={`button tertiary icon pin ${pinIconClass}`} onClick={handlePinCopy}>
                       {pinText}
                     </div>
-                      {isArchived ? 'Archived (Only client  and you)' : 'Share'}
+                      {isExpired ? 'Expired' : isArchived ? 'Archived (Only client and you)' : 'Share'}
                     <button
-                      className={`button primary share icon ${(project.uploadedFilesCount > 0 && !isArchived) ? '' : ''}`}
-                      onClick={() => project.uploadedFilesCount > 0  && dispatch(openModal('shareGallery'))}
+                      className={`button primary share icon ${(project.uploadedFilesCount > 0 && !isExpired) ? '' : 'disabled'}`}
+                      onClick={() => project.uploadedFilesCount > 0 && !isExpired && dispatch(openModal('shareGallery'))}
                     >
-                      Share
+                      {isExpired ? 'Extend Validity' : 'Share'}
                     </button>
         
                     <DropdownMenu>
@@ -232,7 +206,7 @@ export default function Project() {
                         <div className="icon options" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        <DropdownMenuItem onSelect={() => !isArchived && dispatch(openModal('createCollection'))} disabled={isArchived}>
+                        <DropdownMenuItem onSelect={() => !isArchived && !isExpired && dispatch(openModal('createCollection'))} disabled={isArchived || isExpired}>
                           <div className="icon-show add" /> New Gallery
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />

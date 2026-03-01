@@ -24,44 +24,66 @@ export const fetchProjects = createAsyncThunk(
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     const processedProjects = await Promise.all(projects.map(async (project) => {
-      // Ensure createdAt exists and is a valid timestamp, and the project is not already archived
-      if (project.createdAt && typeof project.createdAt === 'number' && project.storage?.status !== 'archive') {
-        const createdAtDate = new Date(project.createdAt);
+      // Ensure createdAt exists and is a valid timestamp
+      if (project.createdAt && typeof project.createdAt === 'number') {
+        const now = Date.now();
         const lastRestoredAt = project.storage?.lastRestoredAt ? new Date(project.storage.lastRestoredAt) : null;
         
-        // Calculate archive threshold based on fileRetentionYears
-        const retentionYears = parseInt(project.fileRetentionYears || '1');
-        const archiveThreshold = new Date();
-        archiveThreshold.setMonth(archiveThreshold.getMonth() - (retentionYears * 12));
+        // 1. Calculate ARCHIVE threshold (Gallery Validity months)
+        // Past this -> Archive status (moves to cold storage)
+        const validityMonths = parseInt(project.projectValidityMonths || '6');
+        const archiveThresholdDate = new Date(project.createdAt);
+        archiveThresholdDate.setMonth(archiveThresholdDate.getMonth() + validityMonths);
         
-        // Add a 30-day grace period before archiving
-        archiveThreshold.setDate(archiveThreshold.getDate() - 30);
+        // 2. Calculate FINAL EXPIRY threshold (File Retention years + 30-day grace)
+        // Past this -> Expired status (Public access ends)
+        const retentionYears = parseInt(project.fileRetentionYears || '1');
+        const finalExpiryThresholdDate = new Date(project.createdAt);
+        finalExpiryThresholdDate.setMonth(finalExpiryThresholdDate.getMonth() + (retentionYears * 12));
+        finalExpiryThresholdDate.setDate(finalExpiryThresholdDate.getDate() + 30);
 
-        // Check if the project's creation date is before the threshold
-        // AND check if it was restored more than 30 days ago (30-day lock)
-        if (createdAtDate < archiveThreshold && (!lastRestoredAt || lastRestoredAt < thirtyDaysAgo)) {
-          // Update the project in Firestore
-          await updateProjectStorageToArchive(currentDomain, project.id);
-          
-          const newStorageHistoryEntry = {
-            status: 'archive',
-            dateMoved: Date.now(),
-          };
+        const isArchivePassed = now > archiveThresholdDate.getTime();
+        const isFinalExpiryPassed = now > finalExpiryThresholdDate.getTime();
 
-          // Return a new project object with updated storage information for the Redux state
-          return {
-            ...project,
-            storage: {
-              ...project.storage, // Preserve existing storage properties
+        let updatedProject = { ...project };
+
+        // Process Final Expiry (Stage 2)
+        if (isFinalExpiryPassed && project.status !== 'expired') {
+          await updateProjectStatusInFirestore(currentDomain, project.id, 'expired');
+          updatedProject.status = 'expired';
+        } 
+        // Process Archiving (Stage 1) - only if not already archived/expired
+        else if (isArchivePassed && project.storage?.status !== 'archive' && project.status !== 'expired') {
+          // Check if it was restored recently (30-day lock)
+          if (!lastRestoredAt || lastRestoredAt < thirtyDaysAgo) {
+            await updateProjectStorageToArchive(currentDomain, project.id);
+            
+            const newStorageHistoryEntry = {
+              status: 'archive',
+              dateMoved: now,
+            };
+
+            updatedProject.status = 'archive';
+            updatedProject.storage = {
+              ...project.storage,
               status: 'archive',
               storageHistory: project.storage?.storageHistory
-              ? [...project.storage.storageHistory, newStorageHistoryEntry]
-              : [newStorageHistoryEntry],
-            },
-          };
+                ? [...project.storage.storageHistory, newStorageHistoryEntry]
+                : [newStorageHistoryEntry],
+            };
+          }
         }
+
+        // Return the project with pre-calculated thresholds for the UI
+        return {
+          ...updatedProject,
+          storage: {
+            ...updatedProject.storage,
+            archiveThreshold: archiveThresholdDate.getTime(),
+            expiryDate: finalExpiryThresholdDate.getTime(),
+          },
+        };
       }
-      // Return the project as is if it doesn't meet the archive criteria
       return project;
     }));
 
