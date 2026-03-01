@@ -173,6 +173,21 @@ export default function Project() {
               </div>
             </div>
           </div>
+        ) : isArchived ? (
+          <div className="archive-banner">
+            <div className="banner-content">
+              <div className="status-badge">Archived</div>
+              <div className="banner-info">
+                <h3>Project Archived</h3>
+                <p>
+                  This project is currently archived and not active. Only the client and studio can view high-resolution photos.
+                </p>
+              </div>
+              <div className="banner-actions">
+                <button className="button primary small" onClick={handleRestoreProject}>Restore Project</button>
+              </div>
+            </div>
+          </div>
         ) : (
           <ProjectPageCoverImages project={project} />
         )}

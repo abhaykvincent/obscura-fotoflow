@@ -26,7 +26,8 @@ const FILTER_TABS = {
     DRAFT: 'draft',
     SELECTED: 'selected',
     COMPLETED: 'completed',
-    ARCHIVED: 'archive'
+    ARCHIVED: 'archive',
+    EXPIRED: 'expired'
 };
 
 const VIEW_TYPES = {
@@ -135,6 +136,8 @@ function Projects() {
                 return getProjectsByStatus(liveProjects, 'selected');
             case FILTER_TABS.COMPLETED:
                 return getProjectsByStatus(liveProjects, 'completed');
+            case FILTER_TABS.EXPIRED:
+                return getProjectsByStatus(liveProjects, 'expired');
             default:
                 return liveProjects;
         }
@@ -213,6 +216,8 @@ function Projects() {
             heading = "No completed projects found for this period";
         } else if (selectedTab === FILTER_TABS.ARCHIVED) {
             heading = "No archived projects found for this period";
+        } else if (selectedTab === FILTER_TABS.EXPIRED) {
+            heading = "No expired projects found for this period";
         }
 
         return (
@@ -343,6 +348,13 @@ function Projects() {
                                         role="button" tabIndex={0}
                                     >
                                         Completed
+                                    </div>
+                                    <div
+                                        className={`control ctrl-expired ${selectedTab === FILTER_TABS.EXPIRED ? 'active' : ''}`}
+                                        onClick={() => handleTabClick(FILTER_TABS.EXPIRED)}
+                                        role="button" tabIndex={0}
+                                    >
+                                        Expired
                                     </div>
                                 </div>
                             </div>
