@@ -32,6 +32,7 @@ import './ArchiveBanner.scss';
 import { ProjectPageCoverImages } from '../../components/ProjectPageCover/ProjectPageCoverImages';
 import { isDeveloper, isProduction } from '../../analytics/utils';
 import { selectStudio } from '../../app/slices/studioSlice';
+import { ChartNoAxesColumnDecreasing } from 'lucide-react';
 
 export default function Project() {
   const { id } = useParams();
@@ -134,6 +135,17 @@ export default function Project() {
     dispatch(restoreProject({ domain, projectId: id }));
   }
 
+  const isExpired = useMemo(() => {
+    if (!project?.createdAt || !project?.projectValidityMonths) return false;
+
+    const createdAt = new Date(project.createdAt);
+    const validityMonths = parseInt(project.projectValidityMonths || '6');
+    const expiryDate = createdAt;
+    expiryDate.setMonth(expiryDate.getMonth() + validityMonths);
+    console.log(Date.now() > expiryDate.getTime())
+    return Date.now() > expiryDate.getTime();
+  }, [project]);
+  
   if (!project) return null;
 
   const isArchived = project.storage?.status === 'archive';
@@ -155,7 +167,7 @@ export default function Project() {
       <AddBudgetModal project={project} />
 
       <main className='project-page'>
-        {isArchived ? (
+        {isArchived || !isExpired ? (
           <div className="archive-banner">
             <div className="banner-content">
               <div className="status-badge">Archived</div>
@@ -171,11 +183,26 @@ export default function Project() {
               </div>
             </div>
           </div>
-        ):
-        <ProjectPageCoverImages project={project} />
-      
-      }
-                <div className="project-dashboard">
+        ) : isExpired ? (
+          <div className="archive-banner expired-banner">
+            <div className="banner-content">
+              <div className="status-badge">Expired</div>
+              <div className="banner-info">
+                <h3>Public Access Ended</h3>
+                <p>
+                  This gallery's public access period has ended. It is no longer visible to guests without a PIN. 
+                  You can still manage and share it as needed.
+                </p>
+              </div>
+              <div className="banner-actions">
+                <button className="button secondary small" onClick={() => dispatch(openModal('shareGallery'))}>Extend Validity</button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <ProjectPageCoverImages project={project} />
+        )}
+        <div className="project-dashboard">
                   <DashboardProjects project={project} />
                 </div>
               </main>
