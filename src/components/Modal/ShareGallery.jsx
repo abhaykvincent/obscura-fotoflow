@@ -176,10 +176,11 @@ function ShareGallery({project }) {
               {project?.collections.map((collection, index) => {
 
                 const isUpdating = updatingCollections[collection.id]?.status || updatingCollections[collection.id]?.selection;
+                const isVisible = collection.status === 'visible' || collection.status === 'active' || collection.status === 'selected';
 
                 return (
 
-                  <div key={index} className={`gallery-item ${collection.status !== 'visible' && collection.status !== 'selected' ? 'disabled' : ''} ${isUpdating ? 'updating' : ''}`}>
+                  <div key={index} className={`gallery-item ${!isVisible ? 'disabled' : ''} ${isUpdating ? 'updating' : ''}`}>
 
                     <div className="gallery-info">
 
@@ -196,7 +197,7 @@ function ShareGallery({project }) {
                           control={
                             <IOSSwitch
                               sx={{ m: 1 }}
-                              checked={collection.status === 'visible'}
+                              checked={isVisible}
                               onChange={(event) => {
                                 const newStatus = event.target.checked ? 'visible' : 'hide';
                                 dispatch(updateCollectionStatus({
@@ -217,7 +218,7 @@ function ShareGallery({project }) {
                         <div className="gallery-name">{collection.name}</div>
                         <div className="gallery-images-count">
                           {
-                          collection.status !== 'visible'|| collection.status !== 'selected' ?'Hidden':
+                          !isVisible ? 'Hidden' :
                           (collection.filesCount > 1 ? `${collection.filesCount} Photos` : '')}
                         </div>
                       </div>
@@ -235,7 +236,7 @@ function ShareGallery({project }) {
                           <IOSSwitch
                             sx={{ m: 1 }}
                             checked={collection.selectionGallery === true}
-                            disabled={collection.status !== 'visible' || updatingCollections[collection.id]?.selection}
+                            disabled={!isVisible || updatingCollections[collection.id]?.selection}
                             onChange={(event) => {
                               const newStatus = event.target.checked;
                               dispatch(updateSelectionGalleryStatus({

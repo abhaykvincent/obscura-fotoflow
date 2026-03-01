@@ -162,7 +162,7 @@ export const updateSelectionGalleryStatus = createAsyncThunk(
     if (selectionGallery) {
       await updateCollectionStatusByCollectionIdInFirestore(domain, projectId, collectionId, 'active', selectionGallery);
     } else {
-      await updateSelectionGalleryStatusByCollectionIdInFirestore(domain, projectId, collectionId, selectionGallery);
+      await updateCollectionStatusByCollectionIdInFirestore(domain, projectId, collectionId, 'visible', selectionGallery);
     }
     return { projectId, collectionId, selectionGallery };
   }
@@ -522,6 +522,8 @@ const projectsSlice = createSlice({
             collectionToUpdate.selectionGallery = selectionGallery;
             if (selectionGallery) {
               collectionToUpdate.status = 'active';
+            } else {
+              collectionToUpdate.status = 'visible';
             }
           }
         }
