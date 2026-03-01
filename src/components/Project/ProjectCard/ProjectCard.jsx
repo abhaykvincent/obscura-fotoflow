@@ -32,11 +32,13 @@ function ProjectCard({project,type}) {
                 <div className="left">
                     <p className="project-type">{project.type}</p>
                     <h4 className="project-title">{project.name}</h4>
-                    {project.storage?.status !== 'archive' && (
+                    {project.status !== 'expired' && (
                         <ProjectExpiration 
                             createdAt={project.createdAt} 
+                            status={project.status}
                             projectValidityMonths={project.projectValidityMonths}
                             fileRetentionYears={project.fileRetentionYears}
+                            archiveThreshold={project.storage?.archiveThreshold}
                             expiryDate={project.storage?.expiryDate}
                         />
                     )}
