@@ -191,9 +191,9 @@ export default function Project() {
         ) : (
           <ProjectPageCoverImages project={project} />
         )}
-        <div className="project-dashboard">
-                  <DashboardProjects project={project} />
-                </div>
+        <div className={`project-dashboard ${isExpired ? 'locked' : ''}`}>
+          <DashboardProjects project={project} />
+        </div>
               </main>
         
               {createPortal(
@@ -210,8 +210,8 @@ export default function Project() {
                     </div>
                       {isExpired ? 'Expired' : isArchived ? 'Archived (Only client and you)' : 'Share'}
                     <button
-                      className={`button primary share icon ${(project.uploadedFilesCount > 0 && !isExpired) ? '' : 'disabled'}`}
-                      onClick={() => project.uploadedFilesCount > 0 && !isExpired && dispatch(openModal('shareGallery'))}
+                      className={`button primary share icon ${(project.uploadedFilesCount > 0 || isExpired) ? '' : 'disabled'}`}
+                      onClick={() => (project.uploadedFilesCount > 0 || isExpired) && dispatch(openModal('shareGallery'))}
                     >
                       {isExpired ? 'Extend Validity' : 'Share'}
                     </button>
