@@ -81,6 +81,8 @@ export const addProjectToStudio = async (domain, project) => {
     const projectData = {
       id,
       ...project,
+      projectValidityMonths: project.projectValidityMonths || '6',
+      fileRetentionYears: project.fileRetentionYears || '1',
       storage: {
         status: 'active',
         storageHistory: [{
@@ -211,15 +213,22 @@ export const updateProjectStorageToArchive = async (domain, projectId) => {
                 return;
             }
 
+            const retentionYears = parseInt(projectData.fileRetentionYears || '1');
+            const storageExpiryDate = new Date(projectData.createdAt);
+            storageExpiryDate.setMonth(storageExpiryDate.getMonth() + (retentionYears * 12));
+            storageExpiryDate.setDate(storageExpiryDate.getDate() + 30); // 30-day grace period
+
             const newStorageHistoryEntry = {
                 status: 'archive',
                 dateMoved: Date.now(),
             };
 
             const updatedData = {
+                status: 'archive',
                 storage: {
                     ...projectData.storage,
                     status: 'archive',
+                    expiryDate: storageExpiryDate.getTime(),
                     storageHistory: arrayUnion(newStorageHistoryEntry)
                 }
             };
@@ -262,6 +271,7 @@ export const restoreProjectFromArchive = async (domain, projectId) => {
             };
 
             const updatedData = {
+                status: 'active',
                 storage: {
                     ...projectData.storage,
                     status: 'active',
@@ -283,6 +293,54 @@ export const restoreProjectFromArchive = async (domain, projectId) => {
         }
     } catch (error) {
         console.error(`Error restoring project storage for ${projectId}: ${error.message}`);
+        throw error;
+    }
+};
+
+export const migrateProjectsValidityFields = async () => {
+    try {
+        const studiosCollectionRef = collection(db, 'studios');
+        const studiosSnapshot = await getDocs(studiosCollectionRef);
+        let totalUpdated = 0;
+
+        for (const studioDoc of studiosSnapshot.docs) {
+            const domain = studioDoc.id;
+            const projectsCollectionRef = collection(db, 'studios', domain, 'projects');
+            const projectsSnapshot = await getDocs(projectsCollectionRef);
+
+            for (const projectDoc of projectsSnapshot.docs) {
+                const projectData = projectDoc.data();
+                const updates = {};
+
+                // Migration logic:
+                // If fileRetentionYears is missing, it's an old project.
+                // Old projectValidityMonths (1, 2, 3) were actually years.
+                if (!projectData.fileRetentionYears) {
+                    const oldValidity = parseInt(projectData.projectValidityMonths || '1');
+                    
+                    if (oldValidity <= 3) {
+                        // It was years
+                        updates.fileRetentionYears = String(oldValidity);
+                        updates.projectValidityMonths = '3'; // Default gallery validity
+                    } else {
+                        // It might already be in months or default
+                        updates.fileRetentionYears = '1';
+                        updates.projectValidityMonths = String(oldValidity);
+                    }
+                }
+
+                if (Object.keys(updates).length > 0) {
+                    const projectDocRef = doc(db, 'studios', domain, 'projects', projectDoc.id);
+                    await updateDoc(projectDocRef, updates);
+                    totalUpdated++;
+                }
+            }
+        }
+
+        console.log(`Migration complete. Updated ${totalUpdated} projects.`);
+        return totalUpdated;
+    } catch (error) {
+        console.error('Error migrating projects validity fields:', error);
         throw error;
     }
 };

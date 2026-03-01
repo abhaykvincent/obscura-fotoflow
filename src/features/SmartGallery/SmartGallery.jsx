@@ -29,6 +29,7 @@ export default function SmartGallery() {
   const tagline = settings?.gallery?.galleryTagline || `smile with ${studioName}`;
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState(null);
+  const [isExpired, setIsExpired] = useState(false);
   const [visibleCollections, setVisibleCollections] = useState([]);
   const [collectionsLoading, setCollectionsLoading] = useState(true);
   
@@ -91,6 +92,28 @@ export default function SmartGallery() {
       try {
         const projectData = await fetchProject(studioName, projectId);
         setProject(projectData);
+
+        // Check for project expiry (gallery access)
+        if (projectData.createdAt) {
+          const createdAt = new Date(projectData.createdAt);
+          const validityMonths = parseInt(projectData.projectValidityMonths || '6');
+          
+          const expiryDate = new Date(createdAt);
+          expiryDate.setMonth(expiryDate.getMonth() + validityMonths);
+          
+          const isNowExpired = Date.now() > expiryDate.getTime();
+          setIsExpired(isNowExpired);
+          
+          if (isNowExpired && !isAuthenticated && !isPinValid(projectId)) {
+            dispatch(showAlert({ 
+              type: 'error', 
+              message: 'This gallery has expired and is no longer public. Please use your PIN for access or contact the photographer.' 
+            }));
+            // Redirect to PIN entry if not authenticated
+            navigate(`/${studioName}/smart-gallery/${projectId}/download/pin`);
+          }
+        }
+
         if (!isAuthenticated || user === 'no-studio-found') {
           setUserType('Guest');
         }

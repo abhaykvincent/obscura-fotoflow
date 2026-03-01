@@ -1,18 +1,25 @@
 import React, { useEffect, useState } from 'react';
 
-export default function ProjectExpiration({ createdAt, projectValidityMonths = 12 }) {
+export default function ProjectExpiration({ createdAt, projectValidityMonths = 6, fileRetentionYears = 1, expiryDate = null }) {
   const [daysRemaining, setDaysRemaining] = useState(0);
 
   useEffect(() => {
     const calculateDaysRemaining = () => {
-      // Use projectValidityMonths to calculate expiration
-      const expirationDate = new Date(createdAt);
-      expirationDate.setMonth(expirationDate.getMonth() + projectValidityMonths);
+      let finalExpiryDate;
+
+      if (expiryDate) {
+        finalExpiryDate = new Date(expiryDate);
+      } else {
+        // Fallback: Use fileRetentionYears to calculate expiration (with 30-day grace)
+        finalExpiryDate = new Date(createdAt);
+        finalExpiryDate.setMonth(finalExpiryDate.getMonth() + (fileRetentionYears * 12));
+        finalExpiryDate.setDate(finalExpiryDate.getDate() + 30);
+      }
       
       const currentDate = Date.now();
 
       // Calculate the difference in days
-      const remainingTime = expirationDate.getTime() - currentDate;
+      const remainingTime = finalExpiryDate.getTime() - currentDate;
       const daysLeft = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
       
       // Update state

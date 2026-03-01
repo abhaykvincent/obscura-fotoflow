@@ -104,15 +104,15 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
           <span className={`arrow`}></span>
 
         </div>
-        <div className="advanced-label">Validity {projectData.projectValidityMonths} { projectData.projectValidityMonths > 1 ? `years`:`year`}</div>
+        <div className="advanced-label">Validity {projectData.projectValidityMonths} { projectData.projectValidityMonths > 1 ? `months` : `month`} </div>
       </div>
       <div className={`advanced-options ${showAdvanced ? 'show' : ''}`}>
         <div className="advanced-options-inner">
           <div className="field validity-field">
-            <label>Validity</label>
+            <label>Gallery Validity</label>
             <div className="project-validity-wrap">
               <div className="project-validity-options">
-                {ARCHIVE_OPTIONS.map(({ id, value, label, disabled, className }) => (
+                {VALIDITY_OPTIONS.map(({ id, value, label, disabled, className }) => (
                   <div className={`radio-button-group ${className}`} key={id}>
                     <input
                       type="radio"
@@ -128,7 +128,32 @@ const ProjectDetails = ({ user, projectData, errors, handleInputChange, nameInpu
                 ))}
               </div>
               <div className="info">
-                Files will be deleted after <span> <b className={animateValidity ? 'validity-change-animation' : ''}>{projectData.projectValidityMonths} { projectData.projectValidityMonths > 1 ? `years`:`year`}</b>.</span>
+                Gallery public access allowed for <span> <b className={animateValidity ? 'validity-change-animation' : ''}>{projectData.projectValidityMonths} { projectData.projectValidityMonths > 1 ? `months`:`month`}</b>.</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="field validity-field file-retention">
+            <label>File Retention</label>
+            <div className="project-validity-wrap">
+              <div className="project-validity-options">
+                {ARCHIVE_OPTIONS.map(({ id, value, label, disabled, className }) => (
+                  <div className={`radio-button-group ${className}`} key={id}>
+                    <input
+                      type="radio"
+                      id={id}
+                      name="fileRetentionYears"
+                      value={value}
+                      checked={projectData.fileRetentionYears === value}
+                      onChange={handleInputChange}
+                      disabled={disabled}
+                    />
+                    <label htmlFor={id}>{label}</label>
+                  </div>
+                ))}
+              </div>
+              <div className="info">
+                Files will be deleted after <span> <b className={animateValidity ? 'validity-change-animation' : ''}>{projectData.fileRetentionYears} { projectData.fileRetentionYears > 1 ? `years`:`year`}</b>.</span>
               </div>
             </div>
           </div>

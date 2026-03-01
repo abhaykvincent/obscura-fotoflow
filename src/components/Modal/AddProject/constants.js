@@ -54,8 +54,9 @@ export const PROJECT_TYPES = [
     uploadedFilesCount: 0,
     totalFileSize: 0,
     status: "draft",
-    projectValidityMonths: '1',
+    projectValidityMonths: '6',
+    fileRetentionYears: '1',
     createdAt: new Date().getTime(),
-  lastOpened: new Date().getTime(),
-  team: [],
+    lastOpened: new Date().getTime(),
+    team: [],
   };

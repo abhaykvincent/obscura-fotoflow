@@ -33,7 +33,12 @@ function ProjectCard({project,type}) {
                     <p className="project-type">{project.type}</p>
                     <h4 className="project-title">{project.name}</h4>
                     {project.storage?.status !== 'archive' && (
-                        <ProjectExpiration createdAt={project.createdAt} projectValidityMonths={project.projectValidityMonths} />
+                        <ProjectExpiration 
+                            createdAt={project.createdAt} 
+                            projectValidityMonths={project.projectValidityMonths}
+                            fileRetentionYears={project.fileRetentionYears}
+                            expiryDate={project.storage?.expiryDate}
+                        />
                     )}
                     <div className="info-bar">
                         <div className="tags">
