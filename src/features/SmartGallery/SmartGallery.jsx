@@ -96,18 +96,12 @@ export default function SmartGallery() {
         // Check for project expiry (gallery access)
         if (projectData.createdAt) {
           const createdAt = new Date(projectData.createdAt);
-          const validityMonths = projectData.projectValidityMonths ? parseInt(projectData.projectValidityMonths) : 6;
-          
-          // Fallback: If projectValidityMonths was used for years (1, 2, 3), multiply by 12
-          const totalMonths = validityMonths <= 3 ? validityMonths * 12 : validityMonths;
+          const validityMonths = parseInt(projectData.projectValidityMonths || '6');
           
           const expiryDate = new Date(createdAt);
-          expiryDate.setMonth(expiryDate.getMonth() + totalMonths);
+          expiryDate.setMonth(expiryDate.getMonth() + validityMonths);
           
           const isNowExpired = Date.now() > expiryDate.getTime();
-          console.log(Date.now()) 
-          console.log(expiryDate.getTime()) 
-          debugger
           setIsExpired(isNowExpired);
           
           if (isNowExpired && !isAuthenticated && !isPinValid(projectId)) {

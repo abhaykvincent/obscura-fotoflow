@@ -288,3 +288,51 @@ export const restoreProjectFromArchive = async (domain, projectId) => {
         throw error;
     }
 };
+
+export const migrateProjectsValidityFields = async () => {
+    try {
+        const studiosCollectionRef = collection(db, 'studios');
+        const studiosSnapshot = await getDocs(studiosCollectionRef);
+        let totalUpdated = 0;
+
+        for (const studioDoc of studiosSnapshot.docs) {
+            const domain = studioDoc.id;
+            const projectsCollectionRef = collection(db, 'studios', domain, 'projects');
+            const projectsSnapshot = await getDocs(projectsCollectionRef);
+
+            for (const projectDoc of projectsSnapshot.docs) {
+                const projectData = projectDoc.data();
+                const updates = {};
+
+                // Migration logic:
+                // If fileRetentionYears is missing, it's an old project.
+                // Old projectValidityMonths (1, 2, 3) were actually years.
+                if (!projectData.fileRetentionYears) {
+                    const oldValidity = parseInt(projectData.projectValidityMonths || '1');
+                    
+                    if (oldValidity <= 3) {
+                        // It was years
+                        updates.fileRetentionYears = String(oldValidity);
+                        updates.projectValidityMonths = '3'; // Default gallery validity
+                    } else {
+                        // It might already be in months or default
+                        updates.fileRetentionYears = '1';
+                        updates.projectValidityMonths = String(oldValidity);
+                    }
+                }
+
+                if (Object.keys(updates).length > 0) {
+                    const projectDocRef = doc(db, 'studios', domain, 'projects', projectDoc.id);
+                    await updateDoc(projectDocRef, updates);
+                    totalUpdated++;
+                }
+            }
+        }
+
+        console.log(`Migration complete. Updated ${totalUpdated} projects.`);
+        return totalUpdated;
+    } catch (error) {
+        console.error('Error migrating projects validity fields:', error);
+        throw error;
+    }
+};

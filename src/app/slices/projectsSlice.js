@@ -30,8 +30,7 @@ export const fetchProjects = createAsyncThunk(
         const lastRestoredAt = project.storage?.lastRestoredAt ? new Date(project.storage.lastRestoredAt) : null;
         
         // Calculate archive threshold based on fileRetentionYears
-        // For old projects, fallback to projectValidityMonths (which stored years)
-        const retentionYears = project.fileRetentionYears ? parseInt(project.fileRetentionYears) : (project.projectValidityMonths && parseInt(project.projectValidityMonths) <= 3 ? parseInt(project.projectValidityMonths) : 1);
+        const retentionYears = parseInt(project.fileRetentionYears || '1');
         const archiveThreshold = new Date();
         archiveThreshold.setMonth(archiveThreshold.getMonth() - (retentionYears * 12));
         
