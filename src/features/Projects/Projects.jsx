@@ -18,6 +18,7 @@ import Refresh from '../../components/Refresh/Refresh';
 
 // --- Styles ---
 import './Projects.scss';
+import { isDeveloper } from '../../analytics/utils';
 
 // --- Constants ---
 const FILTER_TABS = {
@@ -38,7 +39,7 @@ const MODAL_IDS = {
 };
 
 const DAY_RANGES = {
-    INITIAL: 180,
+    INITIAL: 90,
     LOAD_MORE_1: 180,
     LOAD_MORE_2: 360,
     ALL_TIME: 720,
@@ -81,7 +82,7 @@ function Projects() {
     const dispatch = useDispatch();
     const defaultStudio = useSelector(selectUserStudio);
     const allProjects = useSelector(selectProjects);
-
+    isDeveloper && console.log(allProjects)
     // --- State ---
     const [selectedTab, setSelectedTab] = useState(FILTER_TABS.ALL);
     const initialViewType = retrieveProjectsViewType() || VIEW_TYPES.CARDS;
@@ -112,8 +113,16 @@ function Projects() {
             return !isNaN(projectDate) && projectDate >= cutoffDate;
         });
 
+        const archiveCutoffDate = new Date(now.setDate(now.getDate() - 180));
+
+        const archiveProjectsWithinRange = allProjects.filter(project => {
+            const projectDate = new Date(project.createdAt);
+            // Ensure projectDate is a valid date before comparison
+            return !isNaN(projectDate) && projectDate >= archiveCutoffDate;
+        });
+
         if (selectedTab === FILTER_TABS.ARCHIVED) {
-            return getProjectsByStorageStatus(projectsWithinRange, 'archive');
+            return getProjectsByStorageStatus(archiveProjectsWithinRange, 'archive');
         }
 
         // For all other tabs (Live view), exclude archived projects
