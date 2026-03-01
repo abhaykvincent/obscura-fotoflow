@@ -93,6 +93,9 @@ export default function Galleries({}) {
       console.log(targetCollectionId)
     },[targetCollectionId])
 
+  const isArchived = project?.status === 'archive' || project?.storage?.status === 'archive';
+  const isExpired = project?.status === 'expired';
+
   return (
   <>
     {/* Page Header */}
@@ -149,9 +152,11 @@ export default function Galleries({}) {
             <DropdownMenuContent>
                 <DropdownMenuItem
                 onSelect={() => {
-                  // Your action for Delete
-                  dispatch(openModal('createCollection'));
+                  if (!isArchived && !isExpired) {
+                    dispatch(openModal('createCollection'));
+                  }
                 }}
+                disabled={isArchived || isExpired}
                 >
                   <div className="icon-show add"></div>
                   New Gallery</DropdownMenuItem>
