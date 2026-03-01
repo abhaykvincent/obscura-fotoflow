@@ -213,15 +213,22 @@ export const updateProjectStorageToArchive = async (domain, projectId) => {
                 return;
             }
 
+            const retentionYears = parseInt(projectData.fileRetentionYears || '1');
+            const storageExpiryDate = new Date(projectData.createdAt);
+            storageExpiryDate.setMonth(storageExpiryDate.getMonth() + (retentionYears * 12));
+            storageExpiryDate.setDate(storageExpiryDate.getDate() + 30); // 30-day grace period
+
             const newStorageHistoryEntry = {
                 status: 'archive',
                 dateMoved: Date.now(),
             };
 
             const updatedData = {
+                status: 'archive',
                 storage: {
                     ...projectData.storage,
                     status: 'archive',
+                    expiryDate: storageExpiryDate.getTime(),
                     storageHistory: arrayUnion(newStorageHistoryEntry)
                 }
             };
@@ -264,6 +271,7 @@ export const restoreProjectFromArchive = async (domain, projectId) => {
             };
 
             const updatedData = {
+                status: 'active',
                 storage: {
                     ...projectData.storage,
                     status: 'active',

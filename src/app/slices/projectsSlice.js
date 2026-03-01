@@ -24,44 +24,62 @@ export const fetchProjects = createAsyncThunk(
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     const processedProjects = await Promise.all(projects.map(async (project) => {
-      // Ensure createdAt exists and is a valid timestamp, and the project is not already archived
-      if (project.createdAt && typeof project.createdAt === 'number' && project.storage?.status !== 'archive') {
+      // Ensure createdAt exists and is a valid timestamp
+      if (project.createdAt && typeof project.createdAt === 'number') {
         const createdAtDate = new Date(project.createdAt);
         const lastRestoredAt = project.storage?.lastRestoredAt ? new Date(project.storage.lastRestoredAt) : null;
         
-        // Calculate archive threshold based on fileRetentionYears
+        // Calculate storage expiry threshold based on fileRetentionYears
         const retentionYears = parseInt(project.fileRetentionYears || '1');
-        const archiveThreshold = new Date();
-        archiveThreshold.setMonth(archiveThreshold.getMonth() - (retentionYears * 12));
+        const storageExpiryDate = new Date(project.createdAt);
+        storageExpiryDate.setMonth(storageExpiryDate.getMonth() + (retentionYears * 12));
         
         // Add a 30-day grace period before archiving
-        archiveThreshold.setDate(archiveThreshold.getDate() - 30);
+        storageExpiryDate.setDate(storageExpiryDate.getDate() + 30);
 
-        // Check if the project's creation date is before the threshold
-        // AND check if it was restored more than 30 days ago (30-day lock)
-        if (createdAtDate < archiveThreshold && (!lastRestoredAt || lastRestoredAt < thirtyDaysAgo)) {
-          // Update the project in Firestore
-          await updateProjectStorageToArchive(currentDomain, project.id);
-          
-          const newStorageHistoryEntry = {
-            status: 'archive',
-            dateMoved: Date.now(),
-          };
+        const now = Date.now();
+        const isStorageExpired = now > storageExpiryDate.getTime();
 
-          // Return a new project object with updated storage information for the Redux state
-          return {
-            ...project,
-            storage: {
-              ...project.storage, // Preserve existing storage properties
+        // Check if the project is already archived in Firestore
+        const isAlreadyArchived = project.storage?.status === 'archive';
+
+        if (isStorageExpired && !isAlreadyArchived) {
+          // Check if it was restored recently (30-day lock)
+          if (!lastRestoredAt || lastRestoredAt < thirtyDaysAgo) {
+            // Update the project in Firestore
+            await updateProjectStorageToArchive(currentDomain, project.id);
+            
+            const newStorageHistoryEntry = {
               status: 'archive',
-              storageHistory: project.storage?.storageHistory
-              ? [...project.storage.storageHistory, newStorageHistoryEntry]
-              : [newStorageHistoryEntry],
-            },
-          };
+              dateMoved: now,
+            };
+
+            // Return a new project object with updated status and storage information for the Redux state
+            return {
+              ...project,
+              status: 'archive',
+              storage: {
+                ...project.storage,
+                status: 'archive',
+                expiryDate: storageExpiryDate.getTime(),
+                storageHistory: project.storage?.storageHistory
+                  ? [...project.storage.storageHistory, newStorageHistoryEntry]
+                  : [newStorageHistoryEntry],
+              },
+            };
+          }
         }
+
+        // Return the project with the calculated expiry date even if not expired
+        return {
+          ...project,
+          storage: {
+            ...project.storage,
+            expiryDate: storageExpiryDate.getTime(),
+          },
+        };
       }
-      // Return the project as is if it doesn't meet the archive criteria
+      // Return the project as is if it doesn't have a valid creation date
       return project;
     }));
 
