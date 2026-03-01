@@ -17,16 +17,21 @@ function DashboardTabs({ project }) {
   const defaultStudio = useSelector(selectUserStudio);
 
   const renderTabContent = () => {
+    const isArchived = project.status === 'archive' || project.storage?.status === 'archive';
+    const isExpired = project.status === 'expired';
+
     switch (activeTab) {
       case 'galleries':
         return (
           <div className="gallery-overview">
             {/* Replace with gallery card display logic */}
               {project.collections.length === 0 ? (
+                !isExpired && (
                   <div className="galleries">
-                    <div className="gallery new empty-gallery" 
-                    onClick={()=>dispatch(openModal('createCollection'))}>
-                      
+                    <div 
+                      className={`gallery new empty-gallery ${isArchived ? 'disabled' : ''}`} 
+                      onClick={() => !isArchived && dispatch(openModal('createCollection'))}
+                    >
                       <div className="thumbnails">
                         <div className="thumbnail thumb1">
                           <div className="backthumb bthumb1">
@@ -34,18 +39,14 @@ function DashboardTabs({ project }) {
                           </div>
                         </div>
                       </div>
-
                     </div>
-
                   </div>
+                )
               ) : (
                 <>
-               
-            <CollectionsPanel {...{project,collectionId:project.collections[0]?.id}}/>
-          </>
-                
-                )
-              }
+                  <CollectionsPanel {...{project, collectionId: project.collections[0]?.id}}/>
+                </>
+              )}
           </div>
         );
 
