@@ -25,7 +25,7 @@ export const createDummyProjectsInFirestore = async (domain, n = 5) => {
 
     const now = Date.now();
     const thirteenMonthsAgo = new Date();
-    thirteenMonthsAgo.setMonth(thirteenMonthsAgo.getMonth() - 13);
+    thirteenMonthsAgo.setMonth(thirteenMonthsAgo.getMonth() - (13*2));
     const thirteenMonthsMs = now - thirteenMonthsAgo.getTime();
 
     for (let i = 1; i <= n; i++) {

@@ -1,0 +1,141 @@
+@import '../../style/variables';
+
+.project-expired-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $light-3;
+  padding: $spacing-unit * 4;
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  .expired-content {
+    max-width: 600px;
+    width: 100%;
+  }
+
+  .expired-icon-container {
+    color: $red-default-light;
+    margin-bottom: $spacing-unit * 3;
+    display: flex;
+    justify-content: center;
+  }
+
+  .expired-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $dark-2;
+    margin-bottom: $spacing-unit * 2;
+  }
+
+  .expired-message {
+    font-size: 1.1rem;
+    color: $gray-accessible-light;
+    margin-bottom: $spacing-unit * 4;
+    line-height: 1.5;
+
+    strong {
+      color: $dark-1;
+    }
+  }
+
+  .cta-container {
+    background-color: $light-2;
+    border-radius: 24px;
+    padding: $spacing-unit * 4;
+    @include boxShadow;
+  }
+
+  .cta-text {
+    font-size: 1rem;
+    color: $dark-1;
+    margin-bottom: $spacing-unit * 4;
+    line-height: 1.6;
+  }
+
+  .studio-info {
+    margin-bottom: $spacing-unit * 4;
+    
+    .studio-logo {
+      height: 64px;
+      object-fit: contain;
+      margin-bottom: $spacing-unit;
+    }
+
+    .studio-name {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: $dark-2;
+      margin-bottom: 4px;
+    }
+
+    .studio-tagline {
+      font-size: 0.9rem;
+      color: $gray-accessible-light;
+      font-style: italic;
+    }
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: $spacing-unit * 2;
+    margin-top: $spacing-unit * 2;
+  }
+
+  .contact-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-unit;
+    padding: $spacing-unit * 2;
+    background-color: $light-3;
+    border-radius: 16px;
+    text-decoration: none;
+    color: $dark-1;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+
+    span {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      border-color: $blue-default-light;
+      color: $blue-default-light;
+    }
+  }
+
+  .expired-footer {
+    margin-top: $spacing-unit * 6;
+    font-size: 0.85rem;
+    color: $gray-accessible-light;
+
+    a {
+      color: $green-default-light;
+      text-decoration: none;
+      font-weight: 600;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .project-expired-page {
+    padding: $spacing-unit * 2;
+
+    .expired-title {
+      font-size: 2rem;
+    }
+
+    .contact-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}

@@ -1,21 +1,45 @@
 import React, { useEffect, useState } from 'react';
 
-export default function ProjectExpiration({ createdAt, projectValidityMonths = 12 }) {
+export default function ProjectExpiration({ 
+  createdAt, 
+  status, 
+  archiveThreshold = null, 
+  expiryDate = null,
+  projectValidityMonths = 6, 
+  fileRetentionYears = 1
+}) {
   const [daysRemaining, setDaysRemaining] = useState(0);
+  const [isArchiving, setIsArchiving] = useState(true);
 
   useEffect(() => {
     const calculateDaysRemaining = () => {
-      // Use projectValidityMonths to calculate expiration
-      const expirationDate = new Date(createdAt);
-      expirationDate.setMonth(expirationDate.getMonth() + projectValidityMonths);
+      let targetDate;
+      
+      if (status === 'archive') {
+        // Stage 2: Countdown to final expiry
+        targetDate = expiryDate ? new Date(expiryDate) : null;
+        setIsArchiving(false);
+      } else {
+        // Stage 1: Countdown to archiving
+        targetDate = archiveThreshold ? new Date(archiveThreshold) : null;
+        setIsArchiving(true);
+      }
+
+      if (!targetDate) {
+        // Fallback calculation if props are missing
+        targetDate = new Date(createdAt);
+        if (status === 'archive') {
+          targetDate.setMonth(targetDate.getMonth() + (fileRetentionYears * 12));
+          targetDate.setDate(targetDate.getDate() + 30);
+        } else {
+          targetDate.setMonth(targetDate.getMonth() + projectValidityMonths);
+        }
+      }
       
       const currentDate = Date.now();
-
-      // Calculate the difference in days
-      const remainingTime = expirationDate.getTime() - currentDate;
+      const remainingTime = targetDate.getTime() - currentDate;
       const daysLeft = Math.ceil(remainingTime / (24 * 60 * 60 * 1000));
       
-      // Update state
       setDaysRemaining(daysLeft);
     };
 
@@ -29,10 +53,16 @@ export default function ProjectExpiration({ createdAt, projectValidityMonths = 1
   }, [createdAt]);
 
   return (
-    daysRemaining <= 14 && <div className='project-expiration'>
-      {daysRemaining > 0
-        ? `Archives in ${daysRemaining} days` 
-        : 'Project is archived'}
+    <div className='project-expiration'>
+      {status === 'expired' ? (
+        'Project is expired'
+      ) : daysRemaining <= 14 ? (
+        daysRemaining > 0 ? (
+          `${isArchiving ? 'Archives' : 'Expires'} in ${daysRemaining} days`
+        ) : (
+          `Project is ${isArchiving ? 'archived' : 'expired'}`
+        )
+      ) : null}
     </div>
   );
 }
