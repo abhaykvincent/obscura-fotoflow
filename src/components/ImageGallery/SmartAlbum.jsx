@@ -13,6 +13,7 @@ import Preview from '../../features/Preview/Preview';
 import { getThumbnailUrl } from '../../utils/urlUtils';
 import { fetchCollectionStatus } from '../../firebase/functions/firestore';
 import { trackEvent } from '../../analytics/utils';
+import { collection } from 'firebase/firestore';
 
 const SmartAlbum = ({ domain, projectId, collectionId, project: propProject }) => {
   const dispatch = useDispatch();
@@ -114,7 +115,10 @@ const SmartAlbum = ({ domain, projectId, collectionId, project: propProject }) =
   const handleBack = () => {
     navigate(-1);
   };
-
+  const getCollectionById = (project,collectionId) => {
+    return project.collections.find((collection) => collection.id === collectionId);
+    
+  }
   const isStage2Expired = useMemo(() => {
     if (!selectedProject) return false;
     if (selectedProject.status === 'expired') return true;
@@ -216,7 +220,7 @@ const SmartAlbum = ({ domain, projectId, collectionId, project: propProject }) =
         )}
         <div className="gallery-info">
           <h1 className='project-name'>{toTitleCase(selectedProject?.name || '')}</h1>
-          <p className='project-type'>{toTitleCase(smartGalleryData?.name || '')}</p>
+          <p className='project-type'>{toTitleCase(getCollectionById(selectedProject,collectionId)?.name || '')}</p>
         </div>
       </div>
 
