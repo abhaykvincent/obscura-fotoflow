@@ -165,7 +165,7 @@ export const updateCollectionStatusByCollectionIdInFirestore = async (domain, pr
             if (collection.id === collectionId) {
                 return { 
                     ...collection, 
-                    selectionGallery:selectionGallery? selectionGallery : (collection?.selectionGallery ? collection.selectionGallery : true) ,
+                    selectionGallery: selectionGallery !== undefined ? selectionGallery : (collection?.selectionGallery ?? false),
                     status:status,
                     version: 2
                 };

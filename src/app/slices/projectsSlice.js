@@ -161,8 +161,10 @@ export const updateSelectionGalleryStatus = createAsyncThunk(
   async ({ domain, projectId, collectionId, selectionGallery }, { dispatch }) => {
     if (selectionGallery) {
       await updateCollectionStatusByCollectionIdInFirestore(domain, projectId, collectionId, 'active', selectionGallery);
+      // Update project status to active when selection is enabled
+      await updateProjectStatusInFirestore(domain, projectId, 'active');
     } else {
-      await updateSelectionGalleryStatusByCollectionIdInFirestore(domain, projectId, collectionId, selectionGallery);
+      await updateCollectionStatusByCollectionIdInFirestore(domain, projectId, collectionId, 'visible', selectionGallery);
     }
     return { projectId, collectionId, selectionGallery };
   }
@@ -515,6 +517,10 @@ const projectsSlice = createSlice({
         console.log(selectionGallery)
         const projectToUpdate = state.data.find((project) => project.id === projectId);
         if (projectToUpdate) {
+          // Update project status to active if selection is enabled
+          if (selectionGallery) {
+            projectToUpdate.status = 'active';
+          }
           const collectionToUpdate = projectToUpdate.collections.find(
             (collection) => collection.id === collectionId
           );
@@ -522,6 +528,8 @@ const projectsSlice = createSlice({
             collectionToUpdate.selectionGallery = selectionGallery;
             if (selectionGallery) {
               collectionToUpdate.status = 'active';
+            } else {
+              collectionToUpdate.status = 'visible';
             }
           }
         }

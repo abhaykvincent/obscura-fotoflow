@@ -196,7 +196,7 @@ export default function Selection() {
   const CollectionsPanel = () => (
     <div className="collections-panel">
       {project.collections
-        .filter(collection => collection.selectionGallery || collection.selectionGallery !== false)
+        .filter(collection => collection.selectionGallery && collection.selectionGallery === true)
         .map((collection, index) => (
         <div
           key={collection.id}
