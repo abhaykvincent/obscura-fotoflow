@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Apple, Monitor, Laptop, Smartphone, Check } from 'lucide-react';
+import { Apple, Monitor, Check } from 'lucide-react';
 import { FaWindows } from 'react-icons/fa';
 import './DownloadApp.scss';
 import logo from '../../assets/img/fotoflow-pro-logo.svg';
@@ -13,11 +13,10 @@ const DownloadApp = () => {
     if (userAgent.indexOf('win') !== -1) setOs('Windows');
     else if (userAgent.indexOf('mac') !== -1) {
       setOs('macOS');
-      // Simple detection for Apple Silicon (not 100% reliable in all browsers)
+      // Simple detection for Apple Silicon
       if (window.navigator.maxTouchPoints > 0 || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1)) {
          // This might be an iPad, but for desktop we check other hints
       }
-      // Usually we just show macOS and let user choose Intel/Silicon or default to Silicon
       setIsAppleSilicon(true); // Defaulting to Silicon as it's common now
     }
     else if (userAgent.indexOf('linux') !== -1) setOs('Linux');
@@ -26,13 +25,25 @@ const DownloadApp = () => {
   }, []);
 
   const downloadLinks = {
-    macOS_Silicon: '#',
-    macOS_Intel: '#',
-    windows_x64: '#',
-    windows_arm: '#',
+    macOS_Silicon: 'https://github.com/abhaykvincent/fotoflow-desktop-lite/releases/download/0.0.1/FotoFlow.Desktop.Lite-0.0.1.dmg',
+    macOS_Intel: 'https://github.com/abhaykvincent/fotoflow-desktop-lite/releases/download/0.0.1/FotoFlow.Desktop.Lite-0.0.1.dmg',
+    windows_x64: 'https://github.com/abhaykvincent/fotoflow-desktop-lite/releases/download/0.0.1/FotoFlow.Desktop.Lite.Setup.0.0.1.exe',
+    windows_arm: 'https://github.com/abhaykvincent/fotoflow-desktop-lite/releases/download/0.0.1/FotoFlow.Desktop.Lite.Setup.0.0.1.exe',
     ios: '#',
     android: '#',
     webapp: 'https://app.fotoflow.pro'
+  };
+
+  const handleDownload = (link) => {
+    if (link && link !== '#') {
+      window.location.href = link;
+    }
+  };
+
+  const getPrimaryDownloadLink = () => {
+    if (os === 'Windows') return downloadLinks.windows_x64;
+    if (os === 'macOS') return isAppleSilicon ? downloadLinks.macOS_Silicon : downloadLinks.macOS_Intel;
+    return downloadLinks.webapp;
   };
 
   return (
@@ -72,12 +83,12 @@ const DownloadApp = () => {
           <p className="hero-subtitle">Available for macOS, Windows and Web</p>
 
           <div className="primary-action">
-            <button className="main-download-btn">
+            <button className="main-download-btn" onClick={() => handleDownload(getPrimaryDownloadLink())}>
               Download for {os} <span className="kbd-shortcut">D</span>
             </button>
             <div className="optimization-badge">
               <Check size={14} strokeWidth={3} />
-              <span>Appx 100B</span>
+              <span>Appx 70MB</span>
             </div>
           </div>
         </div>
@@ -91,23 +102,23 @@ const DownloadApp = () => {
               <FaWindows size={18} />
               <span>Windows </span>
             </div>
-            <button className="row-download-btn">Download</button>
+            <button className="row-download-btn" onClick={() => handleDownload(downloadLinks.windows_x64)}>Download</button>
           </div>
 
-          <div className="download-row disabled">
+          <div className="download-row">
             <div className="platform-info">
               <Apple size={18} />
               <span>macOS (Apple Silicon)</span>
             </div>
-            <button className="row-download-btn">Download</button>
+            <button className="row-download-btn" onClick={() => handleDownload(downloadLinks.macOS_Silicon)}>Download</button>
           </div>
 
-          <div className="download-row  disabled">
+          <div className="download-row">
             <div className="platform-info">
               <Apple size={18} />
               <span>macOS (Intel)</span>
             </div>
-            <button className="row-download-btn">Download</button>
+            <button className="row-download-btn" onClick={() => handleDownload(downloadLinks.macOS_Intel)}>Download</button>
           </div>
 
           <div className="download-row">
@@ -115,7 +126,7 @@ const DownloadApp = () => {
               <Monitor size={18} />
               <span>Web app</span>
             </div>
-            <button className="row-download-btn open">Open</button>
+            <button className="row-download-btn open" onClick={() => window.open(downloadLinks.webapp, '_blank')}>Open</button>
           </div>
         </div>
       </main>
