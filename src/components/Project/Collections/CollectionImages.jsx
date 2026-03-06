@@ -321,7 +321,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
               ))
             
             // Open the desktop app
-            window.location.href = 'fotoflow.desktop.lite://open';
+            window.location.href = 'fotoflow://open';
         });
     };
 
