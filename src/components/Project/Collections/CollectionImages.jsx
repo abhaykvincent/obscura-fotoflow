@@ -24,7 +24,7 @@ import ImageGalleryDesigner from '../../ImageGalleryDesigner/ImageGalleryDesigne
 import { selectGalleryMode, setGalleryMode } from '../../../app/slices/gallerySlice';
 import { getOperatingSystem } from '../../../utils/generalUtils';
 
-const CollectionImages = ({ id, collectionId, project }) => {
+const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
     const projectCollectionRef = useRef(null);
     const dispatch = useDispatch();
     const galleryMode = useSelector(selectGalleryMode);
@@ -286,6 +286,13 @@ const CollectionImages = ({ id, collectionId, project }) => {
         setImageUrls(images);
         setSelectedImages(collectionImages.filter((image) => image.status === 'selected'));
     }, [collectionImages, page]);
+
+    // Update parent selected count
+    useEffect(() => {
+        if (setSelectedCount) {
+            setSelectedCount(selectedImages.length);
+        }
+    }, [selectedImages, setSelectedCount]);
 
     // Show All Photos
     useEffect(() => {

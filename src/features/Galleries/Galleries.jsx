@@ -43,6 +43,7 @@ export default function Galleries({}) {
 
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState("");
+  const [selectedCount, setSelectedCount] = useState(0);
   // Delete Project Modal
   const onDeleteConfirmClose = () => setConfirmDeleteCollection(false)
   const onDeleteConfirm = () => dispatch(deleteCollection({domain,projectId:id,collectionId:targetCollectionId}))
@@ -77,6 +78,7 @@ export default function Galleries({}) {
     const defaultCollectionId = projectTemp?.collections && (projectTemp.collections.length > 0 ? projectTemp.collections[0].id : '');
 
     setTargetCollectionId(collectionId || defaultCollectionId)
+    setSelectedCount(0);
     setCollection(findCollectionById(projectTemp, collectionId || defaultCollectionId))
     // If the collection is not found, redirect to the project page and return
     if (defaultCollectionId==='Collection not found' && defaultCollectionId!=='') {
@@ -96,7 +98,6 @@ export default function Galleries({}) {
 
   const isArchived = project?.status === 'archive' || project?.storage?.status === 'archive';
   const isExpired = project?.status === 'expired';
-  const selectedCount = collection?.uploadedFiles?.filter(img => img.status === 'selected').length || 0;
 
   return (
   <>
@@ -196,7 +197,7 @@ export default function Galleries({}) {
         project?.collections && project.collections.length !== 0 && (
           <div className="project-collections" tabIndex={0}>
             <CollectionsPanel {...{project,collectionId:targetCollectionId}}/>
-            <CollectionImages   {...{ id, collectionId:targetCollectionId,project}} />
+            <CollectionImages   {...{ id, collectionId:targetCollectionId,project, setSelectedCount }} />
           </div>
         )
       }

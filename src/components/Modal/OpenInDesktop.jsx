@@ -53,8 +53,8 @@ function OpenInDesktop({ selectedCount = 0 }) {
               <div className="step">
                 <div className="step-number">3</div>
                 <div className="step-content">
-                  <p><strong>Paste to Reveal</strong></p>
-                  <p className="step-desc">Simply press <strong>Cmd+V</strong> (Mac) or <strong>Ctrl+V</strong> (Windows) in the app to reveal the files in Finder/Explorer.</p>
+                  <p><strong>Shoot Folder</strong></p>
+                  <p className="step-desc">Simply select the <strong>shoot folder</strong> on the app  to reveal the files in Finder/Explorer.</p>
                 </div>
               </div>
             </div>
