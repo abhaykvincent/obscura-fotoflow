@@ -8,6 +8,7 @@ import AddCollectionModal from '../../components/Modal/AddCollection';
 import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 import ShareGallery from '../../components/Modal/ShareGallery'
 import UploadCompletedModal from '../../components/Modal/UploadCompleted';
+import OpenInDesktop from '../../components/Modal/OpenInDesktop';
 import CollectionsPanel from '../../components/Project/Collections/CollectionsPanel';
 import CollectionImages from '../../components/Project/Collections/CollectionImages';
 // Actions
@@ -95,11 +96,13 @@ export default function Galleries({}) {
 
   const isArchived = project?.status === 'archive' || project?.storage?.status === 'archive';
   const isExpired = project?.status === 'expired';
+  const selectedCount = collection?.uploadedFiles?.filter(img => img.status === 'selected').length || 0;
 
   return (
   <>
     {/* Page Header */}
     <DeleteConfirmationModal itemType="collection" itemName={collection.name} onDeleteConfirm={onDeleteConfirm} />
+    <OpenInDesktop selectedCount={selectedCount} />
 
     {createPortal(
       <div className="project-info gallery-page-info">
