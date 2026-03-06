@@ -7,21 +7,51 @@ import logo from '../../assets/img/fotoflow-pro-logo.svg';
 const DownloadApp = () => {
   const [os, setOs] = useState('macOS');
   const [isAppleSilicon, setIsAppleSilicon] = useState(false);
+  const [badgeText, setBadgeText] = useState('Appx 70MB');
+
+  const fileSizes = {
+    macOS_Silicon: 'Appx 92MB',
+    macOS_Intel: 'Appx 92MB',
+    windows_x64: 'Appx 73MB',
+    windows_arm: 'Appx 73MB',
+    webapp: 'Instant'
+  };
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sizeParam = urlParams.get('size');
+
     const userAgent = window.navigator.userAgent.toLowerCase();
-    if (userAgent.indexOf('win') !== -1) setOs('Windows');
-    else if (userAgent.indexOf('mac') !== -1) {
-      setOs('macOS');
-      // Simple detection for Apple Silicon
-      if (window.navigator.maxTouchPoints > 0 || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1)) {
-         // This might be an iPad, but for desktop we check other hints
-      }
-      setIsAppleSilicon(true); // Defaulting to Silicon as it's common now
+    let detectedOs = 'macOS';
+    let silicon = false;
+
+    if (userAgent.indexOf('win') !== -1) {
+      detectedOs = 'Windows';
+    } else if (userAgent.indexOf('mac') !== -1) {
+      detectedOs = 'macOS';
+      silicon = true; 
+    } else if (userAgent.indexOf('linux') !== -1) {
+      detectedOs = 'Linux';
+    } else if (userAgent.indexOf('iphone') !== -1 || userAgent.indexOf('ipad') !== -1) {
+      detectedOs = 'iOS';
+    } else if (userAgent.indexOf('android') !== -1) {
+      detectedOs = 'Android';
     }
-    else if (userAgent.indexOf('linux') !== -1) setOs('Linux');
-    else if (userAgent.indexOf('iphone') !== -1 || userAgent.indexOf('ipad') !== -1) setOs('iOS');
-    else if (userAgent.indexOf('android') !== -1) setOs('Android');
+
+    setOs(detectedOs);
+    setIsAppleSilicon(silicon);
+
+    if (sizeParam) {
+      setBadgeText(sizeParam);
+    } else {
+      if (detectedOs === 'Windows') {
+        setBadgeText(fileSizes.windows_x64);
+      } else if (detectedOs === 'macOS') {
+        setBadgeText(silicon ? fileSizes.macOS_Silicon : fileSizes.macOS_Intel);
+      } else {
+        setBadgeText(fileSizes.webapp);
+      }
+    }
   }, []);
 
   const downloadLinks = {
@@ -88,7 +118,7 @@ const DownloadApp = () => {
             </button>
             <div className="optimization-badge">
               <Check size={14} strokeWidth={3} />
-              <span>Appx 70MB</span>
+              <span>{badgeText}</span>
             </div>
           </div>
         </div>
