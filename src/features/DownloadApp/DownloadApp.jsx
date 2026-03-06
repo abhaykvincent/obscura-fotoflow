@@ -7,8 +7,16 @@ import logo from '../../assets/img/fotoflow-pro-logo.svg';
 const DownloadApp = () => {
   const [os, setOs] = useState('macOS');
   const [isAppleSilicon, setIsAppleSilicon] = useState(false);
+  const [badgeText, setBadgeText] = useState('Appx 70MB');
 
   useEffect(() => {
+    // Get size from URL parameter if available
+    const urlParams = new URLSearchParams(window.location.search);
+    const sizeParam = urlParams.get('size');
+    if (sizeParam) {
+      setBadgeText(sizeParam);
+    }
+
     const userAgent = window.navigator.userAgent.toLowerCase();
     if (userAgent.indexOf('win') !== -1) setOs('Windows');
     else if (userAgent.indexOf('mac') !== -1) {
@@ -88,7 +96,7 @@ const DownloadApp = () => {
             </button>
             <div className="optimization-badge">
               <Check size={14} strokeWidth={3} />
-              <span>Appx 70MB</span>
+              <span>{badgeText}</span>
             </div>
           </div>
         </div>
