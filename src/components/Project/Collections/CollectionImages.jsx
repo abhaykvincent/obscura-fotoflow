@@ -23,6 +23,7 @@ import { updateCollectionStatus } from '../../../app/slices/projectsSlice';
 import ImageGalleryDesigner from '../../ImageGalleryDesigner/ImageGalleryDesigner';
 import { selectGalleryMode, setGalleryMode } from '../../../app/slices/gallerySlice';
 import { getOperatingSystem } from '../../../utils/generalUtils';
+import OpenInDesktop from '../../Modal/OpenInDesktop';
 
 const CollectionImages = ({ id, collectionId, project }) => {
     const projectCollectionRef = useRef(null);
@@ -320,8 +321,8 @@ const CollectionImages = ({ id, collectionId, project }) => {
               }
               ))
             
-            // Open the desktop app
-            window.location.href = 'fotoflow://open';
+            // Open the instructions modal
+            dispatch(openModal('openInDesktop'));
         });
     };
 
@@ -479,7 +480,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
 
                 </div>
             }
-            
+            <OpenInDesktop selectedCount={selectedImages.length} />
         </div>
     );
 };
