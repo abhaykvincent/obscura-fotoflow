@@ -130,23 +130,26 @@ const DownloadApp = () => {
           <div className="download-row">
             <div className="platform-info">
               <FaWindows size={18} />
-              <span>Windows </span>
+              <span>Windows</span>
+              <span className="platform-size">{fileSizes.windows_x64}</span>
             </div>
             <button className="row-download-btn" onClick={() => handleDownload(downloadLinks.windows_x64)}>Download</button>
           </div>
 
-          <div className="download-row">
+          <div className="download-row disabled">
             <div className="platform-info">
               <Apple size={18} />
-              <span>macOS (Apple Silicon)</span>
+              <span>macOS (Silicon)</span>
+              <span className="platform-size">{fileSizes.macOS_Silicon}</span>
             </div>
             <button className="row-download-btn" onClick={() => handleDownload(downloadLinks.macOS_Silicon)}>Download</button>
           </div>
 
-          <div className="download-row">
+          <div className="download-row disabled">
             <div className="platform-info">
               <Apple size={18} />
               <span>macOS (Intel)</span>
+              <span className="platform-size">{fileSizes.macOS_Intel}</span>
             </div>
             <button className="row-download-btn" onClick={() => handleDownload(downloadLinks.macOS_Intel)}>Download</button>
           </div>
@@ -155,6 +158,7 @@ const DownloadApp = () => {
             <div className="platform-info">
               <Monitor size={18} />
               <span>Web app</span>
+              <span className="platform-size">{fileSizes.webapp}</span>
             </div>
             <button className="row-download-btn open" onClick={() => window.open(downloadLinks.webapp, '_blank')}>Open</button>
           </div>
