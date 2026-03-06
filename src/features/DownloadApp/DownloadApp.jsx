@@ -10,10 +10,10 @@ const DownloadApp = () => {
   const [badgeText, setBadgeText] = useState('Appx 70MB');
 
   const fileSizes = {
-    macOS_Silicon: 'Appx 75MB',
-    macOS_Intel: 'Appx 75MB',
-    windows_x64: 'Appx 65MB',
-    windows_arm: 'Appx 65MB',
+    macOS_Silicon: 'Appx 92MB',
+    macOS_Intel: 'Appx 92MB',
+    windows_x64: 'Appx 73MB',
+    windows_arm: 'Appx 73MB',
     webapp: 'Instant'
   };
 
