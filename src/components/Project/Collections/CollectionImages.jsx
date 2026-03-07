@@ -24,7 +24,7 @@ import ImageGalleryDesigner from '../../ImageGalleryDesigner/ImageGalleryDesigne
 import { selectGalleryMode, setGalleryMode } from '../../../app/slices/gallerySlice';
 import { getOperatingSystem } from '../../../utils/generalUtils';
 
-const CollectionImages = ({ id, collectionId, project }) => {
+const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
     const projectCollectionRef = useRef(null);
     const dispatch = useDispatch();
     const galleryMode = useSelector(selectGalleryMode);
@@ -51,7 +51,7 @@ const CollectionImages = ({ id, collectionId, project }) => {
     // Upload progress state (uploadList and uploadStatus) is now managed by Redux.
     // Local useState for uploadList and uploadStatus are removed.
 
-    const [copyStatus, setCopyStatus] = useState('Lightroom');
+    const [copyStatus, setCopyStatus] = useState('Desktop');
     
     const defaultOptions = {
         loop: true,
@@ -287,6 +287,13 @@ const CollectionImages = ({ id, collectionId, project }) => {
         setSelectedImages(collectionImages.filter((image) => image.status === 'selected'));
     }, [collectionImages, page]);
 
+    // Update parent selected count
+    useEffect(() => {
+        if (setSelectedCount) {
+            setSelectedCount(selectedImages.length);
+        }
+    }, [selectedImages, setSelectedCount]);
+
     // Show All Photos
     useEffect(() => {
         if (!collectionImages) return;
@@ -300,8 +307,8 @@ const CollectionImages = ({ id, collectionId, project }) => {
         }
     }, [showAllPhotos, collectionImages,selectedImages]);
 
-    // Handle "Open in Lightroom" click
-    const handleOpenInLightroom = () => {
+    // Handle "Open in Desktop" click
+    const handleOpenInDesktopApp = () => {
         if(selectedImages.length === 0) {
             dispatch(showAlert({
                 type:'error',
@@ -313,12 +320,15 @@ const CollectionImages = ({ id, collectionId, project }) => {
         const selectedFilenames = selectedImages.map((image) => image.name).join(', ');
         navigator.clipboard.writeText(selectedFilenames).then(() => {
             setCopyStatus('Copied');
-            setTimeout(() => setCopyStatus('Lightroom'), 2000);
+            setTimeout(() => setCopyStatus('Desktop'), 2000);
             dispatch(showAlert({
                 type:'success',
-                message:'Link copied to clipboard'
+                message:'Filenames copied to clipboard'
               }
               ))
+            
+            // Open the instructions modal
+            dispatch(openModal('openInDesktop'));
         });
     };
 
@@ -406,16 +416,10 @@ const CollectionImages = ({ id, collectionId, project }) => {
                         
                     { !showAllPhotos ?
                     <>
-                    <div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInLightroom}>
-                    {/* <div className="button secondary">Open in {getOperatingSystem()}</div> */}
-                    <DownloadFiles 
-                        className={`open-in${showAllPhotos ? 'disabled' : ''}`} 
-                        project={project} 
-                        collection={findCollectionById(project, collectionId)} 
-                        files={selectedImages}
-                        buttonText="Download"
-                    />
-                    
+                    <div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInDesktopApp}>
+                         <button className={`lr button secondary icon copy`}>
+                            {copyStatus === 'Copied' ? 'Copied' : `Open in Desktop`}
+                         </button>
                     </div>
                     
                         </>:
@@ -482,7 +486,6 @@ const CollectionImages = ({ id, collectionId, project }) => {
 
                 </div>
             }
-            
         </div>
     );
 };
