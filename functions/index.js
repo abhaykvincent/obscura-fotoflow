@@ -74,17 +74,9 @@ exports.serveGallery = functions.https.onRequest(async (req, res) => {
       if (projectDoc.exists) {
         const project = projectDoc.data();
         
-        // Match React component's title logic
-        if (collectionId) {
-          // If we have a collectionId, we could try to find the collection name
-          // For now, using a generic title with project name as fetching subcollection here adds latency
-          
-          title = `${toTitleCase(project.name)}'s ${project.type} gallery`;
-        } else {
-          title = `${toTitleCase(project.name)}'s ${project.type} gallery`;
-        }
+        title = `${toTitleCase(project.name)}'s ${project.type}`;
         
-        description = `${toTitleCase(project.type || 'photo')} collection by ${toTitleCase(studioName)}.`;
+        description = `${toTitleCase(project.type || 'Photo')} gallery by ${toTitleCase(studioName)}.`;
         image = project.projectCover ? getImageUrlByQuality(project.projectCover, 'thumb') : '';
       }
     } catch (err) {
@@ -102,4 +94,6 @@ exports.serveGallery = functions.https.onRequest(async (req, res) => {
   // Set Cache control to ensure previews aren't stale but also don't hit function too hard
   res.set('Cache-Control', 'public, max-age=600, s-maxage=1200');
   res.status(200).send(finalHtml);
+
+  
 });

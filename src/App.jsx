@@ -217,7 +217,7 @@ export default function App() {
                 <Route path="/:studioName" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
                 <Route path="/:studioName/home" element={<Home />} />
                 <Route path="/:studioName/project/:id" element={<Project />} />
-                <Route path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
+                <Route path="/:studioName/smart-gallery/:id/:collectionId?" element={<Galleries />} />
                 <Route path="/:studioName/portfolio-editor" element={<PortfolioWebsite />} />
                 <Route path="/:studioName/invitation-creator/:projectId" element={<InvitationPage/>} />
                 <Route path="/:studioName/projects" element={<Projects />} />
