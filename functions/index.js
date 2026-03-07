@@ -78,9 +78,10 @@ exports.serveGallery = functions.https.onRequest(async (req, res) => {
         if (collectionId) {
           // If we have a collectionId, we could try to find the collection name
           // For now, using a generic title with project name as fetching subcollection here adds latency
-          title = `${toTitleCase(project.name)} | Gallery`;
+          
+          title = `${toTitleCase(project.name)}'s ${project.type} gallery`;
         } else {
-          title = `${toTitleCase(project.name)} | Smart Gallery`;
+          title = `${toTitleCase(project.name)}'s ${project.type} gallery`;
         }
         
         description = `${toTitleCase(project.type || 'photo')} collection by ${toTitleCase(studioName)}.`;

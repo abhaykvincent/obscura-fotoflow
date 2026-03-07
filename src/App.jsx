@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Navigate, Route, Routes, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, Outlet, useLocation,useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { HotKeys } from 'react-hotkeys';
 
@@ -56,7 +56,6 @@ import TrialStatusModal from './components/Modal/TrialEnds/TrialEnds';
 import UpgradeModal from './components/Subscription/UpgradeModal';
 
 // Hooks
-import { useParams, Navigate, Route, Routes, Outlet, useLocation } from 'react-router-dom';
 import { useShortcutsConfig } from './hooks/shortcutsConfig';
 
 // Utils
