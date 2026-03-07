@@ -73,7 +73,16 @@ exports.serveGallery = functions.https.onRequest(async (req, res) => {
 
       if (projectDoc.exists) {
         const project = projectDoc.data();
-        title = `${toTitleCase(project.name)} | Gallery`;
+        
+        // Match React component's title logic
+        if (collectionId) {
+          // If we have a collectionId, we could try to find the collection name
+          // For now, using a generic title with project name as fetching subcollection here adds latency
+          title = `${toTitleCase(project.name)} | Gallery`;
+        } else {
+          title = `${toTitleCase(project.name)} | Smart Gallery`;
+        }
+        
         description = `${toTitleCase(project.type || 'photo')} collection by ${toTitleCase(studioName)}.`;
         image = project.projectCover ? getImageUrlByQuality(project.projectCover, 'thumb') : '';
       }
