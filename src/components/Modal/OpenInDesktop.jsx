@@ -1,8 +1,10 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import './OpenInDesktop.scss';
+import logo from '../../assets/img/fotoflow-pro-logo.svg';
 
 function OpenInDesktop({ selectedCount = 0 }) {
   const dispatch = useDispatch();
@@ -29,12 +31,13 @@ function OpenInDesktop({ selectedCount = 0 }) {
         <div className="modal-body">
           <div className="instruction-section">
             <div className="desktop-lite-logo">
-               {/* Icon placeholder or app logo */}
-               <div className="app-icon"></div>
+               <div className="app-icon">
+                  <img src={logo} alt="FotoFlow Icon" />
+               </div>
             </div>
-            <h3>Reveal {selectedCount} Original Files</h3>
-            <p className="subtitle">Use FotoFlow Desktop Lite to find these files on your computer.</p>
-            
+            <h3>Open FotoFlow Lite </h3>
+            <p className="subtitle">Reveal {selectedCount} Original Files in the desktop app to find these files on your computer.</p>
+
             <div className="steps">
               <div className="step done">
                 <div className="step-number">1</div>
@@ -46,7 +49,12 @@ function OpenInDesktop({ selectedCount = 0 }) {
               <div className="step highlight">
                 <div className="step-number">2</div>
                 <div className="step-content">
-                  <p><strong>Open Desktop Lite</strong></p>
+                  <p>
+                    <strong>Open Desktop Lite</strong>
+                    <Link to="/download-app" className="download-link">
+                      <span className="highlight">Download</span> app
+                    </Link>
+                  </p>
                   <p className="step-desc">Launch FotoFlow Desktop Lite on your computer.</p>
                 </div>
               </div>
@@ -71,3 +79,4 @@ function OpenInDesktop({ selectedCount = 0 }) {
 }
 
 export default OpenInDesktop;
+
