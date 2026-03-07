@@ -36,25 +36,25 @@ function OpenInDesktop({ selectedCount = 0 }) {
             <p className="subtitle">Use FotoFlow Desktop Lite to find these files on your computer.</p>
             
             <div className="steps">
-              <div className="step">
+              <div className="step done">
                 <div className="step-number">1</div>
                 <div className="step-content">
                   <p><strong>Filenames Copied</strong></p>
                   <p className="step-desc">We've copied the names of your {selectedCount} selected images to your clipboard.</p>
                 </div>
               </div>
-              <div className="step">
+              <div className="step highlight">
                 <div className="step-number">2</div>
                 <div className="step-content">
                   <p><strong>Open Desktop Lite</strong></p>
-                  <p className="step-desc">Launch <strong>FotoFlow Desktop Lite</strong> on your computer.</p>
+                  <p className="step-desc">Launch FotoFlow Desktop Lite on your computer.</p>
                 </div>
               </div>
               <div className="step">
                 <div className="step-number">3</div>
                 <div className="step-content">
                   <p><strong>Shoot Folder</strong></p>
-                  <p className="step-desc">Simply select the <strong>shoot folder</strong> on the app  to reveal the files in Finder/Explorer.</p>
+                  <p className="step-desc">Simply select the shoot folder on the app  to reveal the files in Finder/Explorer.</p>
                 </div>
               </div>
             </div>
