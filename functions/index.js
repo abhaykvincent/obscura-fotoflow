@@ -1,9 +1,19 @@
-const functions = require('firebase-functions');
+const { onRequest } = require("firebase-functions/v2/https");
+const { setGlobalOptions } = require("firebase-functions/v2");
 const admin = require('firebase-admin');
 const fs = require('fs');
 const path = require('path');
 
+// Initialize Admin SDK
 admin.initializeApp();
+
+/**
+ * Global Options for v2 Functions
+ * Set standard region and concurrency for all functions in this file
+ */
+setGlobalOptions({
+  region: "us-central1", // Match your project region
+});
 
 /**
  * Helper to capitalize strings for display
@@ -26,7 +36,15 @@ function getImageUrlByQuality(url, quality = 'web') {
   return url;
 }
 
-exports.serveGallery = functions.https.onRequest(async (req, res) => {
+/**
+ * serveGallery - v2 Implementation
+ * Optimized for high concurrency and SEO metadata injection
+ */
+exports.serveGallery = onRequest({
+  concurrency: 80,         // Optimized for high volume
+  memory: "256MiB",        // Allocated memory
+  cors: true,              // Built-in CORS handling for Cloud Run
+}, async (req, res) => {
   // Extract studio and project from URL path
   // Expected path format: /:studioName/(smart-gallery|share)/:projectId
   const pathParts = req.path.split('/').filter(p => !!p);
@@ -35,7 +53,7 @@ exports.serveGallery = functions.https.onRequest(async (req, res) => {
   const projectId = pathParts[2];
   const collectionId = pathParts[3];
 
-  console.log(`Serving gallery for studio: ${studioName}, project: ${projectId}, type: ${routeType}`);
+  console.log(`[v2] Serving gallery: Studio=${studioName}, Project=${projectId}, Type=${routeType}`);
 
   // Redirect old /share links to /smart-gallery
   if (routeType === 'share') {
@@ -44,8 +62,7 @@ exports.serveGallery = functions.https.onRequest(async (req, res) => {
     return res.redirect(301, targetPath);
   }
 
-  // Path to the built index.html
-  // Note: During deploy, we must ensure index.html is accessible here
+  // Path to the built index.html (Ensured by firebase.json predeploy)
   const indexPath = path.resolve(__dirname, './index.html');
   let html = '';
   
@@ -75,7 +92,6 @@ exports.serveGallery = functions.https.onRequest(async (req, res) => {
         const project = projectDoc.data();
         
         title = `${toTitleCase(project.name)}'s ${project.type}`;
-        
         description = `${toTitleCase(project.type || 'Photo')} gallery by ${toTitleCase(studioName)}.`;
         image = project.projectCover ? getImageUrlByQuality(project.projectCover, 'thumb') : '';
       }
@@ -92,9 +108,7 @@ exports.serveGallery = functions.https.onRequest(async (req, res) => {
     .replace(/__DESCRIPTION__/g, description)
     .replace(/__IMAGE__/g, image);
 
-  // Set Cache control to ensure previews aren't stale but also don't hit function too hard
+  // Set Cache control to ensure previews aren't stale
   res.set('Cache-Control', 'public, max-age=600, s-maxage=1200');
   res.status(200).send(finalHtml);
-
-  
 });
