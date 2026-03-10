@@ -27,7 +27,7 @@ export default function SmartGallery() {
   const user = useSelector(selectUser);
   const studio = useSelector(selectStudio);
   const { settings } = useSelector(selectStudioAdminSettings);
-  const tagline = settings?.gallery?.galleryTagline || `smile with ${studioName}`;
+  const tagline = settings?.gallery?.galleryTagline;
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState(null);
   const [isExpired, setIsExpired] = useState(false);
@@ -54,7 +54,7 @@ export default function SmartGallery() {
           )}
           <div className="branding-text">
             <h3 className="studio-name">{studio?.name || studioName}</h3>
-            <p className="studio-tagline">{tagline}</p>
+            <p className="studio-tagline">{studio?.settings?.gallery.galleryTagline}</p>
           </div>
           <div className="studio-contact-info">
             {studio?.website && (
