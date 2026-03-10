@@ -3,6 +3,7 @@ import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import './SmartGallery.scss';
 import { fetchProject } from '../../firebase/functions/firestore';
 import SmartAlbum from '../../components/ImageGallery/SmartAlbum';
+import ProjectExpiredPage from '../../components/ImageGallery/ProjectExpiredPage';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectIsAuthenticated, selectUser } from '../../app/slices/authSlice';
 import { selectStudioAdminSettings } from '../../app/slices/adminSettingsSlice';
@@ -29,6 +30,8 @@ export default function SmartGallery() {
   const tagline = settings?.gallery?.galleryTagline || `smile with ${studioName}`;
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState(null);
+  const [isExpired, setIsExpired] = useState(false);
+  const [isStage2Expired, setIsStage2Expired] = useState(false);
   const [visibleCollections, setVisibleCollections] = useState([]);
   const [collectionsLoading, setCollectionsLoading] = useState(true);
   
@@ -91,6 +94,40 @@ export default function SmartGallery() {
       try {
         const projectData = await fetchProject(studioName, projectId);
         setProject(projectData);
+
+        // Check for project expiry (gallery access)
+        if (projectData.createdAt) {
+          const createdAt = new Date(projectData.createdAt);
+          
+          // Stage 1: Archive threshold (Gallery Validity)
+          const validityMonths = parseInt(projectData.projectValidityMonths || '6');
+          const archiveThresholdDate = new Date(createdAt);
+          archiveThresholdDate.setMonth(archiveThresholdDate.getMonth() + validityMonths);
+          
+          // Stage 2: Final Expiry (File Retention)
+          const retentionYears = parseInt(projectData.fileRetentionYears || '1');
+          const finalExpiryThresholdDate = new Date(createdAt);
+          finalExpiryThresholdDate.setMonth(finalExpiryThresholdDate.getMonth() + (retentionYears * 12));
+          finalExpiryThresholdDate.setDate(finalExpiryThresholdDate.getDate() + 30);
+
+          const isStage1Expired = Date.now() > archiveThresholdDate.getTime();
+          const isStage2ExpiredNow = Date.now() > finalExpiryThresholdDate.getTime() || projectData.status === 'expired';
+          
+          setIsExpired(isStage1Expired);
+          setIsStage2Expired(isStage2ExpiredNow);
+          
+          if (isStage2ExpiredNow && !isAuthenticated) {
+            // Handled in main render
+          } else if (isStage1Expired && !isAuthenticated && !isPinValid(projectId)) {
+            dispatch(showAlert({ 
+              type: 'error', 
+              message: 'This gallery has expired and is no longer public. Please use your PIN for access or contact the photographer.' 
+            }));
+            // Redirect to PIN entry if not authenticated
+            navigate(`/${studioName}/smart-gallery/${projectId}/download/pin`);
+          }
+        }
+
         if (!isAuthenticated || user === 'no-studio-found') {
           setUserType('Guest');
         }
@@ -258,6 +295,10 @@ export default function SmartGallery() {
     return <div>Project not found.</div>;
   }
 
+  if (isStage2Expired && !isAuthenticated) {
+    return <ProjectExpiredPage project={project} studio={studio} studioName={studioName} />;
+  }
+
   if (collectionId) {
     const currentIndex = visibleCollections.findIndex(c => c.id === collectionId);
     const prevCollection = currentIndex > 0 ? visibleCollections[currentIndex - 1] : null;
@@ -265,7 +306,7 @@ export default function SmartGallery() {
 
     return (
       <div className="share-project">
-          <SmartAlbum domain={studioName} projectId={projectId} collectionId={collectionId} />
+          <SmartAlbum domain={studioName} projectId={projectId} collectionId={collectionId} project={project} />
           
           {(prevCollection || nextCollection) && !collectionsLoading && (
             <div className="collection-navigation">

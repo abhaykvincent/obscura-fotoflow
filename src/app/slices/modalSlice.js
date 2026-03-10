@@ -26,6 +26,7 @@ const initialState = {
     managePricingPlan: false,
     uploadCompleted: false,
     pinReminder: false,
+    openInDesktop: false,
 };
 export const closeModalWithAnimation = createAsyncThunk(
   'projects/closeModalWithAnimation',

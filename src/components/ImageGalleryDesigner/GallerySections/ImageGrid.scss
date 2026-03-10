@@ -26,6 +26,7 @@
     .image-grid-display {
     .image-grid-row {
       display: flex;
+      justify-content: center;
       gap: 10px;
       margin-bottom: 10px;
       user-select: none;

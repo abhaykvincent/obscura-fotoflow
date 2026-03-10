@@ -32,6 +32,7 @@ import './ArchiveBanner.scss';
 import { ProjectPageCoverImages } from '../../components/ProjectPageCover/ProjectPageCoverImages';
 import { isDeveloper, isProduction } from '../../analytics/utils';
 import { selectStudio } from '../../app/slices/studioSlice';
+import { ChartNoAxesColumnDecreasing } from 'lucide-react';
 
 export default function Project() {
   const { id } = useParams();
@@ -68,9 +69,11 @@ export default function Project() {
     modalsRef.current = modals;
   }, [modals]);
   useEffect(() => {
-    if(project?.collections.length === 0){
+    const isArchived = project?.status === 'archive' || project?.storage?.status === 'archive';
+    const isExpired = project?.status === 'expired';
 
-    const timer = setTimeout(() => {
+    if (project?.collections.length === 0 && !isArchived && !isExpired) {
+      const timer = setTimeout(() => {
         dispatch(openModal('createCollection'));
       }, 2000); // Using 500ms for a noticeable yet quick delay
 
@@ -101,7 +104,10 @@ export default function Project() {
       
       updateProjectLastOpenedInFirestore(domain, project.id);
 
-      if (project.collections.length === 0) {
+      const isArchived = project.status === 'archive' || project.storage?.status === 'archive';
+      const isExpired = project.status === 'expired';
+
+      if (project.collections.length === 0 && !isArchived && !isExpired) {
         setTimeout(() => {
           const isAnyModalOpen = Object.values(modalsRef.current).some(Boolean);
           if (!isAnyModalOpen) dispatch(openModal('firstCollection'));
@@ -134,10 +140,11 @@ export default function Project() {
     dispatch(restoreProject({ domain, projectId: id }));
   }
 
+  const isArchived = project?.status === 'archive' || project?.storage?.status === 'archive';
+  const isExpired = project?.status === 'expired';
+  const archiveDate = project?.storage?.storageHistory?.find(h => h.status === 'archive')?.dateMoved;
+  
   if (!project) return null;
-
-  const isArchived = project.storage?.status === 'archive';
-  const archiveDate = project.storage?.storageHistory?.find(h => h.status === 'archive')?.dateMoved;
 
   return (
     <>
@@ -155,29 +162,43 @@ export default function Project() {
       <AddBudgetModal project={project} />
 
       <main className='project-page'>
-        {isArchived ? (
+        {isExpired ? (
+          <div className="archive-banner expired-banner">
+            <div className="banner-content">
+              <div className="status-badge">Expired</div>
+              <div className="banner-info">
+                <h3>Public Access Ended</h3>
+                <p>
+                  This gallery's public access period has ended. It is no longer visible to guests without a PIN. 
+                  You can still manage and share it as needed.
+                </p>
+              </div>
+              <div className="banner-actions">
+                <button className="button secondary small" onClick={() => dispatch(openModal('shareGallery'))}>Extend Validity</button>
+              </div>
+            </div>
+          </div>
+        ) : isArchived ? (
           <div className="archive-banner">
             <div className="banner-content">
               <div className="status-badge">Archived</div>
               <div className="banner-info">
-                <h3>Storage Optimized</h3>
+                <h3>Project Archived</h3>
                 <p>
-                  This project was moved to <strong>Archive Storage</strong> on {archiveDate ? new Date(archiveDate).toLocaleDateString() : 'N/A'}. 
-                  Smart Previews are still active, but original files must be restored for download.
+                  This project is currently archived and not active. Only the client and studio can view high-resolution photos.
                 </p>
               </div>
               <div className="banner-actions">
-                <button className="button primary small" onClick={handleRestoreProject}>Restore Originals</button>
+                <button className="button primary small" onClick={handleRestoreProject}>Restore Project</button>
               </div>
             </div>
           </div>
-        ):
-        <ProjectPageCoverImages project={project} />
-      
-      }
-                <div className="project-dashboard">
-                  <DashboardProjects project={project} />
-                </div>
+        ) : (
+          <ProjectPageCoverImages project={project} />
+        )}
+        <div className={`project-dashboard ${isExpired ? 'locked' : ''}`}>
+          <DashboardProjects project={project} />
+        </div>
               </main>
         
               {createPortal(
@@ -192,12 +213,12 @@ export default function Project() {
                     <div className={`button tertiary icon pin ${pinIconClass}`} onClick={handlePinCopy}>
                       {pinText}
                     </div>
-                      {isArchived ? 'Archived (Only client  and you)' : 'Share'}
+                      {isExpired ? 'Expired' : isArchived ? 'Archived (Only client and you)' : 'Share'}
                     <button
-                      className={`button primary share icon ${(project.uploadedFilesCount > 0 && !isArchived) ? '' : ''}`}
-                      onClick={() => project.uploadedFilesCount > 0  && dispatch(openModal('shareGallery'))}
+                      className={`button primary share icon ${(project.uploadedFilesCount > 0 || isExpired) ? '' : 'disabled'}`}
+                      onClick={() => (project.uploadedFilesCount > 0 || isExpired) && dispatch(openModal('shareGallery'))}
                     >
-                      Share
+                      {isExpired ? 'Extend Validity' : 'Share'}
                     </button>
         
                     <DropdownMenu>
@@ -205,7 +226,7 @@ export default function Project() {
                         <div className="icon options" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        <DropdownMenuItem onSelect={() => !isArchived && dispatch(openModal('createCollection'))} disabled={isArchived}>
+                        <DropdownMenuItem onSelect={() => !isArchived && !isExpired && dispatch(openModal('createCollection'))} disabled={isArchived || isExpired}>
                           <div className="icon-show add" /> New Gallery
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />

@@ -73,8 +73,10 @@ exports.serveGallery = functions.https.onRequest(async (req, res) => {
 
       if (projectDoc.exists) {
         const project = projectDoc.data();
-        title = `${toTitleCase(project.name)} | Gallery`;
-        description = `${toTitleCase(project.type || 'photo')} collection by ${toTitleCase(studioName)}.`;
+        
+        title = `${toTitleCase(project.name)}'s ${project.type}`;
+        
+        description = `${toTitleCase(project.type || 'Photo')} gallery by ${toTitleCase(studioName)}.`;
         image = project.projectCover ? getImageUrlByQuality(project.projectCover, 'thumb') : '';
       }
     } catch (err) {
@@ -92,4 +94,6 @@ exports.serveGallery = functions.https.onRequest(async (req, res) => {
   // Set Cache control to ensure previews aren't stale but also don't hit function too hard
   res.set('Cache-Control', 'public, max-age=600, s-maxage=1200');
   res.status(200).send(finalHtml);
+
+  
 });

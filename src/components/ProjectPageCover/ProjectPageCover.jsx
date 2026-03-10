@@ -13,6 +13,7 @@ import { getGalleryURL } from "../../utils/urlUtils";
 import { getStorageForDomain } from "../../utils/uploadOperations";
 import { selectStudio } from "../../app/slices/studioSlice";
 import "./ProjectPageCover.scss";
+import { formatDate, formatDateStyle02 } from "../../utils/dateUtils";
 
 export const ProjectCover = ({ project, projectDashboardView, setProjectDashboardView }) => {
     const dispatch = useDispatch();
@@ -252,7 +253,8 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                     </div>
 
                             <div className="project-metadata">
-                            <p>Project created on Jan 12, 2025</p>
+                            {/* <p>Project created on Jan 12, 2025</p> */}
+                            <p>Project created on {formatDateStyle02(project?.createdAt)}</p>
                             </div>
                 </div>
             }

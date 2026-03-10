@@ -6,16 +6,22 @@ import SectionRenderer from './SectionRenderer';
 import { toTitleCase } from '../../utils/stringUtils';
 import './SmartAlbum.scss'
 import { selectProjects } from '../../app/slices/projectsSlice';
+import ProjectExpiredPage from './ProjectExpiredPage';
+import { selectIsAuthenticated } from '../../app/slices/authSlice';
+import { selectStudio } from '../../app/slices/studioSlice';
 import Preview from '../../features/Preview/Preview';
 import { getThumbnailUrl } from '../../utils/urlUtils';
 import { fetchCollectionStatus } from '../../firebase/functions/firestore';
 import { trackEvent } from '../../analytics/utils';
+import { collection } from 'firebase/firestore';
 
-const SmartAlbum = ({ domain, projectId, collectionId }) => {
+const SmartAlbum = ({ domain, projectId, collectionId, project: propProject }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const smartGalleryData = useSelector(selectSmartGallery);
   const smartGalleryStatus = useSelector(selectSmartGalleryStatus);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const studio = useSelector(selectStudio);
   const [displayGallery, setDisplayGallery] = useState(false);
   
   // Preview State
@@ -25,8 +31,8 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
 
   const projects = useSelector(selectProjects);
   const selectedProject = useMemo(() => 
-      projects?.find((p) => p.id === projectId),
-      [projects, projectId]
+      propProject || projects?.find((p) => p.id === projectId),
+      [propProject, projects, projectId]
     );
 
   useEffect(() => {
@@ -109,6 +115,29 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
   const handleBack = () => {
     navigate(-1);
   };
+  const getCollectionById = (project,collectionId) => {
+    return project.collections.find((collection) => collection.id === collectionId);
+    
+  }
+  const isStage2Expired = useMemo(() => {
+    if (!selectedProject) return false;
+    if (selectedProject.status === 'expired') return true;
+    
+    if (selectedProject.createdAt) {
+      const createdAt = new Date(selectedProject.createdAt);
+      const retentionYears = parseInt(selectedProject.fileRetentionYears || '1');
+      const finalExpiryThresholdDate = new Date(createdAt);
+      finalExpiryThresholdDate.setMonth(finalExpiryThresholdDate.getMonth() + (retentionYears * 12));
+      finalExpiryThresholdDate.setDate(finalExpiryThresholdDate.getDate() + 30);
+      
+      return Date.now() > finalExpiryThresholdDate.getTime();
+    }
+    return false;
+  }, [selectedProject]);
+
+  if (isStage2Expired && !isAuthenticated) {
+    return <ProjectExpiredPage project={selectedProject} studio={studio} studioName={domain} />;
+  }
 
   if (smartGalleryStatus === 'loading') {
     return (
@@ -191,7 +220,7 @@ const SmartAlbum = ({ domain, projectId, collectionId }) => {
         )}
         <div className="gallery-info">
           <h1 className='project-name'>{toTitleCase(selectedProject?.name || '')}</h1>
-          <p className='project-type'>{toTitleCase(smartGalleryData?.name || '')}</p>
+          <p className='project-type'>{toTitleCase(getCollectionById(selectedProject,collectionId)?.name || '')}</p>
         </div>
       </div>
 

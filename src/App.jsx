@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Navigate, Route, Routes, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, Outlet, useLocation,useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { HotKeys } from 'react-hotkeys';
 
@@ -19,7 +19,6 @@ import Project from './features/Project/Project';
 import Projects from './features/Projects/Projects';
 import Packages from './features/Packages/Packages';
 import LoginModal from './features/Login/Login';
-import ShareProject from './features/Share/Share';
 import Storage from './features/Storage/Storage';
 import Galleries from './features/Galleries/Galleries';
 import SelectionPIN from './features/Selection/SelectionPIN';
@@ -37,6 +36,7 @@ import BillingHistory from './features/BillingHistory/BillingHistory';
 import SmartGallery from './features/SmartGallery/SmartGallery';
 import SmartGalleryDownloadPIN from './features/SmartGallery/SmartGalleryDownloadPIN';
 import UserProfile from './features/AdminPanel/UserProfile/UserProfile';
+import DownloadApp from './features/DownloadApp/DownloadApp';
 
 // Components
 import Alert from './components/Alert/Alert';
@@ -77,12 +77,20 @@ const AuthWrapper = ({ isAuthenticated }) => {
   return <Outlet />;
 };
 
+// Redirect for legacy share links
+const ShareRedirect = () => {
+  const { studioName, projectId, collectionId } = useParams();
+  const targetPath = `/${studioName}/smart-gallery/${projectId}${collectionId ? `/${collectionId}` : ''}`;
+  return <Navigate to={targetPath} replace />;
+};
+
 
 // APP
 export default function App() {
   const dispatch = useDispatch();
   const location = useLocation();
   const user = useSelector(selectUser);
+
   const authLoading = useSelector(selectAuthLoading);
 
   const isLoading = useSelector(selectProjectsStatus);
@@ -97,7 +105,7 @@ export default function App() {
   useEffect(() => {
     dispatch(verifyAuth());
   }, [dispatch]);
-  
+
 
   useEffect(() => {
     if(isAuthenticated && user!=='no-studio-found'){
@@ -193,9 +201,10 @@ export default function App() {
               {/* Public Routes */}
               <Route path="/login" element={<LoginModal />} />
               <Route path="/onboarding" element={<Onboarding />} />
+              <Route path="/download-app" element={<DownloadApp />} />
               <Route path="/:studioName/smart-gallery/:projectId/:collectionId?" element={<SmartGallery/>}/>
               <Route path="/:studioName/smart-gallery/:projectId/download/pin" element={<SmartGalleryDownloadPIN/>}/>
-              <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareProject/>}/>
+              <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareRedirect/>}/>
               <Route path="/:studioName/selection/:projectId/pin" element={<SelectionPIN/>}/>
               <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>
               <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>

@@ -670,6 +670,48 @@
             }
         }
 
+        &.expired {
+            opacity: 0.7;
+            background: linear-gradient(120deg, rgba($dark-2, 0.9) 0%, rgba($dark-3, 0.9) 100%);
+            border: 1px solid rgba($orange-default-dark, 0.3);
+
+            .project-cover {
+                filter: grayscale(0.8) sepia(0.2) brightness(0.6);
+                border: 1px solid rgba($orange-default-dark, 0.2);
+            }
+
+            .project-title {
+                color: $gray2-default-light;
+            }
+
+            .project-expiration {
+                color: $red-default-dark;
+                font-weight: 700;
+                opacity: 1;
+            }
+
+            .status-signal {
+                background-color: $red-default-dark !important;
+                box-shadow: 0 0 8px rgba($red-default-dark, 0.4) !important;
+                animation: none !important;
+                opacity: 0.6;
+            }
+
+            &:hover {
+                opacity: 0.95;
+                border-color: $orange-default-dark;
+                
+                .project-cover {
+                    filter: grayscale(0.4) sepia(0.1) brightness(0.8);
+                }
+                
+                .status-signal {
+                    opacity: 1;
+                    box-shadow: 0 0 12px rgba($red-default-dark, 0.6) !important;
+                }
+            }
+        }
+
         &.shoots{
 
         }

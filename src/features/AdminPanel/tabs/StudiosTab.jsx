@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { showAlert } from '../../../app/slices/alertSlice';
-import { migrateCollectionsByStudio } from '../../../firebase/functions/firestore';
+import { migrateCollectionsByStudio, migrateProjectsValidityFields } from '../../../firebase/functions/firestore';
 import { migrateStudios } from '../../../firebase/functions/subscription';
 import { migrateUsersToMultiStudio } from '../../../firebase/functions/user-firestore';
 
@@ -59,11 +59,17 @@ export const StudiosTab = ({ studios }) => {
                         </div>
                     </div>
                     <div className="right-actions">
-                        <button className="button secondary outline" onClick={() => handleMigration(
+                        <button className="button secondary outline disabled" disabled onClick={() => handleMigration(
                             migrateUsersToMultiStudio,
                             'All users migrated to multi-studio!',
                             'Error migrating users'
                         )}>Migrate All Users (Multi-Studio)</button>
+
+                        <button className="button secondary outline" onClick={() => handleMigration(
+                            migrateProjectsValidityFields,
+                            'All projects migrated!',
+                            'Error migrating projects'
+                        )}>Migrate Projects (Validity)</button>
                     </div>
                 </div>
                 <table className="invoice-table">
