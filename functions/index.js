@@ -87,7 +87,8 @@ exports.serveGallery = functions.https.onRequest(async (req, res) => {
 
   // Inject metadata into placeholders
   const finalHtml = html
-    .replace(/__TITLE__/g, title)
+    .replace(/>Fotoflow</g, `>${title}<`)
+    .replace(/content="Fotoflow"/g, `content="${title}"`)
     .replace(/__DESCRIPTION__/g, description)
     .replace(/__IMAGE__/g, image);
 
