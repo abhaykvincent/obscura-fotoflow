@@ -5,14 +5,13 @@ import { signInWithPopup } from 'firebase/auth';
 import { analytics, auth, provider } from '../../../firebase/app';
 import { selectUser, setUser, logout, login } from '../../../app/slices/authSlice';
 import { showAlert } from '../../../app/slices/alertSlice';
-import { isDeveloper, trackEvent } from '../../../analytics/utils';
+import { trackEvent } from '../../../analytics/utils';
 import { usePersonalizedGreeting } from './hooks/usePersonalizedGreeting';
 import { useInvitation } from './hooks/useInvitation';
 import { useOnboardingForm } from './hooks/useOnboardingForm';
 import { completeOnboarding } from './slices/onboardingSlice';
 import CreateStudioForm from './components/CreateStudioForm';
 import '../Onboarding.scss';
-import { generateReferral } from '../../../app/slices/referralsSlice';
 import { hideLoading } from '../../../app/slices/loadingSlice';
 import PrivacyPolicyModal from '../../../components/Modal/PrivacyPolicyModal';
 import TermsOfServiceModal from '../../../components/Modal/TermsOfServiceModal';
@@ -47,26 +46,6 @@ function Onboarding() {
         trackEvent('onboarding_viewed', { referral_code: ref });
     }, [ref]);
 
-    useEffect(() => {
-        if(isDeveloper) {
-            dispatch(generateReferral({
-            name: "Abhay",
-            studioName:"Monalisa",
-            campainName: "Admin",
-            campainPlatform: "whatsapp",
-            type: "referral",
-            email: "",
-            studioContact: "",
-            code: ['2744'],
-            status: "active",
-            quota: 3,
-            used: 0,
-            validity: 30,
-            createdAt: new Date().toISOString(),
-            }))
-
-        }
-    },[])
 
     const handleSelectStudio = async (studio) => {
         try {

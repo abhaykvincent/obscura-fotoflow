@@ -266,21 +266,6 @@ function Onboarding() {
       validateForm()
   },[user, createAccountData])
   useEffect(() => {
-    dispatch(generateReferral({
-      name: "Abhay",
-      studioName:"Monalisa",
-      campainName: "Admin",
-      campainPlatform: "whatsapp",
-      type: "referral",
-      email: "",
-      studioContact: "",
-      code: ['2744'],
-      status: "active",
-      quota: 3,
-      used: 0,
-      validity: 30,
-      createdAt: new Date().toISOString(),
-    }))
     createTimeOFDayObject()
     trackEvent('onboarding_viewed', {
       referral_code: ref

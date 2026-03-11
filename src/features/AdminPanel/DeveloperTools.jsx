@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
 import { addDummyProjects, addDummyUsers, fetchAllFirestoreData, clearFirestoreData } from '../../app/slices/adminPaneSlice';
 import { selectDomain } from '../../app/slices/authSlice';
+import { seedDevData } from '../../services/dataSeeder';
 import './AdminPanel.scss';
 
 // --- Icons ---
@@ -258,6 +259,9 @@ function DeveloperTools() {
                     </div>
                     <div className="button secondary outline" onClick={handleAddDummyUsers}>
                         Add Dummy Users
+                    </div>
+                    <div className="button secondary outline" onClick={seedDevData}>
+                        Seed Dev Data
                     </div>
                     <div className="button secondary outline" onClick={handleFetchData}>
                         {loading ? 'Fetching...' : 'Refresh Firestore Data'}
