@@ -48,12 +48,38 @@
       font-family: 'Lastri', sans-serif;
         font-size: 2rem;
         color: rgba(0, 0, 0, 0.9);
+        margin-bottom: 8px;
+    }
+    .sync-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+      
+      &.syncing {
+        color: $blue-accessible-dark;
+        background-color: rgba($blue-default-light, 0.1);
+        .sync-icon {
+          animation: spin 2s linear infinite;
+        }
+      }
+      
+      &.saved {
+        color: $green-accessible-dark;
+        background-color: rgba($green-default-light, 0.1);
+      }
     }
     p{
-      
       color: rgba(0, 0, 0, 0.7);
     }
+  }
 
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
   .project-header{
     display: grid;

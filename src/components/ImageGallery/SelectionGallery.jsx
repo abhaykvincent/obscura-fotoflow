@@ -2,60 +2,51 @@ import React, { useCallback, memo } from 'react';
 import { useDispatch } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
 
-const SelectionGallery = ({ project, images, selectedImages,setUnselectedImages, setSelectedImages }) => {
+const SelectionGallery = ({ project, images, selectedImages, setSelectedImages }) => {
   
   const dispatch = useDispatch()
   const handleImageClick = useCallback((fileUrl) => {
-    const index = selectedImages.indexOf(fileUrl);
+    // Simply call the toggle function provided by the parent
+    setSelectedImages(fileUrl);
+    
+    const isCurrentlySelected = selectedImages.some(img => img.url === fileUrl.url);
+    
+    dispatch(showAlert({
+      type: isCurrentlySelected ? 'warning' : 'success',
+      message: isCurrentlySelected ? 'Image Unselected!' : 'Image Selected!',
+    }));
+  }, [selectedImages, setSelectedImages, dispatch]);
   
-    if (index > -1) {
-      // Unselect the image if already selected
-      const newSelectedImages = [...selectedImages];
-      newSelectedImages.splice(index, 1);
-      setSelectedImages(newSelectedImages);
-      dispatch(showAlert({
-        type: 'warning',
-        message: 'Image Unselected!',
-      }));
-      // Add to unselected images
-      setUnselectedImages((prevUnselected) => [...prevUnselected, fileUrl]);
-    } else {
-      // Select the image if not yet selected
-      setSelectedImages([...selectedImages, fileUrl]);
-  
-      // Remove from unselected images if it exists
-      setUnselectedImages((prevUnselected) =>
-        prevUnselected.filter((img) => img.url !== fileUrl.url)
-      );
-    }
-  }, [selectedImages, setSelectedImages, setUnselectedImages]);
-  
-  const ImageComponent = React.memo(({ fileUrl, index, handleImageClick }) => (
-    <div
-      className="photo"
-      key={index}
-      onClick={() => project.status !== "selected" ? handleImageClick(fileUrl) : dispatch(showAlert({
-        type: 'warning',
-        message: 'Selection Completed!',
-      }))}
-    >
-      <img 
-        className="img" 
-        src={fileUrl.url} 
-        alt={`File ${index}`} 
-        loading="lazy"
-      />
-      
-      {project.status !== "selected" && <input
-        type="checkbox"
-        checked={selectedImages.includes(fileUrl)}
-        onChange={() => project.status !== "selected" ? handleImageClick(fileUrl) : dispatch(showAlert({
+  const ImageComponent = React.memo(({ fileUrl, index, handleImageClick }) => {
+    const isSelected = selectedImages.some(img => img.url === fileUrl.url);
+    
+    return (
+      <div
+        className="photo"
+        key={index}
+        onClick={() => project.status !== "selected" ? handleImageClick(fileUrl) : dispatch(showAlert({
           type: 'warning',
           message: 'Selection Completed!',
         }))}
-      />}
-    </div>
-  ));
+      >
+        <img 
+          className="img" 
+          src={fileUrl.url} 
+          alt={`File ${index}`} 
+          loading="lazy"
+        />
+        
+        {project.status !== "selected" && <input
+          type="checkbox"
+          checked={isSelected}
+          onChange={() => project.status !== "selected" ? handleImageClick(fileUrl) : dispatch(showAlert({
+            type: 'warning',
+            message: 'Selection Completed!',
+          }))}
+        />}
+      </div>
+    );
+  });
 
   return (
     <div className="gallery">
