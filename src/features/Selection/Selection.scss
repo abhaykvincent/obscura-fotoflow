@@ -317,23 +317,29 @@
   .pagination{
     display: flex;
     justify-content: center;
+    gap: 16px;
     align-items: center;
     margin-bottom: 8px*1;
     margin-top: 8px*2;
-    width: calc(100% - 8px*1);
-    overflow-x: scroll;
+    width: 100%;
+    
+    .page-progress {
+      font-size: 0.9rem;
+      color: rgba(0, 0, 0, 0.6);
+      font-weight: 500;
+      span {
+        color: rgba(0, 0, 0, 0.9);
+        font-weight: 700;
+      }
+    }
     
     .button{
       text-shadow: none;
-      &:first-child{
-        margin-right: 8px*1;
-      }
+      min-width: 120px;
+      
       &.selected{
         border: 1px solid $green-accessible-dark;
         color: $green-accessible-dark;
-      }
-      &:last-child{
-        margin-left: 8px*1;
       }
     }
     .send{
