@@ -51,17 +51,24 @@
         margin-bottom: 8px;
     }
     .sync-status {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       font-size: 0.85rem;
-      padding: 4px 12px;
+      padding: 8px 16px;
       border-radius: 20px;
       transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(8px);
       
       &.syncing {
         color: $blue-accessible-dark;
-        background-color: rgba($blue-default-light, 0.1);
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba($blue-default-light, 0.3);
         .sync-icon {
           animation: spin 2s linear infinite;
         }
@@ -69,7 +76,8 @@
       
       &.saved {
         color: $green-accessible-dark;
-        background-color: rgba($green-default-light, 0.1);
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba($green-default-light, 0.3);
       }
     }
     p{
