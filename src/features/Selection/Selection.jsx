@@ -111,7 +111,7 @@ export default function Selection() {
 
       if (resumed) {
         dispatch(showAlert({
-          type: 'info',
+          type: 'success',
           message: 'Resumed from where you left off!',
         }));
       }
@@ -157,13 +157,6 @@ export default function Selection() {
     }
   }, [project, currentCollectionId, studioName, projectId, navigate, size, hasInitializedProgress]);
 
-  // Save progress when page or collection changes
-  useEffect(() => {
-    if (hasInitializedProgress && currentCollectionId) {
-      saveProgress({ collectionId: currentCollectionId, page: page });
-    }
-  }, [page, currentCollectionId, hasInitializedProgress, saveProgress]);
-
   // Paginate images
   const paginatedImages = useMemo(() => {
     return images.slice((page - 1) * size, page * size);
@@ -194,8 +187,14 @@ export default function Selection() {
   };
 
   const handleToggleSelection = useCallback((image) => {
+    const isSelecting = !selectedIds.includes(image.url);
     toggleSelection(image.url);
-  }, [toggleSelection]);
+    
+    // Save progress only when an image is being selected (not unselected)
+    if (isSelecting) {
+      saveProgress({ collectionId: currentCollectionId, page: page });
+    }
+  }, [toggleSelection, currentCollectionId, page, selectedIds, saveProgress]);
 
   const saveSelection = async () => {
     dispatch(showAlert({ type: 'success', message: 'Selection auto-saved!' }));
