@@ -48,12 +48,46 @@
       font-family: 'Lastri', sans-serif;
         font-size: 2rem;
         color: rgba(0, 0, 0, 0.9);
+        margin-bottom: 8px;
+    }
+    .sync-status {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      padding: 8px 16px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(8px);
+      
+      &.syncing {
+        color: $blue-accessible-dark;
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba($blue-default-light, 0.3);
+        .sync-icon {
+          animation: spin 2s linear infinite;
+        }
+      }
+      
+      &.saved {
+        color: $green-accessible-dark;
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba($green-default-light, 0.3);
+      }
     }
     p{
-      
       color: rgba(0, 0, 0, 0.7);
     }
+  }
 
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
   .project-header{
     display: grid;
@@ -283,23 +317,29 @@
   .pagination{
     display: flex;
     justify-content: center;
+    gap: 16px;
     align-items: center;
     margin-bottom: 8px*1;
     margin-top: 8px*2;
-    width: calc(100% - 8px*1);
-    overflow-x: scroll;
+    width: 100%;
+    
+    .page-progress {
+      font-size: 0.9rem;
+      color: rgba(0, 0, 0, 0.6);
+      font-weight: 500;
+      span {
+        color: rgba(0, 0, 0, 0.9);
+        font-weight: 700;
+      }
+    }
     
     .button{
       text-shadow: none;
-      &:first-child{
-        margin-right: 8px*1;
-      }
+      min-width: 120px;
+      
       &.selected{
         border: 1px solid $green-accessible-dark;
         color: $green-accessible-dark;
-      }
-      &:last-child{
-        margin-left: 8px*1;
       }
     }
     .send{
