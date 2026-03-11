@@ -7,14 +7,14 @@ import reportWebVitals from './reportWebVitals';
 
 import { BrowserRouter } from "react-router-dom";
 import './index.css';
-import { seedPricingData } from './utils/seedData';
+import { seedDevData } from './services/dataSeeder';
 
 const container = document.getElementById('root');
 const root = createRoot(container);
 
 // Seed data in development
 if (process.env.NODE_ENV === 'development') {
-  await seedPricingData();
+  await seedDevData();
 }
 
 root.render(

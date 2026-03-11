@@ -57,15 +57,18 @@ export const addUploadCompletionEventToFirestore = async (domain, projectId, col
         const projectData = projectSnapshot.data();
         const existingEvents = projectData.events || [];
 
-        const eventDate = uploadedFiles[0]?.dateTimeOriginal ? new Date(uploadedFiles[0].dateTimeOriginal).getTime() : new Date().getTime();
+        // Extract and Normalize Date
+        const rawDate = uploadedFiles[0]?.dateTimeOriginal ? new Date(uploadedFiles[0].dateTimeOriginal) : new Date();
+        const normalizedEventDate = new Date(rawDate);
+        normalizedEventDate.setHours(0, 0, 0, 0);
 
-        // Check if an event with the same type and date already exists
+        // Check if an event with the same type and normalized date already exists
         const eventAlreadyExists = existingEvents.some(event => 
-            event.type === collectionName && event.date === eventDate
+            event.type === collectionName && event.date === normalizedEventDate.getTime()
         );
 
         if (eventAlreadyExists) {
-            console.log(`%cUpload completion event for collection ${collectionName} on ${new Date(eventDate).toLocaleDateString()} already exists. Skipping creation.`, `color: orange;`);
+            console.log(`%cUpload completion event for collection ${collectionName} on ${normalizedEventDate.toLocaleDateString()} already exists. Skipping creation.`, `color: orange;`);
             return; // Do not create a new event
         }
 
@@ -73,7 +76,7 @@ export const addUploadCompletionEventToFirestore = async (domain, projectId, col
         const uploadCompletionEvent = {
             id: eventId,
             type: collectionName,
-            date: eventDate,
+            date: normalizedEventDate.getTime(),
             location: '',
             crews: [],
             collectionId: collectionId,

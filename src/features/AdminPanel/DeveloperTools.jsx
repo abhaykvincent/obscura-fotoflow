@@ -1,19 +1,20 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
 import { addDummyProjects, addDummyUsers, fetchAllFirestoreData, clearFirestoreData } from '../../app/slices/adminPaneSlice';
 import { selectDomain } from '../../app/slices/authSlice';
+import { seedDevData } from '../../services/dataSeeder';
 import './AdminPanel.scss';
 
-// --- Icons ---
+// --- Icons (Enhanced) ---
 const FolderIcon = () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="fs-icon">
         <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
     </svg>
 );
 
 const DocIcon = () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="fs-icon">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
         <polyline points="14 2 14 8 20 8"></polyline>
         <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -22,48 +23,82 @@ const DocIcon = () => (
     </svg>
 );
 
-const BackIcon = () => (
+const SearchIcon = () => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="15 18 9 12 15 6"></polyline>
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
     </svg>
 );
 
-const JsonViewer = ({ data, level = 0 }) => {
-    const [isExpanded, setIsExpanded] = useState(level < 1);
+const CopyIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+    </svg>
+);
 
-    if (data === null) return <span style={{ color: '#808080' }}>null</span>;
-    if (data === undefined) return <span style={{ color: '#808080' }}>undefined</span>;
+const ExpandIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <polyline points="9 21 3 21 3 15"></polyline>
+        <line x1="21" y1="3" x2="14" y2="10"></line>
+        <line x1="3" y1="21" x2="10" y2="14"></line>
+    </svg>
+);
+
+const CollapseIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="4 14 10 14 10 20"></polyline>
+        <polyline points="20 10 14 10 14 4"></polyline>
+        <line x1="14" y1="10" x2="21" y2="3"></line>
+        <line x1="10" y1="14" x2="3" y2="21"></line>
+    </svg>
+);
+
+// --- JsonViewer Component ---
+const JsonViewer = ({ data, level = 0, initialExpanded = false, forceExpand = null }) => {
+    const [isExpanded, setIsExpanded] = useState(level < 1 || initialExpanded);
+
+    useEffect(() => {
+        if (forceExpand !== null) {
+            setIsExpanded(forceExpand);
+        }
+    }, [forceExpand]);
+
+    if (data === null) return <span className="jv-null">null</span>;
+    if (data === undefined) return <span className="jv-undefined">undefined</span>;
     
     if (typeof data !== 'object') {
-        const color = typeof data === 'string' ? '#CE9178' : typeof data === 'number' ? '#B5CEA8' : '#569CD6';
-        const value = typeof data === 'string' ? `"${data}"` : String(data);
-        return <span style={{ color }}>{value}</span>;
+        const type = typeof data;
+        const value = type === 'string' ? `"${data}"` : String(data);
+        return <span className={`jv-value jv-${type}`}>{value}</span>;
     }
 
     const isArray = Array.isArray(data);
-    const isEmpty = isArray ? data.length === 0 : Object.keys(data).length === 0;
+    const keys = Object.keys(data);
+    const isEmpty = keys.length === 0;
     const preview = isArray ? `Array(${data.length})` : 'Object';
 
-    if (isEmpty) return <span>{isArray ? '[]' : '{}'}</span>;
+    if (isEmpty) return <span className="jv-empty">{isArray ? '[]' : '{}'}</span>;
 
     return (
-        <div style={{ marginLeft: level > 0 ? 20 : 0 }}>
+        <div className="jv-node" style={{ marginLeft: level > 0 ? 20 : 0 }}>
             <div 
+                className="jv-toggle"
                 onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} 
-                style={{ cursor: 'pointer', display: 'inline-block', userSelect: 'none' }}
             >
-                <span style={{ color: '#C586C0', marginRight: 5 }}>{isExpanded ? '▼' : '▶'}</span>
-                <span style={{ fontWeight: 'bold', color: isArray ? '#4EC9B0' : '#4EC9B0' }}>
+                <span className="jv-arrow">{isExpanded ? '▼' : '▶'}</span>
+                <span className={`jv-label ${isArray ? 'jv-array' : 'jv-object'}`}>
                     {preview}
                 </span>
             </div>
             
             {isExpanded && (
-                <div style={{ marginLeft: 15, borderLeft: '1px solid #404040', paddingLeft: 5 }}>
-                    {Object.entries(data).map(([key, value]) => (
-                        <div key={key} style={{ margin: '2px 0' }}>
-                            <span style={{ color: '#9CDCFE', marginRight: 5 }}>{key}:</span>
-                            <JsonViewer data={value} level={level + 1} />
+                <div className="jv-content">
+                    {keys.map((key) => (
+                        <div key={key} className="jv-line">
+                            <span className="jv-key">{key}:</span>
+                            <JsonViewer data={data[key]} level={level + 1} forceExpand={forceExpand} />
                         </div>
                     ))}
                 </div>
@@ -77,87 +112,68 @@ function DeveloperTools() {
     const domain = useSelector(selectDomain);
     const { firestoreData, loading } = useSelector((state) => state.adminPane);
 
-    // Navigation State
-    // path: Array of { col: string, doc: string }
-    // Represents the drill-down history.
-    // E.g., [{col: 'projects', doc: 'proj_1'}, {col: 'collections', doc: 'col_1'}]
+    // Explorer State
     const [path, setPath] = useState([]);
+    const [selectedCollection, setSelectedCollection] = useState(null);
+    const [selectedDocId, setSelectedDocId] = useState(null);
     
-    // Selection State at current level
-    const [selectedCollection, setSelectedCollection] = useState(null); // Name of collection
-    const [selectedDocId, setSelectedDocId] = useState(null); // ID of document
+    // UI State
+    const [colSearch, setColSearch] = useState('');
+    const [docSearch, setDocSearch] = useState('');
+    const [jsonForceExpand, setJsonForceExpand] = useState(null);
+    const [isSeeding, setIsSeeding] = useState(false);
 
     // --- Helpers ---
 
-    // Get available collections at the current path depth
     const getCollectionsAtCurrentLevel = useMemo(() => {
         if (!firestoreData) return [];
 
+        let collections = [];
         if (path.length === 0) {
-            // Root level: Return keys that don't contain '::'
-            return Object.keys(firestoreData).filter(k => !k.includes('::'));
+            collections = Object.keys(firestoreData).filter(k => !k.includes('::'));
         } else {
-            // Nested level: We are inside a doc. 
-            // Previous collection was path[last].col
-            // We need to find keys like `prevCol::subCol`
-            // AND ensure they are relevant for the current doc context (path[last].doc)
             const parent = path[path.length - 1];
-            // The data structure stores subcollections as 'parentCol::subCol'.
-            // Note: Since 'projects::collections' is a top-level key in the slice, 
-            // we need to match keys that start with `${parent.col}::`.
-            // But wait, if we drilled down twice? e.g. projects -> collections -> photos.
-            // The slice currently only supports 1 level of nesting ('parent::child'). 
-            // Deeper nesting might not be supported by the current fetch logic.
-            // Assuming 1 level of nesting for now based on slice.
-            
             const prefix = `${parent.col}::`;
             const potentialKeys = Object.keys(firestoreData).filter(k => k.startsWith(prefix));
             
-            // Map to simple subcollection names (e.g., 'collections', 'events')
-            // And check if they have data for the current parent doc ID
-            return potentialKeys
+            collections = potentialKeys
                 .map(k => ({ fullKey: k, name: k.split('::')[1] }))
                 .filter(({ fullKey }) => {
-                    const subColData = firestoreData[fullKey]; // This is a Map: parentId -> [docs]
+                    const subColData = firestoreData[fullKey];
                     return subColData && subColData[parent.doc] && subColData[parent.doc].length > 0;
                 })
                 .map(item => item.name);
         }
-    }, [firestoreData, path]);
 
-    // Get documents for the currently selected collection
+        if (!colSearch) return collections;
+        return collections.filter(c => c.toLowerCase().includes(colSearch.toLowerCase()));
+    }, [firestoreData, path, colSearch]);
+
     const getDocumentsInSelectedCollection = useMemo(() => {
         if (!firestoreData || !selectedCollection) return [];
 
+        let docs = [];
         if (path.length === 0) {
-            // Root level collection
-            return firestoreData[selectedCollection] || [];
+            docs = firestoreData[selectedCollection] || [];
         } else {
-            // Nested collection
             const parent = path[path.length - 1];
             const fullKey = `${parent.col}::${selectedCollection}`;
-            const map = firestoreData[fullKey]; // parentId -> [docs]
-            return map ? (map[parent.doc] || []) : [];
+            const map = firestoreData[fullKey];
+            docs = map ? (map[parent.doc] || []) : [];
         }
-    }, [firestoreData, selectedCollection, path]);
 
-    // Get the actual data of the selected document
+        if (!docSearch) return docs;
+        return docs.filter(d => d.id.toLowerCase().includes(docSearch.toLowerCase()));
+    }, [firestoreData, selectedCollection, path, docSearch]);
+
     const getSelectedDocumentData = useMemo(() => {
         const docs = getDocumentsInSelectedCollection;
         return docs.find(d => d.id === selectedDocId) || null;
     }, [getDocumentsInSelectedCollection, selectedDocId]);
 
-    // Check if the selected document has subcollections (to show drill-down options)
-    const getSubcollectionsForDoc = (docId) => {
+    const getSubcollectionsForDoc = useCallback((docId) => {
         if (!firestoreData || !selectedCollection) return [];
-        
-        // Construct potential key prefix for the next level
-        // Currently slice uses 'parent::child'. 
-        // If we are at root 'projects', we look for 'projects::...'.
-        // If we are already deep, say 'projects::collections', the slice doesn't have 'projects::collections::items'.
-        // So we only support 1 level of drill down with current data.
-        
-        if (path.length > 0) return []; // Limit to 1 level for now as per slice structure
+        if (path.length > 0) return []; // Limit nesting for now
 
         const prefix = `${selectedCollection}::`;
         return Object.keys(firestoreData)
@@ -168,29 +184,30 @@ function DeveloperTools() {
                 return map && map[docId] && map[docId].length > 0;
             })
             .map(item => item.name);
-    };
+    }, [firestoreData, selectedCollection, path]);
 
     // --- Handlers ---
 
     const handleCollectionClick = (colName) => {
         setSelectedCollection(colName);
         setSelectedDocId(null);
+        setDocSearch('');
     };
 
     const handleDocClick = (docId) => {
         setSelectedDocId(docId);
+        setJsonForceExpand(null);
     };
 
     const handleDrillDown = (subColName) => {
-        // Push current state to path
         setPath([...path, { col: selectedCollection, doc: selectedDocId }]);
-        // Reset selection for new level
         setSelectedCollection(subColName);
         setSelectedDocId(null);
+        setColSearch('');
+        setDocSearch('');
     };
 
     const handleBreadcrumbClick = (index) => {
-        // Navigate back to a specific level
         if (index === -1) {
             setPath([]);
             setSelectedCollection(null);
@@ -198,73 +215,90 @@ function DeveloperTools() {
         } else {
             const newPath = path.slice(0, index + 1);
             setPath(newPath);
-            // We don't restore the exact selection state of that level automatically,
-            // or we could store it in history. For now, reset selection or keep it if it was the target.
-            // Better UX: Cut path, but we need to know what was selected at that level to render it?
-            // Actually, if we go to level X, the state variables (selectedCollection) should reflect level X.
-            // But `path` defines the PARENTS. The component state defines the CURRENT view.
-            
-            // If I click root (index -1): Path becomes empty.
-            // I need to reset selectedCollection/DocId to what they were? Or just null?
             setSelectedCollection(null); 
             setSelectedDocId(null);
         }
+        setColSearch('');
+        setDocSearch('');
+    };
+
+    const copyToClipboard = () => {
+        if (!getSelectedDocumentData) return;
+        const text = JSON.stringify(getSelectedDocumentData, null, 2);
+        navigator.clipboard.writeText(text).then(() => {
+            dispatch(showAlert({ type: 'success', message: 'JSON copied to clipboard!' }));
+        });
+    };
+
+    const toggleExpandAll = () => {
+        setJsonForceExpand(prev => prev === true ? false : true);
     };
 
     // --- Actions ---
 
-    const handleAddDummyProjects = async () => {
+    const handleAction = async (actionFn, successMsg) => {
+        setIsSeeding(true);
+        try {
+            await actionFn();
+            dispatch(showAlert({ type: 'success', message: successMsg }));
+        } catch (error) {
+            dispatch(showAlert({ type: 'error', message: error.message }));
+        } finally {
+            setIsSeeding(false);
+        }
+    };
+
+    const handleAddDummyProjects = () => {
         if (!domain) {
-            dispatch(showAlert({ type: 'error', message: 'Domain not found. Cannot add dummy projects.' }));
+            dispatch(showAlert({ type: 'error', message: 'Domain not found.' }));
             return;
         }
-        try {
-            await dispatch(addDummyProjects({ domain, count: 20 })).unwrap();
-            dispatch(showAlert({ type: 'success', message: 'Dummy projects added successfully!' }));
-        } catch (error) {
-            dispatch(showAlert({ type: 'error', message: `Error adding dummy projects: ${error.message}` }));
-        }
+        handleAction(() => dispatch(addDummyProjects({ domain, count: 20 })).unwrap(), 'Dummy projects added!');
     };
 
-    const handleAddDummyUsers = async () => {
-        try {
-            await dispatch(addDummyUsers()).unwrap();
-            dispatch(showAlert({ type: 'success', message: '20 Dummy users added successfully!' }));
-        } catch (error) {
-            dispatch(showAlert({ type: 'error', message: `Error adding dummy users: ${error.message}` }));
-        }
+    const handleAddDummyUsers = () => {
+        handleAction(() => dispatch(addDummyUsers()).unwrap(), 'Dummy users added!');
     };
 
-    const handleFetchData = async () => {
-        try {
-            // Reset nav
-            setPath([]);
-            setSelectedCollection(null);
-            setSelectedDocId(null);
-            await dispatch(fetchAllFirestoreData(domain)).unwrap();
-            dispatch(showAlert({ type: 'success', message: 'Firestore data fetched successfully!' }));
-        } catch (error) {
-            dispatch(showAlert({ type: 'error', message: `Error fetching data: ${error.message}` }));
-        }
+    const handleSeedDevData = () => {
+        handleAction(seedDevData, 'Dev data seeded!');
+    };
+
+    const handleFetchData = () => {
+        if (loading) return;
+        handleAction(() => dispatch(fetchAllFirestoreData(domain)).unwrap(), 'Firestore data refreshed!');
+        setPath([]);
+        setSelectedCollection(null);
+        setSelectedDocId(null);
     };
 
     return (
         <main className="developer-tools">
-            <h1 className="admin-title">Developer Tools</h1>
+            <header className="dev-header">
+                <h1 className="admin-title">Developer Tools</h1>
+                <div className="dev-status">
+                    {loading && <span className="status-badge loading">Syncing...</span>}
+                    {isSeeding && <span className="status-badge seeding">Seeding Data...</span>}
+                </div>
+            </header>
+
             <div className="admin-dashboard">
-                <div className="admin-actions">
-                    <div className="button secondary outline" onClick={handleAddDummyProjects}>
-                        Add Dummy Projects
-                    </div>
-                    <div className="button secondary outline" onClick={handleAddDummyUsers}>
-                        Add Dummy Users
-                    </div>
-                    <div className="button secondary outline" onClick={handleFetchData}>
-                        {loading ? 'Fetching...' : 'Refresh Firestore Data'}
-                    </div>
-                     <div className="button secondary outline" onClick={() => dispatch(clearFirestoreData())}>
-                        Clear Data
-                    </div>
+                <div className="admin-actions dev-toolbar">
+                    <button className="button secondary outline small" onClick={handleAddDummyProjects} disabled={isSeeding}>
+                        + Dummy Projects
+                    </button>
+                    <button className="button secondary outline small" onClick={handleAddDummyUsers} disabled={isSeeding}>
+                        + Dummy Users
+                    </button>
+                    <button className="button secondary outline small" onClick={handleSeedDevData} disabled={isSeeding}>
+                        Seed Dev Data
+                    </button>
+                    <button className="button primary small" onClick={handleFetchData} disabled={loading || isSeeding}>
+                        {loading ? 'Refreshing...' : 'Refresh Explorer'}
+                    </button>
+                     <button className="button danger outline small" onClick={() => dispatch(clearFirestoreData())} disabled={isSeeding}>
+                        Clear View
+                    </button>
                 </div>
 
                 {firestoreData && (
@@ -275,26 +309,43 @@ function DeveloperTools() {
                                 className={`crumb ${path.length === 0 ? 'active' : ''}`}
                                 onClick={() => handleBreadcrumbClick(-1)}
                             >
-                                Root
+                                <FolderIcon /> root
                             </div>
                             {path.map((item, index) => (
                                 <React.Fragment key={index}>
-                                    <span className="sep">/</span>
+                                    <span className="sep">›</span>
                                     <div 
-                                        className={`crumb ${index === path.length - 1 ? 'active' : ''}`}
+                                        className={`crumb ${index === path.length - 1 && !selectedCollection ? 'active' : ''}`}
                                         onClick={() => handleBreadcrumbClick(index)}
                                     >
-                                        {item.col} <span className="doc-id">({item.doc})</span>
+                                        {item.col} <span className="doc-id">[{item.doc.substring(0, 6)}..]</span>
                                     </div>
                                 </React.Fragment>
                             ))}
+                            {selectedCollection && (
+                                <>
+                                    <span className="sep">›</span>
+                                    <div className="crumb active">{selectedCollection}</div>
+                                </>
+                            )}
                         </div>
 
                         {/* 3-Column Layout */}
                         <div className="fs-columns">
                             {/* Column 1: Collections */}
                             <div className="fs-col collections-col">
-                                <div className="col-header">Collections</div>
+                                <div className="col-header">
+                                    <span>Collections</span>
+                                    <div className="col-search">
+                                        <SearchIcon />
+                                        <input 
+                                            type="text" 
+                                            placeholder="Filter..." 
+                                            value={colSearch}
+                                            onChange={(e) => setColSearch(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
                                 <div className="col-list">
                                     {getCollectionsAtCurrentLevel.map(col => (
                                         <div 
@@ -303,7 +354,7 @@ function DeveloperTools() {
                                             onClick={() => handleCollectionClick(col)}
                                         >
                                             <FolderIcon />
-                                            {col}
+                                            <span className="text">{col}</span>
                                         </div>
                                     ))}
                                     {getCollectionsAtCurrentLevel.length === 0 && (
@@ -315,8 +366,17 @@ function DeveloperTools() {
                             {/* Column 2: Documents */}
                             <div className="fs-col documents-col">
                                 <div className="col-header">
-                                    Documents
-                                    {selectedCollection && <span className="count">({getDocumentsInSelectedCollection.length})</span>}
+                                    <span>Documents {selectedCollection && `(${getDocumentsInSelectedCollection.length})`}</span>
+                                    <div className="col-search">
+                                        <SearchIcon />
+                                        <input 
+                                            type="text" 
+                                            placeholder="Search ID..." 
+                                            value={docSearch}
+                                            onChange={(e) => setDocSearch(e.target.value)}
+                                            disabled={!selectedCollection}
+                                        />
+                                    </div>
                                 </div>
                                 <div className="col-list">
                                     {getDocumentsInSelectedCollection.map(doc => (
@@ -336,18 +396,28 @@ function DeveloperTools() {
                                 </div>
                             </div>
 
-                            {/* Column 3: Data & Subcollections */}
+                            {/* Column 3: Data */}
                             <div className="fs-col data-col">
                                 <div className="col-header">
-                                    {selectedDocId || 'Select a document'}
+                                    <span className="doc-title">{selectedDocId || 'Document Data'}</span>
+                                    {selectedDocId && (
+                                        <div className="data-actions">
+                                            <button className="icon-btn" title="Copy JSON" onClick={copyToClipboard}>
+                                                <CopyIcon />
+                                            </button>
+                                            <button className="icon-btn" title="Toggle Expand" onClick={toggleExpandAll}>
+                                                {jsonForceExpand === true ? <CollapseIcon /> : <ExpandIcon />}
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="data-content">
                                     {selectedDocId && getSelectedDocumentData ? (
                                         <>
-                                            {/* Subcollections Links (if any) */}
+                                            {/* Subcollections Panel */}
                                             {getSubcollectionsForDoc(selectedDocId).length > 0 && (
                                                 <div className="subcollections-panel">
-                                                    <div className="sub-label">Subcollections:</div>
+                                                    <div className="sub-label">Subcollections</div>
                                                     <div className="sub-chips">
                                                         {getSubcollectionsForDoc(selectedDocId).map(sub => (
                                                             <div 
@@ -355,8 +425,7 @@ function DeveloperTools() {
                                                                 className="chip"
                                                                 onClick={() => handleDrillDown(sub)}
                                                             >
-                                                                <FolderIcon />
-                                                                {sub}
+                                                                <FolderIcon /> {sub}
                                                                 <span className="arrow">→</span>
                                                             </div>
                                                         ))}
@@ -365,13 +434,16 @@ function DeveloperTools() {
                                             )}
 
                                             <div className="json-panel">
-                                                <JsonViewer data={getSelectedDocumentData} />
+                                                <JsonViewer 
+                                                    data={getSelectedDocumentData} 
+                                                    forceExpand={jsonForceExpand} 
+                                                />
                                             </div>
                                         </>
                                     ) : (
                                         <div className="empty-state">
                                             <div className="icon">📄</div>
-                                            <p>Select a document to view data</p>
+                                            <p>{selectedCollection ? 'Select a document to view its data' : 'Explore Firestore collections'}</p>
                                         </div>
                                     )}
                                 </div>
@@ -385,3 +457,4 @@ function DeveloperTools() {
 }
 
 export default DeveloperTools;
+

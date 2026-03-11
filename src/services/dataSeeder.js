@@ -1,15 +1,17 @@
 import { db } from "../firebase/app";
-import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
+import { collection, getDocs, writeBatch, query, where, setDoc, doc } from "firebase/firestore";
+import { toKebabCase } from "../utils/stringUtils";
 
+/**
+ * Seeds pricing groups if they don't already exist.
+ * Idempotent: Checks for existing group ID before adding.
+ * Uses writeBatch for atomic operations.
+ */
 const seedPricingData = async () => {
-    if (process.env.NODE_ENV !== 'development') {
-        console.log("Not in development environment, skipping data seeding.");
-        return;
-    }
-
-    console.log("Attempting to seed pricing data...");
-
+    console.log("Checking pricing data...");
     const pricingGroupsRef = collection(db, "pricingGroups");
+    const batch = writeBatch(db);
+    let addedCount = 0;
 
     const customPricingGroups = [
         {
@@ -159,14 +161,80 @@ const seedPricingData = async () => {
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-            await addDoc(pricingGroupsRef, groupData);
-            console.log(`Pricing group '${groupData.name}' (${groupData.id}) added.`);
+            const docRef = doc(pricingGroupsRef, groupData.id);
+            batch.set(docRef, groupData);
+            addedCount++;
+            console.log(`📝 Prepared pricing group '${groupData.name}' for batch.`);
         } else {
-            console.log(`Pricing group '${groupData.name}' (${groupData.id}) already exists, skipping.`);
+            console.log(`ℹ️ Pricing group '${groupData.name}' already exists.`);
         }
     }
 
-    console.log("Pricing data seeding process completed.");
+    if (addedCount > 0) {
+        await batch.commit();
+        console.log(`✅ ${addedCount} pricing groups committed.`);
+    } else {
+        console.log("ℹ️ No new pricing groups to seed.");
+    }
 };
 
-export { seedPricingData };
+/**
+ * Seeds a default developer referral if it doesn't exist.
+ * Idempotent: Checks for existing referral with code '2744'.
+ */
+const seedReferralData = async () => {
+    console.log("Checking referral data...");
+    const referralsRef = collection(db, 'referrals');
+    const defaultReferral = {
+      name: "Abhay",
+      studioName: "Monalisa",
+      campainName: "Admin",
+      campainPlatform: "whatsapp",
+      type: "referral",
+      email: "",
+      studioContact: "",
+      code: ['2744'],
+      status: "active",
+      quota: 3,
+      used: 0,
+      validity: 30,
+      createdAt: new Date().toISOString(),
+    };
+
+    const q = query(referralsRef, where("code", "array-contains", "2744"));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+        const documentId = `${toKebabCase(defaultReferral.name)}-dev-seed`;
+        await setDoc(doc(referralsRef, documentId), defaultReferral);
+        console.log("✅ Default referral data seeded.");
+    } else {
+        console.log("ℹ️ Default referral data already exists.");
+    }
+};
+
+/**
+ * Centralized seeding function for development environment.
+ * Exposes to window for manual triggering.
+ */
+export const seedDevData = async () => {
+    if (process.env.NODE_ENV !== 'development') {
+        console.warn("Seeding is only available in development environment.");
+        return;
+    }
+
+    console.group("🚀 Seeding Development Data");
+    try {
+        await seedPricingData();
+        await seedReferralData();
+        console.log("✨ Seeding process completed.");
+    } catch (error) {
+        console.error("❌ Seeding failed:", error);
+    }
+    console.groupEnd();
+};
+
+// Expose to window for manual execution in dev tools
+if (process.env.NODE_ENV === 'development') {
+    window.seed = seedDevData;
+}
