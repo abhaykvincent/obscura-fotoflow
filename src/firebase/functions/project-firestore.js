@@ -213,6 +213,24 @@ export const updateProjectSelectedImageIdsInFirestore = async (domain, projectId
     }
 };
 
+export const updateProjectLastProgressInFirestore = async (domain, projectId, lastProgress) => {
+    if (!domain || !projectId || !lastProgress) {
+        throw new Error('Domain, Project ID, and lastProgress are required.');
+    }
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+
+    try {
+        await updateDoc(projectDocRef, { lastProgress });
+        console.log(`%c📍 Progress Saved: Collection ${lastProgress.collectionId}, Page ${lastProgress.page}`, `color: #21ade4ff;`);
+    } catch (error) {
+        console.error(`%cError updating lastProgress for project: ${projectId} - ${error.message}`, 'color: red;');
+        throw error;
+    }
+};
+
 export const updateProjectStorageToArchive = async (domain, projectId) => {
     if (!domain || !projectId) {
         throw new Error('Domain and Project ID are required for archiving.');

@@ -1,26 +1,28 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { updateProjectSelectedImageIdsInFirestore, fetchProject } from '../firebase/functions/firestore';
+import { updateProjectSelectedImageIdsInFirestore, fetchProject, updateProjectLastProgressInFirestore } from '../firebase/functions/firestore';
 
 /**
- * Custom hook to manage persistent image selections in Firestore.
- * Handles fetching existing selections, local state management, and debounced syncing.
+ * Custom hook to manage persistent image selections and user progress in Firestore.
  */
 export const usePersistentSelection = (studioName, projectId) => {
     const [selectedIds, setSelectedIds] = useState([]);
+    const [lastProgress, setLastProgress] = useState(null); // { collectionId: string, page: number }
     const [isSyncing, setIsSyncing] = useState(false);
     const [initialLoad, setInitialLoad] = useState(true);
     const syncTimeoutRef = useRef(null);
+    const progressTimeoutRef = useRef(null);
 
-    // Initial Fetch: Load existing selections from Firestore
+    // Initial Fetch: Load existing selections and progress
     useEffect(() => {
-        const loadInitialSelections = async () => {
+        const loadInitialData = async () => {
             if (!studioName || !projectId) return;
             try {
                 const projectData = await fetchProject(studioName, projectId);
+                
+                // Set selections
                 if (projectData && projectData.selectedImageIds) {
                     setSelectedIds(projectData.selectedImageIds);
                 } else {
-                    // Migration: if selectedImageIds doesn't exist, extract from current status-based system
                     const extractedIds = [];
                     projectData.collections.forEach(collection => {
                         collection.uploadedFiles?.forEach(image => {
@@ -31,16 +33,21 @@ export const usePersistentSelection = (studioName, projectId) => {
                     });
                     setSelectedIds(extractedIds);
                 }
+
+                // Set last progress
+                if (projectData && projectData.lastProgress) {
+                    setLastProgress(projectData.lastProgress);
+                }
             } catch (error) {
-                console.error('Error fetching initial selections:', error);
+                console.error('Error fetching initial data:', error);
             } finally {
                 setInitialLoad(false);
             }
         };
-        loadInitialSelections();
+        loadInitialData();
     }, [studioName, projectId]);
 
-    // Sync function: Writes the selection array to Firestore
+    // Sync selections function
     const syncToFirestore = useCallback(async (ids) => {
         if (!studioName || !projectId) return;
         setIsSyncing(true);
@@ -53,38 +60,50 @@ export const usePersistentSelection = (studioName, projectId) => {
         }
     }, [studioName, projectId]);
 
-    // Debounced sync to avoid excessive API calls
-    const debouncedSync = useCallback((ids) => {
-        if (syncTimeoutRef.current) {
-            clearTimeout(syncTimeoutRef.current);
+    // Save progress function
+    const syncProgressToFirestore = useCallback(async (progress) => {
+        if (!studioName || !projectId || !progress) return;
+        try {
+            await updateProjectLastProgressInFirestore(studioName, projectId, progress);
+        } catch (error) {
+            console.error('Sync progress failed:', error);
         }
-        
-        // We set isSyncing to true immediately to show feedback
+    }, [studioName, projectId]);
+
+    // Debounced selection sync
+    const debouncedSync = useCallback((ids) => {
+        if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
         setIsSyncing(true);
-        
         syncTimeoutRef.current = setTimeout(() => {
             syncToFirestore(ids);
-        }, 2500); // 2.5 seconds debounce
+        }, 2500);
     }, [syncToFirestore]);
 
-    // Cleanup timeout on unmount
+    // Debounced progress sync
+    const saveProgress = useCallback((progress) => {
+        // Update local state immediately
+        setLastProgress(progress);
+        
+        if (progressTimeoutRef.current) clearTimeout(progressTimeoutRef.current);
+        progressTimeoutRef.current = setTimeout(() => {
+            syncProgressToFirestore(progress);
+        }, 3000); // 3 seconds debounce for progress
+    }, [syncProgressToFirestore]);
+
+    // Cleanup on unmount
     useEffect(() => {
         return () => {
-            if (syncTimeoutRef.current) {
-                clearTimeout(syncTimeoutRef.current);
-            }
+            if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+            if (progressTimeoutRef.current) clearTimeout(progressTimeoutRef.current);
         };
     }, []);
 
-    // Helper to toggle selection
     const toggleSelection = useCallback((imageUrl) => {
         setSelectedIds(prev => {
             const isAlreadySelected = prev.includes(imageUrl);
             const newSelection = isAlreadySelected
                 ? prev.filter(id => id !== imageUrl)
                 : [...prev, imageUrl];
-            
-            // Trigger debounced sync with the new selection
             debouncedSync(newSelection);
             return newSelection;
         });
@@ -94,6 +113,8 @@ export const usePersistentSelection = (studioName, projectId) => {
         selectedIds,
         setSelectedIds,
         toggleSelection,
+        lastProgress,
+        saveProgress,
         isSyncing,
         initialLoad
     };

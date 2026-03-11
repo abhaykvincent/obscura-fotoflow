@@ -22,6 +22,8 @@ export default function Selection() {
   const { 
     selectedIds, 
     toggleSelection, 
+    lastProgress,
+    saveProgress,
     isSyncing, 
     initialLoad 
   } = usePersistentSelection(studioName, projectId);
@@ -31,6 +33,7 @@ export default function Selection() {
   const [images, setImages] = useState([]);
   const [selectedImagesInCollection, setSelectedImagesInCollection] = useState([]);
   const [page, setPage] = useState(1);
+  const [hasInitializedProgress, setHasInitializedProgress] = useState(false);
   const [size, setSize] = useState(15);
   const [totalPages, setTotalPages] = useState(0);
   const [totalCollections, setTotalCollections] = useState(0);
@@ -86,6 +89,27 @@ export default function Selection() {
     fetchProjectData();
   }, [projectId]);
 
+  // Initialize progress once project and lastProgress are loaded
+  useEffect(() => {
+    if (!initialLoad && project && lastProgress && !hasInitializedProgress) {
+      // If we're on a deep-link collection, we respect that, otherwise navigate to last collection
+      if (!collectionId && lastProgress.collectionId) {
+        navigate(`/${studioName}/selection/${projectId}/${lastProgress.collectionId}`, { replace: true });
+      }
+      
+      // If the current collection matches the saved progress collection, set the page
+      const activeCollId = collectionId || project.collections[0]?.id;
+      if (lastProgress.collectionId === activeCollId) {
+        setPage(lastProgress.page || 1);
+      }
+      
+      setHasInitializedProgress(true);
+    } else if (!initialLoad && project && !hasInitializedProgress) {
+      // If no progress found but initial load is done
+      setHasInitializedProgress(true);
+    }
+  }, [initialLoad, project, lastProgress, hasInitializedProgress, collectionId, studioName, projectId, navigate]);
+
   // Update images when project or collectionId changes
   useEffect(() => {
     if (!project) return;
@@ -113,8 +137,19 @@ export default function Selection() {
     let newImages = currentColl?.uploadedFiles || [];
     setImages(newImages);
     setTotalPages(Math.ceil(newImages.length / size));
-    setPage(1);
-  }, [project, currentCollectionId, studioName, projectId, navigate, size]);
+    
+    // Only reset page to 1 if we haven't initialized from lastProgress or if the collection changed manually
+    if (hasInitializedProgress && lastProgress?.collectionId !== currentCollectionId) {
+        setPage(1);
+    }
+  }, [project, currentCollectionId, studioName, projectId, navigate, size, hasInitializedProgress]);
+
+  // Save progress when page or collection changes
+  useEffect(() => {
+    if (hasInitializedProgress && currentCollectionId) {
+      saveProgress({ collectionId: currentCollectionId, page: page });
+    }
+  }, [page, currentCollectionId, hasInitializedProgress, saveProgress]);
 
   // Paginate images
   const paginatedImages = useMemo(() => {
