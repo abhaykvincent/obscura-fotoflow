@@ -56,6 +56,8 @@ const initialState = {
   subscriptions: [],
   invoices: [],
   loading: false,
+  galleryStudio: null,
+  galleryLoading: false,
   error: null,
 };
 export const fetchStudio = createAsyncThunk(
@@ -64,6 +66,17 @@ export const fetchStudio = createAsyncThunk(
     try {
         const studio = await fetchStudioByDomain(currentDomain);
         return studio;
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+export const fetchGalleryStudio = createAsyncThunk(
+  'studio/fetchGalleryStudio',
+  async ({ currentDomain }) => {
+    try {
+      const studio = await fetchStudioByDomain(currentDomain);
+      return studio;
     } catch (error) {
       throw error;
     }
@@ -128,6 +141,21 @@ const studioSlice = createSlice({
       })
       .addCase(fetchStudio.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+
+      // New fetchGalleryStudio cases
+      .addCase(fetchGalleryStudio.pending, (state) => {
+        state.galleryLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchGalleryStudio.fulfilled, (state, action) => {
+        state.galleryLoading = false;
+        state.galleryStudio = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchGalleryStudio.rejected, (state, action) => {
+        state.galleryLoading = false;
         state.error = action.payload;
       })
 
@@ -206,6 +234,8 @@ export const { } = studioSlice.actions;
 export default studioSlice.reducer;
 
 export const selectStudio = (state) => state.studio.data;
+export const selectGalleryStudio = (state) => state.studio.galleryStudio;
+export const selectGalleryStudioLoading = (state) => state.studio.galleryLoading;
 export const selectCurrentSubscription = (state) => state.studio.currentSubscription;
 export const selectStudioStorageUsage = (state) => state.studio.data?.usage.storage;
 export const selectStudioSubscriptions = (state) => state.studio.subscriptions;

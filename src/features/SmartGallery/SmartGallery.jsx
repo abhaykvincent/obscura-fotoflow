@@ -7,7 +7,7 @@ import ProjectExpiredPage from '../../components/ImageGallery/ProjectExpiredPage
 import { useDispatch, useSelector } from 'react-redux';
 import { selectIsAuthenticated, selectUser } from '../../app/slices/authSlice';
 import { selectStudioAdminSettings } from '../../app/slices/adminSettingsSlice';
-import { selectStudio } from '../../app/slices/studioSlice';
+import { selectGalleryStudio, selectGalleryStudioLoading, fetchGalleryStudio } from '../../app/slices/studioSlice';
 import { toTitleCase } from '../../utils/stringUtils';
 import { setUserType, trackEvent } from '../../analytics/utils';
 import { LoadingLight } from '../../components/Loading/Loading';
@@ -25,7 +25,8 @@ export default function SmartGallery() {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
-  const studio = useSelector(selectStudio);
+  const studio = useSelector(selectGalleryStudio);
+  const studioLoading = useSelector(selectGalleryStudioLoading);
   const { settings } = useSelector(selectStudioAdminSettings);
   const tagline = settings?.gallery?.galleryTagline;
   const [loading, setLoading] = useState(true);
@@ -37,6 +38,12 @@ export default function SmartGallery() {
   
   const [isClientAuthenticated, setIsClientAuthenticated] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+
+  useEffect(() => {
+    if (studioName) {
+      dispatch(fetchGalleryStudio({ currentDomain: studioName }));
+    }
+  }, [studioName, dispatch]);
 
   const StudioBrandingFooter = () => {
     if (project?.type === "FUNERAL") return null;
@@ -256,7 +263,7 @@ export default function SmartGallery() {
     }
   };
 
-  if (loading || (collectionsLoading && !collectionId)) {
+  if (loading || (collectionsLoading && !collectionId) || studioLoading) {
     return (
       <div className="smart-album-loading">
         {project?.projectCover ? (
