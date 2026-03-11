@@ -11,7 +11,7 @@ import { showAlert } from './app/slices/alertSlice';
 import { selectModal } from './app/slices/modalSlice';
 import { fetchCurrentSubscription, fetchStudio, selectStudio } from './app/slices/studioSlice';
 import { selectIsAuthenticated, selectUser, selectUserStudio, verifyAuth, selectAuthLoading } from './app/slices/authSlice';
-import { fetchProjects, selectProjectsStatus } from './app/slices/projectsSlice';
+import { fetchProjects, selectProjectsStatus, updateProjectsStatus } from './app/slices/projectsSlice';
 
 // Features
 import Home from './features/Home/Home';
@@ -113,6 +113,13 @@ export default function App() {
       setUserType('Photographer');
     }
   }, [isAuthenticated, user, defaultStudio]);
+
+  // Handle projects status for public pages
+  useEffect(() => {
+    if (isPublicPage(location.pathname)) {
+      dispatch(updateProjectsStatus('succeeded'));
+    }
+  }, [dispatch, location.pathname]);
 
   // ON Render
   useEffect(() => {
