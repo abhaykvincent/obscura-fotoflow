@@ -1,31 +1,37 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Lottie from 'react-lottie';
 import animationData from '../../assets/animations/CompletedAnimation.json';
-import { fetchProject, addSelectedImagesToFirestore, updateProjectStatusInFirestore, removeUnselectedImagesFromFirestore } from '../../firebase/functions/firestore';
+import { fetchProject, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
 import SelectionGallery from '../../components/ImageGallery/SelectionGallery';
 import PaginationControl from '../../components/PaginationControl/PaginationControl';
 import './Selection.scss';
-import { selectDomain } from '../../app/slices/authSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { trackEvent } from '../../analytics/utils';
+import { useDispatch } from 'react-redux';
 import { toTitleCase } from '../../utils/stringUtils';
 import { isPinValid } from '../../utils/pinUtils';
 import { showAlert } from '../../app/slices/alertSlice';
 import Alert from '../../components/Alert/Alert';
 import { requestSelectionReset } from '../../app/slices/selectionRequestSlice';
 import { updateCollectionStatus } from '../../app/slices/projectsSlice';
+import { usePersistentSelection } from '../../hooks/usePersistentSelection';
 
 export default function Selection() {
-  let { studioName,projectId, collectionId } = useParams();
-  //Project
+  let { studioName, projectId, collectionId } = useParams();
+  
+  // Custom hook for persistent selection logic
+  const { 
+    selectedIds, 
+    toggleSelection, 
+    isSyncing, 
+    initialLoad 
+  } = usePersistentSelection(studioName, projectId);
+
+  // Project state
   const [project, setProject] = useState();
   const [images, setImages] = useState([]);
-  const [selectedImages, setSelectedImages] = useState([]);
-  const [unselectedImages, setUnselectedImages] = useState([]);
   const [selectedImagesInCollection, setSelectedImagesInCollection] = useState([]);
-  const [page,setPage]=useState(1);
-  const [size,setSize]=useState(15);
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(15);
   const [totalPages, setTotalPages] = useState(0);
   const [totalCollections, setTotalCollections] = useState(0);
   const [currentCollectionIndex, setCurrentCollectionIndex] = useState(0);
@@ -36,6 +42,7 @@ export default function Selection() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const defaultOptions = {
     loop: false,
     autoplay: true,
@@ -44,8 +51,20 @@ export default function Selection() {
       preserveAspectRatio: 'xMidYMid slice'
     }
   };
-  collectionId = collectionId || project?.collections[0]?.id;
+
+  // Ensure collectionId is valid
+  const currentCollectionId = useMemo(() => {
+    return collectionId || project?.collections[0]?.id;
+  }, [collectionId, project]);
   
+  // Derive selected image objects from IDs across all collections
+  const selectedImages = useMemo(() => {
+    if (!project) return [];
+    const allImages = project.collections.flatMap(c => c.uploadedFiles || []);
+    return allImages.filter(img => selectedIds.includes(img.url));
+  }, [project, selectedIds]);
+
+  // Security check: PIN validation
   useEffect(() => {
     if (!isPinValid(projectId)) {
       navigate(`/${studioName}/selection/${projectId}/pin`);
@@ -55,27 +74,24 @@ export default function Selection() {
   useEffect(() => {
     document.body.style.backgroundColor = 'white';
   }, []);
+
   useEffect(() => {
-    if(selectionCompleted)  {
+    if (selectionCompleted) {
       isInitialSelection && setIsInitialSelection(false);
-      
-  }
+    }
   }, [selectionCompleted]);
 
-  // Fetch project and image URLs
+  // Initial Fetch
   useEffect(() => {
     fetchProjectData();
   }, [projectId]);
 
   // Update images when project or collectionId changes
   useEffect(() => {
-    if(!project) return
+    if (!project) return;
     
-    // Determine the current collection, handling the initial case where collectionId might be missing
-    const currentId = collectionId || project.collections[0]?.id;
-    const currentColl = project.collections.find(c => c.id === currentId);
+    const currentColl = project.collections.find(c => c.id === currentCollectionId);
 
-    // If selection is disabled for this collection, skip to the next valid one or finish
     if (currentColl && currentColl.selectionGallery === false) {
       const currentIndex = project.collections.findIndex(c => c.id === currentColl.id);
       const nextColl = project.collections.slice(currentIndex + 1).find(c => c.selectionGallery !== false);
@@ -84,81 +100,62 @@ export default function Selection() {
         navigate(`/${studioName}/selection/${projectId}/${nextColl.id}`);
         return;
       } else {
-        // No more selectable collections, complete selection
         setSelectionCompleted(true);
         return;
       }
     }
 
-    document.title = project.name+' | Selection'
+    document.title = project.name + ' | Selection';
 
-    setTotalCollections(project.collections.length)
-    setCurrentCollectionIndex(project.collections.findIndex(collection => collection.id === collectionId))
-    let newImages = project?.collections.find((collection)=>collection.id===collectionId)?.uploadedFiles || []
-    newImages.length>0?setImages(newImages):setImages([])
-    setTotalPages(Math.ceil(newImages.length/size))
-    setPage(1)
-  }, [project, collectionId, studioName, projectId, navigate]);
+    setTotalCollections(project.collections.length);
+    setCurrentCollectionIndex(project.collections.findIndex(collection => collection.id === currentCollectionId));
+    
+    let newImages = currentColl?.uploadedFiles || [];
+    setImages(newImages);
+    setTotalPages(Math.ceil(newImages.length / size));
+    setPage(1);
+  }, [project, currentCollectionId, studioName, projectId, navigate, size]);
 
   // Paginate images
   const paginatedImages = useMemo(() => {
-    let imagesTemp = images
-    return imagesTemp.slice((page-1)*size,page*size);
-  }, [images, page]);
+    return images.slice((page - 1) * size, page * size);
+  }, [images, page, size]);
+
+  // Scroll to top on page change
   useEffect(() => {
     const photosDiv = document.querySelector('.gallery');
     if (photosDiv) {
       photosDiv.scrollIntoView({ behavior: 'auto', block: 'start' });
     }
-  }, [page,collectionId]); // Trigger scroll on both page and collection changes
+  }, [page, currentCollectionId]);
 
-
-  // Fetch project data and set Selected Images  
   const fetchProjectData = async () => {
     try {
       const projectData = await fetchProject(studioName, projectId);
-
       setProject(projectData);
 
-      // Ensure we navigate to the first selectable collection if current one is invalid
       const firstSelectable = projectData.collections.find(c => c.selectionGallery !== false);
       if (firstSelectable && !collectionId) {
         navigate(`/${studioName}/selection/${projectId}/${firstSelectable.id}`, { replace: true });
       } else if (!firstSelectable) {
         setSelectionCompleted(true);
       }
-
-      // get all images url with status 'selected' from projectData as set
-      const selectedImagesInFirestore = []
-      projectData.collections.forEach((collection) => {
-        collection.uploadedFiles?.forEach((image) => {
-          if (image.status === 'selected') {
-            selectedImagesInFirestore.push(image);
-          }
-        });
-      });
-      setSelectedImages(selectedImagesInFirestore)
     } catch (error) {
       console.error('Failed to fetch project:', error);
     }
   };
 
-  
+  const handleToggleSelection = useCallback((image) => {
+    toggleSelection(image.url);
+  }, [toggleSelection]);
 
-
-  // handle selection completed
   const saveSelection = async () => {
-    try {
-      await handleAddOrRemoveSelectedImages();
-    } catch (error) {
-      console.error('Failed to update project status:', error);
-    }
+    dispatch(showAlert({ type: 'success', message: 'Selection auto-saved!' }));
   };
 
   const completeCollection = async () => {
     try {
-      await handleAddOrRemoveSelectedImages();
-      dispatch(updateCollectionStatus({ domain: studioName, projectId, collectionId, status: 'visible', selectionGallery: false }));
+      dispatch(updateCollectionStatus({ domain: studioName, projectId, collectionId: currentCollectionId, status: 'visible', selectionGallery: false }));
     } catch (error) {
       console.error('Failed to update collection status:', error);
     }
@@ -167,70 +164,60 @@ export default function Selection() {
   const completeSelection = async () => {
     if (!selectionCompleted) {
       setSelectionCompleted(true); 
-      await saveSelection();
       try {
-        dispatch(updateCollectionStatus({ domain: studioName, projectId, collectionId, status: 'visible', selectionGallery: false }));
+        dispatch(updateCollectionStatus({ domain: studioName, projectId, collectionId: currentCollectionId, status: 'visible', selectionGallery: false }));
+        await updateProjectStatusInFirestore(studioName, projectId, 'selected');
       } catch (error) {
-        console.error('Failed to update collection status:', error);
+        console.error('Failed to update project status:', error);
       }
     }
   };
-  const handleAddOrRemoveSelectedImages = async () => {
-    try {
-      if (selectedImages.length > 0) {
-        await addSelectedImagesToFirestore(studioName, projectId, collectionId, selectedImages, page, size, totalPages);
-      } 
-      if (unselectedImages.length > 0) {
-        await removeUnselectedImagesFromFirestore(studioName, projectId, collectionId, unselectedImages, page, size, totalPages);
-      }
-      dispatch(showAlert({type:'success', message:`Selection saved!`})); 
 
-      
-    } catch (error) {
-      console.error('Error updating selected/unselected images:', error);
-    }
-  };
+  const SyncStatus = () => (
+    <div className={`sync-status ${isSyncing ? 'syncing' : 'saved'}`}>
+      {isSyncing ? (
+        <><span className="sync-icon">🔄</span> Syncing...</>
+      ) : (
+        <><span className="sync-icon">✅</span> Saved</>
+      )}
+    </div>
+  );
 
-
-  // Collections panel
   const CollectionsPanel = () => (
     <div className="collections-panel">
       {project.collections
-        .filter(collection => collection.selectionGallery && collection.selectionGallery === true)
+        .filter(collection => collection.selectionGallery !== false)
         .map((collection, index) => (
         <div
           key={collection.id}
           className={`
             collection-tab 
-            ${collection.id === collectionId || (!collectionId && index === 0) ? 'active' : ''}
+            ${collection.id === currentCollectionId ? 'active' : ''}
             ${collection.uploadedFiles === undefined ? 'disabled' : ''}
           `}
         >
-          {
-          <Link to={collection.uploadedFiles !== undefined && `/${studioName}/selection/${project.id}/${collection.id}`}>{collection.name}
-            <span className='photo-count-label'>{` ${collection.uploadedFiles?.length}`}</span>
+          <Link to={collection.uploadedFiles !== undefined ? `/${studioName}/selection/${project.id}/${collection.id}` : '#'}>
+            {collection.name}
+            <span className='photo-count-label'>{` ${collection.uploadedFiles?.length || 0}`}</span>
           </Link>
-          
-        }
         </div>
       ))}
     </div>
   );
 
-  if(!project) return null;
+  if (!project || initialLoad) return null;
 
   return (
     <div className="select-project">
-
       <Alert />
       <div className="project-header">
         <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button back-btn icon back">
           Back to Gallery
         </Link>
-        <img className='banner' src={images[0]?images[0].url:''} />
+        <img className='banner' src={images[0]?.url || ''} alt="Banner" />
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
-          
+          <SyncStatus />
         </div>
       </div>
       {!selectionCompleted ? 
@@ -242,11 +229,11 @@ export default function Selection() {
                 <div className="control-wrap">
                     <div className="controls">
                         <div className={`control ${showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(true)}>All</div>
-                        <div className={`control ${!showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(false)}>Selected  {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
+                        <div className={`control ${!showAllPhotos ? 'active' : ''}`} onClick={() => setShowAllPhotos(false)}>Selected {selectedImages.length > 0 && <div className='favorite selected'></div>}</div>
                     </div>
                     <div className={`active`}></div>
                 </div>
-                <div className={`control-label label-selected-photos ${selectedImages.length>0&&' active'}`}>{selectedImages.length} Photos</div>
+                <div className={`control-label label-selected-photos ${selectedImages.length > 0 ? ' active' : ''}`}>{selectedImages.length} Photos</div>
             </div>
             {
               project.status === 'selected'?
@@ -254,31 +241,32 @@ export default function Selection() {
               <div className="selection-completed-label">Click photos to select</div>
             }
             {
-              paginatedImages.length>0?
-              (<SelectionGallery project={project} images={showAllPhotos ? paginatedImages:selectedImages} {...{selectedImages,setSelectedImages,setUnselectedImages,setSelectedImagesInCollection}} />)
+              (showAllPhotos ? paginatedImages : selectedImages).length > 0 ?
+              (<SelectionGallery 
+                project={project} 
+                images={showAllPhotos ? paginatedImages : selectedImages} 
+                selectedImages={selectedImages} 
+                setSelectedImages={handleToggleSelection} 
+              />)
               :
               <div className="no-images-message">
-                <p>There are no photos in this collection</p>
+                <p>{showAllPhotos ? "There are no photos in this collection" : "You haven't selected any photos yet"}</p>
               </div>
             }
             {showAllPhotos &&
             <PaginationControl
               images={paginatedImages}
-              currentCollectionIndex={currentCollectionIndex+1}
+              currentCollectionIndex={currentCollectionIndex + 1}
               totalCollections={totalCollections}
               currentPage={page}
               totalPages={totalPages}
               completeSelection={completeSelection}
               completeCollection={completeCollection}
-              handlePageChange={async (newPage) => {
-                handleAddOrRemoveSelectedImages()
-
-                setPage(newPage)
-              }}
+              handlePageChange={(newPage) => setPage(newPage)}
               saveSelection={saveSelection}
               project={project}
             />
-  }
+            }
           </div> 
         </>)
       :
@@ -288,31 +276,24 @@ export default function Selection() {
               options={defaultOptions}
               height={160}
               width={160}
-              
             />
-
             <h4>Congratulations!<br/> Your selections are complete</h4>
             <p className='selected-files-count'>You've chosen <b>{selectedImages.length}</b> beautiful moments out of <b>{project.uploadedFilesCount} </b>photos</p>
-          <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button large primary ">
-            Go to gallery
-          </Link>
-          <p className='button-label'>Need to make changes? </p>
-          <div className="button secondary light-mode text"
-            onClick={() => {
-              dispatch(requestSelectionReset({ domain: studioName, projectId: project.id, projectName: project.name }));
-              dispatch(showAlert({ type: 'success', message: 'Request sent to photographer!' }));
-            }}
-          >
-            Request to select again
-          </div>
+            <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button large primary ">
+              Go to gallery
+            </Link>
+            <p className='button-label'>Need to make changes? </p>
+            <div className="button secondary light-mode text"
+              onClick={() => {
+                dispatch(requestSelectionReset({ domain: studioName, projectId: project.id, projectName: project.name }));
+                dispatch(showAlert({ type: 'success', message: 'Request sent to photographer!' }));
+              }}
+            >
+              Request to select again
+            </div>
           </div>
         </div>
       }
     </div>
   );
-  
-  
-  
 }
-// Line Complexity  1.5 -> 1.7
-// Line Complexity  1.5 -> 1.7

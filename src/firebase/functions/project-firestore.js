@@ -195,6 +195,24 @@ export const updateProjectLastOpenedInFirestore = async (domain, projectId) => {
     }
 };
 
+export const updateProjectSelectedImageIdsInFirestore = async (domain, projectId, selectedImageIds) => {
+    if (!domain || !projectId || !selectedImageIds) {
+        throw new Error('Domain, Project ID, and selectedImageIds are required.');
+    }
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+
+    try {
+        await updateDoc(projectDocRef, { selectedImageIds });
+        console.log(`%c✅ Selections Synced! ${projectId}`, `color: #54a134;`);
+    } catch (error) {
+        console.error(`%cError updating selectedImageIds for project: ${projectId} - ${error.message}`, 'color: red;');
+        throw error;
+    }
+};
+
 export const updateProjectStorageToArchive = async (domain, projectId) => {
     if (!domain || !projectId) {
         throw new Error('Domain and Project ID are required for archiving.');
