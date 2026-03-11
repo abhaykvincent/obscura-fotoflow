@@ -52,6 +52,13 @@ export default function PaginationControl({
         Previous
       </PaginationButton>
 
+      {/* Page Progress Indicator */}
+      {totalPages > 0 && (
+        <div className="page-progress">
+          Page <span>{currentPage}</span> / {totalPages}
+        </div>
+      )}
+
       {/* Action/Next Button */}
       {isLastPage ? (
         isLastCollection ? (

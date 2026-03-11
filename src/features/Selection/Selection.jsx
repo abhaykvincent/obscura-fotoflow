@@ -343,9 +343,6 @@ export default function Selection() {
             <p className='selected-files-count'>
               You've chosen <b>{selectedImages.length}</b> beautiful moments out of <b>{project.uploadedFilesCount} </b>photos
             </p>
-            <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button large primary ">
-              Go to gallery
-            </Link>
             <p className='button-label'>Need to make changes? </p>
             <div 
               className="button secondary light-mode text"
@@ -357,6 +354,10 @@ export default function Selection() {
               Request to select again
             </div>
           </div>
+
+            <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button large primary ">
+              Go to gallery
+            </Link>
         </div>
       )}
     </div>

@@ -323,6 +323,16 @@
     margin-top: 8px*2;
     width: 100%;
     
+    .page-progress {
+      font-size: 0.9rem;
+      color: rgba(0, 0, 0, 0.6);
+      font-weight: 500;
+      span {
+        color: rgba(0, 0, 0, 0.9);
+        font-weight: 700;
+      }
+    }
+    
     .button{
       text-shadow: none;
       min-width: 120px;
