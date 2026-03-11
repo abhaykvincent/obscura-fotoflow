@@ -92,15 +92,28 @@ export default function Selection() {
   // Initialize progress once project and lastProgress are loaded
   useEffect(() => {
     if (!initialLoad && project && lastProgress && !hasInitializedProgress) {
+      let resumed = false;
+
       // If we're on a deep-link collection, we respect that, otherwise navigate to last collection
       if (!collectionId && lastProgress.collectionId) {
         navigate(`/${studioName}/selection/${projectId}/${lastProgress.collectionId}`, { replace: true });
+        resumed = true;
       }
       
       // If the current collection matches the saved progress collection, set the page
       const activeCollId = collectionId || project.collections[0]?.id;
       if (lastProgress.collectionId === activeCollId) {
-        setPage(lastProgress.page || 1);
+        if (lastProgress.page && lastProgress.page > 1) {
+          setPage(lastProgress.page);
+          resumed = true;
+        }
+      }
+
+      if (resumed) {
+        dispatch(showAlert({
+          type: 'info',
+          message: 'Resumed from where you left off!',
+        }));
       }
       
       setHasInitializedProgress(true);
@@ -108,7 +121,7 @@ export default function Selection() {
       // If no progress found but initial load is done
       setHasInitializedProgress(true);
     }
-  }, [initialLoad, project, lastProgress, hasInitializedProgress, collectionId, studioName, projectId, navigate]);
+  }, [initialLoad, project, lastProgress, hasInitializedProgress, collectionId, studioName, projectId, navigate, dispatch]);
 
   // Update images when project or collectionId changes
   useEffect(() => {
