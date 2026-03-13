@@ -80,3 +80,5 @@ coverage/
 .dynamodb/
 
 .env.development
+
+functions/index.html
