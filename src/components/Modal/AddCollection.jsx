@@ -226,7 +226,7 @@ const handleSuggestedNameChange = (event) => {
             <div className="button secondary" onClick={onClose}>
               Cancel
             </div>
-            <div className="button primary" onClick={handleSubmit}>
+            <div className="button primary" onClick={() => handleSubmit()}>
               Create
             </div>
           </div>
