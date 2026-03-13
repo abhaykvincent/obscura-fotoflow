@@ -45,7 +45,7 @@ const SmartAlbum = ({ domain, projectId, collectionId, project: propProject }) =
     const checkStatus = async () => {
       try {
         const status = await fetchCollectionStatus(domain, projectId, collectionId);
-        if (status === 'visible') {
+        if (status === 'visible'  || status === 'active') {
           setDisplayGallery(true);
         } else {
           setDisplayGallery(false);

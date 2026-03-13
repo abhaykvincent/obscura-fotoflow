@@ -103,7 +103,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         const imageGridEvent = {
             type: 'image-grid',
             id: `image-grid-${collectionId}-${new Date().getTime()}`,
-            images: uploadedFiles,
+    
             collectionId: collectionId,
             date: new Date().getTime(),
         };

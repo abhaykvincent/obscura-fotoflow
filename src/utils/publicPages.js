@@ -1,13 +1,13 @@
 
 const publicPatterns = ['share', 'selection', 'masonry-grid','onboarding','invitation/','login','smart-gallery', 'download-app'];
 const lightModePatterns =  ['share', 'selection','smart-gallery'];
-export const isPublicPage = () => 
-  publicPatterns.some(pattern => 
-    window.location.href.toLowerCase().includes(pattern)
-  );
+export const isPublicPage = (pathname) => {
+  const target = (pathname || window.location.href).toLowerCase();
+  return publicPatterns.some(pattern => target.includes(pattern));
+};
 
 // is light mode page
-export const isLightModePage = () =>
-  lightModePatterns.some(pattern => 
-    window.location.href.toLowerCase().includes(pattern)
-  );
+export const isLightModePage = (pathname) => {
+  const target = (pathname || window.location.href).toLowerCase();
+  return lightModePatterns.some(pattern => target.includes(pattern));
+};

@@ -11,7 +11,7 @@ import { showAlert } from './app/slices/alertSlice';
 import { selectModal } from './app/slices/modalSlice';
 import { fetchCurrentSubscription, fetchStudio, selectStudio } from './app/slices/studioSlice';
 import { selectIsAuthenticated, selectUser, selectUserStudio, verifyAuth, selectAuthLoading } from './app/slices/authSlice';
-import { fetchProjects, selectProjectsStatus } from './app/slices/projectsSlice';
+import { fetchProjects, selectProjectsStatus, updateProjectsStatus } from './app/slices/projectsSlice';
 
 // Features
 import Home from './features/Home/Home';
@@ -114,9 +114,16 @@ export default function App() {
     }
   }, [isAuthenticated, user, defaultStudio]);
 
+  // Handle projects status for public pages
+  useEffect(() => {
+    if (isPublicPage(location.pathname)) {
+      dispatch(updateProjectsStatus('succeeded'));
+    }
+  }, [dispatch, location.pathname]);
+
   // ON Render
   useEffect(() => {
-    if (isAuthenticated && currentDomain !== 'guest') {
+    if (isAuthenticated && currentDomain !== 'guest' && !isPublicPage(location.pathname)) {
 
   dispatch(showLoading({context:` Loading App ..`,subcontext:` `}))
       // Fetching data for studio
@@ -144,7 +151,7 @@ export default function App() {
           dispatch(hideLoading())
       })
     }
-  }, [dispatch, currentDomain, isAuthenticated]);
+  }, [dispatch, currentDomain, isAuthenticated, location.pathname]);
 
   useEffect(() =>{
     if (studio?.trialEndDate) {
@@ -175,11 +182,11 @@ export default function App() {
   }
   // RENDER
   return (
-    <div className={`App ${isLightModePage() ? 'light-mode-page' : ''}`}>
+    <div className={`App ${isLightModePage(location.pathname) ? 'light-mode-page' : ''}`}>
       <LoadingScreen />
       <HotKeys keyMap={keyMap} handlers={handlers} className='app-wrap'>
       {/* <SupportIcon userId={defaultStudio?.domain}/> */}
-      {isAuthenticated && (!isPublicPage()) && (
+      {isAuthenticated && (!isPublicPage(location.pathname)) && (
         <>
           <Header />
           <Sidebar />
@@ -194,7 +201,7 @@ export default function App() {
       {
         isLoading!== 'succeeded' && isAuthenticated && user!=='no-studio-found'  ? 
           (
-            isLoading!=='login' && (!isPublicPage()) ?  <Loading/> : <LoadingLight/>
+            isLoading!=='login' && (!isPublicPage(location.pathname)) ?  <Loading/> : <LoadingLight/>
           ) : 
           (
             <Routes>
@@ -243,7 +250,7 @@ export default function App() {
             </Routes>
           )}
 
-{!isLightModePage&&<div className="footer">
+{!isLightModePage(location.pathname)&&<div className="footer">
             {/* Made in Kochi by Photographers |  */}
             <div className='copyright-symbol'>©</div>  
             <a href="https://www.masanory.com" target="_blank" rel="noopener noreferrer"><span>Fotoflow</span> 2025</a>
