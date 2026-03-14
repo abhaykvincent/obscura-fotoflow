@@ -259,12 +259,6 @@ function ShareGallery({project }) {
               </div>
 
               <div className="gallery-view-status">
-
-                <div className="link-group">
-                  
-                  </div>
-                </div>
-              <div className="gallery-view-status">
                 <div className="link-group">
                   <div className="button primary outline text-only  icon play"
                     onClick={() => {
