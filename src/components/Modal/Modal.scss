@@ -57,7 +57,7 @@ animation-timing-function: ease-out;
     animation-name: modal-in-island;
     animation-duration: 0.2s;
     transition-delay: 0.1s;
-    background-color: rgba(0, 0, 0, 0.016);
+    background-color: rgba(0, 0, 0, 0.05);
 
 
     border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -166,7 +166,7 @@ animation-timing-function: ease-out;
     }
 }
 .form-section{
-    margin:0  8px*4 ;
+    margin:0  8px*12 ;
     gap: 8px;
     text-align: start;
     h2{
@@ -1071,7 +1071,7 @@ transition-delay: 0.2s;
     transform: translate(-50%,50%) scale(1);
     opacity: 1;
 
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(16px);
   }
 }
 @keyframes modal-in-mobile {

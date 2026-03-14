@@ -118,8 +118,11 @@ function UploadCompletedModal({ project, collectionName }) {
           <div className="button secondary" onClick={onClose}>
             Close
           </div>
-          <div className="button primary" onClick={handleShare}>
-            Share Gallery
+          <label htmlFor="fileInput" className="button primary outline icon upload" onClick={onClose}>
+            Upload 
+          </label>
+          <div className="button primary " onClick={handleShare}>
+            Share 
           </div>
         </div>
       </div>

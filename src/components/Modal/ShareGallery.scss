@@ -12,7 +12,7 @@
     .modal-body{
     }
     .modal .form-section{
-        margin: 8px*2 8px*6;
+        margin: 8px*2 8px*12;
 
     }
     .galleries-share-list-selection{
@@ -124,7 +124,7 @@
     }
     .gallery-view-status{
             display: grid;
-            grid-template-columns: auto   8px*16 8px*12   8px*4;
+            grid-template-columns: auto   auto 8px*12   8px*4;
             align-items: center;
             gap: 8px*1;
             margin-top: 8px*0;
@@ -132,7 +132,7 @@
             padding-bottom: 8px*0.5;
             .button.icon{
                 padding: 4px 8px;
-                border-radius: 4px;
+                border-radius: 8px;
                 font-size: 1rem;
                 &.secondary{
                     font-size: 0.9rem;
@@ -184,6 +184,9 @@
             .client-label{
                 text-align: end;
                 color: $gray4-default-dark;
+            }
+            .pin{
+                border: 1px solid rgba(255, 255, 255, 0.5);
             }
 
             &:hover{

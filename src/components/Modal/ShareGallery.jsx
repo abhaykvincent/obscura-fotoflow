@@ -328,12 +328,12 @@ function ShareGallery({project }) {
             window.open(`https://wa.me/?text=Hey, I have a Gallery for Selection that I'd like to share with you. Check it out at ${getGalleryURL('selection',domain,project.id)}/`,'_blank');
           }}
           >Selection</div> */}
-          <div className="button primary " /* Photos */
+          <div className="button primary icon whatsapp" /* Photos */
           onClick={()=>{
             // go to https://wa.me/[phone number]?text=[pre-filled message]
             window.open(`https://wa.me/?text=Hey, I have a project that I'd like to share with you. Check it out at ${getGalleryURL('share',domain,project.id)}/`,'_blank');
           }}
-          >Done</div>
+          >Share</div>
         </div>
       </div>
       <div className="modal-backdrop" onClick={onClose}></div>
