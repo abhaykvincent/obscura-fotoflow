@@ -68,7 +68,10 @@
       .sync-icon {
         width: 16px;
         height: 16px;
-        object-fit: cover;
+        display: inline-block;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
       }
 
       &.syncing {
@@ -76,8 +79,8 @@
         background-color: rgba(255, 255, 255, 0.8);
         border: 1px solid rgba($blue-default-light, 0.3);
         .sync-icon {
+          background-image: url('https://img.icons8.com/?size=100&id=undefined&format=png&color=0099ff'); // Theme blue
           animation: spin 2s linear infinite;
-          filter: invert(41%) sepia(98%) saturate(1633%) hue-rotate(187deg) brightness(97%) contrast(101%); // Tint to match blue if needed, though URL implies white
         }
       }
       
@@ -86,6 +89,8 @@
         background-color: rgba(255, 255, 255, 0.8);
         border: 1px solid rgba($green-default-light, 0.3);
         .sync-icon {
+          background: $blue-default-light url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white"><path d="M1 7 L5 11 L13 1" stroke-width="2" stroke="white" fill="transparent"/></svg>') no-repeat center;
+          background-size: 60%;
           border-radius: 50%;
         }
       }

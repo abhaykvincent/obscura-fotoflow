@@ -23,20 +23,12 @@ const SyncStatus = memo(({ isSyncing }) => (
   <div className={`sync-status ${isSyncing ? 'syncing' : 'saved'}`}>
     {isSyncing ? (
       <>
-        <img 
-          className="sync-icon" 
-          src="https://img.icons8.com/?size=100&id=33936&format=png&color=FFFFFF" 
-          alt="Syncing" 
-        /> 
+        <span className="sync-icon syncing" /> 
         Syncing...
       </>
     ) : (
       <>
-        <img 
-          className="sync-icon" 
-          src="https://picsum.photos/seed/10.655581850312501/694/1041" 
-          alt="Saved" 
-        /> 
+        <span className="sync-icon saved" /> 
         Saved
       </>
     )}
