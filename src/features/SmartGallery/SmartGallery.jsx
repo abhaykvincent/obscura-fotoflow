@@ -293,12 +293,15 @@ export default function SmartGallery() {
   if (!project) {
     return <div>Project not found.</div>;
   }
-  if (isExpired) {
+  if (isExpired && !isAuthenticated && !isPinValid(projectId)) {
     return (
       <ExpiredGallery 
         backgroundImage={project.projectCover}
         photographerName={studio?.name || studioName}
         expiryDate={expiryDate}
+        projectId={project.id}
+        projectName={project.name}
+        domain={studioName}
       />
     );
   }

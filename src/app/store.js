@@ -20,6 +20,7 @@ import adminSettingsReducer from './slices/adminSettingsSlice';
 import usersReducer from './slices/usersSlice';
 import userProfileReducer from './slices/userProfileSlice';
 import selectionRequestReducer from './slices/selectionRequestSlice';
+import extensionRequestReducer from './slices/extensionRequestSlice';
 
 export const store = configureStore({
   reducer: {
@@ -44,6 +45,7 @@ export const store = configureStore({
     users: usersReducer,
     userProfile: userProfileReducer,
     selectionRequest: selectionRequestReducer,
+    extensionRequest: extensionRequestReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -478,3 +478,23 @@ export const declineSelectionRequest = async (domain, projectId) => {
         throw error;
     }
 };
+
+// Extension Requests
+export const createExtensionRequest = async (domain, projectId, projectName) => {
+    try {
+        const studioRef = doc(db, 'studios', domain);
+        const extensionRequestsRef = collection(studioRef, 'extensionRequests');
+        const requestDoc = {
+            projectId,
+            projectName,
+            status: 'pending',
+            requestedAt: Date.now(),
+        };
+        await setDoc(doc(extensionRequestsRef, projectId), requestDoc);
+        console.log(`Extension request created for project ${projectId}`);
+        return requestDoc;
+    } catch (error) {
+        console.error('Error creating extension request:', error);
+        throw error;
+    }
+};

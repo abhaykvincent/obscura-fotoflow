@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { format } from 'date-fns';
 import { Clock, CheckCircle } from 'lucide-react';
+import { requestExtension } from '../../app/slices/extensionRequestSlice';
 import styles from './ExpiredGallery.module.scss';
 
 interface ExpiredGalleryProps {
   expiryDate: Date | number;
   photographerName: string;
   backgroundImage: string;
+  projectId: string;
+  projectName: string;
+  domain: string;
 }
 
 const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
   expiryDate,
   photographerName,
   backgroundImage,
+  projectId,
+  projectName,
+  domain,
 }) => {
+  const dispatch = useDispatch();
   const [isRequested, setIsRequested] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -26,10 +35,15 @@ const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
 
   const handleRequestExtension = async () => {
     setIsLoading(true);
-    // Mock API call to trigger a cloud function or write to a notifications collection
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsRequested(true);
-    setIsLoading(false);
+    try {
+      await dispatch(requestExtension({ domain, projectId, projectName })).unwrap();
+      setIsRequested(true);
+    } catch (error) {
+      console.error('Failed to send extension request:', error);
+      // TODO: Optionally show an error to the user
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const formattedExpiryDate = expiryDate ? format(new Date(expiryDate), 'MMM dd, yyyy') : '';
