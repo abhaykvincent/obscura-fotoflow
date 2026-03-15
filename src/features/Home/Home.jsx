@@ -1,13 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Home.scss';
-import { getProjectsByEventId, getProjectsByLastUpdated, getProjectsByStatus, getRecentProjects, getUpcommingShoots } from '../../utils/projectFilters';
+import { getProjectsByEventId, getProjectsByLastUpdated, getProjectsByStatus, getRecentProjects, getUpcommingShoots, getProjectsByStorageStatus } from '../../utils/projectFilters';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
 import Refresh from '../../components/Refresh/Refresh';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectProjects } from '../../app/slices/projectsSlice';
 import { openModal, selectModal, closeModalWithAnimation } from '../../app/slices/modalSlice';
 import { selectUser, selectUserStudio } from '../../app/slices/authSlice';
+import { fetchStudio, selectStudioStorageUsage } from '../../app/slices/studioSlice';
 import StoragePie from '../../components/StoragePie/StoragePie';
 import { toast } from 'sonner'
 import SearchInput from '../../components/Search/SearchInput';
@@ -20,6 +21,7 @@ import { fetchUserByEmail } from '../../firebase/functions/firestore';
 import { acceptSelectionReset, declineSelectionReset, getSelectionRequests, removeRequestLocally, selectSelectionRequests } from '../../app/slices/selectionRequestSlice';
 import { getExtensionRequests, selectExtensionRequests, acceptExtension, declineExtension, removeExtensionRequestLocally } from '../../app/slices/extensionRequestSlice';
 import { showAlert } from '../../app/slices/alertSlice';
+import { convertMegabytes } from '../../utils/stringUtils';
 
 function Home() {
     const dispatch = useDispatch()
@@ -28,18 +30,21 @@ function Home() {
     const user = useSelector(selectUser);
     const selectionRequests = useSelector(selectSelectionRequests);
     const extensionRequests = useSelector(selectExtensionRequests);
+    const storageUsage = useSelector(selectStudioStorageUsage);
     const navigate = useNavigate();
 
     document.title = `FotoFlow | ${defaultStudio.name}`;
-    const selectionCompletedProjects = getProjectsByStatus(projects, 'selected');
-    const requestPendingProjects = getProjectsByStatus(projects, 'request-pending');
-    const [selectedProjects, setSelectedProjects] = useState([])
-    const [recentProjects, setRecentProjects] = useState([])
-    const [upcommingShoots, setUpcommingShoots] = useState([])
+    
+    const [filter, setFilter] = useState('all');
+    const [recentProjects, setRecentProjects] = useState([]);
+    const [upcommingShoots, setUpcommingShoots] = useState([]);
     const [isAddButtonVisible, setIsAddButtonVisible] = useState(true);
     const addButtonRef = useRef(null);
 
     const modals = useSelector(selectModal);
+
+    const selectionCompletedProjects = useMemo(() => getProjectsByStatus(projects, 'selected'), [projects]);
+    const pendingActionsCount = selectionRequests.length + extensionRequests.length;
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -64,22 +69,19 @@ function Home() {
         if (defaultStudio?.domain) {
             dispatch(getSelectionRequests(defaultStudio.domain));
             dispatch(getExtensionRequests(defaultStudio.domain));
+            dispatch(fetchStudio({ currentDomain: defaultStudio.domain }));
         }
     }, [defaultStudio, dispatch]);
 
     useEffect(() => {
         const checkWelcomeStatus = async () => {
-
             if (user && user.email) {
                 const firestoreUser = await fetchUserByEmail(user.email);
                 if (firestoreUser && firestoreUser.hasSeenWelcomeModal === false) {
                     if (projects.length === 0) {
-                            dispatch(openModal('welcome'));
-                    } else {
-                        // This part is for closing if opened by mistake
-                        if (modals.welcome) {
-                            dispatch(closeModalWithAnimation('welcome'));
-                        }
+                        dispatch(openModal('welcome'));
+                    } else if (modals.welcome) {
+                        dispatch(closeModalWithAnimation('welcome'));
                     }
                 }
             }
@@ -88,97 +90,100 @@ function Home() {
     }, [user, projects, modals, dispatch]);
 
     useEffect(() => {
-        trackEvent('studio_home_view')
-        setSelectedProjects(selectionCompletedProjects.slice(0, 8))
-        setRecentProjects(getProjectsByLastUpdated(projects, 8))
-        const unsortedUpcommingShoots = getUpcommingShoots(projects, 31)
+        trackEvent('studio_home_view');
+        
+        const unsortedUpcommingShoots = getUpcommingShoots(projects, 31);
         const sortedUpcommingShoots = unsortedUpcommingShoots.sort((a, b) => {
-            const aDate = new Date(a.date);
-            const bDate = new Date(b.date);
-            return aDate - bDate;
+            return new Date(a.date) - new Date(b.date);
         });
-        setUpcommingShoots(sortedUpcommingShoots)
-    }, [])
+        setUpcommingShoots(sortedUpcommingShoots);
+    }, [projects]);
+
+    const filteredProjects = useMemo(() => {
+        let result = projects;
+        if (filter === 'active') result = projects.filter(p => p.status === 'active' && p.storage?.status !== 'archive');
+        if (filter === 'drafts') result = projects.filter(p => p.status === 'draft');
+        if (filter === 'archived') result = getProjectsByStorageStatus(projects, 'archive');
+        
+        // Exclude selectedProjects from recent results in the "Recent Projects" section
+        return getProjectsByLastUpdated(result, 12).filter(project => 
+            !selectionCompletedProjects.some(selected => selected.id === project.id)
+        );
+    }, [projects, filter, selectionCompletedProjects]);
 
     useEffect(() => {
+        setRecentProjects(filteredProjects);
+    }, [filteredProjects]);
 
-        // Exclude selectedProjects from recentProjects
-        const filteredRecentProjects = getProjectsByLastUpdated(projects, 8).filter(project =>
-            !selectedProjects.some(selected => selected.id === project.id)
-        );
+    const storageString = useMemo(() => {
+        if (!storageUsage) return '0 / 0';
+        const used = convertMegabytes(storageUsage.used || 0);
+        const total = convertMegabytes(storageUsage.quota || 5000); // Default 5GB if no quota
+        return `${used} / ${total}`;
+    }, [storageUsage]);
 
-        setRecentProjects(filteredRecentProjects);
-    }, [selectedProjects]);
     return (
         <>
             <WelcomeModal />
             <AddProjectModal />
 
             <div className="home-header">
-                <Link to={`/${defaultStudio.name}/notifications`}>
-                    {/* <div className="notifications">
-                        <div className="new"></div>
-                    </div> */}
-                </Link>
+                <div className="header-left">
+                    <h1 className='welcome-message'>Hello, <span className='iconic-gradient'>{defaultStudio?.name}</span></h1>
+                </div>
                 
                 <div className="search-bar">
                     <SearchInput />
                 </div>
 
-                
+                <div className="header-actions" ref={addButtonRef}>
+                    <div className="button primary icon add"
+                        onClick={() => dispatch(openModal('createProject'))}
+                    >New</div>
+                </div>
             </div>
+
             <main className="home">
-                {/*  */}
-                {!isAddButtonVisible && (
-                    <div className="mobile-actions">
-                        <div className="button primary icon icon-only add-mobile"
-                            onClick={() => dispatch(openModal('createProject'))}
-                        ></div>
+                {/* Metrics Ribbon */}
+                <div className="metrics-ribbon">
+                    <div className="metric-item">
+                        <span className="label">Storage Used:</span>
+                        <span className="value">{storageString}</span>
                     </div>
-                )}
-                <div className="welcome-section">
-                    <div className="welcome-content">
-                        <div className='welcome-message-top user-name'>
-                            <h1 className='welcome-message '>Hello, <span className='iconic-gradient'>{defaultStudio?.name} </span></h1>
-
-                        </div>
-                        <h1 className='welcome-message sub-message'>{
-                            projects.length === 0 ?
-                                "Create your first project" :
-                                "Let's manage your Snaps"
-                        } </h1>
+                    <div className="metric-divider"></div>
+                    <div className="metric-item">
+                        <span className="label">Active Galleries:</span>
+                        <span className="value">{projects.length}</span>
                     </div>
-
-                    <div className="storage-pie-wrap" >
-                        {/* <StoragePie height={120} totalSpace={1000} usedSpace={10} active/>
-                        <StoragePie height={120}totalSpace={1000} usedSpace={10} /> */}
-                    </div>
-
-                    <div className="actions" ref={addButtonRef}>
-                        <div className="button primary icon add"
-                            onClick={() => dispatch(openModal('createProject'))}
-                        >New</div>
+                    <div className="metric-divider"></div>
+                    <div className="metric-item">
+                        <span className="label">Pending Actions:</span>
+                        <span className="value status-alert">{pendingActionsCount}</span>
                     </div>
                 </div>
-                {selectionRequests.length > 0 && (
-                    <div className="section requests">
-                        <h3 className='section-heading'>Selection Reset Requests</h3>
-                        <div className="selection-requests-list">
+
+                {/* Combined Action Center */}
+                {(selectionRequests.length > 0 || extensionRequests.length > 0) && (
+                    <div className="section action-center">
+                        <h3 className='section-heading'>Urgent Tasks</h3>
+                        <div className="action-requests-carousel">
                             {selectionRequests.map((request) => (
-                                <div key={request.id} className="selection-request-item island">
-                                    <div className="request-info">
-                                        <p className="request-text">Client requested to select again for <b>{request.projectName}</b></p>
+                                <div key={request.id} className="action-card selection-reset">
+                                    <div className="action-icon reset"></div>
+                                    <div className="action-content">
+                                        <p className="action-title">Selection Reset</p>
+                                        <p className="action-desc"><b>{request.projectName}</b> wants to select again.</p>
                                     </div>
-                                    <div className="request-actions">
-                                        <div className="button secondary small" onClick={() => {
+                                    <div className="action-btns">
+                                        <div className="btn-icon reject" onClick={() => {
                                             dispatch(declineSelectionReset({ domain: defaultStudio.domain, projectId: request.projectId }));
                                             dispatch(showAlert({ type: 'info', message: 'Selection reset request cancelled.' }));
-                                        }}>Reject</div>
-                                        <div className="button primary small outline" onClick={() => {
+                                        }}></div>
+                                        <div className="btn-icon accept" onClick={() => {
                                             dispatch(acceptSelectionReset({ domain: defaultStudio.domain, projectId: request.projectId }));
                                             dispatch(showAlert({ type: 'success', message: 'Selection reset allowed!' }));
-                                        }}>Accept</div>
-                                        <div className="button primary small" onClick={() => {
+                                        }}></div>
+                                        <div className="btn-text" onClick={() => {
                                             const project = projects.find(p => p.id === request.projectId);
                                             if (project) {
                                                 dispatch(removeRequestLocally(request.projectId));
@@ -188,28 +193,23 @@ function Home() {
                                     </div>
                                 </div>
                             ))}
-                        </div>
-                    </div>
-                )}
-                {extensionRequests.length > 0 && (
-                    <div className="section requests">
-                        <h3 className='section-heading'>Gallery Extension Requests</h3>
-                        <div className="selection-requests-list">
                             {extensionRequests.map((request) => (
-                                <div key={request.id} className="selection-request-item island">
-                                    <div className="request-info">
-                                        <p className="request-text">Client requested a gallery extension for <b>{request.projectName}</b></p>
+                                <div key={request.id} className="action-card extension">
+                                    <div className="action-icon clock"></div>
+                                    <div className="action-content">
+                                        <p className="action-title">Gallery Extension</p>
+                                        <p className="action-desc"><b>{request.projectName}</b> wants an extension.</p>
                                     </div>
-                                    <div className="request-actions">
-                                        <div className="button secondary small" onClick={() => {
+                                    <div className="action-btns">
+                                        <div className="btn-icon reject" onClick={() => {
                                             dispatch(declineExtension({ domain: defaultStudio.domain, projectId: request.projectId }));
                                             dispatch(showAlert({ type: 'info', message: 'Extension request cancelled.' }));
-                                        }}>Reject</div>
-                                        <div className="button primary small outline" onClick={() => {
+                                        }}></div>
+                                        <div className="btn-icon accept" onClick={() => {
                                             dispatch(acceptExtension({ domain: defaultStudio.domain, projectId: request.projectId }));
                                             dispatch(showAlert({ type: 'success', message: 'Extension request approved!' }));
-                                        }}>Accept</div>
-                                        <div className="button primary small" onClick={() => {
+                                        }}></div>
+                                        <div className="btn-text" onClick={() => {
                                             const project = projects.find(p => p.id === request.projectId);
                                             if (project) {
                                                 dispatch(removeExtensionRequestLocally(request.projectId));
@@ -222,124 +222,116 @@ function Home() {
                         </div>
                     </div>
                 )}
-                {
-                    projects.length > 0 ? (
-                        <>
-                            {selectedProjects.length !== 0 && <div className="section recent">
+
+                {!isAddButtonVisible && (
+                    <div className="mobile-actions">
+                        <div className="button primary icon icon-only add-mobile"
+                            onClick={() => dispatch(openModal('createProject'))}
+                        ></div>
+                    </div>
+                )}
+
+                {projects.length > 0 ? (
+                    <>
+                        {/* Active Focus: Selection Completed */}
+                        {selectionCompletedProjects.length > 0 && (
+                            <div className="section active-focus">
                                 <h3 className='section-heading'>Selection Completed</h3>
-                                <div className="projects selection">
-                                    {
-                                        selectedProjects.length !== 0 ? (
-                                            selectionCompletedProjects.map((project, index) => (
-                                                <ProjectCard
-                                                    project={project}
-                                                    key={project.id}
-                                                    type='selection'
-                                                />
-                                            ))
-                                        ) : (
-                                            <p className="message">Selection completed projects</p>)
-                                    }
+                                <div className="projects grid-3-col">
+                                    {selectionCompletedProjects.map((project) => (
+                                        <ProjectCard
+                                            project={project}
+                                            key={project.id}
+                                            type='selection'
+                                        />
+                                    ))}
                                 </div>
                             </div>
-                            }
-                            {recentProjects.length !== 0 && <div className="section recent">
-                                <h3 className='section-heading'>Recent Projects</h3>
-                                <div className="projects recent">
-                                    {
-                                        recentProjects.length !== 0 ? (
-                                            recentProjects.map((project, index) => (
-                                                <ProjectCard
-                                                    project={project}
-                                                    key={project.id}
-                                                    type='home'
-                                                />
-                                            ))
-                                        ) : (
-                                            <p className="message">No recent projects</p>)
-                                    }
-                                    <Link className="project all" to={`/${defaultStudio.domain}/projects`} >
-                                        <div className="cover-wrap">
-                                            <div className="project-cover"></div>
-                                        </div>
-                                        <div className="project-details">
-                                            <div className="details-top">
+                        )}
 
-                                                <h4 className="project-title">See all Projects</h4>
-                                                <p className="project-type"></p>
-                                            </div>
+                        {/* Project Library */}
+                        <div className="section library">
+                            <div className="section-header-inline">
+                                <h3 className='section-heading'>Project Library</h3>
+                                <div className="filter-chips">
+                                    {['all', 'active', 'drafts', 'archived'].map((item) => (
+                                        <div 
+                                            key={item} 
+                                            className={`chip ${filter === item ? 'active' : ''}`}
+                                            onClick={() => setFilter(item)}
+                                        >
+                                            {item.charAt(0).toUpperCase() + item.slice(1)}
                                         </div>
-                                    </Link>
+                                    ))}
                                 </div>
-                            </div>}
-
-                        </>
-                    ) :
-                        (<>
-                        <div className="mascot-empty-projects">
-                            <div className="mascot-image"></div>
-                            <p className="mascot-label">
-                                <span className='highlight'>Create your first     Project</span>
-                                <span>Click the <span className='highlight button primary small icon add'
-                            onClick={() => dispatch(openModal('createProject'))}
-                                >  New </span> button to create your project</span>
-                                </p>
-                        </div>
-                            {/* <div className="projects-list">
-                                <div className="project new" onClick={() => dispatch(openModal('createProject'))}>
-                                    <div className="project-cover"></div>
-                                    <div className="project-details">
-                                        <div className="details-top">
-                                            <h4 className="project-title">New Project</h4>
-                                            <p className="project-type"></p>
-                                        </div>
-                                    </div>
-                                    <div className="project-options"></div>
-                                </div >
-                            </div> */}
-                        </>)
-                }
-
-                {
-                    upcommingShoots.length !== 0 && <div className="section shoots">
-                        <h3 className='section-heading'>Upcoming shoots</h3>
-                        <div className="shoots">
-                            {(upcommingShoots?.length > 0 && upcommingShoots?.length !== undefined)
-                                && upcommingShoots
-                                    .map((event) => (
-                                        <div key={event.id} className="time">
-                                            <div className="status large">
-                                                <div className="signal"></div>
-                                            </div>
-                                            <p className="in-ago-event-days">{getEventTimeAgo(event?.date)}</p>
-                                            <div className="date">
-                                                <h5>{new Date(event?.date).toLocaleString('default', { month: 'short' })}</h5>
-                                                <h1>{event?.date.split('-')[2]}</h1>
-                                            </div>
-
-                                            <p className='time-number'>{new Date(event?.date).toLocaleTimeString('default', {
-                                                hour: 'numeric', // Use numeric hour (e.g., 5)
-                                                minute: '2-digit', // Use two-digit minutes (e.g., 30)
-                                                hour12: true, // Use 12-hour format (e.g., AM/PM)
-                                            })}</p>
-                                            <p className='location'>{event?.location}</p>
-
-                                            <p className='event-name-label'>{getProjectsByEventId(projects, event?.id)[0].name}</p>
-                                            <p className='event-type-label'>{event?.type}</p>
-
-
-                                        </div>
+                            </div>
+                            
+                            <div className="projects library-grid">
+                                {recentProjects.length > 0 ? (
+                                    recentProjects.map((project) => (
+                                        <ProjectCard
+                                            project={project}
+                                            key={project.id}
+                                            type='home'
+                                        />
                                     ))
-                            }
+                                ) : (
+                                    <p className="message">No projects found in this category.</p>
+                                )}
+                                <Link className="project all-link" to={`/${defaultStudio.domain}/projects`} >
+                                    <div className="all-link-content">
+                                        <h4>See all Projects</h4>
+                                        <div className="arrow-icon"></div>
+                                    </div>
+                                </Link>
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    <div className="mascot-empty-projects">
+                        <div className="mascot-image"></div>
+                        <p className="mascot-label">
+                            <span className='highlight'>Create your first Project</span>
+                            <span>Click the <span className='highlight button primary small icon add'
+                                onClick={() => dispatch(openModal('createProject'))}
+                            > New </span> button to create your project</span>
+                        </p>
+                    </div>
+                )}
+
+                {upcommingShoots.length > 0 && (
+                    <div className="section shoots">
+                        <h3 className='section-heading'>Upcoming shoots</h3>
+                        <div className="shoots-carousel">
+                            {upcommingShoots.map((event) => (
+                                <div key={event.id} className="shoot-card">
+                                    <div className="shoot-status">
+                                        <div className="signal"></div>
+                                        <span className="days-left">{getEventTimeAgo(event?.date)}</span>
+                                    </div>
+                                    <div className="shoot-date-box">
+                                        <span className="month">{new Date(event?.date).toLocaleString('default', { month: 'short' })}</span>
+                                        <span className="day">{event?.date.split('-')[2]}</span>
+                                    </div>
+                                    <div className="shoot-info">
+                                        <p className="time">{new Date(event?.date).toLocaleTimeString('default', {
+                                            hour: 'numeric',
+                                            minute: '2-digit',
+                                            hour12: true,
+                                        })}</p>
+                                        <p className='project-name'>{getProjectsByEventId(projects, event?.id)[0]?.name}</p>
+                                        <p className='event-type'>{event?.type}</p>
+                                        <p className='location'>{event?.location}</p>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
-
-                }
-
+                )}
             </main>
-
         </>
     );
 }
 
 export default Home;
+
