@@ -270,6 +270,55 @@
                 margin: 0 8px*1;
             }
         }
+
+        .section-header-inline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-right: 16px;
+
+            .section-heading { margin-bottom: 0; }
+
+            .view-control-mini {
+                display: flex;
+                gap: 8px;
+                background: rgba($dark-1, 0.5);
+                padding: 4px;
+                border-radius: 8px;
+                border: 1px solid rgba($gray5-accessible-dark, 0.2);
+
+                .control {
+                    width: 28px;
+                    height: 28px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    opacity: 0.4;
+
+                    &:hover { opacity: 0.8; background: rgba(255,255,255,0.05); }
+                    &.active {
+                        opacity: 1;
+                        background: $dark-4;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                    }
+
+                    .icon {
+                        width: 16px;
+                        height: 16px;
+                        background-size: contain;
+                        background-position: center;
+                        background-repeat: no-repeat;
+                        filter: invert(1);
+
+                        &.card-view { background-image: url('https://img.icons8.com/sf-black-filled/64/FFFFFF/four-squares.png'); }
+                        &.redefined-view { background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/grid-2.png'); }
+                    }
+                }
+            }
+        }
         .projects{
             padding: 8px 8px;
             display: grid;

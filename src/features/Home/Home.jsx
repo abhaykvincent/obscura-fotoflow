@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import './Home.scss';
 import { getProjectsByEventId, getProjectsByLastUpdated, getProjectsByStatus, getRecentProjects, getUpcommingShoots } from '../../utils/projectFilters';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
+import ProjectCardRedefined from '../../components/Project/ProjectCard/ProjectCardRedefined';
 import Refresh from '../../components/Refresh/Refresh';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectProjects } from '../../app/slices/projectsSlice';
@@ -31,6 +32,7 @@ function Home() {
     const navigate = useNavigate();
 
     document.title = `FotoFlow | ${defaultStudio.name}`;
+    const [viewType, setViewType] = useState('cards');
     const selectionCompletedProjects = getProjectsByStatus(projects, 'selected');
     const [selectedProjects, setSelectedProjects] = useState([])
     const [recentProjects, setRecentProjects] = useState([])
@@ -223,16 +225,34 @@ function Home() {
                     projects.length > 0 ? (
                         <>
                             {selectedProjects.length !== 0 && <div className="section recent">
-                                <h3 className='section-heading'>Selection Completed</h3>
+                                <div className="section-header-inline">
+                                    <h3 className='section-heading'>Selection Completed</h3>
+                                    <div className="view-control-mini">
+                                        <div className={`control ${viewType === 'cards' ? 'active' : ''}`} onClick={() => setViewType('cards')}>
+                                            <div className="icon card-view"></div>
+                                        </div>
+                                        <div className={`control ${viewType === 'redefined' ? 'active' : ''}`} onClick={() => setViewType('redefined')}>
+                                            <div className="icon redefined-view"></div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div className="projects selection">
                                     {
                                         selectedProjects.length !== 0 ? (
-                                            selectedProjects.map((project, index) => (
-                                                <ProjectCard
-                                                    project={project}
-                                                    key={project.id}
-                                                    type='selection'
-                                                />
+                                            selectionCompletedProjects.map((project, index) => (
+                                                viewType === 'redefined' ? (
+                                                    <ProjectCardRedefined
+                                                        project={project}
+                                                        key={project.id}
+                                                        type='selection'
+                                                    />
+                                                ) : (
+                                                    <ProjectCard
+                                                        project={project}
+                                                        key={project.id}
+                                                        type='selection'
+                                                    />
+                                                )
                                             ))
                                         ) : (
                                             <p className="message">Selection completed projects</p>)
@@ -246,11 +266,19 @@ function Home() {
                                     {
                                         recentProjects.length !== 0 ? (
                                             recentProjects.map((project, index) => (
-                                                <ProjectCard
-                                                    project={project}
-                                                    key={project.id}
-                                                    type='home'
-                                                />
+                                                viewType === 'redefined' ? (
+                                                    <ProjectCardRedefined
+                                                        project={project}
+                                                        key={project.id}
+                                                        type='home'
+                                                    />
+                                                ) : (
+                                                    <ProjectCard
+                                                        project={project}
+                                                        key={project.id}
+                                                        type='home'
+                                                    />
+                                                )
                                             ))
                                         ) : (
                                             <p className="message">No recent projects</p>)
