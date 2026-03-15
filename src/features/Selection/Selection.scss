@@ -57,7 +57,7 @@
       z-index: 1000;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       font-size: 0.85rem;
       padding: 8px 16px;
       border-radius: 20px;
@@ -65,12 +65,19 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       backdrop-filter: blur(8px);
       
+      .sync-icon {
+        width: 16px;
+        height: 16px;
+        object-fit: cover;
+      }
+
       &.syncing {
         color: $blue-accessible-dark;
         background-color: rgba(255, 255, 255, 0.8);
         border: 1px solid rgba($blue-default-light, 0.3);
         .sync-icon {
           animation: spin 2s linear infinite;
+          filter: invert(41%) sepia(98%) saturate(1633%) hue-rotate(187deg) brightness(97%) contrast(101%); // Tint to match blue if needed, though URL implies white
         }
       }
       
@@ -78,6 +85,9 @@
         color: $green-accessible-dark;
         background-color: rgba(255, 255, 255, 0.8);
         border: 1px solid rgba($green-default-light, 0.3);
+        .sync-icon {
+          border-radius: 50%;
+        }
       }
     }
     p{
