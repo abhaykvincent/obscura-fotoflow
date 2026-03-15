@@ -191,13 +191,17 @@
                 gap: 8px*1;
                 .link{
                     color: $green-dark-accessible-light;
+                    text-decoration: underline;
+                    text-underline-offset: 3px;
                     transition-duration: 0.1s;
-
                     
                     cursor: pointer;
                     &:hover{
                         color: $green-accessible-dark;
-
+                        text-decoration-color: $green-accessible-dark;
+                    }
+                    &::before{
+                        text-decoration-color: transparent;
                         
                     }
                 }   
