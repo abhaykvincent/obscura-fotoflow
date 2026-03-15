@@ -498,3 +498,51 @@ export const createExtensionRequest = async (domain, projectId, projectName) => 
         throw error;
     }
 };
+
+export const fetchExtensionRequests = async (domain) => {
+    try {
+        const studioRef = doc(db, 'studios', domain);
+        const extensionRequestsRef = collection(studioRef, 'extensionRequests');
+        const q = query(extensionRequestsRef, where('status', '==', 'pending'));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error('Error fetching extension requests:', error);
+        throw error;
+    }
+};
+
+export const approveExtensionRequest = async (domain, projectId) => {
+    try {
+        const studioRef = doc(db, 'studios', domain);
+        const extensionRequestsRef = collection(studioRef, 'extensionRequests');
+        const requestRef = doc(extensionRequestsRef, projectId);
+        
+        await updateDoc(requestRef, { status: 'accepted', acceptedAt: Date.now() });
+        
+        // Note: This does not automatically extend the project. 
+        // The photographer is expected to do this manually from the project settings.
+        
+        console.log(`Extension request approved for project ${projectId}`);
+        return true;
+    } catch (error) {
+        console.error('Error approving extension request:', error);
+        throw error;
+    }
+};
+
+export const declineExtensionRequest = async (domain, projectId) => {
+    try {
+        const studioRef = doc(db, 'studios', domain);
+        const extensionRequestsRef = collection(studioRef, 'extensionRequests');
+        const requestRef = doc(extensionRequestsRef, projectId);
+        
+        await updateDoc(requestRef, { status: 'declined', declinedAt: Date.now() });
+        
+        console.log(`Extension request declined for project ${projectId}`);
+        return true;
+    } catch (error) {
+        console.error('Error declining extension request:', error);
+        throw error;
+    }
+};

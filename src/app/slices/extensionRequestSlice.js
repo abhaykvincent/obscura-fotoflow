@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { createExtensionRequest } from '../../firebase/functions/studios';
+import { createExtensionRequest, fetchExtensionRequests, approveExtensionRequest, declineExtensionRequest } from '../../firebase/functions/studios';
 
 export const requestExtension = createAsyncThunk(
   'extensionRequest/request',
@@ -9,14 +9,42 @@ export const requestExtension = createAsyncThunk(
   }
 );
 
+export const getExtensionRequests = createAsyncThunk(
+  'extensionRequest/getRequests',
+  async (domain) => {
+    const response = await fetchExtensionRequests(domain);
+    return response;
+  }
+);
+
+export const acceptExtension = createAsyncThunk(
+  'extensionRequest/accept',
+  async ({ domain, projectId }) => {
+    await approveExtensionRequest(domain, projectId);
+    return projectId;
+  }
+);
+
+export const declineExtension = createAsyncThunk(
+  'extensionRequest/decline',
+  async ({ domain, projectId }) => {
+    await declineExtensionRequest(domain, projectId);
+    return projectId;
+  }
+);
+
 const extensionRequestSlice = createSlice({
   name: 'extensionRequest',
   initialState: {
+    requests: [],
     loading: false,
     error: null,
-    lastRequest: null,
   },
-  reducers: {},
+  reducers: {
+    removeRequestLocally: (state, action) => {
+        state.requests = state.requests.filter((req) => req.projectId !== action.payload);
+      },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(requestExtension.pending, (state) => {
@@ -25,13 +53,31 @@ const extensionRequestSlice = createSlice({
       })
       .addCase(requestExtension.fulfilled, (state, action) => {
         state.loading = false;
-        state.lastRequest = action.payload;
       })
       .addCase(requestExtension.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(getExtensionRequests.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getExtensionRequests.fulfilled, (state, action) => {
+        state.loading = false;
+        state.requests = action.payload;
+      })
+      .addCase(getExtensionRequests.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(acceptExtension.fulfilled, (state, action) => {
+        state.requests = state.requests.filter((req) => req.projectId !== action.payload);
+      })
+      .addCase(declineExtension.fulfilled, (state, action) => {
+        state.requests = state.requests.filter((req) => req.projectId !== action.payload);
       });
   },
 });
 
+export const { removeRequestLocally: removeExtensionRequestLocally } = extensionRequestSlice.actions;
+export const selectExtensionRequests = (state) => state.extensionRequest.requests;
 export default extensionRequestSlice.reducer;
