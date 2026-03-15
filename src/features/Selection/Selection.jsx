@@ -122,7 +122,18 @@ export default function Selection() {
   const isLastCollection = !nextSelectableCollection;
   const isSelectionCompletedStatus = project?.status === "selected";
 
-  // --- Effects ---
+  // Prevent accidental navigation during sync
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (isSyncing) {
+        e.preventDefault();
+        e.returnValue = ''; // Required for most browsers
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isSyncing]);
 
   // Security & Global Style
   useEffect(() => {
