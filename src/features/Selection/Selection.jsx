@@ -141,11 +141,8 @@ export default function Selection() {
       try {
         const projectData = await fetchProject(studioName, projectId);
         setProject(projectData);
-
-        const firstSelectable = projectData.collections.find(c => c.selectionGallery !== false);
-        if (firstSelectable && !collectionId) {
-          navigate(`/${studioName}/selection/${projectId}/${firstSelectable.id}`, { replace: true });
-        } else if (!firstSelectable) {
+        
+        if (projectData && !projectData.collections.find(c => c.selectionGallery !== false)) {
           setSelectionCompleted(true);
         }
       } catch (error) {
@@ -154,25 +151,35 @@ export default function Selection() {
     };
 
     fetchProjectData();
-  }, [projectId, studioName, collectionId, navigate]);
+  }, [projectId, studioName]);
 
   // Handle Progress Resumption
   useEffect(() => {
     if (initialLoad || !project || hasInitializedProgress) return;
 
     let resumed = false;
-    const activeCollId = collectionId || project.collections[0]?.id;
+    const activeCollId = collectionId;
 
-    // Resuming collection location
-    if (!collectionId && lastProgress?.collectionId) {
-      navigate(`/${studioName}/selection/${projectId}/${lastProgress.collectionId}`, { replace: true });
-      resumed = true;
-    }
-    
-    // Resuming page position
-    if (lastProgress?.collectionId === activeCollId && lastProgress?.page > 1) {
-      setPage(lastProgress.page);
-      resumed = true;
+    if (!activeCollId) {
+      // No collection in URL, determine where to go
+      const targetCollId = lastProgress?.collectionId || project.collections.find(c => c.selectionGallery !== false)?.id;
+      
+      if (targetCollId) {
+        navigate(`/${studioName}/selection/${projectId}/${targetCollId}`, { replace: true });
+        if (lastProgress?.collectionId) resumed = true;
+      }
+    } else {
+      // Collection is in URL, check if we need to resume page position
+      if (lastProgress?.collectionId === activeCollId && lastProgress?.page > 1) {
+        setPage(lastProgress.page);
+        resumed = true;
+        
+        // Approximate scroll to where the user left off
+        setTimeout(() => {
+          const scrollPos = (lastProgress.page - 1) * window.innerHeight * 0.8;
+          window.scrollTo({ top: scrollPos, behavior: 'smooth' });
+        }, 1000);
+      }
     }
 
     if (resumed) {
@@ -214,19 +221,25 @@ export default function Selection() {
     }
   }, [project, currentCollectionId, studioName, projectId, navigate, hasInitializedProgress, lastProgress]);
 
-  // Scroll to top on collection change
+  // Scroll to top on collection change (only if not resuming)
   useEffect(() => {
-    const galleryElement = document.querySelector('.gallery');
-    if (galleryElement) {
-      galleryElement.scrollIntoView({ behavior: 'auto', block: 'start' });
+    if (hasInitializedProgress && (!lastProgress || lastProgress.collectionId !== currentCollectionId)) {
+      const galleryElement = document.querySelector('.gallery');
+      if (galleryElement) {
+        galleryElement.scrollIntoView({ behavior: 'auto', block: 'start' });
+      }
     }
-  }, [currentCollectionId]);
+  }, [currentCollectionId, hasInitializedProgress, lastProgress]);
 
   // --- Handlers ---
 
   const handleLoadMore = useCallback(() => {
-    setPage(prev => prev + 1);
-  }, []);
+    setPage(prev => {
+      const nextPage = prev + 1;
+      saveProgress({ collectionId: currentCollectionId, page: nextPage });
+      return nextPage;
+    });
+  }, [currentCollectionId, saveProgress]);
 
   const handleToggleSelection = useCallback((image) => {
     const isSelecting = !selectedIds.includes(image.url);
