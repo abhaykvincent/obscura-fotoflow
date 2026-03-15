@@ -314,36 +314,26 @@
       }
     }
   }
-  .pagination{
+  .collection-actions-footer {
     display: flex;
     justify-content: center;
-    gap: 16px;
-    align-items: center;
-    margin-bottom: 8px*1;
-    margin-top: 8px*2;
+    margin: 40px 0;
+    padding: 20px 0;
     width: 100%;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
     
-    .page-progress {
-      font-size: 0.9rem;
-      color: rgba(0, 0, 0, 0.6);
-      font-weight: 500;
-      span {
-        color: rgba(0, 0, 0, 0.9);
-        font-weight: 700;
-      }
-    }
-    
-    .button{
-      text-shadow: none;
-      min-width: 120px;
+    .button {
+      min-width: 280px;
+      padding: 16px 32px;
+      font-size: 1.1rem;
+      border-radius: 50px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
       
-      &.selected{
-        border: 1px solid $green-accessible-dark;
-        color: $green-accessible-dark;
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
       }
-    }
-    .send{
-      background-color: $green-accessible-dark;
     }
   }
 }
