@@ -72,7 +72,7 @@ export default function Selection() {
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(1);
   const [hasInitializedProgress, setHasInitializedProgress] = useState(false);
-  const [size] = useState(30); // Larger initial size for infinite scroll
+  const [size] = useState(30); 
   const [selectionCompleted, setSelectionCompleted] = useState(false);
   const [showAllPhotos, setShowAllPhotos] = useState(true);
 
@@ -87,7 +87,7 @@ export default function Selection() {
   // --- Derived State ---
 
   const currentCollectionId = useMemo(() => {
-    return collectionId || project?.collections[0]?.id;
+    return collectionId || project?.collections.find(c => c.selectionGallery !== false)?.id;
   }, [collectionId, project]);
 
   const currentCollectionIndex = useMemo(() => {
@@ -95,11 +95,13 @@ export default function Selection() {
     return project.collections.findIndex(c => c.id === currentCollectionId);
   }, [project, currentCollectionId]);
 
+  const selectedIdsSet = useMemo(() => new Set(selectedIds), [selectedIds]);
+
   const selectedImages = useMemo(() => {
     if (!project) return [];
     const allImages = project.collections.flatMap(c => c.uploadedFiles || []);
-    return allImages.filter(img => selectedIds.includes(img.url));
-  }, [project, selectedIds]);
+    return allImages.filter(img => selectedIdsSet.has(img.url));
+  }, [project, selectedIdsSet]);
 
   const paginatedImages = useMemo(() => {
     if (!showAllPhotos) return selectedImages;
@@ -118,6 +120,7 @@ export default function Selection() {
   }, [project, currentCollectionIndex]);
 
   const isLastCollection = !nextSelectableCollection;
+  const isSelectionCompletedStatus = project?.status === "selected";
 
   // --- Effects ---
 
@@ -142,7 +145,8 @@ export default function Selection() {
         const projectData = await fetchProject(studioName, projectId);
         setProject(projectData);
         
-        if (projectData && !projectData.collections.find(c => c.selectionGallery !== false)) {
+        const hasSelectableCollections = projectData?.collections?.some(c => c.selectionGallery !== false);
+        if (projectData?.status === 'selected' || !hasSelectableCollections) {
           setSelectionCompleted(true);
         }
       } catch (error) {
@@ -161,7 +165,6 @@ export default function Selection() {
     const activeCollId = collectionId;
 
     if (!activeCollId) {
-      // No collection in URL, determine where to go
       const targetCollId = lastProgress?.collectionId || project.collections.find(c => c.selectionGallery !== false)?.id;
       
       if (targetCollId) {
@@ -169,12 +172,10 @@ export default function Selection() {
         if (lastProgress?.collectionId) resumed = true;
       }
     } else {
-      // Collection is in URL, check if we need to resume page position
       if (lastProgress?.collectionId === activeCollId && lastProgress?.page > 1) {
         setPage(lastProgress.page);
         resumed = true;
         
-        // Approximate scroll to where the user left off
         setTimeout(() => {
           const scrollPos = (lastProgress.page - 1) * window.innerHeight * 0.8;
           window.scrollTo({ top: scrollPos, behavior: 'smooth' });
@@ -198,7 +199,6 @@ export default function Selection() {
     
     const currentColl = project.collections.find(c => c.id === currentCollectionId);
 
-    // Skip non-selectable galleries
     if (currentColl && currentColl.selectionGallery === false) {
       const currentIndex = project.collections.findIndex(c => c.id === currentColl.id);
       const nextColl = project.collections.slice(currentIndex + 1).find(c => c.selectionGallery !== false);
@@ -215,13 +215,12 @@ export default function Selection() {
     document.title = `${project.name} | Selection`;
     setImages(currentColl?.uploadedFiles || []);
     
-    // Reset page if we moved to a new collection manually
     if (hasInitializedProgress && lastProgress?.collectionId !== currentCollectionId) {
       setPage(1);
     }
   }, [project, currentCollectionId, studioName, projectId, navigate, hasInitializedProgress, lastProgress]);
 
-  // Scroll to top on collection change (only if not resuming)
+  // Scroll to top on collection change
   useEffect(() => {
     if (hasInitializedProgress && (!lastProgress || lastProgress.collectionId !== currentCollectionId)) {
       const galleryElement = document.querySelector('.gallery');
@@ -250,32 +249,36 @@ export default function Selection() {
     }
   }, [toggleSelection, currentCollectionId, page, selectedIds, saveProgress]);
 
-  const completeCollection = async () => {
-    try {
-      dispatch(updateCollectionStatus({ 
-        domain: studioName, 
-        projectId, 
-        collectionId: currentCollectionId, 
-        status: 'visible', 
-        selectionGallery: false 
-      }));
-    } catch (error) {
-      console.error('Failed to update collection status:', error);
+  const handleNotifyCompleted = useCallback(() => {
+    dispatch(showAlert({
+      type: 'info',
+      message: 'Selection is already completed for this project.',
+    }));
+  }, [dispatch]);
+
+  const updateCollectionStatusFinished = useCallback(() => {
+    return dispatch(updateCollectionStatus({ 
+      domain: studioName, 
+      projectId, 
+      collectionId: currentCollectionId, 
+      status: 'visible', 
+      selectionGallery: false 
+    }));
+  }, [dispatch, studioName, projectId, currentCollectionId]);
+
+  const handleFinishCollection = async () => {
+    await updateCollectionStatusFinished();
+    if (nextSelectableCollection) {
+      navigate(`/${studioName}/selection/${projectId}/${nextSelectableCollection.id}`);
     }
   };
 
-  const completeSelection = async () => {
+  const handleFinishSelection = async () => {
     if (selectionCompleted) return;
 
     setSelectionCompleted(true); 
     try {
-      dispatch(updateCollectionStatus({ 
-        domain: studioName, 
-        projectId, 
-        collectionId: currentCollectionId, 
-        status: 'visible', 
-        selectionGallery: false 
-      }));
+      await updateCollectionStatusFinished();
       await updateProjectStatusInFirestore(studioName, projectId, 'selected');
     } catch (error) {
       console.error('Failed to update project status:', error);
@@ -325,17 +328,18 @@ export default function Selection() {
             </div>
 
             <div className="selection-completed-label">
-              {project.status === 'selected' ? 'Selection Completed' : 'Click photos to select'}
+              {isSelectionCompletedStatus ? 'Selection Completed' : 'Click photos to select'}
             </div>
 
             {paginatedImages.length > 0 ? (
               <SelectionGallery 
-                project={project} 
+                isSelectionCompleted={isSelectionCompletedStatus}
                 images={paginatedImages} 
-                selectedImages={selectedImages} 
-                setSelectedImages={handleToggleSelection} 
+                selectedIdsSet={selectedIdsSet} 
+                onToggleSelection={handleToggleSelection} 
                 onLoadMore={handleLoadMore}
                 hasMore={hasMore}
+                onNotifyCompleted={handleNotifyCompleted}
               />
             ) : (
               <div className="no-images-message">
@@ -348,17 +352,14 @@ export default function Selection() {
                 {isLastCollection ? (
                   <button 
                     className="button primary large" 
-                    onClick={completeSelection}
+                    onClick={handleFinishSelection}
                   >
                     Finish Selection
                   </button>
                 ) : (
                   <button 
                     className="button primary large" 
-                    onClick={() => {
-                      completeCollection();
-                      navigate(`/${studioName}/selection/${projectId}/${nextSelectableCollection.id}`);
-                    }}
+                    onClick={handleFinishCollection}
                   >
                     Next Collection: {nextSelectableCollection.name}
                   </button>
@@ -395,3 +396,4 @@ export default function Selection() {
     </div>
   );
 }
+

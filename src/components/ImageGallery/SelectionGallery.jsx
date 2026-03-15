@@ -1,13 +1,11 @@
-import React, { useCallback, memo, useRef, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { showAlert } from '../../app/slices/alertSlice';
+import React, { memo, useRef, useEffect } from 'react';
 
 /**
  * GalleryImage component for rendering individual images in the selection gallery.
  * Memoized to prevent unnecessary re-renders when other images change.
  */
 const GalleryImage = memo(({ 
-  fileUrl, 
+  image, 
   index, 
   isSelected, 
   isSelectionCompleted, 
@@ -15,22 +13,31 @@ const GalleryImage = memo(({
   onNotifyCompleted 
 }) => {
   
-  const handleAction = (e) => {
-    // Prevent default if it's a checkbox to handle it manually via handleClick
+  const handleClick = (e) => {
+    // If it's a checkbox, stop propagation to avoid double trigger
     if (e.target.type === 'checkbox') e.stopPropagation();
     
     if (isSelectionCompleted) {
-      onNotifyCompleted();
+      if (onNotifyCompleted) onNotifyCompleted();
     } else {
-      onToggleSelection(fileUrl);
+      onToggleSelection(image);
+    }
+  };
+
+  const handleCheckboxChange = (e) => {
+    e.stopPropagation();
+    if (isSelectionCompleted) {
+      if (onNotifyCompleted) onNotifyCompleted();
+    } else {
+      onToggleSelection(image);
     }
   };
 
   return (
-    <div className="photo" onClick={handleAction}>
+    <div className="photo" onClick={handleClick}>
       <img 
         className="img" 
-        src={fileUrl.url} 
+        src={image.url} 
         alt={`File ${index}`} 
         loading="lazy"
       />
@@ -39,7 +46,7 @@ const GalleryImage = memo(({
         <input
           type="checkbox"
           checked={isSelected}
-          onChange={handleAction}
+          onChange={handleCheckboxChange}
         />
       )}
     </div>
@@ -49,9 +56,15 @@ const GalleryImage = memo(({
 /**
  * SelectionGallery component for displaying a grid of images for selection.
  */
-const SelectionGallery = ({ project, images, selectedImages, setSelectedImages, onLoadMore, hasMore }) => {
-  const dispatch = useDispatch();
-  const isSelectionCompleted = project.status === "selected";
+const SelectionGallery = ({ 
+  isSelectionCompleted, 
+  images, 
+  selectedIdsSet, 
+  onToggleSelection, 
+  onLoadMore, 
+  hasMore,
+  onNotifyCompleted 
+}) => {
   const observerTarget = useRef(null);
 
   useEffect(() => {
@@ -75,46 +88,26 @@ const SelectionGallery = ({ project, images, selectedImages, setSelectedImages, 
     };
   }, [onLoadMore, hasMore]);
 
-  const notifyCompleted = useCallback(() => {
-    dispatch(showAlert({
-      type: 'warning',
-      message: 'Selection Completed!',
-    }));
-  }, [dispatch]);
-
-  const handleToggleSelection = useCallback((fileUrl) => {
-    const isCurrentlySelected = selectedImages.some(img => img.url === fileUrl.url);
-    
-    // Toggle the selection in the parent state
-    setSelectedImages(fileUrl);
-    
-    // Notify the user of the change
-    dispatch(showAlert({
-      type: isCurrentlySelected ? 'warning' : 'success',
-      message: isCurrentlySelected ? 'Image Unselected!' : 'Image Selected!',
-    }));
-  }, [selectedImages, setSelectedImages, dispatch]);
-
   return (
     <div className="gallery">
       <div className="photos">
-        {images.map((fileUrl, index) => {
-          const isSelected = selectedImages.some(img => img.url === fileUrl.url);
+        {images.map((image, index) => {
+          const isSelected = selectedIdsSet.has(image.url);
           
           return (
             <GalleryImage 
-              key={fileUrl.url || index}
-              fileUrl={fileUrl}
+              key={image.url || index}
+              image={image}
               index={index}
               isSelected={isSelected}
               isSelectionCompleted={isSelectionCompleted}
-              onToggleSelection={handleToggleSelection}
-              onNotifyCompleted={notifyCompleted}
+              onToggleSelection={onToggleSelection}
+              onNotifyCompleted={onNotifyCompleted}
             />
           );
         })}
         {/* Sentinel element for infinite scroll */}
-        <div ref={observerTarget} style={{ height: '20px', width: '100%', clear: 'both' }}></div>
+        <div ref={observerTarget} style={{ height: '20px', width: '100%', clear: 'both' }} />
       </div>
     </div>
   );
