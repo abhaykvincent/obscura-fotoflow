@@ -259,14 +259,8 @@ function ShareGallery({project }) {
               </div>
 
               <div className="gallery-view-status">
-
                 <div className="link-group">
-                  
-                  </div>
-                </div>
-              <div className="gallery-view-status">
-                <div className="link-group">
-                  <div className="button primary outline text-only  icon play"
+                  <div className="link button primary outline text-only  icon play"
                     onClick={() => {
                       // open link in new tab
                       window.open(getGalleryURL('smart-gallery', domain, project?.id), '_blank');
@@ -289,13 +283,13 @@ function ShareGallery({project }) {
               <div className="gallery-view-status">
 
                 <div className="link-group">
-                  <div className="button primary outline text-only  icon selection"
+                  <div className="link button primary outline text-only  icon selection"
                     onClick={() => {
                       dispatch(openModal('pinReminder'));
                     }
                   }
                   >Selection Link</div>
-                <div className="button primary outline text-only  icon copy"
+                <div className=" button primary outline text-only  icon copy"
                   onClick={() => {
                     copyToClipboard(getGalleryURL('selection', domain, project?.id));
                     dispatch(showAlert({ type: 'success', message: 'Selection link copied to clipboard!' }));
