@@ -27,6 +27,7 @@ const initialState = {
     uploadCompleted: false,
     pinReminder: false,
     openInDesktop: false,
+    selectionSyncCompleted: false,
 };
 export const closeModalWithAnimation = createAsyncThunk(
   'projects/closeModalWithAnimation',
