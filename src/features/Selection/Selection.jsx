@@ -4,7 +4,6 @@ import Lottie from 'react-lottie';
 import animationData from '../../assets/animations/CompletedAnimation.json';
 import { fetchProject, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
 import SelectionGallery from '../../components/ImageGallery/SelectionGallery';
-import PaginationControl from '../../components/PaginationControl/PaginationControl';
 import { useDispatch } from 'react-redux';
 import { toTitleCase } from '../../utils/stringUtils';
 import { isPinValid } from '../../utils/pinUtils';
@@ -73,7 +72,7 @@ export default function Selection() {
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(1);
   const [hasInitializedProgress, setHasInitializedProgress] = useState(false);
-  const [size] = useState(15); // Items per page
+  const [size] = useState(30); // Larger initial size for infinite scroll
   const [selectionCompleted, setSelectionCompleted] = useState(false);
   const [showAllPhotos, setShowAllPhotos] = useState(true);
 
@@ -96,10 +95,6 @@ export default function Selection() {
     return project.collections.findIndex(c => c.id === currentCollectionId);
   }, [project, currentCollectionId]);
 
-  const totalPages = useMemo(() => {
-    return Math.ceil(images.length / size);
-  }, [images, size]);
-
   const selectedImages = useMemo(() => {
     if (!project) return [];
     const allImages = project.collections.flatMap(c => c.uploadedFiles || []);
@@ -107,8 +102,22 @@ export default function Selection() {
   }, [project, selectedIds]);
 
   const paginatedImages = useMemo(() => {
-    return images.slice((page - 1) * size, page * size);
-  }, [images, page, size]);
+    if (!showAllPhotos) return selectedImages;
+    return images.slice(0, page * size);
+  }, [images, page, size, showAllPhotos, selectedImages]);
+
+  const hasMore = useMemo(() => {
+    return showAllPhotos && paginatedImages.length < images.length;
+  }, [showAllPhotos, paginatedImages.length, images.length]);
+
+  const nextSelectableCollection = useMemo(() => {
+    if (!project) return null;
+    return project.collections
+      .slice(currentCollectionIndex + 1)
+      .find(c => c.selectionGallery !== false);
+  }, [project, currentCollectionIndex]);
+
+  const isLastCollection = !nextSelectableCollection;
 
   // --- Effects ---
 
@@ -205,15 +214,19 @@ export default function Selection() {
     }
   }, [project, currentCollectionId, studioName, projectId, navigate, hasInitializedProgress, lastProgress]);
 
-  // Scroll to top on page change
+  // Scroll to top on collection change
   useEffect(() => {
     const galleryElement = document.querySelector('.gallery');
     if (galleryElement) {
       galleryElement.scrollIntoView({ behavior: 'auto', block: 'start' });
     }
-  }, [page, currentCollectionId]);
+  }, [currentCollectionId]);
 
   // --- Handlers ---
+
+  const handleLoadMore = useCallback(() => {
+    setPage(prev => prev + 1);
+  }, []);
 
   const handleToggleSelection = useCallback((image) => {
     const isSelecting = !selectedIds.includes(image.url);
@@ -223,10 +236,6 @@ export default function Selection() {
       saveProgress({ collectionId: currentCollectionId, page: page });
     }
   }, [toggleSelection, currentCollectionId, page, selectedIds, saveProgress]);
-
-  const saveSelection = async () => {
-    dispatch(showAlert({ type: 'success', message: 'Selection auto-saved!' }));
-  };
 
   const completeCollection = async () => {
     try {
@@ -306,12 +315,14 @@ export default function Selection() {
               {project.status === 'selected' ? 'Selection Completed' : 'Click photos to select'}
             </div>
 
-            {(showAllPhotos ? paginatedImages : selectedImages).length > 0 ? (
+            {paginatedImages.length > 0 ? (
               <SelectionGallery 
                 project={project} 
-                images={showAllPhotos ? paginatedImages : selectedImages} 
+                images={paginatedImages} 
                 selectedImages={selectedImages} 
                 setSelectedImages={handleToggleSelection} 
+                onLoadMore={handleLoadMore}
+                hasMore={hasMore}
               />
             ) : (
               <div className="no-images-message">
@@ -319,19 +330,27 @@ export default function Selection() {
               </div>
             )}
 
-            {showAllPhotos && (
-              <PaginationControl
-                images={paginatedImages}
-                currentCollectionIndex={currentCollectionIndex + 1}
-                totalCollections={project.collections.length}
-                currentPage={page}
-                totalPages={totalPages}
-                completeSelection={completeSelection}
-                completeCollection={completeCollection}
-                handlePageChange={(newPage) => setPage(newPage)}
-                saveSelection={saveSelection}
-                project={project}
-              />
+            {showAllPhotos && !hasMore && images.length > 0 && (
+              <div className="collection-actions-footer">
+                {isLastCollection ? (
+                  <button 
+                    className="button primary large" 
+                    onClick={completeSelection}
+                  >
+                    Finish Selection
+                  </button>
+                ) : (
+                  <button 
+                    className="button primary large" 
+                    onClick={() => {
+                      completeCollection();
+                      navigate(`/${studioName}/selection/${projectId}/${nextSelectableCollection.id}`);
+                    }}
+                  >
+                    Next Collection: {nextSelectableCollection.name}
+                  </button>
+                )}
+              </div>
             )}
           </div> 
         </>

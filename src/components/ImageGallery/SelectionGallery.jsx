@@ -1,4 +1,4 @@
-import React, { useCallback, memo } from 'react';
+import React, { useCallback, memo, useRef, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
 
@@ -49,9 +49,31 @@ const GalleryImage = memo(({
 /**
  * SelectionGallery component for displaying a grid of images for selection.
  */
-const SelectionGallery = ({ project, images, selectedImages, setSelectedImages }) => {
+const SelectionGallery = ({ project, images, selectedImages, setSelectedImages, onLoadMore, hasMore }) => {
   const dispatch = useDispatch();
   const isSelectionCompleted = project.status === "selected";
+  const observerTarget = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasMore && onLoadMore) {
+          onLoadMore();
+        }
+      },
+      { threshold: 0.1, rootMargin: '100px' }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [onLoadMore, hasMore]);
 
   const notifyCompleted = useCallback(() => {
     dispatch(showAlert({
@@ -91,6 +113,8 @@ const SelectionGallery = ({ project, images, selectedImages, setSelectedImages }
             />
           );
         })}
+        {/* Sentinel element for infinite scroll */}
+        <div ref={observerTarget} style={{ height: '20px', width: '100%', clear: 'both' }}></div>
       </div>
     </div>
   );
