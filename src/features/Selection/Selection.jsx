@@ -4,10 +4,12 @@ import Lottie from 'react-lottie';
 import animationData from '../../assets/animations/CompletedAnimation.json';
 import { fetchProject, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
 import SelectionGallery from '../../components/ImageGallery/SelectionGallery';
+import SelectionSyncCompleted from '../../components/Modal/SelectionSyncCompleted';
 import { useDispatch } from 'react-redux';
 import { toTitleCase } from '../../utils/stringUtils';
 import { isPinValid } from '../../utils/pinUtils';
 import { showAlert } from '../../app/slices/alertSlice';
+import { openModal } from '../../app/slices/modalSlice';
 import Alert from '../../components/Alert/Alert';
 import { requestSelectionReset } from '../../app/slices/selectionRequestSlice';
 import { updateCollectionStatus } from '../../app/slices/projectsSlice';
@@ -75,6 +77,7 @@ export default function Selection() {
   const [size] = useState(30); 
   const [selectionCompleted, setSelectionCompleted] = useState(false);
   const [showAllPhotos, setShowAllPhotos] = useState(true);
+  const [attemptedToLeaveDuringSync, setAttemptedToLeaveDuringSync] = useState(false);
 
   // Configuration
   const lottieOptions = useMemo(() => ({
@@ -122,7 +125,27 @@ export default function Selection() {
   const isLastCollection = !nextSelectableCollection;
   const isSelectionCompletedStatus = project?.status === "selected";
 
-  // --- Effects ---
+  // Prevent accidental navigation during sync
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (isSyncing) {
+        setAttemptedToLeaveDuringSync(true);
+        e.preventDefault();
+        e.returnValue = ''; // Required for most browsers
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isSyncing]);
+
+  // Handle showing "Safe to Close" modal after sync finishes if user tried to leave
+  useEffect(() => {
+    if (!isSyncing && attemptedToLeaveDuringSync) {
+      dispatch(openModal('selectionSyncCompleted'));
+      setAttemptedToLeaveDuringSync(false);
+    }
+  }, [isSyncing, attemptedToLeaveDuringSync, dispatch]);
 
   // Security & Global Style
   useEffect(() => {
@@ -290,6 +313,11 @@ export default function Selection() {
   return (
     <div className="select-project">
       <Alert />
+      <SelectionSyncCompleted 
+        studioName={studioName} 
+        projectId={projectId} 
+        projectName={project?.name} 
+      />
       
       <div className="project-header">
         <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button back-btn icon back">
