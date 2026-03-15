@@ -22,9 +22,15 @@ import './Selection.scss';
 const SyncStatus = memo(({ isSyncing }) => (
   <div className={`sync-status ${isSyncing ? 'syncing' : 'saved'}`}>
     {isSyncing ? (
-      <><span className="sync-icon">🔄</span> Syncing...</>
+      <>
+        <span className="sync-icon syncing" /> 
+        Syncing...
+      </>
     ) : (
-      <><span className="sync-icon">✅</span> Saved</>
+      <>
+        <span className="sync-icon saved" /> 
+        Saved
+      </>
     )}
   </div>
 ));
