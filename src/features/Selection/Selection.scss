@@ -52,12 +52,12 @@
     }
     .sync-status {
       position: fixed;
-      bottom: 24px;
+      top: 24px;
       right: 24px;
       z-index: 1000;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       font-size: 0.85rem;
       padding: 8px 16px;
       border-radius: 20px;
@@ -65,19 +65,41 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       backdrop-filter: blur(8px);
       
+      .sync-icon {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+
       &.syncing {
         color: $blue-accessible-dark;
         background-color: rgba(255, 255, 255, 0.8);
-        border: 1px solid rgba($blue-default-light, 0.3);
+        border: 1px solid rgba($orange-default-light, 0.2);
         .sync-icon {
-          animation: spin 2s linear infinite;
+          background-image: url('https://img.icons8.com/?size=100&id=33936&format=png&color=409cff'); // Theme blue
+          background-size: 110%;
+
+ animation: spin 2s linear infinite;
         }
       }
       
       &.saved {
-        color: $green-accessible-dark;
+        color: $blue-accessible-dark;
+        font-weight: 600;
         background-color: rgba(255, 255, 255, 0.8);
-        border: 1px solid rgba($green-default-light, 0.3);
+        border: 1px solid rgba($cyan-default-light, 0.3);
+        .sync-icon {
+          background: $blue-default-light url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white"><path d="M1 7 L5 11 L13 1" stroke-width="2" stroke="white" fill="transparent"/></svg>') no-repeat center;
+          background-size: 50%;
+          border-radius: 50%;
+          border-color: $blue-accessible-dark;
+          transform: scale(1.1);
+          box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+          transition-duration: 0.1s;
+        }
       }
     }
     p{
@@ -314,36 +336,26 @@
       }
     }
   }
-  .pagination{
+  .collection-actions-footer {
     display: flex;
     justify-content: center;
-    gap: 16px;
-    align-items: center;
-    margin-bottom: 8px*1;
-    margin-top: 8px*2;
+    margin: 40px 0;
+    padding: 20px 0;
     width: 100%;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
     
-    .page-progress {
-      font-size: 0.9rem;
-      color: rgba(0, 0, 0, 0.6);
-      font-weight: 500;
-      span {
-        color: rgba(0, 0, 0, 0.9);
-        font-weight: 700;
-      }
-    }
-    
-    .button{
-      text-shadow: none;
-      min-width: 120px;
+    .button {
+      min-width: 280px;
+      padding: 16px 32px;
+      font-size: 1.1rem;
+      border-radius: 50px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
       
-      &.selected{
-        border: 1px solid $green-accessible-dark;
-        color: $green-accessible-dark;
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
       }
-    }
-    .send{
-      background-color: $green-accessible-dark;
     }
   }
 }

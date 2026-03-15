@@ -1,0 +1,47 @@
+@import '../../style/variables';
+
+.selection-sync-completed {
+  .modal-body {
+    .success-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: $spacing-unit * 4 0;
+      
+      .success-icon {
+        width: 80px;
+        height: 80px;
+        background-color: rgba($green-default-dark, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: $spacing-unit * 3;
+        
+        img {
+          width: 40px;
+          height: 40px;
+          filter: invert(65%) sepia(89%) saturate(326%) hue-rotate(74deg) brightness(118%) contrast(119%);
+        }
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: $spacing-unit * 2;
+        color: $gray6-default-light;
+      }
+      
+      p {
+        font-size: 1rem;
+        color: $gray3-default-dark;
+        max-width: 80%;
+        line-height: 1.5;
+        
+        b {
+          color: $gray-default-light;
+        }
+      }
+    }
+  }
+}
