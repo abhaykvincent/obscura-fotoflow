@@ -18,6 +18,7 @@ import AddProjectModal from '../../components/Modal/AddProject/AddProject';
 import WelcomeModal from '../../components/Modal/WelcomeModal/WelcomeModal';
 import { fetchUserByEmail } from '../../firebase/functions/firestore';
 import { acceptSelectionReset, declineSelectionReset, getSelectionRequests, removeRequestLocally, selectSelectionRequests } from '../../app/slices/selectionRequestSlice';
+import { getExtensionRequests, selectExtensionRequests, acceptExtension, declineExtension, removeExtensionRequestLocally } from '../../app/slices/extensionRequestSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 
 function Home() {
@@ -26,6 +27,7 @@ function Home() {
     const defaultStudio = useSelector(selectUserStudio)
     const user = useSelector(selectUser);
     const selectionRequests = useSelector(selectSelectionRequests);
+    const extensionRequests = useSelector(selectExtensionRequests);
     const navigate = useNavigate();
 
     document.title = `FotoFlow | ${defaultStudio.name}`;
@@ -61,6 +63,7 @@ function Home() {
     useEffect(() => {
         if (defaultStudio?.domain) {
             dispatch(getSelectionRequests(defaultStudio.domain));
+            dispatch(getExtensionRequests(defaultStudio.domain));
         }
     }, [defaultStudio, dispatch]);
 
@@ -180,6 +183,37 @@ function Home() {
                                             if (project) {
                                                 dispatch(removeRequestLocally(request.projectId));
                                                 navigate(`/${defaultStudio.domain}/project/${project.id}`, { state: { openModal: 'shareGallery' } });
+                                            }
+                                        }}>Manage</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {extensionRequests.length > 0 && (
+                    <div className="section requests">
+                        <h3 className='section-heading'>Gallery Extension Requests</h3>
+                        <div className="selection-requests-list">
+                            {extensionRequests.map((request) => (
+                                <div key={request.id} className="selection-request-item island">
+                                    <div className="request-info">
+                                        <p className="request-text">Client requested a gallery extension for <b>{request.projectName}</b></p>
+                                    </div>
+                                    <div className="request-actions">
+                                        <div className="button secondary small" onClick={() => {
+                                            dispatch(declineExtension({ domain: defaultStudio.domain, projectId: request.projectId }));
+                                            dispatch(showAlert({ type: 'info', message: 'Extension request cancelled.' }));
+                                        }}>Reject</div>
+                                        <div className="button primary small outline" onClick={() => {
+                                            dispatch(acceptExtension({ domain: defaultStudio.domain, projectId: request.projectId }));
+                                            dispatch(showAlert({ type: 'success', message: 'Extension request approved!' }));
+                                        }}>Accept</div>
+                                        <div className="button primary small" onClick={() => {
+                                            const project = projects.find(p => p.id === request.projectId);
+                                            if (project) {
+                                                dispatch(removeExtensionRequestLocally(request.projectId));
+                                                navigate(`/${defaultStudio.domain}/project/${project.id}`);
                                             }
                                         }}>Manage</div>
                                     </div>
