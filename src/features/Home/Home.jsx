@@ -227,13 +227,16 @@ function Home() {
                             {selectedProjects.length !== 0 && <div className="section recent">
                                 <div className="section-header-inline">
                                     <h3 className='section-heading'>Selection Completed</h3>
-                                    <div className="view-control-mini">
-                                        <div className={`control ${viewType === 'cards' ? 'active' : ''}`} onClick={() => setViewType('cards')}>
-                                            <div className="icon card-view"></div>
+                                    <div className="control-wrap view-type-controls">
+                                        <div className="controls">
+                                            <div className={`control ${viewType === 'cards' ? 'active' : ''}`} onClick={() => setViewType('cards')}>
+                                                <div className="icon card-view"></div>
+                                            </div>
+                                            <div className={`control ${viewType === 'redefined' ? 'active' : ''}`} onClick={() => setViewType('redefined')}>
+                                                <div className="icon redefined-view"></div>
+                                            </div>
                                         </div>
-                                        <div className={`control ${viewType === 'redefined' ? 'active' : ''}`} onClick={() => setViewType('redefined')}>
-                                            <div className="icon redefined-view"></div>
-                                        </div>
+                                        <div className="label mini-icons view">View</div>
                                     </div>
                                 </div>
                                 <div className="projects selection">
