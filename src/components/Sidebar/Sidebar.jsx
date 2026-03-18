@@ -8,6 +8,7 @@ import { selectCurrentSubscription, selectStudio, selectStudioStorageUsage } fro
 import { convertMegabytes } from '../../utils/stringUtils';
 import { getDaysFromNow } from '../../utils/dateUtils';
 import NetworkSignal from '../NetworkSignal/NetworkSignal';
+import { set } from 'date-fns';
 
 function Sidebar() {
   const dispatch = useDispatch();
@@ -27,6 +28,9 @@ function Sidebar() {
   const circumference = 113.1; // 2 * Math.PI * 18
   const strokeDashoffset = circumference - (usedPercentage / 100) * circumference;
 
+  const [trialDays, setTrialDays] = useState(0);
+  const [isTrialExpired, setIsTrialExpired] = useState(false);
+
   useEffect(() => {
     if (storageLimit) {
       const used = storageLimit.used / 1000;
@@ -40,6 +44,13 @@ function Sidebar() {
     }
   }, [storageLimit]);
 
+  useEffect(() => {
+    if(studio.billing){
+        setTrialDays(getDaysFromNow(studio.billing.trialEnd));
+        setIsTrialExpired(trialDays < 0);
+    }
+
+  },[studio])
   const toggleProfileOption = (e) => {
     e.stopPropagation();
     setProfileOptionActive(!profileOptionActive);
@@ -60,8 +71,6 @@ function Sidebar() {
     return location.pathname === path || location.pathname.startsWith(path + '/');
   };
 
-  const trialDays = getDaysFromNow(studio?.trialEndDate);
-  const isTrialExpired = trialDays < 0;
 
   const closeSidebar = () => {
     document.querySelector('.sidebar')?.classList.add('hide');
