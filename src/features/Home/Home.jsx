@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Home.scss';
 import { getProjectsByEventId, getProjectsByLastUpdated, getProjectsByStatus, getRecentProjects, getUpcommingShoots } from '../../utils/projectFilters';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
+import ProjectCardRedefined from '../../components/Project/ProjectCard/ProjectCardRedefined';
 import Refresh from '../../components/Refresh/Refresh';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectProjects } from '../../app/slices/projectsSlice';
@@ -31,8 +32,8 @@ function Home() {
     const navigate = useNavigate();
 
     document.title = `FotoFlow | ${defaultStudio.name}`;
+    const [viewType, setViewType] = useState('cards');
     const selectionCompletedProjects = getProjectsByStatus(projects, 'selected');
-    const requestPendingProjects = getProjectsByStatus(projects, 'request-pending');
     const [selectedProjects, setSelectedProjects] = useState([])
     const [recentProjects, setRecentProjects] = useState([])
     const [upcommingShoots, setUpcommingShoots] = useState([])
@@ -109,6 +110,7 @@ function Home() {
 
         setRecentProjects(filteredRecentProjects);
     }, [selectedProjects]);
+
     return (
         <>
             <WelcomeModal />
@@ -124,11 +126,8 @@ function Home() {
                 <div className="search-bar">
                     <SearchInput />
                 </div>
-
-                
             </div>
             <main className="home">
-                {/*  */}
                 {!isAddButtonVisible && (
                     <div className="mobile-actions">
                         <div className="button primary icon icon-only add-mobile"
@@ -160,25 +159,29 @@ function Home() {
                         >New</div>
                     </div>
                 </div>
-                {selectionRequests.length > 0 && (
-                    <div className="section requests">
-                        <h3 className='section-heading'>Selection Reset Requests</h3>
-                        <div className="selection-requests-list">
+
+                {/* Unified Action Center */}
+                {(selectionRequests.length > 0 || extensionRequests.length > 0) && (
+                    <div className="section action-center">
+                        <h3 className='section-heading'>Urgent Tasks</h3>
+                        <div className="action-requests-carousel">
                             {selectionRequests.map((request) => (
-                                <div key={request.id} className="selection-request-item island">
-                                    <div className="request-info">
-                                        <p className="request-text">Client requested to select again for <b>{request.projectName}</b></p>
+                                <div key={request.id} className="action-card selection-reset">
+                                    <div className="action-icon reset"></div>
+                                    <div className="action-content">
+                                        <p className="action-title">Selection Reset</p>
+                                        <p className="action-desc"><b>{request.projectName}</b> wants to select again.</p>
                                     </div>
-                                    <div className="request-actions">
-                                        <div className="button secondary small" onClick={() => {
+                                    <div className="action-btns">
+                                        <div className="btn-icon reject" onClick={() => {
                                             dispatch(declineSelectionReset({ domain: defaultStudio.domain, projectId: request.projectId }));
                                             dispatch(showAlert({ type: 'info', message: 'Selection reset request cancelled.' }));
-                                        }}>Reject</div>
-                                        <div className="button primary small outline" onClick={() => {
+                                        }}></div>
+                                        <div className="btn-icon accept" onClick={() => {
                                             dispatch(acceptSelectionReset({ domain: defaultStudio.domain, projectId: request.projectId }));
                                             dispatch(showAlert({ type: 'success', message: 'Selection reset allowed!' }));
-                                        }}>Accept</div>
-                                        <div className="button primary small" onClick={() => {
+                                        }}></div>
+                                        <div className="btn-text" onClick={() => {
                                             const project = projects.find(p => p.id === request.projectId);
                                             if (project) {
                                                 dispatch(removeRequestLocally(request.projectId));
@@ -188,28 +191,23 @@ function Home() {
                                     </div>
                                 </div>
                             ))}
-                        </div>
-                    </div>
-                )}
-                {extensionRequests.length > 0 && (
-                    <div className="section requests">
-                        <h3 className='section-heading'>Gallery Extension Requests</h3>
-                        <div className="selection-requests-list">
                             {extensionRequests.map((request) => (
-                                <div key={request.id} className="selection-request-item island">
-                                    <div className="request-info">
-                                        <p className="request-text">Client requested a gallery extension for <b>{request.projectName}</b></p>
+                                <div key={request.id} className="action-card extension">
+                                    <div className="action-icon clock"></div>
+                                    <div className="action-content">
+                                        <p className="action-title">Gallery Extension</p>
+                                        <p className="action-desc"><b>{request.projectName}</b> wants an extension.</p>
                                     </div>
-                                    <div className="request-actions">
-                                        <div className="button secondary small" onClick={() => {
+                                    <div className="action-btns">
+                                        <div className="btn-icon reject" onClick={() => {
                                             dispatch(declineExtension({ domain: defaultStudio.domain, projectId: request.projectId }));
                                             dispatch(showAlert({ type: 'info', message: 'Extension request cancelled.' }));
-                                        }}>Reject</div>
-                                        <div className="button primary small outline" onClick={() => {
+                                        }}></div>
+                                        <div className="btn-icon accept" onClick={() => {
                                             dispatch(acceptExtension({ domain: defaultStudio.domain, projectId: request.projectId }));
                                             dispatch(showAlert({ type: 'success', message: 'Extension request approved!' }));
-                                        }}>Accept</div>
-                                        <div className="button primary small" onClick={() => {
+                                        }}></div>
+                                        <div className="btn-text" onClick={() => {
                                             const project = projects.find(p => p.id === request.projectId);
                                             if (project) {
                                                 dispatch(removeExtensionRequestLocally(request.projectId));
@@ -222,20 +220,42 @@ function Home() {
                         </div>
                     </div>
                 )}
+
                 {
                     projects.length > 0 ? (
                         <>
                             {selectedProjects.length !== 0 && <div className="section recent">
-                                <h3 className='section-heading'>Selection Completed</h3>
+                                <div className="section-header-inline">
+                                    <h3 className='section-heading'>Selection Completed</h3>
+                                    <div className="control-wrap view-type-controls">
+                                        <div className="controls">
+                                            <div className={`control ${viewType === 'cards' ? 'active' : ''}`} onClick={() => setViewType('cards')}>
+                                                <div className="icon card-view"></div>
+                                            </div>
+                                            <div className={`control ${viewType === 'redefined' ? 'active' : ''}`} onClick={() => setViewType('redefined')}>
+                                                <div className="icon redefined-view"></div>
+                                            </div>
+                                        </div>
+                                        <div className="label mini-icons view">View</div>
+                                    </div>
+                                </div>
                                 <div className="projects selection">
                                     {
                                         selectedProjects.length !== 0 ? (
                                             selectionCompletedProjects.map((project, index) => (
-                                                <ProjectCard
-                                                    project={project}
-                                                    key={project.id}
-                                                    type='selection'
-                                                />
+                                                viewType === 'redefined' ? (
+                                                    <ProjectCardRedefined
+                                                        project={project}
+                                                        key={project.id}
+                                                        type='selection'
+                                                    />
+                                                ) : (
+                                                    <ProjectCard
+                                                        project={project}
+                                                        key={project.id}
+                                                        type='selection'
+                                                    />
+                                                )
                                             ))
                                         ) : (
                                             <p className="message">Selection completed projects</p>)
@@ -249,11 +269,19 @@ function Home() {
                                     {
                                         recentProjects.length !== 0 ? (
                                             recentProjects.map((project, index) => (
-                                                <ProjectCard
-                                                    project={project}
-                                                    key={project.id}
-                                                    type='home'
-                                                />
+                                                viewType === 'redefined' ? (
+                                                    <ProjectCardRedefined
+                                                        project={project}
+                                                        key={project.id}
+                                                        type='home'
+                                                    />
+                                                ) : (
+                                                    <ProjectCard
+                                                        project={project}
+                                                        key={project.id}
+                                                        type='home'
+                                                    />
+                                                )
                                             ))
                                         ) : (
                                             <p className="message">No recent projects</p>)
@@ -279,24 +307,12 @@ function Home() {
                         <div className="mascot-empty-projects">
                             <div className="mascot-image"></div>
                             <p className="mascot-label">
-                                <span className='highlight'>Create your first     Project</span>
+                                <span className='highlight'>Create your first Project</span>
                                 <span>Click the <span className='highlight button primary small icon add'
                             onClick={() => dispatch(openModal('createProject'))}
-                                >  New </span> button to create your project</span>
+                                > New </span> button to create your project</span>
                                 </p>
                         </div>
-                            {/* <div className="projects-list">
-                                <div className="project new" onClick={() => dispatch(openModal('createProject'))}>
-                                    <div className="project-cover"></div>
-                                    <div className="project-details">
-                                        <div className="details-top">
-                                            <h4 className="project-title">New Project</h4>
-                                            <p className="project-type"></p>
-                                        </div>
-                                    </div>
-                                    <div className="project-options"></div>
-                                </div >
-                            </div> */}
                         </>)
                 }
 
@@ -318,26 +334,21 @@ function Home() {
                                             </div>
 
                                             <p className='time-number'>{new Date(event?.date).toLocaleTimeString('default', {
-                                                hour: 'numeric', // Use numeric hour (e.g., 5)
-                                                minute: '2-digit', // Use two-digit minutes (e.g., 30)
-                                                hour12: true, // Use 12-hour format (e.g., AM/PM)
+                                                hour: 'numeric',
+                                                minute: '2-digit',
+                                                hour12: true,
                                             })}</p>
                                             <p className='location'>{event?.location}</p>
 
                                             <p className='event-name-label'>{getProjectsByEventId(projects, event?.id)[0].name}</p>
                                             <p className='event-type-label'>{event?.type}</p>
-
-
                                         </div>
                                     ))
                             }
                         </div>
                     </div>
-
                 }
-
             </main>
-
         </>
     );
 }

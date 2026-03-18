@@ -151,7 +151,7 @@ export default function App() {
           dispatch(hideLoading())
       })
     }
-  }, [dispatch, currentDomain, isAuthenticated, location.pathname]);
+  }, [dispatch, currentDomain, isAuthenticated]);
 
   useEffect(() =>{
     if (studio?.trialEndDate) {
