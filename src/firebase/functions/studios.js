@@ -49,7 +49,7 @@ export const createStudio = async (studioData,user) => {
     const monthlyTier = selectedPlan.pricing.tiers.find(tier => tier.interval === 'month');
     const yearlyTier = selectedPlan.pricing.tiers.find(tier => tier.interval === 'year');
 
-    const trialPeriodDays = selectedPlan.pricing.trialPeriodDays || 0;
+    const trialPeriodDays = selectedPlan.pricing.trialPeriodDays || 14;
 
     const trialEndDate = new Date(currentDate.getTime() + trialPeriodDays * 24 * 60 * 60 * 1000);
     const subscriptionEndDate = new Date(currentDate.getTime() + (monthlyTier ? 30 : 365) * 24 * 60 * 60 * 1000); // Assuming monthly if available, else yearly

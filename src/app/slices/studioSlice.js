@@ -12,15 +12,52 @@ import { updateStudioLogoAsync, updateStudioAsync } from './adminSettingsSlice';
 
 const initialState = {
   data: {
+    id: null,
+    name: null,
+    domain: null,
+    ownerId: null,
+    bucketUrl: null,
+    userBatch: null,
+    planName: null,
+    status: null,
+    batch: null,
     usage: {
       storage: {
         quota: 0,
         used: 0,
       },
+      projects: {
+        monthlyQuota: 0,
+        monthlyUsed: 0,
+      },
+      collections: {
+        quota: 0,
+      }
     },
+    billing: {
+      razorpayCustomerId: null,
+      razorpaySubscriptionId: null,
+      planId: null,
+      status: null,
+      currentPeriodEnd: null,
+      trialEnd: null,
+      cancelAtPeriodEnd: false,
+      quantity: 1,
+      subscriptionHistory: [],
+    },
+    subscriptionId: null,
+    metadata: {
+      createdAt: null,
+      updatedAt: null,
+      createdBy: null,
+      updatedBy: null,
+      version: 2
+    },
+    trialEndDate: null,
   },
   currentSubscription: {
     id: null,
+    studioId: null,
     plan: {
       planId: null,
       name: null,
@@ -29,7 +66,7 @@ const initialState = {
     billing: {
       billingCycle: null,
       autoRenew: false,
-      paymentRecived:false,
+      paymentRecived: false,
       paymentPlatform: null,
       paymentMethod: null,
     },
@@ -45,13 +82,14 @@ const initialState = {
       totalPrice: 0,
     },
     status: null,
-    credit: 0,
     metadata: {
       createdAt: null,
       updatedAt: null,
       createdBy: null,
       updatedBy: null,
     },
+    invoiceId: null,
+    invoiceHistory: [],
   },
   subscriptions: [],
   invoices: [],
@@ -237,6 +275,6 @@ export const selectStudio = (state) => state.studio.data;
 export const selectGalleryStudio = (state) => state.studio.galleryStudio;
 export const selectGalleryStudioLoading = (state) => state.studio.galleryLoading;
 export const selectCurrentSubscription = (state) => state.studio.currentSubscription;
-export const selectStudioStorageUsage = (state) => state.studio.data?.usage.storage;
+export const selectStudioStorageUsage = (state) => state.studio.data?.usage?.storage;
 export const selectStudioSubscriptions = (state) => state.studio.subscriptions;
 export const selectStudioInvoices = (state) => state.studio.invoices;
