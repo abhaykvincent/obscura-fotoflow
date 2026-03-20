@@ -23,8 +23,7 @@ function Preview({
   imagesLength, 
   closePreview, 
   projectId, 
-  collectionId, 
-  isArchived 
+  collectionId 
 }) {
   const { studioName } = useParams();
   const dispatch = useDispatch();
@@ -98,7 +97,6 @@ function Preview({
           collectionId={collectionId}
           studioName={studioName}
           resetControlsTimeout={resetControlsTimeout}
-          isArchived={isArchived}
         />
 
         <AnimatePresence>
