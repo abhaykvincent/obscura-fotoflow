@@ -72,7 +72,7 @@ const LikeButton = ({ image, projectId, collectionId, studioName, resetControlsT
                     exit={{ opacity: 0, y: -5 }}
                     className="likes-count"
                 >
-                    {likes > 0 ? likes : ''}
+                    {likes > 0 ? likes : '0'}
                 </motion.span>
             </AnimatePresence>
         </div>
