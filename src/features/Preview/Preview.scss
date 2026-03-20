@@ -219,10 +219,12 @@
         &.next {
           right: 24px;
           background-image: url('../../assets/img/icons/arrow-round-next.svg'), 
-                            linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(117, 117, 117, 0.12) 40%,rgba(117, 117, 117, 0.1) 70%, rgba(255, 255, 255, 0.15) 100%);
+                            linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(117, 117, 117, 0.1) 40%,rgba(117, 117, 117, 0.1) 70%, rgba(255, 255, 255, 0.15) 100%);
           border-top: 1px solid rgba(255, 255, 255, 0.14);
           border-left: 1px solid rgba(255, 255, 255, 0.1);
           border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+      filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.8));
+      box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
           transform: scale(1) translateY(-50%) rotate(180deg);
           &:hover {
           transform: scale(1.02) translateY(-50%) rotate(180deg);}
