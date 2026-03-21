@@ -51,7 +51,7 @@ export async function downloadImage(url, fileName, quality = 'web') {
 }
 
 // Main Component
-function DownloadImage({ url, fileName, isArchived }) {
+function DownloadImage({ url, fileName }) {
   const [isOpen, setIsOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const dispatch = useDispatch();
@@ -59,10 +59,10 @@ function DownloadImage({ url, fileName, isArchived }) {
   const preference = getDownloadPreference();
 
   const handleDownload = useCallback(async (quality) => {
-    if (quality === 'original' && isArchived) {
+    if (quality === 'original') {
       dispatch(showAlert({ 
         type: 'error', 
-        message: 'Original files are archived. Please restore the project to download.' 
+        message: 'Original quality download is currently disabled.' 
       }));
       return;
     }
@@ -82,11 +82,11 @@ function DownloadImage({ url, fileName, isArchived }) {
       setDownloading(false);
       setIsOpen(false);
     }
-  }, [url, fileName, isArchived, dispatch]);
+  }, [url, fileName, dispatch]);
 
   const onMainClick = (e) => {
     e.stopPropagation();
-    // Default to 'original' if no preference exists yet
+    // Default to 'web' if no preference exists yet
     handleDownload(preference || 'web');
   };
 
@@ -97,7 +97,7 @@ function DownloadImage({ url, fileName, isArchived }) {
           <button 
             className={`main-download-btn ${downloading ? 'loading' : ''}`}
             onClick={onMainClick}
-            title={preference ? `Download ${preference}` : 'Download Original'}
+            title={preference ? `Download ${preference}` : 'Download Image'}
             disabled={downloading}
           >
             {<Download size={16} />}
@@ -114,16 +114,14 @@ function DownloadImage({ url, fileName, isArchived }) {
         <DropdownMenu.Portal>
           <DropdownMenu.Content className="download-dropdown-content" sideOffset={5} align="end">
             <DropdownMenu.Item 
-              className={`dropdown-item ${isArchived ? 'disabled' : ''}`}
-              onSelect={() => handleDownload('web')}
-              disabled={isArchived}
+              className="dropdown-item disabled"
+              disabled={true}
             >
               <div className="item-icon"><Download size={16} /></div>
               <div className="item-text">
                 <span className="label">Original Quality</span>
-                <span className="desc">{isArchived ? 'Locked (Archived)' : 'Best for printing'}</span>
+                <span className="desc">Unavailable</span>
               </div>
-              {preference === 'original' && <Zap size={14} className="pref-indicator" />}
             </DropdownMenu.Item>
 
             <DropdownMenu.Item 

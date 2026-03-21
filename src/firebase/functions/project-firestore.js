@@ -73,6 +73,7 @@ export const fetchProject = async (domain, projectId) => {
 
 // Project Operations
 export const addProjectToStudio = async (domain, project) => {
+    console.log("kjvhewfgshjcehjjbfckj efsbvchfsb vn sfbnv vbnf vfbn ")
     // if wedding type and merge name, and name2 and name 
     if (project.type === 'Wedding' && project.name2 && project.name) {
         project.name = `${project.name} & ${project.name2}`;

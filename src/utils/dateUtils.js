@@ -172,7 +172,7 @@ export function addYears(dateStr, years) {
 export function getDaysFromNow(dateString) {
   const date = new Date(dateString);
   const now = new Date();
-  
+  console.log(dateString, now);
   // Set both dates to midnight to compare full days
   const dateMidnight = new Date(date.setHours(0, 0, 0, 0));
   const nowMidnight = new Date(now.setHours(0, 0, 0, 0));

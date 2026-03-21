@@ -329,7 +329,7 @@ export default function Selection() {
         <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button back-btn icon back">
           Back to Gallery
         </Link>
-        <img className='banner' src={images[0]?.url || ''} alt="Banner" />
+        <img className='banner' src={project?.projectCover || ''} alt="Banner" />
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
           <SyncStatus isSyncing={isSyncing} />

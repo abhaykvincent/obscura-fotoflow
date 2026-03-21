@@ -249,7 +249,12 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
         setShowAllPhotos(true);
         fetchImages(domain, id, collectionId)
             .then((images) => {
-                setCollectionImages(images);
+                const selectedIds = project?.selectedImageIds || [];
+                const updatedImages = images.map(img => ({
+                    ...img,
+                    status: selectedIds.includes(img.url) ? 'selected' : (img.status === 'selected' ? 'none' : img.status)
+                }));
+                setCollectionImages(updatedImages);
             })
             .catch((error) => {
                 console.log(error);
@@ -262,10 +267,15 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
         if (project && project.collections) {
             const currentCollection = project.collections.find(c => c.id === collectionId);
             if (currentCollection && currentCollection.uploadedFiles) {
-                setCollectionImages(currentCollection.uploadedFiles);
+                const selectedIds = project?.selectedImageIds || [];
+                const updatedImages = currentCollection.uploadedFiles.map(img => ({
+                    ...img,
+                    status: selectedIds.includes(img.url) ? 'selected' : (img.status === 'selected' ? 'none' : img.status)
+                }));
+                setCollectionImages(updatedImages);
             }
         }
-    }, [project, collectionId]);
+    }, [project, collectionId, project?.selectedImageIds]);
 
     // Fetch Images
     useEffect(() => {
@@ -275,17 +285,18 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
         }
 
         if(collectionImages.length === 0) {
-            
-            
             setUploadTrigger(true);
-            
         }
+
+        const selectedIds = project?.selectedImageIds || [];
+
         let start = 0;
         let end = page * size;
         let images = collectionImages.slice(start, end);
         setImageUrls(images);
-        setSelectedImages(collectionImages.filter((image) => image.status === 'selected'));
-    }, [collectionImages, page]);
+        // Use selectedImageIds from project document as the source of truth for selections
+        setSelectedImages(collectionImages.filter((image) => selectedIds.includes(image.url)));
+    }, [collectionImages, page, project?.selectedImageIds]);
 
     // Update parent selected count
     useEffect(() => {

@@ -100,6 +100,122 @@
             }
         }
     }
+
+    // Action Center (Urgent Tasks) - ONLY NEW ADDITION KEPT
+    .section.action-center {
+        padding: 8px;
+        margin-bottom: 8px*4;
+        opacity: 0;
+        animation: fadeInUp 0.5s ease-out 0.4s forwards;
+
+        .action-requests-carousel {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding: 8px;
+            padding-bottom: 16px;
+            
+            &::-webkit-scrollbar {
+                display: block;
+                height: 4px;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: rgba($gray5-accessible-dark, 0.3);
+                border-radius: 10px;
+            }
+        }
+
+        .action-card {
+            min-width: 320px;
+            background: linear-gradient(145deg, $dark-2, $dark-1);
+            border: 1px solid rgba($gray5-accessible-dark, 0.5);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: relative;
+            transition: transform 0.2s;
+            box-shadow: 4px 4px 12px rgba(0,0,0,0.4);
+
+            &:hover {
+                transform: translateY(-2px);
+                border-color: rgba($green-default-light, 0.3);
+            }
+
+            .action-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+                background-color: rgba($dark-3, 0.5);
+                background-size: 60%;
+                background-position: center;
+                background-repeat: no-repeat;
+
+                &.reset { background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/undo.png'); }
+                &.clock { background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/clock--v1.png'); }
+            }
+
+            .action-content {
+                flex: 1;
+                .action-title {
+                    font-size: 0.75rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    color: $gray3-default-dark;
+                    margin: 0;
+                }
+                .action-desc {
+                    font-size: 0.9rem;
+                    color: $gray-default-light;
+                    margin: 4px 0 0;
+                    b { color: $green-default-light; }
+                }
+            }
+
+            .action-btns {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .btn-icon {
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    background-size: 50%;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    transition: background-color 0.2s;
+
+                    &.reject {
+                        border-top: 1px solid rgba(255, 255, 255, 0.2);
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                        background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/multiply.png');
+                        background-color: rgba($red-default-dark, 0.1);
+                        &:hover { background-color: rgba($red-default-dark, 0.3); }
+                    }
+                    &.accept {
+                        border-top: 1px solid rgba(255, 255, 255, 0.2);
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                        background-image: url('https://img.icons8.com/ios-filled/50/FFFFFF/checkmark.png');
+                        background-color: rgba($green-default-dark, 0.1);
+                        &:hover { background-color: rgba($green-default-dark, 0.3); }
+                    }
+                }
+
+                .btn-text {
+                    font-size: 0.8rem;
+                    color: $green-default-light;
+                    cursor: pointer;
+                    text-decoration: underline;
+                    padding-left: 4px;
+                    &:hover { color: lighten($green-default-light, 10%); }
+                }
+            }
+        }
+    }
+
     .section{
         padding: 8px;
         margin-bottom: 8px*2;
@@ -156,6 +272,84 @@
                 color: $green-default-dark;
                 text-decoration: underline;
                 margin: 0 8px*1;
+            }
+        }
+
+        .section-header-inline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-right: 16px;
+
+            .section-heading { margin-bottom: 0; }
+
+            .control-wrap {
+                position: relative;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                height: 8px*4;
+
+                &.view-type-controls .label {
+                    position: relative;
+                    top: 0;
+                    left: 0;
+                    margin-left: 4px;
+                    color: $gray3-default-dark;
+                    font-size: 0.75rem;
+                    opacity: 1;
+                    animation: none;
+                }
+
+                .controls {
+                    display: flex;
+                    border-radius: $border-radius-1+1;
+                    background: linear-gradient(120deg, $dark-1 -80%, $dark-2 20%, $dark-2 60%, $dark-3 100%);
+                    border: 1px solid $gray6-accessible-dark;
+                    border-top: 1px solid $gray5-accessible-dark;
+                    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+                    padding: 2px;
+
+                    .control {
+                        padding: 4px 8px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: $border-radius-1;
+                        cursor: pointer;
+                        transition: all 0.1s;
+                        transform: scale(1);
+
+                        &:hover { background-color: $dark-2; }
+
+                        &.active {
+                            color: $light-0;
+                            background-color: $dark-4;
+                            border: 1px solid $gray5-accessible-dark;
+                            border-top: 1px solid $gray3-accessible-dark;
+                            border-left: 1px solid $gray3-accessible-dark;
+                            border-bottom: 1px solid $gray5-accessible-dark;
+                            border-radius: 8px !important;
+                            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+                            transform: scale(1.1);
+                            z-index: 10;
+
+                            .icon { opacity: 1; }
+                        }
+
+                        .icon {
+                            width: 14px;
+                            height: 14px;
+                            background-size: contain;
+                            background-position: center;
+                            background-repeat: no-repeat;
+                            opacity: 0.5;
+
+                            &.card-view { background-image: url('https://img.icons8.com/sf-black-filled/64/FFFFFF/four-squares.png'); }
+                            &.redefined-view { background-image: url('https://img.icons8.com/?size=100&id=JiA06eYfmkye&format=png&color=FFFFFF'); }
+                        }
+                    }
+                }
             }
         }
         .projects{
