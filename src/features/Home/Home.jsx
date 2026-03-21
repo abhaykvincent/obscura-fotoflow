@@ -68,25 +68,29 @@ function Home() {
         }
     }, [defaultStudio, dispatch]);
 
+    const hasCheckedWelcomeStatus = useRef(null);
+
     useEffect(() => {
         const checkWelcomeStatus = async () => {
+            if (!user?.email || hasCheckedWelcomeStatus.current === user.email) return;
 
-            if (user && user.email) {
-                const firestoreUser = await fetchUserByEmail(user.email);
-                if (firestoreUser && firestoreUser.hasSeenWelcomeModal === false) {
-                    if (projects.length === 0) {
-                            dispatch(openModal('welcome'));
-                    } else {
-                        // This part is for closing if opened by mistake
-                        if (modals.welcome) {
-                            dispatch(closeModalWithAnimation('welcome'));
-                        }
-                    }
+            const firestoreUser = await fetchUserByEmail(user.email);
+            hasCheckedWelcomeStatus.current = user.email;
+
+            if (firestoreUser && firestoreUser.hasSeenWelcomeModal === false) {
+                if (projects.length === 0) {
+                    dispatch(openModal('welcome'));
                 }
             }
         };
         checkWelcomeStatus();
-    }, [user, projects, modals, dispatch]);
+    }, [user?.email, projects.length, dispatch]);
+
+    useEffect(() => {
+        if (modals.welcome && projects.length > 0) {
+            dispatch(closeModalWithAnimation('welcome'));
+        }
+    }, [modals.welcome, projects.length, dispatch]);
 
     useEffect(() => {
         trackEvent('studio_home_view')

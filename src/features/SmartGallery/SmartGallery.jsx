@@ -407,13 +407,13 @@ export default function SmartGallery() {
             Select Photos
           </Link>
         )}
-        <button 
+        {/* <button 
           onClick={handleDownloadClick} 
           className={`button primary icon download ${isDownloading ? 'loading' : ''}`}
           disabled={isDownloading}
         >
           {isDownloading ? 'Preparing...' : 'Download'}
-        </button>
+        </button> */}
       </div>
 
       <StudioBrandingFooter />
