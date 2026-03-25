@@ -8,38 +8,25 @@
   "hosting": {
     "public": "build",
     "ignore": [
-      "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
     "rewrites": [
       {
         "source": "/:studioName/smart-gallery/:projectId",
-        "function": {
-          "id": "serveGallery",
-          "region": "asia-south1"
-        }
+        "function": "serveGallery"
       },
       {
         "source": "/:studioName/smart-gallery/:projectId/:collectionId",
-        "function": {
-          "id": "serveGallery",
-          "region": "asia-south1"
-        }
+        "function": "serveGallery"
       },
       {
         "source": "/:studioName/share/:projectId",
-        "function": {
-          "id": "serveGallery",
-          "region": "asia-south1"
-        }
+        "function": "serveGallery"
       },
       {
         "source": "/:studioName/share/:projectId/:collectionId",
-        "function": {
-          "id": "serveGallery",
-          "region": "asia-south1"
-        }
+        "function": "serveGallery"
       },
       {
         "source": "**",

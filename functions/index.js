@@ -53,12 +53,12 @@ exports.serveGallery = onRequest({
   const projectId = pathParts[2];
   const collectionId = pathParts[3];
 
-  console.log(`[v2] Serving gallery: Studio=${studioName}, Project=${projectId}, Type=${routeType}`);
+  console.log(`[v2] Extracted: studioName=${studioName}, projectId=${projectId}, routeType=${routeType}, collectionId=${collectionId}`);
 
   // Redirect old /share links to /smart-gallery
   if (routeType === 'share') {
     const targetPath = `/${studioName}/smart-gallery/${projectId}${collectionId ? `/${collectionId}` : ''}`;
-    console.log(`Redirecting legacy share link to: ${targetPath}`);
+    console.log(`[v2] Redirecting: ${targetPath}`);
     return res.redirect(301, targetPath);
   }
 
@@ -69,7 +69,7 @@ exports.serveGallery = onRequest({
   try {
     html = fs.readFileSync(indexPath, 'utf8');
   } catch (err) {
-    console.error('Error reading index.html:', err);
+    console.error('[v2] Error reading index.html:', err);
     return res.status(500).send('Application Error');
   }
 
@@ -81,6 +81,7 @@ exports.serveGallery = onRequest({
   if (studioName && projectId) {
     try {
       // Fetch project data from Firestore
+      console.log(`[v2] Fetching project: studios/${studioName}/projects/${projectId}`);
       const projectDoc = await admin.firestore()
         .collection('studios')
         .doc(studioName)
@@ -90,23 +91,27 @@ exports.serveGallery = onRequest({
 
       if (projectDoc.exists) {
         const project = projectDoc.data();
+        console.log(`[v2] Project found: ${project.name}`);
         
-        title = `${toTitleCase(project.name)}'s ${project.type}`;
+        title = `${toTitleCase(project.name)}'s ${project.type || 'Gallery'}`;
         description = `${toTitleCase(project.type || 'Photo')} gallery by ${toTitleCase(studioName)}.`;
         image = project.projectCover ? getImageUrlByQuality(project.projectCover, 'thumb') : '';
+      } else {
+        console.warn(`[v2] Project NOT found: studios/${studioName}/projects/${projectId}`);
       }
     } catch (err) {
-      console.error('Error fetching project from Firestore:', err);
-      // Fail gracefully and use defaults
+      console.error('[v2] Firestore error:', err);
     }
   }
 
   // Inject metadata into placeholders
   const finalHtml = html
-    .replace(/>Fotoflow</g, `>${title}<`)
+    .replace(/<title>.*?<\/title>/g, `<title>${title}</title>`)
     .replace(/content="Fotoflow"/g, `content="${title}"`)
     .replace(/__DESCRIPTION__/g, description)
     .replace(/__IMAGE__/g, image);
+
+  console.log(`[v2] Serving HTML for: ${title}`);
 
   // Set Cache control to ensure previews aren't stale
   res.set('Cache-Control', 'public, max-age=600, s-maxage=1200');
