@@ -4,11 +4,12 @@ import Lottie from 'react-lottie';
 import animationData from '../../assets/animations/CompletedAnimation.json';
 import { fetchProject, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
 import SelectionGallery from '../../components/ImageGallery/SelectionGallery';
-import PaginationControl from '../../components/PaginationControl/PaginationControl';
+import SelectionSyncCompleted from '../../components/Modal/SelectionSyncCompleted';
 import { useDispatch } from 'react-redux';
 import { toTitleCase } from '../../utils/stringUtils';
 import { isPinValid } from '../../utils/pinUtils';
 import { showAlert } from '../../app/slices/alertSlice';
+import { openModal } from '../../app/slices/modalSlice';
 import Alert from '../../components/Alert/Alert';
 import { requestSelectionReset } from '../../app/slices/selectionRequestSlice';
 import { updateCollectionStatus } from '../../app/slices/projectsSlice';
@@ -21,9 +22,15 @@ import './Selection.scss';
 const SyncStatus = memo(({ isSyncing }) => (
   <div className={`sync-status ${isSyncing ? 'syncing' : 'saved'}`}>
     {isSyncing ? (
-      <><span className="sync-icon">🔄</span> Syncing...</>
+      <>
+        <span className="sync-icon syncing" /> 
+        Syncing...
+      </>
     ) : (
-      <><span className="sync-icon">✅</span> Saved</>
+      <>
+        <span className="sync-icon saved" /> 
+        Saved
+      </>
     )}
   </div>
 ));
@@ -73,9 +80,10 @@ export default function Selection() {
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(1);
   const [hasInitializedProgress, setHasInitializedProgress] = useState(false);
-  const [size] = useState(15); // Items per page
+  const [size] = useState(30); 
   const [selectionCompleted, setSelectionCompleted] = useState(false);
   const [showAllPhotos, setShowAllPhotos] = useState(true);
+  const [attemptedToLeaveDuringSync, setAttemptedToLeaveDuringSync] = useState(false);
 
   // Configuration
   const lottieOptions = useMemo(() => ({
@@ -88,7 +96,7 @@ export default function Selection() {
   // --- Derived State ---
 
   const currentCollectionId = useMemo(() => {
-    return collectionId || project?.collections[0]?.id;
+    return collectionId || project?.collections.find(c => c.selectionGallery !== false)?.id;
   }, [collectionId, project]);
 
   const currentCollectionIndex = useMemo(() => {
@@ -96,21 +104,54 @@ export default function Selection() {
     return project.collections.findIndex(c => c.id === currentCollectionId);
   }, [project, currentCollectionId]);
 
-  const totalPages = useMemo(() => {
-    return Math.ceil(images.length / size);
-  }, [images, size]);
+  const selectedIdsSet = useMemo(() => new Set(selectedIds), [selectedIds]);
 
   const selectedImages = useMemo(() => {
     if (!project) return [];
     const allImages = project.collections.flatMap(c => c.uploadedFiles || []);
-    return allImages.filter(img => selectedIds.includes(img.url));
-  }, [project, selectedIds]);
+    return allImages.filter(img => selectedIdsSet.has(img.url));
+  }, [project, selectedIdsSet]);
 
   const paginatedImages = useMemo(() => {
-    return images.slice((page - 1) * size, page * size);
-  }, [images, page, size]);
+    if (!showAllPhotos) return selectedImages;
+    return images.slice(0, page * size);
+  }, [images, page, size, showAllPhotos, selectedImages]);
 
-  // --- Effects ---
+  const hasMore = useMemo(() => {
+    return showAllPhotos && paginatedImages.length < images.length;
+  }, [showAllPhotos, paginatedImages.length, images.length]);
+
+  const nextSelectableCollection = useMemo(() => {
+    if (!project) return null;
+    return project.collections
+      .slice(currentCollectionIndex + 1)
+      .find(c => c.selectionGallery !== false);
+  }, [project, currentCollectionIndex]);
+
+  const isLastCollection = !nextSelectableCollection;
+  const isSelectionCompletedStatus = project?.status === "selected";
+
+  // Prevent accidental navigation during sync
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (isSyncing) {
+        setAttemptedToLeaveDuringSync(true);
+        e.preventDefault();
+        e.returnValue = ''; // Required for most browsers
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isSyncing]);
+
+  // Handle showing "Safe to Close" modal after sync finishes if user tried to leave
+  useEffect(() => {
+    if (!isSyncing && attemptedToLeaveDuringSync) {
+      dispatch(openModal('selectionSyncCompleted'));
+      setAttemptedToLeaveDuringSync(false);
+    }
+  }, [isSyncing, attemptedToLeaveDuringSync, dispatch]);
 
   // Security & Global Style
   useEffect(() => {
@@ -132,11 +173,9 @@ export default function Selection() {
       try {
         const projectData = await fetchProject(studioName, projectId);
         setProject(projectData);
-
-        const firstSelectable = projectData.collections.find(c => c.selectionGallery !== false);
-        if (firstSelectable && !collectionId) {
-          navigate(`/${studioName}/selection/${projectId}/${firstSelectable.id}`, { replace: true });
-        } else if (!firstSelectable) {
+        
+        const hasSelectableCollections = projectData?.collections?.some(c => c.selectionGallery !== false);
+        if (projectData?.status === 'selected' || !hasSelectableCollections) {
           setSelectionCompleted(true);
         }
       } catch (error) {
@@ -145,25 +184,32 @@ export default function Selection() {
     };
 
     fetchProjectData();
-  }, [projectId, studioName, collectionId, navigate]);
+  }, [projectId, studioName]);
 
   // Handle Progress Resumption
   useEffect(() => {
     if (initialLoad || !project || hasInitializedProgress) return;
 
     let resumed = false;
-    const activeCollId = collectionId || project.collections[0]?.id;
+    const activeCollId = collectionId;
 
-    // Resuming collection location
-    if (!collectionId && lastProgress?.collectionId) {
-      navigate(`/${studioName}/selection/${projectId}/${lastProgress.collectionId}`, { replace: true });
-      resumed = true;
-    }
-    
-    // Resuming page position
-    if (lastProgress?.collectionId === activeCollId && lastProgress?.page > 1) {
-      setPage(lastProgress.page);
-      resumed = true;
+    if (!activeCollId) {
+      const targetCollId = lastProgress?.collectionId || project.collections.find(c => c.selectionGallery !== false)?.id;
+      
+      if (targetCollId) {
+        navigate(`/${studioName}/selection/${projectId}/${targetCollId}`, { replace: true });
+        if (lastProgress?.collectionId) resumed = true;
+      }
+    } else {
+      if (lastProgress?.collectionId === activeCollId && lastProgress?.page > 1) {
+        setPage(lastProgress.page);
+        resumed = true;
+        
+        setTimeout(() => {
+          const scrollPos = (lastProgress.page - 1) * window.innerHeight * 0.8;
+          window.scrollTo({ top: scrollPos, behavior: 'smooth' });
+        }, 1000);
+      }
     }
 
     if (resumed) {
@@ -182,7 +228,6 @@ export default function Selection() {
     
     const currentColl = project.collections.find(c => c.id === currentCollectionId);
 
-    // Skip non-selectable galleries
     if (currentColl && currentColl.selectionGallery === false) {
       const currentIndex = project.collections.findIndex(c => c.id === currentColl.id);
       const nextColl = project.collections.slice(currentIndex + 1).find(c => c.selectionGallery !== false);
@@ -199,21 +244,30 @@ export default function Selection() {
     document.title = `${project.name} | Selection`;
     setImages(currentColl?.uploadedFiles || []);
     
-    // Reset page if we moved to a new collection manually
     if (hasInitializedProgress && lastProgress?.collectionId !== currentCollectionId) {
       setPage(1);
     }
   }, [project, currentCollectionId, studioName, projectId, navigate, hasInitializedProgress, lastProgress]);
 
-  // Scroll to top on page change
+  // Scroll to top on collection change
   useEffect(() => {
-    const galleryElement = document.querySelector('.gallery');
-    if (galleryElement) {
-      galleryElement.scrollIntoView({ behavior: 'auto', block: 'start' });
+    if (hasInitializedProgress && (!lastProgress || lastProgress.collectionId !== currentCollectionId)) {
+      const galleryElement = document.querySelector('.gallery');
+      if (galleryElement) {
+        galleryElement.scrollIntoView({ behavior: 'auto', block: 'start' });
+      }
     }
-  }, [page, currentCollectionId]);
+  }, [currentCollectionId, hasInitializedProgress, lastProgress]);
 
   // --- Handlers ---
+
+  const handleLoadMore = useCallback(() => {
+    setPage(prev => {
+      const nextPage = prev + 1;
+      saveProgress({ collectionId: currentCollectionId, page: nextPage });
+      return nextPage;
+    });
+  }, [currentCollectionId, saveProgress]);
 
   const handleToggleSelection = useCallback((image) => {
     const isSelecting = !selectedIds.includes(image.url);
@@ -224,36 +278,36 @@ export default function Selection() {
     }
   }, [toggleSelection, currentCollectionId, page, selectedIds, saveProgress]);
 
-  const saveSelection = async () => {
-    dispatch(showAlert({ type: 'success', message: 'Selection auto-saved!' }));
-  };
+  const handleNotifyCompleted = useCallback(() => {
+    dispatch(showAlert({
+      type: 'info',
+      message: 'Selection is already completed for this project.',
+    }));
+  }, [dispatch]);
 
-  const completeCollection = async () => {
-    try {
-      dispatch(updateCollectionStatus({ 
-        domain: studioName, 
-        projectId, 
-        collectionId: currentCollectionId, 
-        status: 'visible', 
-        selectionGallery: false 
-      }));
-    } catch (error) {
-      console.error('Failed to update collection status:', error);
+  const updateCollectionStatusFinished = useCallback(() => {
+    return dispatch(updateCollectionStatus({ 
+      domain: studioName, 
+      projectId, 
+      collectionId: currentCollectionId, 
+      status: 'visible', 
+      selectionGallery: false 
+    }));
+  }, [dispatch, studioName, projectId, currentCollectionId]);
+
+  const handleFinishCollection = async () => {
+    await updateCollectionStatusFinished();
+    if (nextSelectableCollection) {
+      navigate(`/${studioName}/selection/${projectId}/${nextSelectableCollection.id}`);
     }
   };
 
-  const completeSelection = async () => {
+  const handleFinishSelection = async () => {
     if (selectionCompleted) return;
 
     setSelectionCompleted(true); 
     try {
-      dispatch(updateCollectionStatus({ 
-        domain: studioName, 
-        projectId, 
-        collectionId: currentCollectionId, 
-        status: 'visible', 
-        selectionGallery: false 
-      }));
+      await updateCollectionStatusFinished();
       await updateProjectStatusInFirestore(studioName, projectId, 'selected');
     } catch (error) {
       console.error('Failed to update project status:', error);
@@ -265,12 +319,17 @@ export default function Selection() {
   return (
     <div className="select-project">
       <Alert />
+      <SelectionSyncCompleted 
+        studioName={studioName} 
+        projectId={projectId} 
+        projectName={project?.name} 
+      />
       
       <div className="project-header">
         <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button back-btn icon back">
           Back to Gallery
         </Link>
-        <img className='banner' src={images[0]?.url || ''} alt="Banner" />
+        <img className='banner' src={project?.projectCover || ''} alt="Banner" />
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
           <SyncStatus isSyncing={isSyncing} />
@@ -303,15 +362,18 @@ export default function Selection() {
             </div>
 
             <div className="selection-completed-label">
-              {project.status === 'selected' ? 'Selection Completed' : 'Click photos to select'}
+              {isSelectionCompletedStatus ? 'Selection Completed' : 'Click photos to select'}
             </div>
 
-            {(showAllPhotos ? paginatedImages : selectedImages).length > 0 ? (
+            {paginatedImages.length > 0 ? (
               <SelectionGallery 
-                project={project} 
-                images={showAllPhotos ? paginatedImages : selectedImages} 
-                selectedImages={selectedImages} 
-                setSelectedImages={handleToggleSelection} 
+                isSelectionCompleted={isSelectionCompletedStatus}
+                images={paginatedImages} 
+                selectedIdsSet={selectedIdsSet} 
+                onToggleSelection={handleToggleSelection} 
+                onLoadMore={handleLoadMore}
+                hasMore={hasMore}
+                onNotifyCompleted={handleNotifyCompleted}
               />
             ) : (
               <div className="no-images-message">
@@ -319,19 +381,24 @@ export default function Selection() {
               </div>
             )}
 
-            {showAllPhotos && (
-              <PaginationControl
-                images={paginatedImages}
-                currentCollectionIndex={currentCollectionIndex + 1}
-                totalCollections={project.collections.length}
-                currentPage={page}
-                totalPages={totalPages}
-                completeSelection={completeSelection}
-                completeCollection={completeCollection}
-                handlePageChange={(newPage) => setPage(newPage)}
-                saveSelection={saveSelection}
-                project={project}
-              />
+            {showAllPhotos && !hasMore && images.length > 0 && (
+              <div className="collection-actions-footer">
+                {isLastCollection ? (
+                  <button 
+                    className="button primary large" 
+                    onClick={handleFinishSelection}
+                  >
+                    Finish Selection
+                  </button>
+                ) : (
+                  <button 
+                    className="button primary large" 
+                    onClick={handleFinishCollection}
+                  >
+                    Next Collection: {nextSelectableCollection.name}
+                  </button>
+                )}
+              </div>
             )}
           </div> 
         </>
@@ -363,3 +430,4 @@ export default function Selection() {
     </div>
   );
 }
+

@@ -4,6 +4,7 @@ import './SmartGallery.scss';
 import { fetchProject } from '../../firebase/functions/firestore';
 import SmartAlbum from '../../components/ImageGallery/SmartAlbum';
 import ProjectExpiredPage from '../../components/ImageGallery/ProjectExpiredPage';
+import ExpiredGallery from '../../components/galleries/ExpiredGallery.tsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectIsAuthenticated, selectUser } from '../../app/slices/authSlice';
 import { selectStudioAdminSettings } from '../../app/slices/adminSettingsSlice';
@@ -32,6 +33,7 @@ export default function SmartGallery() {
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState(null);
   const [isExpired, setIsExpired] = useState(false);
+  const [expiryDate, setExpiryDate] = useState(null);
   const [isStage2Expired, setIsStage2Expired] = useState(false);
   const [visibleCollections, setVisibleCollections] = useState([]);
   const [collectionsLoading, setCollectionsLoading] = useState(true);
@@ -110,6 +112,7 @@ export default function SmartGallery() {
           const validityMonths = parseInt(projectData.projectValidityMonths || '6');
           const archiveThresholdDate = new Date(createdAt);
           archiveThresholdDate.setMonth(archiveThresholdDate.getMonth() + validityMonths);
+          setExpiryDate(archiveThresholdDate);
           
           // Stage 2: Final Expiry (File Retention)
           const retentionYears = parseInt(projectData.fileRetentionYears || '1');
@@ -122,17 +125,6 @@ export default function SmartGallery() {
           
           setIsExpired(isStage1Expired);
           setIsStage2Expired(isStage2ExpiredNow);
-          
-          if (isStage2ExpiredNow && !isAuthenticated) {
-            // Handled in main render
-          } else if (isStage1Expired && !isAuthenticated && !isPinValid(projectId)) {
-            dispatch(showAlert({ 
-              type: 'error', 
-              message: 'This gallery has expired and is no longer public. Please use your PIN for access or contact the photographer.' 
-            }));
-            // Redirect to PIN entry if not authenticated
-            navigate(`/${studioName}/smart-gallery/${projectId}/download/pin`);
-          }
         }
 
         if (!isAuthenticated || user === 'no-studio-found') {
@@ -301,6 +293,18 @@ export default function SmartGallery() {
   if (!project) {
     return <div>Project not found.</div>;
   }
+  if (isExpired && !isAuthenticated && !isPinValid(projectId)) {
+    return (
+      <ExpiredGallery 
+        backgroundImage={project.projectCover}
+        photographerName={studio?.name || studioName}
+        expiryDate={expiryDate}
+        projectId={project.id}
+        projectName={project.name}
+        domain={studioName}
+      />
+    );
+  }
 
   if (isStage2Expired && !isAuthenticated) {
     return <ProjectExpiredPage project={project} studio={studio} studioName={studioName} />;
@@ -403,13 +407,13 @@ export default function SmartGallery() {
             Select Photos
           </Link>
         )}
-        <button 
+        {/* <button 
           onClick={handleDownloadClick} 
           className={`button primary icon download ${isDownloading ? 'loading' : ''}`}
           disabled={isDownloading}
         >
           {isDownloading ? 'Preparing...' : 'Download'}
-        </button>
+        </button> */}
       </div>
 
       <StudioBrandingFooter />

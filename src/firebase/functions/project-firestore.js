@@ -1,5 +1,5 @@
 import { db } from "../app";
-import { doc, collection, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, increment } from "firebase/firestore";
+import { doc, collection, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, arrayRemove, increment } from "firebase/firestore";
 import { deleteProjectFromStorage } from "../../utils/storageOperations";
 import { generateRandomString } from "../../utils/stringUtils";
 import { isProduction } from "../../analytics/utils";
@@ -73,6 +73,7 @@ export const fetchProject = async (domain, projectId) => {
 
 // Project Operations
 export const addProjectToStudio = async (domain, project) => {
+    console.log("kjvhewfgshjcehjjbfckj efsbvchfsb vn sfbnv vbnf vfbn ")
     // if wedding type and merge name, and name2 and name 
     if (project.type === 'Wedding' && project.name2 && project.name) {
         project.name = `${project.name} & ${project.name2}`;
@@ -209,6 +210,37 @@ export const updateProjectSelectedImageIdsInFirestore = async (domain, projectId
         console.log(`%c✅ Selections Synced! ${projectId}`, `color: #54a134;`);
     } catch (error) {
         console.error(`%cError updating selectedImageIds for project: ${projectId} - ${error.message}`, 'color: red;');
+        throw error;
+    }
+};
+
+/**
+ * Incremental update for selections using arrayUnion and arrayRemove.
+ * This ensures concurrency is handled and no selections are lost if multiple users/tabs are active.
+ */
+export const updateProjectSelectionsIncremental = async (domain, projectId, toAdd = [], toRemove = []) => {
+    if (!domain || !projectId) {
+        throw new Error('Domain and Project ID are required.');
+    }
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectsCollectionRef = collection(studioDocRef, 'projects');
+    const projectDocRef = doc(projectsCollectionRef, projectId);
+
+    try {
+        if (toAdd.length > 0) {
+            await updateDoc(projectDocRef, {
+                selectedImageIds: arrayUnion(...toAdd)
+            });
+        }
+        if (toRemove.length > 0) {
+            await updateDoc(projectDocRef, {
+                selectedImageIds: arrayRemove(...toRemove)
+            });
+        }
+        console.log(`%c✅ Selections Incremental Sync Completed! ${projectId}`, `color: #54a134;`);
+    } catch (error) {
+        console.error(`%cError performing incremental update for project: ${projectId} - ${error.message}`, 'color: red;');
         throw error;
     }
 };

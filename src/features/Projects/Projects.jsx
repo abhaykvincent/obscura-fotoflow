@@ -13,6 +13,7 @@ import { retrieveProjectsViewType, storeProjectsViewType } from '../../utils/loc
 // --- Components ---
 import AddProjectModal from '../../components/Modal/AddProject/AddProject';
 import ProjectCard from '../../components/Project/ProjectCard/ProjectCard';
+import ProjectCardRedefined from '../../components/Project/ProjectCard/ProjectCardRedefined';
 import SearchInput from '../../components/Search/SearchInput';
 import Refresh from '../../components/Refresh/Refresh';
 
@@ -33,6 +34,7 @@ const FILTER_TABS = {
 const VIEW_TYPES = {
     CARDS: 'cards',
     LIST: 'list',
+    REDEFINED: 'redefined',
 };
 
 const MODAL_IDS = {
@@ -246,9 +248,13 @@ function Projects() {
                         style={{ '--group-index': index + 1 }}
                     >
                         <h3 className="month-name">{month}</h3>
-                        <div className={`projects-list ${viewType}`}>
+                        <div className={`projects-list ${viewType === VIEW_TYPES.LIST ? 'list' : 'cards'}`}>
                             {projectsInMonth.map((project) => (
-                                <ProjectCard project={project} key={project.id} type='projects' />
+                                viewType === VIEW_TYPES.REDEFINED ? (
+                                    <ProjectCardRedefined project={project} key={project.id} type='projects' />
+                                ) : (
+                                    <ProjectCard project={project} key={project.id} type='projects' />
+                                )
                             ))}
                         </div>
                     </div>
@@ -367,6 +373,12 @@ function Projects() {
                                     role="button" aria-label="Card View" tabIndex={0}
                                 >
                                     <div className="icon card-view"></div>
+                                </div>
+                                <div className={`control ctrl-redefined ${viewType === VIEW_TYPES.REDEFINED ? 'active' : ''}`}
+                                    onClick={() => handleViewTypeClick(VIEW_TYPES.REDEFINED)}
+                                    role="button" aria-label="Redefined View" tabIndex={0}
+                                >
+                                    <div className="icon redefined-view"></div>
                                 </div>
                                 <div className={`control ctrl-list ${viewType === VIEW_TYPES.LIST ? 'active' : ''}`}
                                     onClick={() => handleViewTypeClick(VIEW_TYPES.LIST)}

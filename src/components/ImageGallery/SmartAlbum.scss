@@ -9,10 +9,12 @@
     transform: translateY(-50%);
     width: 48px;
     height: 48px;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(82, 82, 82, 0.1);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     background-repeat: no-repeat;
     background-position: center;
@@ -28,7 +30,9 @@
     &.prev {
       left: 24px;
       background-image: url('../../assets/img/icons/arrow-round-back.svg');
-      filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
+      filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.6));
+      box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+      
       &:hover {
         transform: translateY(-50%) scale(1.1);
       }
