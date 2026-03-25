@@ -12,7 +12,7 @@ admin.initializeApp();
  * Set standard region and concurrency for all functions in this file
  */
 setGlobalOptions({
-  region: "us-central1", // Match your project region
+  region: "asia-south1", 
 });
 
 /**

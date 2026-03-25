@@ -15,19 +15,31 @@
     "rewrites": [
       {
         "source": "/:studioName/smart-gallery/:projectId",
-        "function": "serveGallery"
+        "function": {
+          "id": "serveGallery",
+          "region": "asia-south1"
+        }
       },
       {
         "source": "/:studioName/smart-gallery/:projectId/:collectionId",
-        "function": "serveGallery"
+        "function": {
+          "id": "serveGallery",
+          "region": "asia-south1"
+        }
       },
       {
         "source": "/:studioName/share/:projectId",
-        "function": "serveGallery"
+        "function": {
+          "id": "serveGallery",
+          "region": "asia-south1"
+        }
       },
       {
         "source": "/:studioName/share/:projectId/:collectionId",
-        "function": "serveGallery"
+        "function": {
+          "id": "serveGallery",
+          "region": "asia-south1"
+        }
       },
       {
         "source": "**",
