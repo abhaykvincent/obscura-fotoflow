@@ -3,7 +3,7 @@ import { getUsedSpace } from '../../utils/fileUtils';
 import { fullAccess, getStudiosOfUser, isAlreadyInStudio, users } from '../../data/teams';
 import firebase from 'firebase/app';
 import { auth } from '../../firebase/app';
-import { fetchUsers } from '../../firebase/functions/firestore';
+import { fetchUsers, updateUserLastStudio } from '../../firebase/functions/firestore';
 import { useRevalidator } from 'react-router';
 import { setUserType } from '../../analytics/utils';
 import { updateStudioLogoAsync } from './adminSettingsSlice';
@@ -40,6 +40,22 @@ const initialState = {
   error: null,
 };
 
+export const updateCurrentStudio = createAsyncThunk(
+  'auth/updateCurrentStudio',
+  async (studio, { getState, dispatch }) => {
+    const { user } = getState().auth;
+    if (user && user.email) {
+      try {
+        await updateUserLastStudio(user.email, studio);
+      } catch (error) {
+        console.error('Error updating last studio in Firestore:', error);
+      }
+    }
+    dispatch(setCurrentStudio(studio));
+    return studio;
+  }
+);
+
 export const verifyAuth = createAsyncThunk(
   'auth/verifyAuth',
   async () => {
@@ -53,7 +69,7 @@ export const verifyAuth = createAsyncThunk(
             localStorage.setItem('authenticated', 'true');
             localStorage.setItem('user', JSON.stringify(appUser));
             
-            const userStudio = appUser.studios?.[0] || appUser.studio;
+            const userStudio = appUser.lastSelectedStudio || appUser.studios?.[0] || appUser.studio;
             if (userStudio) {
               localStorage.setItem('studio', JSON.stringify(userStudio));
             }
@@ -100,7 +116,7 @@ export const login = createAsyncThunk(
       const user = users.find(u => u.email === serializedUser.email);
 
       if (user) {
-        const userStudio = serializedUser.selectedStudio || user.studios?.[0] || user.studio;
+        const userStudio = serializedUser.selectedStudio || user.lastSelectedStudio || user.studios?.[0] || user.studio;
         
         color= '#54a134'
         console.log(`%cUser found in ${userStudio?.name || 'no studio'} `, `color: ${color}; font-size: ${fontSize}`);
@@ -110,6 +126,16 @@ export const login = createAsyncThunk(
           localStorage.setItem('studio', JSON.stringify(userStudio));
           // store user
           localStorage.setItem('user', JSON.stringify(user));
+
+          // Persist the choice if explicitly selected
+          if (serializedUser.selectedStudio) {
+            try {
+              updateUserLastStudio(user.email, userStudio);
+            } catch (error) {
+              console.error('Error updating last studio on login:', error);
+            }
+          }
+
           return {
             ...user,
             selectedStudio: userStudio
