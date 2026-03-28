@@ -59,7 +59,7 @@ export const StudiosTab = ({ studios }) => {
                         </div>
                     </div>
                     <div className="right-actions">
-                        <button className="button secondary outline disabled" disabled onClick={() => handleMigration(
+                        {/* <button className="button secondary outline disabled" disabled onClick={() => handleMigration(
                             migrateUsersToMultiStudio,
                             'All users migrated to multi-studio!',
                             'Error migrating users'
@@ -69,7 +69,7 @@ export const StudiosTab = ({ studios }) => {
                             migrateProjectsValidityFields,
                             'All projects migrated!',
                             'Error migrating projects'
-                        )}>Migrate Projects (Validity)</button>
+                        )}>Migrate Projects (Validity)</button> */}
                     </div>
                 </div>
                 <table className="invoice-table">
