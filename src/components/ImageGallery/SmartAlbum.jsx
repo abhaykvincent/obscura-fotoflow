@@ -10,7 +10,7 @@ import ProjectExpiredPage from './ProjectExpiredPage';
 import { selectIsAuthenticated } from '../../app/slices/authSlice';
 import { selectStudio } from '../../app/slices/studioSlice';
 import Preview from '../../features/Preview/Preview';
-import { getThumbnailUrl } from '../../utils/urlUtils';
+import { getImageUrlByQuality, getThumbnailUrl, getOriginalUrl } from '../../utils/urlUtils';
 import { fetchCollectionStatus } from '../../firebase/functions/firestore';
 import { trackEvent } from '../../analytics/utils';
 import { collection } from 'firebase/firestore';
@@ -73,9 +73,13 @@ const SmartAlbum = ({ domain, projectId, collectionId, project: propProject }) =
       const images = [];
       smartGalleryData.sections.forEach(section => {
         if (section.type === 'image-grid' && section.images) {
-          images.push(...section.images);
+          images.push(...section.images.map(img => ({
+            ...img,
+            url: getImageUrlByQuality(img.url, 'web'), // Default to web quality via CDN
+            thumbUrl: getThumbnailUrl(img.url),
+            originalUrl: getOriginalUrl(img.url)
+          })));
         }
-        // Add other section types here if they contain images that should be in the global preview
       });
       setAllImages(images);
     }
@@ -90,18 +94,18 @@ const SmartAlbum = ({ domain, projectId, collectionId, project: propProject }) =
           ...section,
           images: section.images.map(img => ({
             ...img,
-            url: img.thumbAvailable ? getThumbnailUrl(img.url, collectionId) : img.url,
-            originalUrl: img.url
+            url: img.thumbAvailable ? getThumbnailUrl(img.url) : getImageUrlByQuality(img.url, 'web'),
+            originalUrl: getOriginalUrl(img.url)
           }))
         };
       }
       return section;
     });
-  }, [smartGalleryData?.sections, collectionId]);
+  }, [smartGalleryData?.sections]);
 
   const openPreview = (image) => {
-    const urlToFind = image.originalUrl || image.url;
-    const index = allImages.findIndex(img => img.url === urlToFind);
+    const targetUrl = image.originalUrl || image.url;
+    const index = allImages.findIndex(img => (img.originalUrl || img.url) === targetUrl);
     if (index !== -1) {
       setPreviewIndex(index);
       setIsPreviewOpen(true);

@@ -122,7 +122,11 @@ export const uploadFile = async (storage, type, domain, id, collectionId, file, 
         let uploadTask;
 
         const startTask = () => {
-            uploadTask = uploadBytesResumable(storageRef, file, metadata);
+            const uploadMetadata = {
+                ...metadata,
+                contentType: file.type || 'image/jpeg'
+            };
+            uploadTask = uploadBytesResumable(storageRef, file, uploadMetadata);
 
             uploadTask.on('state_changed',
                 (snapshot) => {
@@ -330,7 +334,13 @@ export const uploadCover = async (file, project) => {
 // Upload a slice of files with sliceSize : 5
     const storage = await getStorageForDomain(project.domain);
     const storageRef = ref(storage, `covers/${project.domain}/${project.id}/${file.name}`);
-    await uploadBytes(storageRef, file);
+    
+    const uploadMetadata = {
+        ...metadata,
+        contentType: file.type || 'image/jpeg'
+    };
+    
+    await uploadBytes(storageRef, file, uploadMetadata);
     const newCoverUrl = await getDownloadURL(storageRef);
 
     const projectDocRef = doc(db, "studios", project.domain, "projects", project.id);
@@ -343,7 +353,13 @@ export const uploadCover = async (file, project) => {
 export const uploadStudioLogo = async (file, studioDomain) => {
     const storage = await getStorageForDomain(studioDomain);
     const storageRef = ref(storage, `branding/${studioDomain}/logo/${file.name}`);
-    await uploadBytes(storageRef, file);
+    
+    const uploadMetadata = {
+        ...metadata,
+        contentType: file.type || 'image/jpeg'
+    };
+
+    await uploadBytes(storageRef, file, uploadMetadata);
     const newLogoUrl = await getDownloadURL(storageRef);
 
     const studioDocRef = doc(db, "studios", studioDomain);
