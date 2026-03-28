@@ -30,6 +30,7 @@ function Sidebar() {
 
   const [trialDays, setTrialDays] = useState(0);
   const [isTrialExpired, setIsTrialExpired] = useState(false);
+  const [isPro, setIsPro] = useState(false);
 
   useEffect(() => {
     if (storageLimit) {
@@ -46,8 +47,10 @@ function Sidebar() {
 
   useEffect(() => {
     if(studio.billing){
-        setTrialDays(getDaysFromNow(studio.billing.trialEnd));
-        setIsTrialExpired(trialDays < 0);
+        const days = getDaysFromNow(studio.billing.trialEnd);
+        setTrialDays(days);
+        setIsTrialExpired(days < 0);
+        setIsPro(studio.billing.trialEnd === studio.billing.currentPeriodEnd);
     }
 
   },[studio])
@@ -161,18 +164,22 @@ function Sidebar() {
         <div className="sidebar-bottom">
           <div className="sidebar-stats">
             <div className="plan-status">
-              <div className="trial-info">
-                {isTrialExpired ? (
-                  <span className="expiry-text expired">Trial expired {Math.abs(trialDays)}d ago</span>
-                ) : trialDays === 0 ? (
-                  <span className="expiry-text warning">Trial ends today</span>
-                ) : (
-                  <span className="expiry-text">Trial ends in {trialDays}d</span>
-                )}
-              </div>
+              {!isPro && (
+                <div className="trial-info">
+                  {isTrialExpired ? (
+                    <span className="expiry-text expired">Trial expired {Math.abs(trialDays)}d ago</span>
+                  ) : trialDays === 0 ? (
+                    <span className="expiry-text warning">Trial ends today</span>
+                  ) : (
+                    <span className="expiry-text">Trial ends in {trialDays}d</span>
+                  )}
+                </div>
+              )}
               <Link to={`/${studioName}/subscription`} className="plan-badge-container" onClick={closeSidebar}>
                 <span className="plan-name">{studio?.planName || 'Free'}</span>
-                {trialDays < 5 || isTrialExpired ? (
+                {isPro ? (
+                  <span className="tag pro">Pro</span>
+                ) : trialDays < 5 || isTrialExpired ? (
                   <span className="tag pay-now">Pay Now</span>
                 ) : studio?.planName === 'Studio' ? (
                   <span className="tag trial">Trial</span>
