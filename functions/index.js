@@ -132,7 +132,7 @@ exports.serveGallery = onRequest({
   console.log(`[v2] Serving HTML for: ${title}`);
 
   // Set Cache control to ensure previews aren't stale
-  res.set('Cache-Control', 'public, max-age=600, s-maxage=1200');
+  res.set('Cache-Control', 'public, max-age=31536000, s-maxage=2592000');
   res.status(200).send(finalHtml);
 });
 
@@ -173,8 +173,8 @@ exports.serveOptimizedImage = onRequest({
     const [metadata] = await file.getMetadata();
     
     // Set caching headers for the CDN
-    res.set('Cache-Control', 'public, max-age=31536000, s-maxage=31536000, immutable');
-    res.set('Content-Type', metadata.contentType || 'image/jpeg');
+    res.set('Cache-Control', 'public, max-age=31536000, s-maxage=2592000, immutable');
+res.set('Content-Type', metadata.contentType || 'image/jpeg');
 
     // Stream the file directly from GCS to the response
     file.createReadStream().pipe(res);
