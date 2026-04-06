@@ -1,191 +1,63 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { fetchSmartGallery, selectSmartGallery, selectSmartGalleryStatus } from '../../app/slices/smartGallerySlice';
 import SectionRenderer from './SectionRenderer';
-import { toTitleCase } from '../../utils/stringUtils';
-import './SmartAlbum.scss'
-import { selectProjects } from '../../app/slices/projectsSlice';
 import ProjectExpiredPage from './ProjectExpiredPage';
+import Preview from '../../features/Preview/Preview';
+import SmartAlbumLoading from './SmartAlbumLoading';
+import SmartAlbumHeader from './SmartAlbumHeader';
 import { selectIsAuthenticated } from '../../app/slices/authSlice';
 import { selectStudio } from '../../app/slices/studioSlice';
-import Preview from '../../features/Preview/Preview';
-import { getThumbnailUrl } from '../../utils/urlUtils';
-import { fetchCollectionStatus } from '../../firebase/functions/firestore';
-import { trackEvent } from '../../analytics/utils';
-import { collection } from 'firebase/firestore';
+import { useSmartAlbum } from '../../hooks/useSmartAlbum';
+import './SmartAlbum.scss';
 
 const SmartAlbum = ({ domain, projectId, collectionId, project: propProject }) => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const smartGalleryData = useSelector(selectSmartGallery);
-  const smartGalleryStatus = useSelector(selectSmartGalleryStatus);
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const studio = useSelector(selectStudio);
-  const [displayGallery, setDisplayGallery] = useState(false);
-  
-  // Preview State
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewIndex, setPreviewIndex] = useState(0);
-  const [allImages, setAllImages] = useState([]);
 
-  const projects = useSelector(selectProjects);
-  const selectedProject = useMemo(() => 
-      propProject || projects?.find((p) => p.id === projectId),
-      [propProject, projects, projectId]
-    );
+  const {
+    project,
+    smartGalleryData,
+    status,
+    displayGallery,
+    allImages,
+    processedSections,
+    isExpired
+  } = useSmartAlbum(domain, projectId, collectionId, propProject);
 
-  useEffect(() => {
-    if (domain && projectId && collectionId) {
-      dispatch(fetchSmartGallery({ domain, projectId, collectionId }));
-    }
-  }, [dispatch, domain, projectId, collectionId])
+  const [preview, setPreview] = useState({ isOpen: false, index: 0 });
 
-  useEffect(() => {
-    const checkStatus = async () => {
-      try {
-        const status = await fetchCollectionStatus(domain, projectId, collectionId);
-        if (status === 'visible'  || status === 'active') {
-          setDisplayGallery(true);
-        } else {
-          setDisplayGallery(false);
-        }
-      } catch (error) {
-        console.error('Error fetching collection status:', error);
-        setDisplayGallery(false);
-      }
-    };
-
-    checkStatus();
-  }, [domain, projectId, collectionId]);
-
-  useEffect(() => {
-    if (projectId) {
-      trackEvent('gallery_viewed', {
-        project_id: projectId,
-        collection_id: collectionId
-      });
-    }
-  }, [projectId, collectionId]);
-
-  useEffect(() => {
-    if (smartGalleryData?.sections) {
-      const images = [];
-      smartGalleryData.sections.forEach(section => {
-        if (section.type === 'image-grid' && section.images) {
-          images.push(...section.images);
-        }
-        // Add other section types here if they contain images that should be in the global preview
-      });
-      setAllImages(images);
-    }
-  }, [smartGalleryData]);
-
-  const processedSections = useMemo(() => {
-    if (!smartGalleryData?.sections) return [];
-
-    return smartGalleryData.sections.map(section => {
-      if (section.type === 'image-grid' && section.images) {
-        return {
-          ...section,
-          images: section.images.map(img => ({
-            ...img,
-            url: img.thumbAvailable ? getThumbnailUrl(img.url, collectionId) : img.url,
-            originalUrl: img.url
-          }))
-        };
-      }
-      return section;
-    });
-  }, [smartGalleryData?.sections, collectionId]);
+  const handleBack = () => navigate(-1);
 
   const openPreview = (image) => {
     const urlToFind = image.originalUrl || image.url;
-    const index = allImages.findIndex(img => img.url === urlToFind);
+    const index = allImages.findIndex((img) => img.url === urlToFind);
     if (index !== -1) {
-      setPreviewIndex(index);
-      setIsPreviewOpen(true);
+      setPreview({ isOpen: true, index });
     }
   };
 
-  const closePreview = () => {
-    setIsPreviewOpen(false);
+  const closePreview = () => setPreview({ ...preview, isOpen: false });
+
+  const getCollectionName = () => {
+    return project?.collections?.find((c) => c.id === collectionId)?.name || '';
   };
 
-  const handleBack = () => {
-    navigate(-1);
-  };
-  const getCollectionById = (project,collectionId) => {
-    return project.collections.find((collection) => collection.id === collectionId);
-    
-  }
-  const isStage2Expired = useMemo(() => {
-    if (!selectedProject) return false;
-    if (selectedProject.status === 'expired') return true;
-    
-    if (selectedProject.createdAt) {
-      const createdAt = new Date(selectedProject.createdAt);
-      const retentionYears = parseInt(selectedProject.fileRetentionYears || '1');
-      const finalExpiryThresholdDate = new Date(createdAt);
-      finalExpiryThresholdDate.setMonth(finalExpiryThresholdDate.getMonth() + (retentionYears * 12));
-      finalExpiryThresholdDate.setDate(finalExpiryThresholdDate.getDate() + 30);
-      
-      return Date.now() > finalExpiryThresholdDate.getTime();
-    }
-    return false;
-  }, [selectedProject]);
-
-  if (isStage2Expired && !isAuthenticated) {
-    return <ProjectExpiredPage project={selectedProject} studio={studio} studioName={domain} />;
+  // Guard Clauses
+  if (isExpired && !isAuthenticated) {
+    return <ProjectExpiredPage project={project} studio={studio} studioName={domain} />;
   }
 
-  if (smartGalleryStatus === 'loading') {
-    return (
-      <div className="smart-album-loading">
-        <button 
-          className="nav-button prev back-button" 
-          onClick={handleBack}
-          title="Go Back"
-        />
-        {selectedProject?.projectCover ? (
-          <div className="loading-cover-container">
-            <img 
-              src={selectedProject.projectCover} 
-              alt="Loading Cover" 
-              className="loading-cover"
-              style={{ 
-                objectPosition: selectedProject?.focusPoint 
-                  ? `${selectedProject.focusPoint.x * 100}% ${selectedProject.focusPoint.y * 100}%` 
-                  : 'center' 
-              }}
-            />
-            <div className="loading-overlay">
-              <div className="loading-content">
-                <h1 className="project-name">{toTitleCase(selectedProject?.name || '')}</h1>
-                <div className="loading-indicator">
-                  <div className="spinner"></div>
-                  <span>Loading Gallery...</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="loading-fallback">
-            <div className="spinner"></div>
-            <p>Loading {toTitleCase(selectedProject?.name || 'Gallery')}...</p>
-          </div>
-        )}
-      </div>
-    );
+  if (status === 'loading') {
+    return <SmartAlbumLoading project={project} onBack={handleBack} />;
   }
 
-  if (smartGalleryStatus === 'failed') {
-    return <div>Error loading gallery.</div>;
+  if (status === 'failed') {
+    return <div className="error-container">Error loading gallery.</div>;
   }
 
-  if (!smartGalleryData) {
-    return null;
-  }
+  if (!smartGalleryData) return null;
 
   if (!displayGallery) {
     return (
@@ -199,54 +71,36 @@ const SmartAlbum = ({ domain, projectId, collectionId, project: propProject }) =
     <div className="smart-album">
       <button 
         className="nav-button prev back-button" 
-        onClick={handleBack}
-        title="Go Back"
+        onClick={handleBack} 
+        title="Go Back" 
       />
-      <div className="project-header">
 
-        {smartGalleryData?.projectCover ? (
-
-          <img 
-            src={smartGalleryData.projectCover} 
-            alt="Cover" 
-            className="banner cover" 
-            loading="lazy"
-            style={{ objectPosition: `${smartGalleryData?.focusPoint?.x * 100}% ${smartGalleryData.focusPoint?.y * 100}%` }} 
-          />
-        ) : (
-          <div className="cover-photo-placeholder">
-            <span>Cover Photo</span>
-          </div>
-        )}
-        <div className="gallery-info">
-          <h1 className='project-name'>{toTitleCase(selectedProject?.name || '')}</h1>
-          <p className='project-type'>{toTitleCase(getCollectionById(selectedProject,collectionId)?.name || '')}</p>
-        </div>
-      </div>
-
-      <div className={`cover-photo-container ${smartGalleryData.coverSize}`}>
-          <div className={`text-overlay ${smartGalleryData.textPosition}`}>
-        </div>
-        <div className="cover-overlay" style={{ backgroundColor: smartGalleryData.overlayColor }}></div>
-        
-      </div>
+      <SmartAlbumHeader 
+        galleryData={smartGalleryData} 
+        project={project} 
+        collectionName={getCollectionName()} 
+      />
 
       <div className="gallery-sections">
         {processedSections.map((section) => (
-          <SectionRenderer key={section.id} section={section} onImageClick={openPreview} />
+          <SectionRenderer 
+            key={section.id} 
+            section={section} 
+            onImageClick={openPreview} 
+          />
         ))}
       </div>
 
-      {isPreviewOpen && (
+      {preview.isOpen && (
         <Preview
-          image={allImages[previewIndex]}
-          previewIndex={previewIndex}
-          setPreviewIndex={setPreviewIndex}
+          image={allImages[preview.index]}
+          previewIndex={preview.index}
+          setPreviewIndex={(index) => setPreview({ ...preview, index })}
           imagesLength={allImages.length}
           closePreview={closePreview}
           projectId={projectId}
           collectionId={collectionId}
-          images={allImages} // Pass allImages if Preview expects it for swiping
+          images={allImages}
         />
       )}
     </div>
