@@ -54,6 +54,8 @@
         &.outline {
             background: none;
             border: 1px solid $green-dark-accessible-light;
+            border-top: 1px solid $green-accessible-light;
+            border-left: 1px solid $green-accessible-light;
             color: $green-default-light;
             font-weight: 400;
         }
@@ -549,7 +551,7 @@
         &.share::before{
             margin-right: 6px;
             margin-bottom: -4px;
-            background-size: 80%;
+            background-size:70%;
             background-position: center center;
             background-image: url('https://img.icons8.com/?size=100&id=12628&format=png&color=FFFFFF');
             

@@ -153,7 +153,7 @@
 
             .button.icon{
                 padding: 4px 8px;
-                border-radius: 8px;
+                border-radius: 8px*2;
                 font-size: 1rem;
                 &.secondary{
                     font-size: 0.9rem;
@@ -470,8 +470,8 @@
             height: 8px*12;
         .project-cover{
                 height: 100%;
-                border: 2px solid $gray-default-light;
-                border-radius: 8px*0.5;
+                border: 2px solid $gray3-default-dark;
+                border-radius: 8px*1.5;
                 overflow: hidden;
             img{
                 height: 100%;
