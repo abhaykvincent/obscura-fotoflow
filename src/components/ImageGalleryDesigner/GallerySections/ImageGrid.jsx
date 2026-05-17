@@ -10,6 +10,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { getOriginalUrl, getThumbnailUrl } from '../../../utils/urlUtils';
 
 const TARGET_ROW_HEIGHT = 200;
 const GAP = 10;
@@ -96,7 +97,7 @@ const SortableImage = ({ image, sectionId, alt, style: propsStyle }) => {
       fromSection: sectionId,
     },
   });
-
+  console.log(image)
   const style = {
     transform: transform ? CSS.Translate.toString({ ...transform, x: 0 }) : undefined,
     transition: [
@@ -108,7 +109,6 @@ const SortableImage = ({ image, sectionId, alt, style: propsStyle }) => {
     opacity: isDragging ? 0 : 1,
     ...propsStyle,
   };
-
   return (
     <div 
       className="image-grid-item" 
@@ -119,7 +119,7 @@ const SortableImage = ({ image, sectionId, alt, style: propsStyle }) => {
       onMouseDown={(e) => e.stopPropagation()}
     >
       <img 
-        src={image.url} 
+        src={getThumbnailUrl(image.url)} // Use thumbnailsimage.url} 
         alt={alt} 
         loading="lazy"
         style={{ width: '100%', height: '100%', display: 'block', borderRadius: '4px', objectFit: 'cover' }} 
@@ -167,7 +167,7 @@ export const ImageDragOverlay = ({ image }) => {
   return (
     <div style={{ width: image.width, height: image.height, borderRadius: '4px', overflow: 'hidden' }}>
       <img
-        src={image.url}
+        src={getThumbnailUrl(image.url)} 
         alt="dragged item"
         style={{
           width: '100%',
@@ -337,7 +337,7 @@ const ImageGrid = ({ id, collectionId, collectionName, section, onSectionUpdate,
                   onClick={() => onImageClick?.(image, images.findIndex(img => img.url === image.url))}
                 >
                   <img 
-                    src={image.url} 
+                    src={getThumbnailUrl(image.url)} 
                     alt={`Gallery item ${imgIndex}`} 
                     loading="lazy"
                     style={{ width: '100%', height: '100%', display: 'block', borderRadius: '4px', objectFit: 'cover' }} 
