@@ -40,31 +40,49 @@ export const copyToClipboard = (url) => {
 export function getImageUrlByQuality(url, quality = 'web') {
   if (!url) return "";
   
-  // Valid qualities are 'web', 'thumb', 'original'
   const targetQuality = quality.toLowerCase();
-  
-  // 1. Handle New Architecture (URL encoded prefixes)
+
+  // 1. If it's already a CDN URL, just swap the quality prefix
+  if (url.includes('/cdn-gallery/')) {
+    const parts = url.split('/');
+    // Format: .../cdn-gallery/:bucket/:quality/:domain/:project/:collection/:file
+    // The quality is at a specific index depending on if it's absolute or relative
+    const cdnIndex = parts.indexOf('cdn-gallery');
+    if (cdnIndex !== -1 && parts.length > cdnIndex + 2) {
+      parts[cdnIndex + 2] = targetQuality;
+      return parts.join('/');
+    }
+  }
+
+  // 2. Handle Firebase Storage URLs and convert to CDN
+  const storageMatch = url.match(/firebasestorage\.googleapis\.com\/v0\/b\/([^/]+)\/o\/([^?]+)/);
+  if (storageMatch) {
+    const bucket = storageMatch[1];
+    let path = decodeURIComponent(storageMatch[2]);
+    
+    // Swap quality prefix in the path (e.g., web/studio/... -> thumb/studio/...)
+    const prefixes = ['web', 'thumb', 'original', 'covers'];
+    for (const prefix of prefixes) {
+      if (path.startsWith(prefix + '/')) {
+        path = path.replace(prefix + '/', targetQuality + '/');
+        break;
+      }
+    }
+    
+    return `/cdn-gallery/${bucket}/${path}`;
+  }
+
+  // 3. Fallback for non-storage URLs or existing architecture
   // Matches patterns like /o/web%2F, /o/thumb%2F, /o/original%2F
   const encodedMatch = url.match(/\/o\/(web|thumb|original)%2F/i);
   if (encodedMatch) {
     return url.replace(/\/o\/(web|thumb|original)%2F/i, `/o/${targetQuality}%2F`);
   }
 
-  // 2. Handle New Architecture (Unencoded prefixes - sometimes seen in emulators/proxies)
+  // 4. Handle New Architecture (Unencoded prefixes - sometimes seen in emulators/proxies)
   const unencodedMatch = url.match(/\/o\/(web|thumb|original)\//i);
   if (unencodedMatch) {
     return url.replace(/\/o\/(web|thumb|original)\//i, `/o/${targetQuality}/`);
-  }
-
-  // 3. Fallback for Old Architecture (if applicable, though user specified 3 versions)
-  // Old architecture usually only had web and thumb (using -thumb suffix)
-  if (targetQuality === 'thumb') {
-    const parts = url.split('%2F');
-    if (parts.length >= 4 && !parts[2].includes('-thumb')) {
-      const newParts = [...parts];
-      newParts[2] = newParts[2] + "-thumb";
-      return newParts.join('%2F');
-    }
   }
 
   return url;
