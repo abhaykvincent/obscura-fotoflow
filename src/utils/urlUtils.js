@@ -54,8 +54,8 @@ export function getImageUrlByQuality(url, quality = 'web') {
     }
   }
 
-  // 2. Handle Firebase Storage URLs and convert to CDN
-  const storageMatch = url.match(/firebasestorage\.googleapis\.com\/v0\/b\/([^/]+)\/o\/([^?]+)/);
+  // 2. Handle Firebase Storage URLs (Production & Emulator) and convert to CDN
+  const storageMatch = url.match(/\/v0\/b\/([^/]+)\/o\/([^?]+)/);
   if (storageMatch) {
     const bucket = storageMatch[1];
     let path = decodeURIComponent(storageMatch[2]);
