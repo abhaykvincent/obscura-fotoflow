@@ -255,7 +255,7 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
                     status: selectedIds.includes(img.url) ? 'selected' : (img.status === 'selected' ? 'none' : img.status)
                 }));
                 setCollectionImages(updatedImages);
-                console.log("Collection Images Status:", updatedImages.map(img => ({ name: img.name, status: img.status })));
+                console.log("Selected Filenames:", updatedImages.filter(img => img.status === 'selected').map(img => img.name));
             })
             .catch((error) => {
                 console.log(error);
