@@ -1,51 +1,53 @@
 @import '../../style/variables';
 
 .admin-controls-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+
     .view-control {
         display: flex;
-        margin: 8px 8px*1.5;
-        margin-bottom: 0;
+        margin: 0 8px * 1.5;
         font-size: 0.9rem;
         justify-content: space-between;
-        height: 8px*5;
+        height: 8px * 5;
+        align-items: center;
+        width: 100%;
 
         .control-wrap {
             position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
 
             .label {
-                position: absolute;
-                width: 100%;
-                top: -8px*2.5;
-                left: 8px*0.5;
+                position: relative;
+                top: 0;
+                left: 0;
                 color: $gray3-default-dark;
                 font-size: 0.8rem;
-                opacity: 0;
-                animation: fadeInLeft 0.5s ease-out 0.04s;
-                animation-fill-mode: forwards;
-                animation-timing-function: ease-out;
+                opacity: 1;
+                animation: none;
+                margin-right: 4px;
             }
         }
 
         .controls {
-            border-radius: $border-radius-1+1;
+            border-radius: $border-radius-1 + 1;
             transition-duration: 0.15s;
-            background: linear-gradient(120deg, $dark-1 -80%, $dark-2 20%,$dark-2 60%, $dark-3 100%);
+            background: linear-gradient(120deg, $dark-1 -80%, $dark-2 20%, $dark-2 60%, $dark-3 100%);
             border: 1px solid $gray6-accessible-dark;
             border-top: 1px solid $gray5-accessible-dark;
-            border-bottom: 1px solid $gray6-accessible-dark;;
-            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);;
-            opacity: 0;
+            border-bottom: 1px solid $gray6-accessible-dark;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            display: flex;
 
-            animation: fadeInLeft 0.5s ease-out 0.05s;
-            animation-fill-mode: forwards;
-            animation-timing-function: ease-out;
             &:hover {
                 transition-duration: 0.1s;
             }
-            display: flex;
 
             .control {
-                padding: 4px 8px*1.4;
+                padding: 4px 8px * 1.4;
                 font-weight: 400;
                 font-size: 0.8rem;
                 line-height: 1.1rem;
@@ -76,7 +78,7 @@
                     border-left: 1px solid $gray3-accessible-dark;
                     border-bottom: 1px solid $gray5-accessible-dark;
                     border-radius: 8px !important;
-                    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);;
+                    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
                     transform: scale(1.1);
                     transition-duration: 0.05s;
                     transition-timing-function: ease-in;
@@ -93,37 +95,36 @@
 
 @media only screen and (max-width: 768px) {
     .admin-controls-header .view-control {
-        flex-direction: column;
+        flex-direction: row;
         height: auto;
-        margin: 8px 8px*1.5;
-        margin-bottom: 0;
-        padding-bottom: 8px;
-        align-items: flex-start;
-        gap: 8px*2;
+        margin: 0 8px;
+        align-items: center;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 4px 0;
+        scrollbar-width: none;
+        &::-webkit-scrollbar {
+            display: none;
+        }
     }
 
     .admin-controls-header .view-control .filter-controls {
-        flex-direction: column;
-        width: 100%;
-        gap: 8px*2;
+        flex-direction: row;
+        width: auto;
+        gap: 8px;
     }
 
     .admin-controls-header .view-control .filter-controls .control-wrap {
-        width: 100%;
+        width: auto;
+        flex-direction: row;
         .label {
-            position: relative;
-            top: 0;
-            left: 0;
-            margin-bottom: 8px;
+            display: none; // Hide label on mobile to save space
         }
         .controls {
-            width: 100%;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start;
+            width: auto;
+            flex-wrap: nowrap;
             .control {
-                flex-grow: 1;
-                text-align: center;
+                flex-grow: 0;
             }
         }
     }

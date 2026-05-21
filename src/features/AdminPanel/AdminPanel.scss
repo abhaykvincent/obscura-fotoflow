@@ -112,6 +112,7 @@
     .tabs {
         display: flex;
         margin-bottom: 8px*3; // Add margin below tabs
+        margin-top: 8px*6; // Add margin below tabs
         gap: 0px;
         .tab-button {            
             background-color: $dark-2 ;// Adjust with your primary color

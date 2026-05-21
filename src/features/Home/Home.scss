@@ -315,7 +315,7 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        border-radius: $border-radius-1;
+                        border-radius: $border-radius-1*2;
                         cursor: pointer;
                         transition: all 0.1s;
                         transform: scale(1);
@@ -329,7 +329,7 @@
                             border-top: 1px solid $gray3-accessible-dark;
                             border-left: 1px solid $gray3-accessible-dark;
                             border-bottom: 1px solid $gray5-accessible-dark;
-                            border-radius: 8px !important;
+                            border-radius: 8px*2 !important;
                             box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
                             transform: scale(1.1);
                             z-index: 10;

@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import './AdminControls.scss';
 
 const ROLES_TABS = {
@@ -12,11 +13,11 @@ const ROLES_TABS = {
 };
 
 function AdminControls({ selectedRole, onRoleChange }) {
-    const handleRoleClick = useCallback((role) => {
+    const handleRoleChange = useCallback((role) => {
         onRoleChange(role);
     }, [onRoleChange]);
 
-    return (
+    return createPortal(
         <div className="admin-controls-header">
             <div className="view-control">
                 <div className="filter-controls">
@@ -27,7 +28,7 @@ function AdminControls({ selectedRole, onRoleChange }) {
                                 <div
                                     key={role}
                                     className={`control ctrl-${role} ${selectedRole === role ? 'active' : ''}`}
-                                    onClick={() => handleRoleClick(role)}
+                                    onClick={() => handleRoleChange(role)}
                                     role="button"
                                     tabIndex={0}
                                 >
@@ -38,7 +39,8 @@ function AdminControls({ selectedRole, onRoleChange }) {
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.getElementById('header-feature-content') || document.body
     );
 }
 

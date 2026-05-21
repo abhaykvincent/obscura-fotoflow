@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'; // Import useRef
+import { createPortal } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux'
 
 // --- Selectors and Actions ---
@@ -278,11 +279,14 @@ function Projects() {
         <>
             <AddProjectModal />
 
-            <div className="projects-page-header">
-                <div className="search-bar">
-                    <SearchInput />
-                </div>
-            </div>
+            {createPortal(
+                <div className="projects-page-header">
+                    <div className="search-bar">
+                        <SearchInput />
+                    </div>
+                </div>,
+                document.getElementById('header-feature-content') || document.body
+            )}
 
             <main className="projects">
                 <div className="projects-header">

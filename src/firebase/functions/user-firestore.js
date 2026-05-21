@@ -83,6 +83,16 @@ export const createUser = async (userData) => {
     await setDoc(userDocRef, userDoc)
     return userDoc
 }
+export const updateUserLastStudio = async (email, studio) => {
+    const userDocRef = doc(db, 'users', email);
+    const updateData = {
+        lastSelectedStudio: studio,
+        activeStudioDomain: studio.domain,
+        updatedAt: new Date().toISOString()
+    };
+    await updateDoc(userDocRef, updateData);
+    return true;
+};
 export const updateUser = async (email, updateData) => {
     const usersCollection = collection(db, 'users');
     const userDocRef = doc(usersCollection, email);
