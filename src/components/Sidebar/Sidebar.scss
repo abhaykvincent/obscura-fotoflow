@@ -245,6 +245,7 @@ $transition-speed: 0.5s;
                         &.pay-now { background: $red-default-dark; color: white; }
                         &.trial { background: $dark-1; color: $green-default-light; }
                         &.upgrade { background: $green-default-dark; color: white; }
+                        &.pro { background: $green-default-light; color: white; }
                     }
                 }
             }

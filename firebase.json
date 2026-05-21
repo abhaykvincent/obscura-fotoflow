@@ -8,11 +8,14 @@
   "hosting": {
     "public": "build",
     "ignore": [
-      "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
     "rewrites": [
+      {
+        "source": "/cdn-gallery/**",
+        "function": "serveOptimizedImage"
+      },
       {
         "source": "/:studioName/smart-gallery/:projectId",
         "function": "serveGallery"
@@ -63,6 +66,14 @@
     },
     "auth": {
       "port": 9099,
+      "host": "0.0.0.0"
+    },
+    "functions": {
+      "port": 5001,
+      "host": "0.0.0.0"
+    },
+    "hosting": {
+      "port": 5000,
       "host": "0.0.0.0"
     },
     "singleProjectMode": false

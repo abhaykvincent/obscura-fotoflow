@@ -685,7 +685,7 @@
 				width: 100%;
 				height: 100%;
 				@include boxed;
-				border-radius: 4px;
+				border-radius: 8px*2;
 				border: 1px solid $gray4-default-dark;
 				box-shadow: 4px 3px 4px rgba(0, 0, 0, 0.8);
 				overflow: hidden;
@@ -752,6 +752,9 @@
 		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 		box-shadow: -1px 0 2px black;
 		border-top: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 0px 0px 8px 8px;
+
+		overflow: hidden;
 		p{
 
 			margin-left: 6px;
@@ -826,7 +829,7 @@
 					.backthumb{
 						width: 100%;
 						height: 100%;
-						border-radius: 4px;
+						border-radius: 8px*2;
 					}
 					.bthumb1{
 						position: absolute;
@@ -903,10 +906,13 @@
 					box-shadow: 
 					0px 2px 2px px rgba(0, 0, 0, 0.6),
 					0px 0px 8px rgba(190, 190, 190, 0.3) ;
-						border: 1px solid $gray-default-dark;
-							transition-duration: 1s;
+					transition-duration: 1s;
+					border: 1px solid $gray-default-dark;
+					border-right: 1px solid $gray3-default-dark;
+					border-bottom: 1px solid $gray3-default-dark;
 						.gallery-name{
-							border-top: 1px solid rgba(255, 255, 255, 0.5);
+							border-radius: 0 0 8px*2 8px*2;
+							border-top: 1px solid rgba(255, 255, 255, 0.3);
 							transition-duration: 1s;
 							transition-delay: 0.0s;
 						}
@@ -960,7 +966,9 @@
 		transform: none;
 				}
 				.backthumb{
-					border: 1px solid $gray4-default-dark;
+					border: 1px solid $gray2-default-dark;
+					border-right: 1px solid $gray4-default-dark;
+					border-bottom: 1px solid $gray4-default-dark;
 					border-style: dashed;
 					background-color: $dark-3;
 					&:hover{
@@ -980,7 +988,7 @@
 					background-repeat: no-repeat;
 					background-position: center calc(50% - 8px*2), center;
 					transition-duration: 0.1s;
-					border-radius:8px !important;
+					border-radius:calc( 8px * 2 + 6px ) !important;
 					height: 8px*16;
 					transform: rotate(0deg) translateY(0px) translateX(0px) scale(1);
 					box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -1429,12 +1437,12 @@
 	.heading{
 		border: none;
 		margin-bottom: 0px;
-		padding-bottom: 0;
+		padding-bottom: 8px*0;
 		span{
 			font-weight: 400;
-			font-size: 0.9rem;
+			font-size: 1rem;
 			margin-left: 8px;
-			color: $dark-1
+			color: $gray-accessible-light;
 		}
 	}
 	.button{
@@ -1445,7 +1453,7 @@
 }
 .galleries,.gallery{
 	.heading-section{
-		margin-bottom: -8px*1.5;
+		//margin-bottom: -8px*1.5;
 		margin-left: 8px*2;
 		opacity: 0;
 		animation: fadeInUp 0.4s ease-in 0.2s;
