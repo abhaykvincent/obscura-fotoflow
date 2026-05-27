@@ -15,6 +15,7 @@ import { updateProjectLastOpenedInFirestore, updateProjectStatusInFirestore } fr
 
 // Components
 import DashboardProjects from '../../components/Project Dashboard/Projects/Projects';
+import StatusPipeline from '../../components/Project Dashboard/StatusPipeline/StatusPipeline';
 import Refresh from '../../components/Refresh/Refresh';
 import { ProjectCover } from '../../components/ProjectPageCover/ProjectPageCover';
 
@@ -197,6 +198,7 @@ export default function Project() {
           <ProjectPageCoverImages project={project} />
         )}
         <div className={`project-dashboard ${isExpired ? 'locked' : ''}`}>
+          <StatusPipeline currentTab={project.currentTab || 'Booking'} ledState={project.ledState} />
           <DashboardProjects project={project} />
         </div>
               </main>

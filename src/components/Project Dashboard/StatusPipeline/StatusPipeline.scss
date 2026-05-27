@@ -1,0 +1,43 @@
+.status-pipeline {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  margin-bottom: 20px;
+
+  .pipeline-tab {
+    padding: 8px 16px;
+    font-weight: 600;
+    color: #888;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &.active {
+      color: #fff;
+    }
+  }
+
+  .led-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    
+    &.red { background: #ff4d4f; }
+    &.yellow { background: #faad14; }
+    &.green { background: #52c41a; }
+    &.blue { background: #1890ff; }
+  }
+
+  .led-blink {
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.05); }
+}
