@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { Clock, CheckCircle, LayoutDashboard } from 'lucide-react';
+import { Clock, CheckCircle, LayoutDashboard, CalendarOff } from 'lucide-react';
 import { requestExtension } from '../../app/slices/extensionRequestSlice';
 import styles from './ExpiredGallery.module.scss';
 
 export type UserRole = 'photographer' | 'client' | 'guest';
+export type GalleryStatus = 'archived' | 'expired';
 
 interface ExpiredGalleryProps {
   expiryDate: Date | number;
@@ -16,6 +17,7 @@ interface ExpiredGalleryProps {
   projectName: string;
   domain: string;
   role: UserRole;
+  type: GalleryStatus;
 }
 
 const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
@@ -26,6 +28,7 @@ const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
   projectName,
   domain,
   role,
+  type,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -46,7 +49,6 @@ const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
       setIsRequested(true);
     } catch (error) {
       console.error('Failed to send extension request:', error);
-      // TODO: Optionally show an error to the user
     } finally {
       setIsLoading(false);
     }
@@ -55,6 +57,7 @@ const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
   const formattedExpiryDate = expiryDate ? format(new Date(expiryDate), 'MMM dd, yyyy') : '';
   const isPhotographer = role === 'photographer';
   const isGuest = role === 'guest';
+  const isExpired = type === 'expired';
 
   return (
     <div className={styles.expiredGallery}>
@@ -64,20 +67,23 @@ const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
       />
       <div className={styles.glassCard}>
         <div className={styles.iconWrapper}>
-          <Clock size={48} />
+          {isExpired ? <CalendarOff size={48} /> : <Clock size={48} />}
         </div>
         <h1 className={styles.title}>
-          {isPhotographer ? 'Your gallery link has expired' : 'This link has expired'}
+          {isPhotographer 
+            ? (isExpired ? 'Your gallery has expired' : 'Your gallery link has archived')
+            : (isExpired ? 'This gallery has expired' : 'This link has archived')}
         </h1>
         {formattedExpiryDate && (
           <p className={styles.subheadline}>
             {isPhotographer ? (
               <>
-                This gallery expired on <strong>{formattedExpiryDate}</strong>. It is no longer visible to your clients.
+                This gallery {isExpired ? 'expired' : 'archived'} on <strong>{formattedExpiryDate}</strong>. 
+                {isExpired ? ' Files may be deleted soon according to your retention policy.' : ' It is no longer visible to your clients.'}
               </>
             ) : (
               <>
-                This gallery, shared by <strong>{photographerName}</strong>, expired on{' '}
+                This gallery, shared by <strong>{photographerName}</strong>, {isExpired ? 'expired' : 'archived'} on{' '}
                 <strong>{formattedExpiryDate}</strong>.
               </>
             )}
@@ -85,15 +91,19 @@ const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
         )}
         <p className={styles.message}>
           {isPhotographer
-            ? 'To regain access for your clients, you can extend the validity in the project settings.'
-            : 'To regain access, you can request a short extension from the photographer.'}
+            ? (isExpired 
+                ? 'To restore this gallery, you need to update the project status and retention settings.' 
+                : 'To regain access for your clients, you can extend the validity in the project settings.')
+            : (isExpired
+                ? 'The files for this project have reached their retention limit. Please contact the photographer directly for any inquiries.'
+                : 'To regain access, you can request a short extension from the photographer.')}
         </p>
 
         {!isGuest && (
           <button
             className={`${styles.requestButton} ${isRequested ? styles.requested : ''}`}
-            onClick={isPhotographer ? () => navigate(`/${domain}/project/${projectId}`) : handleRequestExtension}
-            disabled={(!isPhotographer && isRequested) || isLoading}
+            onClick={isPhotographer ? () => { console.log(`/${domain}/project/${projectId}`);debugger;navigate(`/${domain}/project/${projectId}`)} : handleRequestExtension}
+            disabled={(!isPhotographer && (isRequested || isExpired)) || isLoading}
           >
             {isLoading ? (
               <div className={styles.spinner} />
@@ -107,6 +117,8 @@ const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
                 <LayoutDashboard size={20} />
                 Manage Project
               </>
+            ) : isExpired ? (
+              'Contact Photographer'
             ) : (
               'Request Extension'
             )}

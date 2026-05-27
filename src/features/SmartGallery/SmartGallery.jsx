@@ -32,9 +32,9 @@ export default function SmartGallery() {
   const tagline = settings?.gallery?.galleryTagline;
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState(null);
-  const [isExpired, setIsExpired] = useState(false);
+  const [isArchived, setIsArchived] = useState(false);
   const [expiryDate, setExpiryDate] = useState(null);
-  const [isStage2Expired, setIsStage2Expired] = useState(false);
+  const [isStageExpired, setIsStageExpired] = useState(false);
   const [visibleCollections, setVisibleCollections] = useState([]);
   const [collectionsLoading, setCollectionsLoading] = useState(true);
   
@@ -120,11 +120,11 @@ export default function SmartGallery() {
           finalExpiryThresholdDate.setMonth(finalExpiryThresholdDate.getMonth() + (retentionYears * 12));
           finalExpiryThresholdDate.setDate(finalExpiryThresholdDate.getDate() + 30);
 
-          const isStage1Expired = Date.now() > archiveThresholdDate.getTime();
-          const isStage2ExpiredNow = Date.now() > finalExpiryThresholdDate.getTime() || projectData.status === 'expired';
+          const isStageArchived = Date.now() > archiveThresholdDate.getTime();
+          const isStageExpiredNow = Date.now() > finalExpiryThresholdDate.getTime() || projectData.status === 'expired';
           
-          setIsExpired(isStage1Expired);
-          setIsStage2Expired(isStage2ExpiredNow);
+          setIsArchived(isStageArchived);
+          setIsStageExpired(isStageExpiredNow);
         }
 
         if (!isAuthenticated || user === 'no-studio-found') {
@@ -295,7 +295,10 @@ export default function SmartGallery() {
   }
   const userRole = isAuthenticated ? 'photographer' : (isClientAuthenticated ? 'client' : 'guest');
 
-  if (isExpired) {
+  console.log('Archived',isArchived)
+  console.log('Expired',isStageExpired)
+  if (isStageExpired) {
+    console.log('Expired');
     return (
       <ExpiredGallery 
         backgroundImage={project.projectCover}
@@ -305,12 +308,25 @@ export default function SmartGallery() {
         projectName={project.name}
         domain={studioName}
         role={userRole}
+        type="expired"
       />
     );
   }
 
-  if (isStage2Expired && !isAuthenticated) {
-    return <ProjectExpiredPage project={project} studio={studio} studioName={studioName} />;
+  if (isArchived) {
+    console.log('Archived');
+    return (
+      <ExpiredGallery 
+        backgroundImage={project.projectCover}
+        photographerName={studio?.name || studioName}
+        expiryDate={expiryDate}
+        projectId={project.id}
+        projectName={project.name}
+        domain={studioName}
+        role={userRole}
+        type="archived"
+      />
+    );
   }
 
   if (collectionId) {
