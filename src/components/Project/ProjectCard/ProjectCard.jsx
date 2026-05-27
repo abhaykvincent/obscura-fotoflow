@@ -3,7 +3,7 @@ import './ProjectCard.scss'
 import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../../app/slices/authSlice';
 import { getThumbnailUrl1 } from '../../../utils/urlUtils';
-import { convertMegabytes } from '../../../utils/stringUtils';
+import { convertMegabytes, shortenText } from '../../../utils/stringUtils';
 import ProjectExpiration from '../../ProjectExpiration/ProjectExpiration';
 
 function ProjectCard({project,type}) {   
@@ -30,7 +30,7 @@ function ProjectCard({project,type}) {
         <div className="project-details">
             <div className="details-top">
                 <div className="left">
-                    <p className="project-type">{project.type}</p>
+                    <p className="project-type">{shortenText(project.type, 10)}</p>
                     <h4 className="project-title">{project.name}</h4>
                     <ProjectExpiration 
                         createdAt={project.createdAt} 
