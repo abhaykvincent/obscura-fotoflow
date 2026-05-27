@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
 import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateCollectionSelectionStatusByCollectionIdInFirestore, updateSelectionGalleryStatusByCollectionIdInFirestore, updateCollectionStatusByCollectionIdInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore, updateProjectStorageToArchive, restoreProjectFromArchive, toggleFileFavoriteInFirestore } from '../../firebase/functions/firestore';
+import { approveExtensionRequest } from '../../firebase/functions/studios';
 import { showAlert } from './alertSlice';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/app';
@@ -136,6 +137,15 @@ export const updateProjectStatus = createAsyncThunk(
   async ({ domain, projectId, newStatus }, { dispatch }) => {
     await updateProjectStatusInFirestore(domain, projectId, newStatus);
     return { projectId, newStatus };
+  }
+);
+
+export const approveExtension = createAsyncThunk(
+  'projects/approveExtension',
+  async ({ domain, projectId }, { dispatch }) => {
+    await approveExtensionRequest(domain, projectId);
+    dispatch(showAlert({ type: 'success', message: 'Project validity extended by 3 months.' }));
+    return { projectId };
   }
 );
 export const updateCollectionName = createAsyncThunk(
@@ -835,6 +845,29 @@ const projectsSlice = createSlice({
               }
             : project
         );
+      })
+      .addCase(approveExtension.fulfilled, (state, action) => {
+        const { projectId } = action.payload;
+        state.data = state.data.map((project) => {
+          if (project.id === projectId) {
+            const currentValidity = parseInt(project.projectValidityMonths || '6');
+            const newValidity = currentValidity + 3;
+            
+            // Recalculate archiveThreshold
+            const archiveThresholdDate = new Date(project.createdAt);
+            archiveThresholdDate.setMonth(archiveThresholdDate.getMonth() + newValidity);
+
+            return {
+              ...project,
+              projectValidityMonths: newValidity,
+              storage: {
+                ...project.storage,
+                archiveThreshold: archiveThresholdDate.getTime(),
+              }
+            };
+          }
+          return project;
+        });
       });
   },
 });
