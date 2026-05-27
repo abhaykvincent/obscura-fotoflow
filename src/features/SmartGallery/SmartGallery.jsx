@@ -38,7 +38,7 @@ export default function SmartGallery() {
   const [visibleCollections, setVisibleCollections] = useState([]);
   const [collectionsLoading, setCollectionsLoading] = useState(true);
   
-  const [isClientAuthenticated, setIsClientAuthenticated] = useState(false);
+  const [isClientAuthenticated, setIsClientAuthenticated] = useState(() => isPinValid(projectId));
   const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
@@ -293,7 +293,9 @@ export default function SmartGallery() {
   if (!project) {
     return <div>Project not found.</div>;
   }
-  if (isExpired && !isAuthenticated && !isPinValid(projectId)) {
+  const userRole = isAuthenticated ? 'photographer' : (isClientAuthenticated ? 'client' : 'guest');
+
+  if (isExpired) {
     return (
       <ExpiredGallery 
         backgroundImage={project.projectCover}
@@ -302,6 +304,7 @@ export default function SmartGallery() {
         projectId={project.id}
         projectName={project.name}
         domain={studioName}
+        role={userRole}
       />
     );
   }

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { Clock, CheckCircle } from 'lucide-react';
+import { Clock, CheckCircle, LayoutDashboard } from 'lucide-react';
 import { requestExtension } from '../../app/slices/extensionRequestSlice';
 import styles from './ExpiredGallery.module.scss';
+
+export type UserRole = 'photographer' | 'client' | 'guest';
 
 interface ExpiredGalleryProps {
   expiryDate: Date | number;
@@ -12,6 +15,7 @@ interface ExpiredGalleryProps {
   projectId: string;
   projectName: string;
   domain: string;
+  role: UserRole;
 }
 
 const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
@@ -21,8 +25,10 @@ const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
   projectId,
   projectName,
   domain,
+  role,
 }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isRequested, setIsRequested] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -47,6 +53,8 @@ const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
   };
 
   const formattedExpiryDate = expiryDate ? format(new Date(expiryDate), 'MMM dd, yyyy') : '';
+  const isPhotographer = role === 'photographer';
+  const isGuest = role === 'guest';
 
   return (
     <div className={styles.expiredGallery}>
@@ -58,32 +66,52 @@ const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
         <div className={styles.iconWrapper}>
           <Clock size={48} />
         </div>
-        <h1 className={styles.title}>This link has expired</h1>
+        <h1 className={styles.title}>
+          {isPhotographer ? 'Your gallery link has expired' : 'This link has expired'}
+        </h1>
         {formattedExpiryDate && (
           <p className={styles.subheadline}>
-            This gallery, shared by <strong>{photographerName}</strong>, expired on{' '}
-            <strong>{formattedExpiryDate}</strong>.
+            {isPhotographer ? (
+              <>
+                This gallery expired on <strong>{formattedExpiryDate}</strong>. It is no longer visible to your clients.
+              </>
+            ) : (
+              <>
+                This gallery, shared by <strong>{photographerName}</strong>, expired on{' '}
+                <strong>{formattedExpiryDate}</strong>.
+              </>
+            )}
           </p>
         )}
         <p className={styles.message}>
-          To regain access, you can request a short extension from the photographer.
+          {isPhotographer
+            ? 'To regain access for your clients, you can extend the validity in the project settings.'
+            : 'To regain access, you can request a short extension from the photographer.'}
         </p>
-        <button
-          className={`${styles.requestButton} ${isRequested ? styles.requested : ''}`}
-          onClick={handleRequestExtension}
-          disabled={isRequested || isLoading}
-        >
-          {isLoading ? (
-            <div className={styles.spinner} />
-          ) : isRequested ? (
-            <>
-              <CheckCircle size={20} />
-              Request Sent
-            </>
-          ) : (
-            'Request Extension'
-          )}
-        </button>
+
+        {!isGuest && (
+          <button
+            className={`${styles.requestButton} ${isRequested ? styles.requested : ''}`}
+            onClick={isPhotographer ? () => navigate(`/${domain}/project/${projectId}`) : handleRequestExtension}
+            disabled={(!isPhotographer && isRequested) || isLoading}
+          >
+            {isLoading ? (
+              <div className={styles.spinner} />
+            ) : isRequested ? (
+              <>
+                <CheckCircle size={20} />
+                Request Sent
+              </>
+            ) : isPhotographer ? (
+              <>
+                <LayoutDashboard size={20} />
+                Manage Project
+              </>
+            ) : (
+              'Request Extension'
+            )}
+          </button>
+        )}
       </div>
     </div>
   );
