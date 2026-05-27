@@ -10,10 +10,10 @@ const StatusPipeline = ({ currentTab, ledState }) => {
         const isActive = currentTab?.toLowerCase() === stage.toLowerCase();
         return (
           <div key={stage} className={`pipeline-tab ${isActive ? 'active' : ''}`}>
-            <span className="tab-name">{stage}</span>
-            {isActive && ledState && (
-              <div className={`led-indicator ${ledState.color} ${ledState.style === 'blinking' ? 'led-blink' : ''}`} />
+            {ledState && (
+              <div className={`led-indicator ${ledState.color} ${ledState.style === 'blinking' ? 'led-blink' : ''} ${!isActive ? 'dimmed' : ''}`} />
             )}
+            <span className="tab-name">{stage}</span>
           </div>
         );
       })}
