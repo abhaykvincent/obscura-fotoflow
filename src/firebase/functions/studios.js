@@ -520,10 +520,13 @@ export const approveExtensionRequest = async (domain, projectId) => {
         
         await updateDoc(requestRef, { status: 'accepted', acceptedAt: Date.now() });
         
-        // Note: This does not automatically extend the project. 
-        // The photographer is expected to do this manually from the project settings.
+        // Update project validity months by adding 3
+        const projectRef = doc(db, 'studios', domain, 'projects', projectId);
+        await updateDoc(projectRef, {
+            projectValidityMonths: increment(3)
+        });
         
-        console.log(`Extension request approved for project ${projectId}`);
+        console.log(`Extension request approved for project ${projectId}. Validity extended by 3 months.`);
         return true;
     } catch (error) {
         console.error('Error approving extension request:', error);
