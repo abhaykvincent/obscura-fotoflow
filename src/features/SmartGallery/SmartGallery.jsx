@@ -6,7 +6,7 @@ import SmartAlbum from '../../components/ImageGallery/SmartAlbum';
 import ProjectExpiredPage from '../../components/ImageGallery/ProjectExpiredPage';
 import ExpiredGallery from '../../components/galleries/ExpiredGallery.tsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectIsAuthenticated, selectUser } from '../../app/slices/authSlice';
+import { selectIsAuthenticated, selectUser, selectUserStudio } from '../../app/slices/authSlice';
 import { selectStudioAdminSettings } from '../../app/slices/adminSettingsSlice';
 import { selectGalleryStudio, selectGalleryStudioLoading, fetchGalleryStudio } from '../../app/slices/studioSlice';
 import { toTitleCase } from '../../utils/stringUtils';
@@ -41,6 +41,7 @@ export default function SmartGallery() {
   const [isClientAuthenticated, setIsClientAuthenticated] = useState(() => isPinValid(projectId));
   const [isDownloading, setIsDownloading] = useState(false);
 
+  const userStudio = useSelector(selectUserStudio);
   useEffect(() => {
     if (studioName) {
       dispatch(fetchGalleryStudio({ currentDomain: studioName }));
@@ -293,7 +294,8 @@ export default function SmartGallery() {
   if (!project) {
     return <div>Project not found.</div>;
   }
-  const userRole = isAuthenticated ? 'photographer' : (isClientAuthenticated ? 'client' : 'guest');
+  const isStudioPhotographer = isAuthenticated && userStudio?.domain === studioName;
+  const userRole = isStudioPhotographer ? 'photographer' : (isClientAuthenticated ? 'client' : 'guest');
 
   console.log('Archived',isArchived)
   console.log('Expired',isStageExpired)
