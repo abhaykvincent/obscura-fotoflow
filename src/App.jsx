@@ -114,44 +114,35 @@ export default function App() {
     }
   }, [isAuthenticated, user, defaultStudio]);
 
-  // Handle projects status for public pages
-  useEffect(() => {
-    if (isPublicPage(location.pathname)) {
-      dispatch(updateProjectsStatus('succeeded'));
-    }
-  }, [dispatch, location.pathname]);
-
   // ON Render
   useEffect(() => {
     if (isAuthenticated && currentDomain !== 'guest' && !isPublicPage(location.pathname)) {
+      if (isLoading === 'login' || isLoading === 'failed') {
+        dispatch(showLoading({ context: ` Loading App ..`, subcontext: ` ` }));
+        // Fetching data for studio
+        console.log(`%cFetching data for ${currentDomain}...`, `color: gray`);
+        dispatch(fetchProjects({ currentDomain }))
+          .catch((err) => {
+            dispatch(showAlert({ type: 'error', message: 'Check internet connection' }));
+          });
 
-  dispatch(showLoading({context:` Loading App ..`,subcontext:` `}))
-      // Fetching data for studio
-      console.log(`%cFetching data for ${currentDomain}...`,`color: gray`)
-      dispatch(fetchProjects({currentDomain}))
-      .catch((err)=>{
-        dispatch(showAlert({ type: 'error', message: 'Check internet connection' }));
-      })
-
-      dispatch(fetchStudio({currentDomain})).then((a) => {
-
-        dispatch(fetchCurrentSubscription({currentDomain}))
-        .catch((err)=>{
-          console.error(err)
-
-            dispatch(hideLoading())
+        dispatch(fetchStudio({ currentDomain })).then((a) => {
+          dispatch(fetchCurrentSubscription({ currentDomain }))
+            .catch((err) => {
+              console.error(err);
+              dispatch(hideLoading());
+            });
         })
-
-      })
-      .then(()=>{
-          dispatch(hideLoading())
-        })
-      .catch((err)=>{
-        console.error(err)
-          dispatch(hideLoading())
-      })
+          .then(() => {
+            dispatch(hideLoading());
+          })
+          .catch((err) => {
+            console.error(err);
+            dispatch(hideLoading());
+          });
+      }
     }
-  }, [dispatch, currentDomain, isAuthenticated]);
+  }, [dispatch, currentDomain, isAuthenticated, location.pathname, isLoading]);
 
   useEffect(() =>{
     if (studio?.trialEndDate) {
@@ -199,9 +190,9 @@ export default function App() {
         </>
       )}
       {
-        isLoading!== 'succeeded' && isAuthenticated && user!=='no-studio-found'  ? 
+        isLoading !== 'succeeded' && isAuthenticated && user !== 'no-studio-found' && (!isPublicPage(location.pathname)) ?
           (
-            isLoading!=='login' && (!isPublicPage(location.pathname)) ?  <Loading/> : <LoadingLight/>
+            isLoading !== 'login' ? <Loading /> : <LoadingLight />
           ) : 
           (
             <Routes>

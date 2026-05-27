@@ -100,30 +100,46 @@ const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
         </p>
 
         {!isGuest && (
-          <button
-            className={`${styles.requestButton} ${isRequested ? styles.requested : ''}`}
-            onClick={isPhotographer ? () => { console.log(`/${domain}/project/${projectId}`);debugger;navigate(`/${domain}/project/${projectId}`)} : handleRequestExtension}
-            disabled={(!isPhotographer && (isRequested || isExpired)) || isLoading}
-          >
-            {isLoading ? (
-              <div className={styles.spinner} />
-            ) : isRequested ? (
-              <>
-                <CheckCircle size={20} />
-                Request Sent
-              </>
-            ) : isPhotographer ? (
-              <>
-                <LayoutDashboard size={20} />
-                Manage Project
-              </>
-            ) : isExpired ? (
-              'Contact Photographer'
-            ) : (
-              'Request Extension'
-            )}
-          </button>
-        )}
+  isPhotographer ? (
+    // Photographer View: Standard native link that opens in a new tab
+    <a
+      href={`/${domain}/project/${projectId}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`${styles.requestButton} ${isLoading ? styles.disabled : ''}`}
+      style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}
+    >
+      {isLoading ? (
+        <div className={styles.spinner} />
+      ) : (
+        <>
+          <LayoutDashboard size={20} />
+          Manage Project
+        </>
+      )}
+    </a>
+  ) : (
+    // Client/User View: Regular button that triggers an action
+    <button
+      className={`${styles.requestButton} ${isRequested ? styles.requested : ''}`}
+      onClick={handleRequestExtension}
+      disabled={isRequested || isExpired || isLoading}
+    >
+      {isLoading ? (
+        <div className={styles.spinner} />
+      ) : isRequested ? (
+        <>
+          <CheckCircle size={20} />
+          Request Sent
+        </>
+      ) : isExpired ? (
+        'Contact Photographer'
+      ) : (
+        'Request Extension'
+      )}
+    </button>
+  )
+)}
       </div>
     </div>
   );
