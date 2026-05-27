@@ -34,7 +34,12 @@ function Home() {
 
     document.title = `FotoFlow | ${defaultStudio.name}`;
     const [viewType, setViewType] = useState('cards');
-    const selectionCompletedProjects = getProjectsByStatus(projects, 'selected');
+    
+    const selectionCompletedProjects = useMemo(() => 
+        getProjectsByStatus(projects, 'selected').filter(project => project.storage?.status !== 'archive'),
+        [projects]
+    );
+
     const [selectedProjects, setSelectedProjects] = useState([])
     const [recentProjects, setRecentProjects] = useState([])
     const [upcommingShoots, setUpcommingShoots] = useState([])
@@ -104,7 +109,7 @@ function Home() {
             return aDate - bDate;
         });
         setUpcommingShoots(sortedUpcommingShoots)
-    }, [])
+    }, [selectionCompletedProjects, projects])
 
     useEffect(() => {
 
