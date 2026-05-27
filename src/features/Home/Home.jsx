@@ -35,9 +35,14 @@ function Home() {
     document.title = `FotoFlow | ${defaultStudio.name}`;
     const [viewType, setViewType] = useState('cards');
     
-    const selectionCompletedProjects = useMemo(() => 
-        getProjectsByStatus(projects, 'selected').filter(project => project.storage?.status !== 'archive'),
+    const nonArchivedProjects = useMemo(() => 
+        projects.filter(project => project.storage?.status !== 'archive'),
         [projects]
+    );
+
+    const selectionCompletedProjects = useMemo(() => 
+        getProjectsByStatus(nonArchivedProjects, 'selected'),
+        [nonArchivedProjects]
     );
 
     const [selectedProjects, setSelectedProjects] = useState([])
@@ -101,7 +106,7 @@ function Home() {
     useEffect(() => {
         trackEvent('studio_home_view')
         setSelectedProjects(selectionCompletedProjects.slice(0, 8))
-        setRecentProjects(getProjectsByLastUpdated(projects, 8))
+        setRecentProjects(getProjectsByLastUpdated(nonArchivedProjects, 8))
         const unsortedUpcommingShoots = getUpcommingShoots(projects, 31)
         const sortedUpcommingShoots = unsortedUpcommingShoots.sort((a, b) => {
             const aDate = new Date(a.date);
@@ -109,17 +114,17 @@ function Home() {
             return aDate - bDate;
         });
         setUpcommingShoots(sortedUpcommingShoots)
-    }, [selectionCompletedProjects, projects])
+    }, [selectionCompletedProjects, nonArchivedProjects, projects])
 
     useEffect(() => {
 
         // Exclude selectedProjects from recentProjects
-        const filteredRecentProjects = getProjectsByLastUpdated(projects, 8).filter(project =>
+        const filteredRecentProjects = getProjectsByLastUpdated(nonArchivedProjects, 8).filter(project =>
             !selectedProjects.some(selected => selected.id === project.id)
         );
 
         setRecentProjects(filteredRecentProjects);
-    }, [selectedProjects]);
+    }, [selectedProjects, nonArchivedProjects]);
 
     return (
         <>
