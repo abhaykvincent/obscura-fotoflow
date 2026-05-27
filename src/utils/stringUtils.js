@@ -34,6 +34,29 @@ export function generateMemorablePIN(limit) {
   return pinStr
 }
 
+/**
+ * Truncates a string to a specified length and appends a suffix.
+ * * @param {string} str - The original project name or string.
+ * @param {number} maxLength - The maximum allowed length of the output string (including suffix).
+ * @param {string} [suffix='...'] - The text to append to the truncated string.
+ * @returns {string} The truncated string with the suffix, or the original string if it was short enough.
+ */
+export function shortenText(str, maxLength, suffix = '...') {
+  // Handle edge cases: empty strings or invalid lengths
+  if (!str || maxLength <= 0) return '';
+  if (str.length <= maxLength) return str;
+
+  // Ensure the truncated text + suffix doesn't exceed maxLength
+  const actualMax = maxLength - suffix.length;
+
+  // Fallback in case maxLength is smaller than the suffix itself
+  if (actualMax <= 0) {
+    return suffix.substring(0, maxLength);
+  }
+
+  return str.substring(0, actualMax).trim() + suffix;
+};
+
 export function shortenFileName(fileName){
   return fileName?.length > 30
       ? `${fileName.substring(0, 10)}...${fileName.substring(fileName.length - 10)}`
