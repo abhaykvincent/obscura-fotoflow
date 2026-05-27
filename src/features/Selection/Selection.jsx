@@ -422,7 +422,7 @@ export default function Selection() {
             </div>
           </div>
 
-            <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button large primary ">
+            <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button  primary ">
               Go to gallery
             </Link>
         </div>
