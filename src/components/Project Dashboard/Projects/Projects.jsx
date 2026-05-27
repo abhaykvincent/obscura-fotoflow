@@ -15,6 +15,7 @@ import AddProjectModal from '../../Modal/AddProject/AddProject';
 import CollectionsPanel from '../../Project/Collections/CollectionsPanel';
 import SidePanel from '../../Project/SidePanel/SidePanel'
 import { ProjectCover } from '../../ProjectPageCover/ProjectPageCover';
+import StatusPipeline from '../StatusPipeline/StatusPipeline';
 import { acceptSelectionReset, declineSelectionReset, selectSelectionRequests } from '../../../app/slices/selectionRequestSlice';
 import { selectUserStudio } from '../../../app/slices/authSlice';
 
@@ -36,6 +37,8 @@ function DashboardProjects({project}){
         projectDashboardView={projectDashboardView} 
         setProjectDashboardView={setProjectDashboardView} 
       />
+      
+      <StatusPipeline currentTab={project.currentTab || 'Booking'} ledState={project.ledState} />
       
       {pendingRequest && (
         <div className="selection-requests-list dashboard">

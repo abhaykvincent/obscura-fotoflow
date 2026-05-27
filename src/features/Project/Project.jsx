@@ -198,7 +198,6 @@ export default function Project() {
           <ProjectPageCoverImages project={project} />
         )}
         <div className={`project-dashboard ${isExpired ? 'locked' : ''}`}>
-          <StatusPipeline currentTab={project.currentTab || 'Booking'} ledState={project.ledState} />
           <DashboardProjects project={project} />
         </div>
               </main>
