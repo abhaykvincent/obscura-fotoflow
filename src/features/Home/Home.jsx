@@ -21,6 +21,7 @@ import { fetchUserByEmail } from '../../firebase/functions/firestore';
 import { acceptSelectionReset, declineSelectionReset, getSelectionRequests, removeRequestLocally, selectSelectionRequests } from '../../app/slices/selectionRequestSlice';
 import { getExtensionRequests, selectExtensionRequests, acceptExtension, declineExtension, removeExtensionRequestLocally } from '../../app/slices/extensionRequestSlice';
 import { showAlert } from '../../app/slices/alertSlice';
+import { shortenText } from '../../utils/stringUtils';
 
 function Home() {
     const dispatch = useDispatch()
@@ -33,7 +34,12 @@ function Home() {
 
     document.title = `FotoFlow | ${defaultStudio.name}`;
     const [viewType, setViewType] = useState('cards');
-    const selectionCompletedProjects = getProjectsByStatus(projects, 'selected');
+    
+    const selectionCompletedProjects = useMemo(() => 
+        getProjectsByStatus(projects, 'selected').filter(project => project.storage?.status !== 'archive'),
+        [projects]
+    );
+
     const [selectedProjects, setSelectedProjects] = useState([])
     const [recentProjects, setRecentProjects] = useState([])
     const [upcommingShoots, setUpcommingShoots] = useState([])
@@ -103,7 +109,7 @@ function Home() {
             return aDate - bDate;
         });
         setUpcommingShoots(sortedUpcommingShoots)
-    }, [])
+    }, [selectionCompletedProjects, projects])
 
     useEffect(() => {
 
@@ -174,7 +180,7 @@ function Home() {
                                     <div className="action-icon reset"></div>
                                     <div className="action-content">
                                         <p className="action-title">Selection Reset</p>
-                                        <p className="action-desc"><b>{request.projectName}</b> wants to select again.</p>
+                                        <p className="action-desc"><b>{shortenText(request.projectName, 24)}</b> wants to select again.</p>
                                     </div>
                                     <div className="action-btns">
                                         <div className="btn-icon reject" onClick={() => {
