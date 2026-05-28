@@ -43,10 +43,10 @@ const MODAL_IDS = {
 };
 
 const DAY_RANGES = {
-    INITIAL: 90,
-    LOAD_MORE_1: 180,
+    INITIAL: 180,
+    LOAD_MORE_1: 270,
     LOAD_MORE_2: 360,
-    ALL_TIME: 720,
+    ALL_TIME: 900,
 };
 
 // --- Helper Functions ---
@@ -292,7 +292,7 @@ function Projects() {
                 <div className="projects-header">
                     <div className="page-title">
                         {/* <div className="icon projects-ill"></div> */}
-                        <h1 >Projects</h1>
+                        <h1>Projects</h1>
                     </div>
                     <div className="actions">
                         <button className="button primary icon add" onClick={handleNewProjectClick}>
@@ -302,100 +302,100 @@ function Projects() {
                 </div>
 
                 {allProjects.length > 0 ? (
-                <>
-                    <div className="separator horizontal"></div>
-                    <div className="view-control">
-                        <div className="filter-controls">
-                            <div className="control-wrap">
+                    <>
+                        <div className="separator horizontal"></div>
+                        <div className="view-control">
+                            <div className="filter-controls">
+                                <div className="control-wrap">
 
-                                <div className="label">Storage</div>
-                                <div className="controls">
-                                    <div
-                                        className={`control status-control control-live  ${selectedTab !== FILTER_TABS.ARCHIVED ? 'active' : ''}`}
-                                        onClick={() => handleTabClick(FILTER_TABS.ALL)}
-                                        role="button" tabIndex={0}
-                                    >
-                                        <div className="status-signal"></div>
-                                        Live
+                                    <div className="label">Storage</div>
+                                    <div className="controls">
+                                        <div
+                                            className={`control status-control control-live  ${selectedTab !== FILTER_TABS.ARCHIVED ? 'active' : ''}`}
+                                            onClick={() => handleTabClick(FILTER_TABS.ALL)}
+                                            role="button" tabIndex={0}
+                                        >
+                                            <div className="status-signal"></div>
+                                            Live
+                                        </div>
+                                        <div
+                                            className={`control status-control control-archive ${selectedTab === FILTER_TABS.ARCHIVED ? 'active' : ''}`}
+                                            onClick={() => handleTabClick(FILTER_TABS.ARCHIVED)}
+                                            role="button" tabIndex={0}
+                                        >
+                                            <div className="status-signal"></div>
+                                            Archive
+                                        </div>
                                     </div>
-                                    <div
-                                        className={`control status-control control-archive ${selectedTab === FILTER_TABS.ARCHIVED ? 'active' : ''}`}
-                                        onClick={() => handleTabClick(FILTER_TABS.ARCHIVED)}
-                                        role="button" tabIndex={0}
-                                    >
-                                        <div className="status-signal"></div>
-                                        Archive
+                                </div>
+                                <div className="control-wrap">
+                                    <div className="label">Filter</div>
+                                    <div className="controls">
+                                        <div
+                                            className={`control ctrl-all ${selectedTab === FILTER_TABS.ALL ? 'active' : ''}`}
+                                            onClick={() => handleTabClick(FILTER_TABS.ALL)}
+                                            role="button" tabIndex={0}
+                                        >
+                                            All
+                                        </div>
+                                        <div
+                                            className={`control ctrl-draft ${selectedTab === FILTER_TABS.DRAFT ? 'active' : ''}`}
+                                            onClick={() => handleTabClick(FILTER_TABS.DRAFT)}
+                                            role="button" tabIndex={0}
+                                        >
+                                            Draft
+                                        </div>
+                                        <div
+                                            className={`control ctrl-draft ${selectedTab === FILTER_TABS.SELECTED ? 'active' : ''}`}
+                                            onClick={() => handleTabClick(FILTER_TABS.SELECTED)}
+                                            role="button" tabIndex={0}
+                                        >
+                                            Selected
+                                        </div>
+                                        <div
+                                            className={`control ctrl-draft ${selectedTab === FILTER_TABS.COMPLETED ? 'active' : ''}`}
+                                            onClick={() => handleTabClick(FILTER_TABS.COMPLETED)}
+                                            role="button" tabIndex={0}
+                                        >
+                                            Completed
+                                        </div>
+                                        <div
+                                            className={`control ctrl-expired ${selectedTab === FILTER_TABS.EXPIRED ? 'active' : ''}`}
+                                            onClick={() => handleTabClick(FILTER_TABS.EXPIRED)}
+                                            role="button" tabIndex={0}
+                                        >
+                                            Expired
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="control-wrap">
-                                <div className="label">Filter</div>
+
+                            <div className="control-wrap view-type-controls">
                                 <div className="controls">
-                                    <div
-                                        className={`control ctrl-all ${selectedTab === FILTER_TABS.ALL ? 'active' : ''}`}
-                                        onClick={() => handleTabClick(FILTER_TABS.ALL)}
-                                        role="button" tabIndex={0}
+                                    <div className={`control ctrl-cards ${viewType === VIEW_TYPES.CARDS ? 'active' : ''}`}
+                                        onClick={() => handleViewTypeClick(VIEW_TYPES.CARDS)}
+                                        role="button" aria-label="Card View" tabIndex={0}
                                     >
-                                        All
+                                        <div className="icon card-view"></div>
                                     </div>
-                                    <div
-                                        className={`control ctrl-draft ${selectedTab === FILTER_TABS.DRAFT ? 'active' : ''}`}
-                                        onClick={() => handleTabClick(FILTER_TABS.DRAFT)}
-                                        role="button" tabIndex={0}
+                                    <div className={`control ctrl-redefined ${viewType === VIEW_TYPES.REDEFINED ? 'active' : ''}`}
+                                        onClick={() => handleViewTypeClick(VIEW_TYPES.REDEFINED)}
+                                        role="button" aria-label="Redefined View" tabIndex={0}
                                     >
-                                        Draft
+                                        <div className="icon redefined-view"></div>
                                     </div>
-                                    <div
-                                        className={`control ctrl-draft ${selectedTab === FILTER_TABS.SELECTED ? 'active' : ''}`}
-                                        onClick={() => handleTabClick(FILTER_TABS.SELECTED)}
-                                        role="button" tabIndex={0}
+                                    <div className={`control ctrl-list ${viewType === VIEW_TYPES.LIST ? 'active' : ''}`}
+                                        onClick={() => handleViewTypeClick(VIEW_TYPES.LIST)}
+                                        role="button" aria-label="List View" tabIndex={0}
                                     >
-                                        Selected
-                                    </div>
-                                    <div
-                                        className={`control ctrl-draft ${selectedTab === FILTER_TABS.COMPLETED ? 'active' : ''}`}
-                                        onClick={() => handleTabClick(FILTER_TABS.COMPLETED)}
-                                        role="button" tabIndex={0}
-                                    >
-                                        Completed
-                                    </div>
-                                    <div
-                                        className={`control ctrl-expired ${selectedTab === FILTER_TABS.EXPIRED ? 'active' : ''}`}
-                                        onClick={() => handleTabClick(FILTER_TABS.EXPIRED)}
-                                        role="button" tabIndex={0}
-                                    >
-                                        Expired
+                                        <div className="icon list-view"></div>
                                     </div>
                                 </div>
+                                <div className="label mini-icons view">View</div>
                             </div>
                         </div>
-
-                        <div className="control-wrap view-type-controls">
-                            <div className="controls">
-                                <div className={`control ctrl-cards ${viewType === VIEW_TYPES.CARDS ? 'active' : ''}`}
-                                    onClick={() => handleViewTypeClick(VIEW_TYPES.CARDS)}
-                                    role="button" aria-label="Card View" tabIndex={0}
-                                >
-                                    <div className="icon card-view"></div>
-                                </div>
-                                <div className={`control ctrl-redefined ${viewType === VIEW_TYPES.REDEFINED ? 'active' : ''}`}
-                                    onClick={() => handleViewTypeClick(VIEW_TYPES.REDEFINED)}
-                                    role="button" aria-label="Redefined View" tabIndex={0}
-                                >
-                                    <div className="icon redefined-view"></div>
-                                </div>
-                                <div className={`control ctrl-list ${viewType === VIEW_TYPES.LIST ? 'active' : ''}`}
-                                    onClick={() => handleViewTypeClick(VIEW_TYPES.LIST)}
-                                    role="button" aria-label="List View" tabIndex={0}
-                                >
-                                    <div className="icon list-view"></div>
-                                </div>
-                            </div>
-                            <div className="label mini-icons view">View</div>
-                        </div>
-                    </div>
-                    <div className="separator horizontal"></div>
-                </>
+                        <div className="separator horizontal"></div>
+                    </>
                 ):
                 <div className="mascot-empty-projects">
                     <div className="mascot-image"></div>

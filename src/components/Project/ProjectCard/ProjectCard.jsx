@@ -34,7 +34,7 @@ function ProjectCard({project,type}) {
                     <h4 className="project-title">{project.name}</h4>
                     <ProjectExpiration 
                         createdAt={project.createdAt} 
-                        status={project.status}
+                        status={project.storage.status}
                         projectValidityMonths={project.projectValidityMonths}
                         fileRetentionYears={project.fileRetentionYears}
                         archiveThreshold={project.storage?.archiveThreshold}

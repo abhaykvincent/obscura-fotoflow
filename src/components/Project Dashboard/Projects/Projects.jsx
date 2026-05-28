@@ -15,6 +15,7 @@ import AddProjectModal from '../../Modal/AddProject/AddProject';
 import CollectionsPanel from '../../Project/Collections/CollectionsPanel';
 import SidePanel from '../../Project/SidePanel/SidePanel'
 import { ProjectCover } from '../../ProjectPageCover/ProjectPageCover';
+import StatusPipeline from '../StatusPipeline/StatusPipeline';
 import { acceptSelectionReset, declineSelectionReset, selectSelectionRequests } from '../../../app/slices/selectionRequestSlice';
 import { selectUserStudio } from '../../../app/slices/authSlice';
 
@@ -23,6 +24,7 @@ function DashboardProjects({project}){
   const navigate = useNavigate();
   const { studioName } = useParams();
   const [projectDashboardView, setProjectDashboardView] = useState('abstract')
+  const [activeTab, setActiveTab] = useState('galleries');
   const selectionRequests = useSelector(selectSelectionRequests);
   const defaultStudio = useSelector(selectUserStudio);
 
@@ -35,6 +37,14 @@ function DashboardProjects({project}){
         project={project} 
         projectDashboardView={projectDashboardView} 
         setProjectDashboardView={setProjectDashboardView} 
+      />
+      
+      <StatusPipeline 
+        project={project} 
+        currentView={projectDashboardView}
+        setView={setProjectDashboardView}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
       />
       
       {pendingRequest && (
@@ -131,7 +141,11 @@ function DashboardProjects({project}){
       ))
       :<>
       <AddProjectModal />
-        <DashboardTabs project={project} />
+        <DashboardTabs 
+          project={project} 
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
         {/* <div className="sub-projects">
           <h4 className='heading-section heading'>Sub Projects</h4>
           <div className="sub-projects-body">

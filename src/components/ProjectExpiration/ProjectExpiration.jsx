@@ -50,7 +50,7 @@ export default function ProjectExpiration({
 
     // Cleanup the interval on component unmount
     return () => clearInterval(intervalId);
-  }, [createdAt]);
+  }, [createdAt, status, archiveThreshold, expiryDate, projectValidityMonths, fileRetentionYears]);
 
   return (
     <div className='project-expiration'>
