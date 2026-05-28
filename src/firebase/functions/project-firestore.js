@@ -412,3 +412,22 @@ export const migrateProjectsValidityFields = async () => {
         throw error;
     }
 };
+
+export const addProjectActivityLogInFirestore = async (domain, projectId, activityEntry) => {
+    try {
+        const projectDocRef = doc(db, 'studios', domain, 'projects', projectId);
+        const activity = {
+            id: `act-${generateRandomString(5)}`,
+            timestamp: Date.now(),
+            ...activityEntry
+        };
+        await updateDoc(projectDocRef, {
+            activityLog: arrayUnion(activity)
+        });
+        return activity;
+    } catch (error) {
+        console.error('Error logging project activity:', error);
+        throw error;
+    }
+};
+

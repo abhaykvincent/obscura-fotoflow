@@ -10,6 +10,7 @@ import { selectUserStudio } from '../../../../app/slices/authSlice';
 import DashboardEvents from '../../Events/Events';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import CollectionsPanel from '../../../Project/Collections/CollectionsPanel';
+import HistoryLog from '../HistoryLog/HistoryLog';
 
 function DashboardTabs({ project, activeTab: propActiveTab, setActiveTab: propSetActiveTab }) {
   const dispatch = useDispatch();
@@ -63,6 +64,10 @@ function DashboardTabs({ project, activeTab: propActiveTab, setActiveTab: propSe
           <DashboardPayments project={project} />
         );
 
+      case 'history':
+        return (
+          <HistoryLog project={project} />
+        );
 
       default:
         return null;
@@ -89,6 +94,12 @@ function DashboardTabs({ project, activeTab: propActiveTab, setActiveTab: propSe
           onClick={() => setActiveTab('financials')}
         >
           Financials
+        </button>
+        <button
+          className={`button secondary tab-button ${activeTab === 'history' ? 'active' : ''}`}
+          onClick={() => setActiveTab('history')}
+        >
+          History Log
         </button>
       </div>
       <div className="tab-content">{renderTabContent()}</div>

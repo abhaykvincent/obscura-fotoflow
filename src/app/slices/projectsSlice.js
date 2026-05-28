@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fullAccess } from '../../data/teams';
-import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateCollectionSelectionStatusByCollectionIdInFirestore, updateSelectionGalleryStatusByCollectionIdInFirestore, updateCollectionStatusByCollectionIdInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore, updateProjectStorageToArchive, restoreProjectFromArchive, toggleFileFavoriteInFirestore } from '../../firebase/functions/firestore';
+import { addBudgetToFirestore, addCollectionToFirestore, addCollectionToStudioProject, addCrewToFirestore, addEventToFirestore, addExpenseToFirestore, addPaymentToFirestore, addProjectToStudio, deleteCollectionFromFirestore, deleteFileFromFirestoreAndStorage, deleteProjectFromFirestore, fetchInvitationFromFirebase, fetchProjectsFromFirestore, updateCollectionNameInFirestore, updateCollectionSelectionStatusByCollectionIdInFirestore, updateSelectionGalleryStatusByCollectionIdInFirestore, updateCollectionStatusByCollectionIdInFirestore, updateInvitationInFirebase, updateProjectNameInFirestore, updateProjectStatusInFirestore, updateProjectStorageToArchive, restoreProjectFromArchive, toggleFileFavoriteInFirestore, addProjectActivityLogInFirestore } from '../../firebase/functions/firestore';
 import { approveExtensionRequest } from '../../firebase/functions/studios';
 import { showAlert } from './alertSlice';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
@@ -279,6 +279,13 @@ export const fetchInvitation = createAsyncThunk(
   async ({ domain, projectId }) => {
     const invitation = await fetchInvitationFromFirebase(domain, projectId);
     return convertTimestamps(invitation);
+  }
+);
+export const logProjectActivity = createAsyncThunk(
+  'projects/logProjectActivity',
+  async ({ domain, projectId, activityEntry }) => {
+    const activity = await addProjectActivityLogInFirestore(domain, projectId, activityEntry);
+    return convertTimestamps({ projectId, activity });
   }
 );
 // Upload Cover
@@ -760,6 +767,16 @@ const projectsSlice = createSlice({
         state.data = state.data.map((project) => {
           if (project.id === projectId) {
             return { ...project, invitation: action.payload.invitation };
+          }
+          return project;
+        });
+      })
+      .addCase(logProjectActivity.fulfilled, (state, action) => {
+        const { projectId, activity } = action.payload;
+        state.data = state.data.map((project) => {
+          if (project.id === projectId) {
+            const currentLog = project.activityLog || [];
+            return { ...project, activityLog: [...currentLog, activity] };
           }
           return project;
         });
