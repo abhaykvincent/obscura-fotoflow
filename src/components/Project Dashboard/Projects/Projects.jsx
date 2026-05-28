@@ -24,6 +24,7 @@ function DashboardProjects({project}){
   const navigate = useNavigate();
   const { studioName } = useParams();
   const [projectDashboardView, setProjectDashboardView] = useState('abstract')
+  const [activeTab, setActiveTab] = useState('galleries');
   const selectionRequests = useSelector(selectSelectionRequests);
   const defaultStudio = useSelector(selectUserStudio);
 
@@ -38,7 +39,13 @@ function DashboardProjects({project}){
         setProjectDashboardView={setProjectDashboardView} 
       />
       
-      <StatusPipeline currentTab={project.currentTab || 'Booking'} ledState={project.ledState} />
+      <StatusPipeline 
+        project={project} 
+        currentView={projectDashboardView}
+        setView={setProjectDashboardView}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
       
       {pendingRequest && (
         <div className="selection-requests-list dashboard">
@@ -134,7 +141,11 @@ function DashboardProjects({project}){
       ))
       :<>
       <AddProjectModal />
-        <DashboardTabs project={project} />
+        <DashboardTabs 
+          project={project} 
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
         {/* <div className="sub-projects">
           <h4 className='heading-section heading'>Sub Projects</h4>
           <div className="sub-projects-body">

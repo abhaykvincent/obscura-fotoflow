@@ -15,7 +15,6 @@ import { updateProjectLastOpenedInFirestore, updateProjectStatusInFirestore } fr
 
 // Components
 import DashboardProjects from '../../components/Project Dashboard/Projects/Projects';
-import StatusPipeline from '../../components/Project Dashboard/StatusPipeline/StatusPipeline';
 import Refresh from '../../components/Refresh/Refresh';
 import { ProjectCover } from '../../components/ProjectPageCover/ProjectPageCover';
 

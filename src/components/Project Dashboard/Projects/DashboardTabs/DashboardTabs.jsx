@@ -11,9 +11,11 @@ import DashboardEvents from '../../Events/Events';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import CollectionsPanel from '../../../Project/Collections/CollectionsPanel';
 
-function DashboardTabs({ project }) {
+function DashboardTabs({ project, activeTab: propActiveTab, setActiveTab: propSetActiveTab }) {
   const dispatch = useDispatch();
-  const [activeTab, setActiveTab] = useState('galleries');
+  const [localActiveTab, setLocalActiveTab] = useState('galleries');
+  const activeTab = propActiveTab || localActiveTab;
+  const setActiveTab = propSetActiveTab || setLocalActiveTab;
   const defaultStudio = useSelector(selectUserStudio);
 
   const renderTabContent = () => {
@@ -56,6 +58,7 @@ function DashboardTabs({ project }) {
         );
 
       case 'financials':
+      case 'invoices':
         return (
           <DashboardPayments project={project} />
         );
@@ -82,8 +85,8 @@ function DashboardTabs({ project }) {
           Shoots
         </button>
         <button
-          className={`button secondary tab-button ${activeTab === 'financials' ? 'active' : ''}`}
-          onClick={() => setActiveTab('invoices')}
+          className={`button secondary tab-button ${(activeTab === 'financials' || activeTab === 'invoices') ? 'active' : ''}`}
+          onClick={() => setActiveTab('financials')}
         >
           Financials
         </button>
