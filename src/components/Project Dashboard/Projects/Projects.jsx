@@ -159,7 +159,7 @@ function DashboardProjects({project}){
         </div> */}
       </>
     }
-          <HistoryLog project={project} />
+          {/* <HistoryLog project={project} /> */}
 
       
     </>
