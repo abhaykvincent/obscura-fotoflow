@@ -55,6 +55,7 @@ const StatusPipeline = ({ project, currentView, setView, activeTab, setActiveTab
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+    
   }, []);
 
   // Safe wrapper to format date inside tooltip
@@ -100,7 +101,7 @@ const StatusPipeline = ({ project, currentView, setView, activeTab, setActiveTab
 
         if (criticalEvent) {
           return {
-            status: 'alert',
+            status: 'warning',
             isBlinking: true,
             label: 'Action Required: Crew missing',
             info: `Critical: The shoot on ${formatEventDate(criticalEvent.date)} has no crew assigned!`,

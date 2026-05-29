@@ -18,6 +18,7 @@ import { ProjectCover } from '../../ProjectPageCover/ProjectPageCover';
 import StatusPipeline from '../StatusPipeline/StatusPipeline';
 import { acceptSelectionReset, declineSelectionReset, selectSelectionRequests } from '../../../app/slices/selectionRequestSlice';
 import { selectUserStudio } from '../../../app/slices/authSlice';
+import HistoryLog from './HistoryLog/HistoryLog';
 
 function DashboardProjects({project}){
   const dispatch =useDispatch()
@@ -158,6 +159,7 @@ function DashboardProjects({project}){
         </div> */}
       </>
     }
+          {/* <HistoryLog project={project} /> */}
 
       
     </>
