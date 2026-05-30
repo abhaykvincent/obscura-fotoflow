@@ -29,6 +29,9 @@ const loadingSlice = createSlice({
         setLoadingContext: (state, action) => {
             state.context = action.payload.context;
             state.subcontext = action.payload.subcontext;
+            if (action.payload.celebration !== undefined) {
+                state.celebration = action.payload.celebration;
+            }
         },
     },
 });
