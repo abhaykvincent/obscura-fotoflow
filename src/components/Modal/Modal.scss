@@ -45,7 +45,7 @@ animation-timing-function: ease-out;
 
 &.island{
     grid-template-rows: auto 100%;
-    bottom: calc(50vh);
+    bottom: calc(50vh + 8px*8);
     right: auto;
     left: calc(50vw );
     height: auto;
