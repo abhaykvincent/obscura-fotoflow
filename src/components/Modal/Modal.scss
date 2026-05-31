@@ -333,7 +333,6 @@ animation-timing-function: ease-out;
     }
     .project-validity-options{
     display: flex;
-    flex-wrap: wrap;
     gap: 8px*1;
     margin-top: 0px;
     transition-duration: 0.4s;
@@ -468,7 +467,7 @@ animation-timing-function: ease-out;
     transition-duration: 0.2s;
               }
           label{
-              padding: 8px*1.6 *1.2  8px*1.6 *3;
+              padding: 8px*1.4 *1.2  8px*1.4 *3;
             font-size: 1.3rem;
               color: $gray5-default-light;
               opacity:0.8;
@@ -519,7 +518,6 @@ animation-timing-function: ease-out;
       }
     }
     &.other-templates{
-      width: 8px*64;
       overflow-x: scroll;
         .template-options{
           display: flex;
