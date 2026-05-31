@@ -118,13 +118,27 @@
     border-color: $green-default-dark;
     box-shadow: 0 0 0 3px rgba(84, 161, 52, 0.2);
     background: rgba(0, 0, 0, 0.35);
+    
+    .input-icon-prefix {
+      color: $green-default-light;
+      transform: scale(1.05);
+    }
+  }
+  
+  .input-icon-prefix {
+    padding-left: 14px;
+    color: $gray-accessible-dark;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
   
   .custom-type-input {
     width: 100%;
     border: none !important;
     background: transparent !important;
-    padding: 0.8rem 1rem;
+    padding: 0.8rem 0.6rem;
     padding-right: 6.5rem;
     color: #ffffff;
     font-size: 0.95rem;
@@ -187,11 +201,23 @@
 .suggestions-container {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+  
+  .suggestions-header-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    
+    .suggestions-icon {
+      color: $yellow-default-dark;
+      filter: drop-shadow(0 0 4px rgba(255, 214, 10, 0.4));
+    }
+  }
   
   .suggestions-label {
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
     color: $gray-accessible-dark;
     text-transform: uppercase;
     letter-spacing: 0.05em;
