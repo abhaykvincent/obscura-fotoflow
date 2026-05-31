@@ -28,6 +28,10 @@ const TemplateSelection = ({ projectData, errors, handleInputChange, handleNextS
     }, 50);
   };
 
+  const handleBackToTemplates = () => {
+    handleInputChange({ target: { name: 'type', value: standardTypes[0] || 'Wedding' } });
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && projectData.type.trim()) {
       e.preventDefault();
@@ -44,48 +48,64 @@ const TemplateSelection = ({ projectData, errors, handleInputChange, handleNextS
 
   return (
     <>
-      <div className="form-section stared-templates">
-        <p className="stared-templates-label">Choose a template</p>
-        <div className="project-validity-options template-options">
-          {PROJECT_TYPES.map(({ id, stared, value, label }) => (
-            stared && <div className="radio-button-group" key={id}>
-              <input
-                type="radio"
-                id={id}
-                onClick={() => handleRadioClick(value)}
-                name="type"
-                value={value}
-                checked={projectData.type === value}
-                onChange={handleInputChange}
-              />
-              <label className={id} htmlFor={id}>{label}</label>
+      {!isCustomType ? (
+        <>
+          <div className="form-section stared-templates">
+            <p className="stared-templates-label">Choose a template</p>
+            <div className="project-validity-options template-options">
+              {PROJECT_TYPES.map(({ id, stared, value, label }) => (
+                stared && <div className="radio-button-group" key={id}>
+                  <input
+                    type="radio"
+                    id={id}
+                    onClick={() => handleRadioClick(value)}
+                    name="type"
+                    value={value}
+                    checked={projectData.type === value}
+                    onChange={handleInputChange}
+                  />
+                  <label className={id} htmlFor={id}>{label}</label>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        {errors.type && <div className="error">{errors.type}</div>}
-      </div>
-      <div className="form-section other-templates">
-        <div className="project-validity-options template-options">
-          {PROJECT_TYPES.map(({ id, stared, value, label }) => (
-            !stared && <div className="radio-button-group" key={id}>
-              <input
-                type="radio"
-                id={id}
-                onClick={() => handleRadioClick(value)}
-                name="type"
-                value={value}
-                checked={value === 'Other' ? isCustomType : projectData.type === value}
-                onChange={value === 'Other' ? handleOtherSelect : handleInputChange}
-              />
-              <label htmlFor={id}>{label}</label>
+            {errors.type && <div className="error">{errors.type}</div>}
+          </div>
+          <div className="form-section other-templates">
+            <div className="project-validity-options template-options">
+              {PROJECT_TYPES.map(({ id, stared, value, label }) => (
+                !stared && <div className="radio-button-group" key={id}>
+                  <input
+                    type="radio"
+                    id={id}
+                    onClick={() => handleRadioClick(value)}
+                    name="type"
+                    value={value}
+                    checked={value === 'Other' ? isCustomType : projectData.type === value}
+                    onChange={value === 'Other' ? handleOtherSelect : handleInputChange}
+                  />
+                  <label htmlFor={id}>{label}</label>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        {errors.type && <div className="error">{errors.type}</div>}
-      </div>
-
-      {isCustomType && (
+            {errors.type && <div className="error">{errors.type}</div>}
+          </div>
+        </>
+      ) : (
         <div className="form-section custom-project-type-container animated-fade-in">
+          <div className="custom-input-navigation">
+            <button
+              type="button"
+              className="back-to-templates-btn"
+              onClick={handleBackToTemplates}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              <span>Back to templates</span>
+            </button>
+          </div>
+
           <div className="custom-input-header">
             <label htmlFor="custom-type-input" className="custom-input-label">
               What kind of project are you creating?
