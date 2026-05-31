@@ -4,7 +4,6 @@ export const PROJECT_TYPES = [
     { id: "template-birthday", stared: true, value: "Birthday", label: "Birthday" },
     { id: "template-maternity", stared: false, value: "Maternity", label: "Maternity" },
     { id: "template-newborn", stared: false, value: "Newborn", label: "Newborn" },
-    { id: "template-group", stared: false, value: "Group", label: "Group" },
     { id: "template-travel", stared: false, value: "Travel", label: "Travel" },
     { id: "template-other", stared: false, value: "Other", label: "Other" },
   ];
