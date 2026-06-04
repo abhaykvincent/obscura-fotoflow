@@ -109,7 +109,7 @@
         padding: 8px 8px*2; 
         color: $gray-default-light;
           opacity: 0;
-          animation: fadeInLeft 0.1s ease-out 2.6s;
+          animation: fadeInLeft 0.3s ease-out 3s;
           animation-fill-mode: forwards;
           span{
         color: $green-default-dark;
@@ -146,12 +146,12 @@
         text-shadow: 1px 1px 0px 0px rgb(10, 10, 10);
       }@for $i from 1 through 10 {
         &:nth-child(#{$i}) {
-            $delay: 1.9s + 0.04s * ($i - 1);
+            $delay: 0.65s + (0.04s * ($i - 1));
             animation: fadeInUp 0.2s ease-out $delay;
             animation-fill-mode: forwards;
         }
         &:last-child {
-          animation: fadeInUp 0.2s ease-out 2.5s;
+          animation: fadeInUp 0.2s ease-out 0.75s;
           animation-fill-mode: forwards;
         }
       }
@@ -161,8 +161,8 @@
       font-weight: 200;
       transform: scale(1.3);
       opacity: 0;
-      $delay: 2s + 0.05s * 2;
-      animation: fadeInUp 0.5s ease-out $delay;
+      $delay: 0.65s + 0.07s;
+      animation: fadeInUp 0.21s ease-out $delay;
       animation-fill-mode: forwards;
     }
     
