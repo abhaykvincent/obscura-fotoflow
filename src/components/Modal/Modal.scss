@@ -1449,7 +1449,7 @@ transition-delay: 0.2s;
       
       .modal-footer{
         .actions{
-          display: grid;
+          display: block;
           gap: 8px*0;
           .button{
             width:  calc(100vw - 8px*4);
