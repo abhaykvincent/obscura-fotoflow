@@ -214,7 +214,7 @@
     background: linear-gradient(140deg,#a3de8a 0%,#a9c38b 40%, #c1c1c1 95%,#e3e3e3 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-                animation: fadeInLeft 0.3s ease-in 0.3s forwards;
+                animation: fadeInLeft 0.25s ease-in 0.4s forwards;
 
         }
     }
@@ -277,7 +277,7 @@
         margin-left: 0;
         opacity: 0;
         transform: translateY(2px);
-        animation: fadeInUp 0.3s ease-out 1s forwards;
+        animation: fadeInUp 0.3s ease-out 2.3s forwards;
     }
 }
 .activate-fotoflow-whatsapp{
@@ -347,7 +347,7 @@
         transform: translateY(0px);
         opacity: 0;
         margin-left: 0;
-        animation: fadeInUp 0.3s ease-out 1.05s;
+        animation: fadeInUp 0.3s ease-out 1.8s;
         animation-fill-mode: forwards;
         &:hover{
             transition-delay: 0.2s;
