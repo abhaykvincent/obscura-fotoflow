@@ -277,7 +277,7 @@
         margin-left: 0;
         opacity: 0;
         transform: translateY(2px);
-        animation: fadeInUp 0.3s ease-out 2.3s forwards;
+        animation: fadeInLeft 0.3s ease-out 1.4s forwards;
     }
 }
 .activate-fotoflow-whatsapp{
@@ -347,7 +347,7 @@
         transform: translateY(0px);
         opacity: 0;
         margin-left: 0;
-        animation: fadeInUp 0.3s ease-out 1.8s;
+        animation: fadeInUp 0.3s ease-out 1.7s;
         animation-fill-mode: forwards;
         &:hover{
             transition-delay: 0.2s;
