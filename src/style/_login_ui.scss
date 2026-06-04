@@ -111,11 +111,22 @@
           opacity: 0;
           animation: fadeInLeft 0.3s ease-out 3s;
           animation-fill-mode: forwards;
-          span{
-        color: $green-default-dark;
-        margin-left:4px;
-
+          span.green-label-glow{
+            color: $green-default-dark;
+            margin-left:4px;
+            display: inline-block;
+            animation: green-pulse-glow 0.5s forwards 3.5s ease-in-out;
           }
+      }
+      @keyframes green-pulse-glow {
+        0%{
+            color: $green-default-dark;
+          text-shadow: 0 0 0px rgba($green-default-dark, 0);
+        }
+        100% {
+            color: $green-default-light;
+          text-shadow: 0 0 10px rgba($green-default-dark, 0.4), 0 0 20px rgba($green-default-dark, 0.2);
+        }
       }
       .cta-postlabel{
         color: $gray-default-dark;
