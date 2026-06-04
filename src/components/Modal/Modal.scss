@@ -529,6 +529,12 @@ animation-timing-function: ease-out;
           }
         }
     }
+    &.custom-project-type{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 8px*2;
+    }
     .error{
     display: grid;
     width: 100%;

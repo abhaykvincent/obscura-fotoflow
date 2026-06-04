@@ -1,4 +1,4 @@
-export const validateForm = (projectData, setErrors, nameInputRef, typeInputRef) => {
+export const validateForm = (projectData, setErrors, nameInputRef, name2InputRef, typeInputRef) => {
     const newErrors = {};
     if (!projectData.name.trim()) newErrors.name = "Project name is required";
     // if project data is wedding check bride name
@@ -7,6 +7,7 @@ export const validateForm = (projectData, setErrors, nameInputRef, typeInputRef)
     setErrors(newErrors);
   
     if (newErrors.name && nameInputRef.current) nameInputRef.current.focus();
+    else if (newErrors.name2 && name2InputRef.current) name2InputRef.current.focus();
     else if (newErrors.type && typeInputRef.current) typeInputRef.current.focus();
   
     return Object.keys(newErrors).length === 0;
