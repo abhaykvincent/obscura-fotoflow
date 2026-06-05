@@ -1128,6 +1128,7 @@ transition-delay: 0.2s;
       
       .form-section{
         display: grid;
+      margin:0  8px*4 ;
         .field {
           grid-template-columns:  8px*16 8px*35;
         }
@@ -1146,7 +1147,7 @@ transition-delay: 0.2s;
       .modal{
         .form-section .project-validity-options.template-options{
           display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
+          grid-template-columns: 1fr;
           gap: 8px*2;
           .radio-button-group label{
             justify-content: center;
