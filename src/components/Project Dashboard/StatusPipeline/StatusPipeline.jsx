@@ -438,7 +438,7 @@ const StatusPipeline = ({ project, currentView, setView, activeTab, setActiveTab
 
   return (
     <div className="status-pipeline-container" ref={containerRef}>
-      <div className="status-pipeline-wrapper" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+      <div className="status-pipeline-wrapper">
         <div className="status-pipeline">
           {STAGES.map(renderTab)}
         </div>

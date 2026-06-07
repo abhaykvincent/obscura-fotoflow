@@ -5,18 +5,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 
 // Redux
-import { deleteProject, selectProjects, selectProjectsStatus, updateProjectName, restoreProject } from '../../app/slices/projectsSlice';
-import { closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
+import { deleteProject, selectProjects, selectProjectsStatus, restoreProject } from '../../app/slices/projectsSlice';
+import { openModal, selectModal } from '../../app/slices/modalSlice';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
-import { showAlert } from '../../app/slices/alertSlice';
 
 // Firebase
-import { updateProjectLastOpenedInFirestore, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
+import { updateProjectLastOpenedInFirestore } from '../../firebase/functions/firestore';
 
 // Components
 import DashboardProjects from '../../components/Project Dashboard/Projects/Projects';
-import Refresh from '../../components/Refresh/Refresh';
-import { ProjectCover } from '../../components/ProjectPageCover/ProjectPageCover';
 
 // Modals
 import ShareGallery from '../../components/Modal/ShareGallery';
@@ -25,14 +22,12 @@ import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 import AddExpenseModal from '../../components/Modal/AddExpense';
 import AddPaymentModal from '../../components/Modal/AddPayment';
 import AddBudgetModal from '../../components/Modal/AddBudget';
-import SidePanel from '../../components/Project/SidePanel/SidePanel'
 
 import './Project.scss';
 import './ArchiveBanner.scss';
 import { ProjectPageCoverImages } from '../../components/ProjectPageCover/ProjectPageCoverImages';
-import { isDeveloper, isProduction } from '../../analytics/utils';
+import { isProduction } from '../../analytics/utils';
 import { selectStudio } from '../../app/slices/studioSlice';
-import { ChartNoAxesColumnDecreasing } from 'lucide-react';
 
 export default function Project() {
   const { id } = useParams();
@@ -80,7 +75,7 @@ export default function Project() {
       // Cleanup the timeout if the component unmounts or dependencies change
       return () => clearTimeout(timer);
     }
-  }, [project]);
+  }, [project, dispatch]);
 
   useEffect(() => {
     if (projectsStatus === 'succeeded' && !selectedProject) {
@@ -142,7 +137,6 @@ export default function Project() {
 
   const isArchived = project?.status === 'archive' || project?.storage?.status === 'archive';
   const isExpired = project?.status === 'expired';
-  const archiveDate = project?.storage?.storageHistory?.find(h => h.status === 'archive')?.dateMoved;
   
   if (!project) return null;
 
@@ -194,7 +188,9 @@ export default function Project() {
             </div>
           </div>
         ) : (
-          <ProjectPageCoverImages project={project} />
+          <>
+         {/*  <ProjectPageCoverImages project={project} /> */}
+          </>
         )}
         <div className={`project-dashboard ${isExpired ? 'locked' : ''}`}>
           <DashboardProjects project={project} />
@@ -225,13 +221,22 @@ export default function Project() {
                       <DropdownMenuTrigger>
                         <div className="icon options" />
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuItem onSelect={() => !isArchived && !isExpired && dispatch(openModal('createCollection'))} disabled={isArchived || isExpired}>
-                          <div className="icon-show add" /> New Gallery
+                      <DropdownMenuContent className="dropdown-menu-content" align="end" sideOffset={4}>
+                        <DropdownMenuItem
+                          onSelect={() => !isArchived && !isExpired && dispatch(openModal('createCollection'))}
+                          disabled={isArchived || isExpired}
+                          className="dropdown-menu-item"
+                        >
+                          <div className="icon-show add" />
+                          <span>New Gallery</span>
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onSelect={() => dispatch(openModal('confirmDeleteproject'))}>
-                          <div className="icon-show delete" /> Delete Project
+                        <DropdownMenuSeparator className="dropdown-menu-separator" />
+                        <DropdownMenuItem
+                          onSelect={() => dispatch(openModal('confirmDeleteproject'))}
+                          className="dropdown-menu-item"
+                        >
+                          <div className="icon-show delete" />
+                          <span>Delete Project</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

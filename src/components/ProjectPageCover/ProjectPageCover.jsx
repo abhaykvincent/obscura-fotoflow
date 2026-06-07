@@ -121,172 +121,146 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
         <div
             className={`project-page-cover project-cover ${isSetFocusButton ? "focus-button-active" : ""} ${project?.projectCover || project?.projectCover.length > 0 ? "cover-show" : "cover-hide"}`}
         >
-            {project?.projectCover ? <div className="project-cover-image" >
-                <img  
-                    src={project?.projectCover.replace('/o/thumb%2F', '/o/web%2F').replace('-thumb', '')} 
-                    loading="lazy"
-                    style={{ height: '100%', width: 'auto', objectFit: 'cover' }} 
-                />
-            </div>:
-            <div className="project-cover-image no-cover-image" >
-                
-            </div>
-        }
+            {project?.projectCover ? (
+                <div className="project-cover-image">
+                    <img  
+                        src={project?.projectCover.replace('/o/thumb%2F', '/o/web%2F').replace('-thumb', '')} 
+                        loading="lazy"
+                        style={{ height: '100%', width: 'auto', objectFit: 'cover' }} 
+                    />
+                </div>
+            ) : (
+                <div className="project-cover-image no-cover-image" />
+            )}
 
-            {
             <div className="cover-footer">
-                <div className="static-tools bottom">
-                    {/* <div className="cover-info project-views-count">
-                        <div className="icon-show view"></div>
-                        <p>1.6K <span>Views</span></p>
-                    </div> */}
-                    <div className="client">
-                        <div className="project-name-wrapper">
-
-                        <div className="project-name-editor">
-                            { isEditing ? (
-                                <div className="editable-data ">
-                                    <input
-                                    type="text"
-                                    value={newName}
-                                    onChange={(e) => setNewName(e.target.value)}
-                                    />
-                                    <div className="input-edit-actions">
-                                        <button className={`${newName === project.name ? 'disabled' : ''} button primary icon icon-only check`} onClick={handleSave}></button>
-                                        <button className="button secondary  icon icon-only close" onClick={handleCancel}></button>
-                                    </div>
-                                </div>
-                            ) 
-                            : (
-                                <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
-                            )
-                            }
-                            <div className="edit-pen" onClick={handleNameDoubleClick} ></div>
-                        </div>
-                        <div className="project-tags">
-
-                        <div className="tags">
-                            {!isEditing &&<div className="tag type">{project?.type}</div>}
-                            {/* <div className="tag">Hindu</div> */}
-                        </div>
-                        </div>
-                        </div>
-
-
-                        <div className="link-pin">
-                            <div className="link-pin-container">
-                            <div className="link-pin">
-                            <div className='link' >
-                            
-                                <div className="link-container">
-                                    <a className='linkToGallery' href={getGalleryURL('smart-gallery',currentStudio?.domain,project?.id)} target='_blank' > 
-                                    ...{getGalleryURL('smart-gallery',currentStudio?.domain,project?.id).slice(-16)}
-                                    </a>
-                                </div>
-                                </div>
-                                <div className="button primary outline text-only  icon copy" onClick={() => {
-                                     navigator.clipboard.writeText(getGalleryURL('smart-gallery',currentStudio?.domain,project?.id));
-                                     dispatch(showAlert({ type: "success", message: "Link copied to clipboard!" }));
-                                }}></div>
-
+                {/* 1. Project Title & Tag */}
+                <div className="project-name-editor">
+                    {isEditing ? (
+                        <div className="editable-data">
+                            <input
+                                type="text"
+                                value={newName}
+                                onChange={(e) => setNewName(e.target.value)}
+                            />
+                            <div className="input-edit-actions">
+                                <button 
+                                    className={`${newName === project.name ? 'disabled' : ''} button primary icon icon-only check`} 
+                                    onClick={handleSave}
+                                />
+                                <button 
+                                    className="button secondary icon icon-only close" 
+                                    onClick={handleCancel}
+                                />
                             </div>
-                                {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
-
                         </div>
+                    ) : (
+                        <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
+                    )}
+                    <div className="edit-pen" onClick={handleNameDoubleClick} />
+                    
+                    {!isEditing && (
+                        <div className="tags">
+                            <div className="tag type">{project?.type}</div>
+                        </div>
+                    )}
+                </div>
+
+                <div className="static-tools bottom">
+                    <div className="client">
+                        {/* 2. Gallery URL Sharing & PIN */}
+                        <div className="link-pin-container">
+                            <div className="link-pin">
+                                <a 
+                                    className="linkToGallery" 
+                                    href={getGalleryURL('smart-gallery', currentStudio?.domain, project?.id)} 
+                                    target="_blank" 
+                                    rel="noreferrer"
+                                > 
+                                    ...{getGalleryURL('smart-gallery', currentStudio?.domain, project?.id).slice(-16)}
+                                </a>
+                                <div 
+                                    className="button primary outline text-only icon copy" 
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(getGalleryURL('smart-gallery', currentStudio?.domain, project?.id));
+                                        dispatch(showAlert({ type: "success", message: "Link copied to clipboard!" }));
+                                    }}
+                                />
+                            </div>
+                            {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
                         </div> 
 
-                        {
-                            project.pin&&
+                        {/* 3. Project Statistics */}
+                        {project.pin && (
                             <div className="bottom-right">
-                            <div className="cover-info project-size">
-                            <div className="icon-show storage"></div>
-                            <p>{ convertMegabytes(project?.totalFileSize)} <span></span> </p>
+                                <div className="cover-info project-size">
+                                    <div className="icon-show storage"></div>
+                                    <p>{convertMegabytes(project?.totalFileSize)}</p>
+                                </div>
+                                <div className="cover-info project-size">
+                                    <div className="icon-show image"></div>
+                                    <p>
+                                        {project?.uploadedFilesCount} <span>Photos</span>
+                                    </p>
+                                </div>
+                                <div className="cover-info project-size">
+                                    <div className="icon-show folder"></div>
+                                    <p>
+                                        {project?.collections.length} <span>Galleries</span>
+                                    </p>
+                                </div>
+                                {project.status === 'selected' && (
+                                    <div className="cover-info project-size">
+                                        <div className="icon-show selected"></div>
+                                        <p>
+                                            {project?.selectedFilesCount} <span>Selected</span>
+                                        </p>
+                                    </div>
+                                )}
                             </div>
-                            <div className="cover-info project-size">
-                            <div className="icon-show image"></div>
-                            <p>
-                                {project?.uploadedFilesCount} <span>Photos  </span>
-                            </p>
-                            </div>
-                            <div className="cover-info project-size">
-                            <div className="icon-show folder"></div>
-                            <p>
-                                {project?.collections.length} <span>Galleries</span>
-                            </p>
-                            </div>
-                            {project.status === 'selected' && (
-                            <div className="cover-info project-size">
-                                <div className="icon-show selected"></div>
-                                <p>
-                                    {project?.selectedFilesCount} <span>Selected</span>
-                                </p>
-                            </div>
-                            )}
-                            </div>
-                        }
+                        )}
                     </div>
 
-                        <div className="action-buttons">
-
-                            <ProjectStatus project={project} />
-
+                    {/* 4. Action Buttons & System Metadata */}
+                    <div className="action-buttons">
+                        <ProjectStatus project={project} />
                         
-                        </div>
-                        
-                        
-                    
-                </div>
-                
-            </div>}
-            {project.pin&&
-            <div className="static-tools top">
-                    <div className="cover-info project-expiry">
-                    <div className="icon-show archive"></div>
-                        <p>Expires 
-                            <span> in </span> 
-                            {
-                                project?.createdAt ? 
-                                Math.ceil(((new Date(project?.createdAt).getTime() + 360 * 24 * 60 * 60 * 1000) - Date.now()) / (1000 * 60 * 60 * 24))
-                                : 0
-                            } Days</p>
-
+                        {project.pin && (
+                            <>
+                                <div className="cover-info project-expiry">
+                                    <div className="icon-show archive"></div>
+                                    <p>
+                                        Expires <span>in</span>{' '}
+                                        {project?.createdAt 
+                                            ? Math.ceil(((new Date(project.createdAt).getTime() + 360 * 24 * 60 * 60 * 1000) - Date.now()) / (1000 * 60 * 60 * 24))
+                                            : 0
+                                        } Days
+                                    </p>
+                                </div>
+                                <div className="project-metadata">
+                                    <p>Project created on {formatDateStyle02(project?.createdAt)}</p>
+                                </div>
+                            </>
+                        )}
                     </div>
+                </div>
+            </div>
 
-                            <div className="project-metadata">
-                            {/* <p>Project created on Jan 12, 2025</p> */}
-                            <p>Project created on {formatDateStyle02(project?.createdAt)}</p>
-                            </div>
-                </div>
-            }
-            {
-            !isSetFocusButton && project.pin? 
-                <div className="cover-tools">
-                    {/* <div className="button transparent-button secondary icon image">
-                        <label htmlFor={`change-cover-${project.id}`} style={{ cursor: "pointer" }}>
-                            Change Cover
-                        </label>
-                        <input
-                            id={`change-cover-${project.id}`}
-                            type="file"
-                            accept="image/*"
-                            style={{ display: "none" }}
-                            onChange={handleCoverChange}
-                        />
-                    </div> */}
-                </div>
-                :
-                <div className="cover-tools">
-                </div>
-            }
+            {!isSetFocusButton && project.pin ? (
+                <div className="cover-tools" />
+            ) : (
+                <div className="cover-tools" />
+            )}
+
             {isSetFocusButton && project?.projectCover && (
                 <div
                     className="focus-indicator"
                     style={{
                         left: `${focusPointLocal?.x * 100}%`,
-                        top: `${focusPointLocal?.y * 600}px`, // Position relative to the container's height
-                        transform: "translate(-50%, -50%)", // Center the indicator at the focus point
+                        top: `${focusPointLocal?.y * 600}px`,
+                        transform: "translate(-50%, -50%)",
                     }}
-                ></div>
+                />
             )}
         </div>
     );

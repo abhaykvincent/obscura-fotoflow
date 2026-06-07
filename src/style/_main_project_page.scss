@@ -335,20 +335,21 @@
       .project-cover{
         position: relative;
         width: calc(100vw - 8px*14);
-        margin-top: -8px*22;
+        margin-top: -8px*0;
         display: flex;
         opacity: 01;
         grid-template-columns: auto auto;
         padding: 0;
         padding-left: 8px*3;
         margin-bottom: 8px*3;
+        margin-top: 8px;
         gap: 8px;
         background-color: rgba(255, 0, 0, 0) !important;
         box-shadow: none;
         .cover-footer{
           position: relative;
-          height: 8px*22;
-          margin-top: 8px*11;
+          height: 100%;
+          margin-top: 8px*0;
         box-shadow: none;
           background: none;
           backdrop-filter: none;
@@ -366,7 +367,6 @@
           padding-top: 8px*2;
           padding-bottom: 8px*2;
           padding-left: 8px*0;
-          padding-right: 8px*0;
 
           margin-left: 8px*2;
 
