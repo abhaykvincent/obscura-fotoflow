@@ -221,31 +221,30 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                         )}
                     </div>
 
-                    {/* 4. Action Buttons */}
+                    {/* 4. Action Buttons & System Metadata */}
                     <div className="action-buttons">
                         <ProjectStatus project={project} />
+                        
+                        {project.pin && (
+                            <>
+                                <div className="cover-info project-expiry">
+                                    <div className="icon-show archive"></div>
+                                    <p>
+                                        Expires <span>in</span>{' '}
+                                        {project?.createdAt 
+                                            ? Math.ceil(((new Date(project.createdAt).getTime() + 360 * 24 * 60 * 60 * 1000) - Date.now()) / (1000 * 60 * 60 * 24))
+                                            : 0
+                                        } Days
+                                    </p>
+                                </div>
+                                <div className="project-metadata">
+                                    <p>Project created on {formatDateStyle02(project?.createdAt)}</p>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
-
-            {/* 5. Expiry Status & Date Metadata */}
-            {project.pin && (
-                <div className="static-tools top">
-                    <div className="cover-info project-expiry">
-                        <div className="icon-show archive"></div>
-                        <p>
-                            Expires <span>in</span>{' '}
-                            {project?.createdAt 
-                                ? Math.ceil(((new Date(project.createdAt).getTime() + 360 * 24 * 60 * 60 * 1000) - Date.now()) / (1000 * 60 * 60 * 24))
-                                : 0
-                            } Days
-                        </p>
-                    </div>
-                    <div className="project-metadata">
-                        <p>Project created on {formatDateStyle02(project?.createdAt)}</p>
-                    </div>
-                </div>
-            )}
 
             {!isSetFocusButton && project.pin ? (
                 <div className="cover-tools" />
