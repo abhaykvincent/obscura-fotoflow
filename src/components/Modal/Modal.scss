@@ -808,9 +808,10 @@ animation-timing-function: ease-out;
           background: conic-gradient(from var(--google-angle), #4285F4, #EA4335, #FBBC05, #34A853, #4285F4);
           -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
                   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            animation: spin-google-border 3s linear infinite;
           -webkit-mask-composite: xor;
                   mask-composite: exclude;
-          opacity: 0;
+          opacity: 1;
           transition: opacity 0.3s ease;
           pointer-events: none;
           z-index: 2;
@@ -822,6 +823,7 @@ animation-timing-function: ease-out;
           inset: -1px;
           border-radius: inherit;
           background: conic-gradient(from var(--google-angle), #4285F4, #EA4335, #FBBC05, #34A853, #4285F4);
+            animation: spin-google-border 3s linear infinite;
           filter: blur(15px);
           opacity: 0;
           transition: opacity 0.3s ease;
@@ -834,12 +836,10 @@ animation-timing-function: ease-out;
           
           &::before {
             opacity: 1;
-            animation: spin-google-border 3s linear infinite;
           }
           
           &::after {
             opacity: 0.6;
-            animation: spin-google-border 3s linear infinite;
           }
         } 
         @keyframes primary-action-signin {

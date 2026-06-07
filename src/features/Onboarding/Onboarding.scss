@@ -1,4 +1,17 @@
 @import '../../style/_variables.scss';;
+
+@property --google-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes spin-google-border {
+  to {
+    --google-angle: 360deg;
+  }
+}
+
 .App {
     .loading-container{
         display: flex;
@@ -327,6 +340,8 @@
 }
 
     .App .button.google-login-button{
+        position: relative;
+        z-index: 1;
         margin: 0;
         margin-right: 8px*2;
         height: 8px*6;
@@ -337,8 +352,8 @@
         padding: 8px*3 8px*3;
         padding-right: 8px*2;
         gap: 8px*2;
-        background: $dark-2;
-        border: 1px solid $gray-accessible-dark;
+        background: $dark-3;
+        border: 1px solid $gray2-default-light;
         color: $gray4-default-light;
         font-size: 1.1rem;
         font-weight: 200;
@@ -349,10 +364,52 @@
         margin-left: 0;
         animation: fadeInUp 0.3s ease-out 1.7s;
         animation-fill-mode: forwards;
+
+        &::before {
+          content: '';
+          position: absolute;
+          inset: -1px;
+          border-radius: inherit;
+          padding: 1.5px;
+          background: conic-gradient(from var(--google-angle), #4285F4, #EA4335, #FBBC05, #34A853, #4285F4);
+          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor;
+                  mask-composite: exclude;
+          opacity: 1;
+          transition: opacity 0.3s ease;
+          pointer-events: none;
+          z-index: 2;
+        }
+
+        &::after {
+          content: '';
+          position: absolute;
+          inset: -1px;
+          border-radius: inherit;
+          background: conic-gradient(from var(--google-angle), #4285F4, #EA4335, #FBBC05, #34A853, #4285F4);
+          filter: blur(15px);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          pointer-events: none;
+          z-index: -1;
+        }
+
         &:hover{
-            transition-delay: 0.2s;
-            border: 1px solid $gray5-accessible-light;
-          } 
+          border-color: transparent !important;
+          transition-delay: 0s;
+          
+          &::before {
+            opacity: 1;
+            animation: spin-google-border 3s linear infinite;
+          }
+          
+          &::after {
+            opacity: 0.5;
+            animation: spin-google-border 3s linear infinite;
+          }
+        }
+
         &.error-shake{
             animation: shake-button 0.4s;
             animation-iteration-count: 2;
@@ -373,24 +430,15 @@
 
             }
         }
-          
-          &.google{
-            background-color: $dark-3;
-            border: 1px solid $gray2-default-light;
-            &:hover{
-            border: 1px solid $gray6-accessible-light;
-          } 
 
-          }
-
-          .google-logo{
-            width: 8px*3;
-            height: 8px*3;
-            border: none;
-            background-image: url('../../assets/img/google-logo.png');
-            background-position: center center;
-            background-size: 110%;
-          }
+        .google-logo{
+          width: 8px*3;
+          height: 8px*3;
+          border: none;
+          background-image: url('../../assets/img/google-logo.png');
+          background-position: center center;
+          background-size: 110%;
+        }
     }
 
 .unavaillable-referral-code{
@@ -1027,7 +1075,20 @@
         
     }
 }
-
+@keyframes shake-button {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(10px);
+  }
+  75% {
+    transform: translateX(-12px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
 @media only screen and (max-width: 1230px) {
     .App .onboarding-container{
         padding-left: 8px*8;
