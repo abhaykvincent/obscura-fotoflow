@@ -153,32 +153,37 @@ export default function Galleries({}) {
             <DropdownMenuTrigger >
               <div className="icon options"></div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
+            <DropdownMenuContent className="dropdown-menu-content" align="end" sideOffset={4}>
                 <DropdownMenuItem
-                onSelect={() => {
-                  if (!isArchived && !isExpired) {
-                    dispatch(openModal('createCollection'));
-                  }
-                }}
-                disabled={isArchived || isExpired}
+                  onSelect={() => {
+                    if (!isArchived && !isExpired) {
+                      dispatch(openModal('createCollection'));
+                    }
+                  }}
+                  disabled={isArchived || isExpired}
+                  className="dropdown-menu-item"
                 >
                   <div className="icon-show add"></div>
-                  New Gallery</DropdownMenuItem>
-                <DropdownMenuSeparator />
+                  <span>New Gallery</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="dropdown-menu-separator" />
                 <DropdownMenuItem
                   onSelect={() => {
                     // Your action for Delete
                     dispatch(openModal('confirmDeletecollection'));
                   }}
+                  className="dropdown-menu-item"
                 >
                   <div className="icon-show delete"></div>
-                  Delete Gallery
+                  <span>Delete Gallery</span>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
-                  onSelect={() => { handleDoubleClick()}}>
+                  onSelect={() => { handleDoubleClick()}}
+                  className="dropdown-menu-item"
+                >
                   <div className="icon-show edit"></div>
-                  Edit Gallery name
+                  <span>Edit Gallery name</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
