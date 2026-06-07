@@ -376,7 +376,7 @@
                   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
           -webkit-mask-composite: xor;
                   mask-composite: exclude;
-          opacity: 0;
+          opacity: 1;
           transition: opacity 0.3s ease;
           pointer-events: none;
           z-index: 2;
@@ -405,7 +405,7 @@
           }
           
           &::after {
-            opacity: 0.6;
+            opacity: 0.5;
             animation: spin-google-border 3s linear infinite;
           }
         }
@@ -1075,7 +1075,20 @@
         
     }
 }
-
+@keyframes shake-button {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(10px);
+  }
+  75% {
+    transform: translateX(-12px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
 @media only screen and (max-width: 1230px) {
     .App .onboarding-container{
         padding-left: 8px*8;
