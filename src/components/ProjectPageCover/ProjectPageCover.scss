@@ -24,7 +24,6 @@
                 align-items: flex-end;
                 width: 100%;
                 padding: 8px 8px*2;
-                //background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0) 100%);
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
                 
                 .client {
@@ -79,7 +78,7 @@
                     display: flex;
                     align-items: center;
                     gap: 12px;
-                    margin-top: 8px;
+                    margin-top: 4px;
                     
                     .link-pin {
                         display: flex;
@@ -123,11 +122,58 @@
                     }
                 }
 
+                .bottom-right {
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                    margin-top: 4px;
+
+                    .cover-info {
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        background: rgba(255, 255, 255, 0.04);
+                        border: 1px solid rgba(255, 255, 255, 0.08);
+                        border-radius: 20px;
+                        padding: 6px 14px;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        backdrop-filter: blur(8px);
+
+                        p {
+                            margin: 0;
+                            font-size: 0.85rem;
+                            font-weight: 500;
+                            color: rgba(255, 255, 255, 0.8);
+                            opacity: 1;
+                            text-shadow: none;
+
+                            span {
+                                color: rgba(255, 255, 255, 0.5);
+                            }
+                        }
+
+                        .icon-show {
+                            opacity: 0.8;
+                            transition: transform 0.3s ease;
+                        }
+
+                        &:hover {
+                            background: rgba(255, 255, 255, 0.08);
+                            border-color: rgba(255, 255, 255, 0.16);
+                            transform: translateY(-2px);
+
+                            .icon-show {
+                                transform: scale(1.1);
+                                opacity: 1;
+                            }
+                        }
+                    }
+                }
+
                 .action-buttons {
                     display: flex;
                     align-items: center;
                     gap: 20px;
-
                 }
             }
         }
