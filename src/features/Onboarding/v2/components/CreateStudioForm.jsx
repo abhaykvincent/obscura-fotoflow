@@ -25,8 +25,13 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
         });
     };
 
+    const isStudioFormValid = formData.studioName.length > 3 && formData.studioDomain.length > 3 && isDomainAvailable;
+    const isAllSetFormValid = formData.privacyPolicyAgreed;
+    const isCreateDisabled = disabled || !isStudioFormValid || !isAllSetFormValid;
+
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (isCreateDisabled) return;
         if (validateStudioForm() && validateAllSetForm()) {
             dispatch(showLoading({context:'Creating your studio...', subcontext:''}));
             onNext();
@@ -117,7 +122,7 @@ const CreateStudioForm = ({ user, formData, studioName,updateFormData, onNext, e
                 {(errors.privacyPolicyAgreed ) && <div className={`error-container privacyPolicy-error ${formData.privacyPolicyAgreed  && 'hide-error'}`}>{errors.privacyPolicyAgreed}</div>}
                 
 
-                <div className={`button primary large create-studio-button ${disabled ? 'disabled' : ''} ${isDomainAvailable && !errors.studioName  ? 'active' : ''} `} onClick={handleSubmit}>
+                <div className={`button primary large create-studio-button ${isCreateDisabled ? 'disabled' : 'active'} `} onClick={isCreateDisabled ? null : handleSubmit}>
                     Create Studio
                 </div>
             </form>

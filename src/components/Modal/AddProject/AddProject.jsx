@@ -94,7 +94,7 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
     dispatch(showLoading({
       context:`Creating ${projectData.type} project`,
       subcontext:`${projectData.name} `,
-      celebration: isFirstProject
+      celebration: false
     }));
     onClose();
 
@@ -109,9 +109,14 @@ function AddProjectModal({ isSubProject = false, parentProjectId = null }) {
       const response = await dispatch(action);
       const payload = response.payload;
 
-      dispatch(setLoadingContext({ context: `${projectType} created successfully!`, subcontext: "" }));
+      dispatch(setLoadingContext({ 
+        context: `${projectType} created successfully!`, 
+        subcontext: "",
+        celebration: isFirstProject
+      }));
       
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Stay on page for a second
+      const successDelay = isFirstProject ? 3500 : 1000;
+      await new Promise(resolve => setTimeout(resolve, successDelay)); // Stay on page for celebration or a second
 
       dispatchNotification(payload, user);
       dispatch(showAlert({ type: "success", message: `${projectType} created successfully!` }));

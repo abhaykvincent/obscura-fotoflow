@@ -45,7 +45,7 @@ const LoadingScreen = () => {
                         colors: ['#54a134', '#66b346', '#336c1b', '#ffffff']
                     }));
                 }, 150);
-            }, 1500); // 1.5s delay before confetti starts
+            }, 150); // 150ms delay before confetti starts
 
             return () => {
                 clearInterval(interval);

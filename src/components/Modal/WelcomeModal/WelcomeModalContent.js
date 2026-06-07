@@ -31,7 +31,7 @@ export const welcomeScreens = [
     ),
   },
   {
-    title: <>Design your <span className='iconic-gradient'>Galleries</span>.</>,
+    title: <>Share your <span className='iconic-gradient'>Galleries</span>.</>,
     body: (
       <>
         <p>

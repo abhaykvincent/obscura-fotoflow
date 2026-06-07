@@ -82,3 +82,5 @@ coverage/
 .env.development
 
 functions/index.html
+
+firestore-data/2026-06-07T07:41:39_81053/

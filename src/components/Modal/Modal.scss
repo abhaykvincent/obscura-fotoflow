@@ -45,7 +45,7 @@ animation-timing-function: ease-out;
 
 &.island{
     grid-template-rows: auto 100%;
-    bottom: calc(50vh);
+    bottom: calc(50vh + 8px*8);
     right: auto;
     left: calc(50vw );
     height: auto;
@@ -333,7 +333,6 @@ animation-timing-function: ease-out;
     }
     .project-validity-options{
     display: flex;
-    flex-wrap: wrap;
     gap: 8px*1;
     margin-top: 0px;
     transition-duration: 0.4s;
@@ -468,7 +467,7 @@ animation-timing-function: ease-out;
     transition-duration: 0.2s;
               }
           label{
-              padding: 8px*1.6 *1.2  8px*1.6 *3;
+              padding: 8px*1.4 *1.2  8px*1.4 *3;
             font-size: 1.3rem;
               color: $gray5-default-light;
               opacity:0.8;
@@ -519,7 +518,6 @@ animation-timing-function: ease-out;
       }
     }
     &.other-templates{
-      width: 8px*64;
       overflow-x: scroll;
         .template-options{
           display: flex;
@@ -530,6 +528,12 @@ animation-timing-function: ease-out;
           box-shadow: 1px 1px 0 1px rgba(0, 0, 0, 0.1);
           }
         }
+    }
+    &.custom-project-type{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 8px*2;
     }
     .error{
     display: grid;
@@ -686,7 +690,7 @@ animation-timing-function: ease-out;
     .login-title{
     color: $gray-default-dark;
     opacity: 0;
-    animation: fadeInUp 0.3s ease-out 0.55s;
+    animation: fadeInUp 0.2s ease-out 0.55s;
     animation-fill-mode: forwards;
     span{
         color: $gray4-default-dark;
@@ -704,7 +708,7 @@ animation-timing-function: ease-out;
     line-height: 1rem;
     font-weight: 200;
     opacity: 0;
-    animation: fadeInUp 0.2s ease-in 0.7s;
+    animation: fadeInUp 0.2s ease-in 0.65s;
     animation-fill-mode: forwards;
     .green-label{
         color: $green-default-dark;
@@ -721,7 +725,7 @@ animation-timing-function: ease-out;
     margin-bottom: -8px*0.2;
     margin-left: 8px;
     opacity: 0;
-    animation: fadeInUp 0.3s ease-in 0.6s;
+    animation: fadeInUp 0.3s ease-out 0.6s;
     animation-fill-mode: forwards;
     text-shadow: 1px 1px 1px black;
     }
@@ -776,7 +780,7 @@ animation-timing-function: ease-out;
         border-right: 1px solid #49723fec;
         border-bottom: 1px solid #1f2d1cec;
         opacity: 0;
-        animation: primary-action-signin  0.35s ease-in 1s;
+        animation: primary-action-signin  0.4s ease-in 1.15s;
         animation-fill-mode: forwards;
         text-shadow: 1px 1px 3px black;
         &:hover{
@@ -785,7 +789,7 @@ animation-timing-function: ease-out;
         @keyframes primary-action-signin {
             0% {
               opacity: 0;
-              transform: translateY(2px);
+              transform: translateY(8px*3);
               box-shadow:
                 
                   2px 4px 4px rgba(0, 0, 0, 0.1);  
@@ -810,7 +814,7 @@ animation-timing-function: ease-out;
 
         border: 1px solid $gray5-accessible-dark;
         transform: scale(0.98);
-        animation: fadeInUp 0.35s ease-in 0.9s;
+        animation: fadeInUp 0.35s ease-in 1.05s;
         animation-fill-mode: forwards;
 
         box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.0);
@@ -870,7 +874,7 @@ animation-timing-function: ease-out;
         margin-top: 8px*1;
         margin-bottom: 8px*1;
         opacity: 0;
-        animation: fadeInLeft 0.25s ease-out 1.7s;
+        animation: fadeInLeft 0.2s ease-out 2.95s;
         animation-fill-mode: forwards;
         p{
         }
@@ -1124,6 +1128,7 @@ transition-delay: 0.2s;
       
       .form-section{
         display: grid;
+      margin:0  8px*4 ;
         .field {
           grid-template-columns:  8px*16 8px*35;
         }
@@ -1142,7 +1147,7 @@ transition-delay: 0.2s;
       .modal{
         .form-section .project-validity-options.template-options{
           display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
+          grid-template-columns: 1fr;
           gap: 8px*2;
           .radio-button-group label{
             justify-content: center;
@@ -1445,7 +1450,7 @@ transition-delay: 0.2s;
       
       .modal-footer{
         .actions{
-          display: grid;
+          display: block;
           gap: 8px*0;
           .button{
             width:  calc(100vw - 8px*4);
@@ -1488,7 +1493,7 @@ transition-delay: 0.2s;
       .button{
         gap:8px*0.5;
         font-size: 0.9rem;
-        width: calc(100vw - 8px*4);
+        width: calc(100vw - 8px*6);
       }
     } 
     } 
