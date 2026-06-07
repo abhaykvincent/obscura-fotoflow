@@ -52,6 +52,7 @@
   "scripts": {
     "start": "dotenv -e .env.development react-scripts start",
     "emulator": "firebase emulators:start",
+    "emulator:sandbox": "firebase emulators:start --import=./firestore-data/2026-06-07T07:41:39_81053 --export-on-exit=./firestore-data/2026-06-07T07:41:39_81053",
     "build": "dotenv -e .env.production react-scripts build",
     "deploy": "firebase deploy --only hosting",
     "deploy-all": "firebase deploy",

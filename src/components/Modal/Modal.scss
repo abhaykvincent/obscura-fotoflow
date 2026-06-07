@@ -345,6 +345,7 @@ animation-timing-function: ease-out;
     }
     .project-validity-options{
     display: flex;
+    flex-wrap: wrap;
     gap: 8px*1;
     margin-top: 0px;
     transition-duration: 0.4s;
@@ -362,7 +363,6 @@ animation-timing-function: ease-out;
           background-color: $dark-1-5;
           box-shadow: 2px 1px 0 1px rgba(0, 0, 0, 0.4);
           border-radius: 6px;
-          overflow: hidden;
           cursor: pointer;
           transition-delay: 0s;
           transition-duration: 0.1s;
@@ -443,6 +443,7 @@ animation-timing-function: ease-out;
       &.template-options{
           margin-bottom: 8px*2;
           justify-content: center;
+          flex-wrap: nowrap;
           .radio-button-group{
           padding: 0px;
           font-size: 1.2rem;
