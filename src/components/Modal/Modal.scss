@@ -2,6 +2,18 @@
 @import '../../style/variables.scss';
 @import '../../style/components';
 
+@property --google-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes spin-google-border {
+  to {
+    --google-angle: 360deg;
+  }
+}
+
 .modal-container{
     width: 100vw;
     height: 100dvh;
@@ -333,6 +345,7 @@ animation-timing-function: ease-out;
     }
     .project-validity-options{
     display: flex;
+    flex-wrap: wrap;
     gap: 8px*1;
     margin-top: 0px;
     transition-duration: 0.4s;
@@ -350,7 +363,6 @@ animation-timing-function: ease-out;
           background-color: $dark-1-5;
           box-shadow: 2px 1px 0 1px rgba(0, 0, 0, 0.4);
           border-radius: 6px;
-          overflow: hidden;
           cursor: pointer;
           transition-delay: 0s;
           transition-duration: 0.1s;
@@ -431,6 +443,7 @@ animation-timing-function: ease-out;
       &.template-options{
           margin-bottom: 8px*2;
           justify-content: center;
+          flex-wrap: nowrap;
           .radio-button-group{
           padding: 0px;
           font-size: 1.2rem;
@@ -771,6 +784,8 @@ animation-timing-function: ease-out;
         justify-content: center;
         }
         &.google{
+        position: relative;
+        z-index: 1;
         background: linear-gradient(345deg, black 30%,#1b25133c 85%, #27352270 100%);
         box-shadow:
          2px 4px 4px rgba(0, 0, 0, 0.1);
@@ -783,8 +798,49 @@ animation-timing-function: ease-out;
         animation: primary-action-signin  0.4s ease-in 1.15s;
         animation-fill-mode: forwards;
         text-shadow: 1px 1px 3px black;
+
+        &::before {
+          content: '';
+          position: absolute;
+          inset: -1px;
+          border-radius: inherit;
+          padding: 1.5px;
+          background: conic-gradient(from var(--google-angle), #4285F4, #EA4335, #FBBC05, #34A853, #4285F4);
+          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor;
+                  mask-composite: exclude;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          pointer-events: none;
+          z-index: 2;
+        }
+
+        &::after {
+          content: '';
+          position: absolute;
+          inset: -1px;
+          border-radius: inherit;
+          background: conic-gradient(from var(--google-angle), #4285F4, #EA4335, #FBBC05, #34A853, #4285F4);
+          filter: blur(15px);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          pointer-events: none;
+          z-index: -1;
+        }
+
         &:hover{
-        border: 1px solid $gray6-accessible-light;
+          border-color: transparent !important;
+          
+          &::before {
+            opacity: 1;
+            animation: spin-google-border 3s linear infinite;
+          }
+          
+          &::after {
+            opacity: 0.6;
+            animation: spin-google-border 3s linear infinite;
+          }
         } 
         @keyframes primary-action-signin {
             0% {
