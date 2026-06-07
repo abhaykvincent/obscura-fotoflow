@@ -188,7 +188,9 @@ export default function Project() {
             </div>
           </div>
         ) : (
-          <ProjectPageCoverImages project={project} />
+          <>
+         {/*  <ProjectPageCoverImages project={project} /> */}
+          </>
         )}
         <div className={`project-dashboard ${isExpired ? 'locked' : ''}`}>
           <DashboardProjects project={project} />

@@ -134,40 +134,40 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
             )}
 
             <div className="cover-footer">
+                {/* 1. Project Title & Tag */}
+                <div className="project-name-editor">
+                    {isEditing ? (
+                        <div className="editable-data">
+                            <input
+                                type="text"
+                                value={newName}
+                                onChange={(e) => setNewName(e.target.value)}
+                            />
+                            <div className="input-edit-actions">
+                                <button 
+                                    className={`${newName === project.name ? 'disabled' : ''} button primary icon icon-only check`} 
+                                    onClick={handleSave}
+                                />
+                                <button 
+                                    className="button secondary icon icon-only close" 
+                                    onClick={handleCancel}
+                                />
+                            </div>
+                        </div>
+                    ) : (
+                        <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
+                    )}
+                    <div className="edit-pen" onClick={handleNameDoubleClick} />
+                    
+                    {!isEditing && (
+                        <div className="tags">
+                            <div className="tag type">{project?.type}</div>
+                        </div>
+                    )}
+                </div>
+
                 <div className="static-tools bottom">
                     <div className="client">
-                        {/* 1. Project Title & Tag */}
-                        <div className="project-name-editor">
-                            {isEditing ? (
-                                <div className="editable-data">
-                                    <input
-                                        type="text"
-                                        value={newName}
-                                        onChange={(e) => setNewName(e.target.value)}
-                                    />
-                                    <div className="input-edit-actions">
-                                        <button 
-                                            className={`${newName === project.name ? 'disabled' : ''} button primary icon icon-only check`} 
-                                            onClick={handleSave}
-                                        />
-                                        <button 
-                                            className="button secondary icon icon-only close" 
-                                            onClick={handleCancel}
-                                        />
-                                    </div>
-                                </div>
-                            ) : (
-                                <h1 onClick={handleNameDoubleClick}>{project.name}</h1>
-                            )}
-                            <div className="edit-pen" onClick={handleNameDoubleClick} />
-                            
-                            {!isEditing && (
-                                <div className="tags">
-                                    <div className="tag type">{project?.type}</div>
-                                </div>
-                            )}
-                        </div>
-
                         {/* 2. Gallery URL Sharing & PIN */}
                         <div className="link-pin-container">
                             <div className="link-pin">

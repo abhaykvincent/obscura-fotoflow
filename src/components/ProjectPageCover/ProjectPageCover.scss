@@ -18,7 +18,60 @@
         }
 
         .cover-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+
+            .project-name-editor {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 12px;
+                padding: 0 8px*2;
+                margin-bottom: 8px*2;
+                margin-top: 8px*1;
+
+                h1 {
+                    font-size: 2.5rem;
+                    font-weight: 700;
+                    color: white;
+                    margin: 0;
+                    cursor: pointer;
+                    letter-spacing: -0.02em;
+                    text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+                    transition: color 0.2s;
+                    
+                    &:hover {
+                        color: $green-accessible-light;
+                    }
+                }
+
+                .edit-pen {
+                    width: 20px;
+                    height: 20px;
+                    background-image: url("https://img.icons8.com/material-rounded/24/FFFFFF/edit--v1.png");
+                    background-size: contain;
+                    background-repeat: no-repeat;
+                    opacity: 0;
+                    transition: all 0.2s;
+                    cursor: pointer;
+                    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+                    
+                    &:hover {
+                        transform: scale(1.1);
+                    }
+                }
+
+                &:hover .edit-pen {
+                    opacity: 0.6;
+                }
+            }
+
             .static-tools.bottom {
+                position: relative !important;
+                top: auto !important;
+                left: auto !important;
                 display: flex;
                 justify-content: space-between;
                 align-items: flex-end;
@@ -31,47 +84,6 @@
                     flex-direction: column;
                     gap: 8px;
                     flex: 1;
-                }
-
-                .project-name-editor {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-
-                    h1 {
-                        font-size: 2.5rem;
-                        font-weight: 700;
-                        color: white;
-                        margin: 0;
-                        cursor: pointer;
-                        letter-spacing: -0.02em;
-                        text-shadow: 0 4px 12px rgba(0,0,0,0.5);
-                        transition: color 0.2s;
-                        
-                        &:hover {
-                            color: $green-accessible-light;
-                        }
-                    }
-
-                    .edit-pen {
-                        width: 20px;
-                        height: 20px;
-                        background-image: url("https://img.icons8.com/material-rounded/24/FFFFFF/edit--v1.png");
-                        background-size: contain;
-                        background-repeat: no-repeat;
-                        opacity: 0;
-                        transition: all 0.2s;
-                        cursor: pointer;
-                        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-                        
-                        &:hover {
-                            transform: scale(1.1);
-                        }
-                    }
-
-                    &:hover .edit-pen {
-                        opacity: 0.6;
-                    }
                 }
 
                 .link-pin-container {

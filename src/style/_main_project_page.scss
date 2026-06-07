@@ -335,7 +335,7 @@
       .project-cover{
         position: relative;
         width: calc(100vw - 8px*14);
-        margin-top: -8px*22;
+        margin-top: -8px*0;
         display: flex;
         opacity: 01;
         grid-template-columns: auto auto;
@@ -348,7 +348,7 @@
         .cover-footer{
           position: relative;
           height: 8px*22;
-          margin-top: 8px*11;
+          margin-top: 8px*0;
         box-shadow: none;
           background: none;
           backdrop-filter: none;
