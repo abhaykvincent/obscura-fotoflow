@@ -98,7 +98,7 @@
                         background: rgba(255, 255, 255, 0.08);
                         backdrop-filter: blur(12px);
                         border-radius: 12px;
-                        padding: 4px 14px;
+                        padding: 4px 8px;
                         border: 1px solid rgba(255, 255, 255, 0.1);
                         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
                         transition: all 0.2s;
@@ -118,6 +118,8 @@
                         .copy.icon {
                             margin-left: 10px;
                             opacity: 0.5;
+                            margin: 0;
+                            
                             cursor: pointer;
                             &:hover { opacity: 1; }
                         }
@@ -183,9 +185,60 @@
                 }
 
                 .action-buttons {
-                    display: flex;
+                    display: grid;
                     align-items: center;
-                    gap: 20px;
+                    justify-items: end;
+                    gap: 16px;
+
+                    .project-expiry {
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        background: rgba(255, 255, 255, 0.04);
+                        border: 1px solid rgba(255, 255, 255, 0.08);
+                        border-radius: 20px;
+                        padding: 6px 14px;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        backdrop-filter: blur(8px);
+
+                        p {
+                            margin: 0;
+                            font-size: 0.85rem;
+                            font-weight: 500;
+                            color: rgba(255, 255, 255, 0.8);
+                            opacity: 1;
+                            text-shadow: none;
+
+                            span {
+                                color: rgba(255, 255, 255, 0.5);
+                            }
+                        }
+
+                        .icon-show {
+                            opacity: 0.8;
+                            transition: transform 0.3s ease;
+                        }
+
+                        &:hover {
+                            background: rgba(255, 255, 255, 0.08);
+                            border-color: rgba(255, 255, 255, 0.16);
+                            transform: translateY(-2px);
+
+                            .icon-show {
+                                transform: scale(1.1);
+                                opacity: 1;
+                            }
+                        }
+                    }
+
+                    .project-metadata {
+                        p {
+                            margin: 0;
+                            font-size: 0.85rem;
+                            font-weight: 400;
+                            color: rgba(255, 255, 255, 0.6);
+                        }
+                    }
                 }
             }
         }
