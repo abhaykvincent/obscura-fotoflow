@@ -21,6 +21,7 @@ import usersReducer from './slices/usersSlice';
 import userProfileReducer from './slices/userProfileSlice';
 import selectionRequestReducer from './slices/selectionRequestSlice';
 import extensionRequestReducer from './slices/extensionRequestSlice';
+import bookingReducer from './slices/bookingSlice';
 
 export const store = configureStore({
   reducer: {
@@ -46,6 +47,7 @@ export const store = configureStore({
     userProfile: userProfileReducer,
     selectionRequest: selectionRequestReducer,
     extensionRequest: extensionRequestReducer,
+    booking: bookingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
