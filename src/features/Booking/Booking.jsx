@@ -14,14 +14,7 @@ import weddingCandidImg from '../../assets/img/booking/kerala_wedding_candid.png
 import templePortraitImg from '../../assets/img/booking/kerala_temple_portrait.png';
 
 // Time slot definitions tailored for Indian wedding events and shoot timelines
-const TIME_SLOTS = [
-  '06:00 AM (Sunrise / Muhurtham)', 
-  '09:00 AM (Morning Session)', 
-  '11:00 AM (Late Morning)', 
-  '02:00 PM (Afternoon Session)', 
-  '04:00 PM (Sunset / Outdoor)', 
-  '06:00 PM (Evening Reception)'
-];
+const TIME_SLOTS = ['Morning','Noon','Evening'];
 
 // Helper function to extract inclusions and exclusions for each tier
 const getTierServicesWithExclusions = (tiers, currentTier) => {
@@ -44,6 +37,196 @@ const getTierServicesWithExclusions = (tiers, currentTier) => {
     inclusions,
     exclusions
   };
+};
+
+// Static pricing tiers and package information templates by event type
+const PACKAGE_TEMPLATES = {
+  wedding: {
+    description: 'Elevated multi-day & single-day wedding films and candid photography, custom-tailored for traditional Kerala ceremonies.',
+    tiers: [
+      {
+        name: 'The Intimate / Single-Day',
+        price: '50,000',
+        target: 'Small engagement functions, temple weddings, or budget-conscious couples.',
+        thumbnail: thaliTyingImg,
+        services: [
+          '1 Lead Photographer',
+          '1 Traditional Videographer',
+          '1 Day event coverage',
+          'Online Digital Gallery delivery'
+        ],
+        missing: [
+          'Drone / Aerial coverage',
+          'Same-day Edit Video',
+          'Premium Layflat Album',
+          'Live Web Streaming'
+        ],
+        cta: 'Check Availability'
+      },
+      {
+        name: 'The Signature / Multi-Day',
+        price: '1,20,000',
+        popular: true,
+        target: 'The standard 2-to-3-day Kerala wedding (Save the Date/Haldi/Mehendi + Wedding + Reception).',
+        thumbnail: weddingCandidImg,
+        services: [
+          '2 Photographers (Candid + Traditional)',
+          '2 Videographers (Cinematic + 4K Conventional)',
+          'Drone / Aerial coverage',
+          'Premium Magazine-style Album',
+          'Online Digital Gallery delivery'
+        ],
+        missing: [
+          'Same-day Edit Video',
+          'Live Web Streaming',
+          'Pre/Post-wedding shoot'
+        ],
+        cta: 'Book a Consultation'
+      },
+      {
+        name: 'The Royal / Luxury Heritage',
+        price: '2,50,000',
+        target: 'High-budget, grand NRI or destination weddings (e.g., Kumarakom resorts or Bolgatty).',
+        thumbnail: templePortraitImg,
+        services: [
+          'Full Photo & Video Crew (Candid & Conventional)',
+          'Same-day Edit Wedding Highlights video',
+          'Live YouTube Streaming (highly requested by NRI families)',
+          'Pre/Post-wedding outdoor shoots',
+          'Multiple Premium Albums (2 Hardcover + Parent Albums)',
+          'Online Digital Gallery delivery',
+          'Drone / Aerial coverage'
+        ],
+        missing: [],
+        cta: 'Request Custom Proposal'
+      }
+    ]
+  },
+  maternity: {
+    description: 'Cherish your precious milestones with beautiful, creative portrait setups in our temperature-controlled studio or outdoors.',
+    tiers: [
+      {
+        name: 'Mini Session',
+        price: '12,000',
+        target: 'Quick, intimate session with essential props.',
+        services: ['2 Hours Studio Shoot', '12 Retouched Photos', 'Props Provided by Studio', '1 Outfit Change'],
+        missing: ['Family Portraits Included', 'Newborn session (separate)', 'Custom Theme Setup'],
+        cta: 'Check Availability'
+      },
+      {
+        name: 'Signature Bump-to-Baby',
+        price: '22,000',
+        target: 'Comprehensive package capturing both pregnancy and the baby\'s first days.',
+        services: ['Maternity + Newborn (2 separate sessions)', '30 Retouched Photos', 'Custom Theme Setup', 'Family Portraits Included'],
+        missing: [],
+        cta: 'Book a Consultation'
+      }
+    ]
+  },
+  newborn: {
+    description: 'Sweet, sleepy poses and tiny details of your newborn captured in a safe, warm, and hygienic studio environment.',
+    tiers: [
+      {
+        name: 'Newborn Mini',
+        price: '15,000',
+        target: 'Focus on baby-only portraits with simple, elegant wraps and props.',
+        services: ['2 Hours Studio Session', '10 Retouched Photos', 'Props & Swaddles Provided', 'Safe, Temperature-Controlled Setup'],
+        missing: ['Parent & Sibling Portraits', 'Custom Set Themes', 'Premium Album'],
+        cta: 'Check Availability'
+      },
+      {
+        name: 'Newborn & Family',
+        price: '28,000',
+        target: 'Includes family portraits, multiple outfit changes, and custom themed setups.',
+        services: ['4 Hours Session', '25 Retouched Photos', 'Parent & Sibling Portraits Included', '3 Custom Theme Setups', 'Premium Layflat Album (15 Pages)'],
+        missing: [],
+        cta: 'Book a Consultation'
+      }
+    ]
+  },
+  baptism: {
+    description: "Capture your child's sacred baptism or holy communion ceremony with elegant photography and cinematic family highlights.",
+    tiers: [
+      {
+        name: 'Ceremony Only',
+        price: '15,000',
+        target: 'Essential coverage for the church service and family portraits.',
+        services: ['2 Hours Coverage', '20 Retouched Photos', 'Online Digital Gallery delivery', 'All RAW Images Delivered'],
+        missing: ['Reception / After-party Coverage', 'Physical Photo Album', 'Highlight Video'],
+        cta: 'Check Availability'
+      },
+      {
+        name: 'Ceremony & Reception',
+        price: '30,000',
+        target: 'Complete coverage of the church ceremony and reception celebrations.',
+        services: ['5 Hours Coverage', '45 Retouched Photos', '3-Minute Cinematic Highlight Video', 'Premium Layflat Album (20 Pages)', 'Online Digital Gallery delivery'],
+        missing: [],
+        cta: 'Book a Consultation'
+      }
+    ]
+  },
+  birthday: {
+    description: 'Celebrate your child\'s special day or family milestones with vibrant event photography and birthday highlights.',
+    tiers: [
+      {
+        name: 'Standard Celebration',
+        price: '10,000',
+        target: 'Perfect for intimate family birthday parties at home or small halls.',
+        services: ['3 Hours Event Coverage', '25 Retouched Photos', 'Candid & Traditional Mix', 'Online Digital Gallery delivery'],
+        missing: ['Cinematic Highlights Video', 'Photobooth Setup', 'Custom Album'],
+        cta: 'Check Availability'
+      },
+      {
+        name: 'Grand Birthday Blast',
+        price: '20,000',
+        target: 'Comprehensive coverage for larger parties with custom theme shoots.',
+        services: ['5 Hours Coverage', '50 Retouched Photos', 'Cinematic Highlight Reel (1-2 mins)', 'Premium Photo Album', 'Online Digital Gallery delivery'],
+        missing: [],
+        cta: 'Book a Consultation'
+      }
+    ]
+  },
+  anniversaries: {
+    description: 'Commemorate love stories and milestones with timeless couple portraits and anniversary event coverage.',
+    tiers: [
+      {
+        name: 'Intimate Anniversary',
+        price: '12,000',
+        target: 'A brief couple portrait session at a scenic location or in-studio.',
+        services: ['2 Hours Shoot', '15 Retouched Photos', 'Online Digital Gallery delivery', 'All RAW Images Delivered'],
+        missing: ['Full Event Coverage', 'Cinematic Highlights Video', 'Premium Album'],
+        cta: 'Check Availability'
+      },
+      {
+        name: 'Jubilee Celebration',
+        price: '25,000',
+        target: 'Full coverage of the anniversary event and family gatherings.',
+        services: ['5 Hours Event Coverage', '40 Retouched Photos', '3-Minute Cinematic Couple Film', 'Premium Magazine-style Album', 'Online Digital Gallery delivery'],
+        missing: [],
+        cta: 'Book a Consultation'
+      }
+    ]
+  },
+  default: {
+    description: 'Professional photography services customized for your special milestones and events.',
+    tiers: [
+      {
+        name: 'Standard Coverage',
+        price: '15,000',
+        target: 'Essential coverage for your custom event or photoshoot.',
+        services: ['3 Hours Coverage', '20 Retouched Photos', 'Online Digital Gallery delivery', 'All RAW Images Delivered'],
+        missing: [],
+        cta: 'Check Availability'
+      }
+    ]
+  }
+};
+
+// Resolves package tiers and description based on the package name
+const resolvePackageTemplate = (name) => {
+  const normalized = (name || '').toLowerCase();
+  const key = Object.keys(PACKAGE_TEMPLATES).find(k => normalized.includes(k));
+  return PACKAGE_TEMPLATES[key] || PACKAGE_TEMPLATES.default;
 };
 
 export default function Booking() {
@@ -92,150 +275,23 @@ export default function Booking() {
   }, [studioName, dispatch]);
 
   // Handle fallback if studio has no packages - configured with Indian market rates and packages
-  const activePackages = packages && packages.length > 0 ? packages : [
-    {
-      id: 'wedding-coverage-luxury',
-      name: 'Wedding',
-      description: 'Elevated multi-day & single-day wedding films and candid photography, custom-tailored for traditional Kerala ceremonies.',
-      tiers: [
-        {
-          name: 'The Intimate / Single-Day',
-          price: '50,000',
-          target: 'Small engagement functions, temple weddings, or budget-conscious couples.',
-          thumbnail: thaliTyingImg,
-          services: [
-            '1 Lead Photographer',
-            '1 Traditional Videographer',
-            '1 Day event coverage',
-            'Online Digital Gallery delivery'
-          ],
-          missing: [
-            'Drone / Aerial coverage',
-            'Same-day Edit Video',
-            'Premium Layflat Album',
-            'Live Web Streaming'
-          ],
-          cta: 'Check Availability'
-        },
-        {
-          name: 'The Signature / Multi-Day',
-          price: '1,20,000',
-          popular: true,
-          target: 'The standard 2-to-3-day Kerala wedding (Save the Date/Haldi/Mehendi + Wedding + Reception).',
-          thumbnail: weddingCandidImg,
-          services: [
-            '2 Photographers (Candid + Traditional)',
-            '2 Videographers (Cinematic + 4K Conventional)',
-            'Drone / Aerial coverage',
-            'Premium Magazine-style Album',
-            'Online Digital Gallery delivery'
-          ],
-          missing: [
-            'Same-day Edit Video',
-            'Live Web Streaming',
-            'Pre/Post-wedding shoot'
-          ],
-          cta: 'Book a Consultation'
-        },
-        {
-          name: 'The Royal / Luxury Heritage',
-          price: '2,50,000',
-          target: 'High-budget, grand NRI or destination weddings (e.g., Kumarakom resorts or Bolgatty).',
-          thumbnail: templePortraitImg,
-          services: [
-            'Full Photo & Video Crew (Candid & Conventional)',
-            'Same-day Edit Wedding Highlights video',
-            'Live YouTube Streaming (highly requested by NRI families)',
-            'Pre/Post-wedding outdoor shoots',
-            'Multiple Premium Albums (2 Hardcover + Parent Albums)',
-            'Online Digital Gallery delivery',
-            'Drone / Aerial coverage'
-          ],
-          missing: [],
-          cta: 'Request Custom Proposal'
-        }
-      ]
-    },
-    {
-      id: 'maternity-shoot',
-      name: 'Maternity',
-      description: 'Cherish your precious milestones with beautiful, creative portrait setups in our temperature-controlled studio or outdoors.',
-      tiers: [
-        {
-          name: 'Mini Session',
-          price: '12,000',
-          target: 'Quick, intimate session with essential props.',
-          services: ['2 Hours Studio Shoot', '12 Retouched Photos', 'Props Provided by Studio', '1 Outfit Change'],
-          missing: ['Family Portraits Included', 'Newborn session (separate)', 'Custom Theme Setup'],
-          cta: 'Check Availability'
-        },
-        {
-          name: 'Signature Bump-to-Baby',
-          price: '22,000',
-          target: 'Comprehensive package capturing both pregnancy and the baby\'s first days.',
-          services: ['Maternity + Newborn (2 separate sessions)', '30 Retouched Photos', 'Custom Theme Setup', 'Family Portraits Included'],
-          missing: [],
-          cta: 'Book a Consultation'
-        }
-      ]
-    },
-    {
-      id: 'newborn-shoot',
-      name: 'Newborn',
-      description: 'Cherish your precious milestones with beautiful, creative portrait setups in our temperature-controlled studio or outdoors.',
-      tiers: [
-        {
-          name: 'Mini Session',
-          price: '12,000',
-          target: 'Quick, intimate session with essential props.',
-          services: ['2 Hours Studio Shoot', '12 Retouched Photos', 'Props Provided by Studio', '1 Outfit Change'],
-          missing: ['Family Portraits Included', 'Newborn session (separate)', 'Custom Theme Setup'],
-          cta: 'Check Availability'
-        },
-        {
-          name: 'Signature Bump-to-Baby',
-          price: '22,000',
-          target: 'Comprehensive package capturing both pregnancy and the baby\'s first days.',
-          services: ['Maternity + Newborn (2 separate sessions)', '30 Retouched Photos', 'Custom Theme Setup', 'Family Portraits Included'],
-          missing: [],
-          cta: 'Book a Consultation'
-        }
-      ]
-    },
-    {
-      id: 'pre-wedding-cinematic',
-      name: 'Baptism',
-      description: 'Capture your love story at scenic outdoor locations. Complete with cinematic clips and custom-tailored theme assistance.',
-      tiers: [
-        {
-          name: 'Standard Package',
-          price: '25,000',
-          target: 'Great for single-location couple portraits and save-the-date announcements.',
-          services: ['4 Hours Outdoor Shoot', '25 Retouched Photos', 'Cinematic Instagram Reel (1 min)', 'All RAW Images Delivered'],
-          missing: ['Drone / Aerial Footage', 'Outfit Changes (Up to 3)', 'Cinematic Teaser Film'],
-          cta: 'Check Availability'
-        },
-        {
-          name: 'Elite Cinematic',
-          price: '45,000',
-          target: 'Full cinematic narrative shoot with multi-location coverage.',
-          services: ['Full Day Outdoor Shoot', '50 Retouched Photos', 'Cinematic Teaser (2-3 mins)', 'Drone / Aerial Footage', 'Outfit Changes (Up to 3)'],
-          missing: [],
-          cta: 'Book a Consultation'
-        }
-      ]
-    },
-    {
-      id: 'birthday-shoot',
-      name: 'Birthday',
-      description: 'Cherish your precious milestones with beautiful, creative portrait setups in our temperature-controlled studio or outdoors.',
-    },
-    {
-      id: 'anniversary-shoot',
-      name: 'Anniversaries',
-      description: 'Cherish your precious milestones with beautiful, creative portrait setups in our temperature-controlled studio or outdoors.',
-    }
+  const fallbackPackages = [
+    { id: 'wedding-coverage-luxury', name: 'Wedding' },
+    { id: 'baptism-ceremony', name: 'Baptism' },
+    { id: 'maternity-shoot', name: 'Maternity' },
+    { id: 'newborn-shoot', name: 'Newborn' },
+    { id: 'birthday-shoot', name: 'Birthday' },
+    { id: 'anniversary-shoot', name: 'Anniversaries' }
   ];
+
+  const activePackages = (packages && packages.length > 0 ? packages : fallbackPackages).map(pkg => {
+    const template = resolvePackageTemplate(pkg.name);
+    return {
+      ...pkg,
+      description: pkg.description || template.description,
+      tiers: pkg.tiers && pkg.tiers.length > 0 ? pkg.tiers : template.tiers
+    };
+  });
 
   // Set default selected package when activePackages loads
   useEffect(() => {
