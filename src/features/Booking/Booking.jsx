@@ -8,6 +8,11 @@ import { showAlert } from '../../app/slices/alertSlice';
 import { LoadingLight } from '../../components/Loading/Loading';
 import './Booking.scss';
 
+// Image assets for packages
+import thaliTyingImg from '../../assets/img/booking/kerala_thali_tying.png';
+import weddingCandidImg from '../../assets/img/booking/kerala_wedding_candid.png';
+import templePortraitImg from '../../assets/img/booking/kerala_temple_portrait.png';
+
 // Time slot definitions tailored for Indian wedding events and shoot timelines
 const TIME_SLOTS = [
   '06:00 AM (Sunrise / Muhurtham)', 
@@ -17,6 +22,29 @@ const TIME_SLOTS = [
   '04:00 PM (Sunset / Outdoor)', 
   '06:00 PM (Evening Reception)'
 ];
+
+// Helper function to extract inclusions and exclusions for each tier
+const getTierServicesWithExclusions = (tiers, currentTier) => {
+  if (currentTier.missing) {
+    return {
+      inclusions: currentTier.services || [],
+      exclusions: currentTier.missing
+    };
+  }
+
+  // Fallback: dynamically compute exclusions by comparing with other tiers' services
+  const allServices = Array.from(
+    new Set(tiers.flatMap(t => t.services || []))
+  );
+  
+  const inclusions = currentTier.services || [];
+  const exclusions = allServices.filter(s => !inclusions.includes(s));
+
+  return {
+    inclusions,
+    exclusions
+  };
+};
 
 export default function Booking() {
   const { studioName } = useParams();
@@ -34,6 +62,7 @@ export default function Booking() {
   const [currentStep, setCurrentStep] = useState(1); // 1: Package & Tier, 2: Schedule, 3: Details, 4: Success
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [selectedTier, setSelectedTier] = useState(null);
+  const [activePackageId, setActivePackageId] = useState('');
   
   // Calendar states
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -65,62 +94,156 @@ export default function Booking() {
   // Handle fallback if studio has no packages - configured with Indian market rates and packages
   const activePackages = packages && packages.length > 0 ? packages : [
     {
-      id: 'pre-wedding-cinematic',
-      name: 'Pre-Wedding & Engagement Session',
-      description: 'Capture your love story at scenic outdoor locations. Complete with cinematic clips and custom-tailored theme assistance.',
-      tiers: [
-        {
-          name: 'Standard Package',
-          price: '25,000',
-          services: ['4 Hours Outdoor Shoot', '25 Retouched Photos', 'Cinematic Instagram Reel (1 min)', 'All RAW Images Delivered']
-        },
-        {
-          name: 'Elite Cinematic',
-          price: '45,000',
-          services: ['Full Day Outdoor Shoot', '50 Retouched Photos', 'Cinematic Teaser (2-3 mins)', 'Drone / Aerial Footage', 'Outfit Changes (Up to 3)']
-        }
-      ]
-    },
-    {
       id: 'wedding-coverage-luxury',
-      name: 'Wedding & Traditional Event Coverage',
-      description: 'Comprehensive wedding coverage featuring premium candid shoots, traditional coverage, and cinematic highlights.',
+      name: 'Wedding',
+      description: 'Elevated multi-day & single-day wedding films and candid photography, custom-tailored for traditional Kerala ceremonies.',
       tiers: [
         {
-          name: 'One-Day Traditional',
-          price: '40,000',
-          services: ['Candid + Traditional Photographer', 'Full Event Coverage (8 hours)', '300+ Digital Images', 'RAW File Share']
+          name: 'The Intimate / Single-Day',
+          price: '50,000',
+          target: 'Small engagement functions, temple weddings, or budget-conscious couples.',
+          thumbnail: thaliTyingImg,
+          services: [
+            '1 Lead Photographer',
+            '1 Traditional Videographer',
+            '1 Day event coverage',
+            'Online Digital Gallery delivery'
+          ],
+          missing: [
+            'Drone / Aerial coverage',
+            'Same-day Edit Video',
+            'Premium Layflat Album',
+            'Live Web Streaming'
+          ],
+          cta: 'Check Availability'
         },
         {
-          name: 'Signature Layflat Package',
-          price: '85,000',
-          services: ['2 Candid Photographers', '1 Traditional Videographer', 'Premium Layflat Photobook (40 Pages)', 'Cinematic Highlight Film (4 mins)']
+          name: 'The Signature / Multi-Day',
+          price: '1,20,000',
+          popular: true,
+          target: 'The standard 2-to-3-day Kerala wedding (Save the Date/Haldi/Mehendi + Wedding + Reception).',
+          thumbnail: weddingCandidImg,
+          services: [
+            '2 Photographers (Candid + Traditional)',
+            '2 Videographers (Cinematic + 4K Conventional)',
+            'Drone / Aerial coverage',
+            'Premium Magazine-style Album',
+            'Online Digital Gallery delivery'
+          ],
+          missing: [
+            'Same-day Edit Video',
+            'Live Web Streaming',
+            'Pre/Post-wedding shoot'
+          ],
+          cta: 'Book a Consultation'
         },
         {
-          name: 'Luxury Royal Package',
-          price: '1,50,000',
-          services: ['Complete Photo + Video Team', '2 Premium Hardcover Albums', 'Full Wedding Film (30 mins)', 'Teaser Reel', 'Live Web Streaming Link']
+          name: 'The Royal / Luxury Heritage',
+          price: '2,50,000',
+          target: 'High-budget, grand NRI or destination weddings (e.g., Kumarakom resorts or Bolgatty).',
+          thumbnail: templePortraitImg,
+          services: [
+            'Full Photo & Video Crew (Candid & Conventional)',
+            'Same-day Edit Wedding Highlights video',
+            'Live YouTube Streaming (highly requested by NRI families)',
+            'Pre/Post-wedding outdoor shoots',
+            'Multiple Premium Albums (2 Hardcover + Parent Albums)',
+            'Online Digital Gallery delivery',
+            'Drone / Aerial coverage'
+          ],
+          missing: [],
+          cta: 'Request Custom Proposal'
         }
       ]
     },
     {
-      id: 'maternity-baby-shoot',
-      name: 'Maternity & Newborn Session',
+      id: 'maternity-shoot',
+      name: 'Maternity',
       description: 'Cherish your precious milestones with beautiful, creative portrait setups in our temperature-controlled studio or outdoors.',
       tiers: [
         {
           name: 'Mini Session',
           price: '12,000',
-          services: ['2 Hours Studio Shoot', '12 Retouched Photos', 'Props Provided by Studio', '1 Outfit Change']
+          target: 'Quick, intimate session with essential props.',
+          services: ['2 Hours Studio Shoot', '12 Retouched Photos', 'Props Provided by Studio', '1 Outfit Change'],
+          missing: ['Family Portraits Included', 'Newborn session (separate)', 'Custom Theme Setup'],
+          cta: 'Check Availability'
         },
         {
           name: 'Signature Bump-to-Baby',
           price: '22,000',
-          services: ['Maternity + Newborn (2 separate sessions)', '30 Retouched Photos', 'Custom Theme Setup', 'Family Portraits Included']
+          target: 'Comprehensive package capturing both pregnancy and the baby\'s first days.',
+          services: ['Maternity + Newborn (2 separate sessions)', '30 Retouched Photos', 'Custom Theme Setup', 'Family Portraits Included'],
+          missing: [],
+          cta: 'Book a Consultation'
         }
       ]
+    },
+    {
+      id: 'newborn-shoot',
+      name: 'Newborn',
+      description: 'Cherish your precious milestones with beautiful, creative portrait setups in our temperature-controlled studio or outdoors.',
+      tiers: [
+        {
+          name: 'Mini Session',
+          price: '12,000',
+          target: 'Quick, intimate session with essential props.',
+          services: ['2 Hours Studio Shoot', '12 Retouched Photos', 'Props Provided by Studio', '1 Outfit Change'],
+          missing: ['Family Portraits Included', 'Newborn session (separate)', 'Custom Theme Setup'],
+          cta: 'Check Availability'
+        },
+        {
+          name: 'Signature Bump-to-Baby',
+          price: '22,000',
+          target: 'Comprehensive package capturing both pregnancy and the baby\'s first days.',
+          services: ['Maternity + Newborn (2 separate sessions)', '30 Retouched Photos', 'Custom Theme Setup', 'Family Portraits Included'],
+          missing: [],
+          cta: 'Book a Consultation'
+        }
+      ]
+    },
+    {
+      id: 'pre-wedding-cinematic',
+      name: 'Baptism',
+      description: 'Capture your love story at scenic outdoor locations. Complete with cinematic clips and custom-tailored theme assistance.',
+      tiers: [
+        {
+          name: 'Standard Package',
+          price: '25,000',
+          target: 'Great for single-location couple portraits and save-the-date announcements.',
+          services: ['4 Hours Outdoor Shoot', '25 Retouched Photos', 'Cinematic Instagram Reel (1 min)', 'All RAW Images Delivered'],
+          missing: ['Drone / Aerial Footage', 'Outfit Changes (Up to 3)', 'Cinematic Teaser Film'],
+          cta: 'Check Availability'
+        },
+        {
+          name: 'Elite Cinematic',
+          price: '45,000',
+          target: 'Full cinematic narrative shoot with multi-location coverage.',
+          services: ['Full Day Outdoor Shoot', '50 Retouched Photos', 'Cinematic Teaser (2-3 mins)', 'Drone / Aerial Footage', 'Outfit Changes (Up to 3)'],
+          missing: [],
+          cta: 'Book a Consultation'
+        }
+      ]
+    },
+    {
+      id: 'birthday-shoot',
+      name: 'Birthday',
+      description: 'Cherish your precious milestones with beautiful, creative portrait setups in our temperature-controlled studio or outdoors.',
+    },
+    {
+      id: 'anniversary-shoot',
+      name: 'Anniversaries',
+      description: 'Cherish your precious milestones with beautiful, creative portrait setups in our temperature-controlled studio or outdoors.',
     }
   ];
+
+  // Set default selected package when activePackages loads
+  useEffect(() => {
+    if (activePackages && activePackages.length > 0 && !activePackageId) {
+      const weddingPkg = activePackages.find(p => p.id.includes('wedding') || p.name.toLowerCase().includes('wedding'));
+      setActivePackageId(weddingPkg ? weddingPkg.id : activePackages[0].id);
+    }
+  }, [activePackages, activePackageId]);
 
   const handlePackageAndTierSelect = (pkg, tier) => {
     setSelectedPackage(pkg);
@@ -196,6 +319,7 @@ export default function Booking() {
   const renderCalendar = () => {
     const totalDays = daysInMonth(currentMonth);
     const startDay = firstDayOfMonth(currentMonth);
+
     const days = [];
 
     // Empty spots for previous month padding
@@ -330,64 +454,127 @@ export default function Booking() {
 
         {/* Step 1: Package & Tier Grid */}
         {currentStep === 1 && (
-          <section className="booking-step-section fade-in">
+          <div className="booking-step-section-wrapper fade-in">
             {packagesLoading ? (
-              <LoadingLight />
-            ) : (
-              <div className="packages-premium-list">
-                {activePackages.map((pkg) => (
-                  <div key={pkg.id} className="package-card-detailed">
-                    <div className="pkg-info-col">
-                      <h3>{pkg.name}</h3>
-                      <p className="pkg-desc">{pkg.description || 'Professional photo and video coverage.'}</p>
-                    </div>
-
-                    <div className="pkg-tiers-col">
-                      {pkg.tiers && pkg.tiers.length > 0 ? (
-                        pkg.tiers.map((tier, idx) => (
-                          <div key={`${tier.name}-${idx}`} className="tier-strip-card">
-                            <div className="tier-meta">
-                              <span className="tier-name">{tier.name}</span>
-                              <span className="tier-price">{getDisplayPrice(tier.price)}</span>
-                            </div>
-                            <ul className="tier-services-list">
-                              {tier.services?.slice(0, 3).map((svc, sIdx) => (
-                                <li key={sIdx}>{svc}</li>
-                              ))}
-                              {tier.services?.length > 3 && (
-                                <li className="more-services">+{tier.services.length - 3} more deliverables</li>
-                              )}
-                            </ul>
-                            <button
-                              type="button"
-                              className="button primary select-tier-btn"
-                              onClick={() => handlePackageAndTierSelect(pkg, tier)}
-                            >
-                              Book {tier.name}
-                            </button>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="tier-strip-card">
-                          <div className="tier-meta">
-                            <span className="tier-name">Standard</span>
-                            <span className="tier-price">₹ On Inquiry</span>
-                          </div>
-                          <button
-                            type="button"
-                            className="button primary select-tier-btn"
-                            onClick={() => handlePackageAndTierSelect(pkg, { name: 'Standard', price: 'On Request' })}
-                          >
-                            Inquire Now
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
+              <div className="booking-step-section">
+                <LoadingLight />
               </div>
+            ) : (
+              <>
+                {/* Category Tab Buttons for packages */}
+                <div className="booking-package-tabs">
+                  {activePackages.map((pkg) => (
+                    <button
+                      key={pkg.id}
+                      type="button"
+                      className={`package-tab-btn ${activePackageId === pkg.id ? 'active' : ''}`}
+                      onClick={() => setActivePackageId(pkg.id)}
+                    >
+                      {pkg.name}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Main Package Section */}
+                {(() => {
+                  const currentPackage = activePackages.find(p => p.id === activePackageId) || activePackages[0];
+                  if (!currentPackage) return null;
+
+                  return (
+                    <div className="package-details-wrapper">
+                      <div className="package-intro-header">
+                        <h3>{currentPackage.name}</h3>
+                        <p>{currentPackage.description}</p>
+                      </div>
+
+                      <div className="package-tiers-grid">
+                        {currentPackage.tiers && currentPackage.tiers.length > 0 ? (
+                          currentPackage.tiers.map((tier, idx) => {
+                            const isPopular = tier.popular || (currentPackage.id === 'wedding-coverage-luxury' && idx === 1);
+                            const { inclusions, exclusions } = getTierServicesWithExclusions(currentPackage.tiers, tier);
+
+                            return (
+                              <div key={`${tier.name}-${idx}`} className={`tier-card ${isPopular ? 'popular-tier' : ''}`}>
+                                {isPopular && (
+                                  <div className="popular-badge">Most Popular</div>
+                                )}
+                                
+                                {tier.thumbnail && (
+                                  <div className="tier-thumbnail-wrap">
+                                    <img src={tier.thumbnail} alt={tier.name} className="tier-thumbnail" />
+                                    <div className="tier-thumbnail-overlay"></div>
+                                  </div>
+                                )}
+
+                                <div className="tier-card-header">
+                                  <h4 className="tier-card-name">{tier.name}</h4>
+                                  {tier.target && <p className="tier-card-target">{tier.target}</p>}
+                                  <div className="tier-card-price-wrap">
+                                    <span className="price-currency">₹</span>
+                                    <span className="price-value">{tier.price}</span>
+                                    <span className="price-period">est.</span>
+                                  </div>
+                                </div>
+
+                                <div className="tier-card-body">
+                                  <ul className="tier-features-list">
+                                    {/* Render inclusions */}
+                                    {inclusions.map((svc, sIdx) => (
+                                      <li key={`inc-${sIdx}`} className="feature-item inclusion">
+                                        <span className="feature-icon check-icon">✓</span>
+                                        <span className="feature-text">{svc}</span>
+                                      </li>
+                                    ))}
+                                    
+                                    {/* Render exclusions */}
+                                    {exclusions.map((missingSvc, mIdx) => (
+                                      <li key={`miss-${mIdx}`} className="feature-item exclusion">
+                                        <span className="feature-icon cross-icon">✗</span>
+                                        <span className="feature-text">{missingSvc}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+
+                                <div className="tier-card-footer">
+                                  <button
+                                    type="button"
+                                    className={`button select-tier-btn ${isPopular ? 'primary' : 'secondary'}`}
+                                    onClick={() => handlePackageAndTierSelect(currentPackage, tier)}
+                                  >
+                                    {tier.cta || `Book ${tier.name}`}
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <div className="tier-card">
+                            <div className="tier-card-header">
+                              <h4 className="tier-card-name">Standard Coverage</h4>
+                              <div className="tier-card-price-wrap">
+                                <span className="price-currency">₹</span>
+                                <span className="price-value">On Request</span>
+                              </div>
+                            </div>
+                            <div className="tier-card-footer">
+                              <button
+                                type="button"
+                                className="button primary select-tier-btn"
+                                onClick={() => handlePackageAndTierSelect(currentPackage, { name: 'Standard', price: 'On Request' })}
+                              >
+                                Inquire Now
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </>
             )}
-          </section>
+          </div>
         )}
 
         {/* Step 2: Date & Time Picker */}
