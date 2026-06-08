@@ -37,6 +37,7 @@ import SmartGallery from './features/SmartGallery/SmartGallery';
 import SmartGalleryDownloadPIN from './features/SmartGallery/SmartGalleryDownloadPIN';
 import UserProfile from './features/AdminPanel/UserProfile/UserProfile';
 import DownloadApp from './features/DownloadApp/DownloadApp';
+import Booking from './features/Booking/Booking';
 
 // Components
 import Alert from './components/Alert/Alert';
@@ -200,6 +201,7 @@ export default function App() {
               <Route path="/login" element={<LoginModal />} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/download-app" element={<DownloadApp />} />
+              <Route path="/:studioName/booking" element={<Booking />} />
               <Route path="/:studioName/smart-gallery/:projectId/:collectionId?" element={<SmartGallery/>}/>
               <Route path="/:studioName/smart-gallery/:projectId/download/pin" element={<SmartGalleryDownloadPIN/>}/>
               <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareRedirect/>}/>
