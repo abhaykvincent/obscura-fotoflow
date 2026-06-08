@@ -2,6 +2,9 @@
 
 .booking-page-wrapper {
   min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   background: radial-gradient(circle at 0% 0%, rgba($blue-default-light, 0.03), transparent 35%),
               radial-gradient(circle at 100% 100%, rgba($purple-default-light, 0.03), transparent 35%),
               $light-2;
@@ -12,10 +15,15 @@
   align-items: center;
   padding: 0;
   margin: 0;
-*{
-  color: black;
-}
-  // Animations
+  box-sizing: border-box;
+
+  // Override the broad global `.App * { color: white; }` style
+  * {
+    color: inherit;
+    box-sizing: border-box;
+  }
+
+  // Fade-in animation
   .fade-in {
     animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
@@ -23,7 +31,7 @@
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(12px);
+      transform: translateY(10px);
     }
     to {
       opacity: 1;
@@ -62,6 +70,7 @@
         border-radius: 50%;
         object-fit: cover;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        flex-shrink: 0;
       }
 
       .studio-logo-fallback {
@@ -69,21 +78,31 @@
         height: 44px;
         border-radius: 50%;
         background: linear-gradient(135deg, $blue-default-light, $purple-default-light);
-        color: white;
+        color: white !important;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 18px;
         font-weight: bold;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        flex-shrink: 0;
+
+        * {
+          color: white !important;
+        }
       }
 
       .brand-text {
+        flex-grow: 1;
+        min-width: 0; // Enables word wrapping inside flex child
+
         h1 {
           font-size: 18px;
           font-weight: 700;
           margin: 0;
           color: $dark-2;
+          overflow-wrap: break-word;
+          word-wrap: break-word;
         }
 
         .studio-tagline {
@@ -107,14 +126,18 @@
     max-width: 1000px;
     padding: ($spacing-unit * 3) ($spacing-unit * 2.5);
     box-sizing: border-box;
-
+    
     @media (max-width: 576px) {
       padding: ($spacing-unit * 2) ($spacing-unit * 1.5);
     }
 
+    @media (max-width: 380px) {
+      padding: ($spacing-unit * 1.5) ($spacing-unit);
+    }
+
     // Responsive progress header
     .booking-progress-header {
-      margin-bottom: $spacing-unit * 4;
+      margin-bottom: $spacing-unit * 3.5;
 
       .progress-text-wrap {
         display: flex;
@@ -142,7 +165,7 @@
         }
       }
 
-      // Responsive indicator: bar on mobile, full stepper on desktop
+      // Responsive progress bar
       .progress-bar-container {
         display: none;
         width: 100%;
@@ -152,7 +175,7 @@
         overflow: hidden;
         margin-bottom: $spacing-unit * 2;
 
-        @media (max-width: 768px) {
+        @media (max-width: 820px) {
           display: block;
         }
 
@@ -171,8 +194,8 @@
         border-top: 1px solid rgba(0, 0, 0, 0.05);
         padding-top: $spacing-unit * 2.5;
 
-        @media (max-width: 768px) {
-          display: none; // Hidden on mobile, replaced by the progress-bar
+        @media (max-width: 820px) {
+          display: none; // Hidden on tablets and mobile screens
         }
 
         .step-item {
@@ -219,7 +242,7 @@
             .step-num {
               background-color: $blue-default-light;
               border-color: $blue-default-light;
-              color: white;
+              color: white !important;
             }
             .step-label {
               color: $gray-accessible-light;
@@ -245,11 +268,15 @@
     padding: $spacing-unit * 3.5;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
     border: 1px solid rgba(0, 0, 0, 0.04);
-    box-sizing: border-box;
 
     @media (max-width: 576px) {
-      padding: $spacing-unit * 2.5;
+      padding: 20px;
       border-radius: 14px;
+    }
+
+    @media (max-width: 380px) {
+      padding: 12px;
+      border-radius: 10px;
     }
 
     .back-link-btn {
@@ -277,6 +304,7 @@
     border-radius: 10px;
     font-size: 13px;
     margin-bottom: $spacing-unit * 3;
+    word-break: break-word;
 
     strong {
       color: $blue-default-light;
@@ -343,8 +371,13 @@
         flex-direction: column;
         gap: 12px;
 
+        @media (max-width: 380px) {
+          padding: 8px;
+        }
+
         .tier-strip-card {
           display: flex;
+          flex-direction: column;
           align-items: center;
           justify-content: space-between;
           background: $light-3;
@@ -354,7 +387,7 @@
           transition: all 0.2s ease;
           gap: 16px;
 
-          @media (max-width: 576px) {
+          @media (max-width: 680px) {
             flex-direction: column;
             align-items: flex-start;
             gap: 12px;
@@ -370,6 +403,7 @@
             display: flex;
             flex-direction: column;
             min-width: 100px;
+            flex-shrink: 0;
 
             .tier-name {
               font-size: 15px;
@@ -390,6 +424,7 @@
             padding: 0;
             list-style: none;
             flex-grow: 1;
+            min-width: 0;
 
             li {
               font-size: 13px;
@@ -397,6 +432,7 @@
               margin-bottom: 3px;
               position: relative;
               padding-left: 14px;
+              overflow-wrap: break-word;
 
               &::before {
                 content: "•";
@@ -424,8 +460,9 @@
             padding: 8px 16px;
             border-radius: 8px;
             white-space: nowrap;
+            flex-shrink: 0;
 
-            @media (max-width: 576px) {
+            @media (max-width: 680px) {
               width: 100%;
             }
           }
@@ -447,6 +484,8 @@
     }
 
     .picker-col {
+      min-width: 0; // Prevent flex/grid item overflow
+
       .col-header-wrap {
         display: flex;
         align-items: center;
@@ -466,6 +505,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
+          flex-shrink: 0;
         }
 
         h3 {
@@ -485,6 +525,12 @@
     border-radius: 14px;
     padding: $spacing-unit * 2;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.01);
+    width: 100%;
+    box-sizing: border-box;
+
+    @media (max-width: 380px) {
+      padding: 8px;
+    }
 
     .calendar-header {
       display: flex;
@@ -538,6 +584,10 @@
       grid-template-columns: repeat(7, 1fr);
       gap: 6px;
 
+      @media (max-width: 380px) {
+        gap: 4px;
+      }
+
       .calendar-day {
         aspect-ratio: 1;
         background: none;
@@ -551,7 +601,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        box-sizing: border-box;
+
+        @media (max-width: 380px) {
+          font-size: 12px;
+        }
 
         &:hover:not(.disabled):not(.empty) {
           background-color: rgba($blue-default-light, 0.08);
@@ -581,7 +634,7 @@
   // Time Slots
   .time-slots-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 10px;
 
     .time-slot-btn {
@@ -605,7 +658,7 @@
       &.active {
         background-color: $blue-default-light;
         border-color: $blue-default-light;
-        color: white;
+        color: white !important;
         box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
       }
     }
@@ -658,17 +711,19 @@
 
     .form-column {
       order: 1;
+      min-width: 0; // Prevent overflow in details grid item
 
       @media (max-width: 820px) {
-        order: 2; // Form below summary on mobile
+        order: 2;
       }
     }
 
     .summary-column {
       order: 2;
+      min-width: 0;
 
       @media (max-width: 820px) {
-        order: 1; // Summary on top for mobile review
+        order: 1;
       }
     }
   }
@@ -682,6 +737,10 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.01);
     position: sticky;
     top: 100px;
+
+    @media (max-width: 820px) {
+      position: static; // Don't stick on mobile layouts
+    }
 
     h3 {
       font-size: 16px;
@@ -699,16 +758,20 @@
         justify-content: space-between;
         padding: 8px 0;
         font-size: 13.5px;
+        gap: 12px;
 
         .label {
           color: $gray-accessible-light;
+          flex-shrink: 0;
         }
 
         .value {
           font-weight: 600;
           color: $dark-2;
           text-align: right;
-          max-width: 60%;
+          overflow-wrap: break-word;
+          word-wrap: break-word;
+          min-width: 0;
         }
 
         &.total-row {
@@ -745,7 +808,7 @@
       grid-template-columns: 1fr 1fr;
       gap: 16px;
 
-      @media (max-width: 576px) {
+      @media (max-width: 640px) {
         grid-template-columns: 1fr;
         gap: 14px;
       }
@@ -771,6 +834,8 @@
         color: $dark-1;
         transition: all 0.2s ease;
         box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
 
         &:focus {
           outline: none;
@@ -795,6 +860,15 @@
       font-weight: 700;
       cursor: pointer;
       margin-top: 10px;
+    }
+
+    .indian-advance-note {
+      font-size: 12px;
+      color: $gray-accessible-light;
+      line-height: 1.4;
+      margin-top: 12px;
+      text-align: center;
+      font-style: italic;
     }
   }
 
@@ -861,16 +935,20 @@
         justify-content: space-between;
         font-size: 13.5px;
         padding: 6px 0;
+        gap: 12px;
 
         .label {
           color: $gray-accessible-light;
+          flex-shrink: 0;
         }
 
         .value {
           font-weight: 600;
           color: $dark-2;
           text-align: right;
-          max-width: 60%;
+          overflow-wrap: break-word;
+          word-wrap: break-word;
+          min-width: 0;
         }
       }
     }
@@ -892,8 +970,12 @@
 
     &.primary {
       background-color: $blue-default-light;
-      color: white;
+      color: white !important;
       box-shadow: 0 4px 10px rgba(0, 122, 255, 0.12);
+
+      * {
+        color: white !important;
+      }
 
       &:hover:not(:disabled) {
         background-color: darken($blue-default-light, 4%);
