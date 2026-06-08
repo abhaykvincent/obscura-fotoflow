@@ -312,6 +312,80 @@
     }
   }
 
+  .selected-dates-banner {
+    background-color: #FFFFFF;
+    border: 1px solid #E6DFD3;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(13, 59, 41, 0.02);
+
+    h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0D3B29;
+      margin: 0 0 12px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .selected-dates-inline-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .selected-date-pill-item {
+      display: flex;
+      align-items: center;
+      background-color: #FDFBF7;
+      border: 1px solid #E6DFD3;
+      border-radius: 20px;
+      padding: 6px 14px;
+      gap: 8px;
+      box-shadow: 0 2px 6px rgba(13, 59, 41, 0.01);
+      transition: all 0.2s ease;
+
+      &:hover {
+        border-color: rgba(197, 160, 89, 0.5);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(13, 59, 41, 0.03);
+      }
+
+      .date-pill-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #C5A059;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .date-pill-value {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #0D3B29;
+      }
+
+      .remove-pill-btn {
+        background: none;
+        border: none;
+        color: #8E9B93;
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+        padding: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: #ff4d4f;
+        }
+      }
+    }
+  }
+
   // Tabs for package selection
   .booking-package-tabs {
     display: flex;

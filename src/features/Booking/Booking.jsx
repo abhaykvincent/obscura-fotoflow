@@ -48,6 +48,73 @@ const formatDateLocal = (date) => {
   return `${y}-${m}-${d}`;
 };
 
+// Helper to determine the descriptive title of each date selection based on package and index
+const getDateLabel = (packageName, index, totalSelected) => {
+  const normName = (packageName || '').toLowerCase();
+  
+  if (normName.includes('wedding')) {
+    if (totalSelected === 1) {
+      return 'Wedding Day';
+    } else if (totalSelected === 2) {
+      const labels = ['Engagement', 'Wedding Day'];
+      return labels[index] || `Day ${index + 1}`;
+    } else {
+      const labels = ['Engagement', 'Wedding Day', 'Wedding Eve / Reception'];
+      return labels[index] || `Day ${index + 1}`;
+    }
+  }
+  
+  if (normName.includes('maternity')) {
+    if (totalSelected === 1) {
+      return 'Maternity Shoot';
+    } else {
+      const labels = ['Maternity Session', 'Newborn Session'];
+      return labels[index] || `Day ${index + 1}`;
+    }
+  }
+
+  if (normName.includes('newborn')) {
+    if (totalSelected === 1) {
+      return 'Newborn Session';
+    } else {
+      const labels = ['Newborn Session', 'Family Portraits'];
+      return labels[index] || `Day ${index + 1}`;
+    }
+  }
+
+  if (normName.includes('baptism')) {
+    if (totalSelected === 1) {
+      return 'Baptism Ceremony';
+    } else {
+      const labels = ['Baptism Ceremony', 'Reception / After-party'];
+      return labels[index] || `Day ${index + 1}`;
+    }
+  }
+
+  if (normName.includes('birthday')) {
+    if (totalSelected === 1) {
+      return 'Birthday Celebration';
+    } else {
+      const labels = ['Pre-birthday Shoot', 'Birthday Celebration'];
+      return labels[index] || `Day ${index + 1}`;
+    }
+  }
+
+  if (normName.includes('anniversary') || normName.includes('anniversaries')) {
+    if (totalSelected === 1) {
+      return 'Anniversary Session';
+    } else {
+      const labels = ['Portrait Shoot', 'Celebration Event'];
+      return labels[index] || `Day ${index + 1}`;
+    }
+  }
+
+  if (totalSelected === 1) {
+    return 'Event Day';
+  }
+  return `Day ${index + 1}`;
+};
+
 // Static pricing tiers and package information templates by event type
 const PACKAGE_TEMPLATES = {
   wedding: {
@@ -691,6 +758,38 @@ export default function Booking() {
               Selected: <strong>{selectedPackage.name} ({selectedTier.name} - {getDisplayPrice(selectedTier.price)})</strong>
             </div>
 
+            {/* Selected Dates List right after selected-item-pill */}
+            {bookingDates.length > 0 && (
+              <div className="selected-dates-banner fade-in">
+                <h4>Your Schedule Selection:</h4>
+                <div className="selected-dates-inline-list">
+                  {bookingDates.map((item, index) => {
+                    const dateObj = new Date(item.date);
+                    const formattedDate = dateObj.toLocaleDateString('en-IN', {
+                      weekday: 'short',
+                      month: 'short',
+                      day: 'numeric'
+                    });
+                    const label = getDateLabel(selectedPackage.name, index, bookingDates.length);
+                    return (
+                      <div key={item.date} className="selected-date-pill-item">
+                        <span className="date-pill-label">{label}:</span>
+                        <span className="date-pill-value">{formattedDate} ({item.timeSlot})</span>
+                        <button
+                          type="button"
+                          className="remove-pill-btn"
+                          onClick={() => handleRemoveDate(item.date)}
+                          title="Remove date"
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             <div className="schedule-picker-grid">
               <div className="picker-col">
                 <div className="col-header-wrap">
@@ -726,40 +825,6 @@ export default function Booking() {
                 ) : (
                   <div className="slot-placeholder">
                     <p>Please select a date from the calendar to view available slots.</p>
-                  </div>
-                )}
-
-                {/* Selected Dates List */}
-                {bookingDates.length > 0 && (
-                  <div className="selected-dates-list-section">
-                    <h4>Selected Dates ({bookingDates.length})</h4>
-                    <div className="selected-dates-list">
-                      {bookingDates.map((item) => {
-                        const dateObj = new Date(item.date);
-                        const formattedDate = dateObj.toLocaleDateString('en-IN', {
-                          weekday: 'short',
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric'
-                        });
-                        return (
-                          <div key={item.date} className="selected-date-item">
-                            <div className="date-info">
-                              <span className="date-text">{formattedDate}</span>
-                              <span className="slot-badge">{item.timeSlot}</span>
-                            </div>
-                            <button
-                              type="button"
-                              className="remove-date-btn"
-                              onClick={() => handleRemoveDate(item.date)}
-                              title="Remove date"
-                            >
-                              &times;
-                            </button>
-                          </div>
-                        );
-                      })}
-                    </div>
                   </div>
                 )}
               </div>
@@ -877,17 +942,18 @@ export default function Booking() {
                     <div className="dates-summary-list">
                       <span className="label">Selected Dates & Slots</span>
                       <div className="value-list">
-                        {bookingDates.map((item) => {
+                        {bookingDates.map((item, index) => {
                           const dateObj = new Date(item.date);
                           const formattedDate = dateObj.toLocaleDateString('en-IN', {
                             weekday: 'short',
                             month: 'short',
                             day: 'numeric'
                           });
+                          const label = getDateLabel(selectedPackage.name, index, bookingDates.length);
                           return (
                             <div key={item.date} className="summary-date-entry">
-                              <span>{formattedDate}</span>
-                              <span>{item.timeSlot}</span>
+                              <span>{label}</span>
+                              <span>{formattedDate} • {item.timeSlot}</span>
                             </div>
                           );
                         })}
@@ -933,7 +999,7 @@ export default function Booking() {
                 <div className="dates-success-list">
                   <span className="label">Appointment Dates</span>
                   <div className="value-list">
-                    {bookingDates.map((item) => {
+                    {bookingDates.map((item, index) => {
                       const dateObj = new Date(item.date);
                       const formattedDate = dateObj.toLocaleDateString('en-IN', {
                         weekday: 'short',
@@ -941,10 +1007,11 @@ export default function Booking() {
                         day: 'numeric',
                         year: 'numeric'
                       });
+                      const label = getDateLabel(selectedPackage?.name, index, bookingDates.length);
                       return (
                         <div key={item.date} className="success-date-entry">
-                          <span>{formattedDate}</span>
-                          <span>{item.timeSlot}</span>
+                          <span>{label}</span>
+                          <span>{formattedDate} at {item.timeSlot}</span>
                         </div>
                       );
                     })}
