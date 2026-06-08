@@ -115,6 +115,32 @@ const getDateLabel = (packageName, index, totalSelected) => {
   return `Day ${index + 1}`;
 };
 
+// Helper to determine the expected number of days/sessions for a package tier
+const getExpectedDays = (packageName, tierName) => {
+  const normPkg = (packageName || '').toLowerCase();
+  const normTier = (tierName || '').toLowerCase();
+
+  if (normPkg.includes('wedding')) {
+    if (normTier.includes('signature') || normTier.includes('multi-day')) {
+      return 3;
+    }
+    if (normTier.includes('royal') || normTier.includes('luxury')) {
+      return 3;
+    }
+    return 1;
+  }
+  
+  if (normPkg.includes('maternity')) {
+    if (normTier.includes('bump-to-baby')) {
+      return 2;
+    }
+    return 1;
+  }
+
+  // Default fallback for any other package/tier is 1 day
+  return 1;
+};
+
 // Static pricing tiers and package information templates by event type
 const PACKAGE_TEMPLATES = {
   wedding: {
@@ -759,33 +785,54 @@ export default function Booking() {
             </div>
 
             {/* Selected Dates List right after selected-item-pill */}
-            {bookingDates.length > 0 && (
+            {selectedPackage && selectedTier && (
               <div className="selected-dates-banner fade-in">
                 <h4>Your Schedule Selection:</h4>
                 <div className="selected-dates-inline-list">
-                  {bookingDates.map((item, index) => {
-                    const dateObj = new Date(item.date);
-                    const formattedDate = dateObj.toLocaleDateString('en-IN', {
-                      weekday: 'short',
-                      month: 'short',
-                      day: 'numeric'
-                    });
-                    const label = getDateLabel(selectedPackage.name, index, bookingDates.length);
-                    return (
-                      <div key={item.date} className="selected-date-pill-item">
-                        <span className="date-pill-label">{label}:</span>
-                        <span className="date-pill-value">{formattedDate} ({item.timeSlot})</span>
-                        <button
-                          type="button"
-                          className="remove-pill-btn"
-                          onClick={() => handleRemoveDate(item.date)}
-                          title="Remove date"
-                        >
-                          &times;
-                        </button>
-                      </div>
-                    );
-                  })}
+                  {(() => {
+                    const expectedDays = getExpectedDays(selectedPackage.name, selectedTier.name);
+                    const totalPills = Math.max(expectedDays, bookingDates.length);
+                    const pills = [];
+                    
+                    for (let i = 0; i < totalPills; i++) {
+                      const item = bookingDates[i];
+                      const label = getDateLabel(selectedPackage.name, i, totalPills);
+                      
+                      if (item) {
+                        const dateObj = new Date(item.date);
+                        const formattedDate = dateObj.toLocaleDateString('en-IN', {
+                          weekday: 'short',
+                          month: 'short',
+                          day: 'numeric'
+                        });
+                        
+                        pills.push(
+                          <div key={`pill-${item.date}`} className="selected-date-pill-item populated">
+                            <span className="date-pill-label">{label}:</span>
+                            <span className="date-pill-value">{formattedDate} ({item.timeSlot})</span>
+                            <button
+                              type="button"
+                              className="remove-pill-btn"
+                              onClick={() => handleRemoveDate(item.date)}
+                              title="Remove date"
+                            >
+                              &times;
+                            </button>
+                          </div>
+                        );
+                      } else {
+                        const isActive = i === bookingDates.length;
+                        
+                        pills.push(
+                          <div key={`pill-empty-${i}`} className={`selected-date-pill-item empty ${isActive ? 'active-pill' : ''}`}>
+                            <span className="date-pill-label">{label}:</span>
+                            <span className="date-pill-value placeholder-value">Select the date</span>
+                          </div>
+                        );
+                      }
+                    }
+                    return pills;
+                  })()}
                 </div>
               </div>
             )}
