@@ -312,6 +312,171 @@
     }
   }
 
+  .selected-dates-banner {
+    background-color: #FFFFFF;
+    border: 1px solid #E6DFD3;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(13, 59, 41, 0.02);
+
+    h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0D3B29;
+      margin: 0 0 12px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .selected-dates-inline-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .selected-date-pill-item {
+      display: flex;
+      align-items: center;
+      background-color: #FDFBF7;
+      border: 1px solid #E6DFD3;
+      border-radius: 20px;
+      padding: 6px 14px;
+      gap: 8px;
+      box-shadow: 0 2px 6px rgba(13, 59, 41, 0.01);
+      transition: all 0.2s ease;
+
+      &:hover:not(.empty) {
+        border-color: rgba(197, 160, 89, 0.5);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(13, 59, 41, 0.03);
+      }
+
+      &.empty {
+        background-color: #F9F6F0;
+        border-style: dashed;
+        opacity: 0.6;
+        cursor: not-allowed;
+
+        .date-pill-label {
+          color: #8E9B93;
+        }
+
+        .placeholder-value {
+          color: #8E9B93;
+          font-style: italic;
+        }
+      }
+
+      &.active-pill {
+        border-color: #C5A059;
+        background-color: rgba(197, 160, 89, 0.05);
+        opacity: 1;
+        box-shadow: 0 0 8px rgba(197, 160, 89, 0.15);
+        border-style: solid;
+        animation: pulseBorder 1.5s infinite alternate;
+
+        .date-pill-label {
+          color: #C5A059;
+        }
+
+        .placeholder-value {
+          color: #0D3B29;
+          font-style: normal;
+          font-weight: 700;
+        }
+      }
+
+      @keyframes pulseBorder {
+        from {
+          border-color: rgba(197, 160, 89, 0.4);
+        }
+        to {
+          border-color: rgba(197, 160, 89, 0.9);
+        }
+      }
+
+      .date-pill-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #C5A059;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .date-pill-value {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #0D3B29;
+      }
+
+      .remove-pill-btn {
+        background: none;
+        border: none;
+        color: #8E9B93;
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+        padding: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: #ff4d4f;
+        }
+      }
+    }
+
+    .banner-prompt-tip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      padding: 10px 14px;
+      background-color: rgba(197, 160, 89, 0.08);
+      border-radius: 8px;
+      border-left: 3px solid #C5A059;
+      font-size: 13px;
+      color: #5C6B62;
+
+      strong {
+        color: #0D3B29;
+      }
+
+      .prompt-icon {
+        font-size: 14px;
+        animation: bounce 1.5s infinite alternate;
+        display: inline-block;
+      }
+
+      &.success {
+        background-color: rgba(13, 59, 41, 0.05);
+        border-left-color: #0D3B29;
+        color: #5C6B62;
+
+        strong {
+          color: #0D3B29;
+        }
+
+        .prompt-icon {
+          animation: none;
+          color: #0D3B29;
+        }
+      }
+    }
+
+    @keyframes bounce {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-2px);
+      }
+    }
+  }
+
   // Tabs for package selection
   .booking-package-tabs {
     display: flex;
@@ -823,6 +988,13 @@
           box-shadow: 0 4px 12px rgba(13, 59, 41, 0.25);
         }
  
+        &.has-booking {
+          background-color: rgba(197, 160, 89, 0.15);
+          color: #C5A059;
+          font-weight: 700;
+          box-shadow: 0 2px 6px rgba(197, 160, 89, 0.1);
+        }
+
         &.disabled {
           color: #D3DCD6;
           cursor: not-allowed;
@@ -865,6 +1037,91 @@
         border-color: #0D3B29;
         color: white !important;
         box-shadow: 0 4px 12px rgba(13, 59, 41, 0.2);
+      }
+    }
+
+    .select-slot-tip {
+      font-size: 12.5px;
+      color: #5C6B62;
+      margin-top: 12px;
+      font-style: italic;
+    }
+
+    .selected-dates-list-section {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px dashed #E6DFD3;
+
+      h4 {
+        font-size: 14px;
+        font-weight: 700;
+        color: #0D3B29;
+        margin: 0 0 1rem 0;
+      }
+
+      .selected-dates-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .selected-date-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #FFFFFF;
+        border: 1px solid #E6DFD3;
+        border-radius: 8px;
+        padding: 10px 14px;
+        box-shadow: 0 2px 6px rgba(13, 59, 41, 0.02);
+        transition: all 0.2s ease;
+
+        &:hover {
+          border-color: rgba(197, 160, 89, 0.5);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 10px rgba(13, 59, 41, 0.04);
+        }
+
+        .date-info {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+
+          .date-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1A2B23;
+          }
+
+          .slot-badge {
+            font-size: 11px;
+            font-weight: 700;
+            color: #C5A059;
+            background-color: rgba(197, 160, 89, 0.1);
+            padding: 3px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+        }
+
+        .remove-date-btn {
+          background: none;
+          border: none;
+          color: #8E9B93;
+          font-size: 18px;
+          line-height: 1;
+          cursor: pointer;
+          padding: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: color 0.2s ease;
+
+          &:hover {
+            color: #ff4d4f;
+          }
+        }
       }
     }
   }
@@ -991,6 +1248,58 @@
             font-size: 20px;
             font-weight: 800;
             color: #C5A059;
+          }
+        }
+      }
+
+      .dates-summary-list, .dates-success-list {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: 8px 0;
+        gap: 8px;
+
+        .label {
+          color: #5C6B62;
+          font-size: 13.5px;
+          margin-bottom: 4px;
+          font-weight: 500;
+        }
+
+        .value-list {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          width: 100%;
+
+          .summary-date-entry, .success-date-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #FDFBF7;
+            border: 1px solid #E6DFD3;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0D3B29;
+            width: 100%;
+            box-shadow: 0 1px 3px rgba(13, 59, 41, 0.01);
+
+            span:first-child {
+              color: #1A2B23;
+            }
+
+            span:last-child {
+              font-size: 11px;
+              font-weight: 700;
+              color: #C5A059;
+              background-color: rgba(197, 160, 89, 0.1);
+              padding: 2px 6px;
+              border-radius: 4px;
+              text-transform: uppercase;
+            }
           }
         }
       }
