@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchGalleryStudio, selectGalleryStudio, selectGalleryStudioLoading } from '../../app/slices/studioSlice';
@@ -37,6 +37,108 @@ const getTierServicesWithExclusions = (tiers, currentTier) => {
     inclusions,
     exclusions
   };
+};
+
+// Helper to format Date to YYYY-MM-DD in local time
+const formatDateLocal = (date) => {
+  if (!date) return '';
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+};
+
+// Helper to determine the descriptive title of each date selection based on package and index
+const getDateLabel = (packageName, index, totalSelected) => {
+  const normName = (packageName || '').toLowerCase();
+  
+  if (normName.includes('wedding')) {
+    if (totalSelected === 1) {
+      return 'Wedding Day';
+    } else if (totalSelected === 2) {
+      const labels = ['Engagement', 'Wedding Day'];
+      return labels[index] || `Day ${index + 1}`;
+    } else {
+      const labels = ['Engagement', 'Wedding Day', 'Wedding Eve / Reception'];
+      return labels[index] || `Day ${index + 1}`;
+    }
+  }
+  
+  if (normName.includes('maternity')) {
+    if (totalSelected === 1) {
+      return 'Maternity Shoot';
+    } else {
+      const labels = ['Maternity Session', 'Newborn Session'];
+      return labels[index] || `Day ${index + 1}`;
+    }
+  }
+
+  if (normName.includes('newborn')) {
+    if (totalSelected === 1) {
+      return 'Newborn Session';
+    } else {
+      const labels = ['Newborn Session', 'Family Portraits'];
+      return labels[index] || `Day ${index + 1}`;
+    }
+  }
+
+  if (normName.includes('baptism')) {
+    if (totalSelected === 1) {
+      return 'Baptism Ceremony';
+    } else {
+      const labels = ['Baptism Ceremony', 'Reception / After-party'];
+      return labels[index] || `Day ${index + 1}`;
+    }
+  }
+
+  if (normName.includes('birthday')) {
+    if (totalSelected === 1) {
+      return 'Birthday Celebration';
+    } else {
+      const labels = ['Pre-birthday Shoot', 'Birthday Celebration'];
+      return labels[index] || `Day ${index + 1}`;
+    }
+  }
+
+  if (normName.includes('anniversary') || normName.includes('anniversaries')) {
+    if (totalSelected === 1) {
+      return 'Anniversary Session';
+    } else {
+      const labels = ['Portrait Shoot', 'Celebration Event'];
+      return labels[index] || `Day ${index + 1}`;
+    }
+  }
+
+  if (totalSelected === 1) {
+    return 'Event Day';
+  }
+  return `Day ${index + 1}`;
+};
+
+// Helper to determine the expected number of days/sessions for a package tier
+const getExpectedDays = (packageName, tierName) => {
+  const normPkg = (packageName || '').toLowerCase();
+  const normTier = (tierName || '').toLowerCase();
+
+  if (normPkg.includes('wedding')) {
+    if (normTier.includes('signature') || normTier.includes('multi-day')) {
+      return 3;
+    }
+    if (normTier.includes('royal') || normTier.includes('luxury')) {
+      return 3;
+    }
+    return 1;
+  }
+  
+  if (normPkg.includes('maternity')) {
+    if (normTier.includes('bump-to-baby')) {
+      return 2;
+    }
+    return 1;
+  }
+
+  // Default fallback for any other package/tier is 1 day
+  return 1;
 };
 
 // Static pricing tiers and package information templates by event type
@@ -256,6 +358,18 @@ export default function Booking() {
     return tomorrow;
   });
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
+  const [bookingDates, setBookingDates] = useState([]);
+  const bannerRef = useRef(null);
+
+  // Scroll to selected-dates-banner when a date is added/removed but selections are still remaining
+  useEffect(() => {
+    if (currentStep === 2 && selectedPackage && selectedTier) {
+      const expectedDays = getExpectedDays(selectedPackage.name, selectedTier.name);
+      if (bookingDates.length > 0 && bookingDates.length < expectedDays) {
+        bannerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [bookingDates.length, currentStep, selectedPackage, selectedTier]);
 
   // Form states
   const [clientInfo, setClientInfo] = useState({
@@ -307,6 +421,34 @@ export default function Booking() {
     setCurrentStep(2);
   };
 
+  const handleTimeSlotSelect = (slot) => {
+    const dateStr = formatDateLocal(selectedDate);
+    if (selectedTimeSlot === slot) {
+      // Deselecting: remove from bookingDates
+      setSelectedTimeSlot('');
+      setBookingDates(prev => prev.filter(item => item.date !== dateStr));
+    } else {
+      setSelectedTimeSlot(slot);
+      setBookingDates(prev => {
+        const existingIdx = prev.findIndex(item => item.date === dateStr);
+        if (existingIdx > -1) {
+          const updated = [...prev];
+          updated[existingIdx] = { date: dateStr, timeSlot: slot };
+          return updated;
+        } else {
+          return [...prev, { date: dateStr, timeSlot: slot }];
+        }
+      });
+    }
+  };
+
+  const handleRemoveDate = (dateStr) => {
+    setBookingDates(prev => prev.filter(item => item.date !== dateStr));
+    if (selectedDate && formatDateLocal(selectedDate) === dateStr) {
+      setSelectedTimeSlot('');
+    }
+  };
+
   // Calendar Helpers
   const daysInMonth = (date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -331,7 +473,9 @@ export default function Booking() {
 
     if (clickedDate >= today) {
       setSelectedDate(clickedDate);
-      setSelectedTimeSlot(''); // Reset timeslot on date change
+      const dateStr = formatDateLocal(clickedDate);
+      const existing = bookingDates.find(item => item.date === dateStr);
+      setSelectedTimeSlot(existing ? existing.timeSlot : '');
     }
   };
 
@@ -348,13 +492,19 @@ export default function Booking() {
       return;
     }
 
+    if (bookingDates.length === 0) {
+      dispatch(showAlert({ type: 'error', message: 'Please select at least one date for your booking.' }));
+      return;
+    }
+
     const bookingData = {
       packageName: selectedPackage.name,
       packageId: selectedPackage.id,
       tierName: selectedTier.name,
       price: selectedTier.price,
-      date: selectedDate.toISOString().split('T')[0],
-      timeSlot: selectedTimeSlot,
+      dates: bookingDates,
+      date: bookingDates[0].date,
+      timeSlot: bookingDates[0].timeSlot,
       clientName: clientInfo.name,
       clientEmail: clientInfo.email,
       clientPhone: clientInfo.phone,
@@ -394,13 +544,16 @@ export default function Booking() {
         selectedDate.getMonth() === currentMonth.getMonth() && 
         selectedDate.getFullYear() === currentMonth.getFullYear();
 
+      const dateStr = formatDateLocal(currentDate);
+      const hasBooking = bookingDates.some(item => item.date === dateStr);
+
       days.push(
         <button
           key={`day-${day}`}
           type="button"
           disabled={isPast}
           onClick={() => handleDateClick(day)}
-          className={`calendar-day ${isPast ? 'disabled' : ''} ${isSelected ? 'selected' : ''}`}
+          className={`calendar-day ${isPast ? 'disabled' : ''} ${isSelected ? 'selected' : ''} ${hasBooking && !isSelected ? 'has-booking' : ''}`}
         >
           {day}
         </button>
@@ -642,6 +795,80 @@ export default function Booking() {
               Selected: <strong>{selectedPackage.name} ({selectedTier.name} - {getDisplayPrice(selectedTier.price)})</strong>
             </div>
 
+            {/* Selected Dates List right after selected-item-pill */}
+            {selectedPackage && selectedTier && (
+              <div ref={bannerRef} className="selected-dates-banner fade-in">
+                <h4>Your Schedule Selection:</h4>
+                <div className="selected-dates-inline-list">
+                  {(() => {
+                    const expectedDays = getExpectedDays(selectedPackage.name, selectedTier.name);
+                    const totalPills = Math.max(expectedDays, bookingDates.length);
+                    const pills = [];
+                    
+                    for (let i = 0; i < totalPills; i++) {
+                      const item = bookingDates[i];
+                      const label = getDateLabel(selectedPackage.name, i, totalPills);
+                      
+                      if (item) {
+                        const dateObj = new Date(item.date);
+                        const formattedDate = dateObj.toLocaleDateString('en-IN', {
+                          weekday: 'short',
+                          month: 'short',
+                          day: 'numeric'
+                        });
+                        
+                        pills.push(
+                          <div key={`pill-${item.date}`} className="selected-date-pill-item populated">
+                            <span className="date-pill-label">{label}:</span>
+                            <span className="date-pill-value">{formattedDate} ({item.timeSlot})</span>
+                            <button
+                              type="button"
+                              className="remove-pill-btn"
+                              onClick={() => handleRemoveDate(item.date)}
+                              title="Remove date"
+                            >
+                              &times;
+                            </button>
+                          </div>
+                        );
+                      } else {
+                        const isActive = i === bookingDates.length;
+                        
+                        pills.push(
+                          <div key={`pill-empty-${i}`} className={`selected-date-pill-item empty ${isActive ? 'active-pill' : ''}`}>
+                            <span className="date-pill-label">{label}:</span>
+                            <span className="date-pill-value placeholder-value">Select the date</span>
+                          </div>
+                        );
+                      }
+                    }
+                    return pills;
+                  })()}
+                </div>
+
+                {/* Dynamically prompt the user */}
+                {(() => {
+                  const expectedDays = getExpectedDays(selectedPackage.name, selectedTier.name);
+                  const remainingCount = expectedDays - bookingDates.length;
+                  if (remainingCount > 0) {
+                    return (
+                      <div className="banner-prompt-tip">
+                        <span className="prompt-icon">💡</span>
+                        <span>Please select <strong>{remainingCount} more date{remainingCount > 1 ? 's' : ''}</strong> from the calendar below.</span>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div className="banner-prompt-tip success">
+                        <span className="prompt-icon">✓</span>
+                        <span>All <strong>{expectedDays} days</strong> selected! You can now click continue.</span>
+                      </div>
+                    );
+                  }
+                })()}
+              </div>
+            )}
+
             <div className="schedule-picker-grid">
               <div className="picker-col">
                 <div className="col-header-wrap">
@@ -657,17 +884,22 @@ export default function Booking() {
                   <h3>Select Time Slot</h3>
                 </div>
                 {selectedDate ? (
-                  <div className="time-slots-grid">
-                    {TIME_SLOTS.map((slot) => (
-                      <button
-                        key={slot}
-                        type="button"
-                        className={`time-slot-btn ${selectedTimeSlot === slot ? 'active' : ''}`}
-                        onClick={() => setSelectedTimeSlot(slot)}
-                      >
-                        {slot}
-                      </button>
-                    ))}
+                  <div className="time-slots-wrapper">
+                    <div className="time-slots-grid">
+                      {TIME_SLOTS.map((slot) => (
+                        <button
+                          key={slot}
+                          type="button"
+                          className={`time-slot-btn ${selectedTimeSlot === slot ? 'active' : ''}`}
+                          onClick={() => handleTimeSlotSelect(slot)}
+                        >
+                          {slot}
+                        </button>
+                      ))}
+                    </div>
+                    {!selectedTimeSlot && (
+                      <p className="select-slot-tip">Please select a time slot to add this date to your booking.</p>
+                    )}
                   </div>
                 ) : (
                   <div className="slot-placeholder">
@@ -681,7 +913,7 @@ export default function Booking() {
               <button 
                 type="button" 
                 className="button primary next-step-btn"
-                disabled={!selectedDate || !selectedTimeSlot}
+                disabled={bookingDates.length === 0}
                 onClick={() => setCurrentStep(3)}
               >
                 Continue to Details &rarr;
@@ -783,17 +1015,32 @@ export default function Booking() {
                       <span className="label">Selected Tier</span>
                       <span className="value">{selectedTier.name}</span>
                     </div>
-                    <div className="summary-row">
-                      <span className="label">Date</span>
-                      <span className="value">
-                        {selectedDate.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
-                      </span>
-                    </div>
-                    <div className="summary-row">
-                      <span className="label">Time Slot</span>
-                      <span className="value">{selectedTimeSlot.split(' ')[0]} {selectedTimeSlot.includes('(') ? selectedTimeSlot.slice(selectedTimeSlot.indexOf('(')) : ''}</span>
-                    </div>
+                    
                     <div className="summary-divider"></div>
+                    
+                    <div className="dates-summary-list">
+                      <span className="label">Selected Dates & Slots</span>
+                      <div className="value-list">
+                        {bookingDates.map((item, index) => {
+                          const dateObj = new Date(item.date);
+                          const formattedDate = dateObj.toLocaleDateString('en-IN', {
+                            weekday: 'short',
+                            month: 'short',
+                            day: 'numeric'
+                          });
+                          const label = getDateLabel(selectedPackage.name, index, bookingDates.length);
+                          return (
+                            <div key={item.date} className="summary-date-entry">
+                              <span>{label}</span>
+                              <span>{formattedDate} • {item.timeSlot}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    
+                    <div className="summary-divider"></div>
+                    
                     <div className="summary-row total-row">
                       <span className="label">Estimated Price</span>
                       <span className="value">{getDisplayPrice(selectedTier.price)}</span>
@@ -825,12 +1072,33 @@ export default function Booking() {
                   <span className="label">Package / Tier</span>
                   <span className="value">{selectedPackage?.name} ({selectedTier?.name})</span>
                 </div>
-                <div className="summary-row">
-                  <span className="label">Appointment Time</span>
-                  <span className="value">
-                    {selectedDate?.toLocaleDateString('en-IN', { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' })} at {selectedTimeSlot}
-                  </span>
+                
+                <div className="summary-divider"></div>
+                
+                <div className="dates-success-list">
+                  <span className="label">Appointment Dates</span>
+                  <div className="value-list">
+                    {bookingDates.map((item, index) => {
+                      const dateObj = new Date(item.date);
+                      const formattedDate = dateObj.toLocaleDateString('en-IN', {
+                        weekday: 'short',
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric'
+                      });
+                      const label = getDateLabel(selectedPackage?.name, index, bookingDates.length);
+                      return (
+                        <div key={item.date} className="success-date-entry">
+                          <span>{label}</span>
+                          <span>{formattedDate} at {item.timeSlot}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
+                
+                <div className="summary-divider"></div>
+                
                 <div className="summary-row">
                   <span className="label">Estimated Price</span>
                   <span className="value">{selectedTier ? getDisplayPrice(selectedTier.price) : ''}</span>
@@ -846,8 +1114,11 @@ export default function Booking() {
                 setCurrentStep(1);
                 setSelectedPackage(null);
                 setSelectedTier(null);
-                setSelectedDate(new Date());
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                setSelectedDate(tomorrow);
                 setSelectedTimeSlot('');
+                setBookingDates([]);
                 setClientInfo({ name: '', email: '', phone: '', notes: '' });
               }}
             >
