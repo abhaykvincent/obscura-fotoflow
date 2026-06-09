@@ -57,38 +57,62 @@ export const addUploadCompletionEventToFirestore = async (domain, projectId, col
         const projectData = projectSnapshot.data();
         const existingEvents = projectData.events || [];
 
-        // Extract and Normalize Date
-        const rawDate = uploadedFiles[0]?.dateTimeOriginal ? new Date(uploadedFiles[0].dateTimeOriginal) : new Date();
-        const normalizedEventDate = new Date(rawDate);
-        normalizedEventDate.setHours(0, 0, 0, 0);
-
-        // Check if an event with the same type and normalized date already exists
-        const eventAlreadyExists = existingEvents.some(event => 
-            event.type === collectionName && event.date === normalizedEventDate.getTime()
-        );
-
-        if (eventAlreadyExists) {
-            console.log(`%cUpload completion event for collection ${collectionName} on ${normalizedEventDate.toLocaleDateString()} already exists. Skipping creation.`, `color: orange;`);
-            return; // Do not create a new event
-        }
-
-        const eventId = `upload-completion-${collectionId}-${new Date().getTime()}`;
-        const uploadCompletionEvent = {
-            id: eventId,
-            type: collectionName,
-            date: normalizedEventDate.getTime(),
-            location: '',
-            crews: [],
-            collectionId: collectionId,
-            filesCount: uploadedFiles.length,
-            totalSize: importFileSize,
+        // Helper to parse date consistently from string, Date object, or Firestore Timestamp
+        const parseDate = (dateVal) => {
+            if (!dateVal) return new Date();
+            if (typeof dateVal.toDate === 'function') {
+                return dateVal.toDate();
+            }
+            return new Date(dateVal);
         };
 
-        await updateDoc(projectDocRef, {
-            events: arrayUnion(uploadCompletionEvent)
-        });
+        // Group uploaded files by normalized date (setHours(0,0,0,0) time)
+        const filesByDate = {};
+        for (const file of uploadedFiles) {
+            const rawDate = parseDate(file?.dateTimeOriginal);
+            const normalizedDate = new Date(rawDate);
+            normalizedDate.setHours(0, 0, 0, 0);
+            const timeKey = normalizedDate.getTime();
+            if (!filesByDate[timeKey]) {
+                filesByDate[timeKey] = [];
+            }
+            filesByDate[timeKey].push(file);
+        }
 
-        console.log(`%cAdded upload completion event for Project ${projectId} in ${domain} successfully.`, `color: #54a134;`);
+        const totalFiles = uploadedFiles.length;
+        const sizePerFile = totalFiles > 0 ? importFileSize / totalFiles : 0;
+        const eventsToAdd = [];
+
+        for (const [timeKeyStr, files] of Object.entries(filesByDate)) {
+            const timeKey = Number(timeKeyStr);
+            const eventAlreadyExists = existingEvents.some(event => 
+                event.type === collectionName && event.date === timeKey
+            );
+
+            if (!eventAlreadyExists) {
+                const eventId = `upload-completion-${collectionId}-${timeKey}-${new Date().getTime()}`;
+                const uploadCompletionEvent = {
+                    id: eventId,
+                    type: collectionName,
+                    date: timeKey,
+                    location: '',
+                    crews: [],
+                    collectionId: collectionId,
+                    filesCount: files.length,
+                    totalSize: Number((sizePerFile * files.length).toFixed(2)),
+                };
+                eventsToAdd.push(uploadCompletionEvent);
+            } else {
+                console.log(`%cUpload completion event for collection ${collectionName} on ${new Date(timeKey).toLocaleDateString()} already exists. Skipping creation.`, `color: orange;`);
+            }
+        }
+
+        if (eventsToAdd.length > 0) {
+            await updateDoc(projectDocRef, {
+                events: arrayUnion(...eventsToAdd)
+            });
+            console.log(`%cAdded ${eventsToAdd.length} upload completion event(s) for Project ${projectId} in ${domain} successfully.`, `color: #54a134;`);
+        }
     } catch (error) {
         console.error(`%cError adding upload completion event to Project ${projectId} in ${domain}: ${error.message}`, `color: red;`);
         throw error;
