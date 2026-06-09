@@ -189,6 +189,26 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                             </div>
                             {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
                         </div> 
+                        <div className="link-pin-container">
+                            <div className="link-pin">
+                                <a 
+                                    className="linkToGallery" 
+                                    href={getGalleryURL('smart-gallery', currentStudio?.domain, project?.id)} 
+                                    target="_blank" 
+                                    rel="noreferrer"
+                                > 
+                                    ...{getGalleryURL('smart-gallery', currentStudio?.domain, project?.id).slice(-16)}
+                                </a>
+                                <div 
+                                    className="button primary outline text-only icon copy" 
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(getGalleryURL('smart-gallery', currentStudio?.domain, project?.id));
+                                        dispatch(showAlert({ type: "success", message: "Link copied to clipboard!" }));
+                                    }}
+                                />
+                            </div>
+                            {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
+                        </div> 
 
                         {/* 3. Project Statistics */}
                         {project.pin && (
