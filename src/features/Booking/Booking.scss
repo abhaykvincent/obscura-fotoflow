@@ -428,6 +428,53 @@
         }
       }
     }
+
+    .banner-prompt-tip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      padding: 10px 14px;
+      background-color: rgba(197, 160, 89, 0.08);
+      border-radius: 8px;
+      border-left: 3px solid #C5A059;
+      font-size: 13px;
+      color: #5C6B62;
+
+      strong {
+        color: #0D3B29;
+      }
+
+      .prompt-icon {
+        font-size: 14px;
+        animation: bounce 1.5s infinite alternate;
+        display: inline-block;
+      }
+
+      &.success {
+        background-color: rgba(13, 59, 41, 0.05);
+        border-left-color: #0D3B29;
+        color: #5C6B62;
+
+        strong {
+          color: #0D3B29;
+        }
+
+        .prompt-icon {
+          animation: none;
+          color: #0D3B29;
+        }
+      }
+    }
+
+    @keyframes bounce {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-2px);
+      }
+    }
   }
 
   // Tabs for package selection

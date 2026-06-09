@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchGalleryStudio, selectGalleryStudio, selectGalleryStudioLoading } from '../../app/slices/studioSlice';
@@ -359,6 +359,17 @@ export default function Booking() {
   });
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
   const [bookingDates, setBookingDates] = useState([]);
+  const bannerRef = useRef(null);
+
+  // Scroll to selected-dates-banner when a date is added/removed but selections are still remaining
+  useEffect(() => {
+    if (currentStep === 2 && selectedPackage && selectedTier) {
+      const expectedDays = getExpectedDays(selectedPackage.name, selectedTier.name);
+      if (bookingDates.length > 0 && bookingDates.length < expectedDays) {
+        bannerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [bookingDates.length, currentStep, selectedPackage, selectedTier]);
 
   // Form states
   const [clientInfo, setClientInfo] = useState({
@@ -786,7 +797,7 @@ export default function Booking() {
 
             {/* Selected Dates List right after selected-item-pill */}
             {selectedPackage && selectedTier && (
-              <div className="selected-dates-banner fade-in">
+              <div ref={bannerRef} className="selected-dates-banner fade-in">
                 <h4>Your Schedule Selection:</h4>
                 <div className="selected-dates-inline-list">
                   {(() => {
@@ -834,6 +845,27 @@ export default function Booking() {
                     return pills;
                   })()}
                 </div>
+
+                {/* Dynamically prompt the user */}
+                {(() => {
+                  const expectedDays = getExpectedDays(selectedPackage.name, selectedTier.name);
+                  const remainingCount = expectedDays - bookingDates.length;
+                  if (remainingCount > 0) {
+                    return (
+                      <div className="banner-prompt-tip">
+                        <span className="prompt-icon">💡</span>
+                        <span>Please select <strong>{remainingCount} more date{remainingCount > 1 ? 's' : ''}</strong> from the calendar below.</span>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div className="banner-prompt-tip success">
+                        <span className="prompt-icon">✓</span>
+                        <span>All <strong>{expectedDays} days</strong> selected! You can now click continue.</span>
+                      </div>
+                    );
+                  }
+                })()}
               </div>
             )}
 
