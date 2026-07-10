@@ -22,6 +22,8 @@ import DeleteConfirmationModal from '../../components/Modal/DeleteProject';
 import AddExpenseModal from '../../components/Modal/AddExpense';
 import AddPaymentModal from '../../components/Modal/AddPayment';
 import AddBudgetModal from '../../components/Modal/AddBudget';
+import AddEventModal from '../../components/Modal/AddEvent';
+import AddCrewModal from '../../components/Modal/AddCrew';
 
 import './Project.scss';
 import './ArchiveBanner.scss';
@@ -45,6 +47,7 @@ export default function Project() {
   const [project, setProject] = useState(null);
   const [pinText, setPinText] = useState('');
   const [pinIconClass, setPinIconClass] = useState('hide');
+  const [selectedEventId, setSelectedEventId] = useState('');
   
 
   const selectedProject = useMemo(() => 
@@ -154,6 +157,8 @@ export default function Project() {
       <AddPaymentModal project={project} />
       <AddExpenseModal project={project} />
       <AddBudgetModal project={project} />
+      <AddEventModal project={project} />
+      <AddCrewModal project={project} eventId={selectedEventId} />
 
       <main className='project-page'>
         {isExpired ? (
@@ -193,7 +198,7 @@ export default function Project() {
           </>
         )}
         <div className={`project-dashboard ${isExpired ? 'locked' : ''}`}>
-          <DashboardProjects project={project} />
+          <DashboardProjects project={project} setSelectedEventId={setSelectedEventId} />
         </div>
               </main>
         
