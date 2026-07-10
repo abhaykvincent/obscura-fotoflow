@@ -100,15 +100,7 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
         await updateSmartGalleryInFirestore(domain, projectId, collectionId, updatedSmartGallery);
 
         const pin = generateMemorablePIN(4)
-        const imageGridEvent = {
-            type: 'image-grid',
-            id: `image-grid-${collectionId}-${new Date().getTime()}`,
-    
-            collectionId: collectionId,
-            date: new Date().getTime(),
-        };
         updateDoc(projectDocRef, {
-            events: arrayUnion(imageGridEvent),
             collections: projectData.data().collections.map(collection => {
                 if (collection.id === collectionId) {
                     return {

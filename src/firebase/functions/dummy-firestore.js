@@ -120,15 +120,6 @@ export const createDummyProjectsInFirestore = async (domain, n = 5) => {
             totalProjectFilesCount += numImages;
             totalProjectSize += collectionSize;
 
-            // Add Image Grid Event (simulating actual upload logic)
-            projectEvents.push({
-                type: 'image-grid',
-                id: `image-grid-${coll.id}-${createdAt}`,
-                images: images,
-                collectionId: coll.id,
-                date: createdAt,
-            });
-
             // Add Upload Completion Event (simulating actual upload logic)
             projectEvents.push({
                 id: `upload-completion-${coll.id}-${createdAt}`,
