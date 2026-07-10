@@ -211,9 +211,6 @@ export default function Project() {
                   </div>
                   <div className="client"></div>
                   <div className="project-options options">
-                    <div className={`button tertiary icon pin ${pinIconClass}`} onClick={handlePinCopy}>
-                      {pinText}
-                    </div>
                       {isExpired ? 'Expired' : isArchived ? 'Archived (Only client and you)' : 'Share'}
                     <button
                       className={`button primary share icon ${(project.uploadedFilesCount > 0 || isExpired) ? '' : 'disabled'}`}
