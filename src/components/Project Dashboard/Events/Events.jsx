@@ -7,20 +7,15 @@ import { getEventTimeAgo } from '../../../utils/dateUtils';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../app/slices/modalSlice';
 
-function DashboardEvents({project})
+function DashboardEvents({project, setSelectedEventId})
 { const dispatch = useDispatch()
   
     // Events
-    const [selectedEventID, setSelectedEventID] = useState('')
+    const [localEventId, setLocalEventId] = useState('')
+    const activeSetEventId = setSelectedEventId || setLocalEventId
 
   return (
-    <><AddEventModal 
-        project={project} 
-      />
-      <AddCrewModal
-        project={project} 
-        eventId={selectedEventID}
-      />
+    <>
     <div className="section shoots">
 
       <div className="headings">
@@ -97,8 +92,8 @@ function DashboardEvents({project})
               }
                 <div className="assistant-card new-crew box"
                 onClick={ ()=>{
-                  setSelectedEventID(event.id)
-                  openModal('addCrew')
+                  activeSetEventId(event.id)
+                  dispatch(openModal('addCrew'))
                 }
                 }>
                   <p>Crew</p>

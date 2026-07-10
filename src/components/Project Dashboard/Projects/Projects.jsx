@@ -20,7 +20,7 @@ import { acceptSelectionReset, declineSelectionReset, selectSelectionRequests } 
 import { selectUserStudio } from '../../../app/slices/authSlice';
 import HistoryLog from './HistoryLog/HistoryLog';
 
-function DashboardProjects({project}){
+function DashboardProjects({project, setSelectedEventId}){
   const dispatch =useDispatch()
   const navigate = useNavigate();
   const { studioName } = useParams();
@@ -146,6 +146,7 @@ function DashboardProjects({project}){
           project={project} 
           activeTab={activeTab}
           setActiveTab={setActiveTab}
+          setSelectedEventId={setSelectedEventId}
         />
         {/* <div className="sub-projects">
           <h4 className='heading-section heading'>Sub Projects</h4>

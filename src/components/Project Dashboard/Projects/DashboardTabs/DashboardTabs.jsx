@@ -12,7 +12,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuT
 import CollectionsPanel from '../../../Project/Collections/CollectionsPanel';
 import HistoryLog from '../HistoryLog/HistoryLog';
 
-function DashboardTabs({ project, activeTab: propActiveTab, setActiveTab: propSetActiveTab }) {
+function DashboardTabs({ project, activeTab: propActiveTab, setActiveTab: propSetActiveTab, setSelectedEventId }) {
   const dispatch = useDispatch();
   const [localActiveTab, setLocalActiveTab] = useState('galleries');
   const activeTab = propActiveTab || localActiveTab;
@@ -55,7 +55,7 @@ function DashboardTabs({ project, activeTab: propActiveTab, setActiveTab: propSe
 
       case 'shoots':
         return (
-          <DashboardEvents project={project}/>
+          <DashboardEvents project={project} setSelectedEventId={setSelectedEventId}/>
         );
 
       case 'financials':
