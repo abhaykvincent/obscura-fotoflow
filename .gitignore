@@ -11,6 +11,7 @@ build/
 dist/
 out/
 release/
+firestore-data/
 *.app
 *.exe
 *.dmg
@@ -82,3 +83,7 @@ coverage/
 .env.development
 
 functions/index.html
+
+*.overall_export_metadata
+
+*.export_metadata
