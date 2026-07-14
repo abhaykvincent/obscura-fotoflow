@@ -318,7 +318,8 @@
             background-size: 100%;
             background-image: url('https://img.icons8.com/?size=100&id=Uh8hvgeb99i5&format=png&color=428924');
             padding-top:4px;
-            margin-right: 8px;
+            margin-right: 8pxs
+            ;
             opacity: 0.7;
         }
         &.selection::before{
@@ -742,6 +743,12 @@
         width: 8px*3;
         background-size: auto 80%;
         background-image: url('https://img.icons8.com/?size=100&id=CXSefwAlx5SL&format=png&color=FFFFFF');
+    }
+    &.selected{
+        height: 8px*2.5;
+        width: 8px*3;
+        background-size: auto 80%;
+        background-image: url('https://img.icons8.com/?size=100&id=3xJeeoogmkHB&format=png&color=FFFFFF');
     }
     &.expire{
         height: 8px*2.5;

@@ -160,7 +160,7 @@ function DashboardProjects({project, setSelectedEventId}){
         </div> */}
       </>
     }
-          {/* <HistoryLog project={project} /> */}
+          <HistoryLog project={project} />
 
       
     </>

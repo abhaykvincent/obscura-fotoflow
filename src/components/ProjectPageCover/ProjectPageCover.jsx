@@ -161,7 +161,7 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                     
                     {!isEditing && (
                         <div className="tags">
-                            <div className="tag type">{project?.type}</div>
+                            <div className="tag type">{truncateMiddle(project?.type, 15)}</div>
                         </div>
                     )}
                 </div>
