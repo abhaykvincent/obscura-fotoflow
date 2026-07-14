@@ -159,7 +159,7 @@
     }
     &.large{
         height: 8px*6;
-        padding: 8px*1 8px*2.5;
+        padding: 8px*1.9 8px*3;
         font-size: 1rem;
     }
 
@@ -318,7 +318,8 @@
             background-size: 100%;
             background-image: url('https://img.icons8.com/?size=100&id=Uh8hvgeb99i5&format=png&color=428924');
             padding-top:4px;
-            margin-right: 8px*2;
+            margin-right: 8pxs
+            ;
             opacity: 0.7;
         }
         &.selection::before{
@@ -326,7 +327,7 @@
             background-size: 100%;
             background-image: url('https://img.icons8.com/?size=100&id=82861&format=png&color=0c84ff');
             padding-top: 4px;
-            margin-right:8px*2;
+            margin-right:8px;
             opacity: 0.7;
         }
         &.hand-pointer::before{
@@ -743,6 +744,12 @@
         background-size: auto 80%;
         background-image: url('https://img.icons8.com/?size=100&id=CXSefwAlx5SL&format=png&color=FFFFFF');
     }
+    &.selected{
+        height: 8px*2.5;
+        width: 8px*3;
+        background-size: auto 80%;
+        background-image: url('https://img.icons8.com/?size=100&id=3xJeeoogmkHB&format=png&color=FFFFFF');
+    }
     &.expire{
         height: 8px*2.5;
         width: 8px*3;
@@ -984,4 +991,65 @@ border: 0px solid #535353;
             gap: 8px;
         }
     }
+}
+
+// Dropdown Menu Custom styling to fix visual layout bugs
+.dropdown-menu-content {
+  background-color: $dark-2;
+  border: 1px solid $dark-0;
+  border-radius: 8px;
+  padding: 6px;
+  min-width: 180px;
+  z-index: 1000;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .dropdown-menu-separator {
+    height: 1px;
+    background-color: $dark-1;
+    margin: 4px 0;
+  }
+}
+
+.dropdown-menu-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+  white-space: nowrap;
+
+  &:hover, &[data-highlighted] {
+    background-color: $dark-3;
+    color: white;
+  }
+
+  .icon-show {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+    opacity: 0.8;
+  }
+
+  &[disabled], &[data-disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+
+    .icon-show {
+      opacity: 0.4;
+    }
+  }
 }

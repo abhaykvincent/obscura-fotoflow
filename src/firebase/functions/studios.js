@@ -9,6 +9,7 @@ import { isProduction } from "../../analytics/utils";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchCurrentSubscription } from "../../app/slices/studioSlice";
 import { changeSubscriptionPlan, createInvoice } from "./subscription";
+import { restoreProjectFromArchive } from "./project-firestore";
 import { version } from "jszip";
 
 
@@ -520,10 +521,59 @@ export const approveExtensionRequest = async (domain, projectId) => {
         
         await updateDoc(requestRef, { status: 'accepted', acceptedAt: Date.now() });
         
-        // Note: This does not automatically extend the project. 
-        // The photographer is expected to do this manually from the project settings.
+        const projectRef = doc(db, 'studios', domain, 'projects', projectId);
+
+        // Check if project is archived and restore if necessary
+        const projectSnap = await getDoc(projectRef);
+        if (projectSnap.exists()) {
+            const projectData = projectSnap.data();
+            const isArchived = projectData.status === 'archive' || projectData.storage?.status === 'archive';
+            
+            if (isArchived) {
+                await restoreProjectFromArchive(domain, projectId);
+            }
+            
+            let newValidity;
+            let newThreshold;
+            const createdAt = new Date(projectData.createdAt);
+
+            if (isArchived) {
+                // Find when it was archived
+                const archivedDateMs = projectData.storage?.storageHistory?.filter(h => h.status === 'archive').pop()?.dateMoved || Date.now();
+                const archivedDate = new Date(archivedDateMs);
+                
+                // New threshold is 6 months from archived date
+                const targetThresholdDate = new Date(archivedDate);
+                targetThresholdDate.setMonth(targetThresholdDate.getMonth() + 6);
+                newThreshold = targetThresholdDate.getTime();
+
+                // Calculate total validity months from createdAt to new threshold
+                const diffYears = targetThresholdDate.getFullYear() - createdAt.getFullYear();
+                const diffMonths = targetThresholdDate.getMonth() - createdAt.getMonth();
+                newValidity = (diffYears * 12) + diffMonths;
+            } else {
+                // Default: increment existing validity by 3
+                const currentValidity = parseInt(projectData.projectValidityMonths || '6');
+                newValidity = currentValidity + 3;
+                
+                const targetThresholdDate = new Date(createdAt);
+                targetThresholdDate.setMonth(targetThresholdDate.getMonth() + newValidity);
+                newThreshold = targetThresholdDate.getTime();
+            }
+            
+            const updates = {
+                projectValidityMonths: newValidity
+            };
+
+            // Update archiveThreshold if it exists or if we are restoring
+            if (projectData.storage?.archiveThreshold || isArchived) {
+                updates['storage.archiveThreshold'] = newThreshold;
+            }
+
+            await updateDoc(projectRef, updates);
+        }
         
-        console.log(`Extension request approved for project ${projectId}`);
+        console.log(`Extension request approved for project ${projectId}.`);
         return true;
     } catch (error) {
         console.error('Error approving extension request:', error);

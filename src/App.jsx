@@ -37,6 +37,7 @@ import SmartGallery from './features/SmartGallery/SmartGallery';
 import SmartGalleryDownloadPIN from './features/SmartGallery/SmartGalleryDownloadPIN';
 import UserProfile from './features/AdminPanel/UserProfile/UserProfile';
 import DownloadApp from './features/DownloadApp/DownloadApp';
+import Booking from './features/Booking/Booking';
 
 // Components
 import Alert from './components/Alert/Alert';
@@ -114,44 +115,35 @@ export default function App() {
     }
   }, [isAuthenticated, user, defaultStudio]);
 
-  // Handle projects status for public pages
-  useEffect(() => {
-    if (isPublicPage(location.pathname)) {
-      dispatch(updateProjectsStatus('succeeded'));
-    }
-  }, [dispatch, location.pathname]);
-
   // ON Render
   useEffect(() => {
     if (isAuthenticated && currentDomain !== 'guest' && !isPublicPage(location.pathname)) {
+      if (isLoading === 'login' || isLoading === 'failed') {
+        dispatch(showLoading({ context: ` Loading App ..`, subcontext: ` ` }));
+        // Fetching data for studio
+        console.log(`%cFetching data for ${currentDomain}...`, `color: gray`);
+        dispatch(fetchProjects({ currentDomain }))
+          .catch((err) => {
+            dispatch(showAlert({ type: 'error', message: 'Check internet connection' }));
+          });
 
-  dispatch(showLoading({context:` Loading App ..`,subcontext:` `}))
-      // Fetching data for studio
-      console.log(`%cFetching data for ${currentDomain}...`,`color: gray`)
-      dispatch(fetchProjects({currentDomain}))
-      .catch((err)=>{
-        dispatch(showAlert({ type: 'error', message: 'Check internet connection' }));
-      })
-
-      dispatch(fetchStudio({currentDomain})).then((a) => {
-
-        dispatch(fetchCurrentSubscription({currentDomain}))
-        .catch((err)=>{
-          console.error(err)
-
-            dispatch(hideLoading())
+        dispatch(fetchStudio({ currentDomain })).then((a) => {
+          dispatch(fetchCurrentSubscription({ currentDomain }))
+            .catch((err) => {
+              console.error(err);
+              dispatch(hideLoading());
+            });
         })
-
-      })
-      .then(()=>{
-          dispatch(hideLoading())
-        })
-      .catch((err)=>{
-        console.error(err)
-          dispatch(hideLoading())
-      })
+          .then(() => {
+            dispatch(hideLoading());
+          })
+          .catch((err) => {
+            console.error(err);
+            dispatch(hideLoading());
+          });
+      }
     }
-  }, [dispatch, currentDomain, isAuthenticated]);
+  }, [dispatch, currentDomain, isAuthenticated, location.pathname, isLoading]);
 
   useEffect(() =>{
     if (studio?.trialEndDate) {
@@ -199,9 +191,9 @@ export default function App() {
         </>
       )}
       {
-        isLoading!== 'succeeded' && isAuthenticated && user!=='no-studio-found'  ? 
+        isLoading !== 'succeeded' && isAuthenticated && user !== 'no-studio-found' && (!isPublicPage(location.pathname)) ?
           (
-            isLoading!=='login' && (!isPublicPage(location.pathname)) ?  <Loading/> : <LoadingLight/>
+            isLoading !== 'login' ? <Loading /> : <LoadingLight />
           ) : 
           (
             <Routes>
@@ -209,6 +201,7 @@ export default function App() {
               <Route path="/login" element={<LoginModal />} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/download-app" element={<DownloadApp />} />
+              <Route path="/:studioName/booking" element={<Booking />} />
               <Route path="/:studioName/smart-gallery/:projectId/:collectionId?" element={<SmartGallery/>}/>
               <Route path="/:studioName/smart-gallery/:projectId/download/pin" element={<SmartGalleryDownloadPIN/>}/>
               <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareRedirect/>}/>
@@ -250,7 +243,7 @@ export default function App() {
             </Routes>
           )}
 
-{!isLightModePage(location.pathname)&&<div className="footer">
+{!isLightModePage(location.pathname) && location.pathname !== '/login' && <div className="footer">
             {/* Made in Kochi by Photographers |  */}
             <div className='copyright-symbol'>©</div>  
             <a href="https://www.masanory.com" target="_blank" rel="noopener noreferrer"><span>Fotoflow</span> 2025</a>

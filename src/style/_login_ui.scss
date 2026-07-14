@@ -42,7 +42,7 @@
       // smooth natural spinning with apuse in itervals
       @keyframes logo-spin-login {
           0%{              
-            opacity: 0.8;
+            opacity: 0;
             transform: rotate(0deg) scale(0.5);
             transition-timing-function: ease-in;
           }
@@ -109,13 +109,24 @@
         padding: 8px 8px*2; 
         color: $gray-default-light;
           opacity: 0;
-          animation: fadeInLeft 0.1s ease-out 2.6s;
+          animation: fadeInUpSubtle 0.6s cubic-bezier(0.16, 1, 0.3, 1) 300ms;
           animation-fill-mode: forwards;
-          span{
-        color: $green-default-dark;
-        margin-left:4px;
-
+          span.green-label-glow{
+            color: $green-default-dark;
+            margin-left:4px;
+            display: inline-block;
+            animation: green-pulse-glow 0.5s forwards 3.5s ease-in-out;
           }
+      }
+      @keyframes green-pulse-glow {
+        0%{
+            color: $green-default-dark;
+          text-shadow: 0 0 0px rgba($green-default-dark, 0);
+        }
+        100% {
+            color: $green-default-light;
+          text-shadow: 0 0 10px rgba($green-default-dark, 0.4), 0 0 20px rgba($green-default-dark, 0.2);
+        }
       }
       .cta-postlabel{
         color: $gray-default-dark;
@@ -123,7 +134,7 @@
         font-weight: 200;
         margin-left: 8px*1;
           opacity: 0;
-          animation: fadeInUp 0.3s ease-in 3s;
+          animation: fadeInUpSubtle 0.6s cubic-bezier(0.16, 1, 0.3, 1) 300ms;
           animation-fill-mode: forwards;
       }
 
@@ -146,12 +157,12 @@
         text-shadow: 1px 1px 0px 0px rgb(10, 10, 10);
       }@for $i from 1 through 10 {
         &:nth-child(#{$i}) {
-            $delay: 1.9s + 0.04s * ($i - 1);
-            animation: fadeInUp 0.2s ease-out $delay;
+            $delay: 0.3s + (0.04s * ($i - 1));
+            animation: fadeInUpSubtle 0.6s cubic-bezier(0.16, 1, 0.3, 1) $delay;
             animation-fill-mode: forwards;
         }
         &:last-child {
-          animation: fadeInUp 0.2s ease-out 2.5s;
+          animation: fadeInUpSubtle 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.38s;
           animation-fill-mode: forwards;
         }
       }
@@ -161,8 +172,8 @@
       font-weight: 200;
       transform: scale(1.3);
       opacity: 0;
-      $delay: 2s + 0.05s * 2;
-      animation: fadeInUp 0.5s ease-out $delay;
+      $delay: 0.3s + 0.07s;
+      animation: fadeInUpSubtle 0.6s cubic-bezier(0.16, 1, 0.3, 1) $delay;
       animation-fill-mode: forwards;
     }
     

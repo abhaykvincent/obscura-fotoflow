@@ -1,6 +1,6 @@
 
-const publicPatterns = ['share', 'selection', 'masonry-grid','onboarding','invitation/','login','smart-gallery', 'download-app'];
-const lightModePatterns =  ['share', 'selection','smart-gallery'];
+const publicPatterns = ['share', 'selection', 'masonry-grid','onboarding','invitation/','login','smart-gallery', 'download-app', 'booking'];
+const lightModePatterns =  ['share', 'selection','smart-gallery', 'booking'];
 export const isPublicPage = (pathname) => {
   const target = (pathname || window.location.href).toLowerCase();
   return publicPatterns.some(pattern => target.includes(pattern));

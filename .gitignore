@@ -84,6 +84,4 @@ coverage/
 
 functions/index.html
 
-*.overall_export_metadata
-
-*.export_metadata
+firestore-data/2026-06-07T07:41:39_81053/

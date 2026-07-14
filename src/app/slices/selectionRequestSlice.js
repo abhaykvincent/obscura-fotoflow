@@ -68,5 +68,5 @@ const selectionRequestSlice = createSlice({
 });
 
 export const { removeRequestLocally } = selectionRequestSlice.actions;
-export const selectSelectionRequests = (state) => state.selectionRequest.requests;
+export const selectSelectionRequests = (state) => state.selectionRequest.requests.filter(req => req.status === 'pending');
 export default selectionRequestSlice.reducer;

@@ -25,15 +25,15 @@ header{
     }
     .logo-wrapper{
       display: grid;
-      grid-template-columns: 8px*7 auto;;
+      grid-template-columns: 8px*8 auto;;
       padding-left :0px;
         width: auto;
         height: 100%;
         align-items:center;
-        gap: 8px*0.5;
+        gap: 8px*1;
         cursor:default;
       .logo{
-        width: 8px*7;
+        width: 8px*8;
         height: 8px*8;
         background-image: url('../assets/img/fotoflow-pro-logo.svg');
         background-position: center;

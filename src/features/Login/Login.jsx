@@ -262,7 +262,7 @@ const LoginModal = () => {
 
         <div className="login-footer">
           <div className="footer-cta">
-            <div className="footer-cta-button">Need Help ? <span> Chat with us</span></div>
+            <div className="footer-cta-button">Need Help ? <span className='green-label-glow'> Chat with us</span></div>
             <p className="cta-postlabel"></p>
           </div>
           <div className="footer-actions">

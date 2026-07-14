@@ -6,7 +6,7 @@ import SmartAlbum from '../../components/ImageGallery/SmartAlbum';
 import ProjectExpiredPage from '../../components/ImageGallery/ProjectExpiredPage';
 import ExpiredGallery from '../../components/galleries/ExpiredGallery.tsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectIsAuthenticated, selectUser } from '../../app/slices/authSlice';
+import { selectIsAuthenticated, selectUser, selectUserStudio } from '../../app/slices/authSlice';
 import { selectStudioAdminSettings } from '../../app/slices/adminSettingsSlice';
 import { selectGalleryStudio, selectGalleryStudioLoading, fetchGalleryStudio } from '../../app/slices/studioSlice';
 import { toTitleCase } from '../../utils/stringUtils';
@@ -32,15 +32,16 @@ export default function SmartGallery() {
   const tagline = settings?.gallery?.galleryTagline;
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState(null);
-  const [isExpired, setIsExpired] = useState(false);
+  const [isArchived, setIsArchived] = useState(false);
   const [expiryDate, setExpiryDate] = useState(null);
-  const [isStage2Expired, setIsStage2Expired] = useState(false);
+  const [isStageExpired, setIsStageExpired] = useState(false);
   const [visibleCollections, setVisibleCollections] = useState([]);
   const [collectionsLoading, setCollectionsLoading] = useState(true);
   
-  const [isClientAuthenticated, setIsClientAuthenticated] = useState(false);
+  const [isClientAuthenticated, setIsClientAuthenticated] = useState(() => isPinValid(projectId));
   const [isDownloading, setIsDownloading] = useState(false);
 
+  const userStudio = useSelector(selectUserStudio);
   useEffect(() => {
     if (studioName) {
       dispatch(fetchGalleryStudio({ currentDomain: studioName }));
@@ -120,11 +121,11 @@ export default function SmartGallery() {
           finalExpiryThresholdDate.setMonth(finalExpiryThresholdDate.getMonth() + (retentionYears * 12));
           finalExpiryThresholdDate.setDate(finalExpiryThresholdDate.getDate() + 30);
 
-          const isStage1Expired = Date.now() > archiveThresholdDate.getTime();
-          const isStage2ExpiredNow = Date.now() > finalExpiryThresholdDate.getTime() || projectData.status === 'expired';
+          const isStageArchived = Date.now() > archiveThresholdDate.getTime();
+          const isStageExpiredNow = Date.now() > finalExpiryThresholdDate.getTime() || projectData.status === 'expired';
           
-          setIsExpired(isStage1Expired);
-          setIsStage2Expired(isStage2ExpiredNow);
+          setIsArchived(isStageArchived);
+          setIsStageExpired(isStageExpiredNow);
         }
 
         if (!isAuthenticated || user === 'no-studio-found') {
@@ -293,7 +294,13 @@ export default function SmartGallery() {
   if (!project) {
     return <div>Project not found.</div>;
   }
-  if (isExpired && !isAuthenticated && !isPinValid(projectId)) {
+  const isStudioPhotographer = isAuthenticated && userStudio?.domain === studioName;
+  const userRole = isStudioPhotographer ? 'photographer' : (isClientAuthenticated ? 'client' : 'guest');
+
+  console.log('Archived',isArchived)
+  console.log('Expired',isStageExpired)
+  if (isStageExpired) {
+    console.log('Expired');
     return (
       <ExpiredGallery 
         backgroundImage={project.projectCover}
@@ -302,12 +309,26 @@ export default function SmartGallery() {
         projectId={project.id}
         projectName={project.name}
         domain={studioName}
+        role={userRole}
+        type="expired"
       />
     );
   }
 
-  if (isStage2Expired && !isAuthenticated) {
-    return <ProjectExpiredPage project={project} studio={studio} studioName={studioName} />;
+  if (isArchived) {
+    console.log('Archived');
+    return (
+      <ExpiredGallery 
+        backgroundImage={project.projectCover}
+        photographerName={studio?.name || studioName}
+        expiryDate={expiryDate}
+        projectId={project.id}
+        projectName={project.name}
+        domain={studioName}
+        role={userRole}
+        type="archived"
+      />
+    );
   }
 
   if (collectionId) {

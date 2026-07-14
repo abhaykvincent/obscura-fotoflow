@@ -79,5 +79,5 @@ const extensionRequestSlice = createSlice({
 });
 
 export const { removeRequestLocally: removeExtensionRequestLocally } = extensionRequestSlice.actions;
-export const selectExtensionRequests = (state) => state.extensionRequest.requests;
+export const selectExtensionRequests = (state) => state.extensionRequest.requests.filter(req => req.status === 'pending');
 export default extensionRequestSlice.reducer;
