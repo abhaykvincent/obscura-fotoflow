@@ -7,7 +7,7 @@ import { showAlert } from "../../app/slices/alertSlice";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { setCoverPhotoInFirestore } from "../../firebase/functions/firestore";
 import { updateProjectCover, updateProjectName } from "../../app/slices/projectsSlice";
-import { convertMegabytes } from "../../utils/stringUtils";
+import { convertMegabytes, truncateMiddle, truncateUrl } from "../../utils/stringUtils";
 import { ProjectStatus } from "../Project/ProjectStatus/ProjectStatus";
 import { getGalleryURL } from "../../utils/urlUtils";
 import { getStorageForDomain } from "../../utils/uploadOperations";
@@ -161,7 +161,7 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                     
                     {!isEditing && (
                         <div className="tags">
-                            <div className="tag type">{project?.type}</div>
+                            <div className="tag type">{truncateMiddle(project?.type, 15)}</div>
                         </div>
                     )}
                 </div>
@@ -177,7 +177,9 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                                     target="_blank" 
                                     rel="noreferrer"
                                 > 
-                                    ...{getGalleryURL('smart-gallery', currentStudio?.domain, project?.id).slice(-16)}
+                                    {truncateUrl(
+                                        getGalleryURL('smart-gallery', currentStudio?.domain, project?.id), 8*3, 8*2
+                                    )}
                                 </a>
                                 <div 
                                     className="button primary outline text-only icon copy" 
@@ -187,26 +189,8 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                                     }}
                                 />
                             </div>
-                            {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
                         </div> 
                         <div className="link-pin-container">
-                            <div className="link-pin">
-                                <a 
-                                    className="linkToGallery" 
-                                    href={getGalleryURL('smart-gallery', currentStudio?.domain, project?.id)} 
-                                    target="_blank" 
-                                    rel="noreferrer"
-                                > 
-                                    ...{getGalleryURL('smart-gallery', currentStudio?.domain, project?.id).slice(-16)}
-                                </a>
-                                <div 
-                                    className="button primary outline text-only icon copy" 
-                                    onClick={() => {
-                                        navigator.clipboard.writeText(getGalleryURL('smart-gallery', currentStudio?.domain, project?.id));
-                                        dispatch(showAlert({ type: "success", message: "Link copied to clipboard!" }));
-                                    }}
-                                />
-                            </div>
                             {project.pin && <div className="project-pin">PIN: {project.pin}</div>}
                         </div> 
 

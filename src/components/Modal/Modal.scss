@@ -14,6 +14,17 @@
   }
 }
 
+@keyframes fadeInUpSubtle {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .modal-container{
     width: 100vw;
     height: 100dvh;
@@ -643,9 +654,12 @@ animation-timing-function: ease-out;
     transform: translate(-50%, -40%);
     opacity: 0;
     min-height: 8px*53;
+    height: 8px*53;
+    max-height: 8px*53;
     animation-name: login-popup;
-    animation-delay: 0.5s;
-    animation-duration: 0.2s;
+    animation-delay: 0s;
+    animation-duration: 0.6s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
     animation-fill-mode: forwards;
     border: none;
     overflow: visible;
@@ -653,11 +667,11 @@ animation-timing-function: ease-out;
     box-shadow: none;
     @keyframes login-popup {
     0%{
-    transform: translate(-50%, calc(50% + 8px*12)) scale(0);
+    transform: translate(-50%, calc(50% + 8px*12)) scale(0.96);
     opacity: 0;
     }
     100%{
-        transform: translate(-50%, calc(50% + 8px*12))scale(1);
+        transform: translate(-50%, calc(50% + 8px*12)) scale(1);
         opacity: 1;
     }
     }
@@ -703,7 +717,7 @@ animation-timing-function: ease-out;
     .login-title{
     color: $gray-default-dark;
     opacity: 0;
-    animation: fadeInUp 0.2s ease-out 0.55s;
+    animation: fadeInUpSubtle 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0s;
     animation-fill-mode: forwards;
     span{
         color: $gray4-default-dark;
@@ -721,7 +735,7 @@ animation-timing-function: ease-out;
     line-height: 1rem;
     font-weight: 200;
     opacity: 0;
-    animation: fadeInUp 0.2s ease-in 0.65s;
+    animation: fadeInUpSubtle 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0s;
     animation-fill-mode: forwards;
     .green-label{
         color: $green-default-dark;
@@ -738,7 +752,7 @@ animation-timing-function: ease-out;
     margin-bottom: -8px*0.2;
     margin-left: 8px;
     opacity: 0;
-    animation: fadeInUp 0.3s ease-out 0.6s;
+    animation: fadeInUpSubtle 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0s;
     animation-fill-mode: forwards;
     text-shadow: 1px 1px 1px black;
     }
@@ -795,7 +809,7 @@ animation-timing-function: ease-out;
         border-right: 1px solid #49723fec;
         border-bottom: 1px solid #1f2d1cec;
         opacity: 0;
-        animation: primary-action-signin  0.4s ease-in 1.15s;
+        animation: primary-action-signin 0.6s cubic-bezier(0.16, 1, 0.3, 1) 150ms;
         animation-fill-mode: forwards;
         text-shadow: 1px 1px 3px black;
 
@@ -808,7 +822,7 @@ animation-timing-function: ease-out;
           background: conic-gradient(from var(--google-angle), #4285F4, #EA4335, #FBBC05, #34A853, #4285F4);
           -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
                   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            animation: spin-google-border 3s linear infinite;
+            animation: spin-google-border 3s linear 2s infinite;
           -webkit-mask-composite: xor;
                   mask-composite: exclude;
           opacity: 1;
@@ -823,7 +837,7 @@ animation-timing-function: ease-out;
           inset: -1px;
           border-radius: inherit;
           background: conic-gradient(from var(--google-angle), #4285F4, #EA4335, #FBBC05, #34A853, #4285F4);
-            animation: spin-google-border 3s linear infinite;
+            animation: spin-google-border 3s linear 2s infinite;
           filter: blur(15px);
           opacity: 0;
           transition: opacity 0.3s ease;
@@ -845,7 +859,7 @@ animation-timing-function: ease-out;
         @keyframes primary-action-signin {
             0% {
               opacity: 0;
-              transform: translateY(8px*3);
+              transform: translateY(6px);
               box-shadow:
                 
                   2px 4px 4px rgba(0, 0, 0, 0.1);  
@@ -861,16 +875,16 @@ animation-timing-function: ease-out;
           }
         }
         &.apple{
-        color: $gray3-default-dark;
+        color: #f5f5f7;
         grid-template-columns: 8px*4 auto;
         opacity: 0;
         height: 8px*6;
         padding: 4px;
         width: calc(100% - 8px*2);
 
-        border: 1px solid $gray5-accessible-dark;
+        border: 1px solid rgba(255, 255, 255, 0.15);
         transform: scale(0.98);
-        animation: fadeInUp 0.35s ease-in 1.05s;
+        animation: fadeInUpSubtle 0.6s cubic-bezier(0.16, 1, 0.3, 1) 150ms;
         animation-fill-mode: forwards;
 
         box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.0);
@@ -901,7 +915,8 @@ animation-timing-function: ease-out;
         background-image: url('https://upload.wikimedia.org/wikipedia/commons/1/1b/Apple_logo_grey.svg');
         background-position: center center;
         background-size: 80%;
-        opacity: 0.2;
+        opacity: 0.8;
+        filter: brightness(1.5);
         }
         .lock{
         width: 8px*4;
@@ -930,7 +945,7 @@ animation-timing-function: ease-out;
         margin-top: 8px*1;
         margin-bottom: 8px*1;
         opacity: 0;
-        animation: fadeInLeft 0.2s ease-out 2.95s;
+        animation: fadeInUpSubtle 0.6s cubic-bezier(0.16, 1, 0.3, 1) 300ms;
         animation-fill-mode: forwards;
         p{
         }

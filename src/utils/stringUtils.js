@@ -63,6 +63,40 @@ export function shortenFileName(fileName){
       : fileName
 }
 
+/**
+ * Truncates a string from the middle, leaving a specified number of start and end characters.
+ * @param {string} str - The input string (e.g., a URL or long ID).
+ * @param {number} startChars - Number of characters to keep at the beginning.
+ * @param {number} endChars - Number of characters to keep at the end.
+ * @param {string} ellipsis - The separator to use in the middle (defaults to '...').
+ * @returns {string} The truncated string.
+ */
+export function truncateMiddle(str, startChars = 5, endChars = 3, ellipsis = '...') {
+  // Return early if the string is already short enough
+  if (!str || str.length <= startChars + endChars) {
+    return str;
+  }
+
+  const start = str.slice(0, startChars);
+  const end = str.slice(-endChars);
+
+  return `${start}${ellipsis}${end}`;
+}
+
+// New wrapper function to remove the protocol first
+export function truncateUrl(url, startChars = 5, endChars = 3, ellipsis = '...') {
+  if (!url) return '';
+
+  // Removes http:// or https:// from the start of the string
+  const cleanUrl = url.replace(/^https?:\/\//i, ''); 
+
+  // If you also want to remove 'www.', uncomment the line below:
+  // const cleanUrl = url.replace(/^https?:\/\/(www\.)?/i, '');
+
+  return truncateMiddle(cleanUrl, startChars, endChars, ellipsis);
+}
+
+
 export const capitalizeFirstLetter = (str) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };

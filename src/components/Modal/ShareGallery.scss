@@ -190,19 +190,30 @@
                 align-items: center;
                 gap: 8px*1;
                 .link{
-                    color: $green-dark-accessible-light;
-                    text-decoration: underline;
+                    text-decoration: none;
                     text-underline-offset: 3px;
                     transition-duration: 0.1s;
-                    
+                    transition-delay: 0.01s;
                     cursor: pointer;
-                    &:hover{
-                        color: $green-accessible-dark;
-                        text-decoration-color: $green-accessible-dark;
+                    
+                    &.play {
+                        color: $green-accessible-light !important;
+                        &:hover{
+                            color: $green-accessible-dark !important;
+                            text-decoration-color: $green-accessible-dark;
+                        }
                     }
+
+                    &.selection {
+                        color: $blue-accessible-dark !important;
+                        &:hover{
+                            color: $blue-accessible-dark !important;
+                            text-decoration-color: $blue-accessible-dark;
+                        }
+                    }
+
                     &::before{
                         text-decoration-color: transparent;
-                        
                     }
                 }   
             }
@@ -221,12 +232,18 @@
 
                 .link-group{
                     .link{
-                        color: $green-accessible-light;
-                        text-decoration: underline;
-                        text-decoration-color: $green-dark-accessible-light;
-
                         &::before{
                             text-decoration: none;
+                        }
+
+                        &.play {
+                            color: $green-accessible-light !important;
+                            text-decoration-color: $green-dark-accessible-light;
+                        }
+
+                        &.selection {
+                            color: $blue-accessible-dark !important;
+                            text-decoration-color: $blue-default-dark;
                         }
                     }
                     .copy{

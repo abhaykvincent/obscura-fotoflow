@@ -6,7 +6,7 @@ import { showAlert } from '../../app/slices/alertSlice';
 import { selectDomain } from '../../app/slices/authSlice';
 import { closeModal, closeModalWithAnimation, selectModal } from '../../app/slices/modalSlice';
 
-function AddCrewModal({ project,eventId }) {
+function AddCrewModal({ project, eventId }) {
   const dispatch = useDispatch()
 
   const visible = useSelector(selectModal)
@@ -17,8 +17,10 @@ function AddCrewModal({ project,eventId }) {
     assigne:'sam-0001',
     name: 'Sam',
     });
-  const [users, setUsers] = useState(getUsersByRole(setCrewData.role));
+  const [users, setUsers] = useState(getUsersByRole(crewData.role));
   const domain = useSelector(selectDomain)
+
+  const activeEventId = eventId || project.events?.find(e => !e.crews || e.crews.length === 0)?.id || project.events?.[0]?.id;
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -45,9 +47,9 @@ function AddCrewModal({ project,eventId }) {
       }
   };
   const handleSubmit = () => {
-    dispatch(addCrew({domain, projectId:project.id,eventId:eventId,crewData:crewData}))
+    dispatch(addCrew({domain, projectId:project.id,eventId:activeEventId,crewData:crewData}))
     .then((data)=>{
-      dispatch(showAlert({type:'success', message:`Event <b></b> added successfully!`}));
+      dispatch(showAlert({type:'success', message:`Crew member assigned successfully!`}));
     })
     onClose('createEvent');
   };
@@ -74,7 +76,7 @@ function AddCrewModal({ project,eventId }) {
             {/* Role */}
             <div className="field">
               <label className="" htmlFor="">Role</label>
-              <select className="" name="role" value={setCrewData.role} onChange={handleInputChange}>
+              <select className="" name="role" value={crewData.role} onChange={handleInputChange}>
                 <option value="photographer">Photographer</option>
                 <option value="videographer">Videographer</option>
                 <option value="assistant">Assistant</option>
@@ -86,7 +88,7 @@ function AddCrewModal({ project,eventId }) {
             <div className="field assigne">
               <label className="" htmlFor="assigne">Assigne</label>
               <div className="select-wrapper">
-                <select className="" name="assigne" value={setCrewData.assigne} onChange={handleInputChange}>
+                <select className="" name="assigne" value={crewData.assigne} onChange={handleInputChange}>
                   { 
                     users.map((user)=>{
                       return <option key={user.userId} value={user.userId}> {user.name} </option>

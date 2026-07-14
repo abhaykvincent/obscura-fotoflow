@@ -292,6 +292,8 @@ function HistoryLog({ project }) {
   // Filtering Logic
   const filteredActivities = useMemo(() => {
     if (filter === 'all') return activities;
+
+    console.log(activities.filter((act) => act.type === filter));
     return activities.filter((act) => act.type === filter);
   }, [activities, filter]);
 
