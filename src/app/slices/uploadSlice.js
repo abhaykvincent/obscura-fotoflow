@@ -1,10 +1,32 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   uploadList: {}, // Changed from array to object
   uploadStatus: 'close',
   loading: false,
   error: null,
+};
+
+const calculateWeightedUploadProgress = (uploadParts = {}) => {
+  const parts = Object.values(uploadParts);
+  if (parts.length === 0) return 0;
+
+  const totalBytes = parts.reduce((sum, part) => sum + (part.totalBytes || 0), 0);
+
+  if (totalBytes > 0) {
+    const bytesTransferred = parts.reduce((sum, part) => {
+      const transferred = part.status === 'uploaded'
+        ? (part.totalBytes || part.bytesTransferred || 0)
+        : (part.bytesTransferred || 0);
+
+      return sum + transferred;
+    }, 0);
+
+    return Math.min(100, (bytesTransferred / totalBytes) * 100);
+  }
+
+  const totalProgress = parts.reduce((sum, part) => sum + (part.progress || 0), 0);
+  return totalProgress / parts.length;
 };
 
 const uploadSlice = createSlice({
@@ -26,6 +48,10 @@ const uploadSlice = createSlice({
           size: file.size,
           status: 'pending', // Initial status
           progress: 0,
+          uploadParts: file.uploadParts || {
+            web: { status: 'pending', progress: 0, bytesTransferred: 0, totalBytes: 0 },
+            thumb: { status: 'pending', progress: 0, bytesTransferred: 0, totalBytes: 0 },
+          },
           url: null,
           rawFile: file, // Store the original file object if needed for upload
           ...file, // Spread any other properties from the input file object
@@ -36,7 +62,17 @@ const uploadSlice = createSlice({
     updateUploadFile: (state, action) => {
       const { fileId, changes } = action.payload;
       if (state.uploadList[fileId]) {
-        state.uploadList[fileId] = { ...state.uploadList[fileId], ...changes };
+        const currentFile = state.uploadList[fileId];
+        const uploadParts = changes.uploadParts
+          ? { ...(currentFile.uploadParts || {}), ...changes.uploadParts }
+          : currentFile.uploadParts;
+        const nextFile = { ...currentFile, ...changes, uploadParts };
+
+        if (changes.uploadParts) {
+          nextFile.progress = calculateWeightedUploadProgress(uploadParts);
+        }
+
+        state.uploadList[fileId] = nextFile;
       }
     },
     removeUploadFile: (state, action) => {
