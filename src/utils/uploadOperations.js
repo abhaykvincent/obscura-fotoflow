@@ -2,7 +2,6 @@ import {
     uploadBytesResumable,
     getDownloadURL,
     ref,
-    list,
     uploadBytes,
     getStorage,
     connectStorageEmulator,
@@ -13,19 +12,29 @@ import { showAlert } from "../app/slices/alertSlice";
 import { 
     updateUploadFile, 
     startUploadSession, 
-    setUploadStatus, 
-    clearUploadSession 
+    setUploadStatus
 } from "../app/slices/uploadSlice";
 import { trackEvent } from "../analytics/utils";
 import { addUploadedFilesToFirestore, addUploadCompletionEventToFirestore } from "../firebase/functions/firestore";
 import { fetchProjects } from "../app/slices/projectsSlice";
 
 import imageCompression from 'browser-image-compression';
-import { addAllFileSizesToMB, extractExifData } from "./fileUtils";
+import { extractExifData } from "./fileUtils";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
-import { set } from "date-fns";
 
 const storageInstances = {};
+
+const createUploadPart = (status = 'pending', totalBytes = 0) => ({
+    status,
+    progress: 0,
+    bytesTransferred: 0,
+    totalBytes,
+});
+
+const createUploadParts = () => ({
+    web: createUploadPart(),
+    thumb: createUploadPart(),
+});
 
 export const getStorageForDomain = async (domain, bucketUrl) => {
     if (storageInstances[domain]) {
@@ -112,10 +121,20 @@ export const uploadFile = async (storage, type, domain, id, collectionId, file, 
     const INITIAL_RETRY_DELAY = 1000;
     let retries = 0;
 
-    // Dispatch action to indicate start of upload for this file if it's the web version
-    if (type === 'web') {
-        dispatch(updateUploadFile({ fileId, changes: { status: 'uploading', progress: 0 } }));
-    }
+    dispatch(updateUploadFile({
+        fileId,
+        changes: {
+            status: 'uploading',
+            uploadParts: {
+                [type]: {
+                    status: 'uploading',
+                    progress: 0,
+                    bytesTransferred: 0,
+                    totalBytes: file.size,
+                }
+            }
+        }
+    }));
 
     return new Promise((resolve, reject) => {
         const storageRef = ref(storage, `${type}/${domain}/${id}/${collectionId}/${file.name}`);
@@ -130,10 +149,20 @@ export const uploadFile = async (storage, type, domain, id, collectionId, file, 
 
             uploadTask.on('state_changed',
                 (snapshot) => {
-                    if (type === 'web') {
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        dispatch(updateUploadFile({ fileId, changes: { progress } }));
-                    }
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    dispatch(updateUploadFile({
+                        fileId,
+                        changes: {
+                            uploadParts: {
+                                [type]: {
+                                    status: 'uploading',
+                                    progress,
+                                    bytesTransferred: snapshot.bytesTransferred,
+                                    totalBytes: snapshot.totalBytes,
+                                }
+                            }
+                        }
+                    }));
                 },
                 (error) => {
                     console.error(`Error during upload for ${file.name} (${type}):`, error);
@@ -141,9 +170,20 @@ export const uploadFile = async (storage, type, domain, id, collectionId, file, 
                 },
                 async () => {
                     const url = await getDownloadURL(uploadTask.snapshot.ref);
-                    if (type === 'web') {
-                        dispatch(updateUploadFile({ fileId, changes: { status: 'uploaded', url, progress: 100 } }));
-                    }
+                    dispatch(updateUploadFile({
+                        fileId,
+                        changes: {
+                            ...(type === 'web' ? { url } : { thumbUrl: url }),
+                            uploadParts: {
+                                [type]: {
+                                    status: 'uploaded',
+                                    progress: 100,
+                                    bytesTransferred: uploadTask.snapshot.totalBytes,
+                                    totalBytes: uploadTask.snapshot.totalBytes,
+                                }
+                            }
+                        }
+                    }));
                     resolve({
                         name: file.name,
                         lastModified: file.lastModified,
@@ -165,9 +205,21 @@ export const uploadFile = async (storage, type, domain, id, collectionId, file, 
                 await delay(delayMs);
                 startTask();
             } else {
-                if (type === 'web') {
-                    dispatch(updateUploadFile({ fileId, changes: { status: 'failed', error: error.message } }));
-                }
+                dispatch(updateUploadFile({
+                    fileId,
+                    changes: {
+                        status: 'failed',
+                        error: error.message,
+                        uploadParts: {
+                            [type]: {
+                                status: 'failed',
+                                progress: 0,
+                                bytesTransferred: 0,
+                                totalBytes: file.size,
+                            }
+                        }
+                    }
+                }));
                 reject(error);
             }
         };
@@ -231,6 +283,7 @@ export const handleUpload = async ({
             size: file.size,
             status: 'pending',
             progress: 0,
+            uploadParts: createUploadParts(),
             url: null,
             rawFile: file,
             dateTimeOriginal,
@@ -261,13 +314,41 @@ export const handleUpload = async ({
                 useWebWorker: true 
             });
 
+            const webFile = new File([compressedWeb], fileObj.name, { type: compressedWeb.type });
+            const thumbFile = new File([compressedThumb], fileObj.name, { type: compressedThumb.type });
+
+            dispatch(updateUploadFile({
+                fileId: fileObj.id,
+                changes: {
+                    status: 'uploading',
+                    uploadParts: {
+                        web: createUploadPart('pending', webFile.size),
+                        thumb: createUploadPart('pending', thumbFile.size),
+                    }
+                }
+            }));
+
             // Parallel upload of web and thumb for the same file
-            const [webResult] = await Promise.all([
-                uploadFile(storage, 'web', domain, id, collectionId, new File([compressedWeb], fileObj.name, { type: compressedWeb.type }), dispatch, fileObj.id, fileObj.dateTimeOriginal, fileObj.dimensions),
-                uploadFile(storage, 'thumb', domain, id, collectionId, new File([compressedThumb], fileObj.name, { type: compressedThumb.type }), dispatch, fileObj.id)
+            const [webResult, thumbResult] = await Promise.all([
+                uploadFile(storage, 'web', domain, id, collectionId, webFile, dispatch, fileObj.id, fileObj.dateTimeOriginal, fileObj.dimensions),
+                uploadFile(storage, 'thumb', domain, id, collectionId, thumbFile, dispatch, fileObj.id)
             ]);
 
-            return webResult;
+            dispatch(updateUploadFile({
+                fileId: fileObj.id,
+                changes: {
+                    status: 'uploaded',
+                    progress: 100,
+                    url: webResult.url,
+                    thumbUrl: thumbResult.url,
+                }
+            }));
+
+            return {
+                ...webResult,
+                thumbUrl: thumbResult.url,
+                thumbPathType: thumbResult.type,
+            };
         } catch (error) {
             console.error(`Failed to process ${fileObj.name}:`, error);
             dispatch(updateUploadFile({ fileId: fileObj.id, changes: { status: 'failed', error: error.message } }));
@@ -286,6 +367,7 @@ export const handleUpload = async ({
             dateTimeOriginal: r.value.dateTimeOriginal,
             dimensions: r.value.dimensions,
             thumbAvailable: true,
+            thumbUrl: r.value.thumbUrl,
         }));
 
     const allSucceeded = finalUploadedFiles.length === initialFileObjects.length;
