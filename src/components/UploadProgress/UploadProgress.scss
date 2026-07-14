@@ -95,14 +95,24 @@
         backdrop-filter: blur(2px);
         transition-duration: 0.2s;
         .upload-queue{
-            display: grid;
-            gap: 8px*2;
+            display: block;
             padding-top: 8px*2;
             .upload-task{
                 display: grid;
                 grid-template-columns: 8px*4 auto 8px*4;
                 gap: 8px*2;
                 row-gap: 8px;
+                max-height: 8px*8;
+                margin-bottom: 8px*2;
+                opacity: 1;
+                overflow: hidden;
+                transform: translateY(0) scale(1);
+                transform-origin: top center;
+                transition:
+                    max-height 0.45s ease,
+                    margin-bottom 0.45s ease,
+                    opacity 0.28s ease,
+                    transform 0.45s ease;
                 .task-cover{
                     background-image: url('../../assets/img/icons/image.svg');
                     background-position: center;
@@ -220,13 +230,34 @@
                     }
                 }
                 &.uploaded{
-                    display: none;;
+                    animation-name: upload-task-complete-flash;
+                    animation-duration: 0.7s;
+                    animation-fill-mode: forwards;
                     .file-progress-bar{
                         left: 100%;
                     }
                     .task-status{
                         opacity: 1;
                         background-image: url('../../assets/img/icons/check-circle.svg');
+                    }
+                }
+                &.removing{
+                    max-height: 0;
+                    margin-bottom: 0;
+                    opacity: 0;
+                    transform: translateY(-8px) scale(0.98);
+                    pointer-events: none;
+                }
+
+                @keyframes upload-task-complete-flash {
+                    0%{
+                        background-color: rgba(64, 192, 87, 0);
+                    }
+                    35%{
+                        background-color: rgba(64, 192, 87, 0.1);
+                    }
+                    100%{
+                        background-color: rgba(64, 192, 87, 0);
                     }
                 }
             }
