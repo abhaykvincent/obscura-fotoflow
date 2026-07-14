@@ -34,12 +34,6 @@ function DashboardProjects({project, setSelectedEventId}){
   // Inside your component
   return (
     <>
-      <ProjectCover 
-        project={project} 
-        projectDashboardView={projectDashboardView} 
-        setProjectDashboardView={setProjectDashboardView} 
-      />
-      
       <StatusPipeline 
         project={project} 
         currentView={projectDashboardView}
@@ -47,6 +41,12 @@ function DashboardProjects({project, setSelectedEventId}){
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       />
+      <ProjectCover 
+        project={project} 
+        projectDashboardView={projectDashboardView} 
+        setProjectDashboardView={setProjectDashboardView} 
+      />
+      
       
       {pendingRequest && (
         <div className="selection-requests-list dashboard">
