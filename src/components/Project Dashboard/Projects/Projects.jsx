@@ -24,7 +24,7 @@ function DashboardProjects({project, setSelectedEventId}){
   const dispatch =useDispatch()
   const navigate = useNavigate();
   const { studioName } = useParams();
-  const [projectDashboardView, setProjectDashboardView] = useState('abstract')
+  const [projectDashboardView, setProjectDashboardView] = useState('abstracti')
   const [activeTab, setActiveTab] = useState('galleries');
   const selectionRequests = useSelector(selectSelectionRequests);
   const defaultStudio = useSelector(selectUserStudio);
@@ -70,21 +70,20 @@ function DashboardProjects({project, setSelectedEventId}){
       )}
 
       {/* <div className="project-bashboard-toolbar">
-      {setProjectDashboardView && (
-        <div className="view-cta">
-            <div className="control-wrap">
-                <div className="controls">
-                    <div className={`control ctrl-active ${projectDashboardView === 'dashboard' ? 'active' : ''}`}
-                        onClick={() => setProjectDashboardView('dashboard')}
-                    ><div className="icon list-view"></div></div>
-                    <div className={`control ctrl-all ${projectDashboardView === 'abstract' ? 'active' : ''}`}
-                        onClick={() => setProjectDashboardView('abstract')}
-                    ><div className="icon card-view"></div></div>
-                </div>
-            </div>
-        </div>
-    )}
-
+        {setProjectDashboardView && (
+          <div className="view-cta">
+              <div className="control-wrap">
+                  <div className="controls">
+                      <div className={`control ctrl-active ${projectDashboardView === 'dashboard' ? 'active' : ''}`}
+                          onClick={() => setProjectDashboardView('dashboard')}
+                      ><div className="icon list-view"></div></div>
+                      <div className={`control ctrl-all ${projectDashboardView === 'abstract' ? 'active' : ''}`}
+                          onClick={() => setProjectDashboardView('abstract')}
+                      ><div className="icon card-view"></div></div>
+                  </div>
+              </div>
+          </div>
+        )}
       </div> */}
     {
       projectDashboardView === 'abstract'?
@@ -160,7 +159,7 @@ function DashboardProjects({project, setSelectedEventId}){
         </div> */}
       </>
     }
-          <HistoryLog project={project} />
+          {/* <HistoryLog project={project} /> */}
 
       
     </>
