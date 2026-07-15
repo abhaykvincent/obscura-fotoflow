@@ -64,6 +64,10 @@ function DashboardTabs({ project, activeTab: propActiveTab, setActiveTab: propSe
           <DashboardPayments project={project} />
         );
 
+      case 'history':
+        return (
+          <HistoryLog project={project} />
+        );
 
       default:
         return null;

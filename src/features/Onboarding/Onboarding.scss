@@ -285,8 +285,8 @@
         max-width: 18rem;
         font-size: 0.9rem;
         color: $gray2-default-dark;
-        margin-bottom: 8px*1;
-        margin-top: 8px*2;
+        margin-bottom: 8px*2;
+        margin-top: 8px*0;
         margin-left: 0;
         opacity: 0;
         transform: translateY(2px);
@@ -1055,19 +1055,41 @@
         transition-duration: 0.2s;
         transition-delay: 1.6s;
     }
+    
     input{
         width: 8px*2;
+        height: 8px*2;
         padding: 0 8px;
             border: 1px solid $green-default-dark;
+    outline:1px solid #22c55e00; /* Sharp neon green border */
+
+            box-shadow: 0px 0px 0px 0px #63cf358e;
+
+        transition-duration: 0.4s;
+        transition-delay: 0.4s;
         border-color: #007bff;
         &.privacyPolicy-error-input{
             padding: 8px;
             transform: scale(1.5);
+            border-radius: 4px;
             transition-duration: 0.2s;
             transition-timing-function: ease-in-out;
             border: 1px solid $green-default-dark;
         }
     }
+    input[type="checkbox"].domain-success-highlight {
+    outline:1px solid #22c55e1f; /* Sharp neon green border */
+    box-shadow: 0px 0px 8px 4px #63cf358e;
+    outline-offset:0px;       /* Pushes the rectangular box outward like the screenshot */
+    border-radius: 0px;        /* Keeps the outline corners perfectly sharp/rectangular */
+    
+    transition-duration: 0.4s;
+    transition-delay: 0.4s;
+    &:checked {
+            box-shadow: none !important; /* Forces no box shadow when checked */
+            outline: 0px solid #22c55e;  /* Retains the sharp green rectangle box */
+        }
+}
     label{
         width: 100%;
         white-space: nowrap;

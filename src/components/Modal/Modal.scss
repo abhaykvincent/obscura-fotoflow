@@ -906,6 +906,7 @@ animation-timing-function: ease-out;
         background-image: url('../../assets/img/google-logo.png');
         background-position: center center;
         background-size: 100%;
+        backdrop-filter: shadow(0 0 10px rgba(0, 0, 0, 0.5));
         }
         .apple-logo{
         width: 8px*3;
