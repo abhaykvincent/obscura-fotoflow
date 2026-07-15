@@ -236,10 +236,10 @@ function Onboarding() {
                     !isDisabled && 
                     <>
 
+                        <p className='onboarding-message'> Streamline your photography workflow.</p>
                         <div className={`button google-login-button ${isDisabled ? 'disabled' : ''}`} onClick={() => !isDisabled && handleGoogleSignIn()}>
                             Continue with Google <div className="google-logo"></div>
                         </div>
-                        <p className='onboarding-message'> Start Streamline your wedding photography workflow.</p>
                     
                     </>
                     }
