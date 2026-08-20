@@ -85,3 +85,6 @@ coverage/
 functions/index.html
 
 firestore-data/2026-06-07T07:41:39_81053/
+.env.production
+
+functions/package-lock.json
