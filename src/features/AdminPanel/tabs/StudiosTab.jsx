@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const StudiosTab = ({ studios }) => {
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
 
     const filteredStudios = useMemo(() => {
@@ -49,7 +51,11 @@ export const StudiosTab = ({ studios }) => {
                     </thead>
                     <tbody>
                         {filteredStudios.map(studio => (
-                            <tr key={studio.id}>
+                            <tr 
+                                key={studio.id}
+                                className="clickable-row"
+                                onClick={() => navigate(`/admin/studio/${studio.domain || studio.id}`)}
+                            >
                                 <td>{studio.name}</td>
                                 <td>/{studio.domain}</td>
                                 <td>

@@ -596,3 +596,194 @@ export const declineExtensionRequest = async (domain, projectId) => {
         throw error;
     }
 };
+
+/**
+ * Fetches comprehensive serializable data for a single studio profile.
+ * @param {string} studioIdentifier - Domain, ID, or Name of the studio.
+ * @returns {Promise<object|null>} Complete structured studio profile details.
+ */
+export const fetchStudioProfileData = async (studioIdentifier) => {
+    if (!studioIdentifier) return null;
+
+    try {
+        const studiosCollection = collection(db, 'studios');
+        let studioData = null;
+
+        // Try direct document lookup by domain or id
+        const studioDocRef = doc(db, 'studios', studioIdentifier);
+        const studioDocSnap = await getDoc(studioDocRef);
+
+        if (studioDocSnap.exists()) {
+            studioData = { id: studioDocSnap.id, ...studioDocSnap.data() };
+        } else {
+            // Query by domain
+            const qDomain = query(studiosCollection, where('domain', '==', studioIdentifier));
+            const domainSnap = await getDocs(qDomain);
+            if (!domainSnap.empty) {
+                studioData = { id: domainSnap.docs[0].id, ...domainSnap.docs[0].data() };
+            } else {
+                // Query by ID
+                const qId = query(studiosCollection, where('id', '==', studioIdentifier));
+                const idSnap = await getDocs(qId);
+                if (!idSnap.empty) {
+                    studioData = { id: idSnap.docs[0].id, ...idSnap.docs[0].data() };
+                } else {
+                    // Fallback scan by name / domain insensitive
+                    const allSnap = await getDocs(studiosCollection);
+                    const match = allSnap.docs.find(d => {
+                        const data = d.data();
+                        return (
+                            (data.name && data.name.toLowerCase() === studioIdentifier.toLowerCase()) ||
+                            (data.domain && data.domain.toLowerCase() === studioIdentifier.toLowerCase())
+                        );
+                    });
+                    if (match) {
+                        studioData = { id: match.id, ...match.data() };
+                    }
+                }
+            }
+        }
+
+        if (!studioData) return null;
+
+        const domain = studioData.domain || studioData.id;
+
+        // Fetch projects for this studio
+        let projects = [];
+        let totalPhotosCount = 0;
+        let totalStorageUsed = 0;
+        let activeProjectsCount = 0;
+        let archivedProjectsCount = 0;
+        let completedProjectsCount = 0;
+
+        try {
+            const projectsCollectionRef = collection(db, 'studios', domain, 'projects');
+            const projectsSnap = await getDocs(projectsCollectionRef);
+
+            projects = await Promise.all(
+                projectsSnap.docs.map(async (pDoc) => {
+                    const pData = pDoc.data();
+                    let collectionsCount = 0;
+                    try {
+                        const collsSnap = await getDocs(collection(pDoc.ref, 'collections'));
+                        collectionsCount = collsSnap.size;
+                    } catch (e) {
+                        collectionsCount = pData.collections?.length || 0;
+                    }
+
+                    const fileSize = pData.totalFileSize || 0;
+                    const photoCount = pData.uploadedFilesCount || 0;
+                    totalStorageUsed += fileSize;
+                    totalPhotosCount += photoCount;
+
+                    if (pData.status === 'archive' || pData.storage?.status === 'archive') {
+                        archivedProjectsCount++;
+                    } else if (pData.status === 'completed' || pData.status === 'selected') {
+                        completedProjectsCount++;
+                    } else {
+                        activeProjectsCount++;
+                    }
+
+                    return {
+                        id: pDoc.id,
+                        name: pData.name || 'Untitled Project',
+                        type: pData.type || 'Standard',
+                        status: pData.status || 'draft',
+                        createdAt: pData.createdAt ? (typeof pData.createdAt === 'number' ? new Date(pData.createdAt).toISOString() : String(pData.createdAt)) : null,
+                        lastOpened: pData.lastOpened ? (typeof pData.lastOpened === 'number' ? new Date(pData.lastOpened).toISOString() : String(pData.lastOpened)) : null,
+                        uploadedFilesCount: photoCount,
+                        totalFileSize: fileSize,
+                        projectValidityMonths: pData.projectValidityMonths || 6,
+                        collectionsCount,
+                        pin: pData.pin || null,
+                        client: pData.client || null,
+                    };
+                })
+            );
+        } catch (err) {
+            console.error('Error fetching studio projects:', err);
+        }
+
+        // Fetch users/members associated with this studio
+        let members = [];
+        try {
+            const usersCollectionRef = collection(db, 'users');
+            const usersSnap = await getDocs(usersCollectionRef);
+            members = usersSnap.docs
+                .map(uDoc => ({ id: uDoc.id, ...uDoc.data() }))
+                .filter(user => {
+                    if (user.email && studioData.ownerId && user.email.toLowerCase() === studioData.ownerId.toLowerCase()) return true;
+                    if (user.studio?.domain === domain || user.studio?.name === studioData.name) return true;
+                    if (Array.isArray(user.studios)) {
+                        return user.studios.some(s => s.domain === domain || s.id === studioData.id || s.name === studioData.name);
+                    }
+                    return false;
+                })
+                .map(user => ({
+                    id: user.id,
+                    displayName: user.displayName || user.name || 'Anonymous User',
+                    email: user.email || 'N/A',
+                    role: user.role || (Array.isArray(user.studios) ? user.studios.find(s => s.domain === domain)?.roles?.[0] : null) || (user.email === studioData.ownerId ? 'Owner' : 'Member'),
+                    createdAt: user.createdAt ? (typeof user.createdAt === 'number' ? new Date(user.createdAt).toISOString() : String(user.createdAt)) : null,
+                }));
+        } catch (err) {
+            console.error('Error fetching studio members:', err);
+        }
+
+        // Fetch selection and extension requests
+        let selectionRequests = [];
+        let extensionRequests = [];
+        try {
+            const selReqSnap = await getDocs(collection(db, 'studios', domain, 'selectionRequests'));
+            selectionRequests = selReqSnap.docs.map(d => {
+                const dData = d.data();
+                return {
+                    id: d.id,
+                    ...dData,
+                    requestedAt: dData.requestedAt ? new Date(dData.requestedAt).toISOString() : null,
+                    acceptedAt: dData.acceptedAt ? new Date(dData.acceptedAt).toISOString() : null,
+                    declinedAt: dData.declinedAt ? new Date(dData.declinedAt).toISOString() : null,
+                };
+            });
+
+            const extReqSnap = await getDocs(collection(db, 'studios', domain, 'extensionRequests'));
+            extensionRequests = extReqSnap.docs.map(d => {
+                const dData = d.data();
+                return {
+                    id: d.id,
+                    ...dData,
+                    requestedAt: dData.requestedAt ? new Date(dData.requestedAt).toISOString() : null,
+                    acceptedAt: dData.acceptedAt ? new Date(dData.acceptedAt).toISOString() : null,
+                    declinedAt: dData.declinedAt ? new Date(dData.declinedAt).toISOString() : null,
+                };
+            });
+        } catch (err) {
+            console.error('Error fetching studio requests:', err);
+        }
+
+        return {
+            studio: {
+                ...studioData,
+                createdAt: studioData.metadata?.createdAt || studioData.createdAt || null,
+            },
+            stats: {
+                totalProjects: projects.length,
+                activeProjects: activeProjectsCount,
+                archivedProjects: archivedProjectsCount,
+                completedProjects: completedProjectsCount,
+                totalPhotos: totalPhotosCount,
+                totalStorageUsed: totalStorageUsed || studioData.usage?.storage?.used || 0,
+                storageQuota: studioData.usage?.storage?.quota || 0,
+                totalMembers: members.length,
+                pendingRequests: selectionRequests.filter(r => r.status === 'pending').length + extensionRequests.filter(r => r.status === 'pending').length,
+            },
+            projects,
+            members,
+            selectionRequests,
+            extensionRequests,
+        };
+    } catch (error) {
+        console.error('Error in fetchStudioProfileData:', error);
+        throw error;
+    }
+};

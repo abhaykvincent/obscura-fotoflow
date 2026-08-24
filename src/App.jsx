@@ -36,6 +36,7 @@ import BillingHistory from './features/BillingHistory/BillingHistory';
 import SmartGallery from './features/SmartGallery/SmartGallery';
 import SmartGalleryDownloadPIN from './features/SmartGallery/SmartGalleryDownloadPIN';
 import UserProfile from './features/AdminPanel/UserProfile/UserProfile';
+import StudioProfile from './features/AdminPanel/StudioProfile/StudioProfile';
 import DownloadApp from './features/DownloadApp/DownloadApp';
 import Booking from './features/Booking/Booking';
 
@@ -236,6 +237,7 @@ export default function App() {
                 <Route path="/admin" element={<AdminPanel />} />
                 <Route path="/admin/:page" element={<AdminPanel />} />
                 <Route path="/admin/user/:userId" element={<UserProfile />} />
+                <Route path="/admin/studio/:studioName" element={<StudioProfile />} />
                 <Route path="/tools" element={<DeveloperTools />} />
               </Route>
 
