@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { fetchProject } from '../../firebase/functions/firestore';
 import GalleryPIN from '../../components/GalleryPIN/GalleryPIN';
 import { toTitleCase } from '../../utils/stringUtils';
+import { getCoverUrl } from '../../utils/urlUtils';
 import './Selection.scss'; // Reuse the same styles
 
 export default function SelectionPIN() {
@@ -44,7 +45,7 @@ export default function SelectionPIN() {
         <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button back-btn icon back">
           Back to Gallery
         </Link>
-        <img className='banner' src={images[0] ? images[0].url : ''} alt="Project Banner" />
+        <img className='banner' src={getCoverUrl(project.projectCover || images[0]?.url)} alt="Project Banner" />
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
         </div>

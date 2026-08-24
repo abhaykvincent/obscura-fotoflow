@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './ProjectCardRedefined.scss';
 import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../../app/slices/authSlice';
-import { getThumbnailUrl1 } from '../../../utils/urlUtils';
+import { getThumbnailUrl } from '../../../utils/urlUtils';
 import { convertMegabytes } from '../../../utils/stringUtils';
 import ProjectExpiration from '../../ProjectExpiration/ProjectExpiration';
 
@@ -30,7 +30,7 @@ function ProjectCardRedefined({ project, type }) {
             <div className="card-image-wrapper">
                 <div className="card-image"
                     style={{
-                        backgroundImage: project.projectCover ? `url(${getThumbnailUrl1(project.projectCover).replace(/\(/g, '%28').replace(/\)/g, '%29')})` : '',
+                        backgroundImage: project.projectCover ? `url(${getThumbnailUrl(project.projectCover).replace(/\(/g, '%28').replace(/\)/g, '%29')})` : '',
                     }}
                 />
                 <div className="card-overlay">

@@ -5,7 +5,7 @@ export const welcomeScreens = [
     title: <>Welcome to <span className='iconic-gradient'>Fotoflow</span>!</>,
     body: (
       <>
-        <p>
+        <p className='welcome-sub-heading'>
             <span className='mid-highlight'>Streamline Event photography Workflow</span>. <br/>
         </p>
         <div className="visual-placeholder welcome"></div>
@@ -19,7 +19,7 @@ export const welcomeScreens = [
     title: <>Manage your <span className='iconic-gradient'>Projects</span>.</>,
     body: (
       <>
-        <p>
+        <p className='welcome-sub-heading'>
             A clear structure means <span className='highlight'>less searching, more creating.</span>
             
         </p>
@@ -34,7 +34,7 @@ export const welcomeScreens = [
     title: <>Share your <span className='iconic-gradient'>Galleries</span>.</>,
     body: (
       <>
-        <p>
+        <p className='welcome-sub-heading'>
             Your clients get a <span className='highlight'>curated viewing experience</span>, effortlessly.
 
         </p>
@@ -51,7 +51,7 @@ export const welcomeScreens = [
     title: <>Collaborate on <span className='iconic-gradient'>Selections</span>.</>,
     body: (
       <>
-        <p>
+        <p className='welcome-sub-heading'>
             Forget the hassle of <span className='highlight'>mailing or</span> and the headache of <span className='highlight'>hunting for filenames.</span>
         </p>
         <div className="visual-placeholder collaboration-selection"></div>
@@ -65,7 +65,7 @@ export const welcomeScreens = [
     title: <>Create your <span className='iconic-gradient'>First Project</span></>,
     body: (
       <>
-        <p>
+        <p className='welcome-sub-heading'>
             You're all set to begin.
         </p>
         <div className="visual-placeholder create-project"></div>

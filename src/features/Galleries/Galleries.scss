@@ -4,6 +4,7 @@
 
 .dashboard-tabs{
 	min-width: 46vw;
+	margin-top: 8px;
 	.tabs{
 		display:flex;
 		width: max-content;
@@ -31,10 +32,10 @@
 				}
 			}
 			&:first-child{
-				border-radius: 4px 0px 0px 4px;
+				border-radius: 8px*2 0px 0px 8px*2;
 			}
 			&:last-child{
-				border-radius: 0px 4px 4px 0px;
+				border-radius: 0px 8px*2 8px*2 0px;
 			}
 			&:hover{
 				background-color: $dark-3;
@@ -66,9 +67,12 @@
 			
 		}
 	}
+	.tab-content{
+		padding: 8px*4 8px;
+	}
 
 	.galleries{
-		display: flex;
+		//display: flex;
 		gap: 8px*4;
 	}
 	.gallery .thumbnails{
