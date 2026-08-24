@@ -11,6 +11,7 @@ import { toTitleCase } from '../../utils/stringUtils';
 import { setUserType, trackEvent } from '../../analytics/utils';
 import { set } from 'date-fns';
 import { LoadingLight } from '../../components/Loading/Loading';
+import { getCoverUrl } from '../../utils/urlUtils';
 
 export default function ShareProject() {
   // studio =  get the url and the name is lorem for url http://localhost:3000/lorem/gallery/william-thomas-b23Sg/birthday-qr22E
@@ -134,7 +135,7 @@ export default function ShareProject() {
     }
     <div className="share-project" >
       <div className="project-header">
-        <img className='banner' src={project.projectCover} alt="" />
+        <img className='banner' src={getCoverUrl(project.projectCover)} alt="" />
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
           <p className='projet-type'>{toTitleCase(project.type)}</p>

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { getWebUrl } from '../../../utils/urlUtils';
 
 /**
  * Hook to preload adjacent images for smoother browsing experience.
@@ -9,7 +10,7 @@ import { useEffect } from 'react';
  * @param {boolean} isCurrentLoaded - Whether the current image has finished loading.
  * @param {number} delay - Delay in ms before starting preloads (default: 500ms).
  */
-export function useImagePreloader(images, currentIndex, isCurrentLoaded, delay =600) {
+export function useImagePreloader(images, currentIndex, isCurrentLoaded, delay = 600) {
   useEffect(() => {
     // Only start preloading after the current high-res image is loaded
     if (!images || images.length === 0 || !isCurrentLoaded) return;
@@ -17,7 +18,7 @@ export function useImagePreloader(images, currentIndex, isCurrentLoaded, delay =
     const preloadImage = (url) => {
       if (!url) return;
       const img = new Image();
-      img.src = url;
+      img.src = getWebUrl(url);
     };
 
     // Delay preloading further to give UI a chance to settle

@@ -1,6 +1,7 @@
 import {Link} from 'react-router-dom';
 import './AssociateCard.scss'
 import { capitalizeFirstLetter } from '../../../utils/stringUtils';
+import { getThumbnailUrl } from '../../../utils/urlUtils';
 
 function AssociateCard({associate}) {   
     //associate's selected photos count
@@ -10,7 +11,7 @@ function AssociateCard({associate}) {
             <div
                 className={`associate-cover avatar ${associate.userId}`} 
                 style={{
-                    backgroundImage: associate.associateCover ? `url(${associate.associateCover})` : '',
+                    backgroundImage: associate.associateCover ? `url(${getThumbnailUrl(associate.associateCover)})` : '',
                     backgroundSize: associate.associateCover ? 'cover' : '',
                 }}
             />

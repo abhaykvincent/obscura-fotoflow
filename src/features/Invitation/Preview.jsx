@@ -8,7 +8,7 @@ import { capitalizeFirstLetter, hexToRgb } from '../../utils/stringUtils';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectDomain } from '../../app/slices/authSlice';
 import { useParams } from 'react-router';
-import { getGoogleMapsUrl, getThumbnailUrl } from '../../utils/urlUtils';
+import { getGoogleMapsUrl, getThumbnailUrl, getCoverUrl } from '../../utils/urlUtils';
 import WishMessages from './WishMessages';
 
 const Preview = ({ editor, data,project }) => {
@@ -29,9 +29,9 @@ const Preview = ({ editor, data,project }) => {
       setIsCoverLoaded(false);
       
       const img = new Image();
-      img.src = data.coverPhoto;
+      img.src = getCoverUrl(data.coverPhoto);
       img.onload = () => {
-        setCoverSrc(data.coverPhoto);
+        setCoverSrc(getCoverUrl(data.coverPhoto));
         setIsCoverLoaded(true);
       };
     }

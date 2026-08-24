@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { fetchProject } from '../../firebase/functions/firestore';
 import GalleryPIN from '../../components/GalleryPIN/GalleryPIN';
 import { toTitleCase } from '../../utils/stringUtils';
+import { getCoverUrl } from '../../utils/urlUtils';
 import './SmartGallery.scss';
 
 export default function SmartGalleryDownloadPIN() {
@@ -43,7 +44,7 @@ export default function SmartGalleryDownloadPIN() {
         <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button back-btn icon back" style={{ position: 'absolute', top: '24px', left: '24px', zIndex: 10 }}>
           Back to Gallery
         </Link>
-        <img className='banner' src={project.projectCover} alt="Project Banner" />
+        <img className='banner' src={getCoverUrl(project.projectCover)} alt="Project Banner" />
         <div className="gallery-info">
           <h1 className='project-name'>{toTitleCase(project.name)}</h1>
           <p className='project-type'>Download Authentication</p>

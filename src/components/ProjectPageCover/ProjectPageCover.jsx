@@ -9,7 +9,7 @@ import { setCoverPhotoInFirestore } from "../../firebase/functions/firestore";
 import { updateProjectCover, updateProjectName } from "../../app/slices/projectsSlice";
 import { convertMegabytes, truncateMiddle, truncateUrl } from "../../utils/stringUtils";
 import { ProjectStatus } from "../Project/ProjectStatus/ProjectStatus";
-import { getGalleryURL } from "../../utils/urlUtils";
+import { getGalleryURL, getCoverUrl } from "../../utils/urlUtils";
 import { getStorageForDomain } from "../../utils/uploadOperations";
 import { selectStudio } from "../../app/slices/studioSlice";
 import "./ProjectPageCover.scss";
@@ -124,7 +124,7 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
             {project?.projectCover ? (
                 <div className="project-cover-image">
                     <img  
-                        src={project?.projectCover.replace('/o/thumb%2F', '/o/web%2F').replace('-thumb', '')} 
+                        src={getCoverUrl(project?.projectCover)} 
                         loading="lazy"
                         style={{ height: '100%', width: 'auto', objectFit: 'cover' }} 
                     />
