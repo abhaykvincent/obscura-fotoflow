@@ -12,6 +12,7 @@ dist/
 out/
 release/
 firestore-data/
+backup/
 *.app
 *.exe
 *.dmg
