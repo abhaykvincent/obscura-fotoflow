@@ -45,6 +45,54 @@ function getCdnBaseUrl() {
 }
 
 /**
+ * Checks if a URL points to the local Firebase Storage Emulator.
+ */
+export function isEmulatorUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  
+  if (url.includes(':9199')) return true;
+  const emulatorHost = process.env.REACT_APP_EMULATOR_HOST;
+  if (emulatorHost && url.includes(emulatorHost)) return true;
+  const emulatorPort = process.env.REACT_APP_EMULATOR_PORT;
+  if (emulatorPort && url.includes(`:${emulatorPort}`)) return true;
+
+  if (
+    (url.includes('localhost') || url.includes('127.0.0.1') || url.includes('0.0.0.0')) &&
+    (url.includes('/v0/b/') || url.includes('/o/'))
+  ) {
+    return true;
+  }
+
+  if (url.startsWith('http://') && url.includes('/v0/b/') && url.includes('/o/')) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Transforms an emulator storage URL to deliver the requested quality.
+ */
+function transformEmulatorUrl(url, targetQuality) {
+  const emulatorMatch = url.match(/^(https?:\/\/[^/]+\/v0\/b\/[^/]+\/o)\/([^?#]+)(\?.*)?$/);
+  if (emulatorMatch) {
+    const base = emulatorMatch[1];
+    const encodedPath = emulatorMatch[2];
+    const query = emulatorMatch[3] || '?alt=media';
+    const decodedPath = decodeURIComponent(encodedPath);
+
+    if (targetQuality === 'covers') {
+      return `${base}/${encodeURIComponent(decodedPath)}${query}`;
+    }
+
+    const adjustedPath = swapQualityPrefix(decodedPath, targetQuality);
+    return `${base}/${encodeURIComponent(adjustedPath)}${query}`;
+  }
+
+  return url;
+}
+
+/**
  * Checks if a URL is an external non-storage URL or special scheme.
  */
 function isNonStorageUrl(url) {
@@ -58,7 +106,8 @@ function isNonStorageUrl(url) {
     url.includes('/cdn-gallery/') ||
     url.includes(':9199') ||
     url.includes('/v0/b/') ||
-    url.includes('/o/')
+    url.includes('/o/') ||
+    isEmulatorUrl(url)
   );
   return (url.startsWith('http://') || url.startsWith('https://')) && !isStorageOrCdn;
 }
@@ -129,12 +178,25 @@ function extractStoragePath(url) {
 }
 
 /**
+ * Extracts domain/hostname from a given URL.
+ */
+export function extractDomain(url) {
+  if (!url || typeof url !== 'string') return '';
+  try {
+    const parsed = new URL(url.startsWith('http') ? url : `https://${url}`);
+    return parsed.hostname;
+  } catch {
+    return url;
+  }
+}
+
+/**
  * Single Image Delivery Gateway
- * Transforms storage URLs to the Cloudflare R2 Worker CDN delivery path.
+ * Transforms storage URLs to the Cloudflare R2 Worker CDN delivery path or preserves Storage Emulator paths.
  *
  * @param {string} url - Source photo URL or storage path
  * @param {string} quality - 'web' | 'thumb' | 'original' | 'covers'
- * @returns {string} - Cloudflare R2 / CDN delivery URL
+ * @returns {string} - CDN or Local Emulator delivery URL
  */
 export function getPhotoDeliveryUrl(url, quality = 'web') {
   if (!url || typeof url !== 'string') return '';
@@ -144,6 +206,12 @@ export function getPhotoDeliveryUrl(url, quality = 'web') {
   }
 
   const targetQuality = quality.toLowerCase();
+
+  // If URL points to Firebase Storage Emulator, deliver via emulator format
+  if (isEmulatorUrl(url)) {
+    return transformEmulatorUrl(url, targetQuality);
+  }
+
   const cdnBase = getCdnBaseUrl();
   const objectPath = extractStoragePath(url);
 

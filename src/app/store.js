@@ -19,6 +19,7 @@ import loadingReducer from './slices/loadingSlice';
 import adminSettingsReducer from './slices/adminSettingsSlice';
 import usersReducer from './slices/usersSlice';
 import userProfileReducer from './slices/userProfileSlice';
+import studioProfileReducer from './slices/studioProfileSlice';
 import selectionRequestReducer from './slices/selectionRequestSlice';
 import extensionRequestReducer from './slices/extensionRequestSlice';
 import bookingReducer from './slices/bookingSlice';
@@ -45,6 +46,7 @@ export const store = configureStore({
     adminSettings: adminSettingsReducer,
     users: usersReducer,
     userProfile: userProfileReducer,
+    studioProfile: studioProfileReducer,
     selectionRequest: selectionRequestReducer,
     extensionRequest: extensionRequestReducer,
     booking: bookingReducer,
