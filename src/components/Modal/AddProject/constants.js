@@ -11,7 +11,7 @@ export const PROJECT_TYPES = [
   export const VALIDITY_OPTIONS = [
     { id: "validity-3", value: "3", label: "3 Months" },
     { id: "validity-6", value: "6", label: "6 Months", className: "free-validity" },
-    { id: "validity-12", value: "12", label: "1 Year", disabled: true, className: "upgrade-needed" },
+    { id: "validity-12", value: "12", label: "1 Year", className: "free-validity" },
   ];
   export const ARCHIVE_OPTIONS = [
     { id: "archive-1", value: "1", label: "1 Year", className: "free-validity" },
@@ -53,7 +53,7 @@ export const PROJECT_TYPES = [
     uploadedFilesCount: 0,
     totalFileSize: 0,
     status: "draft",
-    projectValidityMonths: '6',
+    projectValidityMonths: '12',
     fileRetentionYears: '1',
     createdAt: new Date().getTime(),
     lastOpened: new Date().getTime(),
