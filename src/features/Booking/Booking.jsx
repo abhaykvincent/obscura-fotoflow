@@ -6,6 +6,7 @@ import { fetchPackages, selectPackages, selectPackagesLoading } from '../../app/
 import { createBooking, selectBookingLoading, selectBookingError } from '../../app/slices/bookingSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 import { LoadingLight } from '../../components/Loading/Loading';
+import { getThumbnailUrl } from '../../utils/urlUtils';
 import './Booking.scss';
 
 // Image assets for packages
@@ -710,7 +711,7 @@ export default function Booking() {
                                 
                                 {tier.thumbnail && (
                                   <div className="tier-thumbnail-wrap">
-                                    <img src={tier.thumbnail} alt={tier.name} className="tier-thumbnail" />
+                                    <img src={getThumbnailUrl(tier.thumbnail)} alt={tier.name} className="tier-thumbnail" />
                                     <div className="tier-thumbnail-overlay"></div>
                                   </div>
                                 )}

@@ -1,4 +1,5 @@
 import React, { memo, useRef, useEffect } from 'react';
+import { getThumbnailUrl } from '../../utils/urlUtils';
 
 /**
  * GalleryImage component for rendering individual images in the selection gallery.
@@ -37,7 +38,7 @@ const GalleryImage = memo(({
     <div className="photo" onClick={handleClick}>
       <img 
         className="img" 
-        src={image.url} 
+        src={getThumbnailUrl(image.url)} 
         alt={`File ${index}`} 
         loading="lazy"
       />

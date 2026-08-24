@@ -1,4 +1,5 @@
 import React from 'react';
+import { getCoverUrl } from '../../utils/urlUtils';
 
 const CoverPhotoUploader = ({ projectCover, onChange }) => {
   const handleUpload = (e) => {
@@ -15,7 +16,7 @@ const CoverPhotoUploader = ({ projectCover, onChange }) => {
   return (
     <div className="cover-photo-uploader">
         <div className="cover-upload-button"
-          style={projectCover ? { backgroundImage: `url(${projectCover.replace(/\(/g, '%28').replace(/\)/g, '%29')})` } : {}}
+          style={projectCover ? { backgroundImage: `url(${getCoverUrl(projectCover).replace(/\(/g, '%28').replace(/\)/g, '%29')})` } : {}}
         >
           <label htmlFor="cover-file-upload" className="upload-button"></label>
           <input

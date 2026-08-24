@@ -13,7 +13,7 @@ import { toTitleCase } from '../../utils/stringUtils';
 import { setUserType, trackEvent } from '../../analytics/utils';
 import { LoadingLight } from '../../components/Loading/Loading';
 import { fetchCollectionStatus } from '../../firebase/functions/firestore';
-import { getImageUrlByQuality, getThumbnailUrl } from '../../utils/urlUtils';
+import { getImageUrlByQuality, getThumbnailUrl, getCoverUrl } from '../../utils/urlUtils';
 import { isPinValid } from '../../utils/pinUtils';
 import { showAlert } from '../../app/slices/alertSlice';
 import JSZip from 'jszip';
@@ -262,7 +262,7 @@ export default function SmartGallery() {
         {project?.projectCover ? (
           <div className="loading-cover-container">
             <img 
-              src={project.projectCover} 
+              src={getCoverUrl(project.projectCover)} 
               alt="Loading Cover" 
               className="loading-cover"
               style={{ 
@@ -303,7 +303,7 @@ export default function SmartGallery() {
     console.log('Expired');
     return (
       <ExpiredGallery 
-        backgroundImage={project.projectCover}
+        backgroundImage={getCoverUrl(project.projectCover)}
         photographerName={studio?.name || studioName}
         expiryDate={expiryDate}
         projectId={project.id}
@@ -319,7 +319,7 @@ export default function SmartGallery() {
     console.log('Archived');
     return (
       <ExpiredGallery 
-        backgroundImage={project.projectCover}
+        backgroundImage={getCoverUrl(project.projectCover)}
         photographerName={studio?.name || studioName}
         expiryDate={expiryDate}
         projectId={project.id}
@@ -347,7 +347,7 @@ export default function SmartGallery() {
                   <Link 
                     to={`/${studioName}/smart-gallery/${projectId}/${prevCollection.id}`} 
                     className="nav-link prev"
-                    style={{ backgroundImage: `url(${prevCollection.uploadedFiles[0]?.url})` }}
+                    style={{ backgroundImage: `url(${getThumbnailUrl(prevCollection.uploadedFiles[0]?.url)})` }}
                   >
                     <div className="nav-content">
                       <span className="nav-label">Previous Album</span>
@@ -360,7 +360,7 @@ export default function SmartGallery() {
                   <Link 
                     to={`/${studioName}/smart-gallery/${projectId}/${nextCollection.id}`} 
                     className="nav-link next"
-                    style={{ backgroundImage: `url(${nextCollection.uploadedFiles[0]?.url})` }}
+                    style={{ backgroundImage: `url(${getThumbnailUrl(nextCollection.uploadedFiles[0]?.url)})` }}
                   >
                     <div className="nav-content">
                       <span className="nav-label">Next Album</span>
@@ -410,7 +410,7 @@ export default function SmartGallery() {
       <div className="project-header">
         <img 
           className='banner' 
-          src={project.projectCover} 
+          src={getCoverUrl(project.projectCover)} 
           alt={`${project.name} cover`} 
           loading="lazy"
         />

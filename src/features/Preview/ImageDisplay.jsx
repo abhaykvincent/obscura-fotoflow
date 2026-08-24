@@ -1,7 +1,6 @@
-// ImageDisplay.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useAnimation, useTransform } from 'framer-motion';
-import { getThumbnailUrl } from '../../utils/urlUtils';
+import { getThumbnailUrl, getWebUrl } from '../../utils/urlUtils';
 
 const swipeConfidenceThreshold = 10000;
 const swipePower = (offset, velocity) => {
@@ -10,7 +9,7 @@ const swipePower = (offset, velocity) => {
 
 function ImageDisplay({ image, direction, paginate, closePreview, collectionId, resetControlsTimeout, onCurrentLoad }) {
   // Image Loading State
-  const [imgSrc, setImgSrc] = useState(getThumbnailUrl(image.url, collectionId));
+  const [imgSrc, setImgSrc] = useState(getThumbnailUrl(image.url));
   const [isHighResLoaded, setIsHighResLoaded] = useState(false);
 
   // Zoom & Pan State
@@ -36,7 +35,7 @@ function ImageDisplay({ image, direction, paginate, closePreview, collectionId, 
   useEffect(() => {
     // Reset state for new image
     setIsHighResLoaded(false);
-    setImgSrc(getThumbnailUrl(image.url, collectionId));
+    setImgSrc(getThumbnailUrl(image.url));
     setIsZoomed(false);
     scale.set(1);
     x.set(0);
@@ -45,15 +44,16 @@ function ImageDisplay({ image, direction, paginate, closePreview, collectionId, 
     // Reset zoom controls
     controls.start({ scale: 1, x: 0, y: 0, transition: { duration: 0 } });
 
-    // Load High Res
+    // Load High Res (Web Preview Quality)
+    const webUrl = getWebUrl(image.url);
     const highResImg = new Image();
-    highResImg.src = image.url;
+    highResImg.src = webUrl;
     highResImg.onload = () => {
-      setImgSrc(image.url);
+      setImgSrc(webUrl);
       setIsHighResLoaded(true);
       if (onCurrentLoad) onCurrentLoad();
     };
-  }, [image.url, collectionId, scale, controls, x, y, onCurrentLoad]);
+  }, [image.url, scale, controls, x, y, onCurrentLoad]);
 
   // Gestures (Swipe / Dismiss) - Applied to Wrapper
   const handleWrapperDragEnd = (e, { offset, velocity }) => {
