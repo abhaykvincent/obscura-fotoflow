@@ -1,5 +1,6 @@
 import React from 'react';
 import { toTitleCase } from '../../utils/stringUtils';
+import { getCoverUrl } from '../../utils/urlUtils';
 
 const SmartAlbumHeader = ({ galleryData, project, collectionName }) => {
   const { projectCover, focusPoint, overlayColor, coverSize, textPosition } = galleryData;
@@ -9,7 +10,7 @@ const SmartAlbumHeader = ({ galleryData, project, collectionName }) => {
       <div className="project-header">
         {projectCover ? (
           <img 
-            src={projectCover} 
+            src={getCoverUrl(projectCover)} 
             alt="Cover" 
             className="banner cover" 
             loading="lazy"

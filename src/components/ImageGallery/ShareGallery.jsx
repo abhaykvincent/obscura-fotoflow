@@ -141,7 +141,7 @@ const ShareGallery = ({ images = [], sections = null, projectId, collectionId, d
       // Transform loadedImages to match ImageGrid expectations (url handling)
       const gridImages = loadedImages.map(file => ({
           ...file,
-          url: file?.thumbAvailable ? getThumbnailUrl(file.url, collectionId) : file.url,
+          url: getThumbnailUrl(file.url),
           originalUrl: file.url, // Keep track of original for preview mapping
           // Ensure dimensions are present or defaults? ImageGrid handles check.
       }));

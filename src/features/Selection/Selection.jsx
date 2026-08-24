@@ -14,6 +14,7 @@ import Alert from '../../components/Alert/Alert';
 import { requestSelectionReset } from '../../app/slices/selectionRequestSlice';
 import { updateCollectionStatus } from '../../app/slices/projectsSlice';
 import { usePersistentSelection } from '../../hooks/usePersistentSelection';
+import { getCoverUrl } from '../../utils/urlUtils';
 import './Selection.scss';
 
 /**
@@ -329,7 +330,7 @@ export default function Selection() {
         <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button back-btn icon back">
           Back to Gallery
         </Link>
-        <img className='banner' src={project?.projectCover || ''} alt="Banner" />
+        <img className='banner' src={getCoverUrl(project?.projectCover) || ''} alt="Banner" />
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
           <SyncStatus isSyncing={isSyncing} />

@@ -67,7 +67,7 @@ export const useSmartAlbum = (domain, projectId, collectionId, propProject) => {
           ...section,
           images: section.images.map(img => ({
             ...img,
-            url: img.thumbAvailable ? getThumbnailUrl(img.url, collectionId) : img.url,
+            url: getThumbnailUrl(img.url),
             originalUrl: img.url
           }))
         };

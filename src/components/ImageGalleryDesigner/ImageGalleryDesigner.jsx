@@ -5,6 +5,7 @@ import GallerySections from './GallerySections/GallerySections';
 import { findCollectionById } from '../../utils/CollectionQuery';
 import { fetchSmartGallery, updateSmartGallery, selectSmartGallery, selectSmartGalleryStatus } from '../../app/slices/smartGallerySlice';
 import { selectStudio } from '../../app/slices/studioSlice';
+import { getCoverUrl } from '../../utils/urlUtils';
 
 const ImageGalleryDesigner = ({ project, collectionId }) => {
   const dispatch = useDispatch();
@@ -219,7 +220,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
         </div>
         <div className="cover-overlay" style={{ backgroundColor: overlayColor }}></div>
         {smartGalleryData.projectCover ? (
-          <img src={smartGalleryData.projectCover} alt="Cover" className="cover-photo" style={{ objectPosition: `${(showFocusDialog ? focusPoint.x : focusPoint.x) * 100}% ${(showFocusDialog ? focusPoint.y : focusPoint.y) * 100}%` }} />
+          <img src={getCoverUrl(smartGalleryData.projectCover)} alt="Cover" className="cover-photo" style={{ objectPosition: `${(showFocusDialog ? focusPoint.x : focusPoint.x) * 100}% ${(showFocusDialog ? focusPoint.y : focusPoint.y) * 100}%` }} />
         ) : (
           <div className="cover-photo-placeholder">
             <span>Cover Photo</span>
@@ -235,7 +236,7 @@ const ImageGalleryDesigner = ({ project, collectionId }) => {
               {showFocusDialog && (
                 <div className="focus-dialog">
                   <div className="focus-image-container">
-                    <img src={smartGalleryData.projectCover} alt="Cover" className="focus-image" onClick={handleFocusClick} />
+                    <img src={getCoverUrl(smartGalleryData.projectCover)} alt="Cover" className="focus-image" onClick={handleFocusClick} />
                     <div className="focus-point" style={{ left: `${focusPoint.x * 100}%`, top: `${focusPoint.y * 100}%` }}></div>
                   </div>
                   <div className="focus-actions">

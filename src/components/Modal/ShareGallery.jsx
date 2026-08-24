@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
 import { selectDomain } from '../../app/slices/authSlice';
 import { useLocation } from 'react-router';
-import { copyToClipboard, extractDomain, getGalleryURL } from '../../utils/urlUtils';
+import { copyToClipboard, extractDomain, getGalleryURL, getCoverUrl } from '../../utils/urlUtils';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
 import { updateSelectionGalleryStatus, updateCollectionStatus, selectUpdatingCollections } from '../../app/slices/projectsSlice';
@@ -138,7 +138,7 @@ function ShareGallery({project }) {
             {/* map project collections and render it with a check box to select galleries to share */}
             <div className="share-project-details">
               <div className="project-cover">
-                <img src={project?.projectCover || '/images/default-cover.jpg'} alt="Project Cover" />
+                <img src={getCoverUrl(project?.projectCover) || '/images/default-cover.jpg'} alt="Project Cover" />
               </div>
               <div className="gallery-details">
                 <div className="gallery-details-project">

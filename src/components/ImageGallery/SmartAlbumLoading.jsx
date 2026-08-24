@@ -1,5 +1,6 @@
 import React from 'react';
 import { toTitleCase } from '../../utils/stringUtils';
+import { getCoverUrl } from '../../utils/urlUtils';
 
 const SmartAlbumLoading = ({ project, onBack }) => {
   const renderContent = () => {
@@ -7,7 +8,7 @@ const SmartAlbumLoading = ({ project, onBack }) => {
       return (
         <div className="loading-cover-container">
           <img 
-            src={project.projectCover} 
+            src={getCoverUrl(project.projectCover)} 
             alt="Loading Cover" 
             className="loading-cover"
             style={{ 

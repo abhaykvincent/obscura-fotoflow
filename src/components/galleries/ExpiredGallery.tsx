@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Clock, CheckCircle, LayoutDashboard, CalendarOff } from 'lucide-react';
 import { requestExtension } from '../../app/slices/extensionRequestSlice';
+import { getCoverUrl } from '../../utils/urlUtils';
 import styles from './ExpiredGallery.module.scss';
 
 export type UserRole = 'photographer' | 'client' | 'guest';
@@ -37,8 +38,9 @@ const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   useEffect(() => {
+    if (!backgroundImage) return;
     const img = new Image();
-    img.src = backgroundImage;
+    img.src = getCoverUrl(backgroundImage);
     img.onload = () => setIsImageLoaded(true);
   }, [backgroundImage]);
 
@@ -63,7 +65,7 @@ const ExpiredGallery: React.FC<ExpiredGalleryProps> = ({
     <div className={styles.expiredGallery}>
       <div
         className={`${styles.backgroundOverlay} ${isImageLoaded ? styles.loaded : ''}`}
-        style={{ backgroundImage: `url(${backgroundImage})` }}
+        style={{ backgroundImage: `url(${getCoverUrl(backgroundImage)})` }}
       />
       <div className={styles.glassCard}>
         <div className={styles.iconWrapper}>
