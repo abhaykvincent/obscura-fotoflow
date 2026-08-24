@@ -26,7 +26,7 @@ function UploadCompletedModal({ project, collectionName }) {
 
   useEffect(() => {
     if (visible.uploadCompleted) {
-      const count = Object.values(uploadList).filter(file => file.status === 'uploaded').length;
+      const count = Object.values(uploadList).filter(file => file.status === 'uploaded' || file.state === 'completed').length;
       if (count > 0) {
         setUploadedCount(count);
       }

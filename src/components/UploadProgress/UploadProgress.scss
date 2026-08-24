@@ -200,36 +200,38 @@
                         background-color: $gray5-default-dark;
                     }
                 }
+                &.processing{
+                    .task-status{
+                        opacity: 1;
+                        filter:saturate(0.4) brightness(1.5);
+                    }
+                    .file-progress-bar{
+                        background: linear-gradient(to right, $gray4-default-dark, #70ab17);
+                        transition: width 0.3s ease;
+                    }
+                }
                 &.uploading{
                     .task-status{
                         opacity: 1;
-                        filter:saturate(0.6) brightness(2)
+                        filter:saturate(0.6) brightness(2);
                     }
                     .file-progress-bar{
-                        width : 2%;
-                        
+                        min-width: 4%;
                         background:linear-gradient(to right, #428924 80%, #70ab17);
-                        animation-name: progress-initializer-upload;
-                        animation-duration: 4s;
-                        animation-timing-function: ease-in-out;
-                        animation-fill-mode: forwards;
-                        @keyframes progress-initializer-upload {
-                                0%{
-                                    width: 0%;
-                                }
-                                30%{
-                                    width: 50%;
-                                }
-                                60%{
-                                    width: 75%;
-                                }
-                                90%{
-                                    width: 100%;
-                                }
-                        }
+                        transition: width 0.3s ease;
                     }
                 }
-                &.uploaded{
+                &.verifying{
+                    .task-status{
+                        opacity: 1;
+                        filter:saturate(0.8) brightness(1.8);
+                    }
+                    .file-progress-bar{
+                        background: linear-gradient(to right, #428924, #32adf0);
+                        transition: width 0.3s ease;
+                    }
+                }
+                &.uploaded, &.completed{
                     animation-name: upload-task-complete-flash;
                     animation-duration: 0.7s;
                     animation-fill-mode: forwards;
@@ -239,6 +241,15 @@
                     .task-status{
                         opacity: 1;
                         background-image: url('../../assets/img/icons/check-circle.svg');
+                    }
+                }
+                &.failed{
+                    .task-status{
+                        opacity: 1;
+                        filter: hue-rotate(180deg) saturate(2);
+                    }
+                    .file-progress-bar{
+                        background-color: $red-default-dark;
                     }
                 }
                 &.removing{
