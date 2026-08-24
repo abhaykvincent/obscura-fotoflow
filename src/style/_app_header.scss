@@ -27,6 +27,7 @@ header{
       display: grid;
       grid-template-columns: 8px*8 auto;;
       padding-left :0px;
+      margin-right: 8px;
         width: auto;
         height: 100%;
         align-items:center;
@@ -42,7 +43,7 @@ header{
 
       }
       .studio-name-logo{
-        font-size: 1rem;
+        font-size: 1.2rem;
         font-weight: 800;
         max-width: 8px*18;
       }
