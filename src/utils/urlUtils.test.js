@@ -55,9 +55,26 @@ describe('urlUtils - Image Delivery Gateway', () => {
       expect(getCoverUrl(studioCoverUrl)).toBe(`${CDN_DOMAIN}/studios/monalisa/projects/123/cover.jpg`);
     });
 
-    it('transforms Storage Emulator URL correctly', () => {
+    it('transforms Storage Emulator URL correctly preserving emulator host and swapping quality', () => {
       const result = getPhotoDeliveryUrl(SAMPLE_EMULATOR_URL, 'thumb');
-      expect(result).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+      expect(result).toBe('http://127.0.0.1:9199/v0/b/fotoflow-studio.firebasestorage.app/o/thumb%2Fmonalisa%2Fabigail-%26-amigail-q2qSQ%2Fbirthday-B0VMK%2FIM_00014.jpg?alt=media');
+    });
+
+    it('transforms Storage Emulator URL to original quality', () => {
+      const result = getPhotoDeliveryUrl(SAMPLE_EMULATOR_URL, 'original');
+      expect(result).toBe('http://127.0.0.1:9199/v0/b/fotoflow-studio.firebasestorage.app/o/original%2Fmonalisa%2Fabigail-%26-amigail-q2qSQ%2Fbirthday-B0VMK%2FIM_00014.jpg?alt=media');
+    });
+
+    it('transforms Storage Emulator URL to covers quality preserving underlying path', () => {
+      const emulatorCoverUrl = 'http://127.0.0.1:9199/v0/b/fotoflow-studio.firebasestorage.app/o/covers%2Fmonalisa%2Fproject-123%2Fcover.jpg?alt=media';
+      const result = getPhotoDeliveryUrl(emulatorCoverUrl, 'covers');
+      expect(result).toBe('http://127.0.0.1:9199/v0/b/fotoflow-studio.firebasestorage.app/o/covers%2Fmonalisa%2Fproject-123%2Fcover.jpg?alt=media');
+    });
+
+    it('handles Storage Emulator URLs with localhost or custom port and appends alt=media if missing', () => {
+      const localhostEmulatorUrl = 'http://localhost:9199/v0/b/fotoflow-studio.firebasestorage.app/o/web%2Fmonalisa%2Fphoto.jpg';
+      const result = getPhotoDeliveryUrl(localhostEmulatorUrl, 'thumb');
+      expect(result).toBe('http://localhost:9199/v0/b/fotoflow-studio.firebasestorage.app/o/thumb%2Fmonalisa%2Fphoto.jpg?alt=media');
     });
 
     it('transforms GCS URL correctly', () => {
