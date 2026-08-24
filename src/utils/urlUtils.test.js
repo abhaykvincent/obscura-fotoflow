@@ -40,14 +40,19 @@ describe('urlUtils - Image Delivery Gateway', () => {
       expect(result).toBe(`${CDN_DOMAIN}/original/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
     });
 
-    it('transforms Firebase Storage URL to covers quality', () => {
+    it('transforms Firebase Storage URL to covers quality without altering path', () => {
       const result = getPhotoDeliveryUrl(SAMPLE_COVERS_FIREBASE_URL, 'covers');
       expect(result).toBe(`${CDN_DOMAIN}/covers/monalisa/project-123/cover.jpg`);
     });
 
-    it('transforms Firebase Storage URL from web to covers quality', () => {
+    it('transforms Firebase Storage web URL to covers quality preserving web path', () => {
       const result = getPhotoDeliveryUrl(SAMPLE_FIREBASE_URL, 'covers');
-      expect(result).toBe(`${CDN_DOMAIN}/covers/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+      expect(result).toBe(`${CDN_DOMAIN}/web/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+    });
+
+    it('transforms studio cover path with getCoverUrl preserving original path', () => {
+      const studioCoverUrl = 'https://firebasestorage.googleapis.com/v0/b/fotoflow-studio.firebasestorage.app/o/studios%2Fmonalisa%2Fprojects%2F123%2Fcover.jpg?alt=media';
+      expect(getCoverUrl(studioCoverUrl)).toBe(`${CDN_DOMAIN}/studios/monalisa/projects/123/cover.jpg`);
     });
 
     it('transforms Storage Emulator URL correctly', () => {
@@ -91,8 +96,9 @@ describe('urlUtils - Image Delivery Gateway', () => {
       expect(getOriginalUrl(SAMPLE_FIREBASE_URL)).toBe(`${CDN_DOMAIN}/original/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
     });
 
-    it('getCoverUrl returns covers quality', () => {
-      expect(getCoverUrl(SAMPLE_FIREBASE_URL)).toBe(`${CDN_DOMAIN}/covers/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+    it('getCoverUrl returns cdn url preserving the underlying path', () => {
+      expect(getCoverUrl(SAMPLE_FIREBASE_URL)).toBe(`${CDN_DOMAIN}/web/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+      expect(getCoverUrl(SAMPLE_COVERS_FIREBASE_URL)).toBe(`${CDN_DOMAIN}/covers/monalisa/project-123/cover.jpg`);
     });
 
     it('getWebUrl returns web quality', () => {

@@ -113,12 +113,16 @@ function extractStoragePath(url) {
     return decodeURIComponent(gcsMatch[1]);
   }
 
-  // 5. Relative path starting with a known quality prefix
+  // 5. Relative storage path
   const cleanUrl = url.replace(/^\/+/, '');
   for (const prefix of QUALITY_PREFIXES) {
     if (cleanUrl.startsWith(prefix + '/')) {
       return cleanUrl;
     }
+  }
+
+  if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+    return cleanUrl;
   }
 
   return null;
@@ -144,11 +148,18 @@ export function getPhotoDeliveryUrl(url, quality = 'web') {
   const objectPath = extractStoragePath(url);
 
   if (objectPath) {
+    if (targetQuality === 'covers') {
+      return `${cdnBase}/${objectPath}`;
+    }
     const adjustedPath = swapQualityPrefix(objectPath, targetQuality);
     return `${cdnBase}/${adjustedPath}`;
   }
 
   // Fallback for legacy encoded /o/ formats
+  if (targetQuality === 'covers') {
+    return url;
+  }
+
   const encodedMatch = url.match(/\/o\/(web|thumb|original|covers)%2F/i);
   if (encodedMatch) {
     return url.replace(/\/o\/(web|thumb|original|covers)%2F/i, `/o/${targetQuality}%2F`);
