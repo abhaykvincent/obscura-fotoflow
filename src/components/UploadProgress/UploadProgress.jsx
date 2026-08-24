@@ -2,34 +2,35 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import './UploadProgress.scss';
 import { capitalizeFirstLetter, convertMegabytes, shortenFileName } from '../../utils/stringUtils';
 import { useSelector } from 'react-redux';
-import { selectUploadList, selectUploadStatus } from '../../app/slices/uploadSlice';
+import {
+    selectUploadStatus,
+    selectUploadFilesArray,
+    selectSessionProgress,
+    selectTotalFilesCount,
+    selectCompletedFilesCount,
+    calculateFileProgress,
+    UPLOAD_PARENT_STATES,
+    UPLOAD_SESSION_STATUS,
+} from '../../app/slices/uploadSlice';
 
 function UploadProgress() {
-    const uploadList = useSelector(selectUploadList);
     const uploadStatus = useSelector(selectUploadStatus);
+    const files = useSelector(selectUploadFilesArray);
+    const sessionProgress = useSelector(selectSessionProgress);
+    const totalFilesCount = useSelector(selectTotalFilesCount);
+    const completedFilesCount = useSelector(selectCompletedFilesCount);
+
     const [modalState, setModalState] = useState('close');
     const [removingFileIds, setRemovingFileIds] = useState(new Set());
     const [removedFileIds, setRemovedFileIds] = useState(new Set());
     const removalTimersRef = useRef({});
 
-    // Derived data using useMemo for efficiency
-    const files = useMemo(() => Object.values(uploadList), [uploadList]);
-    const totalFilesCount = files.length;
-    
-    const totalProgressCount = useMemo(() => 
-        files.filter((item) => item.status === 'uploaded').length, 
-    [files]);
-
-    const uploadPercent = useMemo(() => 
-        totalFilesCount > 0
-            ? files.reduce((sum, file) => sum + (file.progress || 0), 0) / totalFilesCount
-            : 0
-    , [files, totalFilesCount]);
-
+    // Filter visible files based on presentation-level removal animation
     const visibleFiles = useMemo(() =>
-        files.filter((file) => !removedFileIds.has(file.id))
-    , [files, removedFileIds]);
+        files.filter((file) => !removedFileIds.has(file.id)),
+    [files, removedFileIds]);
 
+    // Manage presentation timers for completed files
     useEffect(() => {
         const activeFileIds = new Set(files.map((file) => file.id));
 
@@ -53,7 +54,8 @@ function UploadProgress() {
 
     useEffect(() => {
         files.forEach((file) => {
-            if (file.status !== 'uploaded' || removalTimersRef.current[file.id]) return;
+            const isCompleted = file.state === UPLOAD_PARENT_STATES.COMPLETED || file.status === 'uploaded';
+            if (!isCompleted || removalTimersRef.current[file.id]) return;
 
             const startRemovalTimer = setTimeout(() => {
                 setRemovingFileIds((currentIds) => new Set(currentIds).add(file.id));
@@ -74,20 +76,19 @@ function UploadProgress() {
         });
     }, []);
 
-    // Handle modal state transitions and auto-minimize timer
+    // Handle modal display transitions and auto-minimize
     useEffect(() => {
         let timer;
         let completedTimer;
-        
-        if (uploadStatus === 'completed') {
+
+        if (uploadStatus === UPLOAD_SESSION_STATUS.COMPLETED || uploadStatus === 'completed') {
             completedTimer = setTimeout(() => {
                 setModalState('completed');
             }, visibleFiles.length > 0 ? 1500 : 0);
-        } else if (uploadStatus === 'close') {
+        } else if (uploadStatus === UPLOAD_SESSION_STATUS.CLOSE || uploadStatus === 'close') {
             setModalState('close');
-        } else if (uploadStatus === 'open') {
+        } else if (uploadStatus === UPLOAD_SESSION_STATUS.OPEN || uploadStatus === 'open') {
             setModalState('');
-            // Auto-minimize after 60 seconds of being open
             timer = setTimeout(() => {
                 setModalState('minimize');
             }, 60000);
@@ -103,23 +104,26 @@ function UploadProgress() {
     const onMaximize = () => setModalState('maximize');
     const onClose = () => setModalState('close');
 
-    if (modalState === 'close' && uploadStatus === 'close') return null;
+    if (modalState === 'close' && (uploadStatus === UPLOAD_SESSION_STATUS.CLOSE || uploadStatus === 'close')) {
+        return null;
+    }
+
+    const isSessionCompleted = uploadStatus === UPLOAD_SESSION_STATUS.COMPLETED || uploadStatus === 'completed';
 
     return (
         <div className={`upload-progress ${modalState}`}>
             <div className="header">
-                <div className={`header-process ${uploadStatus === 'completed' ? 'uploadCompleted' : 'active'}`}></div>
-                
+                <div className={`header-process ${isSessionCompleted ? 'uploadCompleted' : 'active'}`}></div>
+
                 <div className="header-title">
-                    {uploadStatus === 'completed' ? (
+                    {isSessionCompleted ? (
                         <>
                             <h4>Uploading Completed</h4>
                             <p>Uploaded all {totalFilesCount} photos</p>
                         </>
                     ) : (
                         <>
-                            <h4>Uploading {totalProgressCount} of {totalFilesCount}</h4>
-                            {/* <p>{uploadPercent.toFixed(0)}% completed</p> */}
+                            <h4>Uploading {completedFilesCount} of {totalFilesCount}</h4>
                         </>
                     )}
                 </div>
@@ -131,9 +135,9 @@ function UploadProgress() {
                 </div>
 
                 <div className="total-progress">
-                    <div 
+                    <div
                         className="progress-bar"
-                        style={{ width: `${uploadPercent}%` }}
+                        style={{ width: `${Math.round(sessionProgress)}%` }}
                     ></div>
                 </div>
             </div>
@@ -141,20 +145,23 @@ function UploadProgress() {
             <div className="body">
                 <div className="upload-queue">
                     {visibleFiles.map((file) => {
-                        const fileProgress = Math.min(100, Math.max(0, file.progress || 0));
-                        const visibleProgress = file.status === 'uploading' ? Math.max(fileProgress, 2) : fileProgress;
-                        const isDone = file.status === 'uploaded' && fileProgress === 100;
+                        const fileProgress = calculateFileProgress(file);
+                        const state = file.state || file.status || UPLOAD_PARENT_STATES.PENDING;
+                        const isDone = state === UPLOAD_PARENT_STATES.COMPLETED || state === 'uploaded';
                         const isRemoving = removingFileIds.has(file.id);
+                        const fileSize = file.originalSize || file.size || 0;
 
                         return (
-                            <div className={`upload-task ${file.status} ${isRemoving ? 'removing' : ''}`} key={file.id}>
+                            <div className={`upload-task ${state} ${isRemoving ? 'removing' : ''}`} key={file.id}>
                                 <div className="task-cover"></div>
                                 <div className="task-name">
                                     <p className="file-name">{shortenFileName(file.name)}</p>
                                     <p className="file-progress-percentage">
-                                        {convertMegabytes(file.size / 1000000, 2)}
+                                        {convertMegabytes(fileSize / 1000000, 2)}
                                         <span className="file-progress-state">
-                                            {capitalizeFirstLetter(file.status)}
+                                            {state === UPLOAD_PARENT_STATES.PROCESSING && file.processing?.step
+                                                ? `Processing (${file.processing.step})`
+                                                : capitalizeFirstLetter(state)}
                                         </span>
                                     </p>
                                 </div>
@@ -162,7 +169,7 @@ function UploadProgress() {
                                 <div className="file-progress">
                                     <div
                                         className={`file-progress-bar ${isDone ? 'done' : ''}`}
-                                        style={{ width: `${visibleProgress}%` }}
+                                        style={{ width: `${fileProgress}%` }}
                                     ></div>
                                 </div>
                             </div>

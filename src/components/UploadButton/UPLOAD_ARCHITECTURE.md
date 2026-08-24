@@ -1,88 +1,145 @@
 # Upload Feature Architecture
 
-This document explains the architecture, flow, and components of the photo upload feature in FotoFlow. It is designed to help developers understand, maintain, and contribute to this core functionality.
+This document explains the architecture, flow, state machine, and components of the photo upload feature in FotoFlow.
 
 ## 1. Overview
 
-The upload feature is responsible for importing photos from a user's local machine, validating them, generating metadata, compressing them for performance, uploading them to Firebase Storage (both high-res and thumbnails), and finally recording the metadata in Firestore.
+FotoFlow's upload pipeline is built on a **single-source-of-truth, derivative-aware upload state machine**.
+Each photo consists of multiple client-side processing stages (EXIF, Dimensions, Compression) and distinct derivative artifacts (`web` and `thumb`).
+
+### Core Principle
+> **Workers update facts. Selectors derive state. UI renders state.**
+
+```
+Upload Session
+      │
+      ├── Files
+      │     │
+      │     ├── Processing (EXIF / Dimensions / Compression)
+      │     │
+      │     └── Derivatives
+      │           ├── WEB
+      │           └── THUMB
+      │
+      └── Derived Session Metrics (Byte-weighted progress, completed, failed)
+```
 
 ## 2. File Structure
 
 | File | Purpose |
 | :--- | :--- |
-| `src/components/UploadButton/UploadButton.jsx` | UI Component: Triggers the flow and handles file selection. |
-| `src/utils/uploadOperations.js` | Core Logic: Orchestrates slicing, compression, and Firebase interaction. |
-| `src/app/slices/uploadSlice.js` | Redux State: Manages the global state of the upload session and progress. |
-| `src/utils/fileUtils.js` | Utilities: File size calculation, validation, and EXIF extraction. |
-| `src/firebase/functions/firestore.js` | Database: Persists file metadata and completion events to Firestore. |
+| `src/components/UploadButton/UploadButton.jsx` | UI Component: Triggers upload and handles file selection. |
+| `src/utils/uploadOperations.js` | Orchestrator & Workers: Manages worker pool, compression, derivative workers, retries, and verification. |
+| `src/app/slices/uploadConstants.js` | State Machine Contract: Defines states, transitions, required derivatives, and processing stages. |
+| `src/app/slices/uploadSlice.js` | Redux Slice: Stores canonical upload facts, derivative bytes, and statuses. |
+| `src/app/slices/uploadSelectors.js` | Selectors: Computes byte-weighted progress, file progress, and metrics deterministically. |
+| `src/components/UploadProgress/UploadProgress.jsx` | Presentation Component: Subscribes to selectors and renders visual progress. |
 
-## 3. High-Level Flow
+## 3. Upload State Machine
 
-1.  **Selection**: User selects files via `<UploadButton />`.
-2.  **Validation**: Check file types (.jpg, .png) and available storage quota.
-3.  **Preparation**: 
-    - Extract EXIF data (specifically `DateTimeOriginal`).
-    - Get image dimensions.
-    - Generate unique IDs for tracking.
-4.  **Redux Initialization**: `startUploadSession` is dispatched to show the upload UI and track progress.
-5.  **Slicing**: Files are processed in batches (slices) to prevent browser memory issues and respect network concurrency.
-6.  **Compression**: Each image is compressed into two versions:
-    - **Main**: Max width/height 1920px (for display/delivery).
-    - **Thumbnail**: Max width/height 480px (for gallery previews).
-7.  **Storage Upload**: Files are uploaded to Firebase Storage with an exponential backoff retry mechanism.
-8.  **Firestore Sync**: Once all files are in Storage, metadata (URLs, dimensions, dates) is saved to the project collection in Firestore.
-9.  **Completion**: Notify user, trigger project refresh, and show completion modal.
+### Parent File States
+- `pending`: Registered in session, awaiting processing.
+- `processing`: Active EXIF extraction, dimension calculation, or compression.
+- `uploading`: Derivatives are uploading to Firebase Storage.
+- `verifying`: All derivatives uploaded; download URLs are being verified.
+- `completed`: All required derivatives (`web` and `thumb`) and metadata verified.
+- `failed`: Terminal failure during processing or derivative upload after maximum retries.
+- `cancelled`: Upload cancelled by user or system.
 
-## 4. Key Technical Details
+### Derivative States
+- `pending` -> `processing` -> `uploading` -> `verifying` -> `completed` (or `failed`)
 
-### Cloud Storage Folder Architecture
-Files are organized in Firebase Storage using a prefix-based structure to enable easy lifecycle targeting (e.g., different retention policies or transition rules for thumbnails vs. web images):
-- **Web (Optimized)**: `web/{domain}/{projectId}/{collectionId}/{fileName}`
-- **Thumbnails**: `thumb/{domain}/{projectId}/{collectionId}/{fileName}`
-- **Project Covers**: `covers/{domain}/{projectId}/{fileName}`
-- **Studio Branding**: `branding/{domain}/logo/{fileName}`
-
-### Image Compression
-We use `browser-image-compression` to optimize files before they leave the client.
-- **Web (Main)**: Max width/height 2048px, 82% quality, original format preserved.
-- **Thumbnail**: Max width/height 500px, 65% quality, WebP format.
-- **Quota Management**: We check `importFileSize` against `storageLimit.quota - storageLimit.used` before starting.
-
-### UploadProgress Component
-The `UploadProgress` component (located in `src/components/UploadProgress/`) provides real-time feedback to the user:
-- **Redux Integration**: Subscribes to `selectUploadList` and `selectUploadStatus` from `uploadSlice`.
-- **States**: `minimize`, `maximize`, `completed`, and `close`.
-- **Automatic Behavior**: Minimizes automatically after 60 seconds if the upload is still in progress.
-- **Tracking**: Calculates overall percentage and identifies individual file statuses (pending, uploading, uploaded, failed).
-
-### Slicing & Concurrency
-
-### Redux State Schema (`uploadSlice`)
-```javascript
-{
-  uploadList: {
-    "file-name.jpg": {
-      id: "file-name.jpg",
-      status: 'pending' | 'uploading' | 'uploaded' | 'failed',
-      progress: 0 to 100,
-      url: "...",
-      // ... metadata
-    }
-  },
-  uploadStatus: 'close' | 'open' | 'completed' | 'failed'
-}
+### Valid Transitions
+```
+PENDING ──> PROCESSING ──> UPLOADING ──> VERIFYING ──> COMPLETED
+   │             │             │             │
+   └───> FAILED <┴─────────────┴─────────────┘
+           │
+      (Retry) ──> UPLOADING / PENDING
 ```
 
-## 5. Maintenance & Contribution
+## 4. Key Technical Specifications
 
-### Adding a new validation
-Modify `validateFileTypes` in `src/utils/fileUtils.js` and update the error alert in `UploadButton.jsx`.
+### Collision-Proof File Identity
+Files are assigned a collision-proof identifier upon selection:
+```
+sessionId + "_file_" + index + "_" + crypto.randomUUID()
+```
+Two identical files selected in the same batch maintain independent identity and state.
 
-### Modifying Compression
-Compression settings (max dimensions, quality) are located in `compressImages` within `src/utils/uploadOperations.js`.
+### Image Compression Settings
+- **Web (Optimized)**: `maxWidthOrHeight: 4096`, `maxSizeMB: 4`, quality preserved.
+- **Thumbnail**: `maxWidthOrHeight: 1024`, `maxSizeMB: 0.1`, format: `image/webp`, quality: 0.7.
 
-### Extending Metadata
-If you need to extract more EXIF tags, update the `handleUpload` entry point where `extractExifData` is called and ensure the resulting data is passed through to `addUploadedFilesToFirestore`.
+### Byte-Weighted Global Progress
+Global session progress is calculated from actual derivative bytes:
+$$\text{Progress} = \frac{\sum \text{Derivative Transferred Bytes}}{\sum \text{Derivative Total Bytes}} \times 100$$
+- 1 MB file (100%) + 100 MB file (0%) yields $\approx 0.99\%$, not $50\%$.
+- Preparation/processing is scaled between 0% and 10%.
+- Derivative uploads are scaled between 10% and 95%.
+- Verification is scaled between 95% and 99%.
+- Progress reaches 100% only when the session is completely finished.
 
----
-*Last Updated: February 2026*
+### Independent Derivative Retries
+Retrying a failed derivative (`thumb`) preserves the completed state and URL of healthy derivatives (`web`) without restart penalties.
+
+### Deterministic File Completion
+```
+web.status === 'completed'
+AND
+thumb.status === 'completed'
+AND
+metadata (dimensions, dateTimeOriginal) available
+        ↓
+file.completed
+```
+
+## 5. Redux State Schema
+
+```javascript
+{
+  upload: {
+    session: {
+      id: "session_1700000000_abc123",
+      status: "open" | "completed" | "failed" | "close",
+      startedAt: 1700000000000,
+      completedAt: null,
+      error: null
+    },
+    files: {
+      "session_file_0_uuid": {
+        id: "session_file_0_uuid",
+        name: "DSC_001.jpg",
+        originalSize: 8450123,
+        state: "uploading",
+        processing: { step: "done", progress: 100 },
+        derivatives: {
+          web: {
+            status: "uploading",
+            bytesTransferred: 1450000,
+            totalBytes: 3200000,
+            url: null,
+            error: null
+          },
+          thumb: {
+            status: "completed",
+            bytesTransferred: 85000,
+            totalBytes: 85000,
+            url: "https://...",
+            error: null
+          }
+        },
+        metadata: {
+          dateTimeOriginal: "2026-08-24T14:00:00.000Z",
+          dimensions: { width: 6000, height: 4000 }
+        },
+        urls: {
+          web: null,
+          thumb: "https://..."
+        },
+        error: null
+      }
+    }
+  }
+}
+```
