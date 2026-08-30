@@ -10,6 +10,7 @@ import { selectUserStudio } from '../../../../app/slices/authSlice';
 import DashboardEvents from '../../Events/Events';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import CollectionsPanel from '../../../Project/Collections/CollectionsPanel';
+import EmptyGalleriesState from '../EmptyGalleriesState/EmptyGalleriesState';
 import HistoryLog from '../HistoryLog/HistoryLog';
 
 function DashboardTabs({ project, activeTab: propActiveTab, setActiveTab: propSetActiveTab, setSelectedEventId }) {
@@ -27,29 +28,31 @@ function DashboardTabs({ project, activeTab: propActiveTab, setActiveTab: propSe
       case 'galleries':
         return (
           <div className="gallery-overview">
-            {/* Replace with gallery card display logic */}
-              {project.collections.length === 0 ? (
-                !isExpired && (
-                  <div className="galleries">
-                    <div 
-                      className={`gallery new empty-gallery ${isArchived ? 'disabled' : ''}`} 
-                      onClick={() => !isArchived && dispatch(openModal('createCollection'))}
+            {project.collections.length === 0 ? (
+              !isExpired && (
+                <div className="galleries">
+                  <div className="heading-section">
+                    <h3 className="heading">Galleries <span>{project.collections.length}</span></h3>
+                    <button
+                      type="button"
+                      className="button primary small"
+                      disabled={isArchived || isExpired}
+                      onClick={() => dispatch(openModal('createCollection'))}
                     >
-                      <div className="thumbnails">
-                        <div className="thumbnail thumb1">
-                          <div className="backthumb bthumb1">
-                            <div className="button primary outline">Create Gallery</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                      + Create Gallery
+                    </button>
                   </div>
-                )
-              ) : (
-                <>
-                  <CollectionsPanel {...{project, collectionId: project.collections[0]?.id}}/>
-                </>
-              )}
+                  <EmptyGalleriesState
+                    disabled={isArchived || isExpired}
+                    onCreate={() => dispatch(openModal('createCollection'))}
+                  />
+                </div>
+              )
+            ) : (
+              <>
+                <CollectionsPanel {...{project, collectionId: project.collections[0]?.id}}/>
+              </>
+            )}
           </div>
         );
 
