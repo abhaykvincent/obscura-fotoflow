@@ -6,7 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 
 // Redux
 import { deleteProject, selectProjects, selectProjectsStatus, restoreProject } from '../../app/slices/projectsSlice';
-import { openModal, selectModal } from '../../app/slices/modalSlice';
+import { openModal } from '../../app/slices/modalSlice';
 import { selectDomain, selectUserStudio } from '../../app/slices/authSlice';
 
 // Firebase
@@ -40,8 +40,6 @@ export default function Project() {
   const domain = useSelector(selectDomain);
   const projects = useSelector(selectProjects);
   const defaultStudio = useSelector(selectUserStudio);
-  const modals = useSelector(selectModal);
-  const modalsRef = useRef(modals);
   const projectsStatus = useSelector(selectProjectsStatus);
   const studio = useSelector(selectStudio);
   const [project, setProject] = useState(null);
@@ -64,23 +62,6 @@ export default function Project() {
   }, [project, location.state, dispatch, navigate, location.pathname]);
 
   useEffect(() => {
-    modalsRef.current = modals;
-  }, [modals]);
-  useEffect(() => {
-    const isArchived = project?.status === 'archive' || project?.storage?.status === 'archive';
-    const isExpired = project?.status === 'expired';
-
-    if (project?.collections.length === 0 && !isArchived && !isExpired) {
-      const timer = setTimeout(() => {
-        dispatch(openModal('createCollection'));
-      }, 2000); // Using 500ms for a noticeable yet quick delay
-
-      // Cleanup the timeout if the component unmounts or dependencies change
-      return () => clearTimeout(timer);
-    }
-  }, [project, dispatch]);
-
-  useEffect(() => {
     if (projectsStatus === 'succeeded' && !selectedProject) {
       navigate(`/${defaultStudio.domain}/projects`);
     }
@@ -101,18 +82,8 @@ export default function Project() {
       setPinText(project.pin);
       
       updateProjectLastOpenedInFirestore(domain, project.id);
-
-      const isArchived = project.status === 'archive' || project.storage?.status === 'archive';
-      const isExpired = project.status === 'expired';
-
-      if (project.collections.length === 0 && !isArchived && !isExpired) {
-        setTimeout(() => {
-          const isAnyModalOpen = Object.values(modalsRef.current).some(Boolean);
-          if (!isAnyModalOpen) dispatch(openModal('firstCollection'));
-        }, 3000);
-      }
     }
-  }, [project, dispatch, domain, defaultStudio.name]);
+  }, [project, domain, defaultStudio.name]);
 
   const handlePinCopy = () => {
     navigator.clipboard.writeText(project?.pin).then(() => {

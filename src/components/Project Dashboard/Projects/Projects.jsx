@@ -13,6 +13,7 @@ import DashboardEvents from '../Events/Events';
 import DashboardTabs from './DashboardTabs/DashboardTabs';
 import AddProjectModal from '../../Modal/AddProject/AddProject';
 import CollectionsPanel from '../../Project/Collections/CollectionsPanel';
+import EmptyGalleriesState from './EmptyGalleriesState/EmptyGalleriesState';
 import SidePanel from '../../Project/SidePanel/SidePanel'
 import { ProjectCover } from '../../ProjectPageCover/ProjectPageCover';
 import StatusPipeline from '../StatusPipeline/StatusPipeline';
@@ -28,6 +29,9 @@ function DashboardProjects({project, setSelectedEventId}){
   const [activeTab, setActiveTab] = useState('galleries');
   const selectionRequests = useSelector(selectSelectionRequests);
   const defaultStudio = useSelector(selectUserStudio);
+
+  const isArchived = project?.status === 'archive' || project?.storage?.status === 'archive';
+  const isExpired = project?.status === 'expired';
 
   const pendingRequest = selectionRequests.find(req => req.projectId === project?.id);
 
@@ -88,55 +92,28 @@ function DashboardProjects({project, setSelectedEventId}){
     {
       projectDashboardView === 'abstract'?
       (project.collections.length === 0 ? (
-        (() => {
-          const isArchived = project.status === 'archive' || project.storage?.status === 'archive';
-          const isExpired = project.status === 'expired';
-          
-          if (isExpired) return null;
-
-          return (
-            <div 
-              className={`gallery new empty-gallery ${isArchived ? 'disabled' : ''}`} 
-              onClick={() => !isArchived && dispatch(openModal('createCollection'))}
-            >
-              <div className="heading-section">
-                <h3 className='heading'>Galleries <span>{project.collections.length}</span></h3>
-              </div>
-              <div className="thumbnails">
-                <div className="thumbnail thumb1">
-                  <div className="backthumb bthumb1">
-                    <div 
-                      className="button primary outline"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (!isArchived) dispatch(openModal('createCollection'));
-                      }}
-                    >New Gallery</div>
-                  </div>
-                  <div className="backthumb bthumb2"></div>
-                  <div className="backthumb bthumb3"></div>
-                  <div className="backthumb bthumb4"></div>
-                </div>
-              </div>
+        !isExpired && (
+          <div className="galleries">
+            <div className="heading-section">
+              <h3 className='heading'>Galleries <span>{project.collections.length}</span></h3>
+              <button
+                type="button"
+                className="button primary small"
+                disabled={isArchived || isExpired}
+                onClick={() => dispatch(openModal('createCollection'))}
+              >
+                + Create Gallery
+              </button>
             </div>
-          );
-        })()
+            <EmptyGalleriesState
+              disabled={isArchived || isExpired}
+              onCreate={() => dispatch(openModal('createCollection'))}
+            />
+          </div>
+        )
       ) : (
         <>
-
-                                    
           <CollectionsPanel {...{project,collectionId:project.collections[0]?.id}}/>
-          
-          {/* <div className="dashboard-overview">
-            <div className={`tools-overview ${project.events.length>0?'':'empty'}`}>
-                <DashboardEvents project={project} />
-                <div className={`section financials-overview ${project.payments.length > 0 ? 'has-payments' : ''}`}>
-                  <DashboardPayments project={project} />
-                </div>
-              </div>
-            <SidePanel project={project} />
-
-          </div> */}
         </>
       ))
       :<>
