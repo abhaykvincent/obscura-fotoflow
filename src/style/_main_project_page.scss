@@ -45,7 +45,10 @@
           animation: fadeInUp 0.2s ease-in 0.1s;
           animation-fill-mode: forwards;
           .cover-footer{
-            height: 8px*18;
+            height: auto;
+            .static-tools.bottom{
+              display: none;
+            }
           }
         }
         .cover-tools{
