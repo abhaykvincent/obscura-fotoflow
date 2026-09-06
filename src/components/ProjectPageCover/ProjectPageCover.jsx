@@ -4,12 +4,13 @@ import { db } from "../../firebase/app";
 import { doc, updateDoc } from "firebase/firestore";
 import { selectDomain, selectUserStudio } from "../../app/slices/authSlice";
 import { showAlert } from "../../app/slices/alertSlice";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { ref, uploadBytes } from "firebase/storage";
 import { setCoverPhotoInFirestore } from "../../firebase/functions/firestore";
 import { updateProjectCover, updateProjectName } from "../../app/slices/projectsSlice";
 import { convertMegabytes, truncateMiddle, truncateUrl } from "../../utils/stringUtils";
 import { ProjectStatus } from "../Project/ProjectStatus/ProjectStatus";
 import { getGalleryURL, getCoverUrl } from "../../utils/urlUtils";
+import { getCdnUrl } from "../../utils/cdnUrl";
 import { getStorageForDomain } from "../../utils/uploadOperations";
 import { selectStudio } from "../../app/slices/studioSlice";
 import "./ProjectPageCover.scss";
@@ -65,17 +66,18 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
         try {
             const customStorage = await getStorageForDomain(domain, studio.bucketUrl);
             // Define the storage path
-            const storageRef = ref(customStorage, `studios/${currentStudio.domain}/projects/${project.id}/cover.jpg`);
+            const storagePath = `studios/${currentStudio.domain}/projects/${project.id}/cover.jpg`;
+            const storageRef = ref(customStorage, storagePath);
     
             // Upload the file to Firebase Storage
             await uploadBytes(storageRef, file);
     
-            // Get the download URL
-            const downloadURL = await getDownloadURL(storageRef);
+            // Generate canonical CDN URL from the storage path
+            const cdnCoverUrl = getCdnUrl(storagePath);
     
             // Dispatch the thunk to update the cover photo and focus point
             const focusPoint = { x: 0.5, y: 0.5 }; // Default focus point for a new cover
-            dispatch(updateProjectCover({ domain: currentStudio.domain, projectId: project.id, newCoverUrl: downloadURL, focusPoint }));
+            dispatch(updateProjectCover({ domain: currentStudio.domain, projectId: project.id, newCoverUrl: cdnCoverUrl, focusPoint }));
             
             dispatch(showAlert({ type: "success", message: "Cover photo updated successfully!" }));
         } catch (error) {
