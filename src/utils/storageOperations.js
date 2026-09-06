@@ -1,11 +1,9 @@
 import {
-    uploadBytesResumable,
     list,
     ref,
     deleteObject,
     listAll
 } from "firebase/storage";
-import { db } from '../firebase/app';
 import { getStorageForDomain } from "./uploadOperations";
 import { getCdnUrl } from "./cdnUrl";
 

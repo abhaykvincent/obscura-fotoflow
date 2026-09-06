@@ -21,7 +21,6 @@ import {
     setFileCompleted,
     setFileFailed,
     retryDerivative,
-    UPLOAD_PARENT_STATES,
     UPLOAD_DERIVATIVE_STATES,
     UPLOAD_SESSION_STATUS,
     PROCESSING_STEPS,
@@ -177,7 +176,8 @@ export const uploadDerivativeWorker = async ({
 
     const executeUpload = () => {
         return new Promise((resolve, reject) => {
-            const storageRef = ref(storage, `${derivativeType}/${domain}/${projectId}/${collectionId}/${fileName}`);
+            const storagePath = `${derivativeType}/${domain}/${projectId}/${collectionId}/${fileName}`;
+            const storageRef = ref(storage, storagePath);
             const uploadMetadata = {
                 ...metadata,
                 contentType: file.type || (derivativeType === 'thumb' ? 'image/webp' : 'image/jpeg'),
