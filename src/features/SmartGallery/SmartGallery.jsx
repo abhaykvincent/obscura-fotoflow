@@ -85,7 +85,7 @@ export default function SmartGallery() {
           </div>
         </div>
         <div className="powered-by">
-          Powered by <a href="https://fotoflow.pro" target="_blank" rel="noopener noreferrer">FotoFlow Pro</a>
+          Powered by <a href="https://fotoflow.co" target="_blank" rel="noopener noreferrer">FotoFlow Pro</a>
         </div>
       </footer>
     );

@@ -1130,7 +1130,7 @@ export default function Booking() {
       </div>
 
       <footer className="booking-footer">
-        Powered by <a href="https://fotoflow.pro" target="_blank" rel="noopener noreferrer">FotoFlow Pro</a>
+        Powered by <a href="https://fotoflow.co" target="_blank" rel="noopener noreferrer">FotoFlow Pro</a>
       </footer>
     </div>
   );

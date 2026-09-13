@@ -85,7 +85,7 @@ const ProjectExpiredPage = ({ project, studio, studioName }) => {
         </div>
 
         <div className="expired-footer">
-          <p>Powered by <a href="https://fotoflow.pro" target="_blank" rel="noopener noreferrer">FotoFlow Pro</a></p>
+          <p>Powered by <a href="https://fotoflow.co" target="_blank" rel="noopener noreferrer">FotoFlow Pro</a></p>
         </div>
       </div>
     </div>

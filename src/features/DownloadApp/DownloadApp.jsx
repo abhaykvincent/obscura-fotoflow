@@ -61,7 +61,7 @@ const DownloadApp = () => {
     windows_arm: 'https://github.com/abhaykvincent/fotoflow-desktop-lite/releases/download/0.0.1/FotoFlow.Desktop.Lite.Setup.0.0.1.exe',
     ios: '#',
     android: '#',
-    webapp: 'https://app.fotoflow.pro'
+    webapp: 'https://app.fotoflow.co'
   };
 
   const handleDownload = (link) => {
@@ -95,7 +95,7 @@ const DownloadApp = () => {
             </div>
           </div>
           <div className="nav-right">
-            <a href="/login" className="nav-login">Log in</a>
+            <a href="https://login.fotoflow.co" className="nav-login">Log in</a>
             <button className="nav-signup">Sign up</button>
           </div>
         </div>

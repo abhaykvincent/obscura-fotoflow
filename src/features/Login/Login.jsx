@@ -195,7 +195,7 @@ const LoginModal = () => {
                 >
                   <div className="studio-info">
                     <span className="studio-name">{studio.name}</span>
-                    <span className="studio-domain">{studio.domain}.fotoflow.pro</span>
+                    <span className="studio-domain">{studio.domain}.fotoflow.co</span>
                   </div>
                   <div className="icon-chevron-right"></div>
                 </div>

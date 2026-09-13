@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Navigate, Route, Routes, Outlet, useLocation,useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { HotKeys } from 'react-hotkeys';
@@ -66,6 +66,7 @@ import { isPublicPage, isLightModePage } from './utils/publicPages';
 import { getCurrentSubscription } from './firebase/functions/subscription';
 import { welcomeConsole } from './utils/welcomeConsole';
 import { hideLoading, showLoading } from './app/slices/loadingSlice';
+import { getLoginUrl, isProductionDomain } from './utils/domainUtils';
 
 
 welcomeConsole();
@@ -73,7 +74,20 @@ welcomeConsole();
 // Wrapper for authenticated routes
 const AuthWrapper = ({ isAuthenticated }) => {
   const location = useLocation();
+  const redirecting = useRef(false);
+
+  useEffect(() => {
+    if (!isAuthenticated && isProductionDomain() && !redirecting.current) {
+      redirecting.current = true;
+      window.location.replace(getLoginUrl());
+    }
+  }, [isAuthenticated]);
+
   if (!isAuthenticated) {
+    if (isProductionDomain()) {
+      // Full-page redirect to the canonical login entry handled above
+      return null;
+    }
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
   return <Outlet />;

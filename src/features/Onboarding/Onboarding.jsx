@@ -302,7 +302,7 @@ function Onboarding() {
           !invitationReferral && 
           <div className='activate-fotoflow-whatsapp'>
             <p>Referal code is not active. You need to</p>
-            <a href="https://wa.me/+916235099329?text=Activate%20Fotoflow use below link: https://fotoflow-cloud.web.app/onboarding?ref=4752" 
+            <a href="https://wa.me/+916235099329?text=Activate%20Fotoflow use below link: https://app.fotoflow.co/onboarding?ref=4752" 
             target="_blank">Activate Fotoflow</a>
 
             
