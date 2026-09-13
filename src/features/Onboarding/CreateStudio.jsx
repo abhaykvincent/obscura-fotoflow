@@ -129,7 +129,7 @@ const CreateStudio = ({active,next,setCreateAccountData,createAccountData,update
   if (!active) {
     return null;
   }
-  // Get the domain from the current URL the www.fotoflow.com part
+  // Get the domain from the current URL
   const url = window.location.href;
   let domain = url.split('/')[2];
   // get last 20 charecters

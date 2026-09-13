@@ -165,7 +165,7 @@ function Onboarding() {
                             >
                                 <div className="studio-card-info">
                                     <span className="studio-card-name">{studio.name}</span>
-                                    <span className="studio-card-domain">{studio.domain}.fotoflow.pro</span>
+                                    <span className="studio-card-domain">{studio.domain}.fotoflow.co</span>
                                 </div>
                                 <div className="icon-arrow-right"></div>
                             </div>
