@@ -9,7 +9,7 @@ import {
 } from './urlUtils';
 
 describe('urlUtils - Image Delivery Gateway', () => {
-  const CDN_DOMAIN = 'https://fotoflow-r2-shield.fotoflow-cloud.workers.dev';
+  const CDN_DOMAIN = 'https://cdn.fotoflow.co';
   const SAMPLE_FIREBASE_URL = 'https://firebasestorage.googleapis.com/v0/b/fotoflow-studio.firebasestorage.app/o/web%2Fmonalisa%2Fabigail-%26-amigail-q2qSQ%2Fbirthday-B0VMK%2FIM_00014.jpg?alt=media&token=12345';
   const SAMPLE_COVERS_FIREBASE_URL = 'https://firebasestorage.googleapis.com/v0/b/fotoflow-studio.firebasestorage.app/o/covers%2Fmonalisa%2Fproject-123%2Fcover.jpg?alt=media&token=67890';
   const SAMPLE_EMULATOR_URL = 'http://127.0.0.1:9199/v0/b/fotoflow-studio.firebasestorage.app/o/web%2Fmonalisa%2Fabigail-%26-amigail-q2qSQ%2Fbirthday-B0VMK%2FIM_00014.jpg?alt=media';
@@ -25,7 +25,7 @@ describe('urlUtils - Image Delivery Gateway', () => {
       expect(getImageUrlByQuality(null)).toBe('');
     });
 
-    it('transforms Firebase Storage URL to Cloudflare R2 Worker web URL by default', () => {
+    it('transforms Firebase Storage URL to Cloudflare CDN web URL by default', () => {
       const result = getPhotoDeliveryUrl(SAMPLE_FIREBASE_URL);
       expect(result).toBe(`${CDN_DOMAIN}/web/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
     });

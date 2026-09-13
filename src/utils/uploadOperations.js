@@ -1,11 +1,11 @@
 import {
     uploadBytesResumable,
-    getDownloadURL,
     ref,
     uploadBytes,
     getStorage,
     connectStorageEmulator,
 } from "firebase/storage";
+import { getCdnUrl } from "./cdnUrl";
 import { db, storage as defaultStorage, app } from '../firebase/app';
 import { delay } from "./generalUtils";
 import { showAlert } from "../app/slices/alertSlice";
@@ -21,7 +21,6 @@ import {
     setFileCompleted,
     setFileFailed,
     retryDerivative,
-    UPLOAD_PARENT_STATES,
     UPLOAD_DERIVATIVE_STATES,
     UPLOAD_SESSION_STATUS,
     PROCESSING_STEPS,
@@ -177,7 +176,8 @@ export const uploadDerivativeWorker = async ({
 
     const executeUpload = () => {
         return new Promise((resolve, reject) => {
-            const storageRef = ref(storage, `${derivativeType}/${domain}/${projectId}/${collectionId}/${fileName}`);
+            const storagePath = `${derivativeType}/${domain}/${projectId}/${collectionId}/${fileName}`;
+            const storageRef = ref(storage, storagePath);
             const uploadMetadata = {
                 ...metadata,
                 contentType: file.type || (derivativeType === 'thumb' ? 'image/webp' : 'image/jpeg'),
@@ -202,10 +202,10 @@ export const uploadDerivativeWorker = async ({
                 },
                 async () => {
                     try {
-                        // Verification Phase (FF-UPLOAD-15)
-                        const url = await getDownloadURL(uploadTask.snapshot.ref);
+                        // Verification Phase (FF-UPLOAD-15) with canonical CDN URL
+                        const url = getCdnUrl(storagePath);
                         if (!url) {
-                            throw new Error(`Verification failed: download URL empty for ${derivativeType}`);
+                            throw new Error(`Verification failed: CDN URL empty for ${derivativeType}`);
                         }
 
                         dispatch(setDerivativeVerified({
@@ -560,7 +560,8 @@ export const handleUpload = async ({
  */
 export const uploadCover = async (file, project) => {
     const storage = await getStorageForDomain(project.domain);
-    const storageRef = ref(storage, `covers/${project.domain}/${project.id}/${file.name}`);
+    const storagePath = `covers/${project.domain}/${project.id}/${file.name}`;
+    const storageRef = ref(storage, storagePath);
 
     const uploadMetadata = {
         ...metadata,
@@ -568,7 +569,7 @@ export const uploadCover = async (file, project) => {
     };
 
     await uploadBytes(storageRef, file, uploadMetadata);
-    const newCoverUrl = await getDownloadURL(storageRef);
+    const newCoverUrl = getCdnUrl(storagePath);
 
     const projectDocRef = doc(db, "studios", project.domain, "projects", project.id);
     await updateDoc(projectDocRef, { projectCover: newCoverUrl });
@@ -581,7 +582,8 @@ export const uploadCover = async (file, project) => {
  */
 export const uploadStudioLogo = async (file, studioDomain) => {
     const storage = await getStorageForDomain(studioDomain);
-    const storageRef = ref(storage, `branding/${studioDomain}/logo/${file.name}`);
+    const storagePath = `branding/${studioDomain}/logo/${file.name}`;
+    const storageRef = ref(storage, storagePath);
 
     const uploadMetadata = {
         ...metadata,
@@ -589,7 +591,7 @@ export const uploadStudioLogo = async (file, studioDomain) => {
     };
 
     await uploadBytes(storageRef, file, uploadMetadata);
-    const newLogoUrl = await getDownloadURL(storageRef);
+    const newLogoUrl = getCdnUrl(storagePath);
 
     const studioDocRef = doc(db, "studios", studioDomain);
     await updateDoc(studioDocRef, { studioLogo: newLogoUrl });
