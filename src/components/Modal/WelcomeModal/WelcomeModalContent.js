@@ -40,7 +40,7 @@ export const welcomeScreens = [
         </p>
         <div className="visual-placeholder smart-gallery"></div>
         <p>
-            Now, let our <span className='highlight'>Gallery Designer</span> helps you complete the professional look your brand deserves in <span className='mid-highlight'>Minutes</span>, saving you hours.
+            Now, let our <span className='highlight'>Gallery Designer</span> help you complete the professional look your brand deserves in <span className='mid-highlight'>minutes</span>, saving you hours.
 
         </p>
       </>
@@ -56,7 +56,7 @@ export const welcomeScreens = [
         </p>
         <div className="visual-placeholder collaboration-selection"></div>
         <p>
-            When clients <span className='highlight'>Select </span> their favorites, Fotoflow lets you <span className='mid-highlight'>instantly <span className='highlight'>locate </span> locate the original files</span> on your <span className='highlight'>computer </span>  for final editing.
+            When clients <span className='highlight'>Select </span> their favorites, Fotoflow lets you <span className='mid-highlight'>instantly <span className='highlight'>locate </span> the original files</span> on your <span className='highlight'>computer </span>  for final editing.
         </p>
       </>
     ),
