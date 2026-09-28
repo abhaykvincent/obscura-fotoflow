@@ -52,6 +52,7 @@ import LoadingScreen from './components/Loading/LoadingScreen';
 import CommingSoon from './components/CommingSoon/CommingSoon';
 import NotFound from './components/NotFound/NotFound';
 import SupportIcon from './components/Modal/SupportIcon/FlowPilot';
+import StudioAccessGate from './components/AccessGate/StudioAccessGate';
 
 // Modal Components
 import TrialStatusModal from './components/Modal/TrialEnds/TrialEnds';
@@ -214,26 +215,34 @@ export default function App() {
               <Route element={<AuthWrapper isAuthenticated={isAuthenticated} />}>
                 <Route path="/" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
                 <Route path="/search" element={<SearchResults />} />
-                
-                <Route path="/:studioName" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
-                <Route path="/:studioName/home" element={<Home />} />
-                <Route path="/:studioName/project/:id" element={<Project />} />
-                <Route path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
-                <Route path="/:studioName/portfolio-editor" element={<PortfolioWebsite />} />
-                <Route path="/:studioName/invitation-creator/:projectId" element={<InvitationPage/>} />
-                <Route path="/:studioName/projects" element={<Projects />} />
-                <Route path="/:studioName/packages" element={<Packages />} />
-                <Route path="/:studioName/settings" element={<Settings/>} />
-                <Route path="/:studioName/notifications" element={<Notifications />} />
-                <Route path="/:studioName/storage" element={<Storage />} />
-                <Route path="/:studioName/subscription/history" element={<BillingHistory />} />
-                <Route path="/:studioName/subscription" element={<Subscription />} />
-                <Route path="/:studioName/store" element={<CommingSoon title={'Store'}/>} />
-                <Route path="/:studioName/calendar" element={<CommingSoon title={'Calendar'}/>} />
-                <Route path="/:studioName/invoices" element={<CommingSoon title={'Financials'}/>} />
-                <Route path="/:studioName/accounts" element={<CommingSoon title={'Accounts'}/>} />
-                <Route path="/:studioName/team" element={<Teams />} />
 
+                {/* Studio Workspace Routes - Protected by StudioAccessGate */}
+                <Route element={<StudioAccessGate />}>
+                  <Route path="/:studioName" element={<Navigate to={`/${defaultStudio.domain}/home`} replace />} />
+                  <Route path="/:studioName/home" element={<Home />} />
+                  <Route path="/:studioName/project/:id" element={<Project />} />
+                  <Route path="/:studioName/gallery/:id/:collectionId?" element={<Galleries />} />
+                  <Route path="/:studioName/portfolio-editor" element={<PortfolioWebsite />} />
+                  <Route path="/:studioName/invitation-creator/:projectId" element={<InvitationPage/>} />
+                  <Route path="/:studioName/projects" element={<Projects />} />
+                  <Route path="/:studioName/packages" element={<Packages />} />
+                  <Route path="/:studioName/settings" element={<Settings/>} />
+                  <Route path="/:studioName/notifications" element={<Notifications />} />
+                  <Route path="/:studioName/storage" element={<Storage />} />
+                  <Route path="/:studioName/subscription/history" element={<BillingHistory />} />
+                  <Route path="/:studioName/store" element={<CommingSoon title={'Store'}/>} />
+                  <Route path="/:studioName/calendar" element={<CommingSoon title={'Calendar'}/>} />
+                  <Route path="/:studioName/invoices" element={<CommingSoon title={'Financials'}/>} />
+                  <Route path="/:studioName/accounts" element={<CommingSoon title={'Accounts'}/>} />
+                  <Route path="/:studioName/team" element={<Teams />} />
+                </Route>
+
+                {/* Subscription renewal route - Accessible when expired so studio can renew */}
+                <Route element={<StudioAccessGate allowSubscriptionPage={true} />}>
+                  <Route path="/:studioName/subscription" element={<Subscription />} />
+                </Route>
+
+                {/* Admin Routes - EXCLUDED from StudioAccessGate */}
                 <Route path="/admin" element={<AdminPanel />} />
                 <Route path="/admin/:page" element={<AdminPanel />} />
                 <Route path="/admin/user/:userId" element={<UserProfile />} />
