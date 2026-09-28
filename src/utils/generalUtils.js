@@ -22,24 +22,39 @@ export const getOperatingSystem = () => {
 
 export const getLocalIP = () => {
     return new Promise((resolve) => {
+        let pc = null;
+        let settled = false;
+        let timeoutId = null;
+        const done = (ip) => {
+            if (settled) return;
+            settled = true;
+            if (timeoutId) clearTimeout(timeoutId);
+            try {
+                if (pc) {
+                    pc.onicecandidate = null;
+                    pc.close();
+                }
+            } catch (_) { /* ignore cleanup errors */ }
+            resolve(ip);
+        };
         try {
-            const pc = new RTCPeerConnection({ iceServers: [] });
+            pc = new RTCPeerConnection({ iceServers: [] });
             pc.createDataChannel("");
-            pc.createOffer().then(pc.setLocalDescription.bind(pc));
+            pc.createOffer().then(pc.setLocalDescription.bind(pc)).catch(() => done(null));
             pc.onicecandidate = (ice) => {
+                // Final null event signals end of gathering — not an error.
                 if (!ice || !ice.candidate || !ice.candidate.candidate) return;
-                const myIP = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(ice.candidate.candidate)[1];
-                resolve(myIP);
-                pc.onicecandidate = null;
-                pc.close();
+                const match = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(ice.candidate.candidate);
+                // No IP in this candidate line — keep listening instead of crashing.
+                if (!match) return;
+                done(match[1]);
             };
             // Fallback in case onicecandidate is never called or takes too long
-            setTimeout(() => {
-                pc.close();
-                resolve(null);
+            timeoutId = setTimeout(() => {
+                done(null);
             }, 1000);
         } catch (e) {
-            resolve(null);
+            done(null);
         }
     });
 };
