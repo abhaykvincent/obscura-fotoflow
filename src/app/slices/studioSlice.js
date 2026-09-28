@@ -6,7 +6,7 @@ import { auth } from '../../firebase/app';
 import { fetchUsers } from '../../firebase/functions/firestore';
 import { useRevalidator } from 'react-router';
 import { setUserType } from '../../analytics/utils';
-import { fetchStudioByDomain } from '../../firebase/functions/studios';
+import { fetchStudioByDomain, updateStudioStatus } from '../../firebase/functions/studios';
 import { getCurrentSubscription, getStudioInvoices, getStudioSubscriptions } from '../../firebase/functions/subscription';
 import { updateStudioLogoAsync, updateStudioAsync } from './adminSettingsSlice';
 
@@ -161,6 +161,17 @@ export const fetchStudioInvoices = createAsyncThunk(
     }
   }
 );
+export const updateStudioStatusAsync = createAsyncThunk(
+  'studio/updateStudioStatusAsync',
+  async ({ studioId, status }, { rejectWithValue }) => {
+    try {
+      const result = await updateStudioStatus(studioId, status);
+      return { studioId, status: result.status };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 const studioSlice = createSlice({
   name: 'studio',
   initialState,
@@ -264,6 +275,12 @@ const studioSlice = createSlice({
       .addCase(fetchStudioInvoices.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      // updateStudioStatusAsync
+      .addCase(updateStudioStatusAsync.fulfilled, (state, action) => {
+        if (state.data && (state.data.id === action.payload.studioId || state.data.domain === action.payload.studioId)) {
+          state.data.status = action.payload.status;
+        }
       });
   }
 });
