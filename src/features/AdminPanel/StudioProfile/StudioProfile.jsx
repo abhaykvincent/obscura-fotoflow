@@ -7,6 +7,8 @@ import {
     selectStudioProfileLoading, 
     selectStudioProfileError 
 } from '../../../app/slices/studioProfileSlice';
+import { updateStudioStatusAsync } from '../../../app/slices/studioSlice';
+import { showAlert } from '../../../app/slices/alertSlice';
 import { LoadingLight } from '../../../components/Loading/Loading';
 import './StudioProfile.scss';
 
@@ -29,6 +31,8 @@ function StudioProfile() {
     const [activeTab, setActiveTab] = useState('projects');
     const [projectSearchQuery, setProjectSearchQuery] = useState('');
     const [copiedKey, setCopiedKey] = useState(null);
+    const [pendingStatus, setPendingStatus] = useState(null);
+    const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
     useEffect(() => {
         if (studioName) {
@@ -42,6 +46,35 @@ function StudioProfile() {
             setCopiedKey(key);
             setTimeout(() => setCopiedKey(null), 2000);
         });
+    };
+
+    const handleStatusSelectChange = (e) => {
+        const nextStatus = e.target.value;
+        if (!nextStatus || nextStatus === (studio?.status || 'active')) return;
+
+        // Changing to destructive statuses (suspended or inactive) requires confirmation
+        if (nextStatus === 'suspended' || nextStatus === 'inactive') {
+            setPendingStatus(nextStatus);
+        } else {
+            executeStatusChange(nextStatus);
+        }
+    };
+
+    const executeStatusChange = async (nextStatus) => {
+        if (!studio?.id && !studio?.domain) return;
+        setIsUpdatingStatus(true);
+        const studioId = studio.domain || studio.id;
+        try {
+            await dispatch(updateStudioStatusAsync({ studioId, status: nextStatus })).unwrap();
+            dispatch(showAlert({ type: 'success', message: `Studio status changed to ${nextStatus}` }));
+            setPendingStatus(null);
+            // Refresh profile data to stay in sync
+            dispatch(fetchStudioProfile(studioName));
+        } catch (err) {
+            dispatch(showAlert({ type: 'error', message: err || 'Failed to update studio status' }));
+        } finally {
+            setIsUpdatingStatus(false);
+        }
     };
 
     const studio = profileData?.studio;
@@ -136,6 +169,20 @@ function StudioProfile() {
                         <span className={`status-pill ${studio.status || 'active'}`}>
                             {studio.status || 'Active'}
                         </span>
+                        <div className="status-selector-wrapper">
+                            <label htmlFor="studio-status-select">Status:</label>
+                            <select
+                                id="studio-status-select"
+                                className="status-select"
+                                value={studio.status || 'active'}
+                                onChange={handleStatusSelectChange}
+                                disabled={isUpdatingStatus}
+                            >
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="suspended">Suspended</option>
+                            </select>
+                        </div>
                         <span className="plan-badge">
                             {studio.planName || 'Core'}
                             {isTrialActive && <span className="trial-tag">Trial</span>}
@@ -589,6 +636,49 @@ function StudioProfile() {
                         </div>
                     </div>
                 </section>
+            )}
+
+            {/* Confirmation Modal for Destructive Status Change */}
+            {pendingStatus && (
+                <div className="modal-container">
+                    <div className="modal island" style={{ maxWidth: '440px', width: '90%' }}>
+                        <div className="modal-header">
+                            <div className="modal-controls">
+                                <div className="control close" onClick={() => setPendingStatus(null)}></div>
+                            </div>
+                            <div className="modal-title" style={{ color: '#ff3b30' }}>
+                                {pendingStatus === 'suspended' ? 'Suspend Studio?' : 'Deactivate Studio?'}
+                            </div>
+                        </div>
+                        <div className="modal-body" style={{ padding: '16px 20px', textAlign: 'center' }}>
+                            <p style={{ fontSize: '0.95rem', color: '#e5e5ea', lineHeight: 1.5, margin: '10px 0' }}>
+                                {pendingStatus === 'suspended'
+                                    ? `This will immediately suspend "${studio.name}" and prevent the studio from accessing its FotoFlow workspace.`
+                                    : `This will mark "${studio.name}" as inactive and restrict workspace access until re-activated.`}
+                            </p>
+                        </div>
+                        <div className="actions" style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', padding: '16px 20px' }}>
+                            <button
+                                type="button"
+                                className="button secondary"
+                                onClick={() => setPendingStatus(null)}
+                                disabled={isUpdatingStatus}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                className="button primary"
+                                style={{ backgroundColor: '#ff3b30', borderColor: '#ff3b30' }}
+                                onClick={() => executeStatusChange(pendingStatus)}
+                                disabled={isUpdatingStatus}
+                            >
+                                {isUpdatingStatus ? 'Updating...' : (pendingStatus === 'suspended' ? 'Suspend Studio' : 'Deactivate Studio')}
+                            </button>
+                        </div>
+                    </div>
+                    <div className="modal-backdrop" onClick={() => setPendingStatus(null)}></div>
+                </div>
             )}
         </main>
     );

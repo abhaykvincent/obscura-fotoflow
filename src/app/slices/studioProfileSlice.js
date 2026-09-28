@@ -46,6 +46,11 @@ const studioProfileSlice = createSlice({
         state.loading = false;
         state.data = null;
         state.error = action.payload;
+      })
+      .addCase('studio/updateStudioStatusAsync/fulfilled', (state, action) => {
+        if (state.data?.studio && (state.data.studio.id === action.payload.studioId || state.data.studio.domain === action.payload.studioId)) {
+          state.data.studio.status = action.payload.status;
+        }
       });
   },
 });
