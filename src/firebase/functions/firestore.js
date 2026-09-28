@@ -4,6 +4,7 @@ export * from './project-firestore';
 export * from './collection-firestore';
 export * from './file-firestore';
 export * from './event-firestore';
+export * from './shoot-firestore';
 export * from './financial-firestore';
 export * from './team-firestore';
 export * from './invitation-firestore';

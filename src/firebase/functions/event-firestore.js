@@ -1,6 +1,7 @@
 import { db } from "../app";
 import { doc, collection, setDoc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
 import { generateRandomString } from "../../utils/stringUtils";
+import { ensureShootsForUploadedFiles, extractCaptureDateKey } from "./shoot-firestore";
 
 // Event
 export const addEventToFirestore = async (domain, projectId, eventData) => {
@@ -56,54 +57,60 @@ export const addUploadCompletionEventToFirestore = async (domain, projectId, col
 
         const projectData = projectSnapshot.data();
         const existingEvents = projectData.events || [];
+        const projectTitle = projectData.projectTitle || projectData.name || collectionName || '';
 
-        // Helper to parse date consistently from string, Date object, or Firestore Timestamp
-        const parseDate = (dateVal) => {
-            if (!dateVal) return new Date();
-            if (typeof dateVal.toDate === 'function') {
-                return dateVal.toDate();
-            }
-            return new Date(dateVal);
-        };
+        // 1. Lookup-before-create: group by YYYY-MM-DD capture date and
+        // get-or-create exactly one Shoot doc per calendar date inside a
+        // Firestore transaction (race-safe for parallel / multi-gallery uploads).
+        // IF existingShoot found -> photo/gallery refs are attached to
+        // existingShoot.id; ELSE a single new Shoot
+        // { projectId, date, title: projectTitle, createdAt } is created.
+        const shootResults = await ensureShootsForUploadedFiles(domain, projectId, uploadedFiles, {
+            projectTitle,
+            collectionId,
+            importFileSize,
+        });
 
-        // Group uploaded files by normalized date (setHours(0,0,0,0) time)
-        const filesByDate = {};
-        for (const file of uploadedFiles) {
-            const rawDate = parseDate(file?.dateTimeOriginal);
-            const normalizedDate = new Date(rawDate);
-            normalizedDate.setHours(0, 0, 0, 0);
-            const timeKey = normalizedDate.getTime();
-            if (!filesByDate[timeKey]) {
-                filesByDate[timeKey] = [];
-            }
-            filesByDate[timeKey].push(file);
-        }
-
+        // 2. Keep the legacy project.events array in sync, but dedupe by
+        // calendar date / shootId (not by gallery name) so uploads into
+        // different galleries on the same date do NOT create duplicates.
         const totalFiles = uploadedFiles.length;
         const sizePerFile = totalFiles > 0 ? importFileSize / totalFiles : 0;
         const eventsToAdd = [];
 
-        for (const [timeKeyStr, files] of Object.entries(filesByDate)) {
-            const timeKey = Number(timeKeyStr);
-            const eventAlreadyExists = existingEvents.some(event => 
-                event.type === collectionName && event.date === timeKey
-            );
+        for (const { dateKey, shootId, filesCount } of shootResults) {
+            const midnight = new Date(`${dateKey}T00:00:00`);
+            const timeKey = midnight.getTime();
+            const dateKeyFromEvent = (dateVal) => extractCaptureDateKey(dateVal);
+
+            const eventAlreadyExists = existingEvents.some((event) => {
+                if (event.shootId && event.shootId === shootId) return true;
+                if (event.id && event.id === shootId) return true;
+                // Fall back to calendar-date comparison for legacy events
+                // that were created per-gallery (type + timestamp).
+                try {
+                    return dateKeyFromEvent(event.date) === dateKey;
+                } catch {
+                    return event.date === timeKey;
+                }
+            }) || eventsToAdd.some((event) => event.shootId === shootId);
 
             if (!eventAlreadyExists) {
-                const eventId = `upload-completion-${collectionId}-${timeKey}-${new Date().getTime()}`;
-                const uploadCompletionEvent = {
+                const eventId = shootId;
+                eventsToAdd.push({
                     id: eventId,
+                    shootId,
                     type: collectionName,
                     date: timeKey,
                     location: '',
                     crews: [],
-                    collectionId: collectionId,
-                    filesCount: files.length,
-                    totalSize: Number((sizePerFile * files.length).toFixed(2)),
-                };
-                eventsToAdd.push(uploadCompletionEvent);
+                    collectionId,
+                    collectionIds: [collectionId],
+                    filesCount,
+                    totalSize: Number((sizePerFile * filesCount).toFixed(2)),
+                });
             } else {
-                console.log(`%cUpload completion event for collection ${collectionName} on ${new Date(timeKey).toLocaleDateString()} already exists. Skipping creation.`, `color: orange;`);
+                console.log(`%cUpload completion event for ${dateKey} already exists (shoot ${shootId}). Skipping creation.`, `color: orange;`);
             }
         }
 
@@ -113,6 +120,8 @@ export const addUploadCompletionEventToFirestore = async (domain, projectId, col
             });
             console.log(`%cAdded ${eventsToAdd.length} upload completion event(s) for Project ${projectId} in ${domain} successfully.`, `color: #54a134;`);
         }
+
+        return shootResults;
     } catch (error) {
         console.error(`%cError adding upload completion event to Project ${projectId} in ${domain}: ${error.message}`, `color: red;`);
         throw error;
