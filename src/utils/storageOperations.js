@@ -1,13 +1,11 @@
 import {
-    uploadBytesResumable,
-    getDownloadURL,
     list,
     ref,
     deleteObject,
     listAll
 } from "firebase/storage";
-import { db } from '../firebase/app';
 import { getStorageForDomain } from "./uploadOperations";
+import { getCdnUrl } from "./cdnUrl";
 
 // Fetch Images
 export const fetchImageUrls = async (domain, projectId, collectionId, setImageUrls, page, pageSize) => {
@@ -15,7 +13,7 @@ export const fetchImageUrls = async (domain, projectId, collectionId, setImageUr
     
     const storage = await getStorageForDomain(domain);
     // Reference to the images folder within the specific studio, project, and collection
-    // New architecture: web/{domain}/{projectId}/{collectionId}
+    // Architecture: web/{domain}/{projectId}/{collectionId}
     const storageRef = ref(storage, `web/${domain}/${projectId}/${collectionId}`);
 
     try {
@@ -30,8 +28,9 @@ export const fetchImageUrls = async (domain, projectId, collectionId, setImageUr
         let currentIndex = 0;
         for (const item of listResult.items) {
             if (currentIndex >= startAt && currentIndex < endAt) {
-                const downloadURL = await getDownloadURL(item);
-                imageUrls.push(downloadURL);
+                // Generate canonical CDN URL using item's full storage path without getDownloadURL roundtrip
+                const cdnUrl = getCdnUrl(item.fullPath);
+                imageUrls.push(cdnUrl);
             }
 
             currentIndex++;
@@ -49,7 +48,7 @@ export const fetchImageUrls = async (domain, projectId, collectionId, setImageUr
 export const fetchImageInfo = async (domain, projectId, collectionId) => {
     const storage = await getStorageForDomain(domain);
     // Reference to the images folder within the specific studio, project, and collection
-    // New architecture: web/{domain}/{projectId}/{collectionId}
+    // Architecture: web/{domain}/{projectId}/{collectionId}
     const storageRef = ref(storage, `web/${domain}/${projectId}/${collectionId}`);
     const imageInfoList = [];
 
@@ -57,7 +56,6 @@ export const fetchImageInfo = async (domain, projectId, collectionId) => {
         const listResult = await list(storageRef);
 
         for (const item of listResult.items) {
-            const downloadURL = await getDownloadURL(item);
             const imageName = item.name.split('/').pop(); // Extracting the image name
 
             // Pushing image info (name and empty status) into the list
@@ -74,7 +72,7 @@ export const fetchImageInfo = async (domain, projectId, collectionId) => {
 };
 
 
-export const deleteCollectionFromStorage = async (domain,id, collectionId) => {
+export const deleteCollectionFromStorage = async (domain, id, collectionId) => {
     const storage = await getStorageForDomain(domain);
     
     // Delete web version
@@ -97,7 +95,7 @@ export const deleteCollectionFromStorage = async (domain,id, collectionId) => {
 
 }
 
-// stoage is in format project/collection/image
+// storage is in format project/collection/image
 export const deleteProjectFromStorage = async (domain, bucketUrl, projectId) => {
     console.log(domain, bucketUrl, projectId);
     try {
@@ -133,5 +131,3 @@ export const deleteProjectFromStorage = async (domain, bucketUrl, projectId) => 
         throw error; 
     }
 };
-  
-// Line Complexity -> 3.5 -> 1.0

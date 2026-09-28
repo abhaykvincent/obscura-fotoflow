@@ -45,7 +45,10 @@
           animation: fadeInUp 0.2s ease-in 0.1s;
           animation-fill-mode: forwards;
           .cover-footer{
-            height: 8px*18;
+            height: auto;
+            .static-tools.bottom{
+              display: none;
+            }
           }
         }
         .cover-tools{
@@ -381,7 +384,7 @@
         height: 8px*31.5;
         &.no-cover-image{
           width: 8px*31.5*0;
-          height: 8px*31.5;
+          height: auto;
           border: 3px solid $gray5-default-dark;
           border-radius: 8px*2;
           box-shadow: 
