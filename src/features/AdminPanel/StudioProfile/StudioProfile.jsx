@@ -40,6 +40,13 @@ function StudioProfile() {
         }
     }, [dispatch, studioName]);
 
+    const studio = profileData?.studio;
+    const stats = profileData?.stats;
+    const projects = profileData?.projects || [];
+    const members = profileData?.members || [];
+    const selectionRequests = profileData?.selectionRequests || [];
+    const extensionRequests = profileData?.extensionRequests || [];
+
     const handleCopy = (text, key) => {
         if (!text) return;
         navigator.clipboard.writeText(text).then(() => {
@@ -76,13 +83,6 @@ function StudioProfile() {
             setIsUpdatingStatus(false);
         }
     };
-
-    const studio = profileData?.studio;
-    const stats = profileData?.stats;
-    const projects = profileData?.projects || [];
-    const members = profileData?.members || [];
-    const selectionRequests = profileData?.selectionRequests || [];
-    const extensionRequests = profileData?.extensionRequests || [];
 
     const filteredProjects = useMemo(() => {
         if (!projectSearchQuery) return projects;
@@ -640,7 +640,7 @@ function StudioProfile() {
 
             {/* Confirmation Modal for Destructive Status Change */}
             {pendingStatus && (
-                <div className="modal-container">
+                <div className="modal-container studio-status-confirm-modal" style={{ top: 0 }}>
                     <div className="modal island" style={{ maxWidth: '440px', width: '90%' }}>
                         <div className="modal-header">
                             <div className="modal-controls">
