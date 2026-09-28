@@ -40,7 +40,7 @@ export const welcomeScreens = [
         </p>
         <div className="visual-placeholder smart-gallery"></div>
         <p>
-            Now, let our <span className='highlight'>Gallery Designer</span> helps you complete the professional look your brand deserves in <span className='mid-highlight'>Minutes</span>, saving you hours.
+            Now, let our <span className='highlight'>Gallery Designer</span> help you complete the professional look your brand deserves in <span className='mid-highlight'>minutes</span>, saving you hours.
 
         </p>
       </>
