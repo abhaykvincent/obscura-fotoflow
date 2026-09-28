@@ -677,3 +677,13 @@
         transform: translateY(0);
     }
 }
+
+// Confirmation modal renders inside this scrolled page, so it must be
+// anchored to the viewport. The global .modal-container omits `top: 0`
+// (it works at App root but leaves nested modals off-screen with only
+// the fixed backdrop visible).
+.studio-profile-page .modal-container.studio-status-confirm-modal {
+    top: 0;
+    left: 0;
+    z-index: 60;
+}
