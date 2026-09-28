@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
 import {
-    getDownloadURL,
     ref,
     uploadBytesResumable
 } from "firebase/storage";

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { ref, listAll, getDownloadURL } from 'firebase/storage';
+import { ref, listAll } from 'firebase/storage';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { trackEvent } from '../../analytics/utils';
 import { getStorageForDomain } from '../../utils/uploadOperations';
+import { getCdnUrl } from '../../utils/cdnUrl';
 import { useDispatch } from 'react-redux';
 import { showAlert } from '../../app/slices/alertSlice';
 
@@ -24,21 +25,21 @@ const DownloadFiles = ({ folderPath ,className, project,collection, files, butto
       let fileList = [];
 
       if (files && files.length > 0) {
-        // Use provided files
+        // Use provided files with canonical CDN URLs
         fileList = files.map(file => ({
-          url: file.url,
+          url: getCdnUrl(file.url),
           name: file.name
         }));
       } else if (folderPath) {
-        // List all files in the folder
+        // List all files in the folder and derive CDN URLs directly from fullPath
         const storage = await getStorageForDomain(project.domain);
         const folderRef = ref(storage, folderPath);
         const res = await listAll(folderRef);
         
-        fileList = await Promise.all(res.items.map(async (itemRef) => ({
-          url: await getDownloadURL(itemRef),
+        fileList = res.items.map((itemRef) => ({
+          url: getCdnUrl(itemRef.fullPath),
           name: itemRef.name
-        })));
+        }));
       }
 
       if (fileList.length === 0) {

@@ -1,5 +1,24 @@
-const QUALITY_PREFIXES = ['web', 'thumb', 'original', 'covers'];
-const DEFAULT_CDN_BASE = 'https://fotoflow-r2-shield.fotoflow-cloud.workers.dev';
+import {
+  getCdnUrl,
+  getCdnBaseUrl,
+  isEmulatorUrl,
+  isNonStorageUrl,
+  swapQualityPrefix,
+  extractStoragePath,
+  QUALITY_PREFIXES,
+  DEFAULT_CDN_BASE_URL,
+} from './cdnUrl';
+
+export {
+  getCdnUrl,
+  getCdnBaseUrl,
+  isEmulatorUrl,
+  isNonStorageUrl,
+  swapQualityPrefix,
+  extractStoragePath,
+  QUALITY_PREFIXES,
+  DEFAULT_CDN_BASE_URL,
+};
 
 export function getGalleryURL(page, domain, projectId) {
   return `${window.location.protocol}//${window.location.host}/${domain}/${page}/${projectId}`;
@@ -36,148 +55,6 @@ export const copyToClipboard = (url) => {
 };
 
 /**
- * Gets the configured CDN base endpoint without trailing slash.
- */
-function getCdnBaseUrl() {
-  const envUrl = process.env.REACT_APP_IMAGE_CDN_URL;
-  const baseUrl = (envUrl && envUrl.trim()) ? envUrl.trim() : DEFAULT_CDN_BASE;
-  return baseUrl.replace(/\/+$/, '');
-}
-
-/**
- * Checks if a URL points to the local Firebase Storage Emulator.
- */
-export function isEmulatorUrl(url) {
-  if (!url || typeof url !== 'string') return false;
-  
-  if (url.includes(':9199')) return true;
-  const emulatorHost = process.env.REACT_APP_EMULATOR_HOST;
-  if (emulatorHost && url.includes(emulatorHost)) return true;
-  const emulatorPort = process.env.REACT_APP_EMULATOR_PORT;
-  if (emulatorPort && url.includes(`:${emulatorPort}`)) return true;
-
-  if (
-    (url.includes('localhost') || url.includes('127.0.0.1') || url.includes('0.0.0.0')) &&
-    (url.includes('/v0/b/') || url.includes('/o/'))
-  ) {
-    return true;
-  }
-
-  if (url.startsWith('http://') && url.includes('/v0/b/') && url.includes('/o/')) {
-    return true;
-  }
-
-  return false;
-}
-
-/**
- * Transforms an emulator storage URL to deliver the requested quality.
- */
-function transformEmulatorUrl(url, targetQuality) {
-  const emulatorMatch = url.match(/^(https?:\/\/[^/]+\/v0\/b\/[^/]+\/o)\/([^?#]+)(\?.*)?$/);
-  if (emulatorMatch) {
-    const base = emulatorMatch[1];
-    const encodedPath = emulatorMatch[2];
-    const query = emulatorMatch[3] || '?alt=media';
-    const decodedPath = decodeURIComponent(encodedPath);
-
-    if (targetQuality === 'covers') {
-      return `${base}/${encodeURIComponent(decodedPath)}${query}`;
-    }
-
-    const adjustedPath = swapQualityPrefix(decodedPath, targetQuality);
-    return `${base}/${encodeURIComponent(adjustedPath)}${query}`;
-  }
-
-  return url;
-}
-
-/**
- * Checks if a URL is an external non-storage URL or special scheme.
- */
-function isNonStorageUrl(url) {
-  if (url.startsWith('data:') || url.startsWith('blob:')) {
-    return true;
-  }
-  const isStorageOrCdn = (
-    url.includes('firebasestorage.googleapis.com') ||
-    url.includes('storage.googleapis.com') ||
-    url.includes('fotoflow-r2-shield') ||
-    url.includes('/cdn-gallery/') ||
-    url.includes(':9199') ||
-    url.includes('/v0/b/') ||
-    url.includes('/o/') ||
-    isEmulatorUrl(url)
-  );
-  return (url.startsWith('http://') || url.startsWith('https://')) && !isStorageOrCdn;
-}
-
-/**
- * Swaps or prepends the target quality in the storage object path.
- */
-function swapQualityPrefix(path, targetQuality) {
-  let cleanPath = path.replace(/^\/+/, '');
-  for (const prefix of QUALITY_PREFIXES) {
-    if (cleanPath.startsWith(prefix + '/')) {
-      return cleanPath.replace(prefix + '/', `${targetQuality}/`);
-    }
-  }
-  return `${targetQuality}/${cleanPath}`;
-}
-
-/**
- * Extracts the object path from various storage/CDN URL patterns.
- */
-function extractStoragePath(url) {
-  // 1. Existing CDN or R2 Worker URL
-  const cdnBase = getCdnBaseUrl();
-  if (url.startsWith(cdnBase) || url.includes('fotoflow-r2-shield')) {
-    try {
-      const parsed = new URL(url);
-      return parsed.pathname.replace(/^\/+/, '');
-    } catch {
-      const parts = url.split('.workers.dev/');
-      if (parts.length > 1) return parts[1];
-    }
-  }
-
-  // 2. Old /cdn-gallery/ proxy URL (/cdn-gallery/:bucket/:path...)
-  if (url.includes('/cdn-gallery/')) {
-    const parts = url.split('/cdn-gallery/')[1]?.split('/') || [];
-    if (parts.length > 1) {
-      // parts[0] is bucket, parts[1...] is path
-      return parts.slice(1).join('/');
-    }
-  }
-
-  // 3. Firebase Storage URLs (/v0/b/:bucket/o/:encodedPath)
-  const storageMatch = url.match(/\/v0\/b\/[^/]+\/o\/([^?]+)/);
-  if (storageMatch) {
-    return decodeURIComponent(storageMatch[1]);
-  }
-
-  // 4. Direct GCS URLs (storage.googleapis.com/:bucket/:path)
-  const gcsMatch = url.match(/storage\.googleapis\.com\/[^/]+\/([^?]+)/);
-  if (gcsMatch) {
-    return decodeURIComponent(gcsMatch[1]);
-  }
-
-  // 5. Relative storage path
-  const cleanUrl = url.replace(/^\/+/, '');
-  for (const prefix of QUALITY_PREFIXES) {
-    if (cleanUrl.startsWith(prefix + '/')) {
-      return cleanUrl;
-    }
-  }
-
-  if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
-    return cleanUrl;
-  }
-
-  return null;
-}
-
-/**
  * Extracts domain/hostname from a given URL.
  */
 export function extractDomain(url) {
@@ -192,76 +69,37 @@ export function extractDomain(url) {
 
 /**
  * Single Image Delivery Gateway
- * Transforms storage URLs to the Cloudflare R2 Worker CDN delivery path or preserves Storage Emulator paths.
+ * Transforms storage URLs to the canonical FotoFlow CDN delivery path or preserves Storage Emulator paths.
  *
  * @param {string} url - Source photo URL or storage path
- * @param {string} quality - 'web' | 'thumb' | 'original' | 'covers'
+ * @param {string} [quality='web'] - 'web' | 'thumb' | 'original' | 'covers'
  * @returns {string} - CDN or Local Emulator delivery URL
  */
 export function getPhotoDeliveryUrl(url, quality = 'web') {
-  if (!url || typeof url !== 'string') return '';
-
-  if (isNonStorageUrl(url)) {
-    return url;
-  }
-
-  const targetQuality = quality.toLowerCase();
-
-  // If URL points to Firebase Storage Emulator, deliver via emulator format
-  if (isEmulatorUrl(url)) {
-    return transformEmulatorUrl(url, targetQuality);
-  }
-
-  const cdnBase = getCdnBaseUrl();
-  const objectPath = extractStoragePath(url);
-
-  if (objectPath) {
-    if (targetQuality === 'covers') {
-      return `${cdnBase}/${objectPath}`;
-    }
-    const adjustedPath = swapQualityPrefix(objectPath, targetQuality);
-    return `${cdnBase}/${adjustedPath}`;
-  }
-
-  // Fallback for legacy encoded /o/ formats
-  if (targetQuality === 'covers') {
-    return url;
-  }
-
-  const encodedMatch = url.match(/\/o\/(web|thumb|original|covers)%2F/i);
-  if (encodedMatch) {
-    return url.replace(/\/o\/(web|thumb|original|covers)%2F/i, `/o/${targetQuality}%2F`);
-  }
-
-  const unencodedMatch = url.match(/\/o\/(web|thumb|original|covers)\//i);
-  if (unencodedMatch) {
-    return url.replace(/\/o\/(web|thumb|original|covers)\//i, `/o/${targetQuality}/`);
-  }
-
-  return url;
+  return getCdnUrl(url, quality);
 }
 
 /**
  * Alias for getPhotoDeliveryUrl to maintain backward compatibility
  */
 export function getImageUrlByQuality(url, quality = 'web') {
-  return getPhotoDeliveryUrl(url, quality);
+  return getCdnUrl(url, quality);
 }
 
 export function getThumbnailUrl(imageUrl) {
-  return getPhotoDeliveryUrl(imageUrl, 'thumb');
+  return getCdnUrl(imageUrl, 'thumb');
 }
 
 export function getOriginalUrl(imageUrl) {
-  return getPhotoDeliveryUrl(imageUrl, 'original');
+  return getCdnUrl(imageUrl, 'original');
 }
 
 export function getCoverUrl(imageUrl) {
-  return getPhotoDeliveryUrl(imageUrl, 'covers');
+  return getCdnUrl(imageUrl, 'covers');
 }
 
 export function getWebUrl(imageUrl) {
-  return getPhotoDeliveryUrl(imageUrl, 'web');
+  return getCdnUrl(imageUrl, 'web');
 }
 
 /**
