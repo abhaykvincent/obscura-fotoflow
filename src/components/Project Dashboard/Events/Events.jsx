@@ -4,6 +4,7 @@ import AddCrewModal from '../../Modal/AddCrew';
 import CrewCard from '../../Cards/CrewCard/CrewCard';
 import { getUserByID, teams } from '../../../data/teams';
 import { getEventTimeAgo } from '../../../utils/dateUtils';
+import { filterDuplicateShoots } from '../../../utils/shootFilters';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../app/slices/modalSlice';
 
@@ -13,6 +14,10 @@ function DashboardEvents({project, setSelectedEventId})
     // Events
     const [localEventId, setLocalEventId] = useState('')
     const activeSetEventId = setSelectedEventId || setLocalEventId
+
+    // Frontend-only deduplication (no Firestore writes/deletes):
+    // hide same-calendar-date shoots within 6h of the last kept shoot.
+    const visibleEvents = filterDuplicateShoots(project.events || [], 'asc');
 
   return (
     <>
@@ -34,11 +39,10 @@ function DashboardEvents({project, setSelectedEventId})
       <div className="shoot-list">
           <div  className="event-container">
             <div className="shoot">
-        {/* loop events from project */}
+        {/* loop events from project (deduplicated client-side) */}
         {
-          (project.events?.length > 0 && project.events?.length !== undefined)
-            && [...project.events]
-            .sort((a, b) => new Date(a.date) - new Date(b.date))
+          (visibleEvents?.length > 0 && visibleEvents?.length !== undefined)
+            && visibleEvents
             .map((event) => (
                 <div key={event.id} className="time">
                   <div className="status large">
@@ -62,7 +66,7 @@ function DashboardEvents({project, setSelectedEventId})
         }
 
 {
-          project.events.length==0 &&
+          visibleEvents.length===0 &&
           <div className="shoot new"
             onClick={()=>dispatch(openModal('createEvent'))}
           >

@@ -1,3 +1,5 @@
+  import { filterDuplicateShoots } from './shootFilters';
+
   export const getRecentProjects = (projects, limit) => {
     // Create a shallow copy of the projects array to avoid mutating the original
     const projectsCopy = [...projects];
@@ -24,7 +26,8 @@
     const bufferedShoots = shoots.filter(shoot => {
       return new Date(shoot.date) <= bufferDate && new Date(shoot.date) >= today
     })
-    return bufferedShoots
+    // Frontend-only dedupe: hide same-date shoots within 6h (no DB changes).
+    return filterDuplicateShoots(bufferedShoots, 'asc')
 
   };
 
