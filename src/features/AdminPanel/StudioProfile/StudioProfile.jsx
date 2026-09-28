@@ -161,7 +161,7 @@ function StudioProfile() {
             </div>
 
             {/* Header / Hero Section */}
-            <header className="studio-profile-header">
+            <div className="studio-profile-header">
                 <div className="studio-header-main">
                     <div className="studio-title-row">
                         <h1 className="studio-name">{studio.name}</h1>
@@ -245,7 +245,7 @@ function StudioProfile() {
                         Visit Studio &nearr;
                     </a>
                 </div>
-            </header>
+            </div>
 
             {/* Quick Stat Cards */}
             <section className="studio-stats-grid">

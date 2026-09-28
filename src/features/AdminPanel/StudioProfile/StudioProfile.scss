@@ -44,7 +44,14 @@
     }
 
     .studio-profile-header {
+        position: static;
         display: flex;
+        width: auto;
+        height: auto;
+        backdrop-filter: none;
+        background: transparent;
+        box-shadow: none;
+        z-index: auto;
         justify-content: space-between;
         align-items: flex-start;
         flex-wrap: wrap;
