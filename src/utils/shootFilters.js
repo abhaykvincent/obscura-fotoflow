@@ -17,8 +17,17 @@ const isSameCalendarDate = (a, b) => {
 export const filterShootsWithThreshold = (shoots, thresholdHours = 6, sortOrder = 'asc') => {
     if (!shoots || shoots.length === 0) return [];
 
-    // Ensure array is sorted by date for processing (copy — never mutates input)
-    const sorted = [...shoots].sort((a, b) => {
+    // 1. First filter out shoots without filesCount or with filesCount = 0.
+    // A shoot card is only rendered when filesCount is present and > 0.
+    const validShoots = shoots.filter((shoot) =>
+        shoot.filesCount !== undefined &&
+        shoot.filesCount !== null &&
+        shoot.filesCount > 0
+    );
+    if (validShoots.length === 0) return [];
+
+    // 2. Sort remaining shoots chronologically (copy — never mutates input)
+    const sorted = [...validShoots].sort((a, b) => {
         const diff = new Date(a.date) - new Date(b.date);
         return sortOrder === 'desc' ? -diff : diff;
     });
@@ -55,10 +64,17 @@ export const filterShootsWithThreshold = (shoots, thresholdHours = 6, sortOrder 
 
 /**
  * Default wrapper used by the Shoots grid components.
- * Hides shoots on the same calendar date within 6 hours of the last
- * kept shoot, without modifying or deleting Firestore data.
+ * Requires filesCount > 0 AND hides shoots on the same calendar date
+ * within 6 hours of the last kept shoot, without modifying Firestore data.
  */
 export const filterDuplicateShoots = (shoots, sortOrder = 'asc') =>
     filterShootsWithThreshold(shoots, 6, sortOrder);
+
+/**
+ * Alias matching the reference implementation name.
+ * Both conditions must pass: filesCount > 0 + 6-hour gap threshold.
+ */
+export const filterShoots = (shoots, thresholdHours = 6) =>
+    filterShootsWithThreshold(shoots, thresholdHours, 'asc');
 
 export default filterDuplicateShoots;
