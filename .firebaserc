@@ -2,6 +2,17 @@
   "projects": {
     "production": "fotoflow-studio"
   },
-  "targets": {},
+  "targets": {
+    "fotoflow-studio": {
+      "hosting": {
+        "app": [
+          "fotoflow-studio"
+        ],
+        "marketing": [
+          "fotoflow-marketing"
+        ]
+      }
+    }
+  },
   "etags": {}
 }
