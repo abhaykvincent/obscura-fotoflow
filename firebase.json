@@ -54,6 +54,32 @@
     {
       "target": "marketing",
       "public": "marketing/dist",
+      "rewrites": [
+        {
+          "source": "/cdn-gallery/**",
+          "function": "serveOptimizedImage"
+        },
+        {
+          "source": "/:studioName/smart-gallery/:projectId",
+          "function": "serveGallery"
+        },
+        {
+          "source": "/:studioName/smart-gallery/:projectId/:collectionId",
+          "function": "serveGallery"
+        },
+        {
+          "source": "/:studioName/share/:projectId",
+          "function": "serveGallery"
+        },
+        {
+          "source": "/:studioName/share/:projectId/:collectionId",
+          "function": "serveGallery"
+        },
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
       "ignore": [
         "**/.*",
         "**/node_modules/**"
