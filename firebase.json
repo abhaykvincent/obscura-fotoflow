@@ -5,50 +5,61 @@
     ],
     "source": "functions"
   },
-  "hosting": {
-    "public": "build",
-    "ignore": [
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "/cdn-gallery/**",
-        "function": "serveOptimizedImage"
-      },
-      {
-        "source": "/:studioName/smart-gallery/:projectId",
-        "function": "serveGallery"
-      },
-      {
-        "source": "/:studioName/smart-gallery/:projectId/:collectionId",
-        "function": "serveGallery"
-      },
-      {
-        "source": "/:studioName/share/:projectId",
-        "function": "serveGallery"
-      },
-      {
-        "source": "/:studioName/share/:projectId/:collectionId",
-        "function": "serveGallery"
-      },
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ],
-    "headers": [
-      {
-        "source": "**/*.@(jpg|jpeg|png|gif|webp)",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "public, max-age=31536000, immutable"
-          }
-        ]
-      }
-    ]
-  },
+  "hosting": [
+    {
+      "target": "app",
+      "public": "build",
+      "ignore": [
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "/cdn-gallery/**",
+          "function": "serveOptimizedImage"
+        },
+        {
+          "source": "/:studioName/smart-gallery/:projectId",
+          "function": "serveGallery"
+        },
+        {
+          "source": "/:studioName/smart-gallery/:projectId/:collectionId",
+          "function": "serveGallery"
+        },
+        {
+          "source": "/:studioName/share/:projectId",
+          "function": "serveGallery"
+        },
+        {
+          "source": "/:studioName/share/:projectId/:collectionId",
+          "function": "serveGallery"
+        },
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "**/*.@(jpg|jpeg|png|gif|webp)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=31536000, immutable"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "marketing",
+      "public": "marketing/dist",
+      "ignore": [
+        "**/.*",
+        "**/node_modules/**"
+      ]
+    }
+  ],
   "storage": {
     "rules": "storage.rules"
   },
