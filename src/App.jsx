@@ -229,7 +229,6 @@ export default function App() {
                   <Route path="/:studioName/settings" element={<Settings/>} />
                   <Route path="/:studioName/notifications" element={<Notifications />} />
                   <Route path="/:studioName/storage" element={<Storage />} />
-                  <Route path="/:studioName/subscription/history" element={<BillingHistory />} />
                   <Route path="/:studioName/store" element={<CommingSoon title={'Store'}/>} />
                   <Route path="/:studioName/calendar" element={<CommingSoon title={'Calendar'}/>} />
                   <Route path="/:studioName/invoices" element={<CommingSoon title={'Financials'}/>} />
@@ -237,9 +236,10 @@ export default function App() {
                   <Route path="/:studioName/team" element={<Teams />} />
                 </Route>
 
-                {/* Subscription renewal route - Accessible when expired so studio can renew */}
+                {/* Subscription / billing routes - EXCLUDED from access block so suspended/inactive users can renew & view billing (same as Admin/Tools) */}
                 <Route element={<StudioAccessGate allowSubscriptionPage={true} />}>
                   <Route path="/:studioName/subscription" element={<Subscription />} />
+                  <Route path="/:studioName/subscription/history" element={<BillingHistory />} />
                 </Route>
 
                 {/* Admin Routes - EXCLUDED from StudioAccessGate */}

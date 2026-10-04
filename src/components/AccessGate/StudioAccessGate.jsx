@@ -24,8 +24,11 @@ export default function StudioAccessGate({ allowSubscriptionPage = false }) {
     return <Outlet />;
   }
 
-  // If the studio's subscription is expired or missing, allow them to view the subscription page to renew
-  if (allowSubscriptionPage && (access.state === 'expired' || access.state === 'no_subscription')) {
+  // Subscription / billing pages must stay visible even when the studio is
+  // blocked (expired, no_subscription, suspended, inactive) so the user can
+  // renew / view billing. Admin routes (/admin/*, /tools) live outside this
+  // gate entirely.
+  if (allowSubscriptionPage && access.state !== 'loading') {
     return <Outlet />;
   }
 
