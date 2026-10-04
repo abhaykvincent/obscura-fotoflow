@@ -223,9 +223,15 @@
                         font-size: 0.9rem;
                         padding: 0 2px;
                         line-height: 1;
+                        transition: color 0.18s ease, transform 0.18s ease;
 
                         &:hover {
                             color: $light-0;
+                        }
+
+                        &.copied {
+                            color: #2ecc71;
+                            animation: copyCheckPop 0.25s ease;
                         }
                     }
                 }

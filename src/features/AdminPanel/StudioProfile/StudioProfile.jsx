@@ -198,9 +198,9 @@ function StudioProfile() {
                             <span className="meta-label">Studio ID:</span>
                             <span className="meta-value">{studio.id}</span>
                             <button 
-                                className="copy-button"
+                                className={`copy-button${copiedKey === 'id' ? ' copied' : ''}`}
                                 onClick={() => handleCopy(studio.id, 'id')}
-                                title="Copy ID"
+                                title={copiedKey === 'id' ? 'Copied!' : 'Copy ID'}
                             >
                                 {copiedKey === 'id' ? '✓' : '⧉'}
                             </button>
@@ -210,9 +210,9 @@ function StudioProfile() {
                                 <span className="meta-label">Owner:</span>
                                 <span className="meta-value">{studio.ownerId}</span>
                                 <button 
-                                    className="copy-button" 
+                                    className={`copy-button${copiedKey === 'owner' ? ' copied' : ''}`} 
                                     onClick={() => handleCopy(studio.ownerId, 'owner')}
-                                    title="Copy Owner Email"
+                                    title={copiedKey === 'owner' ? 'Copied!' : 'Copy Owner Email'}
                                 >
                                     {copiedKey === 'owner' ? '✓' : '⧉'}
                                 </button>

@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../app/slices/modalSlice';
-import { copyToClipboard, getOnboardingReferralURL } from '../../../utils/urlUtils';
+import { getOnboardingReferralURL } from '../../../utils/urlUtils';
+import CopyButton, { writeToClipboard } from '../../../components/CopyButton/CopyButton';
 
 export const ReferralsTab = ({ referrals }) => {
     const dispatch = useDispatch();
@@ -65,9 +66,13 @@ export const ReferralsTab = ({ referrals }) => {
                                 <td>{referral?.studioContact}</td>
                                 <td>{referral?.used}/{referral?.quota}</td>
                                 <td>
-                                    <span className='button icon copy' onClick={() => copyToClipboard(referral?.code?.[0])}>
+                                    <CopyButton
+                                      text={referral?.code?.[0] || ''}
+                                      className="button icon copy"
+                                      title="Copy referral code"
+                                    >
                                         {referral?.code?.[0]}
-                                    </span>
+                                    </CopyButton>
                                 </td>
                                 <td>
                                     <a 
@@ -75,7 +80,7 @@ export const ReferralsTab = ({ referrals }) => {
                                         href={`https://wa.me/${referral?.phoneNumber}?text=${encodeURIComponent(getOnboardingReferralURL(referral?.code?.[0])).trim()}`}
                                         target="_blank"
                                         rel="noreferrer"
-                                        onClick={() => copyToClipboard(getOnboardingReferralURL(referral?.code?.[0]))}
+                                        onClick={() => writeToClipboard(getOnboardingReferralURL(referral?.code?.[0]))}
                                     >
                                         Send
                                     </a>
