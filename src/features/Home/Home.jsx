@@ -15,6 +15,7 @@ import SearchInput from '../../components/Search/SearchInput';
 import { trackEvent } from '../../analytics/utils';
 import EventCard from '../../components/Project/ProjectCard/EventCard';
 import { getEventTimeAgo } from '../../utils/dateUtils';
+import { filterDuplicateShoots } from '../../utils/shootFilters';
 import AddProjectModal from '../../components/Modal/AddProject/AddProject';
 import WelcomeModal from '../../components/Modal/WelcomeModal/WelcomeModal';
 import { fetchUserByEmail } from '../../firebase/functions/firestore';
@@ -108,11 +109,7 @@ function Home() {
         setSelectedProjects(selectionCompletedProjects.slice(0, 8))
         setRecentProjects(getProjectsByLastUpdated(nonArchivedProjects, 8))
         const unsortedUpcommingShoots = getUpcommingShoots(projects, 31)
-        const sortedUpcommingShoots = unsortedUpcommingShoots.sort((a, b) => {
-            const aDate = new Date(a.date);
-            const bDate = new Date(b.date);
-            return aDate - bDate;
-        });
+        const sortedUpcommingShoots = filterDuplicateShoots(unsortedUpcommingShoots, 'asc');
         setUpcommingShoots(sortedUpcommingShoots)
     }, [selectionCompletedProjects, nonArchivedProjects, projects])
 

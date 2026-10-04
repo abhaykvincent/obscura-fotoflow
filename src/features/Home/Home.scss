@@ -112,16 +112,26 @@
             display: flex;
             gap: 16px;
             overflow-x: auto;
+            overflow-y: hidden;
             padding: 8px;
             padding-bottom: 16px;
-            
+            scrollbar-width: thin;
+            scrollbar-color: rgba($gray5-accessible-dark, 0.8) transparent;
+
             &::-webkit-scrollbar {
                 display: block;
-                height: 4px;
+                height: 8px;
+            }
+            &::-webkit-scrollbar-track {
+                background: rgba($gray5-accessible-dark, 0.15);
+                border-radius: 10px;
             }
             &::-webkit-scrollbar-thumb {
-                background: rgba($gray5-accessible-dark, 0.3);
+                background: rgba($gray5-accessible-dark, 0.8);
                 border-radius: 10px;
+                &:hover {
+                    background: rgba($gray5-accessible-dark, 1);
+                }
             }
         }
 

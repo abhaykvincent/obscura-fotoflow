@@ -278,6 +278,27 @@ export const updateStudio = async (studioId, updates) => {
     }
 };
 
+export const updateStudioStatus = async (studioId, status) => {
+    const VALID_STUDIO_STATUSES = ['active', 'inactive', 'suspended'];
+    const normalizedStatus = (status || '').toLowerCase();
+    if (!VALID_STUDIO_STATUSES.includes(normalizedStatus)) {
+        throw new Error(`Invalid studio status: '${status}'. Allowed statuses are: ${VALID_STUDIO_STATUSES.join(', ')}`);
+    }
+
+    try {
+        const studioRef = doc(db, 'studios', studioId);
+        await updateDoc(studioRef, {
+            status: normalizedStatus,
+            'metadata.updatedAt': new Date().toISOString(),
+        });
+        console.log(`Studio ${studioId} status successfully updated to '${normalizedStatus}'.`);
+        return { success: true, status: normalizedStatus };
+    } catch (error) {
+        console.error(`Error updating status for studio ${studioId}:`, error.message);
+        throw error;
+    }
+};
+
 export const fetchAnalyticsData = async () => {
     try {
         const studiosCollection = collection(db, 'studios');
