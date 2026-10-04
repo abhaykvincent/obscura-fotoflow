@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSmartGallery, selectSmartGallery, selectSmartGalleryStatus } from '../app/slices/smartGallerySlice';
 import { selectProjects } from '../app/slices/projectsSlice';
-import { fetchCollectionStatus } from '../firebase/functions/firestore';
+import { fetchGalleryAccess } from '../firebase/functions/firestore';
 import { trackEvent } from '../analytics/utils';
 import { getThumbnailUrl } from '../utils/urlUtils';
 
@@ -11,11 +11,13 @@ export const useSmartAlbum = (domain, projectId, collectionId, propProject) => {
   const smartGalleryData = useSelector(selectSmartGallery);
   const status = useSelector(selectSmartGalleryStatus);
   const projects = useSelector(selectProjects);
-  
+
   const [displayGallery, setDisplayGallery] = useState(false);
+  const [galleryBlockedReason, setGalleryBlockedReason] = useState(null);
+  const [studioStatus, setStudioStatus] = useState(null);
   const [allImages, setAllImages] = useState([]);
 
-  const project = useMemo(() => 
+  const project = useMemo(() =>
     propProject || projects?.find((p) => p.id === projectId),
     [propProject, projects, projectId]
   );
@@ -27,18 +29,48 @@ export const useSmartAlbum = (domain, projectId, collectionId, propProject) => {
     }
   }, [dispatch, domain, projectId, collectionId]);
 
-  // Check Collection Visibility
+  // Check Gallery Access: Studio allowed + Project allowed + Collection allowed.
+  // The gallery must not be considered available solely because its collection
+  // is active if the parent studio is suspended or inactive.
   useEffect(() => {
+    let cancelled = false;
     const verifyStatus = async () => {
+      if (!domain || !projectId || !collectionId) {
+        setDisplayGallery(false);
+        setGalleryBlockedReason(null);
+        return;
+      }
       try {
-        const collectionStatus = await fetchCollectionStatus(domain, projectId, collectionId);
-        setDisplayGallery(collectionStatus === 'visible' || collectionStatus === 'active');
+        const access = await fetchGalleryAccess(domain, projectId, collectionId);
+        if (cancelled) return;
+        setStudioStatus(access.studioStatus || null);
+        if (access.allowed) {
+          setDisplayGallery(true);
+          setGalleryBlockedReason(null);
+        } else {
+          // access.reason: 'studio-suspended' | 'studio-inactive' | 'collection-hidden'
+          setDisplayGallery(false);
+          setGalleryBlockedReason(access.reason || 'collection-hidden');
+        }
       } catch (error) {
-        console.error('Error fetching collection status:', error);
+        if (cancelled) return;
+        console.error('Error fetching gallery access:', error);
+        // Direct error codes from the enforcement layer map to blocked reasons.
+        const code = error?.code;
+        if (code === 'studio-suspended') {
+          setStudioStatus('suspended');
+          setGalleryBlockedReason('studio-suspended');
+        } else if (code === 'studio-inactive') {
+          setStudioStatus('inactive');
+          setGalleryBlockedReason('studio-inactive');
+        } else {
+          setGalleryBlockedReason('unavailable');
+        }
         setDisplayGallery(false);
       }
     };
     verifyStatus();
+    return () => { cancelled = true; };
   }, [domain, projectId, collectionId]);
 
   // Analytics
@@ -79,14 +111,14 @@ export const useSmartAlbum = (domain, projectId, collectionId, propProject) => {
   const isExpired = useMemo(() => {
     if (!project) return false;
     if (project.status === 'expired') return true;
-    
+
     if (project.createdAt) {
       const createdAt = new Date(project.createdAt);
       const retentionYears = parseInt(project.fileRetentionYears || '1');
       const expiryDate = new Date(createdAt);
       expiryDate.setMonth(expiryDate.getMonth() + (retentionYears * 12));
       expiryDate.setDate(expiryDate.getDate() + 30);
-      
+
       return Date.now() > expiryDate.getTime();
     }
     return false;
@@ -97,6 +129,8 @@ export const useSmartAlbum = (domain, projectId, collectionId, propProject) => {
     smartGalleryData,
     status,
     displayGallery,
+    galleryBlockedReason,
+    studioStatus,
     allImages,
     processedSections,
     isExpired

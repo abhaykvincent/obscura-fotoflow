@@ -151,13 +151,18 @@ function buildDestinationUrl({ studioName, projectId, collectionId, queryString 
 }
 
 /**
- * Retrieves gallery metadata from Firestore
+ * Retrieves gallery metadata from Firestore.
+ * Also resolves studio operational status (domain → studio → studio.status)
+ * so suspended/inactive studios can be denied at the serving layer.
  */
 async function fetchGalleryMetadata(studioName, projectId, collectionId) {
   const defaults = {
     title: 'Smart Gallery | Fotoflow',
     description: 'View your professional photo gallery on FotoFlow.',
     image: '',
+    studioStatus: 'active',
+    blocked: false,
+    blockReason: null,
   };
 
   if (!studioName || !projectId) {
@@ -166,6 +171,30 @@ async function fetchGalleryMetadata(studioName, projectId, collectionId) {
 
   try {
     const db = admin.firestore();
+
+    // Studio-status enforcement: Studio allowed + Project allowed + Collection
+    // allowed → gallery visible. Suspended/inactive studios are blocked even
+    // when the collection itself is active. This is the server-side boundary
+    // that cannot be bypassed by calling client endpoints directly.
+    if (studioName) {
+      try {
+        const studioDoc = await db.collection('studios').doc(studioName).get();
+        if (studioDoc.exists) {
+          const studioStatus = String(studioDoc.data()?.status || 'active').toLowerCase();
+          defaults.studioStatus = studioStatus;
+          if (studioStatus === 'suspended' || studioStatus === 'inactive') {
+            defaults.blocked = true;
+            defaults.blockReason = studioStatus === 'suspended' ? 'studio-suspended' : 'studio-inactive';
+            defaults.title = 'Gallery Unavailable | Fotoflow';
+            defaults.description = 'This gallery is currently unavailable.';
+            return defaults;
+          }
+        }
+      } catch (studioErr) {
+        console.error('[serveGallery] Studio status check error:', studioErr);
+      }
+    }
+
     const projectDoc = await db
       .collection('studios')
       .doc(studioName)
@@ -215,6 +244,35 @@ async function fetchGalleryMetadata(studioName, projectId, collectionId) {
     console.error('[serveGallery] Firestore error:', err);
     return defaults;
   }
+}
+
+/**
+ * Renders a generic blocked-gallery page (no admin details exposed).
+ */
+function renderBlockedPage({ title }) {
+  const safeTitle = escapeHtml(title || 'Gallery Unavailable');
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${safeTitle}</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="/favicon.png" />
+  <style>
+    body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #0b0f19; color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; text-align: center; }
+    .wrapper { max-width: 480px; padding: 32px 24px; }
+    h1 { font-size: 20px; font-weight: 600; margin: 0 0 8px 0; }
+    p { font-size: 14px; color: #9ca3af; margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>${safeTitle}</h1>
+    <p>This gallery is currently unavailable. Please contact the studio for assistance.</p>
+  </div>
+</body>
+</html>`;
 }
 
 /**
@@ -366,6 +424,18 @@ exports.serveGallery = onRequest({
 
   // Fetch gallery metadata from Firestore
   const metadata = await fetchGalleryMetadata(studioName, projectId, collectionId);
+
+  // Server-side studio-status enforcement: deny blocked studios before
+  // serving SEO/redirect content or the React app shell.
+  if (metadata.blocked) {
+    console.log(`[serveGallery] Blocked: studio=${studioName} reason=${metadata.blockReason}`);
+    res.set('Cache-Control', 'no-store');
+    return res.status(403).send(renderBlockedPage({
+      title: metadata.blockReason === 'studio-suspended'
+        ? 'This gallery is temporarily unavailable.'
+        : 'This gallery is currently unavailable.',
+    }));
+  }
 
   // When accessed via fotoflow.co, serve SEO metadata and instantly redirect browsers to app.fotoflow.co
   if (!isApp) {

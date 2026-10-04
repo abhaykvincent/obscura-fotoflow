@@ -11,6 +11,27 @@ import { selectStudio } from '../../app/slices/studioSlice';
 import { useSmartAlbum } from '../../hooks/useSmartAlbum';
 import './SmartAlbum.scss';
 
+// Public-facing blocked-gallery copy. Intentionally generic: do not expose
+// internal administrative details (e.g. who suspended the studio or why).
+const BLOCKED_COPY = {
+  'studio-suspended': {
+    title: 'This gallery is temporarily unavailable.',
+    body: 'Please contact the studio for assistance.',
+  },
+  'studio-inactive': {
+    title: 'This gallery is currently unavailable.',
+    body: 'Please contact the studio for assistance.',
+  },
+  'collection-hidden': {
+    title: 'This gallery is not active.',
+    body: 'Please check the link or contact the studio.',
+  },
+  unavailable: {
+    title: 'This gallery could not be loaded.',
+    body: 'Please try again later or contact the studio.',
+  },
+};
+
 const SmartAlbum = ({ domain, projectId, collectionId, project: propProject }) => {
   const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -21,6 +42,7 @@ const SmartAlbum = ({ domain, projectId, collectionId, project: propProject }) =
     smartGalleryData,
     status,
     displayGallery,
+    galleryBlockedReason,
     allImages,
     processedSections,
     isExpired
@@ -54,39 +76,52 @@ const SmartAlbum = ({ domain, projectId, collectionId, project: propProject }) =
   }
 
   if (status === 'failed') {
+    // A failed gallery fetch may itself be a studio block (enforced in the
+    // data layer). Surface the access-aware message instead of a raw error.
+    if (galleryBlockedReason === 'studio-suspended' || galleryBlockedReason === 'studio-inactive') {
+      const copy = BLOCKED_COPY[galleryBlockedReason];
+      return (
+        <div className="smart-album-inactive studio-blocked">
+          <h2>{copy.title}</h2>
+          <p>{copy.body}</p>
+        </div>
+      );
+    }
     return <div className="error-container">Error loading gallery.</div>;
   }
 
   if (!smartGalleryData) return null;
 
   if (!displayGallery) {
+    const copy = BLOCKED_COPY[galleryBlockedReason] || BLOCKED_COPY['collection-hidden'];
     return (
       <div className="smart-album-inactive">
-        <p>This gallery is not active.</p>
+        <h2>{copy.title}</h2>
+        <p>{copy.body}</p>
       </div>
     );
   }
 
   return (
     <div className="smart-album">
-      <button 
-        className="nav-button prev back-button" 
-        onClick={handleBack} 
-        title="Go Back" 
+      <button
+        className="nav-button prev back-button"
+        onClick={handleBack}
+        title="Go Back"
       />
 
-      <SmartAlbumHeader 
-        galleryData={smartGalleryData} 
-        project={project} 
-        collectionName={getCollectionName()} 
+      <SmartAlbumHeader
+        galleryData={smartGalleryData}
+        project={project}
+        collectionName={getCollectionName()}
       />
 
       <div className="gallery-sections">
         {processedSections.map((section) => (
-          <SectionRenderer 
-            key={section.id} 
-            section={section} 
-            onImageClick={openPreview} 
+          <SectionRenderer
+            key={section.id}
+            section={section}
+            onImageClick={openPreview}
           />
         ))}
       </div>

@@ -37,6 +37,8 @@ export default function SmartGallery() {
   const [isStageExpired, setIsStageExpired] = useState(false);
   const [visibleCollections, setVisibleCollections] = useState([]);
   const [collectionsLoading, setCollectionsLoading] = useState(true);
+  const studioStatus = (studio?.status || 'active').toLowerCase();
+  const isStudioBlocked = studioStatus === 'suspended' || studioStatus === 'inactive';
   
   const [isClientAuthenticated, setIsClientAuthenticated] = useState(() => isPinValid(projectId));
   const [isDownloading, setIsDownloading] = useState(false);
@@ -144,14 +146,32 @@ export default function SmartGallery() {
   useEffect(() => {
     const checkCollectionVisibility = async () => {
       if (!project?.collections) return;
-      
+
+      // Studio-level block takes precedence over per-collection visibility.
+      if (isStudioBlocked) {
+        setVisibleCollections([]);
+        setCollectionsLoading(false);
+        return;
+      }
+
       setCollectionsLoading(true);
       const newVisibleCollections = [];
       for (const collection of project.collections) {
         if (collection.uploadedFiles?.length > 0) {
-          const status = await fetchCollectionStatus(studioName, projectId, collection.id);
-          if (status !== 'hide') {
-            newVisibleCollections.push(collection);
+          try {
+            const status = await fetchCollectionStatus(studioName, projectId, collection.id);
+            if (status !== 'hide') {
+              newVisibleCollections.push(collection);
+            }
+          } catch (err) {
+            // Studio-level blocks (studio-suspended/studio-inactive) deny the
+            // whole list; other errors hide just that collection.
+            if (err?.code === 'studio-suspended' || err?.code === 'studio-inactive') {
+              setVisibleCollections([]);
+              setCollectionsLoading(false);
+              return;
+            }
+            console.error(`Skipping collection ${collection.id}:`, err.message);
           }
         }
       }
@@ -160,7 +180,7 @@ export default function SmartGallery() {
     };
 
     checkCollectionVisibility();
-  }, [project, studioName, projectId]);
+  }, [project, studioName, projectId, isStudioBlocked]);
 
   useEffect(() => {
     if (project) {
@@ -293,6 +313,19 @@ export default function SmartGallery() {
 
   if (!project) {
     return <div>Project not found.</div>;
+  }
+
+  // Studio blocked: gallery list must not be served even for active collections.
+  // Keep the message generic; do not expose administrative details.
+  if (isStudioBlocked) {
+    return (
+      <div className="smart-gallery-page studio-blocked">
+        <div className="smart-album-inactive">
+          <h2>{studioStatus === 'suspended' ? 'This gallery is temporarily unavailable.' : 'This gallery is currently unavailable.'}</h2>
+          <p>Please contact the studio for assistance.</p>
+        </div>
+      </div>
+    );
   }
   const isStudioPhotographer = isAuthenticated && userStudio?.domain === studioName;
   const userRole = isStudioPhotographer ? 'photographer' : (isClientAuthenticated ? 'client' : 'guest');
