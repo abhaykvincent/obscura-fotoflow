@@ -33,6 +33,103 @@ function StudioProfile() {
     const [copiedKey, setCopiedKey] = useState(null);
     const [pendingStatus, setPendingStatus] = useState(null);
     const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+    const [projectSort, setProjectSort] = useState({ key: null, dir: 'asc' });
+    const [memberSort, setMemberSort] = useState({ key: null, dir: 'asc' });
+    const [selectionSort, setSelectionSort] = useState({ key: null, dir: 'asc' });
+    const [extensionSort, setExtensionSort] = useState({ key: null, dir: 'asc' });
+
+    const toggleSort = (sort, setSort, key) => {
+        setSort((prev) => {
+            if (prev.key !== key) return { key, dir: 'asc' };
+            return { key, dir: prev.dir === 'asc' ? 'desc' : 'asc' };
+        });
+    };
+
+    const compareSortValues = (aVal, bVal, dir) => {
+        const mult = dir === 'desc' ? -1 : 1;
+        const aEmpty = aVal === null || aVal === undefined || aVal === '';
+        const bEmpty = bVal === null || bVal === undefined || bVal === '';
+        if (aEmpty && bEmpty) return 0;
+        if (aEmpty) return -1 * mult;
+        if (bEmpty) return 1 * mult;
+        if (typeof aVal === 'number' && typeof bVal === 'number') {
+            return (aVal - bVal) * mult;
+        }
+        return String(aVal).localeCompare(String(bVal), undefined, { numeric: true, sensitivity: 'base' }) * mult;
+    };
+
+    const sortRows = (rows, sort, getValue) => {
+        if (!sort.key) return rows;
+        return [...rows].sort((ra, rb) =>
+            compareSortValues(getValue(ra, sort.key), getValue(rb, sort.key), sort.dir)
+        );
+    };
+
+    const toTime = (v) => {
+        if (!v) return null;
+        const t = new Date(v).getTime();
+        return Number.isNaN(t) ? null : t;
+    };
+
+    const getProjectValue = (p, key) => {
+        switch (key) {
+            case 'name': return p.name || '';
+            case 'type': return p.type || '';
+            case 'status': return p.status || '';
+            case 'photos': return Number(p.uploadedFilesCount ?? 0);
+            case 'storage': return Number(p.totalFileSize ?? 0);
+            case 'galleries': return Number(p.collectionsCount ?? 0);
+            case 'validity': return Number(p.projectValidityMonths ?? 0);
+            case 'created': return toTime(p.createdAt);
+            case 'lastOpened': return toTime(p.lastOpened);
+            default: return null;
+        }
+    };
+
+    const getMemberValue = (m, key) => {
+        switch (key) {
+            case 'member': return m.displayName || '';
+            case 'email': return m.email || '';
+            case 'role': return m.role || '';
+            case 'joined': return toTime(m.createdAt);
+            default: return null;
+        }
+    };
+
+    const getRequestValue = (r, key) => {
+        switch (key) {
+            case 'project': return r.projectName || r.projectId || '';
+            case 'status': return r.status || '';
+            case 'requestedAt': return toTime(r.requestedAt);
+            default: return null;
+        }
+    };
+
+    const renderSortTh = (label, sortKey, sort, onSort) => {
+        const isActive = sort.key === sortKey;
+        const arrow = isActive ? (sort.dir === 'asc' ? ' \u25B2' : ' \u25BC') : ' \u21D5';
+        return (
+            <th
+                key={sortKey}
+                onClick={onSort}
+                className={`sortable${isActive ? ` sorted-${sort.dir}` : ''}`}
+                title={`Sort by ${label}`}
+                aria-sort={isActive ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'}
+            >
+                <button
+                    type="button"
+                    className="th-sort-btn"
+                    onClick={(e) => { e.stopPropagation(); onSort(); }}
+                    aria-label={`Sort by ${label} ${isActive ? (sort.dir === 'asc' ? 'descending' : 'ascending') : 'ascending'}`}
+                >
+                    <span>{label}</span>
+                    <span className={`sort-arrow${isActive ? ' active' : ''}`} aria-hidden="true">
+                        {arrow}
+                    </span>
+                </button>
+            </th>
+        );
+    };
 
     useEffect(() => {
         if (studioName) {
@@ -94,6 +191,27 @@ function StudioProfile() {
             p.status.toLowerCase().includes(query)
         );
     }, [projects, projectSearchQuery]);
+
+    const sortedProjects = useMemo(
+        () => sortRows(filteredProjects, projectSort, getProjectValue),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [filteredProjects, projectSort]
+    );
+    const sortedMembers = useMemo(
+        () => sortRows(members, memberSort, getMemberValue),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [members, memberSort]
+    );
+    const sortedSelectionRequests = useMemo(
+        () => sortRows(selectionRequests, selectionSort, getRequestValue),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [selectionRequests, selectionSort]
+    );
+    const sortedExtensionRequests = useMemo(
+        () => sortRows(extensionRequests, extensionSort, getRequestValue),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [extensionRequests, extensionSort]
+    );
 
     const isTrialActive = useMemo(() => {
         if (!studio?.trialEndDate) return false;
@@ -353,19 +471,19 @@ function StudioProfile() {
                         <table className="invoice-table">
                             <thead>
                                 <tr>
-                                    <th>PROJECT NAME</th>
-                                    <th>TYPE</th>
-                                    <th>STATUS</th>
-                                    <th>PHOTOS</th>
-                                    <th>STORAGE</th>
-                                    <th>GALLERIES</th>
-                                    <th>VALIDITY</th>
-                                    <th>CREATED</th>
-                                    <th>LAST OPENED</th>
+                                    {renderSortTh('PROJECT NAME', 'name', projectSort, () => toggleSort(projectSort, setProjectSort, 'name'))}
+                                    {renderSortTh('TYPE', 'type', projectSort, () => toggleSort(projectSort, setProjectSort, 'type'))}
+                                    {renderSortTh('STATUS', 'status', projectSort, () => toggleSort(projectSort, setProjectSort, 'status'))}
+                                    {renderSortTh('PHOTOS', 'photos', projectSort, () => toggleSort(projectSort, setProjectSort, 'photos'))}
+                                    {renderSortTh('STORAGE', 'storage', projectSort, () => toggleSort(projectSort, setProjectSort, 'storage'))}
+                                    {renderSortTh('GALLERIES', 'galleries', projectSort, () => toggleSort(projectSort, setProjectSort, 'galleries'))}
+                                    {renderSortTh('VALIDITY', 'validity', projectSort, () => toggleSort(projectSort, setProjectSort, 'validity'))}
+                                    {renderSortTh('CREATED', 'created', projectSort, () => toggleSort(projectSort, setProjectSort, 'created'))}
+                                    {renderSortTh('LAST OPENED', 'lastOpened', projectSort, () => toggleSort(projectSort, setProjectSort, 'lastOpened'))}
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredProjects.map(proj => (
+                                {sortedProjects.map(proj => (
                                     <tr key={proj.id}>
                                         <td>
                                             <div className="project-cell-name">
@@ -408,15 +526,15 @@ function StudioProfile() {
                         <table className="invoice-table">
                             <thead>
                                 <tr>
-                                    <th>MEMBER</th>
-                                    <th>EMAIL</th>
-                                    <th>ROLE</th>
-                                    <th>JOINED</th>
+                                    {renderSortTh('MEMBER', 'member', memberSort, () => toggleSort(memberSort, setMemberSort, 'member'))}
+                                    {renderSortTh('EMAIL', 'email', memberSort, () => toggleSort(memberSort, setMemberSort, 'email'))}
+                                    {renderSortTh('ROLE', 'role', memberSort, () => toggleSort(memberSort, setMemberSort, 'role'))}
+                                    {renderSortTh('JOINED', 'joined', memberSort, () => toggleSort(memberSort, setMemberSort, 'joined'))}
                                     <th>ACTIONS</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {members.map(member => (
+                                {sortedMembers.map(member => (
                                     <tr key={member.id}>
                                         <td>
                                             <div className="member-name-cell">
@@ -540,13 +658,13 @@ function StudioProfile() {
                                 <table className="invoice-table">
                                     <thead>
                                         <tr>
-                                            <th>PROJECT</th>
-                                            <th>STATUS</th>
-                                            <th>REQUESTED AT</th>
+                                            {renderSortTh('PROJECT', 'project', selectionSort, () => toggleSort(selectionSort, setSelectionSort, 'project'))}
+                                            {renderSortTh('STATUS', 'status', selectionSort, () => toggleSort(selectionSort, setSelectionSort, 'status'))}
+                                            {renderSortTh('REQUESTED AT', 'requestedAt', selectionSort, () => toggleSort(selectionSort, setSelectionSort, 'requestedAt'))}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {selectionRequests.map(req => (
+                                        {sortedSelectionRequests.map(req => (
                                             <tr key={req.id}>
                                                 <td>{req.projectName || req.projectId}</td>
                                                 <td>
@@ -570,13 +688,13 @@ function StudioProfile() {
                                 <table className="invoice-table">
                                     <thead>
                                         <tr>
-                                            <th>PROJECT</th>
-                                            <th>STATUS</th>
-                                            <th>REQUESTED AT</th>
+                                            {renderSortTh('PROJECT', 'project', extensionSort, () => toggleSort(extensionSort, setExtensionSort, 'project'))}
+                                            {renderSortTh('STATUS', 'status', extensionSort, () => toggleSort(extensionSort, setExtensionSort, 'status'))}
+                                            {renderSortTh('REQUESTED AT', 'requestedAt', extensionSort, () => toggleSort(extensionSort, setExtensionSort, 'requestedAt'))}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {extensionRequests.map(req => (
+                                        {sortedExtensionRequests.map(req => (
                                             <tr key={req.id}>
                                                 <td>{req.projectName || req.projectId}</td>
                                                 <td>
