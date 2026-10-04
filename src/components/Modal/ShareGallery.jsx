@@ -6,7 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, closeModalWithAnimation, openModal, selectModal } from '../../app/slices/modalSlice';
 import { selectDomain } from '../../app/slices/authSlice';
 import { useLocation } from 'react-router';
-import { copyToClipboard, extractDomain, getGalleryURL, getCoverUrl } from '../../utils/urlUtils';
+import { extractDomain, getGalleryURL, getCoverUrl } from '../../utils/urlUtils';
+import CopyButton from '../CopyButton/CopyButton';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
 import { updateSelectionGalleryStatus, updateCollectionStatus, selectUpdatingCollections } from '../../app/slices/projectsSlice';
@@ -155,7 +156,12 @@ function ShareGallery({project }) {
                       </a>
                     </div>
                   </div>
-                    <div className="button primary outline text-only  icon copy"></div>
+                    <CopyButton
+                      text={getGalleryURL('share', domain, project?.id)}
+                      className="button primary outline text-only icon copy"
+                      title="Copy gallery link"
+                      onCopied={() => dispatch(showAlert({ type: 'success', message: 'Gallery link copied to clipboard!' }))}
+                    />
 
                 </div>
               </div>
@@ -266,12 +272,12 @@ function ShareGallery({project }) {
                       window.open(getGalleryURL('smart-gallery', domain, project?.id), '_blank');
                     }}
                   >Gallery Link</div>
-                  <div className="button primary outline text-only  icon copy"
-                    onClick={() => {
-                      copyToClipboard(getGalleryURL('share', domain, project?.id));
-                      dispatch(showAlert({ type: 'success', message: 'Gallery link copied to clipboard!' }));
-                    }}
-                  ></div>
+                  <CopyButton
+                    text={getGalleryURL('share', domain, project?.id)}
+                    className="button primary outline text-only icon copy"
+                    title="Copy gallery link"
+                    onCopied={() => dispatch(showAlert({ type: 'success', message: 'Gallery link copied to clipboard!' }))}
+                  />
                 </div>
                 
                 <p className="client-label">Anyone with link</p>
@@ -289,12 +295,12 @@ function ShareGallery({project }) {
                     }
                   }
                   >Selection Link</div>
-                <div className=" button primary outline text-only  icon copy"
-                  onClick={() => {
-                    copyToClipboard(getGalleryURL('selection', domain, project?.id));
-                    dispatch(showAlert({ type: 'success', message: 'Selection link copied to clipboard!' }));
-                  }}
-                ></div>
+                <CopyButton
+                  text={getGalleryURL('selection', domain, project?.id)}
+                  className="button primary outline text-only icon copy"
+                  title="Copy selection link"
+                  onCopied={() => dispatch(showAlert({ type: 'success', message: 'Selection link copied to clipboard!' }))}
+                />
                 </div>
 
                 <p className="client-label">Client Only</p>

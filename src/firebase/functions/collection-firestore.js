@@ -157,10 +157,10 @@ export const fetchCollectionStatus = async (domain, projectId, collectionId) => 
         }
 
         const projectData = projectSnapshot.data();
-        const collection = projectData.collections.find(c => c.id === collectionId);
-        
-        if (collection) {
-            return collection.status;
+        const matchedCollection = projectData.collections.find(c => c.id === collectionId);
+
+        if (matchedCollection) {
+            return matchedCollection.status;
         } else {
             throw new Error('Collection not found in project.');
         }
@@ -307,14 +307,14 @@ export const fetchGalleryAccess = async (domain, projectId, collectionId) => {
         throw err;
     }
     const projectData = projectSnapshot.data();
-    const collection = projectData.collections?.find(c => c.id === collectionId);
-    if (!collection) {
+    const matchedCollection = projectData.collections?.find(c => c.id === collectionId);
+    if (!matchedCollection) {
         const err = new Error('Collection not found in project.');
         err.code = 'collection-not-found';
         throw err;
     }
 
-    const collectionStatus = collection.status;
+    const collectionStatus = matchedCollection.status;
     const projectStatus = projectData.status || null;
     const allowed = collectionStatus === 'visible' || collectionStatus === 'active';
     return {

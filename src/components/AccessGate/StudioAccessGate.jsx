@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectStudio, selectCurrentSubscription } from '../../app/slices/studioSlice';
 import { getStudioAccessState } from '../../utils/studioAccess';
+import { LoadingLight } from '../Loading/Loading';
 import AccessBlocked from './AccessBlocked';
 
 /**
@@ -28,6 +29,7 @@ export default function StudioAccessGate({ allowSubscriptionPage = false }) {
   const studio = useSelector(selectStudio);
   const currentSubscription = useSelector(selectCurrentSubscription);
   const studioLoading = useSelector((state) => state.studio?.loading);
+  const studioError = useSelector((state) => state.studio?.error);
 
   const access = getStudioAccessState(studio, currentSubscription, studioLoading);
 
@@ -39,6 +41,21 @@ export default function StudioAccessGate({ allowSubscriptionPage = false }) {
   // gate entirely.
   if (allowSubscriptionPage || EXEMPT_PATH_RE.test(location.pathname)) {
     return <Outlet />;
+  }
+
+  // Studio / subscription data not ready yet: the slice still holds its
+  // initial placeholder (null id/domain/status) which the evaluator would
+  // misread as a blocked studio. Show a loader — never flash the
+  // access-blocked card on placeholder data. (Genuine failures fall through:
+  // studioError set, or fetch resolved with no studio record.)
+  const isStudioPlaceholder = studio != null && !studio.id && !studio.domain;
+  const isSubscriptionPlaceholder =
+    currentSubscription != null && !currentSubscription.id && !currentSubscription.status;
+  if (
+    !studioError &&
+    (studioLoading || access.state === 'loading' || isStudioPlaceholder || isSubscriptionPlaceholder)
+  ) {
+    return <LoadingLight />;
   }
 
   // If access is allowed, render child routes normally
