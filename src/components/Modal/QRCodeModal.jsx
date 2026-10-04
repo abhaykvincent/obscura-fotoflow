@@ -7,6 +7,7 @@ import { selectStudio } from '../../app/slices/studioSlice';
 import { useModalFocus } from '../../hooks/modalInputFocus';
 //getGalleryURL
 import { getGalleryURL } from '../../utils/urlUtils';
+import CopyButton from '../CopyButton/CopyButton';
 import './QRCodeModal.scss';
 
 import logo from '../../assets/img/logo192.png';
@@ -73,7 +74,11 @@ function QRCodeModal({ project, url }) {
                   </a>
                 </div>
               </div>
-              <div className="button primary outline text-only  icon copy"></div>
+              <CopyButton
+                text={url || getGalleryURL('share', studio?.domain, project?.id)}
+                className="button primary outline text-only icon copy"
+                title="Copy gallery link"
+              />
           </div>
         </div>
         <div className="actions">

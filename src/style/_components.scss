@@ -574,8 +574,20 @@
                 background-size: 90%;
                 background-position: center center;
                 background-image: url('https://img.icons8.com/?size=100&id=8yBXUwihe10f&format=png&color=FFFFFF');
-                
+                transition: transform 0.18s ease, opacity 0.18s ease;
             }
+            // Minimal green-check feedback right after copy
+            &.copied{
+                opacity: 1 !important;
+                &::before{
+                    background-image: url('https://img.icons8.com/?size=100&id=98955&format=png&color=2ECC71');
+                    animation: copyCheckPop 0.25s ease;
+                }
+            }
+        }
+        // Generic fallback: any icon-copy element that gets .copied shows green check
+        &.copy.copied::before{
+            background-image: url('https://img.icons8.com/?size=100&id=98955&format=png&color=2ECC71');
         }
         &.referal{
             &::before{
@@ -1050,6 +1062,37 @@ border: 0px solid #535353;
 
     .icon-show {
       opacity: 0.4;
+    }
+  }
+}
+
+// ---- Minimal copy-success feedback (green check) ----
+@keyframes copyCheckPop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.App {
+  // Any icon copy button that gets .copied swaps to a green check smoothly
+  .button.icon.copy.copied::before,
+  .copy.icon.copied::before {
+    background-image: url('https://img.icons8.com/?size=100&id=98955&format=png&color=2ECC71');
+    animation: copyCheckPop 0.25s ease 2s;
+  }
+  .button.icon.copy.copied,
+  .copy.icon.copied {
+    opacity: 1 !important;
+  }
+
+  // Text-style copy buttons (admin StudioProfile, dev tools icon-btn)
+  .copy-button.copied,
+  .icon-btn.copied {
+    color: #2ecc71 !important;
+    border-color: rgba(46, 204, 113, 0.5) !important;
+    svg {
+      stroke: #2ecc71 !important;
+      animation: copyCheckPop 0.25s ease;
     }
   }
 }
