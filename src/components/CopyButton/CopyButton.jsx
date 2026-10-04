@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import './CopyButton.scss';
 
 async function writeToClipboard(text) {
   try {
@@ -22,9 +23,22 @@ async function writeToClipboard(text) {
   }
 }
 
+const CopySvg = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+  </svg>
+);
+
+const CheckSvg = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2ecc71" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+);
+
 /**
  * Minimal icon copy button.
- * Shows a smooth green check for ~1.6s right after a successful copy.
+ * Shows a smooth green check crossfade right after a successful copy.
  *
  * Usage:
  *   <CopyButton text={url} className="button primary outline text-only icon copy" />
@@ -64,13 +78,23 @@ export default function CopyButton({
       tabIndex={0}
       aria-label={copied ? 'Copied' : title}
       title={copied ? 'Copied!' : title}
-      className={`${className}${copied ? ' copied' : ''}`}
+      className={`${className} copy-feedback${copied ? ' copied' : ''}`}
       onClick={handleClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') handleClick(e);
       }}
     >
-      {children}
+      <span className="copy-anim" aria-hidden="true">
+        <span className="copy-anim-icon copy-anim-copy">
+          <CopySvg />
+        </span>
+        <span className="copy-anim-icon copy-anim-check">
+          <CheckSvg />
+        </span>
+      </span>
+      {children != null && children !== '' && (
+        <span className="copy-label">{children}</span>
+      )}
     </div>
   );
 }

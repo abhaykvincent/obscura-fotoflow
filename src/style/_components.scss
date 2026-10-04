@@ -570,23 +570,27 @@
         &.copy{
             padding:  4px;
             &::before{
+                display: inline-block;
+                vertical-align: middle;
                 margin: 0;
                 background-size: 90%;
                 background-position: center center;
                 background-image: url('https://img.icons8.com/?size=100&id=8yBXUwihe10f&format=png&color=FFFFFF');
                 transition: transform 0.18s ease, opacity 0.18s ease;
+                will-change: transform, opacity;
             }
             // Minimal green-check feedback right after copy
             &.copied{
                 opacity: 1 !important;
                 &::before{
                     background-image: url('https://img.icons8.com/?size=100&id=98955&format=png&color=2ECC71');
-                    animation: copyCheckPop 0.25s ease;
+                    animation: copyCheckPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
             }
         }
         // Generic fallback: any icon-copy element that gets .copied shows green check
         &.copy.copied::before{
+            display: inline-block;
             background-image: url('https://img.icons8.com/?size=100&id=98955&format=png&color=2ECC71');
         }
         &.referal{
@@ -1077,8 +1081,9 @@ border: 0px solid #535353;
   // Any icon copy button that gets .copied swaps to a green check smoothly
   .button.icon.copy.copied::before,
   .copy.icon.copied::before {
+    display: inline-block;
     background-image: url('https://img.icons8.com/?size=100&id=98955&format=png&color=2ECC71');
-    animation: copyCheckPop 0.25s ease 2s;
+    animation: copyCheckPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   .button.icon.copy.copied,
   .copy.icon.copied {
@@ -1092,7 +1097,9 @@ border: 0px solid #535353;
     border-color: rgba(46, 204, 113, 0.5) !important;
     svg {
       stroke: #2ecc71 !important;
-      animation: copyCheckPop 0.25s ease;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: copyCheckPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
   }
 }
