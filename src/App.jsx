@@ -226,7 +226,6 @@ export default function App() {
                   <Route path="/:studioName/invitation-creator/:projectId" element={<InvitationPage/>} />
                   <Route path="/:studioName/projects" element={<Projects />} />
                   <Route path="/:studioName/packages" element={<Packages />} />
-                  <Route path="/:studioName/settings" element={<Settings/>} />
                   <Route path="/:studioName/notifications" element={<Notifications />} />
                   <Route path="/:studioName/storage" element={<Storage />} />
                   <Route path="/:studioName/store" element={<CommingSoon title={'Store'}/>} />
@@ -236,10 +235,11 @@ export default function App() {
                   <Route path="/:studioName/team" element={<Teams />} />
                 </Route>
 
-                {/* Subscription / billing routes - EXCLUDED from access block so suspended/inactive users can renew & view billing (same as Admin/Tools) */}
+                {/* Subscription / billing / settings routes - EXCLUDED from access block so suspended/inactive users can renew & view billing (same as Admin/Tools) */}
                 <Route element={<StudioAccessGate allowSubscriptionPage={true} />}>
                   <Route path="/:studioName/subscription" element={<Subscription />} />
                   <Route path="/:studioName/subscription/history" element={<BillingHistory />} />
+                  <Route path="/:studioName/settings" element={<Settings/>} />
                 </Route>
 
                 {/* Admin Routes - EXCLUDED from StudioAccessGate */}

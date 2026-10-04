@@ -1,9 +1,17 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectStudio, selectCurrentSubscription } from '../../app/slices/studioSlice';
 import { getStudioAccessState } from '../../utils/studioAccess';
 import AccessBlocked from './AccessBlocked';
+
+/**
+ * Paths that must stay visible even when the studio is blocked
+ * (expired, no_subscription, suspended, inactive) so the user can
+ * renew / view billing / manage settings. Matches:
+ * /:studioName/subscription, /:studioName/subscription/history, /:studioName/settings
+ */
+const EXEMPT_PATH_RE = /\/(subscription(\/history)?|settings)\/?$/;
 
 /**
  * StudioAccessGate protects studio workspace routes based on:
@@ -11,24 +19,30 @@ import AccessBlocked from './AccessBlocked';
  * 2. subscription entitlement & dates.endDate
  *
  * NOTE: Admin routes (/admin/*) and public routes are outside of this gate.
+ * NOTE: Subscription / billing / settings pages are exempt from the access
+ * block (same as Admin/Tools) — enforced here by path as well as by the
+ * allowSubscriptionPage prop, so placement mistakes can't re-block them.
  */
 export default function StudioAccessGate({ allowSubscriptionPage = false }) {
+  const location = useLocation();
   const studio = useSelector(selectStudio);
   const currentSubscription = useSelector(selectCurrentSubscription);
   const studioLoading = useSelector((state) => state.studio?.loading);
 
   const access = getStudioAccessState(studio, currentSubscription, studioLoading);
 
-  // If access is allowed, render child routes normally
-  if (access.allowed) {
+  // Exempt pages (subscription / billing history / settings) are never
+  // blocked — not even while studio data is still loading — so suspended /
+  // inactive users can always reach them to renew or view billing.
+  // Checked by path (not just the prop) so the exemption survives route
+  // re-organisation. Admin routes (/admin/*, /tools) live outside this
+  // gate entirely.
+  if (allowSubscriptionPage || EXEMPT_PATH_RE.test(location.pathname)) {
     return <Outlet />;
   }
 
-  // Subscription / billing pages must stay visible even when the studio is
-  // blocked (expired, no_subscription, suspended, inactive) so the user can
-  // renew / view billing. Admin routes (/admin/*, /tools) live outside this
-  // gate entirely.
-  if (allowSubscriptionPage && access.state !== 'loading') {
+  // If access is allowed, render child routes normally
+  if (access.allowed) {
     return <Outlet />;
   }
 
