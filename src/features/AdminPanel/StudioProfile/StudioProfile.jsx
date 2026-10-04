@@ -7,7 +7,7 @@ import {
     selectStudioProfileLoading, 
     selectStudioProfileError 
 } from '../../../app/slices/studioProfileSlice';
-import { updateStudioStatusAsync } from '../../../app/slices/studioSlice';
+import { updateStudioStatusAsync } from '../../../app/slices/adminSettingsSlice';
 import { showAlert } from '../../../app/slices/alertSlice';
 import { LoadingLight } from '../../../components/Loading/Loading';
 import './StudioProfile.scss';
@@ -33,6 +33,103 @@ function StudioProfile() {
     const [copiedKey, setCopiedKey] = useState(null);
     const [pendingStatus, setPendingStatus] = useState(null);
     const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+    const [projectSort, setProjectSort] = useState({ key: null, dir: 'asc' });
+    const [memberSort, setMemberSort] = useState({ key: null, dir: 'asc' });
+    const [selectionSort, setSelectionSort] = useState({ key: null, dir: 'asc' });
+    const [extensionSort, setExtensionSort] = useState({ key: null, dir: 'asc' });
+
+    const toggleSort = (sort, setSort, key) => {
+        setSort((prev) => {
+            if (prev.key !== key) return { key, dir: 'asc' };
+            return { key, dir: prev.dir === 'asc' ? 'desc' : 'asc' };
+        });
+    };
+
+    const compareSortValues = (aVal, bVal, dir) => {
+        const mult = dir === 'desc' ? -1 : 1;
+        const aEmpty = aVal === null || aVal === undefined || aVal === '';
+        const bEmpty = bVal === null || bVal === undefined || bVal === '';
+        if (aEmpty && bEmpty) return 0;
+        if (aEmpty) return -1 * mult;
+        if (bEmpty) return 1 * mult;
+        if (typeof aVal === 'number' && typeof bVal === 'number') {
+            return (aVal - bVal) * mult;
+        }
+        return String(aVal).localeCompare(String(bVal), undefined, { numeric: true, sensitivity: 'base' }) * mult;
+    };
+
+    const sortRows = (rows, sort, getValue) => {
+        if (!sort.key) return rows;
+        return [...rows].sort((ra, rb) =>
+            compareSortValues(getValue(ra, sort.key), getValue(rb, sort.key), sort.dir)
+        );
+    };
+
+    const toTime = (v) => {
+        if (!v) return null;
+        const t = new Date(v).getTime();
+        return Number.isNaN(t) ? null : t;
+    };
+
+    const getProjectValue = (p, key) => {
+        switch (key) {
+            case 'name': return p.name || '';
+            case 'type': return p.type || '';
+            case 'status': return p.status || '';
+            case 'photos': return Number(p.uploadedFilesCount ?? 0);
+            case 'storage': return Number(p.totalFileSize ?? 0);
+            case 'galleries': return Number(p.collectionsCount ?? 0);
+            case 'validity': return Number(p.projectValidityMonths ?? 0);
+            case 'created': return toTime(p.createdAt);
+            case 'lastOpened': return toTime(p.lastOpened);
+            default: return null;
+        }
+    };
+
+    const getMemberValue = (m, key) => {
+        switch (key) {
+            case 'member': return m.displayName || '';
+            case 'email': return m.email || '';
+            case 'role': return m.role || '';
+            case 'joined': return toTime(m.createdAt);
+            default: return null;
+        }
+    };
+
+    const getRequestValue = (r, key) => {
+        switch (key) {
+            case 'project': return r.projectName || r.projectId || '';
+            case 'status': return r.status || '';
+            case 'requestedAt': return toTime(r.requestedAt);
+            default: return null;
+        }
+    };
+
+    const renderSortTh = (label, sortKey, sort, onSort) => {
+        const isActive = sort.key === sortKey;
+        const arrow = isActive ? (sort.dir === 'asc' ? ' \u25B2' : ' \u25BC') : ' \u21D5';
+        return (
+            <th
+                key={sortKey}
+                onClick={onSort}
+                className={`sortable${isActive ? ` sorted-${sort.dir}` : ''}`}
+                title={`Sort by ${label}`}
+                aria-sort={isActive ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'}
+            >
+                <button
+                    type="button"
+                    className="th-sort-btn"
+                    onClick={(e) => { e.stopPropagation(); onSort(); }}
+                    aria-label={`Sort by ${label} ${isActive ? (sort.dir === 'asc' ? 'descending' : 'ascending') : 'ascending'}`}
+                >
+                    <span>{label}</span>
+                    <span className={`sort-arrow${isActive ? ' active' : ''}`} aria-hidden="true">
+                        {arrow}
+                    </span>
+                </button>
+            </th>
+        );
+    };
 
     useEffect(() => {
         if (studioName) {
@@ -72,8 +169,9 @@ function StudioProfile() {
         setIsUpdatingStatus(true);
         const studioId = studio.domain || studio.id;
         try {
+            // Operational studio status only — never modifies subscription/billing status.
             await dispatch(updateStudioStatusAsync({ studioId, status: nextStatus })).unwrap();
-            dispatch(showAlert({ type: 'success', message: `Studio status changed to ${nextStatus}` }));
+            dispatch(showAlert({ type: 'success', message: `Studio status changed to ${nextStatus}. Public galleries are now ${nextStatus === 'active' || nextStatus === 'trialing' ? 'allowed' : 'blocked'} for this studio.` }));
             setPendingStatus(null);
             // Refresh profile data to stay in sync
             dispatch(fetchStudioProfile(studioName));
@@ -93,6 +191,27 @@ function StudioProfile() {
             p.status.toLowerCase().includes(query)
         );
     }, [projects, projectSearchQuery]);
+
+    const sortedProjects = useMemo(
+        () => sortRows(filteredProjects, projectSort, getProjectValue),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [filteredProjects, projectSort]
+    );
+    const sortedMembers = useMemo(
+        () => sortRows(members, memberSort, getMemberValue),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [members, memberSort]
+    );
+    const sortedSelectionRequests = useMemo(
+        () => sortRows(selectionRequests, selectionSort, getRequestValue),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [selectionRequests, selectionSort]
+    );
+    const sortedExtensionRequests = useMemo(
+        () => sortRows(extensionRequests, extensionSort, getRequestValue),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [extensionRequests, extensionSort]
+    );
 
     const isTrialActive = useMemo(() => {
         if (!studio?.trialEndDate) return false;
@@ -177,11 +296,14 @@ function StudioProfile() {
                                 value={studio.status || 'active'}
                                 onChange={handleStatusSelectChange}
                                 disabled={isUpdatingStatus}
+                                title="Operational studio status. Inactive/suspended blocks public galleries. Does not change billing status."
                             >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                                <option value="suspended">Suspended</option>
+                                <option value="active">Active — galleries allowed</option>
+                                <option value="trialing">Trialing — galleries allowed</option>
+                                <option value="inactive">Inactive — galleries blocked</option>
+                                <option value="suspended">Suspended — galleries blocked</option>
                             </select>
+                            {isUpdatingStatus && <span className="status-updating-note">Updating…</span>}
                         </div>
                         <span className="plan-badge">
                             {studio.planName || 'Core'}
@@ -194,9 +316,9 @@ function StudioProfile() {
                             <span className="meta-label">Studio ID:</span>
                             <span className="meta-value">{studio.id}</span>
                             <button 
-                                className="copy-button"
+                                className={`copy-button${copiedKey === 'id' ? ' copied' : ''}`}
                                 onClick={() => handleCopy(studio.id, 'id')}
-                                title="Copy ID"
+                                title={copiedKey === 'id' ? 'Copied!' : 'Copy ID'}
                             >
                                 {copiedKey === 'id' ? '✓' : '⧉'}
                             </button>
@@ -206,9 +328,9 @@ function StudioProfile() {
                                 <span className="meta-label">Owner:</span>
                                 <span className="meta-value">{studio.ownerId}</span>
                                 <button 
-                                    className="copy-button" 
+                                    className={`copy-button${copiedKey === 'owner' ? ' copied' : ''}`} 
                                     onClick={() => handleCopy(studio.ownerId, 'owner')}
-                                    title="Copy Owner Email"
+                                    title={copiedKey === 'owner' ? 'Copied!' : 'Copy Owner Email'}
                                 >
                                     {copiedKey === 'owner' ? '✓' : '⧉'}
                                 </button>
@@ -349,19 +471,19 @@ function StudioProfile() {
                         <table className="invoice-table">
                             <thead>
                                 <tr>
-                                    <th>PROJECT NAME</th>
-                                    <th>TYPE</th>
-                                    <th>STATUS</th>
-                                    <th>PHOTOS</th>
-                                    <th>STORAGE</th>
-                                    <th>GALLERIES</th>
-                                    <th>VALIDITY</th>
-                                    <th>CREATED</th>
-                                    <th>LAST OPENED</th>
+                                    {renderSortTh('PROJECT NAME', 'name', projectSort, () => toggleSort(projectSort, setProjectSort, 'name'))}
+                                    {renderSortTh('TYPE', 'type', projectSort, () => toggleSort(projectSort, setProjectSort, 'type'))}
+                                    {renderSortTh('STATUS', 'status', projectSort, () => toggleSort(projectSort, setProjectSort, 'status'))}
+                                    {renderSortTh('PHOTOS', 'photos', projectSort, () => toggleSort(projectSort, setProjectSort, 'photos'))}
+                                    {renderSortTh('STORAGE', 'storage', projectSort, () => toggleSort(projectSort, setProjectSort, 'storage'))}
+                                    {renderSortTh('GALLERIES', 'galleries', projectSort, () => toggleSort(projectSort, setProjectSort, 'galleries'))}
+                                    {renderSortTh('VALIDITY', 'validity', projectSort, () => toggleSort(projectSort, setProjectSort, 'validity'))}
+                                    {renderSortTh('CREATED', 'created', projectSort, () => toggleSort(projectSort, setProjectSort, 'created'))}
+                                    {renderSortTh('LAST OPENED', 'lastOpened', projectSort, () => toggleSort(projectSort, setProjectSort, 'lastOpened'))}
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredProjects.map(proj => (
+                                {sortedProjects.map(proj => (
                                     <tr key={proj.id}>
                                         <td>
                                             <div className="project-cell-name">
@@ -404,15 +526,15 @@ function StudioProfile() {
                         <table className="invoice-table">
                             <thead>
                                 <tr>
-                                    <th>MEMBER</th>
-                                    <th>EMAIL</th>
-                                    <th>ROLE</th>
-                                    <th>JOINED</th>
+                                    {renderSortTh('MEMBER', 'member', memberSort, () => toggleSort(memberSort, setMemberSort, 'member'))}
+                                    {renderSortTh('EMAIL', 'email', memberSort, () => toggleSort(memberSort, setMemberSort, 'email'))}
+                                    {renderSortTh('ROLE', 'role', memberSort, () => toggleSort(memberSort, setMemberSort, 'role'))}
+                                    {renderSortTh('JOINED', 'joined', memberSort, () => toggleSort(memberSort, setMemberSort, 'joined'))}
                                     <th>ACTIONS</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {members.map(member => (
+                                {sortedMembers.map(member => (
                                     <tr key={member.id}>
                                         <td>
                                             <div className="member-name-cell">
@@ -463,7 +585,11 @@ function StudioProfile() {
                             </div>
                             <div className="info-row">
                                 <span className="info-label">Subscription Status:</span>
-                                <span className="info-val capitalize">{studio.billing?.status || studio.status || 'Active'}</span>
+                                <span className="info-val capitalize">{studio.billing?.status || 'Active'}</span>
+                            </div>
+                            <div className="info-row">
+                                <span className="info-label">Operational Status:</span>
+                                <span className="info-val capitalize">{studio.status || 'active'}</span>
                             </div>
                             <div className="info-row">
                                 <span className="info-label">Active Trial:</span>
@@ -532,13 +658,13 @@ function StudioProfile() {
                                 <table className="invoice-table">
                                     <thead>
                                         <tr>
-                                            <th>PROJECT</th>
-                                            <th>STATUS</th>
-                                            <th>REQUESTED AT</th>
+                                            {renderSortTh('PROJECT', 'project', selectionSort, () => toggleSort(selectionSort, setSelectionSort, 'project'))}
+                                            {renderSortTh('STATUS', 'status', selectionSort, () => toggleSort(selectionSort, setSelectionSort, 'status'))}
+                                            {renderSortTh('REQUESTED AT', 'requestedAt', selectionSort, () => toggleSort(selectionSort, setSelectionSort, 'requestedAt'))}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {selectionRequests.map(req => (
+                                        {sortedSelectionRequests.map(req => (
                                             <tr key={req.id}>
                                                 <td>{req.projectName || req.projectId}</td>
                                                 <td>
@@ -562,13 +688,13 @@ function StudioProfile() {
                                 <table className="invoice-table">
                                     <thead>
                                         <tr>
-                                            <th>PROJECT</th>
-                                            <th>STATUS</th>
-                                            <th>REQUESTED AT</th>
+                                            {renderSortTh('PROJECT', 'project', extensionSort, () => toggleSort(extensionSort, setExtensionSort, 'project'))}
+                                            {renderSortTh('STATUS', 'status', extensionSort, () => toggleSort(extensionSort, setExtensionSort, 'status'))}
+                                            {renderSortTh('REQUESTED AT', 'requestedAt', extensionSort, () => toggleSort(extensionSort, setExtensionSort, 'requestedAt'))}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {extensionRequests.map(req => (
+                                        {sortedExtensionRequests.map(req => (
                                             <tr key={req.id}>
                                                 <td>{req.projectName || req.projectId}</td>
                                                 <td>
@@ -653,8 +779,11 @@ function StudioProfile() {
                         <div className="modal-body" style={{ padding: '16px 20px', textAlign: 'center' }}>
                             <p style={{ fontSize: '0.95rem', color: '#e5e5ea', lineHeight: 1.5, margin: '10px 0' }}>
                                 {pendingStatus === 'suspended'
-                                    ? `This will immediately suspend "${studio.name}" and prevent the studio from accessing its FotoFlow workspace.`
-                                    : `This will mark "${studio.name}" as inactive and restrict workspace access until re-activated.`}
+                                    ? `This will immediately suspend "${studio.name}" and block its public galleries, even for active collections. The studio will not be able to serve galleries until re-activated.`
+                                    : `This will mark "${studio.name}" as inactive and block its public galleries until re-activated.`}
+                            </p>
+                            <p style={{ fontSize: '0.8rem', color: '#a1a1aa', lineHeight: 1.5, margin: '10px 0' }}>
+                                Subscription/billing status is not changed by this action.
                             </p>
                         </div>
                         <div className="actions" style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', padding: '16px 20px' }}>

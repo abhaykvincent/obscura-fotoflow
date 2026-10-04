@@ -37,6 +37,12 @@ const CopyIcon = () => (
     </svg>
 );
 
+const CheckIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2ecc71" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+);
+
 const ExpandIcon = () => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="15 3 21 3 21 9"></polyline>
@@ -122,6 +128,7 @@ function DeveloperTools() {
     const [docSearch, setDocSearch] = useState('');
     const [jsonForceExpand, setJsonForceExpand] = useState(null);
     const [isSeeding, setIsSeeding] = useState(false);
+    const [jsonCopied, setJsonCopied] = useState(false);
 
     // --- Helpers ---
 
@@ -226,6 +233,8 @@ function DeveloperTools() {
         if (!getSelectedDocumentData) return;
         const text = JSON.stringify(getSelectedDocumentData, null, 2);
         navigator.clipboard.writeText(text).then(() => {
+            setJsonCopied(true);
+            setTimeout(() => setJsonCopied(false), 1600);
             dispatch(showAlert({ type: 'success', message: 'JSON copied to clipboard!' }));
         });
     };
@@ -402,8 +411,8 @@ function DeveloperTools() {
                                     <span className="doc-title">{selectedDocId || 'Document Data'}</span>
                                     {selectedDocId && (
                                         <div className="data-actions">
-                                            <button className="icon-btn" title="Copy JSON" onClick={copyToClipboard}>
-                                                <CopyIcon />
+                                            <button className={`icon-btn${jsonCopied ? ' copied' : ''}`} title={jsonCopied ? 'Copied!' : 'Copy JSON'} onClick={copyToClipboard}>
+                                                {jsonCopied ? <CheckIcon /> : <CopyIcon />}
                                             </button>
                                             <button className="icon-btn" title="Toggle Expand" onClick={toggleExpandAll}>
                                                 {jsonForceExpand === true ? <CollapseIcon /> : <ExpandIcon />}

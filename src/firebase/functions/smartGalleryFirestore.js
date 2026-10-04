@@ -26,6 +26,21 @@ const convertTimestampsToMillis = (obj) => {
 
 export const fetchSmartGalleryFromFirestore = async (domain, projectId, collectionId) => {
     try {
+        // --- Studio-status enforcement ---
+        // Deny gallery data when the parent studio is suspended/inactive, even
+        // if the collection itself is active. Prevents bypassing the React UI
+        // by calling this data path directly.
+        const studioDocRef = doc(db, 'studios', domain);
+        const studioSnapshot = await getDoc(studioDocRef);
+        if (studioSnapshot.exists()) {
+            const studioStatus = (studioSnapshot.data()?.status || 'active').toLowerCase();
+            if (studioStatus === 'suspended' || studioStatus === 'inactive') {
+                const err = new Error(studioStatus === 'suspended' ? 'Studio suspended.' : 'Studio inactive.');
+                err.code = studioStatus === 'suspended' ? 'studio-suspended' : 'studio-inactive';
+                throw err;
+            }
+        }
+
         const collectionDocRef = doc(db, 'studios', domain, 'projects', projectId, 'collections', collectionId);
         const collectionSnapshot = await getDoc(collectionDocRef);
 

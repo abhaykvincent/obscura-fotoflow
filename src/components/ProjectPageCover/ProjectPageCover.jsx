@@ -10,6 +10,7 @@ import { updateProjectCover, updateProjectName } from "../../app/slices/projects
 import { convertMegabytes, truncateMiddle, truncateUrl } from "../../utils/stringUtils";
 import { ProjectStatus } from "../Project/ProjectStatus/ProjectStatus";
 import { getGalleryURL, getCoverUrl } from "../../utils/urlUtils";
+import CopyButton from "../CopyButton/CopyButton";
 import { getCdnUrl } from "../../utils/cdnUrl";
 import { getStorageForDomain } from "../../utils/uploadOperations";
 import { selectStudio } from "../../app/slices/studioSlice";
@@ -183,12 +184,11 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                                         getGalleryURL('smart-gallery', currentStudio?.domain, project?.id), 8*3, 8*2
                                     )}
                                 </a>
-                                <div 
-                                    className="button primary outline text-only icon copy" 
-                                    onClick={() => {
-                                        navigator.clipboard.writeText(getGalleryURL('smart-gallery', currentStudio?.domain, project?.id));
-                                        dispatch(showAlert({ type: "success", message: "Link copied to clipboard!" }));
-                                    }}
+                                <CopyButton
+                                    text={getGalleryURL('smart-gallery', currentStudio?.domain, project?.id)}
+                                    className="button primary outline text-only icon copy"
+                                    title="Copy gallery link"
+                                    onCopied={() => dispatch(showAlert({ type: "success", message: "Link copied to clipboard!" }))}
                                 />
                             </div>
                         </div> 

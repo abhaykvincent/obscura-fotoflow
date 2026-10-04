@@ -429,9 +429,9 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
                     { !showAllPhotos ?
                     <>
                     <div className={`open-in ${showAllPhotos ? 'disabled' : ''}`} onClick={handleOpenInDesktopApp}>
-                         <button className={`lr button secondary icon copy`}>
-                            {copyStatus === 'Copied' ? 'Copied' : `Open in Desktop`}
-                         </button>
+                         <button className={`lr button secondary icon copy${copyStatus === 'Copied' ? ' copied' : ''}`}>
+                             {copyStatus === 'Copied' ? 'Copied' : `Open in Desktop`}
+                          </button>
                     </div>
                     
                         </>:

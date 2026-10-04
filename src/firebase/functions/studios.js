@@ -262,8 +262,21 @@ export const updateStudioLogo = async (studioId, logoUrl) => {
     }
 };
 
+export const VALID_STUDIO_STATUSES = ['active', 'trialing', 'inactive', 'suspended'];
+
 export const updateStudio = async (studioId, updates) => {
     try {
+        // Server-side validation: never trust a client-provided arbitrary status string.
+        // `status` is the operational studio status (not billing status) and only
+        // allows explicitly documented states. `trialing`/`active` permit access;
+        // `inactive`/`suspended` block it per the gallery access-control rule.
+        if (updates && Object.prototype.hasOwnProperty.call(updates, 'status')) {
+            const normalized = (updates.status || '').toLowerCase();
+            if (!VALID_STUDIO_STATUSES.includes(normalized)) {
+                throw new Error(`Invalid studio status: '${updates.status}'. Allowed statuses are: ${VALID_STUDIO_STATUSES.join(', ')}`);
+            }
+            updates = { ...updates, status: normalized };
+        }
         const studioRef = doc(db, 'studios', studioId);
         const updateData = {
             ...updates,
@@ -278,19 +291,25 @@ export const updateStudio = async (studioId, updates) => {
     }
 };
 
-export const updateStudioStatus = async (studioId, status) => {
-    const VALID_STUDIO_STATUSES = ['active', 'inactive', 'suspended'];
+export const updateStudioStatus = async (studioId, status, options = {}) => {
+    // Operational studio statuses only — never conflate with studio.billing.status.
+    // `active` / `trialing` = normal operation; `inactive` / `suspended` = blocked.
+    const VALID_OPERATIONAL_STATUSES = ['active', 'trialing', 'inactive', 'suspended'];
     const normalizedStatus = (status || '').toLowerCase();
-    if (!VALID_STUDIO_STATUSES.includes(normalizedStatus)) {
-        throw new Error(`Invalid studio status: '${status}'. Allowed statuses are: ${VALID_STUDIO_STATUSES.join(', ')}`);
+    if (!VALID_OPERATIONAL_STATUSES.includes(normalizedStatus)) {
+        throw new Error(`Invalid studio status: '${status}'. Allowed statuses are: ${VALID_OPERATIONAL_STATUSES.join(', ')}`);
     }
 
     try {
         const studioRef = doc(db, 'studios', studioId);
-        await updateDoc(studioRef, {
+        const payload = {
             status: normalizedStatus,
             'metadata.updatedAt': new Date().toISOString(),
-        });
+        };
+        if (options.updatedBy) {
+            payload['metadata.updatedBy'] = options.updatedBy;
+        }
+        await updateDoc(studioRef, payload);
         console.log(`Studio ${studioId} status successfully updated to '${normalizedStatus}'.`);
         return { success: true, status: normalizedStatus };
     } catch (error) {

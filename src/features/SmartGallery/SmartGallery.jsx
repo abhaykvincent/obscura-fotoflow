@@ -37,6 +37,13 @@ export default function SmartGallery() {
   const [isStageExpired, setIsStageExpired] = useState(false);
   const [visibleCollections, setVisibleCollections] = useState([]);
   const [collectionsLoading, setCollectionsLoading] = useState(true);
+  // studioBlockedReason is the enforcement result from the direct
+  // domain → studio → studio.status read. It is the source of truth for the
+  // blocked UI — Redux galleryStudio may be stale/null on first render, so a
+  // blocked studio must never fall through to a silent empty grid.
+  const [studioBlockedReason, setStudioBlockedReason] = useState(null);
+  const studioStatus = (studio?.status || 'active').toLowerCase();
+  const isStudioBlocked = studioBlockedReason !== null || studioStatus === 'suspended' || studioStatus === 'inactive';
   
   const [isClientAuthenticated, setIsClientAuthenticated] = useState(() => isPinValid(projectId));
   const [isDownloading, setIsDownloading] = useState(false);
@@ -144,23 +151,44 @@ export default function SmartGallery() {
   useEffect(() => {
     const checkCollectionVisibility = async () => {
       if (!project?.collections) return;
-      
+
+      // Studio-level block takes precedence over per-collection visibility.
+      if (studioStatus === 'suspended' || studioStatus === 'inactive') {
+        setStudioBlockedReason(studioStatus === 'suspended' ? 'studio-suspended' : 'studio-inactive');
+        setVisibleCollections([]);
+        setCollectionsLoading(false);
+        return;
+      }
+
       setCollectionsLoading(true);
       const newVisibleCollections = [];
       for (const collection of project.collections) {
         if (collection.uploadedFiles?.length > 0) {
-          const status = await fetchCollectionStatus(studioName, projectId, collection.id);
-          if (status !== 'hide') {
-            newVisibleCollections.push(collection);
+          try {
+            const status = await fetchCollectionStatus(studioName, projectId, collection.id);
+            if (status !== 'hide') {
+              newVisibleCollections.push(collection);
+            }
+          } catch (err) {
+            // Studio-level blocks (studio-suspended/studio-inactive) deny the
+            // whole list; other errors hide just that collection.
+            if (err?.code === 'studio-suspended' || err?.code === 'studio-inactive') {
+              setStudioBlockedReason(err.code);
+              setVisibleCollections([]);
+              setCollectionsLoading(false);
+              return;
+            }
+            console.error(`Skipping collection ${collection.id}:`, err.message);
           }
         }
       }
+      setStudioBlockedReason(null);
       setVisibleCollections(newVisibleCollections);
       setCollectionsLoading(false);
     };
 
     checkCollectionVisibility();
-  }, [project, studioName, projectId]);
+  }, [project, studioName, projectId, studioStatus]);
 
   useEffect(() => {
     if (project) {
@@ -293,6 +321,20 @@ export default function SmartGallery() {
 
   if (!project) {
     return <div>Project not found.</div>;
+  }
+
+  // Studio blocked: gallery list must not be served even for active collections.
+  // Keep the message generic; do not expose administrative details.
+  if (isStudioBlocked) {
+    const showSuspended = studioBlockedReason === 'studio-suspended' || (studioBlockedReason === null && studioStatus === 'suspended');
+    return (
+      <div className="smart-gallery-page studio-blocked">
+        <div className="smart-album-inactive">
+          <h2>{showSuspended ? 'This gallery is temporarily unavailable.' : 'This gallery is currently unavailable.'}</h2>
+          <p>Please contact the studio for assistance.</p>
+        </div>
+      </div>
+    );
   }
   const isStudioPhotographer = isAuthenticated && userStudio?.domain === studioName;
   const userRole = isStudioPhotographer ? 'photographer' : (isClientAuthenticated ? 'client' : 'guest');
