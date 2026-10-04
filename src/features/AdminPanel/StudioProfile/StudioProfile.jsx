@@ -7,7 +7,7 @@ import {
     selectStudioProfileLoading, 
     selectStudioProfileError 
 } from '../../../app/slices/studioProfileSlice';
-import { updateStudioStatusAsync } from '../../../app/slices/studioSlice';
+import { updateStudioStatusAsync } from '../../../app/slices/adminSettingsSlice';
 import { showAlert } from '../../../app/slices/alertSlice';
 import { LoadingLight } from '../../../components/Loading/Loading';
 import './StudioProfile.scss';
@@ -72,8 +72,9 @@ function StudioProfile() {
         setIsUpdatingStatus(true);
         const studioId = studio.domain || studio.id;
         try {
+            // Operational studio status only — never modifies subscription/billing status.
             await dispatch(updateStudioStatusAsync({ studioId, status: nextStatus })).unwrap();
-            dispatch(showAlert({ type: 'success', message: `Studio status changed to ${nextStatus}` }));
+            dispatch(showAlert({ type: 'success', message: `Studio status changed to ${nextStatus}. Public galleries are now ${nextStatus === 'active' || nextStatus === 'trialing' ? 'allowed' : 'blocked'} for this studio.` }));
             setPendingStatus(null);
             // Refresh profile data to stay in sync
             dispatch(fetchStudioProfile(studioName));
@@ -177,11 +178,14 @@ function StudioProfile() {
                                 value={studio.status || 'active'}
                                 onChange={handleStatusSelectChange}
                                 disabled={isUpdatingStatus}
+                                title="Operational studio status. Inactive/suspended blocks public galleries. Does not change billing status."
                             >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                                <option value="suspended">Suspended</option>
+                                <option value="active">Active — galleries allowed</option>
+                                <option value="trialing">Trialing — galleries allowed</option>
+                                <option value="inactive">Inactive — galleries blocked</option>
+                                <option value="suspended">Suspended — galleries blocked</option>
                             </select>
+                            {isUpdatingStatus && <span className="status-updating-note">Updating…</span>}
                         </div>
                         <span className="plan-badge">
                             {studio.planName || 'Core'}
@@ -463,7 +467,11 @@ function StudioProfile() {
                             </div>
                             <div className="info-row">
                                 <span className="info-label">Subscription Status:</span>
-                                <span className="info-val capitalize">{studio.billing?.status || studio.status || 'Active'}</span>
+                                <span className="info-val capitalize">{studio.billing?.status || 'Active'}</span>
+                            </div>
+                            <div className="info-row">
+                                <span className="info-label">Operational Status:</span>
+                                <span className="info-val capitalize">{studio.status || 'active'}</span>
                             </div>
                             <div className="info-row">
                                 <span className="info-label">Active Trial:</span>
@@ -653,8 +661,11 @@ function StudioProfile() {
                         <div className="modal-body" style={{ padding: '16px 20px', textAlign: 'center' }}>
                             <p style={{ fontSize: '0.95rem', color: '#e5e5ea', lineHeight: 1.5, margin: '10px 0' }}>
                                 {pendingStatus === 'suspended'
-                                    ? `This will immediately suspend "${studio.name}" and prevent the studio from accessing its FotoFlow workspace.`
-                                    : `This will mark "${studio.name}" as inactive and restrict workspace access until re-activated.`}
+                                    ? `This will immediately suspend "${studio.name}" and block its public galleries, even for active collections. The studio will not be able to serve galleries until re-activated.`
+                                    : `This will mark "${studio.name}" as inactive and block its public galleries until re-activated.`}
+                            </p>
+                            <p style={{ fontSize: '0.8rem', color: '#a1a1aa', lineHeight: 1.5, margin: '10px 0' }}>
+                                Subscription/billing status is not changed by this action.
                             </p>
                         </div>
                         <div className="actions" style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', padding: '16px 20px' }}>

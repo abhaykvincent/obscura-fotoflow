@@ -59,7 +59,7 @@ export function normalizeEndDateToTimestamp(dateValue) {
   return null;
 }
 
-export const VALID_STUDIO_STATUSES = ['active', 'inactive', 'suspended'];
+export const VALID_STUDIO_STATUSES = ['active', 'trialing', 'inactive', 'suspended'];
 
 /**
  * Pure evaluator for studio workspace access.

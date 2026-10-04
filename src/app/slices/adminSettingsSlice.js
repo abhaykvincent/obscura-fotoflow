@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { updateGalleryTagline, updateStudioLogo, updateStudio } from '../../firebase/functions/studios';
+import { updateGalleryTagline, updateStudioLogo, updateStudio, updateStudioStatus } from '../../firebase/functions/studios';
 import { uploadStudioLogo } from '../../utils/uploadOperations';
 import { 
     fetchPricingGroups, 
@@ -131,6 +131,24 @@ export const updateStudioAsync = createAsyncThunk(
   }
 );
 
+/**
+ * Explicit studio operational-status action for the Admin Studio Profile.
+ * Uses the validated `updateStudioStatus` path (active/trialing/inactive/suspended)
+ * rather than the generic studio-update mechanism, so status transitions get
+ * validation, state refresh, and audit info. Never touches billing status.
+ */
+export const updateStudioStatusAsync = createAsyncThunk(
+  'adminSettings/updateStudioStatus',
+  async ({ studioId, status, updatedBy }, { rejectWithValue }) => {
+    try {
+      const result = await updateStudioStatus(studioId, status, { updatedBy });
+      return { studioId, status: result.status };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const updateStudioLogoAsync = createAsyncThunk(
   'adminSettings/updateStudioLogo',
   async ({ file, studioDomain }, { rejectWithValue }) => {
@@ -256,6 +274,19 @@ const adminSettingsSlice = createSlice({
         // already handled by re-fetching or other slices.
       })
       .addCase(updateStudioAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Update Studio Status (explicit operational-status action)
+      .addCase(updateStudioStatusAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateStudioStatusAsync.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(updateStudioStatusAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

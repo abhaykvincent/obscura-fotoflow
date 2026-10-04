@@ -51,6 +51,11 @@ const studioProfileSlice = createSlice({
         if (state.data?.studio && (state.data.studio.id === action.payload.studioId || state.data.studio.domain === action.payload.studioId)) {
           state.data.studio.status = action.payload.status;
         }
+      })
+      .addCase('adminSettings/updateStudioStatus/fulfilled', (state, action) => {
+        if (state.data?.studio && (state.data.studio.id === action.payload.studioId || state.data.studio.domain === action.payload.studioId)) {
+          state.data.studio.status = action.payload.status;
+        }
       });
   },
 });

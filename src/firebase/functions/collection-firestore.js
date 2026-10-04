@@ -125,10 +125,31 @@ export const fetchCollectionStatus = async (domain, projectId, collectionId) => 
     }
 
     const studioDocRef = doc(db, 'studios', domain);
-    const projectsCollectionRef = collection(studioDocRef, 'projects');
-    const projectDocRef = doc(projectsCollectionRef, projectId);
 
     try {
+        // --- Studio-status enforcement (access-control boundary) ---
+        // Gallery access requires: Studio allowed + Project allowed + Collection allowed.
+        // A suspended/inactive studio blocks the gallery even if the collection is active.
+        const studioSnapshot = await getDoc(studioDocRef);
+        if (studioSnapshot.exists()) {
+            const studioStatus = (studioSnapshot.data()?.status || 'active').toLowerCase();
+            if (studioStatus === 'suspended') {
+                const err = new Error('Studio suspended.');
+                err.code = 'studio-suspended';
+                throw err;
+            }
+            if (studioStatus === 'inactive') {
+                const err = new Error('Studio inactive.');
+                err.code = 'studio-inactive';
+                throw err;
+            }
+        }
+        // If the studio document is missing, fall through to the project check
+        // below so callers still get a meaningful "Project does not exist" error.
+
+        const projectsCollectionRef = collection(studioDocRef, 'projects');
+        const projectDocRef = doc(projectsCollectionRef, projectId);
+
         const projectSnapshot = await getDoc(projectDocRef);
 
         if (!projectSnapshot.exists()) {
@@ -235,4 +256,72 @@ export const updateCollectionSelectionStatusByCollectionIdInFirestore = async (d
         console.error("Error updating collection selection status:", error);
         throw error;
     }
+};
+
+/**
+ * Studio-status-aware gallery access decision.
+ *
+ * Resolves domain → studio → studio.status → project → collection and denies
+ * gallery access when the studio is not permitted to serve the gallery.
+ *
+ * Effective rule: Studio allowed + Project allowed + Collection allowed → visible.
+ * If any required parent access condition fails → blocked.
+ *
+ * Collection status, project status, subscription status, and studio status
+ * remain separate concepts; this function only combines them into a decision.
+ *
+ * @returns {Promise<{allowed: boolean, reason: string|null, studioStatus: string|null, collectionStatus: string|null, projectStatus: string|null}>}
+ */
+export const fetchGalleryAccess = async (domain, projectId, collectionId) => {
+    if (!domain || !projectId || !collectionId) {
+        throw new Error('Domain, Project ID, and Collection ID are required.');
+    }
+
+    const studioDocRef = doc(db, 'studios', domain);
+    const projectDocRef = doc(studioDocRef, 'projects', projectId);
+
+    // 1. Studio check (operational access to the tenant — not billing status).
+    let studioStatus = null;
+    try {
+        const studioSnapshot = await getDoc(studioDocRef);
+        if (studioSnapshot.exists()) {
+            studioStatus = (studioSnapshot.data()?.status || 'active').toLowerCase();
+        }
+    } catch (error) {
+        console.error(`Error fetching studio status for gallery access: ${error.message}`);
+        throw error;
+    }
+
+    if (studioStatus === 'suspended') {
+        return { allowed: false, reason: 'studio-suspended', studioStatus, collectionStatus: null, projectStatus: null };
+    }
+    if (studioStatus === 'inactive') {
+        return { allowed: false, reason: 'studio-inactive', studioStatus, collectionStatus: null, projectStatus: null };
+    }
+
+    // 2. Project + collection checks.
+    const projectSnapshot = await getDoc(projectDocRef);
+    if (!projectSnapshot.exists()) {
+        const err = new Error('Project does not exist.');
+        err.code = 'project-not-found';
+        throw err;
+    }
+    const projectData = projectSnapshot.data();
+    const collection = projectData.collections?.find(c => c.id === collectionId);
+    if (!collection) {
+        const err = new Error('Collection not found in project.');
+        err.code = 'collection-not-found';
+        throw err;
+    }
+
+    const collectionStatus = collection.status;
+    const projectStatus = projectData.status || null;
+    const allowed = collectionStatus === 'visible' || collectionStatus === 'active';
+    return {
+        allowed,
+        reason: allowed ? null : 'collection-hidden',
+        studioStatus: studioStatus || 'active',
+        collectionStatus,
+        projectStatus,
+    };
 };
