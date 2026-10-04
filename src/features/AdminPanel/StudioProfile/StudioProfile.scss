@@ -481,6 +481,10 @@
                 white-space: nowrap;
 
                 &.sortable {
+                    // Keep th padding at 0 so the inner button owns the
+                    // full hit-area — a bare onClick on <th> alone is easy
+                    // to miss / swallow, a real <button> always fires.
+                    padding: 0;
                     cursor: pointer;
                     user-select: none;
                     transition: color 0.15s ease, background-color 0.15s ease;
@@ -495,15 +499,42 @@
                         color: $light-0;
                     }
 
+                    .th-sort-btn {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 6px;
+                        width: 100%;
+                        padding: 10px 16px;
+                        background: none;
+                        border: none;
+                        color: inherit;
+                        font: inherit;
+                        letter-spacing: inherit;
+                        text-transform: inherit;
+                        cursor: pointer;
+                        text-align: left;
+                        white-space: nowrap;
+
+                        &:focus-visible {
+                            outline: 2px solid $green-accessible-dark;
+                            outline-offset: -2px;
+                        }
+                    }
+
                     .sort-arrow {
                         display: inline-block;
-                        margin-left: 6px;
                         font-size: 0.65rem;
-                        color: $green-accessible-dark;
+                        color: $gray-accessible-dark;
+                        opacity: 0.6;
 
                         &.active {
                             color: $green-default-light;
+                            opacity: 1;
                         }
+                    }
+
+                    &:hover .sort-arrow {
+                        opacity: 1;
                     }
                 }
             }

@@ -107,18 +107,26 @@ function StudioProfile() {
 
     const renderSortTh = (label, sortKey, sort, onSort) => {
         const isActive = sort.key === sortKey;
-        const arrow = isActive ? (sort.dir === 'asc' ? ' \u25B2' : ' \u25BC') : '';
+        const arrow = isActive ? (sort.dir === 'asc' ? ' \u25B2' : ' \u25BC') : ' \u21D5';
         return (
             <th
+                key={sortKey}
                 onClick={onSort}
                 className={`sortable${isActive ? ` sorted-${sort.dir}` : ''}`}
                 title={`Sort by ${label}`}
                 aria-sort={isActive ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'}
             >
-                {label}
-                <span className={`sort-arrow${isActive ? ' active' : ''}`} aria-hidden="true">
-                    {arrow}
-                </span>
+                <button
+                    type="button"
+                    className="th-sort-btn"
+                    onClick={(e) => { e.stopPropagation(); onSort(); }}
+                    aria-label={`Sort by ${label} ${isActive ? (sort.dir === 'asc' ? 'descending' : 'ascending') : 'ascending'}`}
+                >
+                    <span>{label}</span>
+                    <span className={`sort-arrow${isActive ? ' active' : ''}`} aria-hidden="true">
+                        {arrow}
+                    </span>
+                </button>
             </th>
         );
     };
