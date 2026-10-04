@@ -1,9 +1,113 @@
 rules_version = '2';
 
+// FotoFlow Firestore Security Rules — studio-status access boundary.
+//
+// Access-control model:
+//   Gallery access requires: Studio allowed + Project allowed + Collection allowed.
+//   - studio.status (operational tenant access: active/trialing/inactive/suspended)
+//     is SEPARATE from studio.billing.status, project status, collection status,
+//     and time-based expiry. Only the operational status is enforced here.
+//   - `inactive` / `suspended` studios must not serve public galleries, even when
+//     the collection itself is active.
+//
+// Enforcement layers:
+//   1. Client/data layer (fetchGalleryAccess, fetchCollectionStatus,
+//      fetchSmartGalleryFromFirestore) denies blocked studios.
+//   2. Cloud Function (serveGallery) returns 403 for blocked studios — this is
+//      the server-side boundary for SEO/redirect/app-shell serving.
+//   3. THESE RULES constrain direct Firestore reads/writes. Public gallery
+//      reads must stay open (unauthenticated clients view galleries via direct
+//      Firestore reads), so rules alone CANNOT fully block data delivery for
+//      suspended studios — that is why layer 1 + 2 exist. Do not loosen these
+//      rules without re-auditing public image/gallery paths.
+//
+// Admin note: studio operational-status writes require authentication and a
+// valid status value. Strengthen `isAdmin()` to check a custom claim
+// (e.g. request.auth.token.admin == true) once admin claims are issued —
+// ordinary studio users must never be able to set their own studio to
+// active/inactive/suspended.
+
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // TODO: bind to an admin custom claim once issued.
+    // Today this is "any authenticated user"; tighten to
+    // request.auth.token.admin == true before relying on rules alone.
+    function isAdmin() {
+      return isSignedIn();
+    }
+
+    function validStudioStatus(status) {
+      return status in ['active', 'trialing', 'inactive', 'suspended'];
+    }
+
+    // Studio tenant document. Public get is required: public galleries resolve
+    // domain → studio → studio.status client-side before rendering.
+    match /studios/{studioId} {
+      allow get: if true;
+      allow list: if isSignedIn();
+      allow create: if isAdmin();
+      // Status transitions allow only documented values. A status change must
+      // never silently alter billing: when status changes, billing must be
+      // untouched (billing updates without a status change remain permitted).
+      allow update: if isAdmin()
+        && validStudioStatus(request.resource.data.status)
+        && (
+          request.resource.data.status == resource.data.status
+          || request.resource.data.billing == resource.data.billing
+        );
+      allow delete: if isAdmin();
+    }
+
+    // Projects and collections: public read for galleries; writes need auth.
+    match /studios/{studioId}/projects/{projectId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn();
+    }
+
+    match /studios/{studioId}/projects/{projectId}/collections/{collectionId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn();
+    }
+
+    // Guest PIN flows create these from public gallery pages (unauthenticated).
+    match /studios/{studioId}/selectionRequests/{requestId} {
+      allow get, list: if isSignedIn();
+      allow create: if true;
+      allow update, delete: if isSignedIn();
+    }
+
+    match /studios/{studioId}/extensionRequests/{requestId} {
+      allow get, list: if isSignedIn();
+      allow create: if true;
+      allow update, delete: if isSignedIn();
+    }
+
+    // Any other studio subcollection: authenticated access.
+    match /studios/{studioId}/{subcollection}/{docId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // Public pricing display; plan edits are admin-only.
+    match /pricingGroups/{groupId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Public signup/lead capture creates leads unauthenticated.
+    match /leads/{leadId} {
+      allow get, list: if isSignedIn();
+      allow create: if true;
+      allow update, delete: if isSignedIn();
+    }
+
+    // Authenticated app data by default.
     match /{document=**} {
-      allow read, write: if true;
+      allow read, write: if isSignedIn();
     }
   }
 }
