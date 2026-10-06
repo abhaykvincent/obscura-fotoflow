@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import SelectionCategoryEditor from './SelectionCategoryEditor';
 import { normalizeGallery } from '../../../utils/selectionGalleryUtils';
 
@@ -37,7 +38,22 @@ export default function SelectionGalleryConfigModal({ initial = null, onSave, on
     onSave && onSave(payload);
   };
 
-  return (
+  // Escape closes; body scroll is already locked by the parent ShareGallery modal.
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape' && onClose) onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  // Portal to document.body: the global `.modal-container` is `position: fixed`
+  // without `top: 0` and ShareGallery's `.modal-body` has backdrop-filter +
+  // overflow scroll, which traps fixed descendants (containing block) and
+  // strands the dialog off-screen while its `top: 0` backdrop still covers
+  // the viewport (backdrop visible, dialog missing). As a direct body child
+  // this behaves like every other app modal.
+  return createPortal(
     <div className="selection-gallery-config-modal modal-container" data-testid="selection-gallery-config">
       <div className="modal island">
         <div className="modal-header">
@@ -73,6 +89,7 @@ export default function SelectionGalleryConfigModal({ initial = null, onSave, on
         </div>
       </div>
       <div className="modal-backdrop" onClick={onClose} />
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -8,11 +8,10 @@ import {
   reopenGallery,
   selectGalleriesForProject,
 } from '../../../app/slices/selectionGalleriesSlice';
-import { completeSelectionGallery as apiComplete } from '../../../firebase/functions/selection-gallery-firestore';
 import SelectionGalleryConfigModal from './SelectionGalleryConfigModal';
-import { getGalleryURL } from '../../../utils/urlUtils';
 import CopyButton from '../../../components/CopyButton/CopyButton';
 import { showAlert } from '../../../app/slices/alertSlice';
+import './SelectionGalleryManager.scss';
 
 /**
  * Photographer-side Selection Galleries summary + management.

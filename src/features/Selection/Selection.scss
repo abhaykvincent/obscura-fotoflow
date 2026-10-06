@@ -400,21 +400,10 @@
     .selection-review-row{ display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #eee; }
     .selection-review-blockers{ background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:10px 14px; margin:12px 0; }
     .selection-review-actions{ display:flex; gap:12px; justify-content:flex-end; margin-top:16px; } }
-  .selection-gallery-manager{ margin:16px 0;
-    .sgm-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; h3{ margin:0; } }
-    .sgm-list{ display:grid; gap:10px; }
-    .sgm-card{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:12px 14px; border:1px solid #e5e7eb; border-radius:10px; background:#fff;
-      &.status-active{ border-color:#93c5fd; } &.status-completed{ border-color:#86efac; background:#f0fdf4; } &.status-draft{ opacity:.95; } }
-    .sgm-name{ font-weight:600; } .sgm-meta{ display:flex; gap:10px; flex-wrap:wrap; font-size:.85rem; opacity:.85; margin:4px 0; }
-    .sgm-categories{ display:flex; gap:6px; flex-wrap:wrap; .sgm-cat{ font-size:.75rem; background:#f3f4f6; padding:2px 8px; border-radius:10px; } }
-    .sgm-actions{ display:flex; gap:8px; flex-wrap:wrap; } }
-  .selection-category-editor{ margin-top:12px;
-    .category-editor-header{ display:flex; justify-content:space-between; align-items:center; }
-    .category-template-row{ display:flex; gap:6px; flex-wrap:wrap; margin:8px 0; }
-    .category-editor-row{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; padding:8px; border:1px solid #eee; border-radius:8px; margin-bottom:8px;
-      input[type=text], input:not([type]){ min-width:140px; } input[type=number]{ width:70px; } } }
-  .selection-gallery-config-modal{ .modal{ max-width:640px; width:94vw; label{ display:block; margin:8px 0; input[type=text], input:not([type=checkbox]):not([type=radio]){ width:100%; } } .selection-mode-row{ display:flex; gap:16px; margin:8px 0; } } }
-  .selection-photographer-view{ .spv-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:8px; margin:8px 0 16px; } .spv-item img{ width:100%; border-radius:8px; } .spv-meta{ font-size:.7rem; opacity:.7; display:flex; justify-content:space-between; } }
+  // NOTE: photographer styles (manager / category editor / config modal /
+  // photographer view) live in components/SelectionGalleryManager.scss at root
+  // scope. The config modal is portaled to document.body (outside `.App`), so
+  // rules scoped here would never match it.
 }
 
 @media only screen and (max-width: 520px) {
