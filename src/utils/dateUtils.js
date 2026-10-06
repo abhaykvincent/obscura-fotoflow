@@ -186,6 +186,19 @@ export function getDaysFromNow(dateString) {
   return diffDays;
 }
 
+// Formats Onboarding TTFU (avg hours) dynamically based on magnitude:
+// < 60s -> seconds (e.g. "45s"), < 60m -> minutes (e.g. "1.5m", "45m"), >= 1h -> hours (e.g. "1.0h", "2.3h")
+export function formatTTFU(hours) {
+  if (typeof hours !== 'number' || isNaN(hours) || hours < 0) return '—';
+  const totalSeconds = hours * 3600;
+  if (totalSeconds < 60) return `${Math.round(totalSeconds)}s`;
+  if (totalSeconds < 3600) {
+    const minutes = totalSeconds / 60;
+    return `${parseFloat(minutes.toFixed(1))}m`;
+  }
+  return `${hours.toFixed(1)}h`;
+}
+
 // Example usage:
 // getDaysFromNow("2025-03-16") // Returns -1 (yesterday from March 17, 2025)
 // getDaysFromNow("2025-03-17") // Returns 0 (today)
