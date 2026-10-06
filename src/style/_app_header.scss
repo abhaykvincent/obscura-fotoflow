@@ -1,9 +1,11 @@
 header{
     position: fixed;
     display:grid;
-    grid-template-columns: auto auto 1fr;
+    grid-template-columns: auto 1fr auto;
     top:  0px;
     width: 100vw;
+    max-width: 100vw;
+    overflow-x: clip;
     height: $header-height;
     -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(16px);
@@ -18,6 +20,11 @@ header{
     .hamburger{
       display: none;
       opacity: 0.6;
+      justify-self: end;
+      align-items: center;
+      justify-items: center;
+      padding-right: 8px;
+      cursor: pointer;
       svg{
         width: 8px*4;
         height: 8px*4;
@@ -52,6 +59,8 @@ header{
         display: flex;
         align-items: center;
         width: 100%;
+        min-width: 0;
+        overflow: hidden;
         height: 100%;
     }
     

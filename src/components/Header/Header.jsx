@@ -34,6 +34,11 @@ const Header = () => {
 
   return (
     <header className='header'>
+      <div className="logo-wrapper">
+        <div className="logo" style={studio?.studioLogo ? { backgroundImage: `url(${studio.studioLogo})`, backgroundSize: 'contain', backgroundPosition: 'center' } : {}}></div>
+        <div className="studio-name-logo">{studio?.name}</div>
+      </div>
+      <div id="header-feature-content"></div>
       <div className="hamburger"
       onClick={handleHamburger}
       >
@@ -49,11 +54,6 @@ const Header = () => {
         
 
       </div>
-      <div className="logo-wrapper">
-        <div className="logo" style={studio?.studioLogo ? { backgroundImage: `url(${studio.studioLogo})`, backgroundSize: 'contain', backgroundPosition: 'center' } : {}}></div>
-        <div className="studio-name-logo">{studio?.name}</div>
-      </div>
-      <div id="header-feature-content"></div>
     </header>
   );
 };

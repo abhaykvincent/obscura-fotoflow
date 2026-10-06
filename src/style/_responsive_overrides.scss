@@ -62,7 +62,11 @@
   @media only screen and (max-width: 1080px) {
     .App{
       .header{
-        grid-template-columns: $header-height+8px*2 1fr 1fr 1fr;
+        grid-template-columns: 1fr auto;
+        #header-feature-content{
+          min-width: 0;
+          overflow: hidden;
+        }
         .logo-wrapper{
           display: none;
         }
@@ -70,6 +74,15 @@
           display: grid;
           align-items: center;
           justify-items: center;
+          justify-self: end;
+          min-width: $header-height;
+          padding-right: 8px;
+        }
+        // Keep fixed search containers clear of the top-right hamburger
+        .projects-page-header,
+        .home-header,
+        .search-header{
+          right: $header-height;
         }
       }
       .project-info{
@@ -234,7 +247,16 @@
     }
     header{
 
-      grid-template-columns:5fr 5fr 5fr;
+      grid-template-columns: 1fr auto;
+      #header-feature-content{
+        min-width: 0;
+        overflow: hidden;
+      }
+      .hamburger{
+        justify-self: end;
+        min-width: $header-height;
+        padding-right: 8px;
+      }
       .search-bar .search-input input{
         width: 100%
       }
@@ -384,12 +406,22 @@
   .App {
     .header{
 
-      grid-template-columns: 8px*5 1fr 1fr 1fr;
+      grid-template-columns: 1fr auto;
+      #header-feature-content{
+        min-width: 0;
+        overflow: hidden;
+      }
+      .hamburger{
+        justify-self: end;
+        min-width: $header-height;
+        padding-right: 8px;
+      }
     }
     header{
       .hamburger svg{
         margin-top: -8px*0;
-        margin-left: 8px*2.5;
+        margin-left: 0;
+        margin-right: 8px;
       }
     } 
     main {
@@ -779,7 +811,16 @@
   @media only screen and (max-width: 430px) {
   .App{
     header{
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr auto;
+      #header-feature-content{
+        min-width: 0;
+        overflow: hidden;
+      }
+      .hamburger{
+        justify-self: end;
+        min-width: $header-height;
+        padding-right: 8px;
+      }
       .profile-options{
         margin: 0;
         .profile-name{
