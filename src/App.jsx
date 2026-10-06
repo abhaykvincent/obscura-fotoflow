@@ -90,6 +90,31 @@ const ShareRedirect = () => {
 
 // APP
 export default function App() {
+  // Canonical domain guard (backup to the <head> inline redirect in
+  // public/index.html): legacy *.web.app / *.firebaseapp.com links land on
+  // https://app.fotoflow.co with path + query preserved. Gallery routes are
+  // handled server-side with 301 by serveGallery; this covers SPA routes.
+  useEffect(() => {
+    try {
+      const host = window.location.hostname.toLowerCase();
+      const isLegacy =
+        host === 'fotoflow-studio.web.app' ||
+        host === 'fotoflow-studio.firebaseapp.com' ||
+        host === 'fotoflow-cloud.web.app' ||
+        host === 'fotoflow-cloud.firebaseapp.com' ||
+        host.endsWith('.web.app') ||
+        host.endsWith('.firebaseapp.com');
+      if (isLegacy) {
+        const target =
+          'https://app.fotoflow.co' +
+          window.location.pathname +
+          window.location.search +
+          window.location.hash;
+        window.location.replace(target);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
   const dispatch = useDispatch();
   const location = useLocation();
   const user = useSelector(selectUser);

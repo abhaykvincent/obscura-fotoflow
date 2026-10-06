@@ -118,6 +118,36 @@ function parseGalleryRequest(req) {
 }
 
 /**
+ * Checks if request came from a legacy Firebase default domain that should
+ * canonically live on app.fotoflow.co (e.g. fotoflow-studio.web.app).
+ * These hosts historically served the app directly; they must now 301 to
+ * the canonical app domain while preserving serveGallery behaviour
+ * (metadata fetch + suspended/inactive enforcement still runs first).
+ */
+function isLegacyAppHost(req) {
+  const forwardedHost = req.headers['x-forwarded-host'];
+  const hostHeader = req.headers.host;
+  const rawHost = forwardedHost || hostHeader || '';
+  const host = rawHost.split(':')[0].toLowerCase().trim();
+
+  if (!host || host === 'localhost' || host === '127.0.0.1') return false;
+  // Explicit legacy hosts (add more here if old links exist)
+  if (
+    host === 'fotoflow-studio.web.app' ||
+    host === 'fotoflow-studio.firebaseapp.com' ||
+    host === 'fotoflow-cloud.web.app' ||
+    host === 'fotoflow-cloud.firebaseapp.com'
+  ) {
+    return true;
+  }
+  // Catch-all for any other *.web.app / *.firebaseapp.com that serves this project
+  if (host.endsWith('.web.app') || host.endsWith('.firebaseapp.com')) {
+    return true;
+  }
+  return false;
+}
+
+/**
  * Checks if request came to the app domain vs marketing domain
  */
 function isAppDomain(req) {
@@ -414,10 +444,11 @@ exports.serveGallery = onRequest({
   console.log(`[serveGallery] Handling: studio=${studioName}, project=${projectId}, route=${routeType}`);
 
   const isApp = isAppDomain(req);
+  const isLegacyHost = isLegacyAppHost(req);
   const destinationUrl = buildDestinationUrl({ studioName, projectId, collectionId, queryString });
 
   // Handle legacy /share redirect
-  if (routeType === 'share' && isApp) {
+  if (routeType === 'share' && isApp && !isLegacyHost) {
     const targetPath = `/${studioName}/smart-gallery/${projectId}${collectionId ? `/${collectionId}` : ''}${queryString}`;
     return res.redirect(301, targetPath);
   }
@@ -435,6 +466,17 @@ exports.serveGallery = onRequest({
         ? 'This gallery is temporarily unavailable.'
         : 'This gallery is currently unavailable.',
     }));
+  }
+
+  // Legacy Firebase domains (fotoflow-studio.web.app) → canonical app domain.
+  // Placed AFTER the blocked check so suspended/inactive studios still get
+  // 403 on old links, and AFTER metadata fetch so logging stays intact.
+  // destinationUrl already normalises /share → /smart-gallery and preserves
+  // query strings, so old links land on the canonical gallery URL.
+  if (isLegacyHost) {
+    console.log(`[serveGallery] Legacy host redirect -> ${destinationUrl}`);
+    res.set('Cache-Control', 'public, max-age=300, s-maxage=3600');
+    return res.redirect(301, destinationUrl);
   }
 
   // When accessed via fotoflow.co, serve SEO metadata and instantly redirect browsers to app.fotoflow.co
