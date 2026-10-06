@@ -81,7 +81,6 @@ function Sidebar() {
 
   return (
     <>
-      <div className="sidebar-overlay" onClick={closeSidebar}></div>
       <div className="sidebar sleep-sidebar" onMouseLeave={() => setProfileOptionActive(false)}>
         <div className="menu-list">
           <Link to={`/${studioName}/home`} onClick={closeSidebar}>
@@ -257,6 +256,7 @@ function Sidebar() {
           </div>
         </div>
       </div>
+      <div className="sidebar-overlay" onClick={closeSidebar}></div>
     </>
   );
 }

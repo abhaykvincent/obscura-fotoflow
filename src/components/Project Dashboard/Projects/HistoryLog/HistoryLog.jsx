@@ -1,8 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { logProjectActivity } from '../../../../app/slices/projectsSlice';
+import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../../../app/slices/authSlice';
-import { showAlert } from '../../../../app/slices/alertSlice';
 import { selectSelectionRequests } from '../../../../app/slices/selectionRequestSlice';
 import './HistoryLog.scss';
 
@@ -31,11 +29,9 @@ const formatTimeAgo = (timestamp) => {
 };
 
 function HistoryLog({ project }) {
-  const dispatch = useDispatch();
   const defaultStudio = useSelector(selectUserStudio);
   const selectionRequests = useSelector(selectSelectionRequests);
   const [filter, setFilter] = useState('all');
-  const [simulationLoading, setSimulationLoading] = useState(false);
 
   // Compile all activities from existing project data structure & activityLog
   const activities = useMemo(() => {
@@ -297,58 +293,6 @@ function HistoryLog({ project }) {
     return activities.filter((act) => act.type === filter);
   }, [activities, filter]);
 
-  // Simulation handler to show how client tracks work
-  const handleSimulation = async (type) => {
-    if (simulationLoading) return;
-    setSimulationLoading(true);
-
-    try {
-      let activityEntry = {};
-      const clientName = project.invitation?.groomName && project.invitation?.brideName
-        ? `${project.invitation.groomName} & ${project.invitation.brideName}`
-        : 'Client';
-
-      if (type === 'view') {
-        activityEntry = {
-          type: 'client',
-          title: 'Gallery Viewed (Simulation)',
-          description: `Client "${clientName}" accessed and viewed the gallery online.`,
-          icon: '👁️',
-          by: 'Client'
-        };
-      } else if (type === 'download') {
-        activityEntry = {
-          type: 'client',
-          title: 'Gallery Downloaded (Simulation)',
-          description: `Client "${clientName}" downloaded the original digital files package.`,
-          icon: '📥',
-          by: 'Client'
-        };
-      } else if (type === 'fav') {
-        activityEntry = {
-          type: 'client',
-          title: 'Images Favorited (Simulation)',
-          description: `Client "${clientName}" selected and favorited 5 new photos.`,
-          icon: '❤️',
-          by: 'Client'
-        };
-      }
-
-      await dispatch(logProjectActivity({
-        domain: defaultStudio.domain,
-        projectId: project.id,
-        activityEntry
-      })).unwrap();
-
-      dispatch(showAlert({ type: 'success', message: `${activityEntry.title} logged successfully!` }));
-    } catch (err) {
-      dispatch(showAlert({ type: 'error', message: 'Failed to simulate client activity.' }));
-      console.error(err);
-    } finally {
-      setSimulationLoading(false);
-    }
-  };
-
   return (
     <div className="history-log-panel">
       <div className="panel-header">
@@ -399,7 +343,7 @@ function HistoryLog({ project }) {
             <div className="empty-state">
               <div className="empty-icon">📂</div>
               <h4 className="empty-title">No matching activity found</h4>
-              <p className="empty-text">Perform operations, add financials, or simulate client interactions below to view live feed.</p>
+              <p className="empty-text">Perform operations or add financials to view live feed.</p>
             </div>
           ) : (
             <div className="timeline-list">
@@ -426,35 +370,6 @@ function HistoryLog({ project }) {
               ))}
             </div>
           )}
-        </div>
-
-        {/* Live Debug & Simulator Panel */}
-        <div className="simulator-panel glass">
-          <h4 className="sim-heading">Live Interaction Simulator</h4>
-          <p className="sim-text">Need to test how a client interaction looks on the timeline? Trigger simulated client actions below to see live updates instantly:</p>
-          <div className="sim-actions">
-            <button
-              className="button secondary outline small icon view"
-              disabled={simulationLoading}
-              onClick={() => handleSimulation('view')}
-            >
-              👁️ View Gallery
-            </button>
-            <button
-              className="button secondary outline small icon download"
-              disabled={simulationLoading}
-              onClick={() => handleSimulation('download')}
-            >
-              📥 Download Zip
-            </button>
-            <button
-              className="button secondary outline small icon favorite"
-              disabled={simulationLoading}
-              onClick={() => handleSimulation('fav')}
-            >
-              ❤️ Favorite Images
-            </button>
-          </div>
         </div>
       </div>
     </div>
