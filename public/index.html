@@ -6,6 +6,32 @@
     <!-- Made with ❤️ from Kochi, India -->
 
     <meta charset="utf-8" />
+    <script>
+      // Canonical domain redirect: legacy Firebase default domains
+      // (fotoflow-studio.web.app / *.firebaseapp.com) → https://app.fotoflow.co
+      // Gallery routes are 301'd server-side by serveGallery; this covers all
+      // other SPA routes that serve index.html directly. Preserves path+query.
+      (function () {
+        try {
+          var host = window.location.hostname.toLowerCase();
+          var isLegacy =
+            host === 'fotoflow-studio.web.app' ||
+            host === 'fotoflow-studio.firebaseapp.com' ||
+            host === 'fotoflow-cloud.web.app' ||
+            host === 'fotoflow-cloud.firebaseapp.com' ||
+            (/\.web\.app$/.test(host)) ||
+            (/\.firebaseapp\.com$/.test(host));
+          if (isLegacy) {
+            var target =
+              'https://app.fotoflow.co' +
+              window.location.pathname +
+              window.location.search +
+              window.location.hash;
+            window.location.replace(target);
+          }
+        } catch (e) {}
+      })();
+    </script>
     <link rel="icon" href="%PUBLIC_URL%/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
