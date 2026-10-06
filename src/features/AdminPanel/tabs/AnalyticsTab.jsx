@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatTTFU } from '../../../utils/dateUtils';
 
 export const AnalyticsTab = ({ type, analytics, loading, lastUpdated, onRefresh }) => {
     
@@ -68,7 +69,7 @@ export const AnalyticsTab = ({ type, analytics, loading, lastUpdated, onRefresh 
                             <div className="cards">
                                 <div className="group">
                                     <div className="card">
-                                        <h1 className='count'>{summary.avgTTFU.toFixed(1)}h</h1>
+                                        <h1 className='count'>{formatTTFU(summary.avgTTFU)}</h1>
                                         <p>Avg Time to First Upload</p>
                                         <h4 className='cyan'>Onboarding TTFU</h4>
                                     </div>
