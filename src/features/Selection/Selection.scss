@@ -374,6 +374,38 @@
     }
   }
 }
+.App .select-project{
+  .gallery-subtitle{ font-size: 1.1rem; opacity: .7; margin: 4px 0 0; }
+  .selection-gallery-switcher{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:12px 0;
+    .gallery-switch-tab{ padding:8px 16px; border-radius:20px; border:1px solid #ddd; text-decoration:none; color:#333; font-size:.9rem;
+      &.active{ background:#0c84ff; color:#fff; border-color:#0c84ff; } } }
+  .selection-gallery-status-block{ max-width:900px; margin:0 auto; padding:16px; background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px;
+    .selection-progress-text{ font-size:1.05rem; margin-bottom:8px; }
+    .selection-progress-percent{ opacity:.7; font-weight:400; }
+    .selection-progress-bar{ height:10px; background:#e5e7eb; border-radius:6px; overflow:hidden; margin:8px 0;
+      .selection-progress-fill{ height:100%; background:linear-gradient(90deg,#0c84ff,#21ade4); transition:width .3s ease; } }
+    .selection-progress-sub{ font-size:.9rem; opacity:.8;
+      .limit-reached{ color:#b45309; font-weight:600; } }
+    .selection-category-tabs{ display:flex; gap:8px; flex-wrap:wrap; margin:12px 0;
+      .category-tab{ padding:8px 14px; border-radius:20px; border:1px solid #d1d5db; background:#fff; cursor:pointer; display:flex; gap:8px; align-items:center; font-size:.9rem;
+        &.active{ border-color:#0c84ff; background:#eff6ff; }
+        &.full{ border-color:#16a34a; .category-count{ color:#16a34a; font-weight:600; } }
+        .category-count{ opacity:.75; } } }
+    .selection-limit-notice{ background:#fef3c7; border:1px solid #fcd34d; padding:10px 14px; border-radius:8px; margin:8px 0; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .selection-save-hint{ font-size:.8rem; opacity:.6; margin-top:8px; } }
+  .photo{ position:relative;
+    .photo-category-badge{ position:absolute; bottom:8px; left:8px; background:rgba(12,132,255,.9); color:#fff; font-size:.7rem; padding:2px 8px; border-radius:10px; } }
+  .selection-review{ padding:8px 4px;
+    h3{ margin:0 0 8px; } .selection-review-total{ font-weight:600; margin-bottom:12px; }
+    .selection-review-row{ display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #eee; }
+    .selection-review-blockers{ background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:10px 14px; margin:12px 0; }
+    .selection-review-actions{ display:flex; gap:12px; justify-content:flex-end; margin-top:16px; } }
+  // NOTE: photographer styles (manager / category editor / config modal /
+  // photographer view) live in components/SelectionGalleryManager.scss at root
+  // scope. The config modal is portaled to document.body (outside `.App`), so
+  // rules scoped here would never match it.
+}
+
 @media only screen and (max-width: 520px) {
   .App .select-project{
     .collections-panel{

@@ -449,20 +449,23 @@ export const fetchAnalyticsData = async () => {
     }
 };
 
-// Selection Requests
-export const createSelectionRequest = async (domain, projectId, projectName) => {
+// Selection Requests (gallery-aware; preserves legacy project-only requests)
+export const createSelectionRequest = async (domain, projectId, projectName, { selectionGalleryId = null, galleryName = '' } = {}) => {
     try {
         const studioRef = doc(db, 'studios', domain);
         const selectionRequestsRef = collection(studioRef, 'selectionRequests');
+        const requestId = selectionGalleryId ? `${projectId}__${selectionGalleryId}` : projectId;
         const requestDoc = {
             projectId,
             projectName,
+            selectionGalleryId: selectionGalleryId || null,
+            galleryName: galleryName || '',
             status: 'pending',
             requestedAt: Date.now(),
         };
-        await setDoc(doc(selectionRequestsRef, projectId), requestDoc);
-        console.log(`Selection reset request created for project ${projectId}`);
-        return requestDoc;
+        await setDoc(doc(selectionRequestsRef, requestId), requestDoc);
+        console.log(`Selection reset request created for project ${projectId}${selectionGalleryId ? ` gallery ${selectionGalleryId}` : ''}`);
+        return { id: requestId, ...requestDoc };
     } catch (error) {
         console.error('Error creating selection request:', error);
         throw error;
@@ -482,20 +485,33 @@ export const fetchSelectionRequests = async (domain) => {
     }
 };
 
-export const approveSelectionRequest = async (domain, projectId) => {
+export const approveSelectionRequest = async (domain, projectId, { selectionGalleryId = null } = {}) => {
     try {
         const studioRef = doc(db, 'studios', domain);
         const selectionRequestsRef = collection(studioRef, 'selectionRequests');
-        const requestRef = doc(selectionRequestsRef, projectId);
-        
-        // Update request status
-        await updateDoc(requestRef, { status: 'accepted', acceptedAt: Date.now() });
-        
-        // Update project status back to active to allow re-selection
-        const projectRef = doc(db, 'studios', domain, 'projects', projectId);
-        await updateDoc(projectRef, { status: 'active' });
-        
-        console.log(`Selection reset request approved for project ${projectId}`);
+        // Support both legacy (projectId) and gallery-scoped (projectId__galleryId) docs
+        const candidateIds = selectionGalleryId ? [`${projectId}__${selectionGalleryId}`, projectId] : [projectId];
+        let requestRef = doc(selectionRequestsRef, candidateIds[0]);
+        let found = false;
+        for (const cid of candidateIds) {
+            const snap = await getDoc(doc(selectionRequestsRef, cid));
+            if (snap.exists()) { requestRef = doc(selectionRequestsRef, cid); found = true; break; }
+        }
+        if (found) {
+            await updateDoc(requestRef, { status: 'accepted', acceptedAt: Date.now() });
+        }
+
+        if (selectionGalleryId) {
+            // Reopen the specific gallery; keep project status derived logic intact
+            const { reopenSelectionGallery } = await import('./selection-gallery-firestore');
+            await reopenSelectionGallery(domain, projectId, selectionGalleryId);
+        } else {
+            // Legacy: update project status back to active to allow re-selection
+            const projectRef = doc(db, 'studios', domain, 'projects', projectId);
+            await updateDoc(projectRef, { status: 'active' });
+        }
+
+        console.log(`Selection reset request approved for project ${projectId}${selectionGalleryId ? ` gallery ${selectionGalleryId}` : ''}`);
         return true;
     } catch (error) {
         console.error('Error approving selection request:', error);

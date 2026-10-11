@@ -20,8 +20,14 @@ export {
   DEFAULT_CDN_BASE_URL,
 };
 
-export function getGalleryURL(page, domain, projectId) {
-  return `${window.location.protocol}//${window.location.host}/${domain}/${page}/${projectId}`;
+export function getGalleryURL(page, domain, projectId, galleryId = null) {
+  const base = `${window.location.protocol}//${window.location.host}/${domain}/${page}/${projectId}`;
+  if (galleryId) return `${base}/gallery/${galleryId}`;
+  return base;
+}
+
+export function getSelectionGalleryURL(domain, projectId, galleryId = null) {
+  return getGalleryURL('selection', domain, projectId, galleryId);
 }
 
 export function getOnboardingReferralURL(ref) {

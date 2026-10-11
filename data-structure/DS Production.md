@@ -97,6 +97,54 @@ This document outlines the data structure of the Firestore database for the Foto
 | `date` | `String` | Date of the event. |
 | `location` | `String` | Location of the event. |
 
+####### `selectionGalleries`
+
+*   **Description**: Client-only proofing/selection workspaces over existing project photos. A Selection Gallery **references existing photos and does not duplicate Storage objects**. The same underlying image is usable in the public gallery, selection galleries, photographer selections and future design workflows via a stable `photoId` (fallback: `url` during migration).
+*   **Path**: `studios/{domain}/projects/{projectId}/selectionGalleries/{selectionGalleryId}`
+*   **Relationship**: Project Photo → Selection Reference (never Photo → Copy → Selection Gallery Photo).
+*   **Separation**: Collection = where photos belong · Selection Gallery = what the client is asked to choose · Category = how that selection is organized · Selection = the client's actual choice.
+
+| Field | Data Type | Description |
+| :--- | :--- | :--- |
+| `id` | `String` | Unique identifier for the gallery (e.g. `album-selection-x7k2q`, or `default` for the legacy-compat gallery). |
+| `name` | `String` | Display name (e.g. "Album Selection"). |
+| `description` | `String` | Optional photographer note. |
+| `status` | `String` | Lifecycle: `draft` (configuring, client cannot access) · `active` (client can select) · `completed` (submitted, read-only unless reopened) · `locked` (photographer-frozen) · `archived` (historical). |
+| `selectionMode` | `String` | `limit` or `unlimited`. |
+| `selectionLimit` | `Number\|null` | Overall maximum selections (`null` when unlimited). |
+| `selectedCount` | `Number` | Denormalized aggregate; source of truth is the `selections` subcollection. Recomputable via `recomputeGalleryCounters`. |
+| `progressPercent` | `Number` | Denormalized 0–100 aggregate. |
+| `categories` | `Array` | Selection buckets (not image collections). A photo is assigned to a category when selected. |
+| `categories[].id` | `String` | Stable category id (slug). |
+| `categories[].name` | `String` | Display name (Bride, Groom, Couple, Family, Ceremony, Reception…). |
+| `categories[].maximumSelections` | `Number\|null` | Max selections in this category (`null` = unlimited). Legacy `limit` field mirrors this for reads. |
+| `categories[].minimumSelections` | `Number` | Minimum required before completion (default 0). |
+| `categories[].required` | `Boolean` | When true, `minimumSelections` must be met before Finish. |
+| `categories[].selectedCount` | `Number` | Denormalized per-category aggregate. |
+| `categories[].sortOrder` | `Number` | Display order. |
+| `client` | `Object` | `{ name, email, phone }` client contact snapshot. |
+| `pinRequired` | `Boolean` | Always true in v1; selection uses the project PIN workflow. |
+| `createdAt` / `updatedAt` / `activatedAt` / `completedAt` | `Number` | Millis timestamps. |
+| `createdBy` / `updatedBy` | `String` | Actor identifiers. |
+
+######## `selections` (subcollection)
+
+*   **Path**: `studios/{domain}/projects/{projectId}/selectionGalleries/{selectionGalleryId}/selections/{photoKey}`
+*   **Description**: One document per selected photo reference. High-cardinality data lives here so gallery docs stay small for 1,000–5,000+ photo weddings. Individual records + aggregate counters + paginated photo loading keep reads/writes O(1) per click.
+
+| Field | Data Type | Description |
+| :--- | :--- | :--- |
+| `photoId` | `String` | Stable photo identity (preferred). Falls back to `url` for legacy selections. |
+| `photoKey` | `String` | Resolved identity used as doc-id basis (`photoId` ⟸ `url`). |
+| `url` | `String\|null` | Legacy resolution fallback; not a copy. |
+| `collectionId` | `String\|null` | Originating project collection (where the photo belongs). |
+| `categoryId` | `String\|null` | Selection bucket the choice was assigned to. |
+| `selectedAt` | `Number` | Millis timestamp. |
+| `selectedBy` | `String` | `client` or photographer identifier. |
+| `status` | `String` | `selected`. |
+
+**Backward compatibility**: `collections[].selectionGallery` (boolean) is preserved. Projects with `selectionGallery === true` are treated as having a `default` Selection Gallery (unlimited mode, status `active`). `/{studio}/selection/{projectId}` legacy links resolve to the active gallery or the legacy workflow when no gallery exists. `project.status = "selected"` is preserved for the default gallery; per-gallery `status` is the source of truth for multi-gallery projects. Selection reset requests carry an optional `selectionGalleryId` so Album / Wall Art / Social resets stay isolated. See `scripts/migrate-selection-galleries.js` (idempotent) for the one-time legacy migration.
+
 ### `users`
 
 *   **Description**: Stores user information.

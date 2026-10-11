@@ -1,0 +1,50 @@
+// Photographer-side Selection Gallery styles.
+//
+// NOTE: SelectionGalleryConfigModal is portaled to document.body (outside
+// `.App`), so every rule here is scoped at root level — never under
+// `.App .select-project` (that scope only exists on the client Selection
+// page and never matches the portal target).
+
+.selection-gallery-manager{
+  margin: 16px 0;
+  .sgm-header{ display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; h3{ margin: 0; } }
+  .sgm-list{ display: grid; gap: 10px; }
+  .sgm-card{ display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 12px 14px; border: 1px solid #e5e7eb; border-radius: 10px; background: #fff;
+    &.status-active{ border-color: #93c5fd; } &.status-completed{ border-color: #86efac; background: #f0fdf4; } &.status-draft{ opacity: .95; } }
+  .sgm-name{ font-weight: 600; } .sgm-meta{ display: flex; gap: 10px; flex-wrap: wrap; font-size: .85rem; opacity: .85; margin: 4px 0; }
+  .sgm-categories{ display: flex; gap: 6px; flex-wrap: wrap; .sgm-cat{ font-size: .75rem; background: #f3f4f6; padding: 2px 8px; border-radius: 10px; } }
+  .sgm-actions{ display: flex; gap: 8px; flex-wrap: wrap; }
+}
+
+// Portaled nested modal. The global `.modal-container` omits `top: 0` and
+// relies on being a direct body child at z-index 20; nested usage inside
+// ShareGallery's filtered/scrolled `.modal-body` traps `position: fixed`
+// (backdrop-filter creates a containing block) and strands the dialog
+// off-screen while its `top: 0` backdrop still covers the viewport.
+// Portal + explicit top/stacking fixes that: this container paints above
+// ShareGallery (z 20/21) with the dialog above its own backdrop.
+.selection-gallery-config-modal.modal-container{
+  top: 0;
+  z-index: 60;
+  .modal.island{
+    z-index: 61;
+    max-width: 640px;
+    width: 94vw;
+    label{ display: block; margin: 8px 0; input[type=text], input:not([type=checkbox]):not([type=radio]){ width: 100%; } }
+    .selection-mode-row{ display: flex; gap: 16px; margin: 8px 0; }
+  }
+}
+
+.selection-category-editor{
+  margin-top: 12px;
+  .category-editor-header{ display: flex; justify-content: space-between; align-items: center; }
+  .category-template-row{ display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+  .category-editor-row{ display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 8px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 8px;
+    input[type=text], input:not([type]){ min-width: 140px; } input[type=number]{ width: 70px; } }
+}
+
+.selection-photographer-view{
+  .spv-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin: 8px 0 16px; }
+  .spv-item img{ width: 100%; border-radius: 8px; }
+  .spv-meta{ font-size: .7rem; opacity: .7; display: flex; justify-content: space-between; }
+}

@@ -23,6 +23,7 @@ import studioProfileReducer from './slices/studioProfileSlice';
 import selectionRequestReducer from './slices/selectionRequestSlice';
 import extensionRequestReducer from './slices/extensionRequestSlice';
 import bookingReducer from './slices/bookingSlice';
+import selectionGalleriesReducer from './slices/selectionGalleriesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -50,6 +51,7 @@ export const store = configureStore({
     selectionRequest: selectionRequestReducer,
     extensionRequest: extensionRequestReducer,
     booking: bookingReducer,
+    selectionGalleries: selectionGalleriesReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
