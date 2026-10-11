@@ -46,14 +46,14 @@ export default function SelectionCategoryEditor({ categories = [], onChange }) {
       <div className="category-editor-header">
         <h4>Categories</h4>
         <div className="category-template-buttons">
-          <button className="button secondary small" onClick={() => handleAdd(null)}>+ Add Category</button>
+          <div className="button secondary small" onClick={() => handleAdd(null)}>+ Add Category</div>
         </div>
       </div>
-      <div className="category-template-row">
+      <div className="category-template-row project-validity-options">
         {DEFAULT_CATEGORY_TEMPLATES.map((t) => (
-          <button key={t.name} className="button secondary small outline" onClick={() => handleAdd(t)} title={`Add ${t.name} (${t.limit})`}>
-            + {t.name}
-          </button>
+          <div key={t.name} className="radio-button-group" onClick={() => handleAdd(t)} title={`Add ${t.name} (${t.limit})`}>
+            <label>+ {t.name}</label>
+          </div>
         ))}
       </div>
       {categories.length === 0 && <p className="muted">No categories — selections will go to a single bucket.</p>}
@@ -61,6 +61,7 @@ export default function SelectionCategoryEditor({ categories = [], onChange }) {
         <div key={c.id} className="category-editor-row">
           <input
             aria-label="Category name"
+            type="text"
             value={c.name}
             onChange={(e) => handleUpdate(c.id, { name: e.target.value })}
             placeholder="Category name"
@@ -91,9 +92,9 @@ export default function SelectionCategoryEditor({ categories = [], onChange }) {
             <input type="checkbox" checked={Boolean(c.required)} onChange={(e) => handleUpdate(c.id, { required: e.target.checked })} />
             Required
           </label>
-          <button className="button secondary small" onClick={() => handleMove(c.id, -1)} title="Move up">↑</button>
-          <button className="button secondary small" onClick={() => handleMove(c.id, 1)} title="Move down">↓</button>
-          <button className="button secondary small" onClick={() => handleRemove(c.id)} title="Remove">✕</button>
+          <div className="button secondary small" onClick={() => handleMove(c.id, -1)} title="Move up">↑</div>
+          <div className="button secondary small" onClick={() => handleMove(c.id, 1)} title="Move down">↓</div>
+          <div className="button secondary small" onClick={() => handleRemove(c.id)} title="Remove">✕</div>
         </div>
       ))}
     </div>

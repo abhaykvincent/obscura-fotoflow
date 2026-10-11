@@ -23,24 +23,99 @@
 // off-screen while its `top: 0` backdrop still covers the viewport.
 // Portal + explicit top/stacking fixes that: this container paints above
 // ShareGallery (z 20/21) with the dialog above its own backdrop.
+//
+// NOTE: portaled to document.body (outside `.App`), so `.App .button`
+// styles do not apply here. `.button` parity below mirrors
+// `src/style/_components.scss` so actions / template / row buttons look
+// identical to every other `.modal.island`. Body layout itself reuses the
+// global `.modal .form-section > .field` + `.project-validity-options >`
+// `.radio-button-group` rules from `Modal.scss` — no custom label layout.
 .selection-gallery-config-modal.modal-container{
   top: 0;
+  left: 0;
   z-index: 60;
   .modal.island{
     z-index: 61;
     max-width: 640px;
     width: 94vw;
-    label{ display: block; margin: 8px 0; input[type=text], input:not([type=checkbox]):not([type=radio]){ width: 100%; } }
-    .selection-mode-row{ display: flex; gap: 16px; margin: 8px 0; }
   }
-}
 
-.selection-category-editor{
-  margin-top: 12px;
-  .category-editor-header{ display: flex; justify-content: space-between; align-items: center; }
-  .category-template-row{ display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
-  .category-editor-row{ display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 8px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 8px;
-    input[type=text], input:not([type]){ min-width: 140px; } input[type=number]{ width: 70px; } }
+  // Portaled to document.body (outside `.App`), so it misses the global
+  // `.App * { color: white }` rule. Global inputs use a dark `$dark-3`
+  // background with no explicit text color, which inherits Tailwind's
+  // near-black body foreground here — dark-on-dark. Match other modals.
+  input, select, textarea{
+    color: #f2f2f7;
+    color-scheme: dark;
+    &::placeholder{ color: #8e8e93; opacity: 1; }
+  }
+
+  .button{
+    display: inline-block;
+    padding: 5px 11.2px;
+    padding-bottom: 6.4px;
+    border-radius: 16px;
+    font-size: 0.95rem;
+    line-height: 1.1rem;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+    box-shadow: inset -1px -1px 0px rgba(166, 255, 0, 0.05), inset 1px 1px 1px rgba(0, 0, 0, 0.2), 2px 2px 2px rgba(0, 0, 0, 0.2);
+    background-color: rgba(119, 119, 119, 0.226);
+    margin: 4px 0;
+    font-weight: 600;
+    opacity: 0.9;
+    text-align: center;
+    cursor: pointer;
+    transition-duration: 0.1s;
+    transform: scale(1);
+    color: #e8e8e8;
+    &:hover{ opacity: 1; box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 8px 6px rgba(26, 165, 31, 0.1); }
+    &:active{ transform: translateY(1px); opacity: 1; }
+    &.small{ padding: 4px 4.8px; font-size: 0.85rem; }
+    &.primary{
+      background: linear-gradient(110deg, #3f7a1f 50%, #70ab17 200%);
+      border: 1px solid #2f5c16;
+      border-left: 1px solid rgb(132, 193, 40);
+      border-top: 1px solid rgb(178, 234, 95);
+      color: white !important;
+    }
+    &.secondary{
+      background-color: #242426;
+      border: 1px solid #3a3a3d;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      border-left: 1px solid rgba(255, 255, 255, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 16px 6px rgba(0, 0, 0, 0.3);
+      -webkit-backdrop-filter: blur(3px);
+      backdrop-filter: blur(8px);
+    }
+    &.disabled{ opacity: 0.2; cursor: not-allowed; *{ cursor: not-allowed !important; } }
+  }
+
+  .selection-category-editor{
+    margin-top: 8px;
+    .category-editor-header{ display: flex; justify-content: space-between; align-items: center; gap: 12px; h4{ margin: 0; color: #f2f2f7; } }
+    .category-template-row{ margin: 8px 0; }
+    .muted{ color: #8e8e93; font-size: 0.9rem; }
+    .category-editor-row{
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      label{ display: flex; align-items: center; gap: 6px; font-size: 0.9rem; color: #b3b3b3; }
+      input[type=text], input:not([type]){ min-width: 140px; flex: 1; }
+      input[type=number]{ width: 70px; }
+      input[type=checkbox]{ height: auto; width: auto; }
+    }
+  }
 }
 
 .selection-photographer-view{
