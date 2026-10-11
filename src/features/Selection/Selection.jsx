@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback, memo } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Lottie from 'react-lottie';
 import animationData from '../../assets/animations/CompletedAnimation.json';
@@ -747,8 +748,8 @@ export default function Selection() {
             )}
           </div>
 
-          {showReview && viewGallery && (
-            <div className="modal-container">
+          {showReview && viewGallery && createPortal(
+            <div className="selection-review-modal modal-container">
               <div className="modal island">
                 <SelectionReview
                   gallery={{ ...viewGallery, selectedCount: selectedIds.length, categories: viewGallery.categories.map((c) => ({ ...c, selectedCount: localCategoryCounts[c.id] ?? c.selectedCount })) }}
@@ -758,7 +759,8 @@ export default function Selection() {
                 />
               </div>
               <div className="modal-backdrop" onClick={() => setShowReview(false)} />
-            </div>
+            </div>,
+            document.body,
           )}
         </>
       ) : (

@@ -444,3 +444,14 @@
     }
   }
 }
+
+// Review modal is portaled to document.body (same trap as the photographer
+// config modal: nested `.modal-container` omits `top: 0`, so a deeply nested
+// fixed container strands the dialog off-screen while its `top: 0` backdrop
+// still covers the viewport). Root scope — the portal target is outside `.App`.
+.selection-review-modal.modal-container{
+  top: 0;
+  left: 0;
+  z-index: 60;
+  .modal.island{ z-index: 61; }
+}
