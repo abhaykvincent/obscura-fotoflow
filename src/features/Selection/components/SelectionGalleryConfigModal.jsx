@@ -55,37 +55,73 @@ export default function SelectionGalleryConfigModal({ initial = null, onSave, on
   // this behaves like every other app modal.
   return createPortal(
     <div className="selection-gallery-config-modal modal-container" data-testid="selection-gallery-config">
-      <div className="modal island">
+      <div className="modal create-project island">
         <div className="modal-header">
+          <div className="modal-controls">
+            <div className="control close" onClick={onClose}></div>
+            <div className="control minimize"></div>
+            <div className="control maximize"></div>
+          </div>
           <div className="modal-title">{initial?.id ? 'Configure Selection Gallery' : 'Create Selection Gallery'}</div>
-          <button className="button secondary small" onClick={onClose}>Close</button>
         </div>
         <div className="modal-body">
-          <label>
-            Name
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Album Selection" />
-          </label>
-          <div className="selection-mode-row">
-            <label>
-              <input type="radio" checked={mode === 'limit'} onChange={() => setMode('limit')} /> Set limit
-            </label>
-            <label>
-              <input type="radio" checked={mode === 'unlimited'} onChange={() => setMode('unlimited')} /> No limit
-            </label>
+          <div className="form-section">
+            <div className="field">
+              <label htmlFor="sgm-name">Gallery name</label>
+              <input
+                id="sgm-name"
+                name="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Album Selection"
+              />
+            </div>
+            <div className="field">
+              <label>Selection mode</label>
+              <div className="field-options project-validity-options">
+                <div className="radio-button-group">
+                  <input
+                    type="radio"
+                    id="sgm-mode-limit"
+                    name="selection-mode"
+                    checked={mode === 'limit'}
+                    onChange={() => setMode('limit')}
+                  />
+                  <label htmlFor="sgm-mode-limit">Set limit</label>
+                </div>
+                <div className="radio-button-group">
+                  <input
+                    type="radio"
+                    id="sgm-mode-unlimited"
+                    name="selection-mode"
+                    checked={mode === 'unlimited'}
+                    onChange={() => setMode('unlimited')}
+                  />
+                  <label htmlFor="sgm-mode-unlimited">No limit</label>
+                </div>
+              </div>
+            </div>
+            {mode === 'limit' && (
+              <div className="field">
+                <label htmlFor="sgm-limit">Maximum selections</label>
+                <input
+                  id="sgm-limit"
+                  type="number"
+                  min="1"
+                  value={limit}
+                  onChange={(e) => setLimit(e.target.value)}
+                />
+              </div>
+            )}
+            <SelectionCategoryEditor categories={categories} onChange={setCategories} />
           </div>
-          {mode === 'limit' && (
-            <label>
-              Maximum selections
-              <input type="number" min="1" value={limit} onChange={(e) => setLimit(e.target.value)} />
-            </label>
-          )}
-          <SelectionCategoryEditor categories={categories} onChange={setCategories} />
         </div>
         <div className="actions">
-          <button className="button secondary" onClick={onClose}>Cancel</button>
-          <button className="button primary" disabled={saving} onClick={handleSave}>
+          <div className="button secondary" onClick={onClose}>Cancel</div>
+          <div className={`button primary${saving ? ' disabled' : ''}`} onClick={saving ? undefined : handleSave}>
             {saving ? 'Saving…' : initial?.id ? 'Save Changes' : 'Create Gallery'}
-          </button>
+          </div>
         </div>
       </div>
       <div className="modal-backdrop" onClick={onClose} />

@@ -7,13 +7,52 @@
 
 .selection-gallery-manager{
   margin: 16px 0;
-  .sgm-header{ display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; h3{ margin: 0; } }
-  .sgm-list{ display: grid; gap: 10px; }
-  .sgm-card{ display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 12px 14px; border: 1px solid #e5e7eb; border-radius: 10px; background: #fff;
-    &.status-active{ border-color: #93c5fd; } &.status-completed{ border-color: #86efac; background: #f0fdf4; } &.status-draft{ opacity: .95; } }
-  .sgm-name{ font-weight: 600; } .sgm-meta{ display: flex; gap: 10px; flex-wrap: wrap; font-size: .85rem; opacity: .85; margin: 4px 0; }
-  .sgm-categories{ display: flex; gap: 6px; flex-wrap: wrap; .sgm-cat{ font-size: .75rem; background: #f3f4f6; padding: 2px 8px; border-radius: 10px; } }
-  .sgm-actions{ display: flex; gap: 8px; flex-wrap: wrap; }
+  .sgm-header{ display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; h3{ margin: 0; font-size: 1.1rem; color: #fff; } }
+  .muted{ color: rgba(255, 255, 255, 0.45); font-size: 0.85rem; }
+  .sgm-list{
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    position: relative;
+    &:empty{ display: none; }
+  }
+  .sgm-card{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.3s ease;
+    &:last-child{ border-bottom: none; }
+    &:hover{ background: rgba(255, 255, 255, 0.05); }
+    &.status-active{ box-shadow: inset 2px 0 0 #0c84ff; }
+    &.status-completed{ box-shadow: inset 2px 0 0 #52c41a; background: rgba(82, 196, 26, 0.04); }
+    &.status-draft{ opacity: 0.75; }
+  }
+  .sgm-card-main{ display: grid; gap: 4px; min-width: 0; }
+  .sgm-name{ font-size: 0.95rem; font-weight: 400; color: #fff; }
+  .sgm-meta{
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+    font-size: 0.75rem; color: rgba(255, 255, 255, 0.45); margin: 0;
+    .status-badge{
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 2px 6px; border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.55);
+      &.active{ background: rgba(33, 173, 228, 0.15); color: #21ade4; border-color: rgba(33, 173, 228, 0.3); }
+      &.completed{ background: rgba(82, 196, 26, 0.15); color: #52c41a; border-color: rgba(82, 196, 26, 0.3); }
+      &.draft{ background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.55); border-color: rgba(255, 255, 255, 0.15); }
+    }
+  }
+  .sgm-categories{ display: flex; gap: 6px; flex-wrap: wrap; .sgm-cat{ font-size: 0.75rem; color: rgba(255, 255, 255, 0.65); background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2px 8px; border-radius: 10px; } }
+  .sgm-actions{ display: flex; gap: 8px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
 }
 
 // Portaled nested modal. The global `.modal-container` omits `top: 0` and
@@ -23,24 +62,99 @@
 // off-screen while its `top: 0` backdrop still covers the viewport.
 // Portal + explicit top/stacking fixes that: this container paints above
 // ShareGallery (z 20/21) with the dialog above its own backdrop.
+//
+// NOTE: portaled to document.body (outside `.App`), so `.App .button`
+// styles do not apply here. `.button` parity below mirrors
+// `src/style/_components.scss` so actions / template / row buttons look
+// identical to every other `.modal.island`. Body layout itself reuses the
+// global `.modal .form-section > .field` + `.project-validity-options >`
+// `.radio-button-group` rules from `Modal.scss` — no custom label layout.
 .selection-gallery-config-modal.modal-container{
   top: 0;
+  left: 0;
   z-index: 60;
   .modal.island{
     z-index: 61;
     max-width: 640px;
     width: 94vw;
-    label{ display: block; margin: 8px 0; input[type=text], input:not([type=checkbox]):not([type=radio]){ width: 100%; } }
-    .selection-mode-row{ display: flex; gap: 16px; margin: 8px 0; }
   }
-}
 
-.selection-category-editor{
-  margin-top: 12px;
-  .category-editor-header{ display: flex; justify-content: space-between; align-items: center; }
-  .category-template-row{ display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
-  .category-editor-row{ display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 8px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 8px;
-    input[type=text], input:not([type]){ min-width: 140px; } input[type=number]{ width: 70px; } }
+  // Portaled to document.body (outside `.App`), so it misses the global
+  // `.App * { color: white }` rule. Global inputs use a dark `$dark-3`
+  // background with no explicit text color, which inherits Tailwind's
+  // near-black body foreground here — dark-on-dark. Match other modals.
+  input, select, textarea{
+    color: #f2f2f7;
+    color-scheme: dark;
+    &::placeholder{ color: #8e8e93; opacity: 1; }
+  }
+
+  .button{
+    display: inline-block;
+    padding: 5px 11.2px;
+    padding-bottom: 6.4px;
+    border-radius: 16px;
+    font-size: 0.95rem;
+    line-height: 1.1rem;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+    box-shadow: inset -1px -1px 0px rgba(166, 255, 0, 0.05), inset 1px 1px 1px rgba(0, 0, 0, 0.2), 2px 2px 2px rgba(0, 0, 0, 0.2);
+    background-color: rgba(119, 119, 119, 0.226);
+    margin: 4px 0;
+    font-weight: 600;
+    opacity: 0.9;
+    text-align: center;
+    cursor: pointer;
+    transition-duration: 0.1s;
+    transform: scale(1);
+    color: #e8e8e8;
+    &:hover{ opacity: 1; box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 8px 6px rgba(26, 165, 31, 0.1); }
+    &:active{ transform: translateY(1px); opacity: 1; }
+    &.small{ padding: 4px 4.8px; font-size: 0.85rem; }
+    &.primary{
+      background: linear-gradient(110deg, #3f7a1f 50%, #70ab17 200%);
+      border: 1px solid #2f5c16;
+      border-left: 1px solid rgb(132, 193, 40);
+      border-top: 1px solid rgb(178, 234, 95);
+      color: white !important;
+    }
+    &.secondary{
+      background-color: #242426;
+      border: 1px solid #3a3a3d;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      border-left: 1px solid rgba(255, 255, 255, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 16px 6px rgba(0, 0, 0, 0.3);
+      -webkit-backdrop-filter: blur(3px);
+      backdrop-filter: blur(8px);
+    }
+    &.disabled{ opacity: 0.2; cursor: not-allowed; *{ cursor: not-allowed !important; } }
+  }
+
+  .selection-category-editor{
+    margin-top: 8px;
+    .category-editor-header{ display: flex; justify-content: space-between; align-items: center; gap: 12px; h4{ margin: 0; color: #f2f2f7; } }
+    .category-template-row{ margin: 8px 0; }
+    .muted{ color: #8e8e93; font-size: 0.9rem; }
+    .category-editor-row{
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      label{ display: flex; align-items: center; gap: 6px; font-size: 0.9rem; color: #b3b3b3; }
+      input[type=text], input:not([type]){ min-width: 140px; flex: 1; }
+      input[type=number]{ width: 70px; }
+      input[type=checkbox]{ height: auto; width: auto; }
+    }
+  }
 }
 
 .selection-photographer-view{
