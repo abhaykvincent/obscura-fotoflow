@@ -108,11 +108,19 @@ export const usePersistentSelection = (studioName, projectId, galleryId = null, 
                     } else {
                         const extractedIds = [];
                         (projectData.collections || []).forEach(collection => {
-                            collection.uploadedFiles?.forEach(image => {
-                                if (image.status === 'selected') {
-                                    extractedIds.push(image.url);
-                                }
-                            });
+                            // New model: collections reference photos via photoIds[].
+                            // Legacy model: collections contain uploadedFiles[] with status.
+                            if (collection.uploadedFiles) {
+                                collection.uploadedFiles?.forEach(image => {
+                                    if (image.status === 'selected') {
+                                        extractedIds.push(image.photoId || image.fileId || image.url || image.name);
+                                    }
+                                });
+                            } else if (collection.photoIds) {
+                                // photoIds[] alone doesn't carry selection status;
+                                // selection status lives on the Project Photo or project.selectedImageIds.
+                                // Skip here — selectedIds comes from project.selectedImageIds.
+                            }
                         });
                         setSelectedIds(extractedIds);
                     }

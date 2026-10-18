@@ -585,12 +585,19 @@ const projectsSlice = createSlice({
       })
       
       .addCase(deleteFile.fulfilled, (state, action) => {
-        const { projectId, collectionId, fileName } = action.payload;
+        const { projectId, collectionId, fileName, photoId } = action.payload;
         const project = state.data.find(p => p.id === projectId);
         if (project) {
           const collection = project.collections.find(c => c.id === collectionId);
-          if (collection && collection.uploadedFiles) {
-            collection.uploadedFiles = collection.uploadedFiles.filter(f => f.name !== fileName);
+          if (collection) {
+            // New model: remove photoId from photoIds[]
+            if (photoId && collection.photoIds) {
+              collection.photoIds = collection.photoIds.filter(id => id !== photoId);
+            }
+            // Legacy model: remove from uploadedFiles[]
+            if (collection.uploadedFiles) {
+              collection.uploadedFiles = collection.uploadedFiles.filter(f => f.name !== fileName);
+            }
           }
         }
       })
@@ -601,14 +608,21 @@ const projectsSlice = createSlice({
 
       builder
       .addCase(toggleFileFavorite.fulfilled, (state, action) => {
-        const { projectId, collectionId, imageUrl, newStatus } = action.payload;
+        const { projectId, collectionId, imageUrl, newStatus, photoId } = action.payload;
         const project = state.data.find(p => p.id === projectId);
         if (project) {
           const collection = project.collections.find(c => c.id === collectionId);
-          if (collection && collection.uploadedFiles) {
-            const file = collection.uploadedFiles.find(f => f.url === imageUrl);
-            if (file) {
-              file.status = newStatus;
+          if (collection) {
+            // New model: update status on photoIds reference (lightweight)
+            if (photoId && collection.photoIds) {
+              // status lives on the Project Photo; collection only holds references
+            }
+            // Legacy model: update status in uploadedFiles[]
+            if (collection.uploadedFiles) {
+              const file = collection.uploadedFiles.find(f => f.url === imageUrl);
+              if (file) {
+                file.status = newStatus;
+              }
             }
           }
         }

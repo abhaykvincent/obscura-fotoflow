@@ -181,8 +181,9 @@ export const ensureShootsForUploadedFiles = async (
     // doc in a way that drops an arrayUnion; per-date transactions still
     // protect against cross-batch / cross-gallery races.
     for (const [dateKey, files] of Object.entries(filesByDateKey)) {
+        // photoRefs use canonical photoId (upload-generated fileId), never URL or filename.
         const photoRefs = files
-            .map((f) => f?.url || f?.name)
+            .map((f) => f?.photoId || f?.fileId || f?.id)
             .filter(Boolean);
         const { id, created } = await getOrCreateShootForDate(domain, projectId, dateKey, {
             title: projectTitle,

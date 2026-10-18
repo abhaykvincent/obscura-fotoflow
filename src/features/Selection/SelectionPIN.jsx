@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { fetchProject, fetchSelectionGallery } from '../../firebase/functions/firestore';
+import { fetchProject, fetchSelectionGallery, fetchImages } from '../../firebase/functions/firestore';
 import GalleryPIN from '../../components/GalleryPIN/GalleryPIN';
 import { toTitleCase } from '../../utils/stringUtils';
 import { getCoverUrl } from '../../utils/urlUtils';
@@ -23,8 +23,12 @@ export default function SelectionPIN() {
       try {
         const projectData = await fetchProject(studioName, projectId);
         setProject(projectData);
-        const firstCollectionImages = projectData?.collections[0]?.uploadedFiles || [];
-        setImages(firstCollectionImages);
+        // New model: resolve first collection's photos via fetchImages (compat handles both)
+        const firstCollectionId = projectData?.collections?.[0]?.id;
+        if (firstCollectionId) {
+          const firstCollectionImages = await fetchImages(studioName, projectId, firstCollectionId);
+          setImages(firstCollectionImages);
+        }
         if (selectionGalleryId) {
           try {
             const g = await fetchSelectionGallery(studioName, projectId, selectionGalleryId);

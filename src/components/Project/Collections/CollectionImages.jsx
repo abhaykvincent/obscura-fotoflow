@@ -267,6 +267,8 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
     useEffect(() => {
         if (project && project.collections) {
             const currentCollection = project.collections.find(c => c.id === collectionId);
+            // New model: collections have photoIds[]; resolve via fetchImages (compat handles both)
+            // Legacy model: collections have uploadedFiles[]
             if (currentCollection && currentCollection.uploadedFiles) {
                 const selectedIds = project?.selectedImageIds || [];
                 const updatedImages = currentCollection.uploadedFiles.map(img => ({
@@ -274,6 +276,9 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
                     status: selectedIds.includes(img.url) ? 'selected' : (img.status === 'selected' ? 'none' : img.status)
                 }));
                 setCollectionImages(updatedImages);
+            } else if (currentCollection && currentCollection.photoIds) {
+                // PhotoIds resolved asynchronously via fetchImages; skip here,
+                // the fetchImages useEffect above handles this path.
             }
         }
     }, [project, collectionId, project?.selectedImageIds]);

@@ -2,6 +2,7 @@ import { db } from "../app";
 import { doc, collection, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { deleteCollectionFromStorage } from "../../utils/storageOperations";
 import { generateRandomString } from "../../utils/stringUtils";
+import { removePhotoFromCollection } from './photo-firestore';
 
 // Collection Operations
 export const addCollectionToStudioProject = async (domain, projectId, collectionData) => {
@@ -12,6 +13,8 @@ export const addCollectionToStudioProject = async (domain, projectId, collection
         id: `${id}`,
         name,
         status,
+        photoIds: [], // Collection → Photo relationship (ordered list of photoIds)
+        photoCount: 0,
         smartGallery: {
             id: `${id}`,
             name: name,
@@ -42,7 +45,7 @@ export const addCollectionToStudioProject = async (domain, projectId, collection
 
         // Update the project with the new collection ID, name, and status
         await updateDoc(projectDocRef, {
-            collections: arrayUnion({ id, name, status }), // Assuming collections is an array in your projectData
+            collections: arrayUnion({ id, name, status, photoCount: 0 }), // Assuming collections is an array in your projectData
         });
 
         // Create the new collection document in the Firestore
@@ -80,7 +83,35 @@ export const deleteCollectionFromFirestore = async (domain, projectId, collectio
             await updateDoc(projectDocRef, { collections: updatedCollections });
             color = '#54a134';
             console.log(`%cCollection ${collectionId} deleted successfully from Project ${projectId} in ${domain}`, `color: ${color};`);
-            deleteCollectionFromStorage(domain, projectId, collectionId); // Assuming you also pass the domain to this function
+
+            // --- Mandatory delete semantics for Project-Owned Photos ---
+            // Deleting a Collection must:
+            //   - remove Collection → Photo relationships (photoIds[])
+            //   - remove Collection-specific metadata
+            //   - PRESERVE Project Photo Assets (photos/{photoId})
+            //   - PRESERVE Photos referenced by other Collections, Selection, Design, AI, Delivery
+            // Deleting a Collection must NEVER delete canonical Project Photos.
+            //
+            // We remove each photoId from this collection's photoIds[] relationship
+            // but do NOT touch the underlying Project Photo documents or Storage objects.
+            const collectionDocRef = doc(projectDocRef, 'collections', collectionId);
+            const collectionSnap = await getDoc(collectionDocRef);
+            if (collectionSnap.exists()) {
+                const collectionData = collectionSnap.data();
+                const photoIds = Array.isArray(collectionData.photoIds) ? collectionData.photoIds : [];
+                for (const photoId of photoIds) {
+                    try {
+                        await removePhotoFromCollection(domain, projectId, collectionId, photoId);
+                    } catch (e) {
+                        console.warn(`Failed to remove photo ${photoId} from collection ${collectionId}:`, e.message);
+                    }
+                }
+            }
+
+            // Storage cleanup: only remove collection-specific (non-photo) storage.
+            // Canonical Project Photo storage (web/{domain}/{projectId}/{photoId}) is
+            // NOT deleted here — it belongs to the Project, not the Collection.
+            deleteCollectionFromStorage(domain, projectId, collectionId); // collection-specific stubs only
         } else {
             color = 'red';
             console.error(`%cProject ${projectId} does not exist in ${domain}`, `color: ${color};`);
