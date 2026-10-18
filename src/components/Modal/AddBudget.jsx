@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { addBudget, addPayment } from '../../app/slices/projectsSlice';
 import { showAlert } from '../../app/slices/alertSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,6 +26,10 @@ export default function AddBudgetModal({ project }) {
   ]);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(0);
   const [errors, setErrors] = useState({});
+  const suggestionResetTimer = useRef(null);
+
+  // clear any pending hover-reset timer on unmount
+  useEffect(() => () => clearTimeout(suggestionResetTimer.current), []);
 
   const validateForm = () => {
     let newErrors = {};
@@ -104,11 +108,16 @@ const modalRef = useModalFocus(visible.addBudget);
                     <div className="tag button tertiary suggestion"
                     onClick={() => handleAISuggestionChange(suggestion.amount)}
                     //on hover set activeSuggestionIndex
-                    onMouseEnter={() => 
-                      setActiveSuggestionIndex(index)}
+                    onMouseEnter={() => {
+                      clearTimeout(suggestionResetTimer.current);
+                      setActiveSuggestionIndex(index);
+                    }}
                     onMouseLeave={
                       // after 2 s reset to 0
-                      () => setTimeout(() => setActiveSuggestionIndex(0), 10000)
+                      () => {
+                        clearTimeout(suggestionResetTimer.current);
+                        suggestionResetTimer.current = setTimeout(() => setActiveSuggestionIndex(0), 2000);
+                      }
                     } 
                     key={index}
                     >{formatDecimal(suggestion.amount)}</div>

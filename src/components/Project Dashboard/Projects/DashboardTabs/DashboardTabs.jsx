@@ -13,6 +13,9 @@ import CollectionsPanel from '../../../Project/Collections/CollectionsPanel';
 import EmptyGalleriesState from '../EmptyGalleriesState/EmptyGalleriesState';
 import HistoryLog from '../HistoryLog/HistoryLog';
 
+// Temporarily hidden from the project navigation menu.
+const SHOW_HISTORY_TAB = false;
+
 function DashboardTabs({ project, activeTab: propActiveTab, setActiveTab: propSetActiveTab, setSelectedEventId }) {
   const dispatch = useDispatch();
   const [localActiveTab, setLocalActiveTab] = useState('galleries');
@@ -90,12 +93,14 @@ function DashboardTabs({ project, activeTab: propActiveTab, setActiveTab: propSe
           >
             Financials
           </button>
-          <button
-            className={`button secondary tab-button ${activeTab === 'history' ? 'active' : ''}`}
-            onClick={() => setActiveTab('history')}
-          >
-            History Log
-          </button>
+          {SHOW_HISTORY_TAB && (
+            <button
+              className={`button secondary tab-button ${activeTab === 'history' ? 'active' : ''}`}
+              onClick={() => setActiveTab('history')}
+            >
+              History Log
+            </button>
+          )}
         </div>
       )}
       <div className="tab-content">{renderTabContent()}</div>
