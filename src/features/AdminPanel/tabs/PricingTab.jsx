@@ -90,7 +90,7 @@ export const PricingTab = () => {
                         </div>
                     </div>
 
-                    <table className="invoice-table">
+                    <table className="table-view pricing-groups-table">
                         <thead>
                             <tr>
                                 <th>Pricing Name</th>
@@ -150,7 +150,7 @@ export const PricingTab = () => {
                     </div>
                 </div>
                 
-                <table className="invoice-table">
+                <table className="table-view pricing-plans-table">
                     <thead>
                         <tr>
                             <th>Plan Name</th>

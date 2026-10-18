@@ -40,7 +40,7 @@ export const LeadsTab = ({ leads }) => {
                             {/* Add any right-actions here if needed */}
                         </div>
                     </div>
-                    <table className="invoice-table">
+                    <table className="table-view leads-table">
                         <thead>
                             <tr>
                                 <th>NAME</th>
