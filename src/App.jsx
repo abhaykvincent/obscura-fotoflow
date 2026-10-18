@@ -284,7 +284,7 @@ export default function App() {
 {!isLightModePage(location.pathname) && location.pathname !== '/login' && <div className="footer">
             {/* Made in Kochi by Photographers |  */}
             <div className='copyright-symbol'>©</div>  
-            <a href="https://www.masanory.com" target="_blank" rel="noopener noreferrer"><span>Fotoflow</span> 2025</a>
+            <a href="https://www.masanory.com" target="_blank" rel="noopener noreferrer"><span>Fotoflow</span> 2026</a>
           </div>}
           </HotKeys>
           
