@@ -31,11 +31,19 @@ export default function SelectionPhotographerView({ domain, projectId, gallery, 
   const photoByKey = useMemo(() => {
     const map = {};
     (project?.collections || []).forEach((c) => {
-      (c.uploadedFiles || []).forEach((f) => {
-        if (f.url) map[f.url] = { ...f, collectionId: c.id, collectionName: c.name };
-        if (f.photoId) map[f.photoId] = { ...f, collectionId: c.id, collectionName: c.name };
-        if (f.name) map[f.name] = { ...f, collectionId: c.id, collectionName: c.name };
-      });
+      // New model: collections reference photos via photoIds[].
+      // Legacy model: collections contain uploadedFiles[].
+      if (c.uploadedFiles) {
+        (c.uploadedFiles || []).forEach((f) => {
+          if (f.url) map[f.url] = { ...f, collectionId: c.id, collectionName: c.name };
+          if (f.photoId) map[f.photoId] = { ...f, collectionId: c.id, collectionName: c.name };
+          if (f.name) map[f.name] = { ...f, collectionId: c.id, collectionName: c.name };
+        });
+      } else if (c.photoIds) {
+        c.photoIds.forEach((photoId) => {
+          map[photoId] = { photoId, collectionId: c.id, collectionName: c.name };
+        });
+      }
     });
     return map;
   }, [project]);
