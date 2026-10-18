@@ -16,18 +16,59 @@ import {
 } from './photo-firestore';
 
 /**
- * Fetch images for a Collection with Project-Owned Photo fallback.
+ * Merges canonical Project Photos with legacy uploadedFiles[] entries for the
+ * migration window (union read).
  *
- * Reads → Project Photos with legacy fallback (uploadedFiles[]).
- * During the migration window, if the Collection has a photoIds[] relationship,
- * resolve each photoId to its canonical Project Photo. Otherwise fall back to
- * the legacy collection.uploadedFiles[] array.
+ * - Canonical Project Photos always win.
+ * - Legacy entries already represented by a canonical photo (matching on
+ *   photoId / fileId / id / url) are dropped.
+ * - Result is sorted by name for stable gallery ordering.
+ *
+ * Dedupe uses strong identities only, so two different photos that happen to
+ * share an original filename are never collapsed into one.
+ *
+ * @param {Object[]} projectPhotos - normalized canonical photos
+ * @param {Object[]} legacyPhotos - normalized legacy uploadedFiles entries
+ * @returns {Object[]} deduped, name-sorted union
+ */
+export const mergeCollectionPhotos = (projectPhotos = [], legacyPhotos = []) => {
+    const canonicalIdentity = new Set();
+    projectPhotos.forEach((p) => {
+        [p.photoId, p.id, p.fileId, p.url].forEach((key) => {
+            if (key) canonicalIdentity.add(key);
+        });
+    });
+
+    const photos = [...projectPhotos];
+    legacyPhotos.forEach((f) => {
+        const tokens = [f.photoId, f.fileId, f.id, f.url].filter(Boolean);
+        const alreadyRepresented = tokens.length > 0 && tokens.some((token) => canonicalIdentity.has(token));
+        if (alreadyRepresented) {
+            return;
+        }
+        tokens.forEach((token) => canonicalIdentity.add(token));
+        photos.push(f);
+    });
+
+    return photos.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+};
+
+/**
+ * Fetch images for a Collection with Project-Owned Photo union read.
+ *
+ * Reads → canonical Project Photos (resolved from Collection.photoIds[])
+ * UNIONED with legacy collection.uploadedFiles[] for the migration window.
+ *
+ * A project in transition may hold photos in both stores: legacy photos live
+ * only in uploadedFiles[], newly uploaded photos live only in photoIds[].
+ * Returning either side alone would hide the other, so both are merged and
+ * deduped (canonical Project Photos win). Once migration completes and legacy
+ * uploadedFiles[] is removed, this naturally degrades to a photoIds+Project
+ * Photos read.
  *
  * @returns {Promise<Object[]>} array of photo objects (canonical shape where possible)
  */
 export const fetchImages = async (domain, projectId, collectionId) => {
-    let color = domain === '' ? 'gray' : '#0099ff';
-
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
     const projectDocRef = doc(projectsCollectionRef, projectId);
@@ -35,52 +76,44 @@ export const fetchImages = async (domain, projectId, collectionId) => {
     const collectionDocRef = doc(projectDocRef, 'collections', subCollectionId);
     const collectionSnapshot = await getDoc(collectionDocRef);
 
-    if (collectionSnapshot.exists()) {
-        const collectionsData = collectionSnapshot.data();
-
-        // New path: Collection → Photo relationship (photoIds[])
-        if (Array.isArray(collectionsData.photoIds) && collectionsData.photoIds.length > 0) {
-            const photoIds = collectionsData.photoIds;
-            // Fetch canonical Project Photos for each photoId
-            const photos = [];
-            for (const photoId of photoIds) {
-                try {
-                    const photoRef = doc(projectDocRef, 'photos', photoId);
-                    const photoSnap = await getDoc(photoRef);
-                    if (photoSnap.exists()) {
-                        const p = photoSnap.data();
-                        // Normalize: top-level url/thumbUrl aliases for backward-compat reads
-                        photos.push({
-                            ...p,
-                            url: p.urls?.web || p.url || '',
-                            thumbUrl: p.urls?.thumb || p.thumbUrl || '',
-                            photoId: p.id,
-                        });
-                    }
-                } catch (e) {
-                    console.warn(`Failed to fetch photo ${photoId} for collection ${collectionId}:`, e.message);
-                }
-            }
-            photos.sort((a, b) => a.name.localeCompare(b.name));
-            return photos;
-        }
-
-        // Legacy path: collection.uploadedFiles[] (temporary compatibility fallback)
-        if (collectionsData.uploadedFiles?.length > 0) {
-            const legacyPhotos = collectionsData.uploadedFiles.map(f => ({
-                ...f,
-                photoId: f.photoId || f.fileId || f.id || f.url || f.name,
-                url: f.url || '',
-                thumbUrl: f.thumbUrl || '',
-            }));
-            legacyPhotos.sort((a, b) => a.name.localeCompare(b.name));
-            return legacyPhotos;
-        }
-
+    if (!collectionSnapshot.exists()) {
         return [];
-    } else {
-        return []
     }
+
+    const collectionData = collectionSnapshot.data();
+    const photoIds = Array.isArray(collectionData.photoIds) ? collectionData.photoIds : [];
+
+    // 1. Canonical: resolve Collection → Photo relationships to Project Photos.
+    const projectPhotos = [];
+    for (const photoId of photoIds) {
+        try {
+            const photoRef = doc(projectDocRef, 'photos', photoId);
+            const photoSnap = await getDoc(photoRef);
+            if (photoSnap.exists()) {
+                const p = photoSnap.data();
+                // Normalize: top-level url/thumbUrl aliases for backward-compat reads
+                projectPhotos.push({
+                    ...p,
+                    photoId: p.id || photoId,
+                    url: p.urls?.web || p.url || '',
+                    thumbUrl: p.urls?.thumb || p.thumbUrl || '',
+                });
+            }
+        } catch (e) {
+            console.warn(`Failed to fetch photo ${photoId} for collection ${collectionId}:`, e.message);
+        }
+    }
+
+    // 2. Legacy: uploadedFiles[] entries not yet migrated to Project Photos.
+    const legacyPhotos = (collectionData.uploadedFiles || []).map((f) => ({
+        ...f,
+        photoId: f.photoId || f.fileId || f.id || f.url || f.name,
+        url: f.url || '',
+        thumbUrl: f.thumbUrl || '',
+    }));
+
+    // 3. Union + dedupe: canonical photos win; legacy fills the gaps.
+    return mergeCollectionPhotos(projectPhotos, legacyPhotos);
 };
 
 /**
