@@ -55,6 +55,57 @@ done" checks. Agents will run these before saying they are finished. -->
 - `npm test` runs in watch mode by default; always pass `--watchAll=false`.
 - Do not modify `GEMINI.md`; it is another tool's config.
 
+## Git
+
+Branch off `develop-alpha`, never off `main` and never commit directly to
+`main`. Feature branches merge into a `session/<n>` branch first, then that
+merges into `develop-alpha`.
+
+### Branch names
+
+`<type>/<kebab-case-summary>-<suffix>`
+
+- `type` — one of `feat`, `fix`, `refactor`.
+- summary — short, kebab-case, describes the change.
+- `suffix` — a short unique token to avoid collisions. Use `F…` for `feat` and
+  `fix`, `R…` for `refactor`. Omit it only if the name is already unique.
+
+Examples from this repo:
+
+- `feat/copy-button-component-F3Cbc7`
+- `fix/collection-status-tdz-F6CsT7`
+- `refactor/dedupe-shoot-creation-R4`
+
+### Commit messages
+
+`<emoji> <type>[(scope)]: <summary>`
+
+Pick the single emoji that best fits the change. Subject line only; add a body
+only when the change genuinely needs explanation. No trailing period.
+
+| Emoji | Use for |
+| --- | --- |
+| ✨ | new feature |
+| 🐛 | bug fix |
+| ♻️ | refactor, no behavior change |
+| 🎨 | style, formatting, visual polish |
+| ⚡ | performance |
+| ♿ | accessibility |
+| 🔒 | security, hiding or restricting access |
+| 🔓 | removing a restriction |
+| 📊 | data, tables, analytics |
+| 📋 | docs |
+| 🔧 | config, tooling |
+| 🙈 | gitignore |
+| 🚀 | deploy, release |
+| 💳 | payments |
+| 💄 | cosmetic UI |
+
+Example: `🐛 fix: Define missing keyframes and fix budget hover timer`
+
+Keep one logical change per commit. Do not use `git commit --no-verify`. Only
+commit when asked; do not push or open PRs unless asked.
+
 ## Verification
 
 <!-- Tell the agent what "done" means for this repo. Example:
