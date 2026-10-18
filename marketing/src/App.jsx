@@ -312,7 +312,7 @@ export default function App() {
               </ul>
             </nav>
           </div>
-          <p className="copyright">© 2026 FotoFlow. All rights reserved.</p>
+          <p className="copyright">© {new Date().getFullYear()} FotoFlow. All rights reserved.</p>
         </div>
       </footer>
     </>

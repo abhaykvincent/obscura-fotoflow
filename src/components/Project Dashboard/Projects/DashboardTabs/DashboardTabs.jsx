@@ -20,6 +20,8 @@ function DashboardTabs({ project, activeTab: propActiveTab, setActiveTab: propSe
   const setActiveTab = propSetActiveTab || setLocalActiveTab;
   const defaultStudio = useSelector(selectUserStudio);
 
+  const isEmptyState = project.collections.length === 0;
+
   const renderTabContent = () => {
     const isArchived = project.status === 'archive' || project.storage?.status === 'archive';
     const isExpired = project.status === 'expired';
@@ -31,17 +33,6 @@ function DashboardTabs({ project, activeTab: propActiveTab, setActiveTab: propSe
             {project.collections.length === 0 ? (
               !isExpired && (
                 <div className="galleries">
-                  <div className="heading-section">
-                    <h3 className="heading">Galleries <span>{project.collections.length}</span></h3>
-                    <button
-                      type="button"
-                      className="button primary small"
-                      disabled={isArchived || isExpired}
-                      onClick={() => dispatch(openModal('createCollection'))}
-                    >
-                      + Create Gallery
-                    </button>
-                  </div>
                   <EmptyGalleriesState
                     disabled={isArchived || isExpired}
                     onCreate={() => dispatch(openModal('createCollection'))}
@@ -79,32 +70,34 @@ function DashboardTabs({ project, activeTab: propActiveTab, setActiveTab: propSe
 
   return (
     <div className="dashboard-tabs">
-      <div className="tabs">
-        <button
-          className={`button secondary tab-button ${activeTab === 'galleries' ? 'active' : ''}`}
-          onClick={() => setActiveTab('galleries')}
-        >
-          Galleries
-        </button>
-        <button
-          className={`button secondary tab-button ${activeTab === 'shoots' ? 'active' : ''}`}
-          onClick={() => setActiveTab('shoots')}
-        >
-          Shoots
-        </button>
-        <button
-          className={`button secondary tab-button ${(activeTab === 'financials' || activeTab === 'invoices') ? 'active' : ''}`}
-          onClick={() => setActiveTab('financials')}
-        >
-          Financials
-        </button>
-        <button
-          className={`button secondary tab-button ${activeTab === 'history' ? 'active' : ''}`}
-          onClick={() => setActiveTab('history')}
-        >
-          History Log
-        </button>
-      </div>
+      {!isEmptyState && (
+        <div className="tabs">
+          <button
+            className={`button secondary tab-button ${activeTab === 'galleries' ? 'active' : ''}`}
+            onClick={() => setActiveTab('galleries')}
+          >
+            Galleries
+          </button>
+          <button
+            className={`button secondary tab-button ${activeTab === 'shoots' ? 'active' : ''}`}
+            onClick={() => setActiveTab('shoots')}
+          >
+            Shoots
+          </button>
+          <button
+            className={`button secondary tab-button ${(activeTab === 'financials' || activeTab === 'invoices') ? 'active' : ''}`}
+            onClick={() => setActiveTab('financials')}
+          >
+            Financials
+          </button>
+          <button
+            className={`button secondary tab-button ${activeTab === 'history' ? 'active' : ''}`}
+            onClick={() => setActiveTab('history')}
+          >
+            History Log
+          </button>
+        </div>
+      )}
       <div className="tab-content">{renderTabContent()}</div>
     </div>
   );
