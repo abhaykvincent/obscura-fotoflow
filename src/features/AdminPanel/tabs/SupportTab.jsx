@@ -8,7 +8,7 @@ export const SupportTab = ({ tickets }) => {
     return (
         <div className="invoice-history">
             <section className="support-list">
-                <table className="invoice-table">
+                <table className="table-view tickets-table">
                     <thead>
                         <tr>
                             <th>Ticket ID</th>

@@ -40,7 +40,7 @@ export const StudiosTab = ({ studios }) => {
                     </div>
                     <div className="right-actions"></div>
                 </div>
-                <table className="invoice-table">
+                <table className="table-view studios-table">
                     <thead>
                         <tr>
                             <th>STUDIO</th>

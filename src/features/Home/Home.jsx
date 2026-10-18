@@ -172,6 +172,104 @@ function Home() {
                     </div>
                 </div>
 
+
+                {
+                    projects.length > 0 ? (
+                        <>
+                            
+                            {recentProjects.length !== 0 && <div className="section recent">
+                                <h3 className='section-heading'>Recent Projects</h3>
+                                <div className="projects recent">
+                                    {
+                                        recentProjects.length !== 0 ? (
+                                            recentProjects.map((project, index) => (
+                                                viewType === 'redefined' ? (
+                                                    <ProjectCardRedefined
+                                                        project={project}
+                                                        key={project.id}
+                                                        type='home'
+                                                    />
+                                                ) : (
+                                                    <ProjectCard
+                                                        project={project}
+                                                        key={project.id}
+                                                        type='home'
+                                                    />
+                                                )
+                                            ))
+                                        ) : (
+                                            <p className="message">No recent projects</p>)
+                                    }
+                                    <Link className="project all" to={`/${defaultStudio.domain}/projects`} >
+                                        <div className="cover-wrap">
+                                            <div className="project-cover"></div>
+                                        </div>
+                                        <div className="project-details">
+                                            <div className="details-top">
+
+                                                <h4 className="project-title">See all Projects</h4>
+                                                <p className="project-type"></p>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </div>
+                            </div>}
+
+                            {selectedProjects.length !== 0 && <div className="section recent">
+                                <div className="section-header-inline">
+                                    <h3 className='section-heading'>Selection Completed</h3>
+                                    <div className="control-wrap view-type-controls">
+                                        <div className="controls">
+                                            <div className={`control ${viewType === 'cards' ? 'active' : ''}`} onClick={() => setViewType('cards')}>
+                                                <div className="icon card-view"></div>
+                                            </div>
+                                            <div className={`control ${viewType === 'redefined' ? 'active' : ''}`} onClick={() => setViewType('redefined')}>
+                                                <div className="icon redefined-view"></div>
+                                            </div>
+                                        </div>
+                                        <div className="label mini-icons view">View</div>
+                                    </div>
+                                </div>
+                                <div className="projects selection">
+                                    {
+                                        selectedProjects.length !== 0 ? (
+                                            selectionCompletedProjects.map((project, index) => (
+                                                viewType === 'redefined' ? (
+                                                    <ProjectCardRedefined
+                                                        project={project}
+                                                        key={project.id}
+                                                        type='selection'
+                                                    />
+                                                ) : (
+                                                    <ProjectCard
+                                                        project={project}
+                                                        key={project.id}
+                                                        type='selection'
+                                                    />
+                                                )
+                                            ))
+                                        ) : (
+                                            <p className="message">Selection completed projects</p>)
+                                    }
+                                </div>
+                            </div>
+                            }
+
+                        </>
+                    ) :
+                        (<>
+                        <div className="mascot-empty-projects">
+                            <div className="mascot-image"></div>
+                            <p className="mascot-label">
+                                <span className='highlight'>Create your first Project</span>
+                                <span>Click the <span className='highlight button primary small icon add'
+                            onClick={() => dispatch(openModal('createProject'))}
+                                > New </span> button to create your project</span>
+                                </p>
+                        </div>
+                        </>)
+                }
+
                 {/* Unified Action Center */}
                 {(selectionRequests.length > 0 || extensionRequests.length > 0) && (
                     <div className="section action-center">
@@ -233,100 +331,6 @@ function Home() {
                     </div>
                 )}
 
-                {
-                    projects.length > 0 ? (
-                        <>
-                            {selectedProjects.length !== 0 && <div className="section recent">
-                                <div className="section-header-inline">
-                                    <h3 className='section-heading'>Selection Completed</h3>
-                                    <div className="control-wrap view-type-controls">
-                                        <div className="controls">
-                                            <div className={`control ${viewType === 'cards' ? 'active' : ''}`} onClick={() => setViewType('cards')}>
-                                                <div className="icon card-view"></div>
-                                            </div>
-                                            <div className={`control ${viewType === 'redefined' ? 'active' : ''}`} onClick={() => setViewType('redefined')}>
-                                                <div className="icon redefined-view"></div>
-                                            </div>
-                                        </div>
-                                        <div className="label mini-icons view">View</div>
-                                    </div>
-                                </div>
-                                <div className="projects selection">
-                                    {
-                                        selectedProjects.length !== 0 ? (
-                                            selectionCompletedProjects.map((project, index) => (
-                                                viewType === 'redefined' ? (
-                                                    <ProjectCardRedefined
-                                                        project={project}
-                                                        key={project.id}
-                                                        type='selection'
-                                                    />
-                                                ) : (
-                                                    <ProjectCard
-                                                        project={project}
-                                                        key={project.id}
-                                                        type='selection'
-                                                    />
-                                                )
-                                            ))
-                                        ) : (
-                                            <p className="message">Selection completed projects</p>)
-                                    }
-                                </div>
-                            </div>
-                            }
-                            {recentProjects.length !== 0 && <div className="section recent">
-                                <h3 className='section-heading'>Recent Projects</h3>
-                                <div className="projects recent">
-                                    {
-                                        recentProjects.length !== 0 ? (
-                                            recentProjects.map((project, index) => (
-                                                viewType === 'redefined' ? (
-                                                    <ProjectCardRedefined
-                                                        project={project}
-                                                        key={project.id}
-                                                        type='home'
-                                                    />
-                                                ) : (
-                                                    <ProjectCard
-                                                        project={project}
-                                                        key={project.id}
-                                                        type='home'
-                                                    />
-                                                )
-                                            ))
-                                        ) : (
-                                            <p className="message">No recent projects</p>)
-                                    }
-                                    <Link className="project all" to={`/${defaultStudio.domain}/projects`} >
-                                        <div className="cover-wrap">
-                                            <div className="project-cover"></div>
-                                        </div>
-                                        <div className="project-details">
-                                            <div className="details-top">
-
-                                                <h4 className="project-title">See all Projects</h4>
-                                                <p className="project-type"></p>
-                                            </div>
-                                        </div>
-                                    </Link>
-                                </div>
-                            </div>}
-
-                        </>
-                    ) :
-                        (<>
-                        <div className="mascot-empty-projects">
-                            <div className="mascot-image"></div>
-                            <p className="mascot-label">
-                                <span className='highlight'>Create your first Project</span>
-                                <span>Click the <span className='highlight button primary small icon add'
-                            onClick={() => dispatch(openModal('createProject'))}
-                                > New </span> button to create your project</span>
-                                </p>
-                        </div>
-                        </>)
-                }
 
                 {
                     upcommingShoots.length !== 0 && <div className="section shoots">
