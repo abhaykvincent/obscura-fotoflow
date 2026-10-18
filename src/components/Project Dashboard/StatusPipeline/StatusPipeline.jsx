@@ -41,10 +41,31 @@ const isWithin48Hours = (dateStr) => {
 const StatusPipeline = ({ project, currentView, setView, activeTab, setActiveTab }) => {
   const dispatch = useDispatch();
   const selectionRequests = useSelector(selectSelectionRequests) || [];
+  const galleriesFromStore = useSelector((s) => s.selectionGalleries?.byProject?.[project?.id] || []);
   const [activeDetailsStage, setActiveDetailsStage] = useState(null);
   const containerRef = useRef(null);
 
   const pendingRequest = selectionRequests.find(req => req.projectId === project?.id);
+
+  // Merge store galleries into the project view-model for gallery-aware stage info.
+  // Falls back to any pre-attached preview so public/legacy paths keep working.
+  const enrichedProject = project
+    ? { ...project, selectionGalleriesPreview: galleriesFromStore.length > 0 ? galleriesFromStore : (project.selectionGalleriesPreview || []) }
+    : project;
+
+  useEffect(() => {
+    if (!project?.id) return;
+    if (galleriesFromStore.length > 0) return;
+    let cancelled = false;
+    import('../../../app/slices/selectionGalleriesSlice').then(({ fetchGalleries }) => {
+      // Resolve domain from project or fallback; fetch is best-effort for dashboard enrichment
+      const domain = project.domain || project.studioDomain || project.studio || null;
+      if (!domain || cancelled) return;
+      dispatch(fetchGalleries({ domain, projectId: project.id })).catch(() => {});
+    }).catch(() => {});
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project?.id]);
 
   // Close the details card when clicking outside
   useEffect(() => {
@@ -68,6 +89,7 @@ const StatusPipeline = ({ project, currentView, setView, activeTab, setActiveTab
   };
 
   const getStageDetails = (stage) => {
+    const project = enrichedProject;
     switch (stage) {
       case 'Booking': {
         const isBooked = project?.status !== 'draft' || (project?.events && project.events.length > 0);
@@ -205,25 +227,41 @@ const StatusPipeline = ({ project, currentView, setView, activeTab, setActiveTab
         };
       }
       case 'Selection': {
-        if (project?.status === 'selected') {
-          const selectedCount = project?.selectedFilesCount || 0;
+        const galleries = project?.selectionGalleriesPreview || [];
+        const completedGalleries = galleries.filter((g) => g.status === 'completed');
+        const activeGalleries = galleries.filter((g) => g.status === 'active');
+        if (project?.status === 'selected' || (galleries.length > 0 && completedGalleries.length === galleries.length)) {
+          const selectedCount = project?.selectedFilesCount || completedGalleries.reduce((a, g) => a + (g.selectedCount || 0), 0) || 0;
+          const names = completedGalleries.map((g) => g.name).join(', ');
           return {
             status: 'completed',
-            label: 'Selection completed',
-            info: `Client finalized selections (${selectedCount} photos selected).`,
+            label: galleries.length > 1 ? `${completedGalleries.length}/${galleries.length} selections completed` : 'Selection completed',
+            info: names ? `Client finalized selections (${selectedCount} photos): ${names}.` : `Client finalized selections (${selectedCount} photos selected).`,
             actionLabel: 'View Selections',
             actionType: 'viewSelections'
           };
         }
 
         if (pendingRequest) {
+          const gallerySuffix = pendingRequest.selectionGalleryId ? ` for "${pendingRequest.galleryName || pendingRequest.selectionGalleryId}"` : '';
           return {
             status: 'warning',
             isBlinking: true,
             label: 'Selection reset requested',
-            info: 'Client has requested to reset their selections to select again.',
+            info: `Client has requested to reset their selections${gallerySuffix} to select again.`,
             actionLabel: 'Review Request',
             actionType: 'respondReset'
+          };
+        }
+
+        if (activeGalleries.length > 0) {
+          const summary = activeGalleries.map((g) => `${g.name}: ${g.selectedCount || 0}${g.selectionLimit ? `/${g.selectionLimit}` : ''}`).join(' · ');
+          return {
+            status: 'active',
+            label: galleries.length > 1 ? `${activeGalleries.length} selection${activeGalleries.length === 1 ? '' : 's'} in progress` : 'Client selecting',
+            info: summary ? `Selection is currently open. ${summary}.` : 'Selection is currently open. Waiting for client to submit selections.',
+            actionLabel: 'Share Gallery Link',
+            actionType: 'shareGallery'
           };
         }
 
@@ -241,7 +279,7 @@ const StatusPipeline = ({ project, currentView, setView, activeTab, setActiveTab
         return {
           status: 'pending',
           label: 'Not started',
-          info: 'Enable selection on a gallery to allow clients to select photos.',
+          info: 'Create a Selection Gallery to allow clients to select photos with limits and categories.',
           actionLabel: 'Enable Selection',
           actionType: 'viewGalleries'
         };

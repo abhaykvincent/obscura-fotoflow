@@ -3,8 +3,8 @@ import { createSelectionRequest, fetchSelectionRequests, approveSelectionRequest
 
 export const requestSelectionReset = createAsyncThunk(
   'selectionRequest/requestReset',
-  async ({ domain, projectId, projectName }) => {
-    const response = await createSelectionRequest(domain, projectId, projectName);
+  async ({ domain, projectId, projectName, selectionGalleryId = null, galleryName = '' }) => {
+    const response = await createSelectionRequest(domain, projectId, projectName, { selectionGalleryId, galleryName });
     return response;
   }
 );

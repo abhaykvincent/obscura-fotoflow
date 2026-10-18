@@ -11,3 +11,4 @@ export * from './invitation-firestore';
 export * from './dummy-firestore';
 export * from './admin-firestore';
 export * from './packages-firestore';
+export * from './selection-gallery-firestore';

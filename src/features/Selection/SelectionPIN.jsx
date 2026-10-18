@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { fetchProject } from '../../firebase/functions/firestore';
+import { fetchProject, fetchSelectionGallery } from '../../firebase/functions/firestore';
 import GalleryPIN from '../../components/GalleryPIN/GalleryPIN';
 import { toTitleCase } from '../../utils/stringUtils';
 import { getCoverUrl } from '../../utils/urlUtils';
 import './Selection.scss'; // Reuse the same styles
 
 export default function SelectionPIN() {
-  const { studioName, projectId } = useParams();
+  const { studioName, projectId, selectionGalleryId } = useParams();
   const navigate = useNavigate();
   const [project, setProject] = useState(null);
+  const [gallery, setGallery] = useState(null);
   const [images, setImages] = useState([]);
   const [authenticated, setAuthenticated] = useState(false);
 
@@ -24,18 +25,28 @@ export default function SelectionPIN() {
         setProject(projectData);
         const firstCollectionImages = projectData?.collections[0]?.uploadedFiles || [];
         setImages(firstCollectionImages);
+        if (selectionGalleryId) {
+          try {
+            const g = await fetchSelectionGallery(studioName, projectId, selectionGalleryId);
+            if (g) setGallery(g);
+          } catch { /* ignore — PIN is project-level */ }
+        }
       } catch (error) {
         console.error('Failed to fetch project:', error);
       }
     };
     fetchProjectData();
-  }, [studioName, projectId]);
+  }, [studioName, projectId, selectionGalleryId]);
 
   useEffect(() => {
     if (authenticated) {
-      navigate(`/${studioName}/selection/${projectId}`);
+      if (selectionGalleryId) {
+        navigate(`/${studioName}/selection/${projectId}/gallery/${selectionGalleryId}`);
+      } else {
+        navigate(`/${studioName}/selection/${projectId}`);
+      }
     }
-  }, [authenticated, navigate, studioName, projectId]);
+  }, [authenticated, navigate, studioName, projectId, selectionGalleryId]);
 
   if (!project) return null; // Or a loading indicator
 
@@ -48,12 +59,13 @@ export default function SelectionPIN() {
         <img className='banner' src={getCoverUrl(project.projectCover || images[0]?.url)} alt="Project Banner" />
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
+          {gallery?.name && <p className="gallery-subtitle">{gallery.name}</p>}
         </div>
       </div>
       <div className="pin-container" style={{ padding: '60px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
         <GalleryPIN setAuthenticated={setAuthenticated} projectPin={project.pin} projectId={projectId} />
-        <Link 
-          to={`/${studioName}/smart-gallery/${project.id}`} 
+        <Link
+          to={`/${studioName}/smart-gallery/${project.id}`}
           className="button secondary outline small"
           style={{ textShadow: 'none', border: '1px solid #ddd', color: '#666' }}
         >

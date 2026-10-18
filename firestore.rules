@@ -74,6 +74,57 @@ service cloud.firestore {
       allow create, update, delete: if isSignedIn();
     }
 
+    // Selection Galleries: client-only proofing workspaces referencing
+    // existing project photos (never duplicates of Storage objects).
+    //
+    // Access model:
+    //   - Public read (get/list) so PIN-gated clients can load gallery
+    //     config, limits, categories and progress via direct reads.
+    //     PIN protection is enforced at the app layer (SelectionPIN);
+    //     tighten to a PIN custom claim before relying on rules alone.
+    //   - Config writes (limits, categories, status lifecycle except
+    //     client finish) require authentication (photographer/studio).
+    //   - Clients (unauthenticated, PIN-gated) may ONLY:
+    //       * increment/decrement denormalized counters via the
+    //         transactional select/deselect path, and
+    //         * submit their own gallery via active -> completed.
+    //     They MUST NOT change selectionLimit/selectionMode/name/
+    //     categories structure/pinRequired, reopen, lock or archive.
+    //   - True limit enforcement (overall + category, incl. concurrency)
+    //     lives in the transactional service layer
+    //     (selection-gallery-firestore.js); rules are the outer boundary.
+    function selectionConfigUnchanged() {
+      return request.resource.data.selectionLimit == resource.data.selectionLimit
+        && request.resource.data.selectionMode == resource.data.selectionMode
+        && request.resource.data.name == resource.data.name
+        && request.resource.data.pinRequired == resource.data.pinRequired;
+    }
+    function isCounterOnlyUpdate() {
+      return selectionConfigUnchanged()
+        && request.resource.data.status == resource.data.status
+        && request.resource.data.status == 'active';
+    }
+    function isClientFinish() {
+      return selectionConfigUnchanged()
+        && resource.data.status == 'active'
+        && request.resource.data.status == 'completed';
+    }
+    match /studios/{studioId}/projects/{projectId}/selectionGalleries/{galleryId} {
+      allow get, list: if true;
+      allow create, delete: if isSignedIn();
+      allow update: if isSignedIn() || isCounterOnlyUpdate() || isClientFinish();
+    }
+
+    // Selection references: one doc per selected photo (photoId reference,
+    // never a Storage copy). Public read so clients can restore progress;
+    // create/delete allowed for PIN-gated clients on active galleries.
+    // Updates (e.g. changing categoryId) require auth (photographer).
+    match /studios/{studioId}/projects/{projectId}/selectionGalleries/{galleryId}/selections/{selectionId} {
+      allow get, list: if true;
+      allow create, delete: if true;
+      allow update: if isSignedIn();
+    }
+
     // Guest PIN flows create these from public gallery pages (unauthenticated).
     match /studios/{studioId}/selectionRequests/{requestId} {
       allow get, list: if isSignedIn();

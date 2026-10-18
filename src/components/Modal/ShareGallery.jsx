@@ -12,6 +12,9 @@ import { useModalFocus } from '../../hooks/modalInputFocus';
 import { showAlert } from '../../app/slices/alertSlice';
 import { updateSelectionGalleryStatus, updateCollectionStatus, selectUpdatingCollections } from '../../app/slices/projectsSlice';
 import { acceptSelectionReset, selectSelectionRequests } from '../../app/slices/selectionRequestSlice';
+import SelectionGalleryManager from '../../features/Selection/components/SelectionGalleryManager';
+import SelectionPhotographerView from '../../features/Selection/components/SelectionPhotographerView';
+import { fetchSelectionGalleries } from '../../firebase/functions/selection-gallery-firestore';
 import QRCodeModal from './QRCodeModal';
 import PinReminderModal from './PinReminderModal';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -307,7 +310,11 @@ function ShareGallery({project }) {
                 <div className="button secondary  icon pin">{project?.pin}</div>
                 <div className="button secondary outline  icon icon-only share"></div>
 
-                
+
+              </div>
+
+              <div className="selection-galleries-section">
+                <SelectionGalleryManager domain={domain} project={project} />
               </div>
 
 
