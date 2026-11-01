@@ -269,6 +269,86 @@ export const updateProjectPhotoMetadata = async (domain, projectId, photoId, upd
 };
 
 /**
+ * Persists an embedding vector on a canonical Project Photo and synchronizes
+ * legacy collection.uploadedFiles if present.
+ *
+ * @param {string} domain
+ * @param {string} projectId
+ * @param {string} photoId
+ * @param {number[]} vector
+ * @param {Object} [meta]
+ * @param {string} [collectionId]
+ * @returns {Promise<Object>} updated photo payload
+ */
+export const savePhotoEmbeddingToFirestore = async (domain, projectId, photoId, vector, meta = {}, collectionId = null) => {
+    if (!domain || !projectId || !photoId) {
+        throw new Error('Domain, Project ID, and Photo ID are required to save embedding.');
+    }
+    if (!Array.isArray(vector) || vector.length === 0) {
+        throw new Error('A valid non-empty vector array is required.');
+    }
+
+    const now = Date.now();
+    const payload = {
+        embeddings: {
+            geminiEmbedding2: {
+                vector,
+                model: meta.model || 'gemini-embedding-2',
+                dimension: vector.length,
+                updatedAt: new Date(now).toISOString(),
+                ...(meta.details || {}),
+            },
+        },
+        updatedAt: now,
+    };
+
+    // 1. Update canonical Project Photo document if it exists
+    if (photoId && !photoId.includes('/')) {
+        try {
+            const photoRef = doc(photosCollectionRef(domain, projectId), photoId);
+            const snap = await getDoc(photoRef);
+            if (snap.exists()) {
+                await updateDoc(photoRef, payload);
+            }
+        } catch (err) {
+            console.warn(`Could not update photo doc ${photoId}:`, err.message);
+        }
+    }
+
+    // 2. Backward compatibility: update in collection.uploadedFiles[] if present
+    if (collectionId) {
+        try {
+            const collectionDocRef = doc(db, 'studios', domain, 'projects', projectId, 'collections', `${collectionId}`);
+            const collectionSnap = await getDoc(collectionDocRef);
+            if (collectionSnap.exists()) {
+                const collectionData = collectionSnap.data();
+                if (Array.isArray(collectionData.uploadedFiles) && collectionData.uploadedFiles.length > 0) {
+                    let changed = false;
+                    const updatedFiles = collectionData.uploadedFiles.map((f) => {
+                        const fileId = f.photoId || f.fileId || f.id || f.url || f.name;
+                        if (fileId === photoId || f.url === photoId) {
+                            changed = true;
+                            return {
+                                ...f,
+                                ...payload,
+                            };
+                        }
+                        return f;
+                    });
+                    if (changed) {
+                        await updateDoc(collectionDocRef, { uploadedFiles: updatedFiles });
+                    }
+                }
+            }
+        } catch (err) {
+            console.warn(`Could not sync embedding to collection ${collectionId}:`, err.message);
+        }
+    }
+
+    return payload;
+};
+
+/**
  * Deletes a canonical Project Photo safely.
  *
  * Before physical deletion, determines whether the Photo is referenced by
