@@ -23,11 +23,20 @@ import { updateCollectionStatus } from '../../../app/slices/projectsSlice';
 import ImageGalleryDesigner from '../../ImageGalleryDesigner/ImageGalleryDesigner';
 import { selectGalleryMode, setGalleryMode } from '../../../app/slices/gallerySlice';
 import { getOperatingSystem } from '../../../utils/generalUtils';
+import TimelineGallery from '../../../features/TimelineGallery/TimelineGallery';
+import useAdminAuth from '../../../hooks/useAdminAuth';
 
 const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
     const projectCollectionRef = useRef(null);
     const dispatch = useDispatch();
-    const galleryMode = useSelector(selectGalleryMode);
+    const requestedGalleryMode = useSelector(selectGalleryMode);
+    const isAdmin = useAdminAuth();
+    // Timeline (New) is developer-only. A persisted mode must never expose it to
+    // a non-admin (e.g. mode left in Redux after switching accounts/studios).
+    const timelineAllowed = isAdmin && requestedGalleryMode === 'timelineMode';
+    const galleryMode = requestedGalleryMode === 'timelineMode' && !timelineAllowed
+        ? 'workflowMode'
+        : requestedGalleryMode;
     const domain = useSelector(selectDomain);
     const storageLimit = useSelector(selectStudioStorageUsage);
     const currentStudio = useSelector(selectUserStudio);
@@ -64,6 +73,14 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
 
     const galleryPageRef = useRef(null);
     const loaderRef = useRef(null);
+
+    // If a non-admin somehow has timelineMode persisted (account switch, shared
+    // browser), fall back to the existing default gallery mode explicitly.
+    useEffect(() => {
+        if (requestedGalleryMode === 'timelineMode' && !isAdmin) {
+            dispatch(setGalleryMode('workflowMode'));
+        }
+    }, [requestedGalleryMode, isAdmin, dispatch]);
 
     useEffect(() => {
         galleryPageRef.current = document.querySelector('.gallery-page');
@@ -422,6 +439,20 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
                             <div className="controls">
                                 <div className={`control ${galleryMode === 'workflowMode' ? 'active' : ''}`} onClick={() => { setDisplayMode('darkMode') ;dispatch(setGalleryMode('workflowMode'))}}>Worklow</div>
                                 <div className={`control ${galleryMode === 'designMode' ? 'active' : ''}`} onClick={handleDesignClick}>Design {selectedImages.length>0&&<div className='favorite selected'></div>}</div>
+                                {isAdmin && (
+                                    <div
+                                        className={`control timeline-mode-control ${galleryMode === 'timelineMode' ? 'active' : ''}`}
+                                        onClick={() => {
+                                            setDisplayMode('darkMode');
+                                            dispatch(setGalleryMode('timelineMode'));
+                                        }}
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label="Timeline (New) developer view"
+                                    >
+                                        Timeline <span className="timeline-dev-tag">New</span>
+                                    </div>
+                                )}
                             </div>
                             <div className={`active`}></div>
                         </div>
@@ -490,9 +521,20 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
                 <ImageGalleryDesigner {...{project, collectionId }} />
             )
             }
+            {
+                galleryMode === 'timelineMode' && isAdmin && (
+                    <TimelineGallery
+                        photos={collectionImages}
+                        projectId={id || project?.id}
+                        collectionId={collectionId}
+                        domain={domain}
+                        onPhotosUpdate={setCollectionImages}
+                    />
+                )
+            }
 
             {
-                collectionImages?.length >0 && <div className={`${galleryMode === 'designMode' && 'bottom-panel-light-mode'} image-gallery-bottom-panel `} ref={loaderRef}>
+                collectionImages?.length >0 && galleryMode !== 'timelineMode' && <div className={`${galleryMode === 'designMode' && 'bottom-panel-light-mode'} image-gallery-bottom-panel `} ref={loaderRef}>
                     {/* <div className="button secondary">Load All</div> */}
                     
                     {collectionImages?.length !== imageUrls.length && collectionImages?.length >0 && showAllPhotos && <div className={`button primary`}
