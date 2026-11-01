@@ -527,6 +527,8 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
                         photos={collectionImages}
                         projectId={id}
                         collectionId={collectionId}
+                        domain={domain}
+                        onPhotosUpdate={setCollectionImages}
                     />
                 )
             }

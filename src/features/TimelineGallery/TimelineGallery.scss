@@ -1056,3 +1056,232 @@ $timeline-text: #e5e5e5;
     text-transform: uppercase;
   }
 }
+
+// ------------------------------------------------------------------
+// Gemini Embedding 2 Generator Controls
+// ------------------------------------------------------------------
+.timeline-gallery {
+  .photo-embedding-controls {
+    margin-top: 14px;
+    border-color: rgba(94, 160, 235, 0.25);
+    background: linear-gradient(180deg, #16191f 0%, #121418 100%);
+
+    .embedding-controls-header {
+      h3 {
+        color: #dbeafe;
+      }
+    }
+
+    .embedding-controls-desc {
+      margin: 4px 0 0;
+      color: #94a3b8;
+      font-size: 0.72rem;
+      line-height: 1.4;
+
+      strong {
+        color: #60a5fa;
+      }
+    }
+
+    .embedding-config-toggle {
+      font-size: 0.72rem;
+      border-color: #334155;
+      color: #93c5fd;
+
+      &:hover {
+        background: rgba(96, 165, 250, 0.12);
+        border-color: #60a5fa;
+      }
+    }
+
+    .embedding-metrics-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+
+      .embedding-metric {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 90px;
+
+        .embedding-metric-label {
+          font-size: 0.64rem;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: #64748b;
+        }
+
+        .embedding-metric-value {
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #f1f5f9;
+
+          &.text-success {
+            color: #4ade80;
+          }
+
+          &.text-warning {
+            color: #fbbf24;
+          }
+
+          &.text-accent {
+            color: #60a5fa;
+          }
+        }
+      }
+    }
+
+    .embedding-settings-drawer {
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid #334155;
+      border-radius: 6px;
+
+      .embedding-settings-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .api-key-status {
+        margin-left: 8px;
+        font-weight: normal;
+        color: #38bdf8;
+      }
+
+      .api-key-input-wrapper {
+        display: flex;
+        gap: 6px;
+
+        input {
+          flex: 1;
+        }
+      }
+    }
+
+    .embedding-trigger-row {
+      align-items: flex-end;
+      gap: 14px;
+      margin-top: 14px;
+
+      .count-field {
+        max-width: 120px;
+      }
+
+      .embedding-presets {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .preset-buttons {
+          display: flex;
+          gap: 4px;
+          flex-wrap: wrap;
+        }
+
+        .preset-btn {
+          padding: 4px 8px;
+          font-size: 0.7rem;
+
+          &.active {
+            background: rgba(96, 165, 250, 0.25);
+            border-color: #60a5fa;
+            color: #93c5fd;
+            font-weight: 600;
+          }
+        }
+      }
+
+      .embedding-filters {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .embedding-actions {
+        margin-left: auto;
+
+        .embedding-start-btn {
+          background: #2563eb;
+          border-color: #3b82f6;
+          color: #ffffff;
+          font-weight: 600;
+
+          &:hover:not(:disabled) {
+            background: #1d4ed8;
+          }
+        }
+
+        .embedding-stop-btn {
+          background: #dc2626;
+          border-color: #ef4444;
+          color: #ffffff;
+        }
+      }
+    }
+
+    .embedding-progress-container {
+      margin-top: 14px;
+      padding: 10px 12px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+
+      .embedding-progress-bar-bg {
+        width: 100%;
+        height: 8px;
+        background: #1e293b;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .embedding-progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #3b82f6, #60a5fa);
+        transition: width 0.3s ease;
+      }
+
+      .embedding-progress-status {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 6px;
+        font-size: 0.72rem;
+        color: #94a3b8;
+      }
+    }
+
+    .embedding-result-summary {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 6px;
+      font-size: 0.74rem;
+
+      .result-badge.success {
+        color: #4ade80;
+        font-weight: 600;
+      }
+
+      .result-badge.error {
+        color: #f87171;
+        font-weight: 600;
+      }
+
+      .result-time {
+        color: #94a3b8;
+        margin-left: auto;
+      }
+    }
+  }
+}
