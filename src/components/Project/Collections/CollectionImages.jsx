@@ -525,7 +525,7 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
                 galleryMode === 'timelineMode' && isAdmin && (
                     <TimelineGallery
                         photos={collectionImages}
-                        projectId={id}
+                        projectId={id || project?.id}
                         collectionId={collectionId}
                         domain={domain}
                         onPhotosUpdate={setCollectionImages}

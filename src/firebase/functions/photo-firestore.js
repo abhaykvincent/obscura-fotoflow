@@ -304,10 +304,16 @@ export const savePhotoEmbeddingToFirestore = async (domain, projectId, photoId, 
     };
 
     // 1. Update canonical Project Photo document if it exists
-    const photoRef = doc(photosCollectionRef(domain, projectId), photoId);
-    const snap = await getDoc(photoRef);
-    if (snap.exists()) {
-        await updateDoc(photoRef, payload);
+    if (photoId && !photoId.includes('/')) {
+        try {
+            const photoRef = doc(photosCollectionRef(domain, projectId), photoId);
+            const snap = await getDoc(photoRef);
+            if (snap.exists()) {
+                await updateDoc(photoRef, payload);
+            }
+        } catch (err) {
+            console.warn(`Could not update photo doc ${photoId}:`, err.message);
+        }
     }
 
     // 2. Backward compatibility: update in collection.uploadedFiles[] if present
