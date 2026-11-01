@@ -5,14 +5,18 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { useSelector } from 'react-redux';
 import Preview from '../../features/Preview/Preview';
 import useAdminAuth from '../../hooks/useAdminAuth';
+import { selectDomain } from '../../app/slices/authSlice';
 import TimelineControls from './TimelineControls';
 import TimelineSummary from './TimelineSummary';
 import TimelineSegment from './TimelineSegment';
 import TimelineExcluded from './TimelineExcluded';
 import MomentDetectionControls from './moments/MomentDetectionControls';
 import MomentDetectionSummary from './moments/MomentDetectionSummary';
+import PhotoEmbeddingControls from './moments/PhotoEmbeddingControls';
+import SemanticPhotoSearch from './search/SemanticPhotoSearch';
 import { DEFAULT_MOMENT_CONFIG, normalizeMomentConfig } from './moments/momentConfig';
 import { runMomentDetectionAsync } from './moments/momentDetectionEngine';
 import {
@@ -25,8 +29,22 @@ import './TimelineGallery.scss';
 const INITIAL_VISIBLE_SEGMENTS = 6;
 const SEGMENT_PAGE_SIZE = 6;
 
-const TimelineGallery = ({ photos = [], projectId, collectionId }) => {
+const TimelineGallery = ({
+  photos = [],
+  projectId,
+  collectionId,
+  domain: domainProp,
+  onPhotosUpdate,
+}) => {
   const isAdmin = useAdminAuth();
+  const authDomain = useSelector(selectDomain);
+  const activeDomain = domainProp || authDomain;
+
+  const [currentPhotos, setCurrentPhotos] = useState(photos);
+
+  useEffect(() => {
+    setCurrentPhotos(photos);
+  }, [photos]);
 
   const [draftConfig, setDraftConfig] = useState({ ...DEFAULT_SEGMENTATION_CONFIG });
   const [appliedConfig, setAppliedConfig] = useState({ ...DEFAULT_SEGMENTATION_CONFIG });
@@ -52,6 +70,32 @@ const TimelineGallery = ({ photos = [], projectId, collectionId }) => {
   const [preview, setPreview] = useState({ isOpen: false, index: 0 });
 
   const loadMoreRef = useRef(null);
+  const embeddingGeneratorRef = useRef(null);
+
+  const selectedSegment = useMemo(() => {
+    if (!result || !selectedSegmentId) return null;
+    return result.segments.find((seg) => seg.id === selectedSegmentId) || null;
+  }, [result, selectedSegmentId]);
+
+  const handleEmbeddingsGenerated = useCallback((updatedMap) => {
+    setCurrentPhotos((prevPhotos) => {
+      const nextPhotos = prevPhotos.map((photo) => {
+        const id = photoIdentity(photo);
+        const patch = updatedMap[id] || updatedMap[photo.id] || updatedMap[photo.photoId];
+        if (!patch) return photo;
+        return {
+          ...photo,
+          ...patch,
+        };
+      });
+      onPhotosUpdate?.(nextPhotos);
+      return nextPhotos;
+    });
+
+    // Invalidate moment detection cache and trigger immediate detection
+    forceMomentRunRef.current = true;
+    setMomentRunNonce((value) => value + 1);
+  }, [onPhotosUpdate]);
 
   // Apply configuration changes automatically (debounced), so the developer
   // sees a new segmentation without a page reload while typing stays smooth.
@@ -86,7 +130,7 @@ const TimelineGallery = ({ photos = [], projectId, collectionId }) => {
 
     const timer = window.setTimeout(() => {
       try {
-        const next = runTemporalSegmentation(photos, appliedConfig);
+        const next = runTemporalSegmentation(currentPhotos, appliedConfig);
         if (cancelled) return;
         setResult(next);
         setMomentResult(null);
@@ -104,7 +148,7 @@ const TimelineGallery = ({ photos = [], projectId, collectionId }) => {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [photos, appliedConfig, runNonce, isAdmin]);
+  }, [currentPhotos, appliedConfig, runNonce, isAdmin]);
 
   // Moment detection is independent of segmentation: re-running it never
   // re-runs temporal segmentation, and per-segment results are cached by
@@ -289,6 +333,25 @@ const TimelineGallery = ({ photos = [], projectId, collectionId }) => {
           setMomentAppliedConfig({ ...DEFAULT_MOMENT_CONFIG });
           forceMomentRunRef.current = true;
           setMomentRunNonce((value) => value + 1);
+        }}
+      />
+
+      <div ref={embeddingGeneratorRef}>
+        <PhotoEmbeddingControls
+          photos={currentPhotos}
+          selectedSegment={selectedSegment}
+          domain={activeDomain}
+          projectId={projectId}
+          collectionId={collectionId}
+          onEmbeddingsGenerated={handleEmbeddingsGenerated}
+        />
+      </div>
+
+      <SemanticPhotoSearch
+        photos={currentPhotos}
+        onOpenPhoto={openPhoto}
+        onScrollToEmbeddingGenerator={() => {
+          embeddingGeneratorRef.current?.scrollIntoView({ behavior: 'smooth' });
         }}
       />
 
