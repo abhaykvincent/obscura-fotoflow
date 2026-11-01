@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { fetchImageUrls } from '../../utils/storageOperations';
 import { findCollectionById } from '../../utils/CollectionQuery';
 import './Share.scss';
-import { fetchCollectionStatus, fetchProject, fetchProjectsFromFirestore } from '../../firebase/functions/firestore';
+import { fetchCollectionStatus, fetchProject, fetchProjectsFromFirestore, fetchImages } from '../../firebase/functions/firestore';
 import ShareGallery from '../../components/ImageGallery/ShareGallery';
 import { useSelector } from 'react-redux';
 import { selectDomain, selectIsAuthenticated, selectUser, selectUserStudio } from '../../app/slices/authSlice';
@@ -81,10 +81,18 @@ export default function ShareProject() {
     // find collection name from collection id
     const collection = findCollectionById(project.collections, collectionId);
     document.title = `${project.name} | ${collection?.name} | Gallery`
-    const newImages = project?.collections.find((collection)=>collection.id===collectionId)?.uploadedFiles;
-    setImageUrls(newImages)
-    setPage(1)
-  }, [project, collectionId]);
+    // Fetch images via Project-Owned Photo model (fetchImages handles new photoIds[]
+    // relationship and legacy uploadedFiles[] fallback).
+    fetchImages(studioName, projectId, collectionId)
+        .then((newImages) => {
+            setImageUrls(newImages)
+            setPage(1)
+        })
+        .catch((error) => {
+            console.error('Failed to fetch images for share gallery:', error);
+            setImageUrls([]);
+        });
+  }, [project, collectionId, studioName, projectId]);
 
   useEffect(() => {
     const checkCollectionStatus = async () => {
@@ -110,20 +118,20 @@ export default function ShareProject() {
   return (
     <div className="">
       <div className="collections-panel">
-        {project.collections.map((collection, index) => (
-          collection.uploadedFiles?.length !== 0 && 
-        
-          collection.uploadedFiles !== undefined && <div
-            key={collection.id}
-            className={`
-              collection-tab  active
-            `}
-          >
-            {
-            <Link to={collection.uploadedFiles !== undefined && `/${studioName}/smart-gallery/${project.id}/${collection.id}`}>{collection.name}</Link>
-            }
-          </div>
-        ))}
+        {project.collections.map((collection, index) => {
+          const photoCount = collection.photoCount ?? (collection.uploadedFiles?.length ?? 0);
+          if (!photoCount) return null;
+          return (
+            <div
+              key={collection.id}
+              className={`
+                collection-tab  active
+              `}
+            >
+              <Link to={`/${studioName}/smart-gallery/${project.id}/${collection.id}`}>{collection.name}</Link>
+            </div>
+          );
+        })}
       </div>
     </div>
     );

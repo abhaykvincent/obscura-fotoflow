@@ -163,7 +163,10 @@ export default function SmartGallery() {
       setCollectionsLoading(true);
       const newVisibleCollections = [];
       for (const collection of project.collections) {
-        if (collection.uploadedFiles?.length > 0) {
+        // New model: collections reference photos via photoIds[] + photoCount.
+        // Legacy model: collections contain uploadedFiles[].
+        const photoCount = collection.photoCount ?? (collection.uploadedFiles?.length ?? 0);
+        if (photoCount > 0) {
           try {
             const status = await fetchCollectionStatus(studioName, projectId, collection.id);
             if (status !== 'hide') {
@@ -224,6 +227,8 @@ export default function SmartGallery() {
     try {
       for (const collection of visibleCollections) {
         const folder = zip.folder(toTitleCase(collection.name));
+        // New model: resolve collection photos via photoIds relationship.
+        // Legacy model: uploadedFiles[].
         const files = collection.uploadedFiles || [];
         
         const filePromises = files.map(async (file) => {
@@ -389,7 +394,7 @@ export default function SmartGallery() {
                   <Link 
                     to={`/${studioName}/smart-gallery/${projectId}/${prevCollection.id}`} 
                     className="nav-link prev"
-                    style={{ backgroundImage: `url(${getThumbnailUrl(prevCollection.uploadedFiles[0]?.url)})` }}
+                    style={{ backgroundImage: `url(${getThumbnailUrl(prevCollection.galleryCover || '')})` }}
                   >
                     <div className="nav-content">
                       <span className="nav-label">Previous Album</span>
@@ -402,7 +407,7 @@ export default function SmartGallery() {
                   <Link 
                     to={`/${studioName}/smart-gallery/${projectId}/${nextCollection.id}`} 
                     className="nav-link next"
-                    style={{ backgroundImage: `url(${getThumbnailUrl(nextCollection.uploadedFiles[0]?.url)})` }}
+                    style={{ backgroundImage: `url(${getThumbnailUrl(nextCollection.galleryCover || '')})` }}
                   >
                     <div className="nav-content">
                       <span className="nav-label">Next Album</span>
@@ -439,7 +444,7 @@ export default function SmartGallery() {
                 style={{ backgroundImage: `url(${getThumbnailUrl(collection.galleryCover)})` }}
               >
                 <div className="collection-name">{toTitleCase(collection.name)}</div>
-                <div className="collection-image-count">{collection.uploadedFiles.length} images</div>
+                <div className="collection-image-count">{collection.photoCount ?? (collection.uploadedFiles?.length ?? 0)} images</div>
               </div>
             </Link>
         ))}

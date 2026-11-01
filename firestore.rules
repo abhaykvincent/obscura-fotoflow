@@ -69,6 +69,15 @@ service cloud.firestore {
       allow create, update, delete: if isSignedIn();
     }
 
+    // Canonical Project Photos: public read for galleries; writes need auth.
+    // Photos are project-owned assets (not collection-owned). Public gallery
+    // URLs resolve photos directly, so get/list must remain open for
+    // unauthenticated clients.
+    match /studios/{studioId}/projects/{projectId}/photos/{photoId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn();
+    }
+
     match /studios/{studioId}/projects/{projectId}/collections/{collectionId} {
       allow get, list: if true;
       allow create, update, delete: if isSignedIn();

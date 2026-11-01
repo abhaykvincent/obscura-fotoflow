@@ -313,9 +313,11 @@ function ShareGallery({project }) {
 
               </div>
 
+              {/* Temporarily hidden
               <div className="selection-galleries-section">
                 <SelectionGalleryManager domain={domain} project={project} />
               </div>
+              */}
 
 
 

@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Lottie from 'react-lottie';
 import animationData from '../../assets/animations/CompletedAnimation.json';
-import { fetchProject, updateProjectStatusInFirestore } from '../../firebase/functions/firestore';
+import { fetchProject, updateProjectStatusInFirestore, fetchImages } from '../../firebase/functions/firestore';
 import {
   fetchSelectionGalleries,
   fetchSelectionGallery,
@@ -248,10 +248,22 @@ export default function Selection() {
     if (!project) return [];
     const all = [];
     (project.collections || []).forEach((c) => {
-      (c.uploadedFiles || []).forEach((f) => {
-        const photo = { ...f, collectionId: c.id, collectionName: c.name };
-        if (isPhotoEligible(photo)) all.push(photo);
-      });
+      // New model: collections reference photos via photoIds[] (Project-owned).
+      // Legacy model: collections contain uploadedFiles[].
+      const photos = c.uploadedFiles || [];
+      if (photos.length > 0) {
+        photos.forEach((f) => {
+          const photo = { ...f, collectionId: c.id, collectionName: c.name };
+          if (isPhotoEligible(photo)) all.push(photo);
+        });
+      } else if (c.photoIds && c.photoIds.length > 0) {
+        // Collection references canonical Project Photos; create lightweight
+        // photo refs. Full resolution happens via fetchImages in the gallery view.
+        c.photoIds.forEach((photoId) => {
+          const photo = { photoId, collectionId: c.id, collectionName: c.name };
+          if (isPhotoEligible(photo)) all.push(photo);
+        });
+      }
     });
     return all;
   }, [project]);
@@ -460,7 +472,20 @@ export default function Selection() {
       return;
     }
     document.title = `${project.name} | Selection`;
-    setImages(currentColl?.uploadedFiles || []);
+    // New model: collection may have photoIds[] instead of uploadedFiles[].
+    // Resolve via fetchImages (compat handles both).
+    if (currentColl && currentColl.uploadedFiles) {
+      setImages(currentColl.uploadedFiles);
+    } else if (currentColl && currentColl.photoIds && currentColl.photoIds.length > 0) {
+      fetchImages(studioName, projectId, currentCollectionId)
+        .then((resolvedPhotos) => setImages(resolvedPhotos))
+        .catch((err) => {
+          console.error('Failed to resolve collection photos:', err);
+          setImages([]);
+        });
+    } else {
+      setImages([]);
+    }
     if (hasInitializedProgress && lastProgress?.collectionId !== currentCollectionId) {
       setPage(1);
     }

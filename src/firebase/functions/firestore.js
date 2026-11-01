@@ -3,6 +3,8 @@ export * from './referral-firestore';
 export * from './project-firestore';
 export * from './collection-firestore';
 export * from './file-firestore';
+export * from './photo-firestore';
+export * from './photoMigration';
 export * from './event-firestore';
 export * from './shoot-firestore';
 export * from './financial-firestore';
