@@ -26,12 +26,21 @@ import {
     PROCESSING_STEPS,
 } from "../app/slices/uploadSlice";
 import { trackEvent } from "../analytics/utils";
-import { addUploadedFilesToFirestore, addUploadCompletionEventToFirestore } from "../firebase/functions/firestore";
+import {
+    addUploadedFilesToFirestore,
+    addUploadCompletionEventToFirestore,
+    createProjectPhoto,
+    addPhotoToCollection,
+} from "../firebase/functions/firestore";
 import { fetchProjects } from "../app/slices/projectsSlice";
 
 import imageCompression from 'browser-image-compression';
 import { extractExifData } from "./fileUtils";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
+import {
+    getWebStoragePath,
+    getThumbStoragePath,
+} from "./photoStorage";
 
 const storageInstances = {};
 
@@ -156,7 +165,7 @@ export const uploadDerivativeWorker = async ({
     derivativeType,
     domain,
     projectId,
-    collectionId,
+    photoId,
     file,
     fileName,
     dispatch,
@@ -176,7 +185,11 @@ export const uploadDerivativeWorker = async ({
 
     const executeUpload = () => {
         return new Promise((resolve, reject) => {
-            const storagePath = `${derivativeType}/${domain}/${projectId}/${collectionId}/${fileName}`;
+            // Project-owned storage path: {web|thumb}/{domain}/{projectId}/{photoId}.{ext}
+            // collectionId is NOT part of the canonical Photo Asset storage path.
+            const storagePath = derivativeType === 'thumb'
+                ? getThumbStoragePath(domain, projectId, photoId, fileName)
+                : getWebStoragePath(domain, projectId, photoId, fileName);
             const storageRef = ref(storage, storagePath);
             const uploadMetadata = {
                 ...metadata,
@@ -217,6 +230,7 @@ export const uploadDerivativeWorker = async ({
                         resolve({
                             derivativeType,
                             url,
+                            storagePath,
                             totalBytes: uploadTask.snapshot.totalBytes,
                             fileName,
                         });
@@ -258,7 +272,7 @@ export const uploadFile = async (
     type,
     domain,
     id,
-    collectionId,
+    photoId,
     file,
     dispatch,
     fileId,
@@ -270,7 +284,7 @@ export const uploadFile = async (
         derivativeType: type,
         domain,
         projectId: id,
-        collectionId,
+        photoId,
         file,
         fileName: file.name,
         dispatch,
@@ -282,7 +296,9 @@ export const uploadFile = async (
         lastModified: file.lastModified,
         dateTimeOriginal,
         url: result.url,
+        storagePath: result.storagePath,
         fileId,
+        photoId,
         dimensions,
         type,
     };
@@ -394,6 +410,26 @@ export const processFileArtifacts = async (fileObj, dispatch) => {
 
 /**
  * Main Upload Pipeline Entry Point
+ *
+ * Target flow (Project-Owned Photo Assets):
+ *   Process file → Generate photoId → Upload project-owned derivatives →
+ *   Persist Project Photo → Create Collection → Photo relationship →
+ *   Update counters/events → Refresh application state
+ *
+ * Collection is NO LONGER the physical owner of uploaded Photos.
+ * The upload-generated fileId is the canonical photoId.
+ *
+ * @param {Object} options
+ *   {string} domain - studio domain
+ *   {File[]} files - files to upload
+ *   {string} id - projectId
+ *   {string} collectionId - target Collection (for relationship only, not storage path)
+ *   {number} importFileSize
+ *   {Function} dispatch - redux dispatch
+ *   {string} collectionName
+ *   {string} sectionId - smart gallery section
+ *   {string} bucketUrl
+ *   {number} concurrency
  */
 export const handleUpload = async ({
     domain,
@@ -412,6 +448,7 @@ export const handleUpload = async ({
     const sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
     // 1. Initialize Canonical Session State with Collision-Proof IDs (FF-UPLOAD-13)
+    // fileId is the canonical photoId - no second identity system.
     const initialFiles = files.map((file, index) => {
         const fileId = generateUploadId(sessionId, file, index);
         return {
@@ -438,13 +475,14 @@ export const handleUpload = async ({
             const processed = await processFileArtifacts(fileObj, dispatch);
 
             // Stage B: Parallel Derivative Uploads (FF-UPLOAD-05)
+            // Project-owned paths: web/{domain}/{projectId}/{photoId}.{ext}
             const [webResult, thumbResult] = await Promise.all([
                 uploadDerivativeWorker({
                     storage,
                     derivativeType: 'web',
                     domain,
                     projectId: id,
-                    collectionId,
+                    photoId: fileObj.id,
                     file: processed.webFile,
                     fileName: fileObj.name,
                     dispatch,
@@ -455,7 +493,7 @@ export const handleUpload = async ({
                     derivativeType: 'thumb',
                     domain,
                     projectId: id,
-                    collectionId,
+                    photoId: fileObj.id,
                     file: processed.thumbFile,
                     fileName: fileObj.name,
                     dispatch,
@@ -487,6 +525,12 @@ export const handleUpload = async ({
                 thumbUrl: thumbResult.url,
                 thumbAvailable: true,
                 fileId: fileObj.id,
+                photoId: fileObj.id,
+                storage: {
+                    webPath: webResult.storagePath,
+                    thumbPath: thumbResult.storagePath,
+                },
+                originalSize: fileObj.originalSize,
             };
         } catch (error) {
             console.error(`Failed to complete upload for ${fileObj.name}:`, error);
@@ -508,19 +552,71 @@ export const handleUpload = async ({
 
     if (finalUploadedFiles.length > 0) {
         try {
+            // --- Project-Owned Photo Persistence (Phase 3 & 4 of target flow) ---
+            // Persist each canonical Project Photo and create the Collection → Photo relationship.
+            const persistedPhotos = [];
+            for (const file of finalUploadedFiles) {
+                try {
+                    // 4. Persist the canonical Project Photo document (idempotent)
+                    await createProjectPhoto(domain, id, {
+                        photoId: file.photoId,
+                        name: file.name,
+                        originalSize: file.originalSize,
+                        lastModified: file.lastModified,
+                        dateTimeOriginal: file.dateTimeOriginal,
+                        dimensions: file.dimensions,
+                        urls: {
+                            web: file.url,
+                            thumb: file.thumbUrl,
+                        },
+                        storage: {
+                            webPath: file.storage.webPath,
+                            thumbPath: file.storage.thumbPath,
+                        },
+                        status: 'active',
+                        collectionId,
+                    });
+
+                    // 5. Create / update the Collection → Photo relationship
+                    if (collectionId) {
+                        await addPhotoToCollection(domain, id, collectionId, {
+                            photoId: file.photoId,
+                            name: file.name,
+                            originalSize: file.originalSize,
+                            lastModified: file.lastModified,
+                            dateTimeOriginal: file.dateTimeOriginal,
+                            dimensions: file.dimensions,
+                            urls: {
+                                web: file.url,
+                                thumb: file.thumbUrl,
+                            },
+                            storage: file.storage,
+                            status: 'active',
+                        });
+                    }
+
+                    persistedPhotos.push(file);
+                } catch (photoError) {
+                    console.error(`Failed to persist Project Photo ${file.photoId}:`, photoError);
+                    // Still include the file in results; upload succeeded at storage layer.
+                    persistedPhotos.push(file);
+                }
+            }
+
+            // 6. Update required counters & upload completion events
             const { pin } = await addUploadedFilesToFirestore(
                 domain,
                 id,
                 collectionId,
                 importFileSize,
-                finalUploadedFiles,
+                persistedPhotos,
                 sectionId
             );
             await addUploadCompletionEventToFirestore(
                 domain,
                 id,
                 collectionId,
-                finalUploadedFiles,
+                persistedPhotos,
                 importFileSize,
                 collectionName
             );
@@ -528,7 +624,7 @@ export const handleUpload = async ({
             trackEvent('gallery_uploaded', {
                 domain,
                 size: importFileSize,
-                files: finalUploadedFiles.length,
+                files: persistedPhotos.length,
             });
 
             dispatch(fetchProjects({ currentDomain: domain }));
@@ -536,11 +632,11 @@ export const handleUpload = async ({
             if (allSucceeded) {
                 dispatch(setUploadStatus(UPLOAD_SESSION_STATUS.COMPLETED));
                 showAlert('success', 'All files uploaded successfully!');
-                return { uploadedFiles: finalUploadedFiles, pin, error: null };
+                return { uploadedFiles: persistedPhotos, pin, error: null };
             } else {
                 dispatch(setUploadStatus(UPLOAD_SESSION_STATUS.FAILED));
                 showAlert('error', 'Some files failed to upload. Check the list.');
-                return { uploadedFiles: finalUploadedFiles, pin, error: 'Partial failure' };
+                return { uploadedFiles: persistedPhotos, pin, error: 'Partial failure' };
             }
         } catch (error) {
             console.error('Firestore update failed:', error);

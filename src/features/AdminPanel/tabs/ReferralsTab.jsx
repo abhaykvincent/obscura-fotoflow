@@ -41,7 +41,7 @@ export const ReferralsTab = ({ referrals }) => {
                         <div className="button primary icon referal" onClick={() => dispatch(openModal('addReferral'))}>New</div>
                     </div>
                 </div>
-                <table className="invoice-table">
+                <table className="table-view referrals-table">
                     <thead>
                         <tr>
                             <th>ID</th>

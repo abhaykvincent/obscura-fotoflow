@@ -24,12 +24,34 @@ const convertTimestampsToMillis = (obj) => {
     return newObj;
 };
 
+/**
+ * Resolves a smart gallery image entry to a canonical Project Photo reference.
+ * Legacy entries contain full photo objects; new entries contain photoId references.
+ * Returns a normalized entry with both photoId and a display snapshot.
+ */
+const normalizeGalleryImage = (image) => {
+    if (!image) return null;
+    // Already a canonical photo reference (new model)
+    if (image.photoId || image.id || image.fileId) {
+        return {
+            photoId: image.photoId || image.id || image.fileId,
+            name: image.name || '',
+            url: image.url || '',
+            thumbUrl: image.thumbUrl || '',
+        };
+    }
+    // Legacy full photo object — keep for compat; the url is used as identity
+    return {
+        photoId: image.url || image.name || '',
+        name: image.name || '',
+        url: image.url || '',
+        thumbUrl: image.thumbUrl || '',
+    };
+};
+
 export const fetchSmartGalleryFromFirestore = async (domain, projectId, collectionId) => {
     try {
         // --- Studio-status enforcement ---
-        // Deny gallery data when the parent studio is suspended/inactive, even
-        // if the collection itself is active. Prevents bypassing the React UI
-        // by calling this data path directly.
         const studioDocRef = doc(db, 'studios', domain);
         const studioSnapshot = await getDoc(studioDocRef);
         if (studioSnapshot.exists()) {
@@ -48,10 +70,25 @@ export const fetchSmartGalleryFromFirestore = async (domain, projectId, collecti
             const collectionData = collectionSnapshot.data();
             // Convert any Firestore Timestamps in smartGallery to milliseconds
             if (collectionData.smartGallery) {
-                return convertTimestampsToMillis(collectionData.smartGallery);
+                const gallery = convertTimestampsToMillis(collectionData.smartGallery);
+                // Normalize section images to photo references (compat: legacy full objects OK)
+                if (gallery.sections) {
+                    gallery.sections = gallery.sections.map((section) => {
+                        if (section.images && Array.isArray(section.images)) {
+                            return {
+                                ...section,
+                                images: section.images.map(normalizeGalleryImage).filter(Boolean),
+                            };
+                        }
+                        return section;
+                    });
+                }
+                return gallery;
             } else {
                 debugger
                 // Simulate smartGallery data if missing
+                // Legacy fallback: build from uploadedFiles (compat)
+                const legacyFiles = collectionData.uploadedFiles || [];
                 return {
                     name: collectionData.name || '',
                     projectCover: collectionData.uploadedFiles?.[0]?.url || '',
@@ -60,7 +97,7 @@ export const fetchSmartGalleryFromFirestore = async (domain, projectId, collecti
                         {
                             id: 'default-grid',
                             type: 'image-grid',
-                            images: collectionData.uploadedFiles || []
+                            images: legacyFiles.map(normalizeGalleryImage).filter(Boolean),
                         }
                     ],
                     coverSize: 'default',
@@ -84,6 +121,7 @@ export const updateSmartGalleryInFirestore = async (domain, projectId, collectio
         const collectionDocRef = doc(db, 'studios', domain, 'projects', projectId, 'collections', collectionId);
         await updateDoc(collectionDocRef, {
             smartGallery: smartGallery,
+            updatedAt: Date.now(),
         });
         console.log(`Smart gallery updated successfully for collection ${collectionId}.`);
     } catch (error) {

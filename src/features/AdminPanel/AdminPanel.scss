@@ -722,3 +722,141 @@
         50% { opacity: 0.6; }
         100% { opacity: 1; }
     }
+
+/* ------------------------------------------------------------------
+   Responsive overrides
+   ------------------------------------------------------------------ */
+
+// Tighter card spacing as the viewport narrows
+@media only screen and (max-width: 1080px) {
+    .App .admin-panel {
+        .admin-dashboard .cards {
+            gap: 8px * 1.618;
+        }
+    }
+}
+
+// Let the stat-card groups wrap onto multiple rows
+@media only screen and (max-width: 860px) {
+    .App .admin-panel {
+        .admin-dashboard .cards {
+            flex-wrap: wrap;
+        }
+    }
+}
+
+@media only screen and (max-width: 720px) {
+    .App .admin-panel {
+        padding: 8px 8px * 2;
+
+        .admin-controls-header {
+            margin-left: 0;
+        }
+
+        .admin-title {
+            font-size: 1.6rem;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
+        .admin-dashboard {
+            margin-top: 8px * 2;
+
+            .cards {
+                flex-wrap: wrap;
+                gap: 8px * 1.618;
+
+                // Each pair of cards takes a full row so nothing overflows
+                .group {
+                    flex: 1 1 100%;
+                }
+
+                .card {
+                    width: auto;
+                    min-width: 0;
+                    height: auto;
+                    min-height: 8px * 11;
+                }
+            }
+        }
+
+        .tabs {
+            margin-top: 8px * 3;
+            margin-bottom: 8px * 2;
+        }
+
+        // Stack the search / filters / actions instead of forcing one row
+        .actions {
+            grid-template-columns: 1fr;
+            gap: 8px;
+
+            .left-actions {
+                flex-wrap: wrap;
+            }
+
+            .right-actions {
+                justify-content: flex-start;
+            }
+        }
+
+        .search-input-wrapper {
+            flex: 1 1 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 100%;
+            margin-right: 0;
+        }
+
+        // Wide admin tables scroll horizontally rather than breaking the layout
+        .invoice-history,
+        .users-tab-window {
+            overflow-x: auto;
+        }
+
+        .table-view {
+            min-width: 640px;
+        }
+
+        // Firestore explorer: keep columns side by side but allow scrolling
+        .firestore-explorer-container {
+            height: auto;
+            min-height: 60vh;
+
+            .fs-columns {
+                overflow-x: auto;
+            }
+
+            .collections-col {
+                flex: 0 0 180px;
+            }
+
+            .documents-col {
+                flex: 0 0 200px;
+            }
+
+            .data-col {
+                flex: 0 0 280px;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 520px) {
+    .App .admin-panel {
+        .cards .card {
+            min-height: 8px * 10;
+            padding: 8px * 1.5;
+
+            .count {
+                font-size: 1.4rem;
+
+                span.icon {
+                    width: 8px * 8;
+                    padding: 8px * 1.5;
+                }
+            }
+        }
+    }
+}

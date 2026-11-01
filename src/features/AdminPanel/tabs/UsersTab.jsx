@@ -56,7 +56,7 @@ export const UsersTab = ({ users, leads }) => {
                             <div className="button primary" onClick={() => dispatch(openModal('addUser'))}>New</div>
                         </div>
                     </div>
-                    <table className="invoice-table">
+                    <table className="table-view users-table">
                         <thead>
                             <tr>
                                 <th>NAME</th>

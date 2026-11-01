@@ -185,7 +185,7 @@ export const AnalyticsTab = ({ type, analytics, loading, lastUpdated, onRefresh 
                 return (
                     <div style={{ marginTop: '0px' }}>
                         <h4 style={{ color: '#555', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Heavy User Leaderboard (Top 10 Storage)</h4>
-                        <table className="invoice-table">
+                        <table className="table-view leaderboard-table">
                             <thead>
                                 <tr>
                                     {/* Identity */}

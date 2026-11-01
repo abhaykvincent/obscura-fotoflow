@@ -468,7 +468,7 @@ function StudioProfile() {
                             <p>No projects found matching the criteria.</p>
                         </div>
                     ) : (
-                        <table className="invoice-table">
+                        <table className="table-view projects-table">
                             <thead>
                                 <tr>
                                     {renderSortTh('PROJECT NAME', 'name', projectSort, () => toggleSort(projectSort, setProjectSort, 'name'))}
@@ -523,7 +523,7 @@ function StudioProfile() {
                             <p>No associated users found for this studio.</p>
                         </div>
                     ) : (
-                        <table className="invoice-table">
+                        <table className="table-view members-table">
                             <thead>
                                 <tr>
                                     {renderSortTh('MEMBER', 'member', memberSort, () => toggleSort(memberSort, setMemberSort, 'member'))}
@@ -655,7 +655,7 @@ function StudioProfile() {
                             {selectionRequests.length === 0 ? (
                                 <p className="empty-subtext">No selection reset requests recorded.</p>
                             ) : (
-                                <table className="invoice-table">
+                                <table className="table-view selection-requests-table">
                                     <thead>
                                         <tr>
                                             {renderSortTh('PROJECT', 'project', selectionSort, () => toggleSort(selectionSort, setSelectionSort, 'project'))}
@@ -685,7 +685,7 @@ function StudioProfile() {
                             {extensionRequests.length === 0 ? (
                                 <p className="empty-subtext">No validity extension requests recorded.</p>
                             ) : (
-                                <table className="invoice-table">
+                                <table className="table-view extension-requests-table">
                                     <thead>
                                         <tr>
                                             {renderSortTh('PROJECT', 'project', extensionSort, () => toggleSort(extensionSort, setExtensionSort, 'project'))}

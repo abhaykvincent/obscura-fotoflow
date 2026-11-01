@@ -113,7 +113,7 @@ export default function BillingHistory() {
       {/* Subscriprions History Section */}
       <div className="invoice-history">
         <h2 className="section-title">Subscriptions</h2>
-        <table className="invoice-table">
+        <table className="table-view subscriptions-table">
           <thead>
             <tr>
               <th onClick={() => handleSort('invoiceId')}>
@@ -188,7 +188,7 @@ export default function BillingHistory() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <table className="invoice-table">
+        <table className="table-view invoices-table">
           <thead>
             <tr>
               <th onClick={() => handleSort('invoiceId')}>

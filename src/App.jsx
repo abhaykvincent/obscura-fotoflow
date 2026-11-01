@@ -233,6 +233,8 @@ export default function App() {
               <Route path="/:studioName/smart-gallery/:projectId/download/pin" element={<SmartGalleryDownloadPIN/>}/>
               <Route path="/:studioName/share/:projectId/:collectionId?" element={<ShareRedirect/>}/>
               <Route path="/:studioName/selection/:projectId/pin" element={<SelectionPIN/>}/>
+              <Route path="/:studioName/selection/:projectId/gallery/:selectionGalleryId/pin" element={<SelectionPIN/>}/>
+              <Route path="/:studioName/selection/:projectId/gallery/:selectionGalleryId/:collectionId?" element={<Selection/>}/>
               <Route path="/:studioName/selection/:projectId/:collectionId?" element={<Selection/>}/>
               <Route path="/:studioName/invitation/:projectId/:eventId?" element={<InvitationPreview/>}/>
 
@@ -282,7 +284,7 @@ export default function App() {
 {!isLightModePage(location.pathname) && location.pathname !== '/login' && <div className="footer">
             {/* Made in Kochi by Photographers |  */}
             <div className='copyright-symbol'>©</div>  
-            <a href="https://www.masanory.com" target="_blank" rel="noopener noreferrer"><span>Fotoflow</span> 2025</a>
+            <a href="https://www.masanory.com" target="_blank" rel="noopener noreferrer"><span>Fotoflow</span> {new Date().getFullYear()}</a>
           </div>}
           </HotKeys>
           
