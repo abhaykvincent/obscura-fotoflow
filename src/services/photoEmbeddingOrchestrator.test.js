@@ -50,7 +50,8 @@ describe('photoEmbeddingOrchestrator', () => {
       expect(result.successful).toHaveLength(2);
       expect(result.failed).toHaveLength(0);
       expect(Object.keys(result.updatedMap)).toEqual(['p1', 'p3']);
-      expect(result.updatedMap.p1.embedding).toHaveLength(32);
+      expect(result.updatedMap.p1.embeddings.geminiEmbedding2.vector).toHaveLength(32);
+      expect(result.updatedMap.p1.embedding).toBeUndefined();
       expect(progressEvents.length).toBeGreaterThan(0);
     });
 

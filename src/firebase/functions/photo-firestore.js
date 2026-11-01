@@ -290,7 +290,6 @@ export const savePhotoEmbeddingToFirestore = async (domain, projectId, photoId, 
 
     const now = Date.now();
     const payload = {
-        embedding: vector,
         embeddings: {
             geminiEmbedding2: {
                 vector,

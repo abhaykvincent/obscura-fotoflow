@@ -9,7 +9,6 @@ describe('Photo Embedding Integration with Moment Detection', () => {
     const photo = {
       id: 'photo-test-123',
       name: 'IMG_0001.JPG',
-      embedding: vector,
       embeddings: {
         geminiEmbedding2: {
           vector,
@@ -23,7 +22,7 @@ describe('Photo Embedding Integration with Moment Detection', () => {
     const resolved = resolvePhotoEmbedding(photo);
     expect(resolved.vector).toEqual(vector);
     expect(resolved.dimension).toBe(64);
-    expect(resolved.source).toBe('embedding');
+    expect(resolved.source).toBe('embeddings.geminiEmbedding2');
   });
 
   it('enables Moment Detection to cluster photos once embeddings are added', async () => {

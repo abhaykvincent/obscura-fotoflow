@@ -171,7 +171,6 @@ export const runPhotoEmbeddingBatch = async ({
       }
 
       const updateData = {
-        embedding: vector,
         embeddings: savedPayload?.embeddings || {
           geminiEmbedding2: {
             vector,

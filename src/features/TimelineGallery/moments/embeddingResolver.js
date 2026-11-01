@@ -15,13 +15,13 @@
  */
 
 export const EMBEDDING_FIELD_PATHS = [
+  'embeddings.geminiEmbedding2',
+  'embeddings.gemini',
+  'embeddings.vector',
   'embedding',
   'embeddingVector',
   'geminiEmbedding',
   'geminiEmbedding2',
-  'embeddings.gemini',
-  'embeddings.geminiEmbedding2',
-  'embeddings.vector',
   'visualEmbedding',
   'ai.embedding',
   'photoIntelligence.embedding',
