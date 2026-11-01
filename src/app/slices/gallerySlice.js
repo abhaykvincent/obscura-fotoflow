@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  mode: 'workflowMode', // or 'designMode'
+  mode: 'workflowMode', // 'workflowMode' | 'designMode' | 'timelineMode' (admin-only)
 };
 
 export const gallerySlice = createSlice({
