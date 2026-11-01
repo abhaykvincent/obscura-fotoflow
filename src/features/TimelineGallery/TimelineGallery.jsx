@@ -11,6 +11,10 @@ import TimelineControls from './TimelineControls';
 import TimelineSummary from './TimelineSummary';
 import TimelineSegment from './TimelineSegment';
 import TimelineExcluded from './TimelineExcluded';
+import MomentDetectionControls from './moments/MomentDetectionControls';
+import MomentDetectionSummary from './moments/MomentDetectionSummary';
+import { DEFAULT_MOMENT_CONFIG, normalizeMomentConfig } from './moments/momentConfig';
+import { runMomentDetectionAsync } from './moments/momentDetectionEngine';
 import {
   DEFAULT_SEGMENTATION_CONFIG,
   runTemporalSegmentation,
@@ -32,6 +36,16 @@ const TimelineGallery = ({ photos = [], projectId, collectionId }) => {
   const [isComputing, setIsComputing] = useState(true);
   const [computeError, setComputeError] = useState(null);
 
+  const [momentDraftConfig, setMomentDraftConfig] = useState({ ...DEFAULT_MOMENT_CONFIG });
+  const [momentAppliedConfig, setMomentAppliedConfig] = useState({ ...DEFAULT_MOMENT_CONFIG });
+  const [momentRunNonce, setMomentRunNonce] = useState(0);
+  const [momentResult, setMomentResult] = useState(null);
+  const [isDetectingMoments, setIsDetectingMoments] = useState(false);
+  const [momentProgress, setMomentProgress] = useState(null);
+  const [momentError, setMomentError] = useState(null);
+
+  const forceMomentRunRef = useRef(false);
+
   const [selectedSegmentId, setSelectedSegmentId] = useState(null);
   const [visibleSegmentCount, setVisibleSegmentCount] = useState(INITIAL_VISIBLE_SEGMENTS);
 
@@ -48,6 +62,14 @@ const TimelineGallery = ({ photos = [], projectId, collectionId }) => {
     }, 250);
     return () => window.clearTimeout(timer);
   }, [draftConfig, isAdmin]);
+
+  useEffect(() => {
+    if (!isAdmin) return undefined;
+    const timer = window.setTimeout(() => {
+      setMomentAppliedConfig(normalizeMomentConfig(momentDraftConfig));
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [momentDraftConfig, isAdmin]);
 
   // Segmentation runs outside render. Yielding once with setTimeout lets the
   // controls paint before the (pure, O(n log n) for time-gap) calculation runs.
@@ -67,6 +89,7 @@ const TimelineGallery = ({ photos = [], projectId, collectionId }) => {
         const next = runTemporalSegmentation(photos, appliedConfig);
         if (cancelled) return;
         setResult(next);
+        setMomentResult(null);
         setVisibleSegmentCount(INITIAL_VISIBLE_SEGMENTS);
         setSelectedSegmentId(null);
       } catch (error) {
@@ -82,6 +105,48 @@ const TimelineGallery = ({ photos = [], projectId, collectionId }) => {
       window.clearTimeout(timer);
     };
   }, [photos, appliedConfig, runNonce, isAdmin]);
+
+  // Moment detection is independent of segmentation: re-running it never
+  // re-runs temporal segmentation, and per-segment results are cached by
+  // photo IDs + timestamps + config.
+  useEffect(() => {
+    if (!isAdmin || !momentAppliedConfig.enabled || !result) {
+      setIsDetectingMoments(false);
+      setMomentProgress(null);
+      setMomentError(null);
+      return undefined;
+    }
+
+    const controller = new AbortController();
+    setIsDetectingMoments(true);
+    setMomentError(null);
+
+    const timer = window.setTimeout(async () => {
+      try {
+        const next = await runMomentDetectionAsync(result, momentAppliedConfig, {
+          force: forceMomentRunRef.current,
+          signal: controller.signal,
+          onProgress: setMomentProgress,
+        });
+        if (!controller.signal.aborted) setMomentResult(next);
+      } catch (error) {
+        if (!controller.signal.aborted && error.name !== 'AbortError') {
+          setMomentError(error);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsDetectingMoments(false);
+          setMomentProgress(null);
+          forceMomentRunRef.current = false;
+        }
+      }
+    }, 0);
+
+    return () => {
+      controller.abort();
+      window.clearTimeout(timer);
+    };
+  }, [result, momentAppliedConfig, momentRunNonce, isAdmin]);
 
   useEffect(() => {
     if (!selectedSegmentId || !result) return;
@@ -179,11 +244,17 @@ const TimelineGallery = ({ photos = [], projectId, collectionId }) => {
           <span className="timeline-eyebrow">Developer / experimental</span>
           <h2>Timeline (New)</h2>
           <p>
-            Chronological capture timeline with automatic temporal segmentation.
-            Read-only — photo records, selection state, and ordering are untouched.
+            Chronological capture timeline with automatic temporal segmentation
+            and experimental Moment Detection inside each segment. Read-only —
+            photo records, embeddings, selection state, and ordering are untouched.
           </p>
         </div>
         {isComputing && result && <span className="timeline-working">Re-segmenting…</span>}
+        {!isComputing && isDetectingMoments && result && (
+          <span className="timeline-working">
+            Detecting Moments{momentProgress ? ` ${momentProgress.completed}/${momentProgress.total}` : '…'}
+          </span>
+        )}
       </div>
 
       <TimelineControls
@@ -202,9 +273,34 @@ const TimelineGallery = ({ photos = [], projectId, collectionId }) => {
         }}
       />
 
+      <MomentDetectionControls
+        config={momentDraftConfig}
+        appliedConfig={momentAppliedConfig}
+        isDetecting={isDetectingMoments}
+        stats={momentResult?.stats || null}
+        onChange={setMomentDraftConfig}
+        onRegenerate={() => {
+          setMomentAppliedConfig(normalizeMomentConfig(momentDraftConfig));
+          forceMomentRunRef.current = true;
+          setMomentRunNonce((value) => value + 1);
+        }}
+        onReset={() => {
+          setMomentDraftConfig({ ...DEFAULT_MOMENT_CONFIG });
+          setMomentAppliedConfig({ ...DEFAULT_MOMENT_CONFIG });
+          forceMomentRunRef.current = true;
+          setMomentRunNonce((value) => value + 1);
+        }}
+      />
+
       {computeError && (
         <div className="timeline-error" role="alert">
           Segmentation failed: {computeError.message}
+        </div>
+      )}
+
+      {momentError && (
+        <div className="timeline-error" role="alert">
+          Moment detection failed: {momentError.message}
         </div>
       )}
 
@@ -218,6 +314,13 @@ const TimelineGallery = ({ photos = [], projectId, collectionId }) => {
       {result && (
         <>
           <TimelineSummary stats={result.stats} />
+
+          {momentAppliedConfig.enabled && momentResult && (
+            <MomentDetectionSummary
+              stats={momentResult.stats}
+              config={momentAppliedConfig}
+            />
+          )}
 
           {result.stats.totalPhotos === 0 && (
             <div className="timeline-empty">No photos in this gallery yet.</div>
@@ -250,6 +353,8 @@ const TimelineGallery = ({ photos = [], projectId, collectionId }) => {
                     isSelected={selectedSegmentId === segment.id}
                     onSelect={(id) => setSelectedSegmentId((current) => (current === id ? null : id))}
                     onOpenPhoto={openPhoto}
+                    momentDetectionEnabled={momentAppliedConfig.enabled}
+                    momentResult={momentResult?.momentsBySegmentId.get(segment.id) || null}
                   />
                 </div>
               </React.Fragment>
