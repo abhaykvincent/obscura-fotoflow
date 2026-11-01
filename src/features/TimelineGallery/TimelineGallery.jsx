@@ -16,6 +16,7 @@ import TimelineExcluded from './TimelineExcluded';
 import MomentDetectionControls from './moments/MomentDetectionControls';
 import MomentDetectionSummary from './moments/MomentDetectionSummary';
 import PhotoEmbeddingControls from './moments/PhotoEmbeddingControls';
+import SemanticPhotoSearch from './search/SemanticPhotoSearch';
 import { DEFAULT_MOMENT_CONFIG, normalizeMomentConfig } from './moments/momentConfig';
 import { runMomentDetectionAsync } from './moments/momentDetectionEngine';
 import {
@@ -69,6 +70,7 @@ const TimelineGallery = ({
   const [preview, setPreview] = useState({ isOpen: false, index: 0 });
 
   const loadMoreRef = useRef(null);
+  const embeddingGeneratorRef = useRef(null);
 
   const selectedSegment = useMemo(() => {
     if (!result || !selectedSegmentId) return null;
@@ -334,13 +336,23 @@ const TimelineGallery = ({
         }}
       />
 
-      <PhotoEmbeddingControls
+      <div ref={embeddingGeneratorRef}>
+        <PhotoEmbeddingControls
+          photos={currentPhotos}
+          selectedSegment={selectedSegment}
+          domain={activeDomain}
+          projectId={projectId}
+          collectionId={collectionId}
+          onEmbeddingsGenerated={handleEmbeddingsGenerated}
+        />
+      </div>
+
+      <SemanticPhotoSearch
         photos={currentPhotos}
-        selectedSegment={selectedSegment}
-        domain={activeDomain}
-        projectId={projectId}
-        collectionId={collectionId}
-        onEmbeddingsGenerated={handleEmbeddingsGenerated}
+        onOpenPhoto={openPhoto}
+        onScrollToEmbeddingGenerator={() => {
+          embeddingGeneratorRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }}
       />
 
       {computeError && (

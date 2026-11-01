@@ -275,3 +275,90 @@ export const generateGeminiEmbedding = async ({
     dimension: vector.length,
   };
 };
+
+/**
+ * Calls Gemini Embedding 2 endpoint to generate an embedding for a natural language text query.
+ * Because gemini-embedding-2 is multimodal, text and image vectors share the exact same space.
+ *
+ * @param {Object} options
+ * @param {string} options.text
+ * @param {string} options.apiKey
+ * @param {string} [options.model=DEFAULT_EMBEDDING_MODEL]
+ * @param {number} [options.outputDimensionality=DEFAULT_OUTPUT_DIMENSION]
+ * @param {AbortSignal} [options.signal]
+ * @returns {Promise<{ vector: number[], model: string, dimension: number }>}
+ */
+export const generateTextGeminiEmbedding = async ({
+  text,
+  apiKey,
+  model = DEFAULT_EMBEDDING_MODEL,
+  outputDimensionality = DEFAULT_OUTPUT_DIMENSION,
+  signal,
+}) => {
+  if (!apiKey || !apiKey.trim()) {
+    throw new Error('A valid Gemini API Key is required for semantic search.');
+  }
+
+  if (!text || typeof text !== 'string' || !text.trim()) {
+    throw new Error('Query text is required to generate a text embedding.');
+  }
+
+  const endpoint = `${GEMINI_API_BASE_URL}/${model}:embedContent?key=${encodeURIComponent(apiKey.trim())}`;
+
+  const payload = {
+    content: {
+      parts: [
+        {
+          text: text.trim(),
+        },
+      ],
+    },
+  };
+
+  if (Number.isFinite(outputDimensionality) && outputDimensionality > 0) {
+    payload.outputDimensionality = outputDimensionality;
+  }
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+    signal,
+  });
+
+  if (!response.ok) {
+    let errorDetail = '';
+    try {
+      const errorJson = await response.json();
+      errorDetail = errorJson?.error?.message || response.statusText;
+    } catch {
+      errorDetail = response.statusText;
+    }
+
+    if (response.status === 400) {
+      throw new Error(`Gemini API 400 Bad Request: ${errorDetail}`);
+    }
+    if (response.status === 403) {
+      throw new Error(`Gemini API 403 Forbidden: ${errorDetail}`);
+    }
+    if (response.status === 429) {
+      throw new Error(`Gemini API 429 Rate Limit Exceeded: ${errorDetail}`);
+    }
+    throw new Error(`Gemini API Error (${response.status}): ${errorDetail}`);
+  }
+
+  const data = await response.json();
+  const vector = data?.embedding?.values;
+
+  if (!Array.isArray(vector) || vector.length === 0) {
+    throw new Error('Gemini API did not return embedding values in response.');
+  }
+
+  return {
+    vector,
+    model,
+    dimension: vector.length,
+  };
+};
