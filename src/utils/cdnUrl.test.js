@@ -96,16 +96,20 @@ describe('cdnUrl - Canonical FotoFlow CDN Generation', () => {
   });
 
   describe('swapQualityPrefix', () => {
-    it('swaps web to thumb', () => {
+    it('swaps web JPG to thumb WebP', () => {
       expect(swapQualityPrefix('web/domain/project/img.jpg', 'thumb')).toBe('thumb/domain/project/img.jpg');
     });
 
-    it('swaps thumb to original', () => {
-      expect(swapQualityPrefix('thumb/domain/project/img.jpg', 'original')).toBe('original/domain/project/img.jpg');
+    it('swaps thumb WebP to original JPG', () => {
+      expect(swapQualityPrefix('thumb/domain/project/img.webp', 'original')).toBe('original/domain/project/img.jpg');
     });
 
-    it('prepends quality if no existing prefix matches', () => {
-      expect(swapQualityPrefix('custom/domain/project/img.jpg', 'thumb')).toBe('thumb/custom/domain/project/img.jpg');
+    it('prepends quality and changes extension to webp for thumb if image extension present', () => {
+      expect(swapQualityPrefix('custom/domain/project/img.png', 'thumb')).toBe('thumb/custom/domain/project/img.png');
+    });
+
+    it('preserves webp when already webp for thumb', () => {
+      expect(swapQualityPrefix('thumb/domain/project/img.webp', 'thumb')).toBe('thumb/domain/project/img.webp');
     });
   });
 
@@ -131,12 +135,12 @@ describe('cdnUrl - Canonical FotoFlow CDN Generation', () => {
       expect(result).toBe(`${CDN_DOMAIN}/web/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
     });
 
-    it('converts Firebase URL to requested thumb quality', () => {
+    it('converts Firebase URL to requested thumb quality with webp extension', () => {
       const result = getCdnUrl(SAMPLE_FIREBASE_URL, 'thumb');
       expect(result).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
     });
 
-    it('converts Firebase URL to requested original quality', () => {
+    it('converts Firebase URL to requested original quality preserving JPG extension', () => {
       const result = getCdnUrl(SAMPLE_FIREBASE_URL, 'original');
       expect(result).toBe(`${CDN_DOMAIN}/original/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
     });

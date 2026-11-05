@@ -109,22 +109,38 @@ export function isNonStorageUrl(url) {
 
 /**
  * Swaps or prepends the target quality in the storage object path.
+ * Maps file extension to .webp for target quality 'thumb' while preserving JPG (or other original extensions) for other qualities.
+ * If the path already has a .webp extension (e.g. from an existing thumb path) and target quality is not 'thumb',
+ * it keeps the extension or swaps back to .jpg if it was mapped.
  *
  * @param {string} path - Storage path
  * @param {string} targetQuality - Quality name ('web', 'thumb', 'original', 'covers')
- * @returns {string} Path with updated quality prefix
+ * @returns {string} Path with updated quality prefix and appropriate extension
  */
 export function swapQualityPrefix(path, targetQuality) {
   if (!path || typeof path !== 'string') return '';
-  const cleanPath = path.replace(/^\/+/, '');
+  let cleanPath = path.replace(/^\/+/, '');
 
+  let currentPrefix = null;
   for (const prefix of QUALITY_PREFIXES) {
     if (cleanPath.startsWith(prefix + '/')) {
-      return cleanPath.replace(prefix + '/', `${targetQuality}/`);
+      currentPrefix = prefix;
+      cleanPath = cleanPath.replace(prefix + '/', `${targetQuality}/`);
+      break;
     }
   }
 
-  return `${targetQuality}/${cleanPath}`;
+  if (!currentPrefix) {
+    cleanPath = `${targetQuality}/${cleanPath}`;
+  }
+
+  if (targetQuality === 'thumb') {
+    cleanPath = cleanPath.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+  } else if (currentPrefix === 'thumb' && targetQuality !== 'thumb') {
+    cleanPath = cleanPath.replace(/\.webp$/i, '.jpg');
+  }
+
+  return cleanPath;
 }
 
 /**
@@ -279,14 +295,26 @@ export function getCdnUrl(storagePathOrUrl, quality) {
     return storagePathOrUrl;
   }
 
-  const encodedMatch = storagePathOrUrl.match(/\/o\/(web|thumb|original|covers)%2F/i);
+  const encodedMatch = storagePathOrUrl.match(/\/o\/(covers|web|thumb|original)%2F/i);
   if (encodedMatch) {
-    return storagePathOrUrl.replace(/\/o\/(web|thumb|original|covers)%2F/i, `/o/${targetQuality}%2F`);
+    let result = storagePathOrUrl.replace(/\/o\/(covers|web|thumb|original)%2F/i, `/o/${targetQuality}%2F`);
+    if (targetQuality === 'thumb') {
+      result = result.replace(/\.(jpg|jpeg|png)(\?|$)/i, `.webp$2`);
+    } else if (encodedMatch[1].toLowerCase() === 'thumb') {
+      result = result.replace(/\.webp(\?|$)/i, `.jpg$1`);
+    }
+    return result;
   }
 
-  const unencodedMatch = storagePathOrUrl.match(/\/o\/(web|thumb|original|covers)\//i);
+  const unencodedMatch = storagePathOrUrl.match(/\/o\/(covers|web|thumb|original)\//i);
   if (unencodedMatch) {
-    return storagePathOrUrl.replace(/\/o\/(web|thumb|original|covers)\//i, `/o/${targetQuality}/`);
+    let result = storagePathOrUrl.replace(/\/o\/(covers|web|thumb|original)\//i, `/o/${targetQuality}/`);
+    if (targetQuality === 'thumb') {
+      result = result.replace(/\.(jpg|jpeg|png)(\?|$)/i, `.webp$2`);
+    } else if (unencodedMatch[1].toLowerCase() === 'thumb') {
+      result = result.replace(/\.webp(\?|$)/i, `.jpg$1`);
+    }
+    return result;
   }
 
   return storagePathOrUrl;
