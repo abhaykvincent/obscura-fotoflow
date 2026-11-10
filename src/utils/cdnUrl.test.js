@@ -96,16 +96,28 @@ describe('cdnUrl - Canonical FotoFlow CDN Generation', () => {
   });
 
   describe('swapQualityPrefix', () => {
-    it('swaps web to thumb', () => {
-      expect(swapQualityPrefix('web/domain/project/img.jpg', 'thumb')).toBe('thumb/domain/project/img.jpg');
+    it('maps web JPG to thumb WebP', () => {
+      expect(swapQualityPrefix('web/domain/project/img.jpg', 'thumb')).toBe('thumb/domain/project/img.webp');
     });
 
-    it('swaps thumb to original', () => {
-      expect(swapQualityPrefix('thumb/domain/project/img.jpg', 'original')).toBe('original/domain/project/img.jpg');
+    it('maps PNG to thumb WebP', () => {
+      expect(swapQualityPrefix('web/domain/project/img.png', 'thumb')).toBe('thumb/domain/project/img.webp');
     });
 
-    it('prepends quality if no existing prefix matches', () => {
-      expect(swapQualityPrefix('custom/domain/project/img.jpg', 'thumb')).toBe('thumb/custom/domain/project/img.jpg');
+    it('maps thumb WebP back to original JPG', () => {
+      expect(swapQualityPrefix('thumb/domain/project/img.webp', 'original')).toBe('original/domain/project/img.jpg');
+    });
+
+    it('preserves JPG when the target is not thumb', () => {
+      expect(swapQualityPrefix('web/domain/project/img.jpg', 'original')).toBe('original/domain/project/img.jpg');
+    });
+
+    it('preserves WebP when the target is thumb', () => {
+      expect(swapQualityPrefix('thumb/domain/project/img.webp', 'thumb')).toBe('thumb/domain/project/img.webp');
+    });
+
+    it('prepends quality and maps extension for thumb when no prefix matches', () => {
+      expect(swapQualityPrefix('custom/domain/project/img.jpg', 'thumb')).toBe('thumb/custom/domain/project/img.webp');
     });
   });
 
@@ -131,9 +143,9 @@ describe('cdnUrl - Canonical FotoFlow CDN Generation', () => {
       expect(result).toBe(`${CDN_DOMAIN}/web/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
     });
 
-    it('converts Firebase URL to requested thumb quality', () => {
+    it('converts Firebase URL to requested thumb quality with WebP extension', () => {
       const result = getCdnUrl(SAMPLE_FIREBASE_URL, 'thumb');
-      expect(result).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+      expect(result).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.webp`);
     });
 
     it('converts Firebase URL to requested original quality', () => {
@@ -167,9 +179,9 @@ describe('cdnUrl - Canonical FotoFlow CDN Generation', () => {
       expect(getCdnUrl(blobUrl)).toBe(blobUrl);
     });
 
-    it('preserves and transforms Storage Emulator URLs', () => {
+    it('preserves and transforms Storage Emulator URLs to WebP thumb', () => {
       const result = getCdnUrl(SAMPLE_EMULATOR_URL, 'thumb');
-      expect(result).toBe('http://127.0.0.1:9199/v0/b/fotoflow-studio.firebasestorage.app/o/thumb%2Fmonalisa%2Fabigail-%26-amigail-q2qSQ%2Fbirthday-B0VMK%2FIM_00014.jpg?alt=media');
+      expect(result).toBe('http://127.0.0.1:9199/v0/b/fotoflow-studio.firebasestorage.app/o/thumb%2Fmonalisa%2Fabigail-%26-amigail-q2qSQ%2Fbirthday-B0VMK%2FIM_00014.webp?alt=media');
     });
   });
 });

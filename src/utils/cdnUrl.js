@@ -108,23 +108,54 @@ export function isNonStorageUrl(url) {
 }
 
 /**
+ * Applies the appropriate file extension for the target quality.
+ * Thumbnails are always stored as WebP, while other derivatives keep the
+ * original (usually JPG) extension. When moving away from a thumb path the
+ * WebP extension is mapped back to JPG for backward compatibility.
+ *
+ * @param {string} path - Storage path, optionally with a query string
+ * @param {string} targetQuality - Quality name ('web', 'thumb', 'original', 'covers')
+ * @param {string|null} currentQuality - Quality prefix present on the source path
+ * @returns {string} Path with the mapped extension
+ */
+function mapQualityExtension(path, targetQuality, currentQuality) {
+  if (targetQuality === 'thumb') {
+    return path.replace(/\.(jpe?g|png)(?=($|[?#]))/i, '.webp');
+  }
+
+  if (currentQuality === 'thumb') {
+    return path.replace(/\.webp(?=($|[?#]))/i, '.jpg');
+  }
+
+  return path;
+}
+
+/**
  * Swaps or prepends the target quality in the storage object path.
+ * Thumbnails are mapped to WebP while non-thumb qualities preserve JPG.
  *
  * @param {string} path - Storage path
  * @param {string} targetQuality - Quality name ('web', 'thumb', 'original', 'covers')
- * @returns {string} Path with updated quality prefix
+ * @returns {string} Path with updated quality prefix and appropriate extension
  */
 export function swapQualityPrefix(path, targetQuality) {
   if (!path || typeof path !== 'string') return '';
-  const cleanPath = path.replace(/^\/+/, '');
+  let cleanPath = path.replace(/^\/+/, '');
 
+  let currentQuality = null;
   for (const prefix of QUALITY_PREFIXES) {
     if (cleanPath.startsWith(prefix + '/')) {
-      return cleanPath.replace(prefix + '/', `${targetQuality}/`);
+      currentQuality = prefix;
+      cleanPath = cleanPath.replace(prefix + '/', `${targetQuality}/`);
+      break;
     }
   }
 
-  return `${targetQuality}/${cleanPath}`;
+  if (!currentQuality) {
+    cleanPath = `${targetQuality}/${cleanPath}`;
+  }
+
+  return mapQualityExtension(cleanPath, targetQuality, currentQuality);
 }
 
 /**
@@ -281,12 +312,14 @@ export function getCdnUrl(storagePathOrUrl, quality) {
 
   const encodedMatch = storagePathOrUrl.match(/\/o\/(web|thumb|original|covers)%2F/i);
   if (encodedMatch) {
-    return storagePathOrUrl.replace(/\/o\/(web|thumb|original|covers)%2F/i, `/o/${targetQuality}%2F`);
+    const swapped = storagePathOrUrl.replace(/\/o\/(web|thumb|original|covers)%2F/i, `/o/${targetQuality}%2F`);
+    return mapQualityExtension(swapped, targetQuality, encodedMatch[1].toLowerCase());
   }
 
   const unencodedMatch = storagePathOrUrl.match(/\/o\/(web|thumb|original|covers)\//i);
   if (unencodedMatch) {
-    return storagePathOrUrl.replace(/\/o\/(web|thumb|original|covers)\//i, `/o/${targetQuality}/`);
+    const swapped = storagePathOrUrl.replace(/\/o\/(web|thumb|original|covers)\//i, `/o/${targetQuality}/`);
+    return mapQualityExtension(swapped, targetQuality, unencodedMatch[1].toLowerCase());
   }
 
   return storagePathOrUrl;
