@@ -5,6 +5,7 @@ import { db } from "../app";
 import { collection, doc, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, increment, query, where } from "firebase/firestore";
 
 import { generateMemorablePIN, generateRandomString, toKebabCase, toTitleCase} from "../../utils/stringUtils";
+import { bytesToMB, BYTES_PER_MB } from "../../utils/storageUnits";
 import { isProduction } from "../../analytics/utils";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchCurrentSubscription } from "../../app/slices/studioSlice";
@@ -406,13 +407,14 @@ export const fetchAnalyticsData = async () => {
                 avgPhotosPerProject: projectsCount ? studioPhotos / projectsCount : 0,
                 avgStoragePerProject: projectsCount ? studioSize / projectsCount : 0,
                 avgPhotosPerCollection: studioCollections ? studioPhotos / studioCollections : 0,
-                avgSizePerPhoto: studioPhotos ? studioSize / studioPhotos : 0
+                avgSizePerPhoto: studioPhotos ? bytesToMB(studioSize) / studioPhotos : 0
             });
         }
 
         // Infrastructure Cost Constants (Firebase Estimates)
         const STORAGE_COST_PER_GB = 0.026;
-        const totalGB = totalFileSize / 1024;
+        // project.totalFileSize is bytes; convert to decimal GB.
+        const totalGB = totalFileSize / (BYTES_PER_MB * 1000);
         const estimatedMonthlyBurn = totalGB * STORAGE_COST_PER_GB;
 
         const avgProjectsPerStudio = studios.length ? totalProjects / studios.length : 0;
@@ -438,7 +440,7 @@ export const fetchAnalyticsData = async () => {
                 avgCollectionsPerProject,
                 avgPhotosPerCollection,
                 avgPhotosPerProject,
-                storageEfficiency: totalPhotos ? (totalFileSize / totalPhotos) : 0, // MB per photo
+                storageEfficiency: totalPhotos ? (bytesToMB(totalFileSize) / totalPhotos) : 0, // MB per photo
             },
             leaderboard: [...studioPerformance].sort((a, b) => b.storageUsed - a.storageUsed).slice(0, 10),
             studioPerformance

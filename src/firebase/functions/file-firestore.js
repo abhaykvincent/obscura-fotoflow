@@ -7,6 +7,7 @@ import { fetchSmartGalleryFromFirestore, updateSmartGalleryInFirestore } from '.
 import { organizePhotos } from "../../utils/smartGalleryUtils";
 import { updateCollectionStatusByCollectionIdInFirestore } from './collection-firestore';
 import { getWebStoragePath, getThumbStoragePath } from '../../utils/photoStorage';
+import { mbToBytes } from '../../utils/storageUnits';
 import {
     createProjectPhoto,
     addPhotoToCollection,
@@ -239,7 +240,8 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
 
         if (!alreadyHasProjectPhotos) {
             projectUpdates.uploadedFilesCount = (existingCounts.uploadedFilesCount || 0) + uploadedFiles.length;
-            projectUpdates.totalFileSize = importFileSize + (existingCounts.totalFileSize || 0);
+            // importFileSize is decimal MB; project totalFileSize is bytes.
+            projectUpdates.totalFileSize = mbToBytes(importFileSize, 'importFileSize') + (existingCounts.totalFileSize || 0);
         }
 
         // Update project collections array metadata (galleryCover on collection entries)
@@ -261,15 +263,9 @@ export const addUploadedFilesToFirestore = async (domain, projectId, collectionI
 
         await updateDoc(projectDocRef, projectUpdates);
 
-        await updateDoc(studioDocRef, {
-            "usage.storage.used": increment(importFileSize)
-        })
-            .then(() => {
-                console.log('Studio storage updated successfully!');
-            })
-            .catch((error) => {
-                console.error('Error updating studio storage:', error);
-            });
+        // Studio storage accounting is owned exclusively by
+        // createProjectPhoto(). This compatibility path must not increment it
+        // again for the same asset (that caused duplicate counting).
 
         return({pin});
         color = '#54a134';
