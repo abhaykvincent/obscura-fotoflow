@@ -1,6 +1,7 @@
 import * as ExifReader from 'exifreader';
 import { db } from '../firebase/app';
 import { doc, updateDoc } from 'firebase/firestore';
+import { bytesToMB } from './storageUnits';
 
 // write function to add all the sizes of importef files array
 export const addAllFileSizesToMB = (files) => {
@@ -11,10 +12,10 @@ export const addAllFileSizesToMB = (files) => {
     return size / 1000000;
 }
 export const getUsedSpace = (projects) => {
-    const usedSpace = projects.reduce((acc, project) => {
-        return acc + project.totalFileSize
+    // project.totalFileSize is bytes; studio usage quota is decimal MB.
+    return projects.reduce((acc, project) => {
+        return acc + bytesToMB(project.totalFileSize)
     }, 0)
-    return usedSpace
 }
 
 // File type validation
