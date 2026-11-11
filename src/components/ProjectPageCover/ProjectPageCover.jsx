@@ -8,6 +8,7 @@ import { ref, uploadBytes } from "firebase/storage";
 import { setCoverPhotoInFirestore } from "../../firebase/functions/firestore";
 import { updateProjectCover, updateProjectName } from "../../app/slices/projectsSlice";
 import { convertMegabytes, truncateMiddle, truncateUrl } from "../../utils/stringUtils";
+import { bytesToMB } from "../../utils/storageUnits";
 import { ProjectStatus } from "../Project/ProjectStatus/ProjectStatus";
 import { getGalleryURL, getCoverUrl } from "../../utils/urlUtils";
 import CopyButton from "../CopyButton/CopyButton";
@@ -201,7 +202,7 @@ export const ProjectCover = ({ project, projectDashboardView, setProjectDashboar
                             <div className="bottom-right">
                                 <div className="cover-info project-size">
                                     <div className="icon-show storage"></div>
-                                    <p>{convertMegabytes(project?.totalFileSize)}</p>
+                                    <p>{convertMegabytes(bytesToMB(project?.totalFileSize))}</p>
                                 </div>
                                 <div className="cover-info project-size">
                                     <div className="icon-show image"></div>

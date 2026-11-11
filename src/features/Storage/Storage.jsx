@@ -2,6 +2,7 @@ import React from 'react'
 import './Storage.scss'
 import StoragePie from '../../components/StoragePie/StoragePie';
 import { convertMegabytes } from '../../utils/stringUtils';
+import { bytesToMB } from '../../utils/storageUnits';
 import { selectProjects } from '../../app/slices/projectsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUsedSpace } from '../../utils/fileUtils';
@@ -141,14 +142,14 @@ function Storage() {
                                     <div className="box-content">
                                         <h4>{project.name}</h4>
                                         <div className="project-size">
-                                            <p className='filesize-label'>{convertMegabytes(project.totalFileSize,1)} </p>
+                                            <p className='filesize-label'>{convertMegabytes(bytesToMB(project.totalFileSize),1)} </p>
                                             <p className='count-label'>{project.uploadedFilesCount} files</p>
                                             <p className='created-label'>{getTimeAgo(project.createdAt)}</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="action">
-                                    {project.totalFileSize > 1 && <p className="action-label">Free up {convertMegabytes(project.totalFileSize,0)}</p>}
+                                    {project.totalFileSize > 1 && <p className="action-label">Free up {convertMegabytes(bytesToMB(project.totalFileSize),0)}</p>}
                                     <div className="button secondary icon archive">Archive</div>
                                 </div>
                             </Link>
@@ -173,7 +174,7 @@ function Storage() {
                                     <div className="box-content">
                                         <h4>{project.name}</h4>
                                         <div className="project-size">
-                                            <p>{convertMegabytes(project.totalFileSize,1)} </p>
+                                            <p>{convertMegabytes(bytesToMB(project.totalFileSize),1)} </p>
                                         </div>
                                     </div>
                                 </div>
