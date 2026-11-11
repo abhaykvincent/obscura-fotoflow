@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { fetchGallerySelections } from '../../../firebase/functions/selection-gallery-firestore';
-import { getThumbnailUrl } from '../../../utils/urlUtils';
+import { getPhotoThumbnailUrl } from '../../../utils/urlUtils';
 
 /**
  * Photographer "View Selection": selected photos + category + originating
@@ -72,7 +72,9 @@ export default function SelectionPhotographerView({ domain, projectId, gallery, 
           <div className="spv-grid">
             {rows.map((s) => {
               const photo = photoByKey[s.photoKey] || photoByKey[s.photoId] || photoByKey[s.url] || {};
-              const thumb = photo.url ? getThumbnailUrl(photo.url) : (s.url ? getThumbnailUrl(s.url) : '');
+              const thumb = photo.url
+                ? getPhotoThumbnailUrl(photo)
+                : (s.url ? getPhotoThumbnailUrl(s) : '');
               return (
                 <div key={s.id} className="spv-item" title={`${photo.collectionName || s.collectionId || ''} · ${s.selectedAt ? new Date(s.selectedAt).toLocaleString() : ''}`}>
                   {thumb ? <img src={thumb} alt="" loading="lazy" /> : <div className="spv-missing">{s.photoKey}</div>}

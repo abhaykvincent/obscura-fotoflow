@@ -8,6 +8,7 @@ import {
   QUALITY_PREFIXES,
   DEFAULT_CDN_BASE_URL,
 } from './cdnUrl';
+import { resolvePhotoThumbUrl } from './photoStorage';
 
 export {
   getCdnUrl,
@@ -94,6 +95,18 @@ export function getImageUrlByQuality(url, quality = 'web') {
 
 export function getThumbnailUrl(imageUrl) {
   return getCdnUrl(imageUrl, 'thumb');
+}
+
+/**
+ * Resolves a photo's stored thumbnail URL. Canonical Project Photos use the
+ * document's urls.thumb (WebP); legacy uploadedFiles[] use their JPG thumbUrl.
+ * The stored format is preserved, so no WebP derivative is invented for older
+ * projects. Falls back to the web URL only when no thumbnail is stored.
+ */
+export function getPhotoThumbnailUrl(photo) {
+  const storedThumb = resolvePhotoThumbUrl(photo);
+  if (storedThumb) return getCdnUrl(storedThumb);
+  return getCdnUrl(photo?.url || photo?.urls?.web || '');
 }
 
 export function getOriginalUrl(imageUrl) {

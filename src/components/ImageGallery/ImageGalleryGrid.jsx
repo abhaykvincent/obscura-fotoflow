@@ -7,7 +7,7 @@ import { downloadImage } from '../ImageDownload/ImageDownload';
 import { showAlert } from '../../app/slices/alertSlice';
 import { deleteFile, toggleFileFavorite } from '../../app/slices/projectsSlice';
 import { setCoverPhotoInFirestore, setGalleryCoverPhotoInFirestore } from '../../firebase/functions/firestore';
-import { getThumbnailUrl } from '../../utils/urlUtils';
+import { getPhotoThumbnailUrl } from '../../utils/urlUtils';
 import { selectIsAuthenticated, selectUser } from '../../app/slices/authSlice';
 import { isPinValid } from '../../utils/pinUtils';
 
@@ -113,7 +113,7 @@ const PhotoItem = React.memo(({ fileUrl, index, onImageClick, isArchived, projec
       </div>
       <div
         className='photo'
-        style={{ backgroundImage: `url("${getThumbnailUrl(fileUrl.url)}")` }}
+        style={{ backgroundImage: `url("${getPhotoThumbnailUrl(fileUrl)}")` }}
         alt={`File ${index}`}
       ></div>
     </div>
