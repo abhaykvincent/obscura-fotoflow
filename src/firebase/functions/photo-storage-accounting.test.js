@@ -14,14 +14,26 @@ const mockSnapshot = (path) => ({
     data: () => mockStore.get(path),
 });
 
+const mockApplyValue = (existing, value) => {
+    if (value && typeof value === 'object' && typeof value.__increment === 'number') {
+        return (Number(existing) || 0) + value.__increment;
+    }
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+        const base = existing && typeof existing === 'object' && !Array.isArray(existing)
+            ? { ...existing }
+            : {};
+        Object.entries(value).forEach(([key, nested]) => {
+            base[key] = mockApplyValue(base[key], nested);
+        });
+        return base;
+    }
+    return value;
+};
+
 const mockApplyWrite = (path, data = {}, { merge = false } = {}) => {
     const existing = merge ? { ...(mockStore.get(path) || {}) } : {};
     Object.entries(data).forEach(([key, value]) => {
-        if (value && typeof value === 'object' && typeof value.__increment === 'number') {
-            existing[key] = (Number(existing[key]) || 0) + value.__increment;
-        } else {
-            existing[key] = value;
-        }
+        existing[key] = mockApplyValue(existing[key], value);
     });
     mockStore.set(path, existing);
 };
@@ -71,12 +83,10 @@ const DOMAIN = 'monalisa';
 const PROJECT_ID = 'project-1';
 const STUDIO_PATH = `studios/${DOMAIN}`;
 const PROJECT_PATH = `studios/${DOMAIN}/projects/${PROJECT_ID}`;
-const STUDIO_USED = 'usage.storage.used';
-
-const studioUsed = () => mockStore.get(STUDIO_PATH)?.[STUDIO_USED] || 0;
+const studioUsed = () => mockStore.get(STUDIO_PATH)?.usage?.storage?.used || 0;
 
 const seedStudioAndProject = ({ used = 0, totalFileSize = 0, storage } = {}) => {
-    mockStore.set(STUDIO_PATH, { [STUDIO_USED]: used });
+    mockStore.set(STUDIO_PATH, { usage: { storage: { used } } });
     mockStore.set(PROJECT_PATH, {
         id: PROJECT_ID,
         uploadedFilesCount: 0,
@@ -205,13 +215,12 @@ describe('studio storage accounting regression', () => {
     it('unit boundary: quota and used are both decimal MB', async () => {
         seedStudioAndProject({ used: 0 });
         mockStore.set(STUDIO_PATH, {
-            [STUDIO_USED]: 0,
-            'usage.storage.quota': 100 * 1000,
+            usage: { storage: { used: 0, quota: 100 * 1000 } },
         });
 
         await createProjectPhoto(DOMAIN, PROJECT_ID, photoInput());
 
         expect(studioUsed()).toBe(10);
-        expect(mockStore.get(STUDIO_PATH)['usage.storage.quota']).toBe(100_000);
+        expect(mockStore.get(STUDIO_PATH).usage.storage.quota).toBe(100_000);
     });
 });

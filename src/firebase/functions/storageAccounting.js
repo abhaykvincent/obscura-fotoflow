@@ -44,7 +44,13 @@ export const computeStudioStorageDeltaMB = (bytes, { direction = 'increment' } =
  * @param {string} [context.photoId]
  * @param {string} [context.idempotency]
  * @param {string} [context.reason]
- * @returns {{'usage.storage.used': *}}
+ * @returns {{usage: {storage: {used: *}}}}
+ *
+ * Returns a nested map rather than a `'usage.storage.used'` dotted key.
+ * `updateDoc` interprets dotted keys as field paths, but `setDoc` /
+ * `transaction.set` with `{ merge: true }` treat them as a literal field
+ * name — which is why uploads were creating a stray
+ * `usage.storage.used` field instead of updating `usage.storage.used`.
  */
 export const buildStudioStorageUpdate = (bytes, {
     operation,
@@ -70,7 +76,11 @@ export const buildStudioStorageUpdate = (bytes, {
     });
 
     return {
-        'usage.storage.used': increment(deltaMB),
+        usage: {
+            storage: {
+                used: increment(deltaMB),
+            },
+        },
     };
 };
 
