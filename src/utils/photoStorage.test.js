@@ -5,6 +5,8 @@ import {
     extractExtension,
     extractPhotoIdFromPath,
     getCoverStoragePath,
+    resolvePhotoThumbUrl,
+    isProjectOwnedPhoto,
 } from './photoStorage';
 
 describe('photoStorage - Project-Owned Photo Asset Storage Paths', () => {
@@ -90,6 +92,39 @@ describe('photoStorage - Project-Owned Photo Asset Storage Paths', () => {
             const path1 = getWebStoragePath(domain, projectId, photoId, 'IMG_0001.jpg');
             const path2 = getWebStoragePath(domain, projectId, photoId, 'IMG_0002.jpg');
             expect(path1).toBe(path2);
+        });
+    });
+
+    describe('resolvePhotoThumbUrl', () => {
+        it('prefers the canonical Project Photo document thumb', () => {
+            expect(resolvePhotoThumbUrl({
+                urls: { thumb: 'https://cdn.fotoflow.co/thumb/monalisa/proj/photo.webp' },
+            })).toBe('https://cdn.fotoflow.co/thumb/monalisa/proj/photo.webp');
+        });
+
+        it('falls back to the legacy JPG thumb without converting it', () => {
+            expect(resolvePhotoThumbUrl({
+                thumbUrl: 'https://cdn.fotoflow.co/thumb/monalisa/proj/coll/IMG_0001.jpg',
+                url: 'https://cdn.fotoflow.co/web/monalisa/proj/coll/IMG_0001.jpg',
+            })).toBe('https://cdn.fotoflow.co/thumb/monalisa/proj/coll/IMG_0001.jpg');
+        });
+
+        it('never fabricates a thumb from the web URL or storage path', () => {
+            expect(resolvePhotoThumbUrl({
+                url: 'https://cdn.fotoflow.co/web/monalisa/proj/coll/IMG_0001.jpg',
+                storage: { thumbPath: 'thumb/monalisa/proj/photo.webp' },
+            })).toBe('');
+        });
+    });
+
+    describe('isProjectOwnedPhoto', () => {
+        it('detects canonical Project Photo documents', () => {
+            expect(isProjectOwnedPhoto({ urls: { thumb: 'x' } })).toBe(true);
+            expect(isProjectOwnedPhoto({ storage: { webPath: 'x' } })).toBe(true);
+        });
+
+        it('treats legacy uploadedFiles entries as non-project-owned', () => {
+            expect(isProjectOwnedPhoto({ url: 'x', thumbUrl: 'y' })).toBe(false);
         });
     });
 });

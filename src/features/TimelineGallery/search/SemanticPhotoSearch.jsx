@@ -10,7 +10,7 @@ import { getStoredApiKey } from '../../../services/geminiEmbeddingService';
 import { searchPhotosBySemanticQuery } from '../../../services/semanticSearchService';
 import { resolvePhotoEmbedding } from '../moments/embeddingResolver';
 import { formatTime, resolveCaptureTimestamp } from '../segmentation/timestampUtils';
-import { getThumbnailUrl } from '../../../utils/urlUtils';
+import { getPhotoThumbnailUrl } from '../../../utils/urlUtils';
 
 const QUICK_PROMPTS = [
   '💍 Rings & jewelry details',
@@ -316,8 +316,7 @@ const SemanticPhotoSearch = memo(({
           ) : (
             <div className="semantic-photo-grid" role="list">
               {searchResult.matches.map(({ photo, photoId, scorePercent }, index) => {
-                const source = photo?.url || photo?.thumbUrl || '';
-                const thumbnail = getThumbnailUrl(source);
+                const thumbnail = getPhotoThumbnailUrl(photo);
                 const captureTimestamp = resolveCaptureTimestamp(photo)?.timestamp ?? null;
                 const title = `${photo?.name || 'Photo'} (${scorePercent}% match)${
                   Number.isFinite(captureTimestamp) ? ` — ${new Date(captureTimestamp).toLocaleString()}` : ''

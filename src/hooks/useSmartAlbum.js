@@ -4,7 +4,7 @@ import { fetchSmartGallery, selectSmartGallery, selectSmartGalleryStatus } from 
 import { selectProjects } from '../app/slices/projectsSlice';
 import { fetchGalleryAccess } from '../firebase/functions/firestore';
 import { trackEvent } from '../analytics/utils';
-import { getThumbnailUrl } from '../utils/urlUtils';
+import { getPhotoThumbnailUrl } from '../utils/urlUtils';
 
 export const useSmartAlbum = (domain, projectId, collectionId, propProject) => {
   const dispatch = useDispatch();
@@ -99,7 +99,7 @@ export const useSmartAlbum = (domain, projectId, collectionId, propProject) => {
           ...section,
           images: section.images.map(img => ({
             ...img,
-            url: getThumbnailUrl(img.url),
+            url: getPhotoThumbnailUrl(img),
             originalUrl: img.url
           }))
         };
