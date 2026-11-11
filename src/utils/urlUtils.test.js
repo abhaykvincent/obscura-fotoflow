@@ -5,7 +5,10 @@ import {
   getOriginalUrl,
   getCoverUrl,
   getWebUrl,
-  getThumbnailUrl1 
+  getThumbnailUrl1,
+  getPhotoThumbnailUrl,
+  getCollectionCoverThumbnailUrl,
+  getProjectCoverThumbnailUrl,
 } from './urlUtils';
 
 describe('urlUtils - Image Delivery Gateway', () => {
@@ -129,6 +132,48 @@ describe('urlUtils - Image Delivery Gateway', () => {
     it('maps an existing WebP thumbnail back to JPG for web quality', () => {
       const webpThumbUrl = `${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.webp`;
       expect(getWebUrl(webpThumbUrl)).toBe(`${CDN_DOMAIN}/web/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+    });
+  });
+
+  describe('photo and cover thumbnails', () => {
+    const legacyWeb = `${CDN_DOMAIN}/web/monalisa/proj/coll/IMG_0001.jpg`;
+    const legacyThumb = `${CDN_DOMAIN}/thumb/monalisa/proj/coll/IMG_0001.jpg`;
+    const canonicalThumb = `${CDN_DOMAIN}/thumb/monalisa/proj/photo-1.webp`;
+
+    it('uses the document thumb for canonical Project Photos', () => {
+      expect(getPhotoThumbnailUrl({ urls: { thumb: canonicalThumb, web: legacyWeb } })).toBe(canonicalThumb);
+    });
+
+    it('uses the legacy JPG thumbUrl without converting it to WebP', () => {
+      expect(getPhotoThumbnailUrl({ url: legacyWeb, thumbUrl: legacyThumb })).toBe(legacyThumb);
+    });
+
+    it('resolves a legacy collection cover from uploadedFiles thumbUrl', () => {
+      const collection = {
+        galleryCover: legacyWeb,
+        uploadedFiles: [{ url: legacyWeb, thumbUrl: legacyThumb }],
+      };
+      expect(getCollectionCoverThumbnailUrl(collection)).toBe(legacyThumb);
+    });
+
+    it('keeps the JPG format for legacy covers without a matching photo', () => {
+      const collection = { galleryCover: legacyWeb, uploadedFiles: [] };
+      expect(getCollectionCoverThumbnailUrl(collection)).toBe(legacyWeb);
+    });
+
+    it('derives WebP thumbs for project-owned collections', () => {
+      const collection = { galleryCover: legacyWeb, photoIds: ['photo-1'] };
+      expect(getCollectionCoverThumbnailUrl(collection)).toBe(
+        `${CDN_DOMAIN}/thumb/monalisa/proj/coll/IMG_0001.webp`
+      );
+    });
+
+    it('resolves a legacy project cover from its collections', () => {
+      const project = {
+        projectCover: legacyWeb,
+        collections: [{ uploadedFiles: [{ url: legacyWeb, thumbUrl: legacyThumb }] }],
+      };
+      expect(getProjectCoverThumbnailUrl(project)).toBe(legacyThumb);
     });
   });
 });
