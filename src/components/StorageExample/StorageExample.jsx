@@ -11,9 +11,9 @@ import { initializeApp } from "firebase/app";
 import { useEffect } from "react";
 const firebaseConfig = {
     apiKey: "AIzaSyDmAGZJTd1xSofgYgyQeGOYP2dSiLE646U",
-    authDomain: "fotoflow-dev.firebaseapp.com",
-    projectId: "fotoflow-dev",
-    storageBucket: "fotoflow-dev.appspot.com",
+    authDomain: "fotoflow-studio.firebaseapp.com",
+    projectId: "fotoflow-studio",
+    storageBucket: "fotoflow-studio.appspot.com",
     messagingSenderId: "180761954293",
     appId: "1:180761954293:web:2756c328ad6f8d792e82bc",
     measurementId: "G-HMJWHV4W3X"

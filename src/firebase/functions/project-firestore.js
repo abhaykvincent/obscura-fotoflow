@@ -1,8 +1,13 @@
 import { db } from "../app";
-import { doc, collection, getDocs, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, arrayRemove, increment } from "firebase/firestore";
+import { doc, collection, getDocs, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, runTransaction } from "firebase/firestore";
 import { deleteProjectFromStorage } from "../../utils/storageOperations";
 import { generateRandomString } from "../../utils/stringUtils";
 import { isProduction } from "../../analytics/utils";
+import { toByteSize } from "../../utils/storageUnits";
+import {
+    buildStudioStorageUpdate,
+    STORAGE_ACCOUNTING_OPERATIONS,
+} from "./storageAccounting";
 
 // Projects //
 export const fetchProjectsFromFirestore = async (domain) => {
@@ -116,18 +121,39 @@ export const deleteProjectFromFirestore = async (domain, bucketUrl, projectId) =
     const projectDocRef = doc(projectsCollectionRef, projectId);
 
     try {
-        const docSnapshot = await getDoc(projectDocRef);
+        // Atomic delete + studio decrement. The project document is the
+        // idempotency guard: once deleted, a retry cannot decrement again.
+        await runTransaction(db, async (transaction) => {
+            const projectSnapshot = await transaction.get(projectDocRef);
+            if (!projectSnapshot.exists()) {
+                throw new Error('Project does not exist.');
+            }
 
-        if (docSnapshot.exists()) {
-            await deleteDoc(projectDocRef);
-            color = '#54a134';
-            console.log(`%cProject ${projectId} deleted successfully from ${domain}`, `color: ${color};`);
-            deleteProjectFromStorage(domain,bucketUrl, projectId); // Assuming you also pass the domain to this function
-        } else {
-            color = 'red';
-            console.error(`%cProject ${projectId} does not exist in ${domain}`, `color: ${color};`);
-            throw new Error('Project does not exist.');
-        }
+            const projectData = projectSnapshot.data();
+            const isArchived = projectData.storage?.status === 'archive';
+            const totalBytes = toByteSize(projectData.totalFileSize, 'project.totalFileSize');
+
+            transaction.delete(projectDocRef);
+
+            // Archived projects were already removed from hot storage usage.
+            if (!isArchived && totalBytes > 0) {
+                transaction.set(
+                    studioDocRef,
+                    buildStudioStorageUpdate(totalBytes, {
+                        operation: STORAGE_ACCOUNTING_OPERATIONS.PROJECT_DELETE,
+                        direction: 'decrement',
+                        domain,
+                        projectId,
+                        idempotency: 'deleted',
+                    }),
+                    { merge: true }
+                );
+            }
+        });
+
+        color = '#54a134';
+        console.log(`%cProject ${projectId} deleted successfully from ${domain}`, `color: ${color};`);
+        deleteProjectFromStorage(domain,bucketUrl, projectId); // Assuming you also pass the domain to this function
     } 
     catch (error) {
         color = 'red';
@@ -304,11 +330,16 @@ export const updateProjectStorageToArchive = async (domain, projectId) => {
             await updateDoc(projectDocRef, updatedData);
             console.log(`Project ${projectId} storage status updated to archive.`);
 
-            // Decrement studio storage usage (Hot Storage)
+            // Decrement studio storage usage (Hot Storage) in MB from bytes.
             const studioDocRef = doc(db, 'studios', domain);
-            await updateDoc(studioDocRef, {
-                "usage.storage.used": increment(-(projectData.totalFileSize || 0))
-            });
+            const totalBytes = toByteSize(projectData.totalFileSize, 'project.totalFileSize');
+            await updateDoc(studioDocRef, buildStudioStorageUpdate(totalBytes, {
+                operation: STORAGE_ACCOUNTING_OPERATIONS.PROJECT_ARCHIVE,
+                direction: 'decrement',
+                domain,
+                projectId,
+                idempotency: 'archived',
+            }));
         } else {
             console.error(`Project ${projectId} does not exist.`);
             throw new Error('Project does not exist.');
@@ -331,6 +362,12 @@ export const restoreProjectFromArchive = async (domain, projectId) => {
 
         if (projectSnapshot.exists()) {
             const projectData = projectSnapshot.data();
+
+            if (projectData.storage?.status !== 'archive') {
+                console.log(`Project ${projectId} is not archived.`);
+                return;
+            }
+
             const now = Date.now();
 
             const newStorageHistoryEntry = {
@@ -351,11 +388,16 @@ export const restoreProjectFromArchive = async (domain, projectId) => {
             await updateDoc(projectDocRef, updatedData);
             console.log(`Project ${projectId} storage status restored to active.`);
 
-            // Increment studio storage usage back (Hot Storage)
+            // Increment studio storage usage back (Hot Storage) in MB from bytes.
             const studioDocRef = doc(db, 'studios', domain);
-            await updateDoc(studioDocRef, {
-                "usage.storage.used": increment(projectData.totalFileSize || 0)
-            });
+            const totalBytes = toByteSize(projectData.totalFileSize, 'project.totalFileSize');
+            await updateDoc(studioDocRef, buildStudioStorageUpdate(totalBytes, {
+                operation: STORAGE_ACCOUNTING_OPERATIONS.PROJECT_RESTORE,
+                direction: 'increment',
+                domain,
+                projectId,
+                idempotency: 'restored',
+            }));
         } else {
             throw new Error('Project does not exist.');
         }

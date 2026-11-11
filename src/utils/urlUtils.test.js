@@ -30,9 +30,9 @@ describe('urlUtils - Image Delivery Gateway', () => {
       expect(result).toBe(`${CDN_DOMAIN}/web/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
     });
 
-    it('transforms Firebase Storage URL to thumb quality', () => {
+    it('transforms Firebase Storage URL to thumb quality with WebP extension', () => {
       const result = getPhotoDeliveryUrl(SAMPLE_FIREBASE_URL, 'thumb');
-      expect(result).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+      expect(result).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.webp`);
     });
 
     it('transforms Firebase Storage URL to original quality', () => {
@@ -57,7 +57,7 @@ describe('urlUtils - Image Delivery Gateway', () => {
 
     it('transforms Storage Emulator URL correctly preserving emulator host and swapping quality', () => {
       const result = getPhotoDeliveryUrl(SAMPLE_EMULATOR_URL, 'thumb');
-      expect(result).toBe('http://127.0.0.1:9199/v0/b/fotoflow-studio.firebasestorage.app/o/thumb%2Fmonalisa%2Fabigail-%26-amigail-q2qSQ%2Fbirthday-B0VMK%2FIM_00014.jpg?alt=media');
+      expect(result).toBe('http://127.0.0.1:9199/v0/b/fotoflow-studio.firebasestorage.app/o/thumb%2Fmonalisa%2Fabigail-%26-amigail-q2qSQ%2Fbirthday-B0VMK%2FIM_00014.webp?alt=media');
     });
 
     it('transforms Storage Emulator URL to original quality', () => {
@@ -74,7 +74,7 @@ describe('urlUtils - Image Delivery Gateway', () => {
     it('handles Storage Emulator URLs with localhost or custom port and appends alt=media if missing', () => {
       const localhostEmulatorUrl = 'http://localhost:9199/v0/b/fotoflow-studio.firebasestorage.app/o/web%2Fmonalisa%2Fphoto.jpg';
       const result = getPhotoDeliveryUrl(localhostEmulatorUrl, 'thumb');
-      expect(result).toBe('http://localhost:9199/v0/b/fotoflow-studio.firebasestorage.app/o/thumb%2Fmonalisa%2Fphoto.jpg?alt=media');
+      expect(result).toBe('http://localhost:9199/v0/b/fotoflow-studio.firebasestorage.app/o/thumb%2Fmonalisa%2Fphoto.webp?alt=media');
     });
 
     it('transforms GCS URL correctly', () => {
@@ -82,9 +82,9 @@ describe('urlUtils - Image Delivery Gateway', () => {
       expect(result).toBe(`${CDN_DOMAIN}/web/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
     });
 
-    it('swaps quality when URL is already a Cloudflare CDN URL', () => {
+    it('swaps quality to WebP thumb when URL is already a Cloudflare CDN web URL', () => {
       const result = getPhotoDeliveryUrl(SAMPLE_CDN_URL, 'thumb');
-      expect(result).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+      expect(result).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.webp`);
     });
 
     it('transforms old /cdn-gallery/ path to Cloudflare CDN URL', () => {
@@ -105,8 +105,8 @@ describe('urlUtils - Image Delivery Gateway', () => {
   });
 
   describe('Convenience helper functions', () => {
-    it('getThumbnailUrl returns thumb quality', () => {
-      expect(getThumbnailUrl(SAMPLE_FIREBASE_URL)).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+    it('getThumbnailUrl returns thumb quality with WebP extension', () => {
+      expect(getThumbnailUrl(SAMPLE_FIREBASE_URL)).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.webp`);
     });
 
     it('getOriginalUrl returns original quality', () => {
@@ -123,7 +123,12 @@ describe('urlUtils - Image Delivery Gateway', () => {
     });
 
     it('getThumbnailUrl1 is backward-compatible with getThumbnailUrl', () => {
-      expect(getThumbnailUrl1(SAMPLE_FIREBASE_URL)).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+      expect(getThumbnailUrl1(SAMPLE_FIREBASE_URL)).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.webp`);
+    });
+
+    it('maps an existing WebP thumbnail back to JPG for web quality', () => {
+      const webpThumbUrl = `${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.webp`;
+      expect(getWebUrl(webpThumbUrl)).toBe(`${CDN_DOMAIN}/web/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
     });
   });
 });

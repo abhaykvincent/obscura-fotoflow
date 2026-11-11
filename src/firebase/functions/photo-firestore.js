@@ -32,7 +32,6 @@ import {
     collection,
     getDoc,
     getDocs,
-    setDoc,
     updateDoc,
     arrayUnion,
     arrayRemove,
@@ -42,11 +41,17 @@ import {
     orderBy,
     limit,
     startAfter,
-    writeBatch,
+    runTransaction,
 } from "firebase/firestore";
 import { ref, deleteObject } from "firebase/storage";
 import { getStorageForDomain } from "../../utils/uploadOperations";
 import { getPhotoStoragePaths } from "../../utils/photoStorage";
+import { toByteSize } from "../../utils/storageUnits";
+import {
+    buildStudioStorageUpdate,
+    logStorageAccountingOutcome,
+    STORAGE_ACCOUNTING_OPERATIONS,
+} from "./storageAccounting";
 
 /* ------------------------------------------------------------------ */
 /* Collection references                                              */
@@ -99,7 +104,7 @@ export const buildProjectPhoto = ({
     return {
         id: photoId,
         name,
-        originalSize: Number(originalSize) || 0,
+        originalSize: toByteSize(originalSize, 'originalSize'),
         lastModified: lastModified || now,
         dateTimeOriginal: dateTimeOriginal || new Date(lastModified || now).toISOString(),
         dimensions: dimensions || { width: 0, height: 0 },
@@ -124,54 +129,95 @@ export const buildProjectPhoto = ({
 
 /**
  * Creates a canonical Project Photo document. Idempotent: if a photo with the
- * same photoId already exists, it is NOT overwritten (returns existing).
+ * same photoId already exists, it is NOT overwritten and no storage is
+ * accounted again. Existence check, photo write, project counters and studio
+ * storage accounting happen in one transaction so concurrent retries cannot
+ * double-count.
+ *
+ * Accounting policy:
+ *   - `accountStorage` (default true): increment studio usage by the decimal MB
+ *     equivalent of the byte size. Set false when representing a legacy asset
+ *     that is already included in studio usage.
+ *   - `accountProjectCounters` (default true): increment project
+ *     uploadedFilesCount/totalFileSize. Set false for the same legacy case.
  *
  * @returns {Promise<{ photoId: string, created: boolean, photo: Object }>}
  */
-export const createProjectPhoto = async (domain, projectId, photoInput) => {
+export const createProjectPhoto = async (
+    domain,
+    projectId,
+    photoInput,
+    { accountStorage = true, accountProjectCounters = true } = {}
+) => {
     if (!domain || !projectId || !photoInput || !photoInput.photoId) {
         throw new Error('Domain, Project ID, and photo with photoId are required.');
     }
 
     const { photoId } = photoInput;
+    // Validate before any write so invalid sizes never mutate counters.
+    const originalBytes = toByteSize(photoInput.originalSize, 'originalSize');
     const photoRef = doc(photosCollectionRef(domain, projectId), photoId);
-
-    const existing = await getDoc(photoRef);
-    if (existing.exists()) {
-        return { photoId, created: false, photo: existing.data() };
-    }
+    const projectRef = projectDocRef(domain, projectId);
 
     const photoData = buildProjectPhoto({
         domain,
         projectId,
         ...photoInput,
+        originalSize: originalBytes,
     });
 
-    await setDoc(photoRef, photoData);
-
-    // Increment project-level unique photo counter
-    const projectSnap = await getDoc(projectDocRef(domain, projectId));
-    if (projectSnap.exists()) {
-        const updateData = {
-            uploadedFilesCount: increment(1),
-        };
-        if (photoInput.originalSize) {
-            updateData.totalFileSize = increment(Number(photoInput.originalSize));
+    const result = await runTransaction(db, async (transaction) => {
+        const existing = await transaction.get(photoRef);
+        if (existing.exists()) {
+            logStorageAccountingOutcome({
+                studioId: domain,
+                projectId,
+                photoId,
+                operation: STORAGE_ACCOUNTING_OPERATIONS.PHOTO_CREATE,
+                originalBytes,
+                deltaMB: 0,
+                idempotency: 'skipped-existing-photo',
+            });
+            return { photoId, created: false, photo: existing.data() };
         }
-        await updateDoc(projectDocRef(domain, projectId), updateData);
-    }
 
-    // Update studio storage usage
-    try {
-        await updateDoc(studioDocRef(domain), {
-            "usage.storage.used": increment(Number(photoInput.originalSize || 0)),
-        });
-    } catch (e) {
-        // Studio storage is best-effort; never fail photo creation for it.
-        console.warn('Studio storage increment skipped:', e.message);
-    }
+        // All transaction reads MUST happen before any writes.
+        const projectSnap = accountProjectCounters
+            ? await transaction.get(projectRef)
+            : null;
 
-    return { photoId, created: true, photo: photoData };
+        transaction.set(photoRef, photoData);
+
+        if (accountProjectCounters && projectSnap?.exists()) {
+            const updateData = {
+                uploadedFilesCount: increment(1),
+            };
+            if (originalBytes > 0) {
+                // Project totalFileSize is bytes.
+                updateData.totalFileSize = increment(originalBytes);
+            }
+            transaction.update(projectRef, updateData);
+        }
+
+        if (accountStorage) {
+            transaction.set(
+                studioDocRef(domain),
+                buildStudioStorageUpdate(originalBytes, {
+                    operation: STORAGE_ACCOUNTING_OPERATIONS.PHOTO_CREATE,
+                    direction: 'increment',
+                    domain,
+                    projectId,
+                    photoId,
+                    idempotency: 'created',
+                }),
+                { merge: true }
+            );
+        }
+
+        return { photoId, created: true, photo: photoData };
+    });
+
+    return result;
 };
 
 /**
@@ -369,7 +415,22 @@ export const deleteProjectPhoto = async (domain, projectId, photoId, { force = f
     const photoRef = doc(photosCollectionRef(domain, projectId), photoId);
     const photoSnap = await getDoc(photoRef);
     if (!photoSnap.exists()) {
-        throw new Error(`Photo ${photoId} not found in project ${projectId}.`);
+        // Idempotent retry: an already-deleted photo must not decrement again.
+        logStorageAccountingOutcome({
+            studioId: domain,
+            projectId,
+            photoId,
+            operation: STORAGE_ACCOUNTING_OPERATIONS.PHOTO_DELETE,
+            deltaMB: 0,
+            idempotency: 'skipped-missing-photo',
+        });
+        return {
+            deleted: false,
+            photoId,
+            reason: 'not-found',
+            references: { collections: [], selection: [], events: [], shoots: [], smartGallery: [], cover: [] },
+            removedRelationships: { collections: [], selection: [], smartGallery: [] },
+        };
     }
 
     const photo = photoSnap.data();
@@ -470,43 +531,80 @@ export const deleteProjectPhoto = async (domain, projectId, photoId, { force = f
         smartGallery: [],
     };
 
-    const batch = writeBatch(db);
+    const projectRef = projectDocRef(domain, projectId);
 
-    // Remove photo from each referencing collection's photoIds[]
-    for (const collectionId of references.collections) {
-        const cRef = collectionDocRef(domain, projectId, collectionId);
-        batch.update(cRef, {
-            photoIds: arrayRemove(photoId),
+    // Firestore transaction makes "photo still exists -> decrement" atomic, so
+    // concurrent/repeated deletes cannot decrement usage more than once.
+    const deletionResult = await runTransaction(db, async (transaction) => {
+        const currentSnap = await transaction.get(photoRef);
+        if (!currentSnap.exists()) {
+            return { deleted: false, reason: 'not-found' };
+        }
+
+        const currentPhoto = currentSnap.data();
+        const originalBytes = toByteSize(currentPhoto.originalSize, 'originalSize');
+
+        for (const collectionId of references.collections) {
+            const cRef = collectionDocRef(domain, projectId, collectionId);
+            transaction.update(cRef, {
+                photoIds: arrayRemove(photoId),
+                updatedAt: Date.now(),
+            });
+            removedRelationships.collections.push(collectionId);
+        }
+
+        if (references.selection.length > 0) {
+            transaction.update(projectRef, {
+                selectedImageIds: arrayRemove(...references.selection),
+            });
+            removedRelationships.selection = references.selection;
+        }
+
+        // Project totalFileSize is bytes.
+        transaction.update(projectRef, {
+            uploadedFilesCount: increment(-1),
+            totalFileSize: increment(-originalBytes),
             updatedAt: Date.now(),
         });
-        removedRelationships.collections.push(collectionId);
-    }
 
-    // Remove from project selectedImageIds
-    if (references.selection.length > 0) {
-        const toRemove = references.selection;
-        batch.update(projectDocRef(domain, projectId), {
-            selectedImageIds: arrayRemove(...toRemove),
+        // Studio usage is MB.
+        transaction.set(
+            studioDocRef(domain),
+            buildStudioStorageUpdate(originalBytes, {
+                operation: STORAGE_ACCOUNTING_OPERATIONS.PHOTO_DELETE,
+                direction: 'decrement',
+                domain,
+                projectId,
+                photoId,
+                idempotency: 'deleted',
+            }),
+            { merge: true }
+        );
+
+        transaction.delete(photoRef);
+        return { deleted: true };
+    });
+
+    if (!deletionResult.deleted) {
+        logStorageAccountingOutcome({
+            studioId: domain,
+            projectId,
+            photoId,
+            operation: STORAGE_ACCOUNTING_OPERATIONS.PHOTO_DELETE,
+            deltaMB: 0,
+            idempotency: 'skipped-missing-photo-race',
         });
-        removedRelationships.selection = toRemove;
+        return {
+            deleted: false,
+            photoId,
+            reason: deletionResult.reason,
+            references,
+            removedRelationships,
+        };
     }
 
-    // Decrement project counters
-    batch.update(projectDocRef(domain, projectId), {
-        uploadedFilesCount: increment(-1),
-        totalFileSize: increment(-(photo.originalSize || 0)),
-        updatedAt: Date.now(),
-    });
-
-    // Decrement studio storage usage
-    batch.update(studioDocRef(domain), {
-        "usage.storage.used": increment(-(photo.originalSize || 0)),
-    });
-
-    // Delete the photo document
-    batch.delete(photoRef);
-
-    // Physical storage deletion (web + thumb)
+    // Physical storage deletion (web + thumb) only after Firestore accounting
+    // committed successfully.
     const storage = await getStorageForDomain(domain);
     const storageDeletions = [];
     if (photo.storage?.webPath) {
@@ -516,8 +614,6 @@ export const deleteProjectPhoto = async (domain, projectId, photoId, { force = f
         storageDeletions.push(deleteObject(ref(storage, photo.storage.thumbPath)).catch(() => {}));
     }
     await Promise.all(storageDeletions);
-
-    await batch.commit();
 
     return {
         deleted: true,

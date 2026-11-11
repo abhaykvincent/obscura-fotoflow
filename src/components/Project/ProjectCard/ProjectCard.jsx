@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../../app/slices/authSlice';
 import { getThumbnailUrl } from '../../../utils/urlUtils';
 import { convertMegabytes, shortenText } from '../../../utils/stringUtils';
+import { bytesToMB } from '../../../utils/storageUnits';
 import ProjectExpiration from '../../ProjectExpiration/ProjectExpiration';
 
 function ProjectCard({project,type}) {   
@@ -77,7 +78,7 @@ function ProjectCard({project,type}) {
                     <div className="summary-left">
                         <div className="pin">
                             <p className="disk-label"></p>
-                            <p className="pin-number">{convertMegabytes(project.totalFileSize)}</p>
+                            <p className="pin-number">{convertMegabytes(bytesToMB(project.totalFileSize))}</p>
                         </div>
                         <div className={`summary-item collection-count ${project.collections.length>0?'active':''}`}>
                             <div className="icon"></div>
