@@ -3,55 +3,114 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FotoFlow — Photography Workflow Software for Event Photographers</title>
+    <title>FotoFlow — All-in-One Photography Client Proofing & Studio Management Software</title>
     <meta
       name="description"
-      content="FotoFlow is photography workflow software for wedding and event photographers to manage projects, share galleries, collect client selections, and streamline studio workflows."
+      content="FotoFlow is the ultimate photography workflow & client proofing platform for wedding, studio, and event photographers. Manage shoots, deliver client galleries, collect selections, and streamline studio operations effortlessly."
     />
-    <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="photography workflow software, client photo proofing, photographer studio management, wedding photography galleries, photo selection app, online photo proofing for photographers, client selection software" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href="https://fotoflow.co/" />
     <meta name="theme-color" content="#0d0d0d" />
 
-    <meta property="og:title" content="FotoFlow — Photography Workflow Software for Event Photographers" />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="FotoFlow — Photography Client Proofing & Studio Management" />
     <meta
       property="og:description"
-      content="Manage photography projects, galleries and client selections in one workflow."
+      content="Streamline photography projects, share high-res client galleries, collect photo selections, and run your studio operations all in one unified flow."
     />
-    <meta property="og:type" content="website" />
     <meta property="og:url" content="https://fotoflow.co/" />
     <meta property="og:site_name" content="FotoFlow" />
+    <meta property="og:image" content="https://fotoflow.co/og-image.png" />
 
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="FotoFlow — Photography Workflow Software for Event Photographers" />
+    <meta name="twitter:title" content="FotoFlow — Photography Client Proofing & Studio Management" />
     <meta
       name="twitter:description"
-      content="Manage photography projects, galleries and client selections in one workflow."
+      content="Streamline photography projects, share high-res client galleries, collect photo selections, and run your studio operations all in one unified flow."
     />
+    <meta name="twitter:image" content="https://fotoflow.co/og-image.png" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
+    <!-- Structured Data for Google & AI Search (GEO) -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@graph": [
           {
             "@type": "Organization",
+            "@id": "https://fotoflow.co/#organization",
             "name": "FotoFlow",
             "url": "https://fotoflow.co/",
-            "slogan": "Shoot. Select. Share."
+            "logo": "https://fotoflow.co/favicon.svg",
+            "slogan": "Shoot. Select. Share.",
+            "description": "FotoFlow provides photography studio management, online client proofing galleries, and automated shoot workflows for professional wedding, portrait, and event photographers."
           },
           {
             "@type": "WebSite",
+            "@id": "https://fotoflow.co/#website",
+            "url": "https://fotoflow.co/",
             "name": "FotoFlow",
-            "url": "https://fotoflow.co/"
+            "publisher": { "@id": "https://fotoflow.co/#organization" }
           },
           {
             "@type": "SoftwareApplication",
+            "@id": "https://fotoflow.co/#software",
             "name": "FotoFlow",
             "applicationCategory": "BusinessApplication",
-            "operatingSystem": "Web",
+            "operatingSystem": "Web, iOS, Android",
             "url": "https://fotoflow.co/",
-            "description": "Photography workflow software for wedding and event photographers to manage projects, share galleries, collect client selections, and streamline studio workflows."
+            "description": "FotoFlow is an integrated studio management and client proofing platform. Photographers upload high-resolution shoots, create client galleries, gather client image selections, and automate deliverable handoffs.",
+            "offers": {
+              "@type": "AggregateOffer",
+              "priceCurrency": "USD",
+              "lowPrice": "0",
+              "highPrice": "49",
+              "offerCount": "3"
+            },
+            "featureList": [
+              "High-resolution online client photo galleries",
+              "Instant client photo selection & proofing workflow",
+              "Smart AI album and semantic search organization",
+              "Multi-collection project management for weddings & events",
+              "Studio workflow automation and status tracking"
+            ]
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://fotoflow.co/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What is FotoFlow and how does it help photographers?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "FotoFlow is an all-in-one studio management and client proofing platform designed for wedding, event, and portrait photographers. It replaces scattered tools by combining project management, online client galleries, image selection proofing, and delivery into a single unified workflow."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How do clients select photos for retouching or print albums in FotoFlow?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Photographers share a password-protected or secure link to a client gallery. Clients browse through images, pin or favorite their choices, add feedback comments, and submit their selection directly back to the photographer."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is FotoFlow suitable for wedding and high-volume event photographers?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes! FotoFlow is built specifically to handle complex multi-event shoots like weddings (e.g. Engagement, Mehendi, Ceremony, Reception) with custom collections, granular permissions, and fast proofing."
+                }
+              }
+            ]
           }
         ]
       }
