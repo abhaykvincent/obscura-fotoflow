@@ -114,80 +114,164 @@ export const resolveCollectionPhotosFromMap = (collectionData = {}, projectPhoto
     return mergeCollectionPhotos(projectPhotos, legacyPhotos);
 };
 
+const chunkArray = (items, chunkSize) => {
+    const chunks = [];
+    for (let i = 0; i < items.length; i += chunkSize) {
+        chunks.push(items.slice(i, i + chunkSize));
+    }
+    return chunks;
+};
+
 /**
- * Fetch images for a Collection with Project-Owned Photo union read.
+ * Resolves canonical Project Photo documents by ID using batched
+ * `documentId() in [...]` queries (parallel, max 30 IDs per query) instead of
+ * N+1 sequential getDoc calls. Returns a Map keyed by both document ID and
+ * photoId.
  *
- * Reads → canonical Project Photos (resolved in bulk via `collectionIds` query
- * + batched `documentId() in [...]` fallback instead of N+1 sequential getDocs)
- * UNIONED with legacy collection.uploadedFiles[] for the migration window.
+ * @returns {Promise<Map<string, Object>>}
+ */
+export const fetchProjectPhotosByIds = async (domain, projectId, photoIds = []) => {
+    const photosById = new Map();
+    const uniqueIds = [...new Set(photoIds.filter(Boolean))];
+    if (uniqueIds.length === 0) {
+        return photosById;
+    }
+
+    const photosRef = collection(db, 'studios', domain, 'projects', projectId, 'photos');
+    await Promise.all(chunkArray(uniqueIds, FIRESTORE_IN_QUERY_LIMIT).map(async (chunk) => {
+        try {
+            const snap = await getDocs(query(photosRef, where(documentId(), 'in', chunk)));
+            snap.docs.forEach((d) => {
+                const normalized = normalizeProjectPhoto(d.data(), d.id);
+                photosById.set(d.id, normalized);
+                if (normalized.photoId) photosById.set(normalized.photoId, normalized);
+            });
+        } catch (e) {
+            console.warn(`Failed to fetch photo batch for project ${projectId}:`, e.message);
+        }
+    }));
+
+    return photosById;
+};
+
+/**
+ * Builds the ordered reference list for a collection: canonical photoIds[] in
+ * their stored order, followed by legacy uploadedFiles[] entries that are not
+ * already represented by a canonical photoId.
+ *
+ * @returns {{ refs: Object[], total: number }}
+ */
+export const buildCollectionPhotoRefs = (collectionData = {}) => {
+    const photoIds = Array.isArray(collectionData.photoIds) ? collectionData.photoIds : [];
+    const canonicalIds = [...new Set(photoIds.filter(Boolean))];
+    const canonicalIdSet = new Set(canonicalIds);
+
+    const legacyPhotos = (collectionData.uploadedFiles || [])
+        .map(normalizeLegacyPhoto)
+        .filter((file) => {
+            const tokens = [file.photoId, file.fileId, file.id, file.url].filter(Boolean);
+            return tokens.length === 0 || !tokens.some((token) => canonicalIdSet.has(token));
+        });
+
+    const refs = [
+        ...canonicalIds.map((photoId) => ({ type: 'canonical', photoId })),
+        ...legacyPhotos.map((photo) => ({ type: 'legacy', photo })),
+    ];
+
+    return { refs, total: refs.length };
+};
+
+/**
+ * Loads a single ordered page of collection photos.
+ *
+ * Only the canonical photo documents referenced by the requested slice of
+ * photoIds[] are read, in parallel batches. Results are reconstructed in the
+ * original photoIds[] order (Firestore does not guarantee `in` order).
+ */
+export const loadCollectionPhotosPage = async (domain, projectId, collectionData = {}, offset = 0, limit = 16) => {
+    const { refs, total } = buildCollectionPhotoRefs(collectionData);
+    const start = Math.max(0, offset);
+    const end = start + Math.max(0, limit);
+    const pageRefs = refs.slice(start, end);
+
+    const canonicalIds = pageRefs
+        .filter((ref) => ref.type === 'canonical')
+        .map((ref) => ref.photoId);
+    const photosById = await fetchProjectPhotosByIds(domain, projectId, canonicalIds);
+
+    const photos = [];
+    pageRefs.forEach((ref) => {
+        if (ref.type === 'legacy') {
+            photos.push(ref.photo);
+            return;
+        }
+        const photo = photosById.get(ref.photoId);
+        if (photo) photos.push(photo);
+    });
+
+    return {
+        photos,
+        total,
+        offset: start,
+        nextOffset: Math.min(end, total),
+        hasMore: end < total,
+    };
+};
+
+/**
+ * Fetches one page of a Collection's images for the Project-Owned Photo union
+ * read. Reads the collection metadata once (unless `collectionData` is supplied
+ * by a previous page) and resolves only the requested photoIds slice.
+ *
+ * @param {Object} [options]
+ *   {number} offset - starting index into the ordered collection
+ *   {number} limit - page size
+ *   {Object} collectionData - previously returned metadata to avoid a re-read
+ * @returns {Promise<{photos, total, offset, nextOffset, hasMore, collectionData}>}
+ */
+export const fetchCollectionPhotosPage = async (
+    domain,
+    projectId,
+    collectionId,
+    { offset = 0, limit = 16, collectionData } = {}
+) => {
+    let data = collectionData;
+    if (!data) {
+        const collectionDocRef = doc(db, 'studios', domain, 'projects', projectId, 'collections', `${collectionId}`);
+        const collectionSnapshot = await getDoc(collectionDocRef);
+        if (!collectionSnapshot.exists()) {
+            return {
+                photos: [],
+                total: 0,
+                offset: 0,
+                nextOffset: 0,
+                hasMore: false,
+                collectionData: null,
+            };
+        }
+        data = collectionSnapshot.data();
+    }
+
+    const page = await loadCollectionPhotosPage(domain, projectId, data, offset, limit);
+    return { ...page, collectionData: data };
+};
+
+/**
+ * Fetch all images for a Collection with Project-Owned Photo union read.
+ *
+ * Delegates to the same ordered, batched loader as `fetchCollectionPhotosPage`
+ * so callers that need the complete list (e.g. Share gallery) stay consistent
+ * with the paginated studio gallery. New galleries should prefer
+ * `fetchCollectionPhotosPage`.
  *
  * @returns {Promise<Object[]>} array of photo objects (canonical shape where possible)
  */
 export const fetchImages = async (domain, projectId, collectionId) => {
-    const studioDocRef = doc(db, 'studios', domain);
-    const projectsCollectionRef = collection(studioDocRef, 'projects');
-    const projectDocRef = doc(projectsCollectionRef, projectId);
-    const subCollectionId = `${collectionId}`;
-    const collectionDocRef = doc(projectDocRef, 'collections', subCollectionId);
-    const collectionSnapshot = await getDoc(collectionDocRef);
-
-    if (!collectionSnapshot.exists()) {
-        return [];
-    }
-
-    const collectionData = collectionSnapshot.data();
-    const photoIds = Array.isArray(collectionData.photoIds) ? collectionData.photoIds : [];
-
-    // 1. Canonical: bulk-resolve Collection → Photo relationships.
-    const projectPhotosById = new Map();
-    if (photoIds.length > 0) {
-        const photosRef = collection(projectDocRef, 'photos');
-        try {
-            const byCollectionSnap = await getDocs(
-                query(photosRef, where('collectionIds', 'array-contains', subCollectionId))
-            );
-            byCollectionSnap.docs.forEach((d) => {
-                const normalized = normalizeProjectPhoto(d.data(), d.id);
-                projectPhotosById.set(d.id, normalized);
-                if (normalized.photoId) projectPhotosById.set(normalized.photoId, normalized);
-            });
-        } catch (e) {
-            console.warn(`Bulk collectionIds query failed for ${collectionId}, falling back to ID batches:`, e.message);
-        }
-
-        // Fetch only any IDs listed in collection.photoIds that weren't covered by collectionIds[]
-        const missingIds = photoIds.filter((id) => !projectPhotosById.has(id));
-        if (missingIds.length > 0) {
-            const chunks = [];
-            for (let i = 0; i < missingIds.length; i += FIRESTORE_IN_QUERY_LIMIT) {
-                chunks.push(missingIds.slice(i, i + FIRESTORE_IN_QUERY_LIMIT));
-            }
-            await Promise.all(chunks.map(async (chunk) => {
-                try {
-                    const snap = await getDocs(query(photosRef, where(documentId(), 'in', chunk)));
-                    snap.docs.forEach((d) => {
-                        const normalized = normalizeProjectPhoto(d.data(), d.id);
-                        projectPhotosById.set(d.id, normalized);
-                        if (normalized.photoId) projectPhotosById.set(normalized.photoId, normalized);
-                    });
-                } catch (e) {
-                    console.warn(`Failed to fetch photo batch for collection ${collectionId}:`, e.message);
-                }
-            }));
-        }
-    }
-
-    const projectPhotos = [];
-    photoIds.forEach((id) => {
-        const p = projectPhotosById.get(id);
-        if (p) projectPhotos.push(p);
+    const result = await fetchCollectionPhotosPage(domain, projectId, collectionId, {
+        offset: 0,
+        limit: Number.MAX_SAFE_INTEGER,
     });
-
-    // 2. Legacy: uploadedFiles[] entries not yet migrated to Project Photos.
-    const legacyPhotos = (collectionData.uploadedFiles || []).map(normalizeLegacyPhoto);
-
-    // 3. Union + dedupe: canonical photos win; legacy fills the gaps.
-    return mergeCollectionPhotos(projectPhotos, legacyPhotos);
+    return result.photos;
 };
 
 /**
