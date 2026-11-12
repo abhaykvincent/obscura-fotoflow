@@ -33,6 +33,9 @@ import {
   canSelectPhoto,
   selectionLimitMessage,
   canCompleteGallery,
+  getCollectionPhotoCount,
+  hasCollectionPhotoRefs,
+  resolveCollectionSelectionPhotos,
 } from '../../utils/selectionGalleryUtils';
 import './Selection.scss';
 
@@ -66,7 +69,7 @@ const CollectionsPanel = memo(({ project, currentCollectionId, studioName, galle
   const base = galleryMode && galleryId
     ? `/${studioName}/selection/${project.id}/gallery/${galleryId}`
     : `/${studioName}/selection/${project.id}`;
-  const eligible = (project.collections || []).filter((c) => (c.uploadedFiles || []).length > 0 || c.selectionGallery !== false);
+  const eligible = (project.collections || []).filter((c) => getCollectionPhotoCount(c) > 0 || c.selectionGallery !== false);
   return (
     <div className="collections-panel">
       {galleryMode && (
@@ -81,12 +84,12 @@ const CollectionsPanel = memo(({ project, currentCollectionId, studioName, galle
             className={`
               collection-tab
               ${collection.id === currentCollectionId ? 'active' : ''}
-              ${collection.uploadedFiles === undefined ? 'disabled' : ''}
+              ${hasCollectionPhotoRefs(collection) ? '' : 'disabled'}
             `}
           >
-            <Link to={collection.uploadedFiles !== undefined ? `${base}/${collection.id}` : '#'}>
+            <Link to={hasCollectionPhotoRefs(collection) ? `${base}/${collection.id}` : '#'}>
               {collection.name}
-              <span className="photo-count-label">{` ${collection.uploadedFiles?.length || 0}`}</span>
+              <span className="photo-count-label">{` ${getCollectionPhotoCount(collection)}`}</span>
             </Link>
           </div>
         ),
@@ -133,6 +136,7 @@ export default function Selection() {
 
   // Core State (legacy-compatible)
   const [images, setImages] = useState([]);
+  const [galleryImages, setGalleryImages] = useState([]);
   const [page, setPage] = useState(1);
   const [hasInitializedProgress, setHasInitializedProgress] = useState(false);
   const [size] = useState(30);
@@ -246,6 +250,7 @@ export default function Selection() {
 
   const eligiblePhotos = useMemo(() => {
     if (!project) return [];
+    if (galleryMode) return galleryImages;
     const all = [];
     (project.collections || []).forEach((c) => {
       // New model: collections reference photos via photoIds[] (Project-owned).
@@ -266,7 +271,7 @@ export default function Selection() {
       }
     });
     return all;
-  }, [project]);
+  }, [project, galleryMode, galleryImages]);
 
   const filteredByCollection = useMemo(() => {
     if (!galleryMode) return null;
@@ -285,9 +290,9 @@ export default function Selection() {
     if (!project) return [];
     const allImages = galleryMode
       ? eligiblePhotos
-      : project.collections.flatMap((c) => c.uploadedFiles || []);
+      : (images.length > 0 ? images : project.collections.flatMap((c) => c.uploadedFiles || []));
     return allImages.filter((img) => selectedIdsSet.has(img.url) || selectedIdsSet.has(getPhotoKey(img)));
-  }, [project, selectedIdsSet, galleryMode, eligiblePhotos]);
+  }, [project, selectedIdsSet, galleryMode, eligiblePhotos, images]);
 
   // Local per-category counts (client truth; server aggregates refresh via gallery doc)
   const localCategoryCounts = useMemo(() => {
@@ -473,16 +478,17 @@ export default function Selection() {
     }
     document.title = `${project.name} | Selection`;
     // New model: collection may have photoIds[] instead of uploadedFiles[].
-    // Resolve via fetchImages (compat handles both).
-    if (currentColl && currentColl.uploadedFiles) {
-      setImages(currentColl.uploadedFiles);
-    } else if (currentColl && currentColl.photoIds && currentColl.photoIds.length > 0) {
+    // Resolve via fetchImages (compat handles both) so transitional
+    // collections with both stores are unioned.
+    if (currentColl && currentColl.photoIds && currentColl.photoIds.length > 0) {
       fetchImages(studioName, projectId, currentCollectionId)
         .then((resolvedPhotos) => setImages(resolvedPhotos))
         .catch((err) => {
           console.error('Failed to resolve collection photos:', err);
           setImages([]);
         });
+    } else if (currentColl && currentColl.uploadedFiles) {
+      setImages(currentColl.uploadedFiles);
     } else {
       setImages([]);
     }
@@ -490,6 +496,31 @@ export default function Selection() {
       setPage(1);
     }
   }, [project, currentCollectionId, studioName, projectId, navigate, hasInitializedProgress, lastProgress, galleryMode, gallery]);
+
+  // Resolve gallery-mode photos from the canonical Project Photos store.
+  // Collection.photoIds[] only carries references, so without this the grid
+  // would render blank tiles for every new/project-based collection.
+  useEffect(() => {
+    if (!galleryMode || !project) return undefined;
+    let cancelled = false;
+    const collections = currentCollectionId
+      ? project.collections.filter((c) => c.id === currentCollectionId)
+      : project.collections.filter((c) => c.selectionGallery !== false);
+
+    const load = async () => {
+      const resolved = await resolveCollectionSelectionPhotos(
+        collections,
+        (id) => fetchImages(studioName, projectId, id),
+        (error, collection) => {
+          console.error(`Failed to resolve photos for collection ${collection.id}:`, error);
+        }
+      );
+      if (!cancelled) setGalleryImages(resolved);
+    };
+
+    load();
+    return () => { cancelled = true; };
+  }, [galleryMode, project, currentCollectionId, studioName, projectId]);
 
   // Scroll to top on collection change (legacy)
   useEffect(() => {
