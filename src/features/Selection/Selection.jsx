@@ -3,7 +3,12 @@ import { createPortal } from 'react-dom';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Lottie from 'react-lottie';
 import animationData from '../../assets/animations/CompletedAnimation.json';
-import { fetchProject, updateProjectStatusInFirestore, fetchImages } from '../../firebase/functions/firestore';
+import {
+  fetchProject,
+  updateProjectStatusInFirestore,
+  fetchAllProjectPhotosMap,
+  resolveCollectionPhotosFromMap,
+} from '../../firebase/functions/firestore';
 import {
   fetchSelectionGalleries,
   fetchSelectionGallery,
@@ -35,7 +40,6 @@ import {
   canCompleteGallery,
   getCollectionPhotoCount,
   hasCollectionPhotoRefs,
-  resolveCollectionSelectionPhotos,
 } from '../../utils/selectionGalleryUtils';
 import './Selection.scss';
 
@@ -106,9 +110,11 @@ export default function Selection() {
   // The gallery route uses :selectionGalleryId; legacy route may carry a
   // gallery id in :collectionId position (old links stay working).
   const routeGalleryId = selectionGalleryId || null;
+  const pinValid = isPinValid(projectId);
 
   const [project, setProject] = useState();
   const [galleries, setGalleries] = useState([]);
+  const [galleriesLoaded, setGalleriesLoaded] = useState(false);
   const [gallery, setGallery] = useState(null);
   const [galleryMode, setGalleryMode] = useState(false);
   const [galleryLoading, setGalleryLoading] = useState(true);
@@ -117,11 +123,8 @@ export default function Selection() {
   const [showReview, setShowReview] = useState(false);
   const [finishing, setFinishing] = useState(false);
 
-  // Legacy compat note: /selection/:projectId/:collectionId may carry a gallery id
-  // in :collectionId position; resolution happens in the gallery-resolution effect below.
-  void galleries;
-
-  // Persistence Layer — gallery-isolated when galleryMode
+  // Persistence Layer — waits until gallery mode & project are resolved so it
+  // neither runs a throwaway legacy load nor re-fetches the project document.
   const effectiveGalleryId = galleryMode && gallery ? gallery.id : null;
   const {
     selectedIds,
@@ -132,11 +135,13 @@ export default function Selection() {
     initialLoad,
     saveError,
     categoryByPhoto,
-  } = usePersistentSelection(studioName, projectId, effectiveGalleryId, gallery);
+  } = usePersistentSelection(studioName, projectId, effectiveGalleryId, gallery, {
+    enabled: pinValid && !galleryLoading && Boolean(project),
+    project,
+  });
 
   // Core State (legacy-compatible)
-  const [images, setImages] = useState([]);
-  const [galleryImages, setGalleryImages] = useState([]);
+  const [projectPhotosMap, setProjectPhotosMap] = useState(null);
   const [page, setPage] = useState(1);
   const [hasInitializedProgress, setHasInitializedProgress] = useState(false);
   const [size] = useState(30);
@@ -153,18 +158,33 @@ export default function Selection() {
     rendererSettings: { preserveAspectRatio: 'xMidYMid slice' }
   }), []);
 
-  // --- Gallery resolution ---
+  // --- Fetch selection galleries list once per project ---
   useEffect(() => {
+    if (!pinValid || !studioName || !projectId) return undefined;
     let cancelled = false;
-    const resolve = async () => {
-      setGalleryLoading(true);
-      try {
-        const list = await fetchSelectionGalleries(studioName, projectId).catch(() => []);
+    setGalleriesLoaded(false);
+    setGalleryLoading(true);
+
+    fetchSelectionGalleries(studioName, projectId)
+      .catch(() => [])
+      .then((list) => {
         if (cancelled) return;
         setGalleries(list || []);
+        setGalleriesLoaded(true);
+      });
 
+    return () => { cancelled = true; };
+  }, [pinValid, studioName, projectId]);
+
+  // --- Resolve active gallery from loaded list (no network call on collection tab clicks) ---
+  useEffect(() => {
+    if (!pinValid || !galleriesLoaded) return undefined;
+    let cancelled = false;
+
+    const resolveActiveGallery = async () => {
+      try {
         if (routeGalleryId) {
-          const g = (list || []).find((x) => x.id === routeGalleryId)
+          const g = galleries.find((x) => x.id === routeGalleryId)
             || await fetchSelectionGallery(studioName, projectId, routeGalleryId).catch(() => null);
           if (cancelled) return;
           if (g) {
@@ -174,30 +194,26 @@ export default function Selection() {
             // Unknown gallery id → fall back to legacy so old links never break
             setGalleryMode(false);
           }
-        } else if (collectionId && (list || []).some((g) => g.id === collectionId)) {
-          const g = list.find((x) => x.id === collectionId);
+        } else if (collectionId && galleries.some((g) => g.id === collectionId)) {
+          const g = galleries.find((x) => x.id === collectionId);
           if (cancelled) return;
           setGallery(normalizeGallery(g));
           setGalleryMode(true);
-        } else if ((list || []).length > 0) {
+        } else if (galleries.length > 0) {
           // Backward compat: legacy URL opens the active (or first) gallery
-          const active = list.find((g) => g.status === 'active') || list[0];
+          const active = galleries.find((g) => g.status === 'active') || galleries[0];
           if (active && (active.status === 'active' || active.status === 'completed' || active.status === 'locked')) {
-            if (cancelled) return;
             setGallery(normalizeGallery(active));
             setGalleryMode(true);
-          } else if (active && active.status === 'draft' && list.some((g) => g.status === 'active')) {
-            const a = list.find((g) => g.status === 'active');
-            if (cancelled) return;
+          } else if (active && active.status === 'draft' && galleries.some((g) => g.status === 'active')) {
+            const a = galleries.find((g) => g.status === 'active');
             setGallery(normalizeGallery(a));
             setGalleryMode(true);
           } else {
             // All galleries are drafts → stay in legacy workflow until photographer activates
-            if (cancelled) return;
             setGalleryMode(false);
           }
         } else {
-          if (cancelled) return;
           setGalleryMode(false);
         }
       } catch (e) {
@@ -207,9 +223,10 @@ export default function Selection() {
         if (!cancelled) setGalleryLoading(false);
       }
     };
-    if (studioName && projectId) resolve();
+
+    resolveActiveGallery();
     return () => { cancelled = true; };
-  }, [studioName, projectId, routeGalleryId, collectionId]);
+  }, [pinValid, galleriesLoaded, galleries, routeGalleryId, collectionId, studioName, projectId]);
 
   // Keep gallery doc fresh (aggregates are denormalized; selections subcollection is truth)
   const refreshGallery = useCallback(async () => {
@@ -248,30 +265,46 @@ export default function Selection() {
     setShowAllCollections(!currentCollectionId);
   }, [currentCollectionId]);
 
+  const hasCanonicalPhotoRefs = useMemo(
+    () => Boolean(project?.collections?.some((c) => Array.isArray(c.photoIds) && c.photoIds.length > 0)),
+    [project]
+  );
+
+  const photosLoading = hasCanonicalPhotoRefs && projectPhotosMap === null;
+
+  // Pre-resolve every collection's unioned photos in memory from the single
+  // bulk-loaded `projectPhotosMap` + `uploadedFiles[]`. Zero network calls on
+  // collection tab switches.
+  const resolvedCollectionsById = useMemo(() => {
+    const byId = new Map();
+    if (!project) return byId;
+    const map = projectPhotosMap || new Map();
+    (project.collections || []).forEach((c) => {
+      byId.set(c.id, resolveCollectionPhotosFromMap(c, map));
+    });
+    return byId;
+  }, [project, projectPhotosMap]);
+
+  const images = useMemo(() => {
+    if (galleryMode || !currentCollectionId) return [];
+    return resolvedCollectionsById.get(currentCollectionId) || [];
+  }, [galleryMode, currentCollectionId, resolvedCollectionsById]);
+
   const eligiblePhotos = useMemo(() => {
     if (!project) return [];
-    if (galleryMode) return galleryImages;
+    const sourceCollections = galleryMode
+      ? (project.collections || []).filter((c) => getCollectionPhotoCount(c) > 0 || c.selectionGallery !== false)
+      : (project.collections || []);
     const all = [];
-    (project.collections || []).forEach((c) => {
-      // New model: collections reference photos via photoIds[] (Project-owned).
-      // Legacy model: collections contain uploadedFiles[].
-      const photos = c.uploadedFiles || [];
-      if (photos.length > 0) {
-        photos.forEach((f) => {
-          const photo = { ...f, collectionId: c.id, collectionName: c.name };
-          if (isPhotoEligible(photo)) all.push(photo);
-        });
-      } else if (c.photoIds && c.photoIds.length > 0) {
-        // Collection references canonical Project Photos; create lightweight
-        // photo refs. Full resolution happens via fetchImages in the gallery view.
-        c.photoIds.forEach((photoId) => {
-          const photo = { photoId, collectionId: c.id, collectionName: c.name };
-          if (isPhotoEligible(photo)) all.push(photo);
-        });
-      }
+    sourceCollections.forEach((c) => {
+      const photos = resolvedCollectionsById.get(c.id) || [];
+      photos.forEach((p) => {
+        const decorated = { ...p, collectionId: c.id, collectionName: c.name };
+        if (isPhotoEligible(decorated)) all.push(decorated);
+      });
     });
     return all;
-  }, [project, galleryMode, galleryImages]);
+  }, [project, galleryMode, resolvedCollectionsById]);
 
   const filteredByCollection = useMemo(() => {
     if (!galleryMode) return null;
@@ -288,9 +321,7 @@ export default function Selection() {
 
   const selectedImages = useMemo(() => {
     if (!project) return [];
-    const allImages = galleryMode
-      ? eligiblePhotos
-      : (images.length > 0 ? images : project.collections.flatMap((c) => c.uploadedFiles || []));
+    const allImages = galleryMode ? eligiblePhotos : (images.length > 0 ? images : eligiblePhotos);
     return allImages.filter((img) => selectedIdsSet.has(img.url) || selectedIdsSet.has(getPhotoKey(img)));
   }, [project, selectedIdsSet, galleryMode, eligiblePhotos, images]);
 
@@ -384,35 +415,62 @@ export default function Selection() {
     };
   }, [studioName, projectId, navigate, routeGalleryId]);
 
-  // Initial Data Fetch
+  // Initial Project Fetch (once per studio/project — independent of galleryMode)
   useEffect(() => {
+    if (!pinValid || !studioName || !projectId) return undefined;
+    let cancelled = false;
+    setProjectPhotosMap(null);
+
     const fetchProjectData = async () => {
       try {
         const projectData = await fetchProject(studioName, projectId);
-        setProject(projectData);
-        if (!galleryMode) {
-          const hasSelectableCollections = projectData?.collections?.some((c) => c.selectionGallery !== false);
-          if (projectData?.status === 'selected' || !hasSelectableCollections) {
-            setSelectionCompleted(true);
-          }
-        }
+        if (!cancelled) setProject(projectData);
       } catch (error) {
         console.error('Failed to fetch project:', error);
       }
     };
     fetchProjectData();
-  }, [projectId, studioName, galleryMode]);
+    return () => { cancelled = true; };
+  }, [pinValid, projectId, studioName]);
 
-  // Gallery completion state
+  // Bulk-load canonical Project Photos ONCE in a single Firestore collection
+  // query whenever any collection references `photoIds[]`.
   useEffect(() => {
+    if (!project || !studioName || !projectId) return undefined;
+    if (!hasCanonicalPhotoRefs) {
+      setProjectPhotosMap(new Map());
+      return undefined;
+    }
+    let cancelled = false;
+    fetchAllProjectPhotosMap(studioName, projectId)
+      .then((map) => {
+        if (!cancelled) setProjectPhotosMap(map);
+      })
+      .catch((error) => {
+        console.error('Failed to bulk-load project photos:', error);
+        if (!cancelled) setProjectPhotosMap(new Map());
+      });
+    return () => { cancelled = true; };
+  }, [project, hasCanonicalPhotoRefs, studioName, projectId]);
+
+  // Completion state (both gallery mode and legacy project-level mode)
+  useEffect(() => {
+    if (galleryLoading || !project) return;
     if (galleryMode && gallery) {
       if (gallery.status === 'completed' || gallery.status === 'locked' || gallery.status === 'archived') {
         setSelectionCompleted(true);
       } else {
         setSelectionCompleted(false);
       }
+      return;
     }
-  }, [galleryMode, gallery]);
+    if (!galleryMode) {
+      const hasSelectableCollections = project.collections?.some((c) => c.selectionGallery !== false);
+      if (project.status === 'selected' || !hasSelectableCollections) {
+        setSelectionCompleted(true);
+      }
+    }
+  }, [project, galleryMode, gallery, galleryLoading]);
 
   // Handle Progress Resumption
   useEffect(() => {
@@ -455,9 +513,9 @@ export default function Selection() {
     setHasInitializedProgress(true);
   }, [initialLoad, galleryLoading, project, lastProgress, hasInitializedProgress, collectionId, studioName, projectId, navigate, dispatch, galleryMode, gallery]);
 
-  // Update Images when collection changes
+  // Handle collection routing & page reset when collection changes
   useEffect(() => {
-    if (!project) return;
+    if (!project || galleryLoading) return;
     if (galleryMode) {
       document.title = `${project.name} | ${gallery?.name || 'Selection'}`;
       if (hasInitializedProgress && lastProgress?.collectionId !== (currentCollectionId || null)) {
@@ -477,50 +535,10 @@ export default function Selection() {
       return;
     }
     document.title = `${project.name} | Selection`;
-    // New model: collection may have photoIds[] instead of uploadedFiles[].
-    // Resolve via fetchImages (compat handles both) so transitional
-    // collections with both stores are unioned.
-    if (currentColl && currentColl.photoIds && currentColl.photoIds.length > 0) {
-      fetchImages(studioName, projectId, currentCollectionId)
-        .then((resolvedPhotos) => setImages(resolvedPhotos))
-        .catch((err) => {
-          console.error('Failed to resolve collection photos:', err);
-          setImages([]);
-        });
-    } else if (currentColl && currentColl.uploadedFiles) {
-      setImages(currentColl.uploadedFiles);
-    } else {
-      setImages([]);
-    }
     if (hasInitializedProgress && lastProgress?.collectionId !== currentCollectionId) {
       setPage(1);
     }
-  }, [project, currentCollectionId, studioName, projectId, navigate, hasInitializedProgress, lastProgress, galleryMode, gallery]);
-
-  // Resolve gallery-mode photos from the canonical Project Photos store.
-  // Collection.photoIds[] only carries references, so without this the grid
-  // would render blank tiles for every new/project-based collection.
-  useEffect(() => {
-    if (!galleryMode || !project) return undefined;
-    let cancelled = false;
-    const collections = currentCollectionId
-      ? project.collections.filter((c) => c.id === currentCollectionId)
-      : project.collections.filter((c) => c.selectionGallery !== false);
-
-    const load = async () => {
-      const resolved = await resolveCollectionSelectionPhotos(
-        collections,
-        (id) => fetchImages(studioName, projectId, id),
-        (error, collection) => {
-          console.error(`Failed to resolve photos for collection ${collection.id}:`, error);
-        }
-      );
-      if (!cancelled) setGalleryImages(resolved);
-    };
-
-    load();
-    return () => { cancelled = true; };
-  }, [galleryMode, project, currentCollectionId, studioName, projectId]);
+  }, [project, currentCollectionId, studioName, projectId, navigate, hasInitializedProgress, lastProgress, galleryMode, gallery, galleryLoading]);
 
   // Scroll to top on collection change (legacy)
   useEffect(() => {
@@ -585,9 +603,9 @@ export default function Selection() {
         });
         setLimitNotice(msg);
         dispatch(showAlert({ type: 'info', message: msg }));
+        refreshGallery();
       } else {
         saveProgress({ selectionGalleryId: effectiveGalleryId, collectionId: currentCollectionId, page, categoryId: activeCategoryId });
-        refreshGallery();
         // Limit-reached analytics hint
         const after = selectedIds.length + (isCurrentlySelected ? -1 : 1);
         if (viewGallery.selectionLimit && after >= viewGallery.selectionLimit) {
@@ -768,7 +786,11 @@ export default function Selection() {
               />
             ) : (
               <div className="no-images-message">
-                <p>{showAllPhotos ? 'There are no photos in this collection' : "You haven't selected any photos yet"}</p>
+                <p>
+                  {photosLoading
+                    ? 'Loading photos...'
+                    : (showAllPhotos ? 'There are no photos in this collection' : "You haven't selected any photos yet")}
+                </p>
               </div>
             )}
 

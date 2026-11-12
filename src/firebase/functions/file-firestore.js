@@ -1,5 +1,5 @@
 import { db } from "../app";
-import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, increment, collection, getDocs, query, where } from "firebase/firestore";
+import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, increment, collection, getDocs, query, where, documentId } from "firebase/firestore";
 import { ref, deleteObject } from "firebase/storage";
 import { getStorageForDomain } from "../../utils/uploadOperations";
 import { generateMemorablePIN } from "../../utils/stringUtils";
@@ -54,18 +54,72 @@ export const mergeCollectionPhotos = (projectPhotos = [], legacyPhotos = []) => 
     return photos.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 };
 
+const FIRESTORE_IN_QUERY_LIMIT = 30;
+
+/**
+ * Normalizes a canonical Project Photo document so legacy top-level `url` and
+ * `thumbUrl` fields are populated alongside `urls.{web,thumb}`.
+ */
+export const normalizeProjectPhoto = (photo, fallbackId = '') => {
+    const photoId = photo.id || photo.photoId || fallbackId;
+    return {
+        ...photo,
+        photoId,
+        url: photo.urls?.web || photo.url || '',
+        thumbUrl: photo.urls?.thumb || photo.thumbUrl || '',
+    };
+};
+
+const normalizeLegacyPhoto = (file) => ({
+    ...file,
+    photoId: file.photoId || file.fileId || file.id || file.url || file.name,
+    url: file.url || '',
+    thumbUrl: file.thumbUrl || '',
+});
+
+/**
+ * Fetches all canonical Project Photos for a project in a single Firestore
+ * collection read, keyed by photoId. Ideal when resolving multiple collections
+ * at once (e.g. Selection Gallery).
+ *
+ * @returns {Promise<Map<string, Object>>}
+ */
+export const fetchAllProjectPhotosMap = async (domain, projectId) => {
+    const photosRef = collection(db, 'studios', domain, 'projects', projectId, 'photos');
+    const snap = await getDocs(photosRef);
+    const map = new Map();
+    snap.docs.forEach((d) => {
+        const normalized = normalizeProjectPhoto(d.data(), d.id);
+        map.set(d.id, normalized);
+        if (normalized.photoId) {
+            map.set(normalized.photoId, normalized);
+        }
+    });
+    return map;
+};
+
+/**
+ * Resolves a single collection object (already carrying `photoIds` and/or
+ * `uploadedFiles`) against a preloaded `projectPhotosMap` using the standard
+ * canonical + legacy union read. Makes zero network calls.
+ */
+export const resolveCollectionPhotosFromMap = (collectionData = {}, projectPhotosMap = new Map()) => {
+    const photoIds = Array.isArray(collectionData.photoIds) ? collectionData.photoIds : [];
+    const projectPhotos = [];
+    photoIds.forEach((photoId) => {
+        const p = projectPhotosMap.get(photoId);
+        if (p) projectPhotos.push(p);
+    });
+    const legacyPhotos = (collectionData.uploadedFiles || []).map(normalizeLegacyPhoto);
+    return mergeCollectionPhotos(projectPhotos, legacyPhotos);
+};
+
 /**
  * Fetch images for a Collection with Project-Owned Photo union read.
  *
- * Reads → canonical Project Photos (resolved from Collection.photoIds[])
+ * Reads → canonical Project Photos (resolved in bulk via `collectionIds` query
+ * + batched `documentId() in [...]` fallback instead of N+1 sequential getDocs)
  * UNIONED with legacy collection.uploadedFiles[] for the migration window.
- *
- * A project in transition may hold photos in both stores: legacy photos live
- * only in uploadedFiles[], newly uploaded photos live only in photoIds[].
- * Returning either side alone would hide the other, so both are merged and
- * deduped (canonical Project Photos win). Once migration completes and legacy
- * uploadedFiles[] is removed, this naturally degrades to a photoIds+Project
- * Photos read.
  *
  * @returns {Promise<Object[]>} array of photo objects (canonical shape where possible)
  */
@@ -84,34 +138,53 @@ export const fetchImages = async (domain, projectId, collectionId) => {
     const collectionData = collectionSnapshot.data();
     const photoIds = Array.isArray(collectionData.photoIds) ? collectionData.photoIds : [];
 
-    // 1. Canonical: resolve Collection → Photo relationships to Project Photos.
-    const projectPhotos = [];
-    for (const photoId of photoIds) {
+    // 1. Canonical: bulk-resolve Collection → Photo relationships.
+    const projectPhotosById = new Map();
+    if (photoIds.length > 0) {
+        const photosRef = collection(projectDocRef, 'photos');
         try {
-            const photoRef = doc(projectDocRef, 'photos', photoId);
-            const photoSnap = await getDoc(photoRef);
-            if (photoSnap.exists()) {
-                const p = photoSnap.data();
-                // Normalize: top-level url/thumbUrl aliases for backward-compat reads
-                projectPhotos.push({
-                    ...p,
-                    photoId: p.id || photoId,
-                    url: p.urls?.web || p.url || '',
-                    thumbUrl: p.urls?.thumb || p.thumbUrl || '',
-                });
-            }
+            const byCollectionSnap = await getDocs(
+                query(photosRef, where('collectionIds', 'array-contains', subCollectionId))
+            );
+            byCollectionSnap.docs.forEach((d) => {
+                const normalized = normalizeProjectPhoto(d.data(), d.id);
+                projectPhotosById.set(d.id, normalized);
+                if (normalized.photoId) projectPhotosById.set(normalized.photoId, normalized);
+            });
         } catch (e) {
-            console.warn(`Failed to fetch photo ${photoId} for collection ${collectionId}:`, e.message);
+            console.warn(`Bulk collectionIds query failed for ${collectionId}, falling back to ID batches:`, e.message);
+        }
+
+        // Fetch only any IDs listed in collection.photoIds that weren't covered by collectionIds[]
+        const missingIds = photoIds.filter((id) => !projectPhotosById.has(id));
+        if (missingIds.length > 0) {
+            const chunks = [];
+            for (let i = 0; i < missingIds.length; i += FIRESTORE_IN_QUERY_LIMIT) {
+                chunks.push(missingIds.slice(i, i + FIRESTORE_IN_QUERY_LIMIT));
+            }
+            await Promise.all(chunks.map(async (chunk) => {
+                try {
+                    const snap = await getDocs(query(photosRef, where(documentId(), 'in', chunk)));
+                    snap.docs.forEach((d) => {
+                        const normalized = normalizeProjectPhoto(d.data(), d.id);
+                        projectPhotosById.set(d.id, normalized);
+                        if (normalized.photoId) projectPhotosById.set(normalized.photoId, normalized);
+                    });
+                } catch (e) {
+                    console.warn(`Failed to fetch photo batch for collection ${collectionId}:`, e.message);
+                }
+            }));
         }
     }
 
+    const projectPhotos = [];
+    photoIds.forEach((id) => {
+        const p = projectPhotosById.get(id);
+        if (p) projectPhotos.push(p);
+    });
+
     // 2. Legacy: uploadedFiles[] entries not yet migrated to Project Photos.
-    const legacyPhotos = (collectionData.uploadedFiles || []).map((f) => ({
-        ...f,
-        photoId: f.photoId || f.fileId || f.id || f.url || f.name,
-        url: f.url || '',
-        thumbUrl: f.thumbUrl || '',
-    }));
+    const legacyPhotos = (collectionData.uploadedFiles || []).map(normalizeLegacyPhoto);
 
     // 3. Union + dedupe: canonical photos win; legacy fills the gaps.
     return mergeCollectionPhotos(projectPhotos, legacyPhotos);
