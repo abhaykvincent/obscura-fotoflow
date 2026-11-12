@@ -64,6 +64,30 @@ export const mbToBytes = (mb, fieldName = 'sizeMb') => {
 };
 
 /**
+ * Normalizes a project's stored `totalFileSize` to decimal MB.
+ *
+ * Legacy project documents store this field in decimal MB, while documents
+ * written after the storage-accounting change store canonical bytes. A byte
+ * value is identified by its average size per uploaded file, which for photos
+ * is orders of magnitude larger than a legacy MB total.
+ *
+ * @param {{ totalFileSize?: *, uploadedFilesCount?: * }} project
+ * @returns {number} MB
+ */
+export const projectTotalFileSizeToMB = (project = {}) => {
+    const stored = toByteSize(project.totalFileSize, 'project.totalFileSize');
+    if (stored === 0) {
+        return 0;
+    }
+
+    const fileCount = Number(project.uploadedFilesCount) || 0;
+    const averagePerFile = fileCount > 0 ? stored / fileCount : 0;
+    const isByteValue = averagePerFile >= 1024;
+
+    return isByteValue ? stored / BYTES_PER_MB : stored;
+};
+
+/**
  * True when the value can safely be used as a byte size.
  */
 export const isValidByteSize = (value) => {

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../../app/slices/authSlice';
 import { getProjectCoverThumbnailUrl } from '../../../utils/urlUtils';
 import { convertMegabytes } from '../../../utils/stringUtils';
-import { bytesToMB } from '../../../utils/storageUnits';
+import { projectTotalFileSizeToMB } from '../../../utils/storageUnits';
 import ProjectExpiration from '../../ProjectExpiration/ProjectExpiration';
 
 function ProjectCardRedefined({ project, type }) {
@@ -36,7 +36,7 @@ function ProjectCardRedefined({ project, type }) {
                 />
                 <div className="card-overlay">
                     <div className="overlay-details">
-                        <span>{convertMegabytes(bytesToMB(project.totalFileSize))}</span>
+                        <span>{convertMegabytes(projectTotalFileSizeToMB(project))}</span>
                         <span className="dot"></span>
                         <span>{project.collections.length} Folders</span>
                     </div>
