@@ -2,9 +2,9 @@ import {Link} from 'react-router-dom';
 import './ProjectCard.scss'
 import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../../app/slices/authSlice';
-import { getThumbnailUrl } from '../../../utils/urlUtils';
+import { getProjectCoverThumbnailUrl } from '../../../utils/urlUtils';
 import { convertMegabytes, shortenText } from '../../../utils/stringUtils';
-import { bytesToMB } from '../../../utils/storageUnits';
+import { projectTotalFileSizeToMB } from '../../../utils/storageUnits';
 import ProjectExpiration from '../../ProjectExpiration/ProjectExpiration';
 
 function ProjectCard({project,type}) {   
@@ -22,7 +22,7 @@ function ProjectCard({project,type}) {
         <div className="cover-wrap">
             <div className="project-cover"
             style={{
-                backgroundImage: project.projectCover ? `url(${getThumbnailUrl(project.projectCover).replace(/\(/g, '%28').replace(/\)/g, '%29')})` : '',
+                backgroundImage: project.projectCover ? `url(${getProjectCoverThumbnailUrl(project).replace(/\(/g, '%28').replace(/\)/g, '%29')})` : '',
                 backgroundSize: project.projectCover ? 'cover' : '',
                 backgroundBlendMode: project.projectCover ? '' : 'soft-light',
             }}
@@ -78,7 +78,7 @@ function ProjectCard({project,type}) {
                     <div className="summary-left">
                         <div className="pin">
                             <p className="disk-label"></p>
-                            <p className="pin-number">{convertMegabytes(bytesToMB(project.totalFileSize))}</p>
+                            <p className="pin-number">{convertMegabytes(projectTotalFileSizeToMB(project))}</p>
                         </div>
                         <div className={`summary-item collection-count ${project.collections.length>0?'active':''}`}>
                             <div className="icon"></div>

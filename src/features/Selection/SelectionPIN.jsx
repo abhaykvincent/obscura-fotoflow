@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { fetchProject, fetchSelectionGallery, fetchImages } from '../../firebase/functions/firestore';
+import { fetchProject, fetchSelectionGallery, fetchProjectPhotoById } from '../../firebase/functions/firestore';
 import GalleryPIN from '../../components/GalleryPIN/GalleryPIN';
 import { toTitleCase } from '../../utils/stringUtils';
 import { getCoverUrl } from '../../utils/urlUtils';
@@ -11,7 +11,7 @@ export default function SelectionPIN() {
   const navigate = useNavigate();
   const [project, setProject] = useState(null);
   const [gallery, setGallery] = useState(null);
-  const [images, setImages] = useState([]);
+  const [fallbackCoverUrl, setFallbackCoverUrl] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -19,27 +19,37 @@ export default function SelectionPIN() {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
     const fetchProjectData = async () => {
       try {
-        const projectData = await fetchProject(studioName, projectId);
+        const [projectData, galleryData] = await Promise.all([
+          fetchProject(studioName, projectId),
+          selectionGalleryId
+            ? fetchSelectionGallery(studioName, projectId, selectionGalleryId).catch(() => null)
+            : Promise.resolve(null),
+        ]);
+        if (cancelled) return;
         setProject(projectData);
-        // New model: resolve first collection's photos via fetchImages (compat handles both)
-        const firstCollectionId = projectData?.collections?.[0]?.id;
-        if (firstCollectionId) {
-          const firstCollectionImages = await fetchImages(studioName, projectId, firstCollectionId);
-          setImages(firstCollectionImages);
-        }
-        if (selectionGalleryId) {
-          try {
-            const g = await fetchSelectionGallery(studioName, projectId, selectionGalleryId);
-            if (g) setGallery(g);
-          } catch { /* ignore — PIN is project-level */ }
+        if (galleryData) setGallery(galleryData);
+
+        if (!projectData?.projectCover) {
+          const firstColl = projectData?.collections?.[0];
+          const immediateFallback = firstColl?.galleryCover || firstColl?.uploadedFiles?.[0]?.url || '';
+          if (immediateFallback) {
+            setFallbackCoverUrl(immediateFallback);
+          } else if (firstColl?.photoIds?.[0]) {
+            const firstPhoto = await fetchProjectPhotoById(studioName, projectId, firstColl.photoIds[0]).catch(() => null);
+            if (!cancelled && firstPhoto) {
+              setFallbackCoverUrl(firstPhoto.urls?.web || firstPhoto.url || '');
+            }
+          }
         }
       } catch (error) {
         console.error('Failed to fetch project:', error);
       }
     };
     fetchProjectData();
+    return () => { cancelled = true; };
   }, [studioName, projectId, selectionGalleryId]);
 
   useEffect(() => {
@@ -60,7 +70,7 @@ export default function SelectionPIN() {
         <Link to={`/${studioName}/smart-gallery/${project.id}`} className="button back-btn icon back">
           Back to Gallery
         </Link>
-        <img className='banner' src={getCoverUrl(project.projectCover || images[0]?.url)} alt="Project Banner" />
+        <img className='banner' src={getCoverUrl(project.projectCover || fallbackCoverUrl)} alt="Project Banner" />
         <div className="gallery-info">
           <h1 className='projet-name'>{toTitleCase(project.name)}</h1>
           {gallery?.name && <p className="gallery-subtitle">{gallery.name}</p>}

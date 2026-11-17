@@ -16,6 +16,7 @@ import {
   DEFAULT_OUTPUT_DIMENSION,
 } from './geminiEmbeddingService';
 import { savePhotoEmbeddingToFirestore } from '../firebase/functions/photo-firestore';
+import { resolvePhotoThumbUrl } from '../utils/photoStorage';
 import { resolvePhotoEmbedding } from '../features/TimelineGallery/moments/embeddingResolver';
 import { photoIdentity } from '../features/TimelineGallery/segmentation/timestampUtils';
 
@@ -135,7 +136,7 @@ export const runPhotoEmbeddingBatch = async ({
         const seed = `${photoId}_${photoName}_${photo.dateTimeOriginal || photo.lastModified || '0'}`;
         vector = generateSyntheticEmbedding(seed, dimension);
       } else {
-        const imageUrl = photo.urls?.thumb || photo.thumbUrl || photo.urls?.web || photo.url;
+        const imageUrl = resolvePhotoThumbUrl(photo) || photo.url || photo.urls?.web;
         if (!imageUrl) {
           throw new Error('Photo has no available thumbnail or image URL.');
         }

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import './CollectionsCard.scss';
 import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../../app/slices/authSlice';
-import { getThumbnailUrl } from '../../../utils/urlUtils';
+import { getCollectionCoverThumbnailUrl } from '../../../utils/urlUtils';
 
 function CollectionCard({ collection }) {
   const defaultStudio = useSelector(selectUserStudio);
@@ -16,7 +16,7 @@ function CollectionCard({ collection }) {
         <div 
           className={"collection-cover "+collection.galleryCover}
           style={{
-            backgroundImage: collection.galleryCover ? `url(${getThumbnailUrl(collection.galleryCover).replace(/\(/g, '%28').replace(/\)/g, '%29')})` : '',
+            backgroundImage: collection.galleryCover ? `url(${getCollectionCoverThumbnailUrl(collection).replace(/\(/g, '%28').replace(/\)/g, '%29')})` : '',
             backgroundSize: collection.galleryCover ? 'cover' : '',
             backgroundBlendMode: collection.coverImage ? '' : 'soft-light',
           }}

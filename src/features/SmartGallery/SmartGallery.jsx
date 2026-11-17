@@ -13,7 +13,7 @@ import { toTitleCase } from '../../utils/stringUtils';
 import { setUserType, trackEvent } from '../../analytics/utils';
 import { LoadingLight } from '../../components/Loading/Loading';
 import { fetchCollectionStatus } from '../../firebase/functions/firestore';
-import { getImageUrlByQuality, getThumbnailUrl, getCoverUrl } from '../../utils/urlUtils';
+import { getImageUrlByQuality, getCollectionCoverThumbnailUrl, getCoverUrl } from '../../utils/urlUtils';
 import { isPinValid } from '../../utils/pinUtils';
 import { showAlert } from '../../app/slices/alertSlice';
 import JSZip from 'jszip';
@@ -394,7 +394,7 @@ export default function SmartGallery() {
                   <Link 
                     to={`/${studioName}/smart-gallery/${projectId}/${prevCollection.id}`} 
                     className="nav-link prev"
-                    style={{ backgroundImage: `url(${getThumbnailUrl(prevCollection.galleryCover || '')})` }}
+                    style={{ backgroundImage: `url(${getCollectionCoverThumbnailUrl(prevCollection)})` }}
                   >
                     <div className="nav-content">
                       <span className="nav-label">Previous Album</span>
@@ -407,7 +407,7 @@ export default function SmartGallery() {
                   <Link 
                     to={`/${studioName}/smart-gallery/${projectId}/${nextCollection.id}`} 
                     className="nav-link next"
-                    style={{ backgroundImage: `url(${getThumbnailUrl(nextCollection.galleryCover || '')})` }}
+                    style={{ backgroundImage: `url(${getCollectionCoverThumbnailUrl(nextCollection)})` }}
                   >
                     <div className="nav-content">
                       <span className="nav-label">Next Album</span>
@@ -441,7 +441,7 @@ export default function SmartGallery() {
             <Link key={collection.id} to={`/${studioName}/smart-gallery/${project.id}/${collection.id}`} className="collection-card-link">
               <div
                 className="collection-card"
-                style={{ backgroundImage: `url(${getThumbnailUrl(collection.galleryCover)})` }}
+                style={{ backgroundImage: `url(${getCollectionCoverThumbnailUrl(collection)})` }}
               >
                 <div className="collection-name">{toTitleCase(collection.name)}</div>
                 <div className="collection-image-count">{collection.photoCount ?? (collection.uploadedFiles?.length ?? 0)} images</div>

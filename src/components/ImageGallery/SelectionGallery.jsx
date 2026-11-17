@@ -1,5 +1,5 @@
 import React, { memo, useRef, useEffect } from 'react';
-import { getThumbnailUrl } from '../../utils/urlUtils';
+import { getPhotoThumbnailUrl } from '../../utils/urlUtils';
 import { getPhotoKey } from '../../utils/selectionGalleryUtils';
 
 /**
@@ -41,7 +41,7 @@ const GalleryImage = memo(({
     <div className={`photo ${isSelected ? 'selected' : ''}`} onClick={handleClick}>
       <img
         className="img"
-        src={getThumbnailUrl(image.url)}
+        src={getPhotoThumbnailUrl(image)}
         alt={`File ${index}`}
         loading="lazy"
       />

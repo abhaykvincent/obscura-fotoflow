@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useAnimation, useTransform } from 'framer-motion';
-import { getThumbnailUrl, getWebUrl } from '../../utils/urlUtils';
+import { getPhotoThumbnailUrl, getWebUrl } from '../../utils/urlUtils';
 
 const swipeConfidenceThreshold = 10000;
 const swipePower = (offset, velocity) => {
@@ -9,7 +9,7 @@ const swipePower = (offset, velocity) => {
 
 function ImageDisplay({ image, direction, paginate, closePreview, collectionId, resetControlsTimeout, onCurrentLoad }) {
   // Image Loading State
-  const [imgSrc, setImgSrc] = useState(getThumbnailUrl(image.url));
+  const [imgSrc, setImgSrc] = useState(getPhotoThumbnailUrl(image));
   const [isHighResLoaded, setIsHighResLoaded] = useState(false);
 
   // Zoom & Pan State
@@ -35,7 +35,7 @@ function ImageDisplay({ image, direction, paginate, closePreview, collectionId, 
   useEffect(() => {
     // Reset state for new image
     setIsHighResLoaded(false);
-    setImgSrc(getThumbnailUrl(image.url));
+    setImgSrc(getPhotoThumbnailUrl(image));
     setIsZoomed(false);
     scale.set(1);
     x.set(0);

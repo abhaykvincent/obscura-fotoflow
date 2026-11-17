@@ -45,34 +45,42 @@ export const fetchProject = async (domain, projectId) => {
     const studioDocRef = doc(db, 'studios', domain);
     const projectsCollectionRef = collection(studioDocRef, 'projects');
     const projectDoc = doc(projectsCollectionRef, projectId);
-    const projectSnapshot = await getDoc(projectDoc);
+    const [projectSnapshot, collectionsSnapshot] = await Promise.all([
+        getDoc(projectDoc),
+        getDocs(collection(projectDoc, 'collections')),
+    ]);
 
     const projectData = projectSnapshot.data();
 
-        if(!isProduction){
-            let color = projectData ? '#21ade4ff' : 'gray';
-            console.log(`%c 🔥 Project`, `color: ${color};`,projectData);
-        }
-    projectData.collections = await Promise.all(projectData.collections.map(async (collection) => {
-        const subCollectionId = collection.id;
-        const collectionDoc = doc(projectDoc, 'collections', subCollectionId);
-        const collectionSnapshot = await getDoc(collectionDoc);
-    
-        if (collectionSnapshot.exists()) {
-            const collectionData = collectionSnapshot.data();
-            
+    if (!isProduction) {
+        let color = projectData ? '#21ade4ff' : 'gray';
+        console.log(`%c 🔥 Project`, `color: ${color};`, projectData);
+    }
+
+    if (!projectData) {
+        return projectData;
+    }
+
+    const collectionDocsById = new Map();
+    collectionsSnapshot.docs.forEach((d) => {
+        collectionDocsById.set(d.id, d.data());
+    });
+
+    projectData.collections = (projectData.collections || []).map((coll) => {
+        const subCollectionId = coll.id;
+        const collectionData = collectionDocsById.get(subCollectionId);
+
+        if (collectionData) {
             // Sort files by file name
             if (collectionData.uploadedFiles && Array.isArray(collectionData.uploadedFiles)) {
                 collectionData.uploadedFiles.sort((a, b) => a.name.localeCompare(b.name));
             }
 
-            return { ...collection, ...collectionData, id: collection.id };
-        } else {
-            throw new Error('Collection does not exist.');
+            return { ...coll, ...collectionData, id: coll.id };
         }
-    }));
+        throw new Error('Collection does not exist.');
+    });
 
-    
     return projectData;
 };
 

@@ -4,6 +4,7 @@ import {
     mbToBytes,
     toByteSize,
     isValidByteSize,
+    projectTotalFileSizeToMB,
 } from './storageUnits';
 
 describe('storageUnits - byte/MB contract', () => {
@@ -33,5 +34,21 @@ describe('storageUnits - byte/MB contract', () => {
         expect(isValidByteSize(1_000_000)).toBe(true);
         expect(isValidByteSize(-1)).toBe(false);
         expect(isValidByteSize(Infinity)).toBe(false);
+    });
+
+    it('reads legacy project totals stored in MB', () => {
+        expect(projectTotalFileSizeToMB({ totalFileSize: 75.177, uploadedFilesCount: 40 })).toBe(75.177);
+        expect(projectTotalFileSizeToMB({ totalFileSize: 0.777, uploadedFilesCount: 2 })).toBe(0.777);
+        expect(projectTotalFileSizeToMB({ totalFileSize: 12 })).toBe(12);
+    });
+
+    it('reads new project totals stored in bytes', () => {
+        expect(projectTotalFileSizeToMB({ totalFileSize: 2_349_898, uploadedFilesCount: 1 })).toBeCloseTo(2.349898);
+        expect(projectTotalFileSizeToMB({ totalFileSize: 10_000_000, uploadedFilesCount: 5 })).toBe(10);
+    });
+
+    it('treats missing project totals as zero', () => {
+        expect(projectTotalFileSizeToMB({})).toBe(0);
+        expect(projectTotalFileSizeToMB({ totalFileSize: null })).toBe(0);
     });
 });
