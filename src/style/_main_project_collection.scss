@@ -408,6 +408,16 @@
               border: 1px solid $gray3-default-light;
             }
           }
+          .photo-skeleton{
+            background-color: $light-2;
+            &:hover{
+              border: 1px solid $gray3-default-light;
+              background-color: $light-2;
+            }
+            .photo-skeleton-tile{
+              background: linear-gradient(90deg, $light-2 20%, $light-3 40%, $light-3 60%, $light-2 80%);
+            }
+          }
         }
         &.scrolled-top{
 

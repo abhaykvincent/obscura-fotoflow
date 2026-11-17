@@ -8,6 +8,7 @@ import {
   QUALITY_PREFIXES,
   DEFAULT_CDN_BASE_URL,
 } from './cdnUrl';
+import { resolvePhotoThumbUrl } from './photoStorage';
 
 export {
   getCdnUrl,
@@ -94,6 +95,56 @@ export function getImageUrlByQuality(url, quality = 'web') {
 
 export function getThumbnailUrl(imageUrl) {
   return getCdnUrl(imageUrl, 'thumb');
+}
+
+/**
+ * Resolves a photo's stored thumbnail URL. Canonical Project Photos use the
+ * document's urls.thumb (WebP); legacy uploadedFiles[] use their JPG thumbUrl.
+ * The stored format is preserved, so no WebP derivative is invented for older
+ * projects. Falls back to the web URL only when no thumbnail is stored.
+ */
+export function getPhotoThumbnailUrl(photo) {
+  const storedThumb = resolvePhotoThumbUrl(photo);
+  if (storedThumb) return getCdnUrl(storedThumb);
+  return getCdnUrl(photo?.url || photo?.urls?.web || '');
+}
+
+const findPhotoByCoverUrl = (photos, coverUrl) =>
+  (photos || []).find((photo) => photo && (
+    photo.url === coverUrl ||
+    photo.thumbUrl === coverUrl ||
+    photo.urls?.web === coverUrl ||
+    photo.urls?.thumb === coverUrl
+  ));
+
+/**
+ * Resolves a cover thumbnail from the cover URL plus any known photos.
+ * When the matching photo is found, its stored thumb is used (WebP for new
+ * Project Photos, JPG for legacy uploadedFiles). Without a matching photo the
+ * cover's own format is preserved so older projects are never pointed at a
+ * WebP derivative they do not have.
+ */
+export function getCoverThumbnailUrl(coverUrl, { photos = [], isProjectOwned = false } = {}) {
+  if (!coverUrl) return '';
+  const match = findPhotoByCoverUrl(photos, coverUrl);
+  if (match) return getPhotoThumbnailUrl(match);
+  return isProjectOwned ? getThumbnailUrl(coverUrl) : getCdnUrl(coverUrl);
+}
+
+export function getCollectionCoverThumbnailUrl(collection) {
+  const photos = collection?.uploadedFiles || [];
+  const isProjectOwned = photos.length === 0 &&
+    Array.isArray(collection?.photoIds) && collection.photoIds.length > 0;
+  return getCoverThumbnailUrl(collection?.galleryCover, { photos, isProjectOwned });
+}
+
+export function getProjectCoverThumbnailUrl(project) {
+  const collections = project?.collections || [];
+  const photos = collections.flatMap((collection) => collection?.uploadedFiles || []);
+  const isProjectOwned = collections.some(
+    (collection) => Array.isArray(collection?.photoIds) && collection.photoIds.length > 0
+  );
+  return getCoverThumbnailUrl(project?.projectCover, { photos, isProjectOwned });
 }
 
 export function getOriginalUrl(imageUrl) {

@@ -37,7 +37,13 @@ const writeLocal = (key, value) => {
  *   via transactional writes, with localStorage as offline/optimistic cache.
  *   Progress shape: { selectionGalleryId, collectionId, page, categoryId, updatedAt }
  */
-export const usePersistentSelection = (studioName, projectId, galleryId = null, gallery = null) => {
+export const usePersistentSelection = (
+    studioName,
+    projectId,
+    galleryId = null,
+    gallery = null,
+    { enabled = true, project = null } = {}
+) => {
     const [selectedIds, setSelectedIds] = useState([]);
     // categoryByPhotoKey: { [photoKey]: categoryId }
     const [categoryByPhoto, setCategoryByPhoto] = useState({});
@@ -52,15 +58,17 @@ export const usePersistentSelection = (studioName, projectId, galleryId = null, 
     const pendingChangesRef = useRef({ add: new Set(), remove: new Set() });
     const galleryIdRef = useRef(galleryId);
     galleryIdRef.current = galleryId;
+    const projectRef = useRef(project);
+    projectRef.current = project;
 
     const storageKey = gallerySelKey(studioName, projectId, galleryId);
     const progressKey = galleryProgressKey(studioName, projectId, galleryId);
 
     // Initial Fetch
     useEffect(() => {
+        if (!studioName || !projectId || !enabled) return undefined;
         let cancelled = false;
         const loadInitialData = async () => {
-            if (!studioName || !projectId) return;
             setInitialLoad(true);
             try {
                 // Restore progress (local first, then server)
@@ -83,43 +91,36 @@ export const usePersistentSelection = (studioName, projectId, galleryId = null, 
                             const k = s.photoKey || s.photoId || s.url;
                             if (k && s.categoryId) catMap[k] = s.categoryId;
                         });
-                        // Merge: server is truth; keep local-only optimistic adds that aren't on server yet?
-                        // For simplicity server wins after load (optimistic adds re-applied via pending queue is out of scope).
                         setSelectedIds(ids);
                         setCategoryByPhoto(catMap);
                         writeLocal(storageKey, { ids, categoryByPhoto: catMap, updatedAt: Date.now() });
                     } catch (e) {
                         console.error('Error fetching gallery selections:', e);
-                        // keep local cache
                     }
-                    // Server progress lives on the project doc (legacy field) — keep local as primary for galleries
-                    try {
-                        const projectData = await fetchProject(studioName, projectId);
-                        if (!cancelled && projectData?.lastProgress && !localProgress) {
-                            setLastProgress({ ...projectData.lastProgress, selectionGalleryId: galleryIdRef.current });
-                        }
-                    } catch { /* ignore */ }
+                    // Reuse already-loaded project doc if available instead of re-fetching
+                    if (!localProgress) {
+                        try {
+                            const projectData = projectRef.current || await fetchProject(studioName, projectId);
+                            if (!cancelled && projectData?.lastProgress) {
+                                setLastProgress({ ...projectData.lastProgress, selectionGalleryId: galleryIdRef.current });
+                            }
+                        } catch { /* ignore */ }
+                    }
                 } else {
-                    // Legacy project-level path (unchanged behaviour)
-                    const projectData = await fetchProject(studioName, projectId);
+                    // Legacy project-level path: reuse preloaded project when provided
+                    const projectData = projectRef.current || await fetchProject(studioName, projectId);
                     if (cancelled) return;
                     if (projectData && projectData.selectedImageIds) {
                         setSelectedIds(projectData.selectedImageIds);
                     } else {
                         const extractedIds = [];
-                        (projectData.collections || []).forEach(collection => {
-                            // New model: collections reference photos via photoIds[].
-                            // Legacy model: collections contain uploadedFiles[] with status.
+                        (projectData?.collections || []).forEach(collection => {
                             if (collection.uploadedFiles) {
                                 collection.uploadedFiles?.forEach(image => {
                                     if (image.status === 'selected') {
                                         extractedIds.push(image.photoId || image.fileId || image.url || image.name);
                                     }
                                 });
-                            } else if (collection.photoIds) {
-                                // photoIds[] alone doesn't carry selection status;
-                                // selection status lives on the Project Photo or project.selectedImageIds.
-                                // Skip here — selectedIds comes from project.selectedImageIds.
                             }
                         });
                         setSelectedIds(extractedIds);
@@ -139,7 +140,7 @@ export const usePersistentSelection = (studioName, projectId, galleryId = null, 
         loadInitialData();
         return () => { cancelled = true; };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [studioName, projectId, galleryId]);
+    }, [studioName, projectId, galleryId, enabled]);
 
     /**
      * Incremental sync to Firestore (legacy path).

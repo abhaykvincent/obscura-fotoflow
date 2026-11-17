@@ -258,6 +258,50 @@ export const isPhotoEligible = (photo) => {
   return true;
 };
 
+/** Photo count for a Collection in either storage model. */
+export const getCollectionPhotoCount = (collection = {}) =>
+  Math.max(collection.uploadedFiles?.length || 0, collection.photoIds?.length || 0);
+
+/** Whether a Collection exposes photo references that can be resolved. */
+export const hasCollectionPhotoRefs = (collection = {}) =>
+  Array.isArray(collection.uploadedFiles) || Array.isArray(collection.photoIds);
+
+/**
+ * Resolves the photos a Selection Gallery should display for the given
+ * collections.
+ *
+ * - Legacy collections with uploadedFiles[] are used directly.
+ * - New/project-based collections only carry photoIds[] references, so their
+ *   canonical Project Photos are loaded through fetchCollectionPhotos.
+ *
+ * @param {Object[]} collections
+ * @param {(collectionId: string) => Promise<Object[]>} fetchCollectionPhotos
+ * @param {(error: Error, collection: Object) => void} [onError]
+ * @returns {Promise<Object[]>} photos decorated with collectionId/collectionName
+ */
+export const resolveCollectionSelectionPhotos = async (
+  collections = [],
+  fetchCollectionPhotos,
+  onError
+) => {
+  const groups = await Promise.all((collections || []).map(async (collection) => {
+    const withCollection = (photos) => (photos || [])
+      .map((photo) => ({ ...photo, collectionId: collection.id, collectionName: collection.name }))
+      .filter(isPhotoEligible);
+
+    if (Array.isArray(collection.photoIds) && collection.photoIds.length > 0) {
+      try {
+        return withCollection(await fetchCollectionPhotos(collection.id));
+      } catch (error) {
+        if (onError) onError(error, collection);
+        return [];
+      }
+    }
+    return withCollection(collection.uploadedFiles || []);
+  }));
+  return groups.flat();
+};
+
 export const selectionLimitMessage = (reason, { overallLimit, categoryName, categoryLimit } = {}) => {
   switch (reason) {
     case 'overall-limit':

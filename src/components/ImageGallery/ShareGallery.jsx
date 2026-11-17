@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Preview from '../../features/Preview/Preview';
-import { getThumbnailUrl } from '../../utils/urlUtils';
+import { getPhotoThumbnailUrl } from '../../utils/urlUtils';
 import { trackEvent } from '../../analytics/utils';
 import { fetchCollectionStatus } from '../../firebase/functions/firestore';
 import SectionRenderer from './SectionRenderer';
@@ -141,7 +141,7 @@ const ShareGallery = ({ images = [], sections = null, projectId, collectionId, d
       // Transform loadedImages to match ImageGrid expectations (url handling)
       const gridImages = loadedImages.map(file => ({
           ...file,
-          url: getThumbnailUrl(file.url),
+          url: getPhotoThumbnailUrl(file),
           originalUrl: file.url, // Keep track of original for preview mapping
           // Ensure dimensions are present or defaults? ImageGrid handles check.
       }));

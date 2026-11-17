@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import './ProjectCardRedefined.scss';
 import { useSelector } from 'react-redux';
 import { selectUserStudio } from '../../../app/slices/authSlice';
-import { getThumbnailUrl } from '../../../utils/urlUtils';
+import { getProjectCoverThumbnailUrl } from '../../../utils/urlUtils';
 import { convertMegabytes } from '../../../utils/stringUtils';
+import { projectTotalFileSizeToMB } from '../../../utils/storageUnits';
 import ProjectExpiration from '../../ProjectExpiration/ProjectExpiration';
 
 function ProjectCardRedefined({ project, type }) {
@@ -30,12 +31,12 @@ function ProjectCardRedefined({ project, type }) {
             <div className="card-image-wrapper">
                 <div className="card-image"
                     style={{
-                        backgroundImage: project.projectCover ? `url(${getThumbnailUrl(project.projectCover).replace(/\(/g, '%28').replace(/\)/g, '%29')})` : '',
+                        backgroundImage: project.projectCover ? `url(${getProjectCoverThumbnailUrl(project).replace(/\(/g, '%28').replace(/\)/g, '%29')})` : '',
                     }}
                 />
                 <div className="card-overlay">
                     <div className="overlay-details">
-                        <span>{convertMegabytes(project.totalFileSize)}</span>
+                        <span>{convertMegabytes(projectTotalFileSizeToMB(project))}</span>
                         <span className="dot"></span>
                         <span>{project.collections.length} Folders</span>
                     </div>

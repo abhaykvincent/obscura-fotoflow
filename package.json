@@ -52,8 +52,8 @@
   "scripts": {
     "start": "dotenv -e .env.development react-scripts start",
     "emulator": "firebase emulators:start",
-    "emulator:sandbox": "./scripts/kill-emulators.sh && firebase emulators:start --import=./backup/2026-10-18T12:29:18_54884 --export-on-exit=./backup/2026-10-18T12:29:18_54884",
-  "build": "dotenv -e .env.production react-scripts build",
+    "emulator:sandbox": "node scripts/kill-emulators.js && firebase emulators:start --import=./backup/2026-11-11T19_05_36_73327 --export-on-exit=./backup/emulator-data/2026-11-11T19_05_36_73327",
+    "build": "dotenv -e .env.production react-scripts build",
     "deploy": "firebase deploy --only hosting",
     "deploy-all": "firebase deploy",
     "eject": "react-scripts eject",
@@ -79,8 +79,10 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "concurrently": "^8.2.2",
     "dotenv-cli": "^7.3.0",
+    "firebase-tools": "^15.35.0",
     "tailwindcss": "^3.4.11"
   }
 }

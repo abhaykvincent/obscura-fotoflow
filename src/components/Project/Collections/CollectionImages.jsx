@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 import ImageGallery from '../../ImageGallery/ImageGallery';
-import { fetchImages } from '../../../firebase/functions/firestore';
+import { fetchCollectionPhotosPage } from '../../../firebase/functions/firestore';
 import { addAllFileSizesToMB, validateFileTypes } from '../../../utils/fileUtils';
 import UploadButton from '../../UploadButton/UploadButton';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,6 +15,7 @@ import DownloadFiles from '../../DownloadFiles/DownloadFiles';
 import { findCollectionById } from '../../../utils/CollectionQuery';
 import { openModal } from '../../../app/slices/modalSlice';
 import ImageGalleryGrid from '../../ImageGallery/ImageGalleryGrid';
+import CollectionImagesSkeleton from './CollectionImagesSkeleton';
 import { showAlert } from '../../../app/slices/alertSlice';
 import { selectStudio, selectStudioStorageUsage } from '../../../app/slices/studioSlice';
 import { handleUpload } from '../../../utils/uploadOperations';
@@ -25,6 +26,12 @@ import { selectGalleryMode, setGalleryMode } from '../../../app/slices/gallerySl
 import { getOperatingSystem } from '../../../utils/generalUtils';
 import TimelineGallery from '../../../features/TimelineGallery/TimelineGallery';
 import useAdminAuth from '../../../hooks/useAdminAuth';
+
+const applySelectionStatus = (images, selectedIds = []) =>
+    images.map((img) => ({
+        ...img,
+        status: selectedIds.includes(img.url) ? 'selected' : (img.status === 'selected' ? 'none' : img.status)
+    }));
 
 const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
     const projectCollectionRef = useRef(null);
@@ -50,12 +57,18 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
     const [imageUrls, setImageUrls] = useState([]);
     const [selectedImages, setSelectedImages] = useState([]);
     const [isPhotosImported, setIsPhotosImported] = useState(false);
+    const [isLoadingPhotos, setIsLoadingPhotos] = useState(true);
     const [galleryView, setGalleryView] = useState('grid');
 
     // Import size
     const [showAllPhotos, setShowAllPhotos] = useState(true);
-    const [page, setPage] = useState(1);
-    const [size, setSize] = useState(16);
+    const [size] = useState(16);
+    const [totalPhotos, setTotalPhotos] = useState(0);
+    const [nextOffset, setNextOffset] = useState(0);
+    const [hasMore, setHasMore] = useState(false);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const activeCollectionRef = useRef(null);
+    const collectionDataRef = useRef(null);
 
     // Upload progress state (uploadList and uploadStatus) is now managed by Redux.
     // Local useState for uploadList and uploadStatus are removed.
@@ -73,6 +86,35 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
 
     const galleryPageRef = useRef(null);
     const loaderRef = useRef(null);
+
+    const loadMorePhotos = useCallback(async () => {
+        if (isLoadingMore || !hasMore) return;
+        const activeCollectionId = activeCollectionRef.current;
+        if (!activeCollectionId) return;
+
+        const selectedIds = project?.selectedImageIds || [];
+        setIsLoadingMore(true);
+        try {
+            const result = await fetchCollectionPhotosPage(domain, id, activeCollectionId, {
+                offset: nextOffset,
+                limit: size,
+                collectionData: collectionDataRef.current,
+            });
+            if (activeCollectionRef.current !== activeCollectionId) return;
+            collectionDataRef.current = result.collectionData;
+            setCollectionImages((prev) => [
+                ...prev,
+                ...applySelectionStatus(result.photos, selectedIds),
+            ]);
+            setTotalPhotos(result.total);
+            setNextOffset(result.nextOffset);
+            setHasMore(result.hasMore);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsLoadingMore(false);
+        }
+    }, [domain, id, size, nextOffset, hasMore, isLoadingMore, project?.selectedImageIds]);
 
     // If a non-admin somehow has timelineMode persisted (account switch, shared
     // browser), fall back to the existing default gallery mode explicitly.
@@ -115,8 +157,8 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
 
         const observer = new IntersectionObserver(
             (entries) => {
-                if (entries[0].isIntersecting && collectionImages?.length > imageUrls.length) {
-                    setPage((prevPage) => prevPage + 1);
+                if (entries[0].isIntersecting && hasMore) {
+                    loadMorePhotos();
                 }
             },
             {
@@ -135,7 +177,7 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
                 observer.unobserve(currentLoader);
             }
         };
-    }, [collectionImages?.length, imageUrls.length, showAllPhotos, galleryPageRef.current]);
+    }, [hasMore, showAllPhotos, loadMorePhotos]);
 
     // Global upload status from Redux
     const globalUploadStatus = useSelector(selectUploadStatus);
@@ -261,65 +303,56 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
 
     // Obsolete useEffects for local uploadList and uploadStatus are removed.
 
-    // Initial collection images fetch
+    // Selected IDs are owned by the project document; read them without adding
+    // project?.selectedImageIds as a dependency that would re-fetch page 1 on
+    // every selection toggle.
+    const selectedImageIdsRef = useRef(project?.selectedImageIds || []);
+    selectedImageIdsRef.current = project?.selectedImageIds || [];
+
+    // Initial collection images fetch: first page only. Remaining pages load on
+    // scroll so the first thumbnails render without waiting for the collection.
     useEffect(() => {
+        let cancelled = false;
+        activeCollectionRef.current = collectionId;
+        collectionDataRef.current = null;
         setShowAllPhotos(true);
-        fetchImages(domain, id, collectionId)
-            .then((images) => {
-                const selectedIds = project?.selectedImageIds || [];
-                const updatedImages = images.map(img => ({
-                    ...img,
-                    status: selectedIds.includes(img.url) ? 'selected' : (img.status === 'selected' ? 'none' : img.status)
-                }));
-                setCollectionImages(updatedImages);
-                console.log("Selected Filenames:", images.filter(img => img.status === 'selected').map(img => img.name).join(', '));
+        setCollectionImages([]);
+        setImageUrls([]);
+        setSelectedImages([]);
+        setTotalPhotos(0);
+        setNextOffset(0);
+        setHasMore(false);
+        setIsLoadingPhotos(true);
+
+        fetchCollectionPhotosPage(domain, id, collectionId, { offset: 0, limit: size })
+            .then((result) => {
+                if (cancelled || activeCollectionRef.current !== collectionId) return;
+                setIsLoadingPhotos(false);
+                collectionDataRef.current = result.collectionData;
+                setCollectionImages(applySelectionStatus(result.photos, selectedImageIdsRef.current));
+                setTotalPhotos(result.total);
+                setNextOffset(result.nextOffset);
+                setHasMore(result.hasMore);
+                setUploadTrigger(result.total === 0);
+                console.log("Selected Filenames:", result.photos.filter(img => img.status === 'selected').map(img => img.name).join(', '));
             })
             .catch((error) => {
+                if (cancelled || activeCollectionRef.current !== collectionId) return;
+                setIsLoadingPhotos(false);
                 console.log(error);
             });
         document.title = `${project.name}'s ${collectionId } Gallery`
-    }, [collectionId]);
 
-    // Update collectionImages when project prop changes (e.g., after Redux update)
+        return () => {
+            cancelled = true;
+        };
+    }, [collectionId, domain, id, project.name, size]);
+
+    // Selections are project-owned; derive them from the loaded photos.
     useEffect(() => {
-        if (project && project.collections) {
-            const currentCollection = project.collections.find(c => c.id === collectionId);
-            // New model: collections have photoIds[]; resolve via fetchImages (compat handles both)
-            // Legacy model: collections have uploadedFiles[]
-            if (currentCollection && currentCollection.uploadedFiles) {
-                const selectedIds = project?.selectedImageIds || [];
-                const updatedImages = currentCollection.uploadedFiles.map(img => ({
-                    ...img,
-                    status: selectedIds.includes(img.url) ? 'selected' : (img.status === 'selected' ? 'none' : img.status)
-                }));
-                setCollectionImages(updatedImages);
-            } else if (currentCollection && currentCollection.photoIds) {
-                // PhotoIds resolved asynchronously via fetchImages; skip here,
-                // the fetchImages useEffect above handles this path.
-            }
-        }
-    }, [project, collectionId, project?.selectedImageIds]);
-
-    // Fetch Images
-    useEffect(() => {
-        if (!collectionImages) {
-            setImageUrls([]);
-            return;
-        }
-
-        if(collectionImages.length === 0) {
-            setUploadTrigger(true);
-        }
-
         const selectedIds = project?.selectedImageIds || [];
-
-        let start = 0;
-        let end = page * size;
-        let images = collectionImages.slice(start, end);
-        setImageUrls(images);
-        // Use selectedImageIds from project document as the source of truth for selections
         setSelectedImages(collectionImages.filter((image) => selectedIds.includes(image.url)));
-    }, [collectionImages, page, project?.selectedImageIds]);
+    }, [collectionImages, project?.selectedImageIds]);
 
     // Update parent selected count
     useEffect(() => {
@@ -328,18 +361,10 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
         }
     }, [selectedImages, setSelectedCount]);
 
-    // Show All Photos
+    // Render loaded photos immediately; the "Selected" view filters loaded ones.
     useEffect(() => {
-        if (!collectionImages) return;
-        if (showAllPhotos) {
-            let start = 0;
-            let end = page * size;
-            let images = collectionImages.slice(start, end);
-            setImageUrls(images);
-        } else {
-            setImageUrls(selectedImages);
-        }
-    }, [showAllPhotos, collectionImages,selectedImages]);
+        setImageUrls(showAllPhotos ? collectionImages : selectedImages);
+    }, [showAllPhotos, collectionImages, selectedImages]);
 
     // Handle "Open in Desktop" click
     const handleOpenInDesktopApp = () => {
@@ -500,6 +525,8 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
                     galleryView === 'grid' ?
                     <ImageGalleryGrid {...{ isPhotosImported, imageUrls, projectId: id, collectionId, project }} />:
                     <ImageGallery {...{ isPhotosImported, imageUrls, projectId: id, collectionId, project }} />
+                ) : isLoadingPhotos ? (
+                    <CollectionImagesSkeleton count={size} />
                 ) : (
                     <label 
                         htmlFor="fileInput" 
@@ -534,14 +561,14 @@ const CollectionImages = ({ id, collectionId, project, setSelectedCount }) => {
             }
 
             {
-                collectionImages?.length >0 && galleryMode !== 'timelineMode' && <div className={`${galleryMode === 'designMode' && 'bottom-panel-light-mode'} image-gallery-bottom-panel `} ref={loaderRef}>
+                (collectionImages?.length > 0 || totalPhotos > 0) && galleryMode !== 'timelineMode' && <div className={`${galleryMode === 'designMode' && 'bottom-panel-light-mode'} image-gallery-bottom-panel `} ref={loaderRef}>
                     {/* <div className="button secondary">Load All</div> */}
-                    
-                    {collectionImages?.length !== imageUrls.length && collectionImages?.length >0 && showAllPhotos && <div className={`button primary`}
-                        onClick={() => setPage(page + 1)}
-                    >Loading more...</div>}
 
-                    {(imageUrls.length !==0 && collectionImages?.length === imageUrls.length && showAllPhotos)  && <p className='caughtup-label label'>You are all caught up!</p>}
+                    {hasMore && showAllPhotos && <div className={`button primary`}
+                        onClick={loadMorePhotos}
+                    >{isLoadingMore ? 'Loading...' : 'Load more'}</div>}
+
+                    {!hasMore && imageUrls.length > 0 && showAllPhotos && <p className='caughtup-label label'>You are all caught up!</p>}
 
                 </div>
             }

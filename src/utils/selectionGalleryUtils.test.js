@@ -8,6 +8,9 @@ import {
   photoMatchesSelectionId,
   isPhotoEligible,
   hasLegacySelection,
+  getCollectionPhotoCount,
+  hasCollectionPhotoRefs,
+  resolveCollectionSelectionPhotos,
 } from './selectionGalleryUtils';
 
 const gallery80 = (overrides = {}) => normalizeGallery({
@@ -123,6 +126,42 @@ describe('selectionGalleryUtils — limits, categories, progress', () => {
   test('legacy detection: collection.selectionGallery preserved', () => {
     expect(hasLegacySelection({ collections: [{ id: 'a', selectionGallery: true }] })).toBe(true);
     expect(hasLegacySelection({ collections: [{ id: 'a', selectionGallery: false }] })).toBe(false);
+  });
+
+  test('collection photo count/refs support legacy and project-based models', () => {
+    expect(getCollectionPhotoCount({ uploadedFiles: [{ url: 'a' }, { url: 'b' }] })).toBe(2);
+    expect(getCollectionPhotoCount({ photoIds: ['p1'] })).toBe(1);
+    expect(getCollectionPhotoCount({ uploadedFiles: [], photoIds: ['p1'] })).toBe(1);
+    expect(getCollectionPhotoCount({})).toBe(0);
+    expect(hasCollectionPhotoRefs({ uploadedFiles: [] })).toBe(true);
+    expect(hasCollectionPhotoRefs({ photoIds: [] })).toBe(true);
+    expect(hasCollectionPhotoRefs({})).toBe(false);
+  });
+
+  test('resolveCollectionSelectionPhotos unions legacy uploads and project photos', async () => {
+    const fetchPhotos = jest.fn(async (collectionId) => (
+      collectionId === 'c2' ? [{ photoId: 'p2', name: 'b' }] : []
+    ));
+    const result = await resolveCollectionSelectionPhotos([
+      { id: 'c1', name: 'Legacy', uploadedFiles: [{ photoId: 'p1', name: 'a' }] },
+      { id: 'c2', name: 'New', photoIds: ['p2'] },
+    ], fetchPhotos);
+
+    expect(fetchPhotos).toHaveBeenCalledWith('c2');
+    expect(result.map((p) => p.photoId)).toEqual(['p1', 'p2']);
+    expect(result[1]).toMatchObject({ collectionId: 'c2', collectionName: 'New' });
+  });
+
+  test('resolveCollectionSelectionPhotos reports failed project photo loads', async () => {
+    const onError = jest.fn();
+    const result = await resolveCollectionSelectionPhotos(
+      [{ id: 'c1', name: 'New', photoIds: ['p1'] }],
+      async () => { throw new Error('boom'); },
+      onError
+    );
+
+    expect(result).toEqual([]);
+    expect(onError).toHaveBeenCalledTimes(1);
   });
 
   test('legacy limit field maps to maximumSelections', () => {

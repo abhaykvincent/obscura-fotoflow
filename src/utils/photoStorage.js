@@ -78,6 +78,31 @@ export const extractPhotoIdFromPath = (storagePath) => {
 };
 
 /**
+ * True when the photo comes from a canonical Project Photo document
+ * (project-based architecture). Legacy collection.uploadedFiles[] entries only
+ * carry top-level url/thumbUrl.
+ */
+export const isProjectOwnedPhoto = (photo) =>
+    Boolean(photo && (photo.urls?.thumb || photo.urls?.web || photo.storage?.thumbPath || photo.storage?.webPath));
+
+/**
+ * Resolves the stored thumbnail URL directly from the photo source. Never
+ * guesses a path or converts formats.
+ *
+ * - Canonical Project Photo document: urls.thumb (WebP for new uploads).
+ * - Legacy collection.uploadedFiles[] entry: thumbUrl (the older JPG thumb).
+ *
+ * Returns '' when the source has no stored thumbnail, so callers can fall back
+ * without fabricating a derivative that may not exist.
+ */
+export const resolvePhotoThumbUrl = (photo) => {
+    if (!photo) return '';
+    if (photo.urls?.thumb) return photo.urls.thumb;
+    if (photo.thumbUrl) return photo.thumbUrl;
+    return '';
+};
+
+/**
  * Returns the cover storage path (project-level, unchanged by this refactor).
  */
 export const getCoverStoragePath = (domain, projectId, fileName) => {

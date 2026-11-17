@@ -5,7 +5,10 @@ import {
   getOriginalUrl,
   getCoverUrl,
   getWebUrl,
-  getThumbnailUrl1 
+  getThumbnailUrl1,
+  getPhotoThumbnailUrl,
+  getCollectionCoverThumbnailUrl,
+  getProjectCoverThumbnailUrl,
 } from './urlUtils';
 
 describe('urlUtils - Image Delivery Gateway', () => {
@@ -30,9 +33,9 @@ describe('urlUtils - Image Delivery Gateway', () => {
       expect(result).toBe(`${CDN_DOMAIN}/web/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
     });
 
-    it('transforms Firebase Storage URL to thumb quality', () => {
+    it('transforms Firebase Storage URL to thumb quality with WebP extension', () => {
       const result = getPhotoDeliveryUrl(SAMPLE_FIREBASE_URL, 'thumb');
-      expect(result).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+      expect(result).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.webp`);
     });
 
     it('transforms Firebase Storage URL to original quality', () => {
@@ -57,7 +60,7 @@ describe('urlUtils - Image Delivery Gateway', () => {
 
     it('transforms Storage Emulator URL correctly preserving emulator host and swapping quality', () => {
       const result = getPhotoDeliveryUrl(SAMPLE_EMULATOR_URL, 'thumb');
-      expect(result).toBe('http://127.0.0.1:9199/v0/b/fotoflow-studio.firebasestorage.app/o/thumb%2Fmonalisa%2Fabigail-%26-amigail-q2qSQ%2Fbirthday-B0VMK%2FIM_00014.jpg?alt=media');
+      expect(result).toBe('http://127.0.0.1:9199/v0/b/fotoflow-studio.firebasestorage.app/o/thumb%2Fmonalisa%2Fabigail-%26-amigail-q2qSQ%2Fbirthday-B0VMK%2FIM_00014.webp?alt=media');
     });
 
     it('transforms Storage Emulator URL to original quality', () => {
@@ -74,7 +77,7 @@ describe('urlUtils - Image Delivery Gateway', () => {
     it('handles Storage Emulator URLs with localhost or custom port and appends alt=media if missing', () => {
       const localhostEmulatorUrl = 'http://localhost:9199/v0/b/fotoflow-studio.firebasestorage.app/o/web%2Fmonalisa%2Fphoto.jpg';
       const result = getPhotoDeliveryUrl(localhostEmulatorUrl, 'thumb');
-      expect(result).toBe('http://localhost:9199/v0/b/fotoflow-studio.firebasestorage.app/o/thumb%2Fmonalisa%2Fphoto.jpg?alt=media');
+      expect(result).toBe('http://localhost:9199/v0/b/fotoflow-studio.firebasestorage.app/o/thumb%2Fmonalisa%2Fphoto.webp?alt=media');
     });
 
     it('transforms GCS URL correctly', () => {
@@ -82,9 +85,9 @@ describe('urlUtils - Image Delivery Gateway', () => {
       expect(result).toBe(`${CDN_DOMAIN}/web/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
     });
 
-    it('swaps quality when URL is already a Cloudflare CDN URL', () => {
+    it('swaps quality to WebP thumb when URL is already a Cloudflare CDN web URL', () => {
       const result = getPhotoDeliveryUrl(SAMPLE_CDN_URL, 'thumb');
-      expect(result).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+      expect(result).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.webp`);
     });
 
     it('transforms old /cdn-gallery/ path to Cloudflare CDN URL', () => {
@@ -105,8 +108,8 @@ describe('urlUtils - Image Delivery Gateway', () => {
   });
 
   describe('Convenience helper functions', () => {
-    it('getThumbnailUrl returns thumb quality', () => {
-      expect(getThumbnailUrl(SAMPLE_FIREBASE_URL)).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+    it('getThumbnailUrl returns thumb quality with WebP extension', () => {
+      expect(getThumbnailUrl(SAMPLE_FIREBASE_URL)).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.webp`);
     });
 
     it('getOriginalUrl returns original quality', () => {
@@ -123,7 +126,54 @@ describe('urlUtils - Image Delivery Gateway', () => {
     });
 
     it('getThumbnailUrl1 is backward-compatible with getThumbnailUrl', () => {
-      expect(getThumbnailUrl1(SAMPLE_FIREBASE_URL)).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+      expect(getThumbnailUrl1(SAMPLE_FIREBASE_URL)).toBe(`${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.webp`);
+    });
+
+    it('maps an existing WebP thumbnail back to JPG for web quality', () => {
+      const webpThumbUrl = `${CDN_DOMAIN}/thumb/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.webp`;
+      expect(getWebUrl(webpThumbUrl)).toBe(`${CDN_DOMAIN}/web/monalisa/abigail-&-amigail-q2qSQ/birthday-B0VMK/IM_00014.jpg`);
+    });
+  });
+
+  describe('photo and cover thumbnails', () => {
+    const legacyWeb = `${CDN_DOMAIN}/web/monalisa/proj/coll/IMG_0001.jpg`;
+    const legacyThumb = `${CDN_DOMAIN}/thumb/monalisa/proj/coll/IMG_0001.jpg`;
+    const canonicalThumb = `${CDN_DOMAIN}/thumb/monalisa/proj/photo-1.webp`;
+
+    it('uses the document thumb for canonical Project Photos', () => {
+      expect(getPhotoThumbnailUrl({ urls: { thumb: canonicalThumb, web: legacyWeb } })).toBe(canonicalThumb);
+    });
+
+    it('uses the legacy JPG thumbUrl without converting it to WebP', () => {
+      expect(getPhotoThumbnailUrl({ url: legacyWeb, thumbUrl: legacyThumb })).toBe(legacyThumb);
+    });
+
+    it('resolves a legacy collection cover from uploadedFiles thumbUrl', () => {
+      const collection = {
+        galleryCover: legacyWeb,
+        uploadedFiles: [{ url: legacyWeb, thumbUrl: legacyThumb }],
+      };
+      expect(getCollectionCoverThumbnailUrl(collection)).toBe(legacyThumb);
+    });
+
+    it('keeps the JPG format for legacy covers without a matching photo', () => {
+      const collection = { galleryCover: legacyWeb, uploadedFiles: [] };
+      expect(getCollectionCoverThumbnailUrl(collection)).toBe(legacyWeb);
+    });
+
+    it('derives WebP thumbs for project-owned collections', () => {
+      const collection = { galleryCover: legacyWeb, photoIds: ['photo-1'] };
+      expect(getCollectionCoverThumbnailUrl(collection)).toBe(
+        `${CDN_DOMAIN}/thumb/monalisa/proj/coll/IMG_0001.webp`
+      );
+    });
+
+    it('resolves a legacy project cover from its collections', () => {
+      const project = {
+        projectCover: legacyWeb,
+        collections: [{ uploadedFiles: [{ url: legacyWeb, thumbUrl: legacyThumb }] }],
+      };
+      expect(getProjectCoverThumbnailUrl(project)).toBe(legacyThumb);
     });
   });
 });

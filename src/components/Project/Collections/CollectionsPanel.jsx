@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../../app/slices/modalSlice';
 import { positionCollectionsActiveBox } from '../../../utils/UI/collectionActiveBox';
 import { selectUserStudio } from '../../../app/slices/authSlice';
-import { getThumbnailUrl } from '../../../utils/urlUtils';
+import { getCollectionCoverThumbnailUrl } from '../../../utils/urlUtils';
 
 const CollectionsPanel = ({ project, collectionId}) => {
   const dispatch = useDispatch();
@@ -30,10 +30,10 @@ const CollectionsPanel = ({ project, collectionId}) => {
               <div className={`gallery  no-images `} key={collection.id} onClick={()=>{}}>
                 <div className="thumbnails">
                   <div className="thumbnail thumb1">
-                    <div className={`backthumb bthumb1 ${getThumbnailUrl(collection.galleryCover)}`}
+                    <div className="backthumb bthumb1"
                     style={{
                       backgroundImage: collection?.galleryCover 
-                        ? `url("${getThumbnailUrl(collection.galleryCover)}")` 
+                        ? `url("${getCollectionCoverThumbnailUrl(collection)}")` 
                         : 'url(https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333)',
                       backgroundSize: collection?.galleryCover ? 'cover' : '40%',
                       backgroundPosition: collection?.galleryCover ? 'center' : '40%',
@@ -53,7 +53,7 @@ const CollectionsPanel = ({ project, collectionId}) => {
                   <div className={`backthumb bthumb1 ${decodeURIComponent(collection.galleryCover)}`}
                     style={{
                       backgroundImage: collection?.galleryCover 
-                        ? `url("${getThumbnailUrl(collection.galleryCover)}")` 
+                        ? `url("${getCollectionCoverThumbnailUrl(collection)}")` 
                         : 'url(https://img.icons8.com/?size=100&id=UVEiJZnIRQiE&format=png&color=333333)',
                       backgroundSize: collection?.galleryCover ? 'cover' : '40%',
                     }}

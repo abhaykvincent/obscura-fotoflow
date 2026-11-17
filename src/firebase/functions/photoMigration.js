@@ -54,6 +54,10 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  *   {number} delayMs - delay between batches (default 250ms)
  *   {Function} onProgress - callback({ processed, total, phase, collectionId })
  *   {boolean} resume - if true, skip already-migrated collections
+ *   {'preserve'|'account-new'} accountingPolicy - legacy uploadedFiles[] were
+ *     already included in studio usage by the legacy upload path, so the
+ *     default 'preserve' creates canonical documents without re-accounting.
+ *     Use 'account-new' only for assets that were never previously counted.
  * @returns {Promise<{ migratedCollections: number, migratedPhotos: number, relationships: number, errors: Array }>}
  */
 export const migrateProjectPhotos = async (domain, projectId, {
@@ -61,6 +65,7 @@ export const migrateProjectPhotos = async (domain, projectId, {
     delayMs = DEFAULT_DELAY_MS,
     onProgress,
     resume = true,
+    accountingPolicy = 'preserve',
 } = {}) => {
     if (!domain || !projectId) {
         throw new Error('Domain and Project ID are required.');
@@ -111,7 +116,7 @@ export const migrateProjectPhotos = async (domain, projectId, {
                 projectId,
                 collectionId,
                 collection,
-                { batchSize, delayMs, onProgress }
+                { batchSize, delayMs, onProgress, accountingPolicy }
             );
 
             migratedPhotos += result.migratedPhotos;
@@ -159,6 +164,7 @@ const migrateCollectionPhotos = async (domain, projectId, collectionId, collecti
     batchSize = DEFAULT_BATCH_SIZE,
     delayMs = DEFAULT_DELAY_MS,
     onProgress,
+    accountingPolicy = 'preserve',
 } = {}) => {
     const legacyFiles = Array.isArray(collectionData.uploadedFiles) ? collectionData.uploadedFiles : [];
     const existingPhotoIds = Array.isArray(collectionData.photoIds) ? collectionData.photoIds : [];
@@ -184,8 +190,14 @@ const migrateCollectionPhotos = async (domain, projectId, collectionId, collecti
                 // 2. Convert legacy photo to canonical photo input
                 const photoInput = legacyPhotoToPhotoInput(legacyFile, domain, projectId);
 
-                // 3. Create Project Photo if it doesn't exist (idempotent)
-                const { created } = await createProjectPhoto(domain, projectId, photoInput);
+                // 3. Create Project Photo if it doesn't exist (idempotent).
+                // Legacy assets are already in studio/project totals unless an
+                // explicit 'account-new' policy is requested.
+                const accountNew = accountingPolicy === 'account-new';
+                const { created } = await createProjectPhoto(domain, projectId, photoInput, {
+                    accountStorage: accountNew,
+                    accountProjectCounters: accountNew,
+                });
                 if (created) migratedPhotos++;
 
                 // 4. Create Collection → Photo relationship

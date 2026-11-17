@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { getThumbnailUrl } from '../../utils/urlUtils';
+import { getPhotoThumbnailUrl } from '../../utils/urlUtils';
 import {
   formatTime,
   photoIdentity,
@@ -14,8 +14,7 @@ import {
  * surface, so existing selection/favorite workflows are left untouched.
  */
 const TimelinePhoto = memo(({ photo, index, onClick }) => {
-  const source = photo?.url || photo?.thumbUrl || '';
-  const thumbnail = getThumbnailUrl(source);
+  const thumbnail = getPhotoThumbnailUrl(photo);
   const captureTimestamp = resolveCaptureTimestamp(photo)?.timestamp ?? null;
   const title = `${photo?.name || 'Photo'}${Number.isFinite(captureTimestamp) ? ` — ${new Date(captureTimestamp).toLocaleString()}` : ' — no capture timestamp'}`;
 

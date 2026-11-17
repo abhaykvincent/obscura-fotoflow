@@ -1,7 +1,7 @@
 {
   "functions": {
     "predeploy": [
-      "cp build/index.html functions/index.html"
+      "node scripts/copy-index.js"
     ],
     "source": "functions"
   },
