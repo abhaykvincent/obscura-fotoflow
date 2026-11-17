@@ -52,7 +52,7 @@
   "scripts": {
     "start": "dotenv -e .env.development react-scripts start",
     "emulator": "firebase emulators:start",
-    "emulator:sandbox": "node scripts/kill-emulators.js && firebase emulators:start --import=./backup/2026-11-11T19_05_36_73327 --export-on-exit=./backup/2026-11-11T19_05_36_73327",
+    "emulator:sandbox": "node scripts/kill-emulators.js && firebase emulators:start --import=./backup/2026-11-11T19_05_36_73327 --export-on-exit=./backup/emulator-data/2026-11-11T19_05_36_73327",
     "build": "dotenv -e .env.production react-scripts build",
     "deploy": "firebase deploy --only hosting",
     "deploy-all": "firebase deploy",
